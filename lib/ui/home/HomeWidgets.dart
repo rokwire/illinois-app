@@ -12,6 +12,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -280,8 +281,29 @@ class HomeFavoriteWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeFavoriteWidgetState();
 }
 
-class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> {
-  bool _expanded = true;
+class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with NotificationsListener {
+  late bool _expanded;
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [Storage.notifySettingChanged]);
+    _expanded = Storage().isHomeFavoriteExpanded(widget.favoriteId) != false;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if ((name == Storage.notifySettingChanged) && (param == Storage().homeFavoriteExpandedStatesMapKey)) {
+      _handleHomeFavoriteExpandedStatesChanged();
+    }
+    super.onNotification(name, param);
+  }
 
   @override
   Widget build(BuildContext context) => Column(children: [
@@ -349,7 +371,17 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> {
     Analytics().logSelect(target: _dropdownAccLabel, source: "Favorite ${widget.favoriteId}" );
     setState(() {
       _expanded = !_expanded;
+      Storage().setHomeFavoriteExpanded(widget.favoriteId, _expanded);
     });
+  }
+
+  void _handleHomeFavoriteExpandedStatesChanged() {
+    bool? expanded = Storage().isHomeFavoriteExpanded(widget.favoriteId) != false;
+    if ((_expanded != expanded) && mounted) {
+      setState(() {
+        _expanded = expanded;
+      });
+    }
   }
 }
 
