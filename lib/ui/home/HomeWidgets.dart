@@ -21,7 +21,6 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 ////////////////////////////
@@ -352,100 +351,6 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> {
       _expanded = !_expanded;
     });
   }
-}
-
-////////////////////////////
-// HomeSlantWidget
-
-class HomeSlantWidget extends StatelessWidget {
-
-  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 16);
-
-  final String? title;
-  final String? titleIconKey;
-  final CrossAxisAlignment headerAxisAlignment;
-
-  final double flatHeight;
-  final double slantHeight;
-  
-  final Widget? child;
-  final EdgeInsetsGeometry childPadding;
-
-  final List<Widget>? actions;
-  final String? favoriteId;
-
-  const HomeSlantWidget({Key? key,
-    this.title,
-    this.titleIconKey,
-    this.headerAxisAlignment = CrossAxisAlignment.center,
-    
-    this.flatHeight = 40,
-    this.slantHeight = 65,
-
-    this.child,
-    this.childPadding = EdgeInsets.zero,
-    
-    this.actions,
-    this.favoriteId,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-
-    EdgeInsetsGeometry titleTextPadding = EdgeInsets.only(top: 12, bottom: 12,
-      left: (titleIconKey == null) ? 16 : 0,
-      right: ((actions == null) && (favoriteId == null)) ? 16 : 0,
-    );
-
-    return Column(children: [
-      
-      // Title Row
-      Padding(padding: EdgeInsets.zero, child: 
-        Semantics(container: true, header: true,
-          child: Container(color: Styles().colors.fillColorPrimary, child:
-            Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
-
-              if (titleIconKey != null)
-                HomeTitleIcon(image: Styles().images.getImage(titleIconKey, excludeFromSemantics: true)),
-
-              Expanded(child:
-                Padding(padding: titleTextPadding, child:
-                  Semantics(label: title, header: true, excludeSemantics: true, child:
-                    Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat"))
-                  )
-                )
-              ),
-
-              if (actions != null)
-                ...actions!,
-
-              if (favoriteId != null)
-                HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: FavoriteIconStyle.SlantHeader, prompt: true),
-            ],),
-        ),),
-      ),
-      
-      Stack(children:<Widget>[
-      
-        // Slant
-        Column(children: <Widget>[
-          Container(color: Styles().colors.fillColorPrimary, height: flatHeight,),
-          Container(color: Styles().colors.fillColorPrimary, child:
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
-              Container(height: slantHeight,),
-            ),
-          ),
-        ],),
-        
-        // Content
-        Padding(padding: childPadding, child:
-          child ?? Container()
-        )
-      ])
-
-    ],);
-  }
-
 }
 
 ////////////////////////////
