@@ -25,6 +25,7 @@ class HomeToutWidget extends StatefulWidget {
   final StreamController<String>? updateController;
 
   static double triangleHeight = 40;
+  static double imageAspectRatio = (1080.0 / 810.0);
 
   HomeToutWidget({Key? key, this.favoriteId, this.contentType, this.updateController});
 
@@ -120,14 +121,14 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
       Semantics(label: "tout", image: true, excludeSemantics: true, child:
         ModalImageHolder(child: Image.network(imageUrl, semanticLabel: '', loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
-        double imageHeight = imageWidth * 810 / 1080;
+        double imageHeight = imageWidth / _imageAspectRatio;
         return (loadingProgress != null) ?
           Container(color: Styles().colors.fillColorPrimary, width: imageWidth, height: imageHeight, child:
             Center(child:
               CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white))
             )
           ) :
-          AspectRatio(aspectRatio: (1080.0 / 810.0), child:
+          AspectRatio(aspectRatio: _imageAspectRatio, child:
             Container(color: Styles().colors.fillColorPrimary, child: child)
           );
       }))),
@@ -142,6 +143,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
   }
 
   double get _triangleHeight => HomeToutWidget.triangleHeight;
+  double get _imageAspectRatio => HomeToutWidget.imageAspectRatio;
 
   String? get _title1 {
     if (_dayPart != null) {

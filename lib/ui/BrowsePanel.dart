@@ -977,6 +977,8 @@ class _BrowseToutWidget extends StatefulWidget {
 
   final StreamController<String>? updateController;
 
+  static double imageAspectRatio = (1080.0 / 810.0);
+
   _BrowseToutWidget({Key? key, this.updateController}) : super(key: key);
 
   @override
@@ -1021,14 +1023,14 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> with Notifications
     return (_imageUrl != null) ? Stack(children: [
       ModalImageHolder(child: Image.network(_imageUrl!, semanticLabel: 'tout', loadingBuilder:(  BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
-        double imageHeight = imageWidth * 810 / 1080;
+        double imageHeight = imageWidth / _imageAspectRatio;
         return (loadingProgress != null) ?
           Container(color: Styles().colors.fillColorPrimary, width: imageWidth, height: imageHeight, child:
             Center(child:
               CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white), )
             ),
           ) :
-          AspectRatio(aspectRatio: (1080.0 / 810.0), child:
+          AspectRatio(aspectRatio: _imageAspectRatio, child:
             Container(color: Styles().colors.fillColorPrimary, child: child)
           );
       })),
@@ -1045,6 +1047,8 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> with Notifications
     ],) : Container();
 
   }
+
+  double get _imageAspectRatio => _BrowseToutWidget.imageAspectRatio;
 
   bool get _shouldUpdateImage {
     return (_imageUrl == null) || (_imageDateTime == null) || (DateTimeUtils.midnight(_imageDateTime)!.compareTo(DateTimeUtils.midnight(DateTime.now())!) < 0);
