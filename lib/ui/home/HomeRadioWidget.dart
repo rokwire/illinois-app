@@ -28,10 +28,9 @@ class HomeRadioWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: favoriteId,
+    return HomeFavoriteWidget(favoriteId: favoriteId,
       title: stationTitle(radioStation),
-      titleIconKey: 'radio',
-      childPadding: HomeSlantWidget.defaultChildPadding,
+      childPadding: HomeFavoriteWidget.defaultChildPadding,
       child: _isEnabled ?
         _RadioControl(radioStation,
           borderRadius: BorderRadius.all(Radius.circular(6)),
@@ -226,7 +225,7 @@ class _RadioControlState extends State<_RadioControl> with NotificationsListener
                                 Padding(padding: EdgeInsets.all(16), child:
                                   Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.fillColorSecondary , width: 3))), child:
                                     Padding(padding: EdgeInsets.only(left: 10), child:
-                                    Row(children: [Expanded(child: Text(buttonTitle, style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat')))]))))),
+                                    Row(children: [Expanded(child: Text(buttonTitle, style: Styles().textStyles.getTextStyle('widget.title.medium.extra_fat')))]))))),
                             ],),
                           ),
                         ),

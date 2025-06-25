@@ -64,7 +64,7 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
     return Material(color: Colors.transparent, child:
       Row(children: [
         MergeSemantics(child: Semantics(label: "Previous Page", hint: _iosHint, onLongPressHint: _longPressHint, child:
-            IconButton( icon: Styles().images.getImage(_previousButtonAvailable? 'chevron-left-bold' :  'chevron-left-gray', excludeFromSemantics: true) ?? Container(),
+            IconButton( icon: Styles().images.getImage(_previousButtonAvailable ? 'chevron-left-bold' :  'chevron-left-gray', size: 12, excludeFromSemantics: true) ?? Container(),
                 onPressed: _previousButtonAvailable ? _onTapPrevious : null,
                 onLongPress: _hasLongPress ? _onLongPress : null,
             )
@@ -75,7 +75,7 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
             hint:  _iosHint, onLongPressHint: _longPressHint, child:
               IconButton(onPressed:_nextButtonAvailable? _onTapNext : null,
                 onLongPress: _hasLongPress ? _onLongPress : null,
-                icon: Styles().images.getImage(_nextButtonAvailable? 'chevron-right-bold' :  'chevron-right-gray', excludeFromSemantics: true) ?? Container()
+                icon: Styles().images.getImage(_nextButtonAvailable ? 'chevron-right-bold' :  'chevron-right-gray', size: 12, excludeFromSemantics: true) ?? Container()
               )
         ))
       ],),

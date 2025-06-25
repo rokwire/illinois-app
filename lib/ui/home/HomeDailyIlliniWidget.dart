@@ -23,7 +23,6 @@ import 'package:illinois/model/DailyIllini.dart';
 import 'package:illinois/service/DailyIllini.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -110,9 +109,8 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeDailyIlliniWidget.title,
-      titleIconKey: 'news',
       child: _buildContent(),
     );
   }
@@ -138,7 +136,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
       Widget contentWidget;
       if (widgetsList.length >= 3) {
         contentWidget = Padding(
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Container(
             decoration: BoxDecoration(
                 color: Styles().colors.white,
@@ -169,7 +167,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
       return Column(
         children: [
           contentWidget,
-          LinkButton(
+          HomeBrowseLinkButton(
               title: Localization().getStringEx('widget.home.daily_illini.button.all.title', 'More Stories'),
               hint: Localization().getStringEx('widget.home.daily_illini.button.all.hint', 'Tap to go to the Daily Illini home page'),
               onTap: _onViewAll
@@ -246,12 +244,12 @@ class _MainStoryWidget extends _StoryWidget {
                 Padding(
                   padding: EdgeInsets.only(top: 12, bottom: 8, left: 20, right: 20),
                   child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
-                      style: Styles().textStyles.getTextStyle('widget.title.extra_large.extra_fat')),
+                      style: Styles().textStyles.getTextStyle('widget.title.medium.extra_fat')),
                 ),
                 Padding(
                     padding: EdgeInsets.only(bottom: 6, left: 20),
                     child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
-                        style: Styles().textStyles.getTextStyle("widget.info.small.medium_fat"))
+                        style: Styles().textStyles.getTextStyle("widget.info.small.semi_fat"))
                 ),
               ],
             ),
@@ -302,7 +300,7 @@ class _MinorStoryWidget extends _StoryWidget {
                 Padding(
                     padding: EdgeInsets.only(bottom: 6, left: 20),
                     child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
-                        style: Styles().textStyles.getTextStyle("widget.info.small.medium_fat"))
+                        style: Styles().textStyles.getTextStyle("widget.info.small.semi_fat"))
                 ),
               ],
             ),

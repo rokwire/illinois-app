@@ -116,9 +116,8 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
       return Column(children: gameDayWidgets);
     }
     else {
-      return HomeSlantWidget(favoriteId: widget.favoriteId,
+      return HomeFavoriteWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
-        titleIconKey: 'athletics',
         child: HomeMessageCard(message: Localization().getStringEx('widget.game_day.label.no_games', 'No Illini Big 10 events today.')),
       );
     }

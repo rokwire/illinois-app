@@ -59,10 +59,9 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> with No
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessToDoWidget.title,
-      titleIconKey: 'todo',
-      childPadding: HomeSlantWidget.defaultChildPadding,
+      childPadding: HomeFavoriteWidget.defaultChildPadding,
       child: _buildContent(),
     );
   }

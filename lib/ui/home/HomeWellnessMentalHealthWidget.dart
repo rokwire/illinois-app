@@ -28,7 +28,6 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -109,9 +108,8 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessMentalHealthWidget.title,
-      titleIconKey: 'wellness',
       child: _buildContent(),
     );
   }
@@ -132,7 +130,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
         child: HtmlWidget(
             message,
             onTapUrl : (url) {_handleLocalUrl(url); return true;},
-            textStyle:  Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+            textStyle:  Styles().textStyles.getTextStyle("widget.item.small.semi_fat"),
             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
         )
       ),
@@ -179,7 +177,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
     return Column(children: [
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
-        LinkButton(
+        HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.wellness_mental_health.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.wellness_mental_health.button.all.hint', 'Tap to view all mental heatlh resources'),
           onTap: _onViewAll,

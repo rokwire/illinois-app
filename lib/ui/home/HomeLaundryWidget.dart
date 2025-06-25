@@ -14,7 +14,6 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -123,9 +122,8 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
         title: HomeLaundryWidget.title,
-        titleIconKey: 'laundry',
         child: _buildContent(),
     );
   }
@@ -189,7 +187,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
     return Column(children: <Widget>[
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
-        LinkButton(
+        HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.laundry.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.laundry.button.all.hint', 'Tap to view all laundries'),
           onTap: _onTapSeeAll,
@@ -304,7 +302,7 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> with NotificationsLis
                   Flex(direction: Axis.vertical, children: <Widget>[
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
                       Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.medium")),
+                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.regular.extra_fat")), // widget.title.medium.extra_fat
                       ),
                       Visibility(visible: Auth2().canFavorite, child:
                         GestureDetector(behavior: HitTestBehavior.opaque,

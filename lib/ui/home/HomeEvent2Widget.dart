@@ -35,7 +35,6 @@ import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -269,9 +268,8 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(key: _visibilityDetectorKey, onVisibilityChanged: _onVisibilityChanged, child:
-      HomeSlantWidget(favoriteId: widget.favoriteId,
+      HomeFavoriteWidget(favoriteId: widget.favoriteId,
         title: widget._title,
-        titleIconKey: 'events',
         child: _buildContent(),
       )
     );
@@ -353,7 +351,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
     return Column(children: <Widget>[
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => (_events?.length ?? 0), centerWidget:
-        LinkButton(
+       HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.event2_feed.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.event2_feed.button.all.hint', 'Tap to view all events'),
           onTap: _onTapViewAll,
