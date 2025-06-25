@@ -29,6 +29,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class Storage extends rokwire.Storage with NotificationsListener {
 
   static String get notifySettingChanged => rokwire.Storage.notifySettingChanged;
+  static String get notifyHomeFavoriteExpandedChanged => 'edu.illinois.rokwire.storage.home.favorite.expanded.changed';
 
   late Map<String, bool> _homeFavoriteExpandedStates;
 
@@ -42,7 +43,9 @@ class Storage extends rokwire.Storage with NotificationsListener {
   // Service Overrides
 
   void createService() {
-    NotificationService().subscribe(this, [Auth2UserPrefs.notifyFavoriteChanged]);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoriteChanged
+    ]);
     super.createService();
   }
 
@@ -54,7 +57,7 @@ class Storage extends rokwire.Storage with NotificationsListener {
   @override
   Future<void> initService() async {
     await super.initService();
-    _homeFavoriteExpandedStates = _homeFavoriteExpandedStatesMap ?? <String, bool>{};
+    _homeFavoriteExpandedStates = _loadHomeFavoriteExpandedStates() ?? <String, bool>{};
   }
 
   // NotificationsListener Overrides
@@ -402,9 +405,9 @@ class Storage extends rokwire.Storage with NotificationsListener {
   String? get homeContentType => getStringWithName(homeContentTypeKey);
   set homeContentType(String? value) => setStringWithName(homeContentTypeKey, value);
 
-  String get homeFavoriteExpandedStatesMapKey => 'edu.illinois.rokwire.home.favorite.expanded.state';
-  Map<String, bool>? get _homeFavoriteExpandedStatesMap => JsonUtils.mapCastValue(JsonUtils.decode(getStringWithName(homeFavoriteExpandedStatesMapKey)));
-  set _homeFavoriteExpandedStatesMap(Map<String, bool>? value) => setStringWithName(homeFavoriteExpandedStatesMapKey, JsonUtils.encode(value));
+  String get _homeFavoriteExpandedStatesMapKey => 'edu.illinois.rokwire.home.favorite.expanded.state';
+  Map<String, bool>? _loadHomeFavoriteExpandedStates() => JsonUtils.mapCastValue(JsonUtils.decode(getStringWithName(_homeFavoriteExpandedStatesMapKey)));
+  void _saveHomeFavoriteExpandedStatesMap(Map<String, bool>? value) => setStringWithName(_homeFavoriteExpandedStatesMapKey, JsonUtils.encode(value));
 
   void _handleFavoriteChanged(HomeFavorite favorite) {
     if (Auth2().isFavorite(favorite) != true) {
@@ -414,9 +417,15 @@ class Storage extends rokwire.Storage with NotificationsListener {
 
   bool? isHomeFavoriteExpanded(String? key) => _homeFavoriteExpandedStates[key];
   void setHomeFavoriteExpanded(String? key, bool? value) {
-    if (value != isHomeFavoriteExpanded(key)) {
-      MapUtils.set(_homeFavoriteExpandedStates, key, value);
-      _homeFavoriteExpandedStatesMap = _homeFavoriteExpandedStates;
+    if ((key != null) && (value != isHomeFavoriteExpanded(key))) {
+      if (value != null) {
+        _homeFavoriteExpandedStates[key] = value;
+      }
+      else {
+        _homeFavoriteExpandedStates.remove(key);
+      }
+      _saveHomeFavoriteExpandedStatesMap(_homeFavoriteExpandedStates);
+      NotificationService().notify(notifyHomeFavoriteExpandedChanged, key);
     }
   }
 

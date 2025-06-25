@@ -279,6 +279,8 @@ class HomeFavoriteWidget extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _HomeFavoriteWidgetState();
+
+  bool get isExpanded => (Storage().isHomeFavoriteExpanded(favoriteId) != false);
 }
 
 class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with NotificationsListener {
@@ -286,8 +288,10 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Storage.notifySettingChanged]);
-    _expanded = Storage().isHomeFavoriteExpanded(widget.favoriteId) != false;
+    NotificationService().subscribe(this, [
+      Storage.notifyHomeFavoriteExpandedChanged
+    ]);
+    _expanded = widget.isExpanded;
     super.initState();
   }
 
@@ -299,7 +303,7 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
 
   @override
   void onNotification(String name, param) {
-    if ((name == Storage.notifySettingChanged) && (param == Storage().homeFavoriteExpandedStatesMapKey)) {
+    if ((name == Storage.notifyHomeFavoriteExpandedChanged) && (param == widget.favoriteId)) {
       _handleHomeFavoriteExpandedStatesChanged();
     }
     super.onNotification(name, param);
@@ -376,7 +380,7 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
   }
 
   void _handleHomeFavoriteExpandedStatesChanged() {
-    bool? expanded = Storage().isHomeFavoriteExpanded(widget.favoriteId) != false;
+    bool expanded = widget.isExpanded;
     if ((_expanded != expanded) && mounted) {
       setState(() {
         _expanded = expanded;
