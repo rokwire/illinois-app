@@ -294,7 +294,7 @@ class WellnessRegularResourceButton extends StatelessWidget {
         ),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(vertical: 17), child:
-            Text(label ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))
+            Text(label ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.extra_fat'))
           ),
         ),
         hasExternalLink ? Padding(padding: EdgeInsets.only(left: 8, top: 18, bottom: 18), child:

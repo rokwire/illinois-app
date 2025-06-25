@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - WEB: Customize image cropping UI [#5208](https://github.com/rokwire/illinois-app/issues/5208).
 
+## [7.2.2] - 2025-06-25
+### Changed
+- UI Clean Up - Home Panel [#5205](https://github.com/rokwire/illinois-app/issues/5205).
+
 ## [7.2.1] - 2025-06-23
 
 ## [7.2.0] - 2025-06-05

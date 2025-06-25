@@ -18,12 +18,15 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+enum GuideEntryCardDisplayMode { home, browse, }
+
 class GuideEntryCard extends StatefulWidget {
   final String? favoriteKey;
   final Map<String, dynamic>? guideEntry;
-  final AnalyticsFeature ? analyticsFeature;
+  final AnalyticsFeature? analyticsFeature;
+  final GuideEntryCardDisplayMode? displayMode;
 
-  GuideEntryCard(this.guideEntry, { this.favoriteKey = GuideFavorite.favoriteKeyName, this.analyticsFeature });
+  GuideEntryCard(this.guideEntry, { this.favoriteKey = GuideFavorite.favoriteKeyName, this.displayMode = GuideEntryCardDisplayMode.browse, this.analyticsFeature });
 
   _GuideEntryCardState createState() => _GuideEntryCardState();
 }
@@ -71,27 +74,27 @@ class _GuideEntryCardState extends State<GuideEntryCard> with NotificationsListe
 
     List<Widget> contentList = Guide().isEntryReminder(widget.guideEntry) ? <Widget>[
       Padding(padding: EdgeInsets.only(right: 17), child:
-        Text(reminderDate ?? '',
-          style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")),),
+        Text(reminderDate ?? '', style: _reminderDateTextStyle),
+      ),
       Container(height: 4),
       HtmlWidget(
           StringUtils.ensureNotEmpty(titleHtml),
           onTapUrl : (url) {_onTapLink(url); return true;},
-          textStyle: Styles().textStyles.getTextStyle("widget.title.regular.medium_fat"),
+          textStyle: _reminderTitleTextStyle,
       )
     ] : <Widget>[
       Padding(padding: EdgeInsets.only(right: 17), child:
         HtmlWidget(
           StringUtils.ensureNotEmpty(titleHtml),
           onTapUrl : (url) {_onTapLink(url); return true;},
-          textStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")
+          textStyle: _guideTitleTextStyle
         ),
       ),
       Container(height: 8),
       HtmlWidget(
         StringUtils.ensureNotEmpty(descriptionHtml),
         onTapUrl : (url) {_onTapLink(url); return true;},
-        textStyle: Styles().textStyles.getTextStyle("widget.item.regular.thin")
+        textStyle: _guideDescriptionTextStyle
       ),
     ];
 
@@ -125,6 +128,33 @@ class _GuideEntryCardState extends State<GuideEntryCard> with NotificationsListe
           ),)),),),
       ],),
     );
+  }
+
+  TextStyle? get _reminderDateTextStyle {
+    switch (widget.displayMode) {
+      case GuideEntryCardDisplayMode.home: return Styles().textStyles.getTextStyle("widget.title.medium.extra_fat");
+      default: return Styles().textStyles.getTextStyle("widget.title.medium.extra_fat");
+    }
+  }
+
+  TextStyle? get _reminderTitleTextStyle {
+    switch (widget.displayMode) {
+      case GuideEntryCardDisplayMode.home: return Styles().textStyles.getTextStyle("widget.title.small.medium_fat");
+      default: return Styles().textStyles.getTextStyle("widget.title.regular.medium_fat");
+    }
+  }
+
+  TextStyle? get _guideTitleTextStyle {
+    switch (widget.displayMode) {
+      case GuideEntryCardDisplayMode.home: return Styles().textStyles.getTextStyle("widget.title.medium.extra_fat");
+      default: return Styles().textStyles.getTextStyle("widget.title.large.extra_fat");
+    }
+  }
+  TextStyle? get _guideDescriptionTextStyle {
+    switch (widget.displayMode) {
+      case GuideEntryCardDisplayMode.home: return Styles().textStyles.getTextStyle("widget.item.small.thin");
+      default: return Styles().textStyles.getTextStyle("widget.item.regular.thin");
+    }
   }
 
   bool get _canFavorite => (widget.favoriteKey != null) && Auth2().canFavorite;

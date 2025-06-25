@@ -29,9 +29,8 @@ class HomeSafeWalkRequestWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: favoriteId,
+    return HomeFavoriteWidget(favoriteId: favoriteId,
       title: title,
-      titleIconKey: 'person-walking',
       child: _contentWidget(context),
     );
   }

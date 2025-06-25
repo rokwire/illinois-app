@@ -66,34 +66,34 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> with Notifi
   Widget build(BuildContext context) {
 
     return Visibility(visible: _visible, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId,
+        HomeFavoriteWidget(favoriteId: widget.favoriteId,
           title: Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"),
-          titleIconKey: 'polls',
-          flatHeight: 0, slantHeight: 0,
-          childPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+          childPadding: EdgeInsets.symmetric(horizontal: 16),
           child: _buildContent(),
       ));
   }
 
-  Widget _buildContent() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly Create and Share Polls."), style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")),
-        Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-          Text(_canCreatePoll ?
-            Localization().getStringEx("widget.home_create_poll.text.description", "People in your Group can be notified to vote through the {{app_title}} app. Or you can give voters the four-digit poll number.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) :
-            AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.polls', 'Polls')),
-            style: Styles().textStyles.getTextStyle("widget.description.variant.regular")
-          ),
+  Widget _buildContent() => Container(decoration: HomeMessageCard.defaultDecoration, padding: EdgeInsets.all(12), child:
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Text(Localization().getStringEx("widget.home_create_poll.text.title", "Quickly Create and Share Polls."),
+        style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
+      ),
+      Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+        Text(_canCreatePoll ?
+          Localization().getStringEx("widget.home_create_poll.text.description", "People in your Group can be notified to vote through the {{app_title}} app. Or you can give voters the four-digit poll number.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) :
+          AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.polls', 'Polls')),
+          style: Styles().textStyles.getTextStyle("widget.card.detail.small.semi_fat")
         ),
-        _buildButtons()
-      ],);
-  }
+      ),
+      _buildButtons()
+    ],)
+  );
 
   Widget _buildButtons() {
     return _canCreatePoll ?
     RoundedButton(
       label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a Poll"),
-      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
       borderColor: Styles().colors.fillColorSecondary,
       backgroundColor: Colors.white,
       contentWeight: 0.6,

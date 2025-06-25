@@ -27,6 +27,7 @@ class HomeToutWidget extends StatefulWidget {
   final StreamController<String>? updateController;
 
   static double triangleHeight = 40;
+  static double imageAspectRatio = (1080.0 / 810.0);
 
   HomeToutWidget({Key? key, this.favoriteId, this.contentType, this.updateController});
 
@@ -77,15 +78,15 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       (imageUrl != null) ? _buildImageWidget(imageUrl) : Container(),
       Visibility(visible: (widget.contentType == HomeContentType.favorites), child:
-        Container(padding: EdgeInsets.only(bottom: 16,), color: Styles().colors.fillColorPrimary, child:
+        Container(padding: EdgeInsets.only(bottom: 8,), color: Styles().colors.white, child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16, top: 16), child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(_title1 ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.medium.fat")),
+                  Text(_title1 ?? '', style: Styles().textStyles.getTextStyle("widget.home_tout.text.greeting")),
                   Visibility(visible: StringUtils.isNotEmpty(title2), child:
                     Row(children: [
-                      Text(title2 ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")),
+                      Text(title2 ?? '', style: Styles().textStyles.getTextStyle("widget.home_tout.text.title")),
                       Semantics(label: Localization().getStringEx("widget.home.tout.button.info.label", "Info"), hint: Localization().getStringEx("widget.home.tout.button.info.hint", "Tap for more info"), child:
                         InkWell(onTap: _onInfo, child:
                           Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8), child:
@@ -102,80 +103,49 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
               Padding(padding: EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 16), child:
                 Row(mainAxisSize: MainAxisSize.min, children: [
                   Padding(padding: EdgeInsets.only(right: 4), child:
-                    Styles().images.getImage('edit-white', size: 14, excludeFromSemantics: true) ?? Container(),
+                    Styles().images.getImage('edit-dark-blue', size: 14, excludeFromSemantics: true) ?? Container(),
                   ),
-
                   Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
-                    style: Styles().textStyles.getTextStyle("widget.home_tout.button.underline.title"))
+                    style: Styles().textStyles.getTextStyle("widget.home_tout.button.link"))
                 ],),
               ),
             ),
           ],)
         )
-      )
+      ),
+      Container(height: 3, color: Styles().colors.surfaceAccent,),
 
     ],);
   }
 
   Widget _buildImageWidget(String imageUrl) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double imageWidth = screenWidth;
-    double imageHeight = max((screenHeight / 3.0), 300); //imageWidth * 810 / 1080;
     return Stack(children: [
-      Semantics(
-          label: "tout",
-          image: true,
-          excludeSemantics: true,
-          child: ModalImageHolder(
-              child: SizedBox(
-                  width: imageWidth,
-                  height: imageHeight,
-                  child: WebNetworkImage(imageUrl: imageUrl, semanticLabel: '', fit: BoxFit.cover, alignment: Alignment.center,
-                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                    return (loadingProgress != null)
-                        ? Container(
-                            color: Styles().colors.fillColorPrimary,
-                            width: imageWidth,
-                            height: imageHeight,
-                            child: Center(
-                                child: CircularProgressIndicator(
-                                    strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white))))
-                        : AspectRatio(
-                            aspectRatio: (1080.0 / 810.0), child: Container(color: Styles().colors.fillColorPrimary, child: child));
-                  })))),
-      Align(alignment: Alignment.topCenter, child:
-        CustomPaint(painter: TrianglePainter(
-            painterColor: Styles().colors.fillColorSecondaryTransparent05,
-            horzDir: TriangleHorzDirection.rightToLeft,
-            vertDir: TriangleVertDirection.bottomToTop),
-          child: Container(height: _triangleHeight, decoration: BoxDecoration(
-            // color: Styles().colors.fillColorPrimaryTransparent03,
-            gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-              Styles().colors.fillColorPrimaryTransparent05,
-              Colors.transparent,
-            ]),
-          ),),
-        ),
-      ),
+      Semantics(label: "tout", image: true, excludeSemantics: true, child:
+        ModalImageHolder(child: WebNetworkImage(imageUrl: imageUrl, semanticLabel: '', loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+        double imageWidth = MediaQuery.of(context).size.width;
+        double imageHeight = imageWidth / _imageAspectRatio;
+        return (loadingProgress != null) ?
+          Container(color: Styles().colors.fillColorPrimary, width: imageWidth, height: imageHeight, child:
+            Center(child:
+              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white))
+            )
+          ) :
+          AspectRatio(aspectRatio: _imageAspectRatio, child:
+            Container(color: Styles().colors.fillColorPrimary, child: child)
+          );
+      }))),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
           CustomPaint(painter: TrianglePainter(
               painterColor: Styles().colors.fillColorSecondaryTransparent05,
-              horzDir: TriangleHorzDirection.leftToRight,
+              horzDir: TriangleHorzDirection.rightToLeft,
               vertDir: TriangleVertDirection.topToBottom),
-            child: Container(height: _triangleHeight)))),
-      Positioned.fill(child:
-        Align(alignment: Alignment.bottomCenter, child:
-          CustomPaint(painter: TrianglePainter(
-                painterColor: Styles().colors.fillColorPrimary,
-                horzDir: TriangleHorzDirection.rightToLeft,
-                vertDir: TriangleVertDirection.topToBottom),
             child: Container(height: _triangleHeight))))
     ]);
   }
 
   double get _triangleHeight => HomeToutWidget.triangleHeight;
+  double get _imageAspectRatio => HomeToutWidget.imageAspectRatio;
 
   String? get _title1 {
     if (_dayPart != null) {

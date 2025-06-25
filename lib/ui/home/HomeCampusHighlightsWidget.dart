@@ -7,7 +7,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -113,10 +112,9 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
-      titleIconKey: 'guide',
-      child: _buildContent() 
+      child: _buildContent()
     );
   }
 
@@ -134,7 +132,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
       for (int index = 0; index < visibleCount; index++) {
         Map<String, dynamic>? promotedItem = JsonUtils.mapValue(_promotedItems![index]);
         pages.add(Padding(key: _contentKeys[Guide().entryId(promotedItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8), child:
-          GuideEntryCard(promotedItem)
+          GuideEntryCard(promotedItem, displayMode: GuideEntryCardDisplayMode.home)
         ));
       }
 
@@ -157,14 +155,14 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        GuideEntryCard(_promotedItems?.first)
+        GuideEntryCard(_promotedItems?.first, displayMode: GuideEntryCardDisplayMode.home)
       );
     }
 
     return Column(children: <Widget>[
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
-        LinkButton(
+        HomeBrowseLinkButton(
               title: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.title', 'View All'),
               hint: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.hint', 'Tap to view all highlights'),
           onTap: _onViewAll,
