@@ -67,8 +67,8 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> with NotificationsLis
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.all(12), child:
-                Text(Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
-                  style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
+                Text(Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois").toUpperCase(),
+                  style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
                 ),
               ),
             ),
@@ -152,9 +152,10 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
         Semantics(explicitChildNodes: true, child:
           RoundedButton(
             label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Sign In with your NetID"),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
             borderColor: Styles().colors.fillColorSecondary,
             backgroundColor: Styles().colors.surface,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             progress: (_authLoading == true),
             onTap: ()=> _onTapConnectNetIdClicked(context),
           )
@@ -202,7 +203,7 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
           RoundedButton(
             label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Continue"),
             hint: '',
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
             borderColor: Styles().colors.fillColorSecondary,
             backgroundColor: Styles().colors.surface,
             onTap: ()=> _onTapPhoneOrEmailClicked(context),

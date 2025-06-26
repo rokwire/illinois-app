@@ -351,8 +351,8 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
           ),
         Expanded(child:
           Padding(padding: EdgeInsets.only(left: (dropdownIcon == null) ? 16 : 0, right: rightPadding, top: 12, bottom: 12), child:
-            Text(widget.title ?? '',
-              style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
+            Text(widget.title?.toUpperCase() ?? '',
+              style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
             ),
           ),
         )

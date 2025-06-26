@@ -95,8 +95,8 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(right: 16, top: 12, bottom: 12), child:
-                Text(Localization().getStringEx("widget.home.welcome.title.text", 'Tailor Your App Experience'),
-                  style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
+                Text(Localization().getStringEx("widget.home.welcome.title.text", 'Tailor Your App Experience').toUpperCase(),
+                  style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
                 ),
               ),
             ),
