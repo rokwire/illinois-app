@@ -18,6 +18,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:illinois/model/Voter.dart';
@@ -93,76 +94,46 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     bool closeBtnVisible = !(_voterRule?.electionPeriod ?? false);
     String? vbmButtonTitleKey = StringUtils.ensureNotEmpty(_voterRule?.vbmButtonTitle);
     String? vbmButtonTitle = Localization().getStringFromKeyMapping(vbmButtonTitleKey, _stringsContent);
-    return Visibility(
-      visible: voterWidgetVisible,
-      child: Container(
-        color: Styles().colors.background,
-        padding: EdgeInsets.only(left: 16, top: 12, right: 12, bottom: 24),
-        child: Semantics(container: true,child:Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(left: 4, top: 4),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      voterTitle,
-                      style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 8, bottom: 16),
-                      child: Visibility(visible: StringUtils.isNotEmpty(voterText), child: Text(
-                        voterText,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 10,
-                        style: Styles().textStyles.getTextStyle("widget.detail.variant.regular"),
-                      ),),
-                    )
-                  ],
-                ),
-              ),
+
+    return Visibility(visible: voterWidgetVisible, child:
+      HomeCardWidget(
+        title: voterTitle,
+        onClose: closeBtnVisible ? _hideByUser : null,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+
+          Padding(padding: EdgeInsets.only(bottom: 12), child:
+            Visibility(visible: StringUtils.isNotEmpty(voterText), child:
+              Text(voterText, overflow: TextOverflow.ellipsis, maxLines: 10, style: Styles().textStyles.getTextStyle("widget.detail.variant.regular"),),
             ),
-            // 'Close' button is visible by default unless specified other in the json
-            Visibility(visible: closeBtnVisible, child: Semantics(
-              label: Localization().getStringFromKeyMapping('widget.voter.button.close.label', _stringsContent, defaults: 'Close'),
-              excludeSemantics: true,
-              button: true,
-              child: GestureDetector(
-                child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
-                onTap: _hideByUser,
-              ),
-            ),)
-          ],
-        ),
-          Wrap(runSpacing: 8, spacing: 16, children: _getButtonOptions(voterWidgetVisible),),
-          Visibility(visible: vbmVisible, child: Padding(padding: EdgeInsets.only(left: 4), child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Semantics(label: vbmText, child: Padding(
-                padding: EdgeInsets.only(top: 32, bottom: 16),
-                child: Text(
-                  vbmText,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 10,
-                  style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+          ),
+
+          Wrap(runSpacing: 8, spacing: 16, children:
+            _getButtonOptions(voterWidgetVisible),
+          ),
+
+          Visibility(visible: vbmVisible, child:
+            Padding(padding: EdgeInsets.only(left: 4), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Semantics(label: vbmText, child:
+                  Padding(padding: EdgeInsets.only(top: 32, bottom: 16), child:
+                    Text(vbmText, overflow: TextOverflow.ellipsis, maxLines: 10, style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),),
+                  )
                 ),
-              )),
-              Row(children: <Widget>[RoundedButton(
-                label: vbmButtonTitle ?? '',
-                textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                borderColor: Styles().colors.fillColorSecondary,
-                backgroundColor: Styles().colors.white,
-                contentWeight: 0.0,
-                onTap: () => _onTapVbmButton(vbmButtonTitle),
-              )
-              ],)
-            ],
-          ),),)
-        ],)),
+                Row(children: <Widget>[
+                  RoundedButton(
+                    label: vbmButtonTitle ?? '',
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                    borderColor: Styles().colors.fillColorSecondary,
+                    backgroundColor: Styles().colors.white,
+                    contentWeight: 0.0,
+                    onTap: () => _onTapVbmButton(vbmButtonTitle),
+                  )
+                ],)
+              ],),
+            ),
+          ),
+
+        ]),
       ),
     );
   }

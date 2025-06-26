@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -61,33 +60,11 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> with NotificationsLis
     contentWidgets.isNotEmpty ? _buildContentCard(contentWidgets) : Container();
 
   Widget _buildContentCard(List<Widget> contentWidgets) =>
-    Padding(padding: EdgeInsets.all(16), child:
-      Container(decoration: HomeMessageCard.defaultDecoration, child:
-        Column(children: [
-          Row(children: [
-            Expanded(child:
-              Padding(padding: EdgeInsets.all(12), child:
-                Text(Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
-                  style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
-                ),
-              ),
-            ),
-            Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
-              InkWell(onTap : _onClose, child:
-                Padding(padding: EdgeInsets.all(12), child:
-                  Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
-                ),
-              ),
-            ),
-          ],),
-          //Padding(padding: EdgeInsets.only(bottom: 16), child:
-          //  Container(height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
-          //),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 12), child:
-            Column(children:contentWidgets),
-          )
-        ]),
-      )
+    HomeCardWidget(
+      title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois").toUpperCase(),
+      padding: const EdgeInsets.only(left: 12, right: 12, top: 12),
+      onClose: _onClose,
+      child: Column(children:contentWidgets),
     );
 
   List<Widget> get _contentWidgets {
@@ -152,9 +129,10 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
         Semantics(explicitChildNodes: true, child:
           RoundedButton(
             label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Sign In with your NetID"),
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
             borderColor: Styles().colors.fillColorSecondary,
             backgroundColor: Styles().colors.surface,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             progress: (_authLoading == true),
             onTap: ()=> _onTapConnectNetIdClicked(context),
           )
@@ -202,7 +180,7 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
           RoundedButton(
             label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Continue"),
             hint: '',
-            textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
             borderColor: Styles().colors.fillColorSecondary,
             backgroundColor: Styles().colors.surface,
             onTap: ()=> _onTapPhoneOrEmailClicked(context),

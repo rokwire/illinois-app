@@ -351,8 +351,8 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
           ),
         Expanded(child:
           Padding(padding: EdgeInsets.only(left: (dropdownIcon == null) ? 16 : 0, right: rightPadding, top: 12, bottom: 12), child:
-            Text(widget.title ?? '',
-              style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
+            Text(widget.title?.toUpperCase() ?? '',
+              style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
             ),
           ),
         )
@@ -387,6 +387,50 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
       });
     }
   }
+}
+
+////////////////////////////
+// HomeCardWidget
+
+class HomeCardWidget extends StatelessWidget {
+  final String? title;
+  final Widget? child;
+  final EdgeInsets padding;
+  final EdgeInsets margin;
+  final void Function()? onClose;
+
+  HomeCardWidget({super.key, this.title, this.child,
+    this.padding = const EdgeInsets.all(12),
+    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    this.onClose,
+  });
+
+  @override
+  Widget build(BuildContext context) =>
+    Container(padding: EdgeInsets.only(left: padding.left, bottom: padding.bottom), margin: margin, decoration: HomeMessageCard.defaultDecoration, child:
+      Column(children: [
+        Row(children: [
+          Expanded(child:
+            Padding(padding: EdgeInsets.symmetric(vertical: padding.top), child:
+              Text(title?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
+            ),
+          ),
+          Visibility(visible: (onClose != null), child:
+            Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
+              InkWell(onTap : onClose, child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: padding.right, vertical: padding.top), child:
+                  Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
+                ),
+              ),
+            ),
+          ),
+        ],),
+
+        Padding(padding: EdgeInsets.only(right: padding.right), child:
+          child
+        ),
+      ],),
+    );
 }
 
 ////////////////////////////
@@ -874,7 +918,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
     else if (direction == Axis.horizontal) {
       List<Widget> pages = <Widget>[];
       for (String code in _displayCodes!) {
-        pages.add(Padding(key: _contentKeys[code] ??= GlobalKey(), padding: EdgeInsets.only(right: pageSpacing, bottom: contentSpacing), child: widgetFromCode(code) ?? Container()));
+        pages.add(Padding(key: _contentKeys[code] ??= GlobalKey(), padding: EdgeInsets.only(right: pageSpacing, bottom: contentSpacing / 2), child: widgetFromCode(code) ?? Container()));
       }
 
       if (_pageController == null) {
@@ -997,7 +1041,7 @@ class HomeBrowseLinkButton extends LinkButton {
     super.title,
     super.hint,
     super.onTap,
-    super.padding = const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+    super.padding = const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
     TextStyle? textStyle,
     super.textWidget,
   }) : super(
