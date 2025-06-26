@@ -390,6 +390,50 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
 }
 
 ////////////////////////////
+// HomeCardWidget
+
+class HomeCardWidget extends StatelessWidget {
+  final String? title;
+  final Widget? child;
+  final EdgeInsets padding;
+  final EdgeInsets margin;
+  final void Function()? onClose;
+
+  HomeCardWidget({super.key, this.title, this.child,
+    this.padding = const EdgeInsets.all(12),
+    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    this.onClose,
+  });
+
+  @override
+  Widget build(BuildContext context) =>
+    Container(padding: EdgeInsets.only(left: padding.left, bottom: padding.bottom), margin: margin, decoration: HomeMessageCard.defaultDecoration, child:
+      Column(children: [
+        Row(children: [
+          Expanded(child:
+            Padding(padding: EdgeInsets.symmetric(vertical: padding.top), child:
+              Text(title?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
+            ),
+          ),
+          Visibility(visible: (onClose != null), child:
+            Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
+              InkWell(onTap : onClose, child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: padding.right, vertical: padding.top), child:
+                  Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
+                ),
+              ),
+            ),
+          ),
+        ],),
+
+        Padding(padding: EdgeInsets.only(right: padding.right), child:
+          child
+        ),
+      ],),
+    );
+}
+
+////////////////////////////
 // HomeTitleIcon
 
 class HomeTitleIcon extends StatelessWidget {
