@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/onboarding/OnboardingMessagePanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -44,76 +45,54 @@ class OnboardingUpgradePanel extends StatelessWidget {
       title = Localization().getStringEx('panel.onboarding.upgrade.available.label.title', 'Upgrade Available');
       message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.available.label.description', '%s app version %s has newer version %s available.'), [appName, appVersion, availableVersion]);
     }
+
+    return OnboardingMessagePanel(title: title, message: message, footer: _footerWidget(context),);
+  }
+
+  Widget _footerWidget(BuildContext context) {
     String notNow = Localization().getStringEx('panel.onboarding.upgrade.button.not_now.title', 'Not right now');
     String dontShow = Localization().getStringEx('panel.onboarding.upgrade.button.dont_show.title', 'Don\'t show again');
     bool canSkip = (requiredVersion == null);
 
-    return Scaffold(backgroundColor: Styles().colors.background, body:
-        Column(children: <Widget>[
-          Styles().images.getImage('header-login', fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true,) ?? Container(),
-          Expanded(child:
-            SafeArea(child:
-              Padding(padding: EdgeInsets.symmetric(horizontal: 42), child:
-                Column(children: <Widget>[
-                  Expanded(flex: 1, child: Container()),
+    return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+      RoundedButton(
+        label: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.title', 'Upgrade'),
+        hint: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.hint', ''),
+        textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
+        borderColor: Styles().colors.fillColorSecondary,
+        backgroundColor: Styles().colors.fillColorSecondary,
+        onTap: () => _onUpgradeClicked(context),
+      ),
 
-                  Text(title ?? '', textAlign: TextAlign.center, style:
-                    TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 32, color: Styles().colors.fillColorPrimary),
-                  ),
+      canSkip ? Row(children: <Widget>[
+        Expanded(child:
+          Align(alignment: Alignment.centerLeft, child:
+            InkWell(onTap: () => _onDontShowAgainClicked(context), child:
+              Semantics(label: dontShow, hint: Localization().getStringEx('panel.onboarding.upgrade.button.dont_show.hint', ''), button: true, excludeSemantics: true, child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
+                  Text(dontShow, style:
+                  _linkTextStyle,
+                  )
+                )
+              ),
+            ),
+          ),
+        ),
 
-                  Expanded(flex: 1, child: Container()),
+        Expanded(child:
+          Align(alignment: Alignment.centerRight, child:
+            InkWell(onTap: () => _onNotRightNowClicked(context), child:
+              Semantics(label: notNow, hint: Localization().getStringEx('panel.onboarding.upgrade.button.not_now.hint', ''), button: true, excludeSemantics: true, child:
+                Padding(padding:EdgeInsets.symmetric(vertical: 20), child:
+                  Text(notNow, style: _linkTextStyle)
+                )
+              ),
+            ),
+          ),
+        ),
 
-                  Text(message ?? '', textAlign: TextAlign.center, style:
-                    TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary),
-                  ),
-
-                  Expanded(flex: 3, child: Container()),
-
-                  RoundedButton(
-                    label: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.title', 'Upgrade'),
-                    hint: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.hint', ''),
-                    textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
-                    borderColor: Styles().colors.fillColorSecondary,
-                    backgroundColor: Styles().colors.fillColorSecondary,
-                    onTap: () => _onUpgradeClicked(context),
-                  ),
-
-                canSkip ?
-                  Row(children: <Widget>[
-                    Expanded(child:
-                      Align(alignment: Alignment.centerLeft, child:
-                        InkWell(onTap: () => _onDontShowAgainClicked(context), child:
-                          Semantics(label: dontShow, hint: Localization().getStringEx('panel.onboarding.upgrade.button.dont_show.hint', ''), button: true, excludeSemantics: true, child:
-                            Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
-                              Text(dontShow, style:
-                              _linkTextStyle,
-                              )
-                            )
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    Expanded(child:
-                      Align(alignment: Alignment.centerRight, child:
-                        InkWell(onTap: () => _onNotRightNowClicked(context), child:
-                          Semantics(label: notNow, hint: Localization().getStringEx('panel.onboarding.upgrade.button.not_now.hint', ''), button: true, excludeSemantics: true, child:
-                            Padding(padding:EdgeInsets.symmetric(vertical: 20), child:
-                              Text(notNow, style: _linkTextStyle)
-                            )
-                          ),
-                        ),
-                      ),
-                    ),
-
-                  ],) : Padding(padding: EdgeInsets.symmetric(vertical: 32),),
-                ]),
-              )
-            )
-          )
-
-        ],)
-    );
+      ],) : Padding(padding: EdgeInsets.symmetric(vertical: 32),),
+    ]);
   }
 
   TextStyle? get _linkTextStyle => TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary, decorationThickness: 1, decorationStyle: TextDecorationStyle.solid);
