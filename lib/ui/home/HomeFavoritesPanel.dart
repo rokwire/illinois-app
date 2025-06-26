@@ -163,11 +163,16 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
   }
 
   @override
-  Widget build(BuildContext context) =>
-    Column(children: <Widget>[
-      ..._buildWidgetsFromCodes(_systemCodes, availableCodes: widget.availableSystemCodes),
-      ..._buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes),
+  Widget build(BuildContext context) {
+    List<Widget> systemWidgets = _buildWidgetsFromCodes(_systemCodes, availableCodes: widget.availableSystemCodes);
+    List<Widget> favoriteWidget = _buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes);
+    return Column(children: <Widget>[
+      if (systemWidgets.isNotEmpty)
+        Padding(padding: EdgeInsets.only(top: 8)),
+      ...systemWidgets,
+      ...favoriteWidget,
     ],);
+  }
 
   List<Widget> _buildWidgetsFromCodes(Iterable<String>? codes, { Set<String>? availableCodes }) {
     List<Widget> widgets = [];
