@@ -343,7 +343,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 8), child:
         Event2Card(_events!.first, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, onTap: () => _onTapEvent2(_events!.first))
       );
     }

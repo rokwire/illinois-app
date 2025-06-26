@@ -918,7 +918,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
     else if (direction == Axis.horizontal) {
       List<Widget> pages = <Widget>[];
       for (String code in _displayCodes!) {
-        pages.add(Padding(key: _contentKeys[code] ??= GlobalKey(), padding: EdgeInsets.only(right: pageSpacing, bottom: contentSpacing), child: widgetFromCode(code) ?? Container()));
+        pages.add(Padding(key: _contentKeys[code] ??= GlobalKey(), padding: EdgeInsets.only(right: pageSpacing, bottom: contentSpacing / 2), child: widgetFromCode(code) ?? Container()));
       }
 
       if (_pageController == null) {
@@ -1041,7 +1041,7 @@ class HomeBrowseLinkButton extends LinkButton {
     super.title,
     super.hint,
     super.onTap,
-    super.padding = const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+    super.padding = const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
     TextStyle? textStyle,
     super.textWidget,
   }) : super(
