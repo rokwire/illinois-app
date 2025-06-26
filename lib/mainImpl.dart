@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
+import 'package:illinois/model/Config.dart';
 import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppReview.dart';
@@ -59,6 +60,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/service/WellnessRings.dart';
+import 'package:illinois/ui/onboarding/OnboardingAlertPanel.dart';
 
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
@@ -68,6 +70,7 @@ import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowle
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
+import 'package:illinois/utils/AppUtils.dart';
 
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/device_calendar.dart';
@@ -234,6 +237,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
   String? _lastRunVersion;
   String? _upgradeRequiredVersion;
   String? _upgradeAvailableVersion;
+  ConfigAlert? _configAlert;
   Widget? _launchPopup;
   ServiceError? _initializeError;
   Future<ServiceError?>? _retryInitialzeFuture;
@@ -249,9 +253,11 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       Config.notifyUpgradeAvailable,
       Config.notifyUpgradeRequired,
       Config.notifyOnboardingRequired,
+      Config.notifyConfigChanged,
       Storage.notifySettingChanged,
       Auth2.notifyUserDeleted,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
+      OnboardingConfigAlertPanel.notifyCheckAgain,
       AppLivecycle.notifyStateChanged,
     ]);
 
@@ -260,6 +266,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
     _lastRunVersion = Storage().lastRunVersion;
     _upgradeRequiredVersion = Config().upgradeRequiredVersion;
     _upgradeAvailableVersion = Config().upgradeAvailableVersion;
+    _configAlert = Config().alert;
 
     _checkForceOnboarding();
 
@@ -306,6 +313,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
   }
 
   Widget get _homePanel {
+
     if (_initializeError != null) {
       return OnboardingErrorPanel(error: _initializeError, retryHandler: _retryInitialze);
     }
@@ -314,6 +322,9 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
     }
     else if (_upgradeAvailableVersion != null) {
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
+    }
+    else if (_configAlert?.isCurrent == true) {
+      return OnboardingConfigAlertPanel(alert: _configAlert,);
     }
     else if (Storage().onBoardingPassed != true) {
       return Onboarding2().first ?? Container();
@@ -364,11 +375,11 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
 
   void _didFinishParticipateInResearch(BuildContext context) {
     Navigator.of(context).popUntil((route) => route.isFirst);
-    setState(() {});
+    setStateIfMounted(() {});
   }
 
   void _resetUI() async {
-    this.setState(() {
+    this.setStateIfMounted(() {
       _key = UniqueKey();
     });
   }
@@ -404,7 +415,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
 
       if (_initializeError != serviceError) {
         Future.delayed(Duration(milliseconds: 300)).then((_) {
-          setState(() {
+          setStateIfMounted(() {
             _initializeError = serviceError;
           });
         });
@@ -466,12 +477,12 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       });
     }
     else if (name == Config.notifyUpgradeRequired) {
-      setState(() {
+      setStateIfMounted(() {
         _upgradeRequiredVersion = param;
       });
     }
     else if (name == Config.notifyUpgradeAvailable) {
-      setState(() {
+      setStateIfMounted(() {
         _upgradeAvailableVersion = param;
       });
     }
@@ -479,6 +490,9 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       if (_checkForceOnboarding()) {
         _resetUI();
       }
+    }
+    else if (name == Config.notifyConfigChanged) {
+      _updateConfigAlert();
     }
     else if (name == Auth2.notifyUserDeleted) {
       _resetUI();
@@ -488,11 +502,16 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
     }
     else if (name == Storage.notifySettingChanged) {
       if (param == Storage.privacyUpdateVersionKey) {
-        setState(() {});
+        setStateIfMounted(() {});
       }
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      setState(() { });
+      setStateIfMounted(() { });
+    }
+    else if (name == OnboardingConfigAlertPanel.notifyCheckAgain) {
+      setStateIfMounted(() {
+
+      });
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
@@ -512,15 +531,25 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       if (_initializeError != null) {
         _retryInitialze();
       }
+      else if (_configAlert?.hasTimeLimits == true) {
+        setStateIfMounted(() {}); // setState will acknolwedge the time limits
+      }
       else if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          if (mounted) {
-            setState(() {}); // setState could present Participate In Research, in case the user has logged in recently
-          }
+          setStateIfMounted(() {}); // setState could present Participate In Research, in case the user has logged in recently
           _presentLaunchPopup();
         }
       }
+    }
+  }
+
+  void _updateConfigAlert() {
+    ConfigAlert? configAlert = Config().alert;
+    if ((_configAlert != configAlert) && mounted) {
+      setState(() {
+        _configAlert = configAlert;
+      });
     }
   }
 }
