@@ -23,17 +23,12 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
-class OnboardingUpgradePanel extends StatefulWidget {
+class OnboardingUpgradePanel extends StatelessWidget {
   final String? requiredVersion;
   final String? availableVersion;
-  OnboardingUpgradePanel({Key? key, this.requiredVersion, this.availableVersion})
-      : super(key: key);
 
-  @override
-  _OnboardingUpgradePanelState createState() => _OnboardingUpgradePanelState();
-}
-
-class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
+  OnboardingUpgradePanel({Key? key, this.requiredVersion, this.availableVersion}) :
+    super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,17 +36,17 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
     String? appName = Localization().getStringEx('app.title', 'Illinois');
     String? appVersion = Config().appVersion;
     String? title, message;
-    if (widget.requiredVersion != null) {
+    if (requiredVersion != null) {
       title = Localization().getStringEx('panel.onboarding.upgrade.required.label.title', 'Upgrade Required');
-      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.required.label.description', '%s app version %s requires an upgrade to version %s or later.'), [appName, appVersion, widget.requiredVersion])
+      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.required.label.description', '%s app version %s requires an upgrade to version %s or later.'), [appName, appVersion, requiredVersion])
       ;
-    } else if (widget.availableVersion != null) {
+    } else if (availableVersion != null) {
       title = Localization().getStringEx('panel.onboarding.upgrade.available.label.title', 'Upgrade Available');
-      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.available.label.description', '%s app version %s has newer version %s available.'), [appName, appVersion, widget.availableVersion]);
+      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.available.label.description', '%s app version %s has newer version %s available.'), [appName, appVersion, availableVersion]);
     }
     String notNow = Localization().getStringEx('panel.onboarding.upgrade.button.not_now.title', 'Not right now');
     String dontShow = Localization().getStringEx('panel.onboarding.upgrade.button.dont_show.title', 'Don\'t show again');
-    bool canSkip = (widget.requiredVersion == null);
+    bool canSkip = (requiredVersion == null);
 
     return Scaffold(backgroundColor: Styles().colors.background, body:
         Column(children: <Widget>[
@@ -132,16 +127,14 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
   }
 
   void _onNotRightNowClicked(BuildContext context) {
-    if (widget.availableVersion != null) {
-      Config().setUpgradeAvailableVersionReported(widget.availableVersion,
-          permanent: false);
+    if (availableVersion != null) {
+      Config().setUpgradeAvailableVersionReported(availableVersion, permanent: false);
     }
   }
 
   void _onDontShowAgainClicked(BuildContext context) {
-    if (widget.availableVersion != null) {
-      Config().setUpgradeAvailableVersionReported(widget.availableVersion,
-          permanent: true);
+    if (availableVersion != null) {
+      Config().setUpgradeAvailableVersionReported(availableVersion, permanent: true);
     }
   }
 }
