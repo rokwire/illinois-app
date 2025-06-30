@@ -14,55 +14,45 @@ import 'package:rokwire_plugin/service/styles.dart';
 class HomeRadioWidget extends StatelessWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final RadioStation radioStation;
 
-  const HomeRadioWidget(this.radioStation, {Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  const HomeRadioWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle(RadioStation radioStation, {Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: _radioStationTitle(radioStation),
+      title: title,
     );
 
-  static String stationTitle(RadioStation radioStation) =>
-    _radioStationTitle(radioStation);
+  static String get title => Localization().getStringEx('widget.home.radio.illini.title', 'Illini Radio');
 
   @override
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: favoriteId,
-      title: stationTitle(radioStation),
-      childPadding: HomeFavoriteWidget.defaultChildPadding,
-      child: _isEnabled ?
-        _RadioControl(radioStation,
-          borderRadius: BorderRadius.all(Radius.circular(6)),
-          analyticsHost: this.runtimeType.toString(),
-        ) :
-        HomeMessageCard(
+      title: title,
+      child: Container(padding: EdgeInsets.all(16), margin: EdgeInsets.symmetric(horizontal: 16), decoration: HomeMessageCard.defaultDecoration, child:
+        _RadioControl(analyticsHost: this.runtimeType.toString(),),
+        /*HomeMessageCard(
           message: Localization().getStringEx('widget.home.radio.disabled.message', 'WPGU 107.1 FM is not enabled.'),
           margin: EdgeInsets.only(top: 8, bottom: 16),
-        ),
+        ),*/
+      ),
     );
   }
-
-  bool get _isEnabled => RadioPlayer().isStationEnabled(radioStation);
 }
 
 class RadioPopupWidget extends StatelessWidget with AnalyticsInfo {
-  final RadioStation radioStation;
-
-  RadioPopupWidget(this.radioStation, { super.key });
+  RadioPopupWidget({ super.key });
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes =>
-    _radioStationAnalyticsAttributes(radioStation);
+  //Map<String, dynamic>? get analyticsPageAttributes =>
+  //  _radioStationAnalyticsAttributes(radioStation);
 
   @override
   AnalyticsFeature? get analyticsFeature =>
     AnalyticsFeature.Radio;
 
-  static void show(BuildContext context, RadioStation radioStation) =>
-    showDialog(context: context,
-        barrierDismissible: true,
-        builder: (BuildContext context) => RadioPopupWidget(radioStation)
+  static void show(BuildContext context) =>
+    showDialog(context: context, barrierDismissible: true, builder:
+      (BuildContext context) => RadioPopupWidget()
     );
 
   static String stationTitle(RadioStation radioStation) =>
@@ -70,33 +60,17 @@ class RadioPopupWidget extends StatelessWidget with AnalyticsInfo {
 
   @override
   Widget build(BuildContext context) =>
-    ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
-      Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
-        Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Container(color: Styles().colors.fillColorPrimary, child:
-            Row(children: <Widget>[
-              Expanded(child:
-                Padding(padding: EdgeInsets.all(8), child:
-                  Center(child:
-                    Text(_radioStationTitle(radioStation), style: Styles().textStyles.getTextStyle("widget.dialog.message.regular")),
-                  ),
-                ),
-              ),
-              Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), button: true, child:
-                InkWell(onTap : () => _onClosePopup(context, radioStation), child:
-                  Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images.getImage('close-circle-white', excludeFromSemantics: true),
-                  ),
-                ),
-              ),
-            ],),
-          ),
-          _RadioControl(radioStation,
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(6)),
+    ClipRRect(borderRadius: HomeMessageCard.defaultBorderRadius, child:
+      Dialog(shape: RoundedRectangleBorder(borderRadius: HomeMessageCard.defaultBorderRadius,), child:
+        HomeCardWidget(
+          title: Localization().getStringEx('widget.home.radio.illini.title', 'Illini Radio'),
+          onClose: () => _onClosePopup(context),
+          margin: EdgeInsets.zero,
+          child: _RadioControl(
             analyticsHost: this.runtimeType.toString(),
             onInitState: _didInitRadioControl,
           ),
-        ],),
+        )
       ),
     );
 
@@ -104,7 +78,7 @@ class RadioPopupWidget extends StatelessWidget with AnalyticsInfo {
     Analytics().logPageWidget(this);
   }
 
-  void _onClosePopup(BuildContext context, RadioStation radioStation) {
+  void _onClosePopup(BuildContext context) {
     Analytics().logSelect(
       target: 'Close',
       source: runtimeType.toString(),
@@ -116,16 +90,12 @@ class RadioPopupWidget extends StatelessWidget with AnalyticsInfo {
 
 class _RadioControl extends StatefulWidget {
 
-  final RadioStation radioStation;
-  final BorderRadius borderRadius;
-
   final void Function()? onInitState;
   final String? analyticsHost;
 
 
-  const _RadioControl(this.radioStation, {
+  const _RadioControl({
     Key? key,
-    required this.borderRadius,
     this.onInitState,
     this.analyticsHost
   }) : super(key: key);
@@ -136,6 +106,8 @@ class _RadioControl extends StatefulWidget {
 
 class _RadioControlState extends State<_RadioControl> with NotificationsListener {
 
+  late RadioStation _radioStation;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -143,6 +115,7 @@ class _RadioControlState extends State<_RadioControl> with NotificationsListener
       RadioPlayer.notifyPlayerStateChanged,
     ]);
 
+    _radioStation = RadioStation.values.first;
     widget.onInitState?.call();
     super.initState();
   }
@@ -154,27 +127,71 @@ class _RadioControlState extends State<_RadioControl> with NotificationsListener
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Visibility(visible: RadioPlayer().isStationEnabled(widget.radioStation), child:
-      _buildContentCard(),
-    );
+  Widget build(BuildContext context) => Column(children: [
+    _stationsBar,
+    _stationControl,
+  ],);
+
+  Widget get _stationsBar {
+    final double borderWidth = 1.0;
+    final Color borderColor = Styles().colors.surfaceAccent; // Styles().colors.mediumGray2
+    final BorderSide borderSide = BorderSide(color: borderColor, width: borderWidth);
+    final Radius radius = Radius.circular(MediaQuery.of(context).textScaler.scale(14));
+
+    List<Widget> stations = <Widget>[];
+    for (int index = 0; index < RadioStation.values.length; index++) {
+      RadioStation radioStation = RadioStation.values[index];
+      bool selected = (radioStation == _radioStation);
+
+      Border border;
+      BorderRadius? borderRadius;
+      if (index == 0) {
+        border = Border(left: borderSide, top: borderSide, bottom: borderSide, right: borderSide);
+        borderRadius = BorderRadius.horizontal(left: radius);
+      }
+      else if (index == (RadioStation.values.length - 1)) {
+        border = Border(right: borderSide, top: borderSide, bottom: borderSide);
+        borderRadius = BorderRadius.horizontal(right: radius);
+      }
+      else {
+        border = Border(right: borderSide, top: borderSide, bottom: borderSide);
+      }
+      BoxDecoration decoration = BoxDecoration(
+        color: selected ? Styles().colors.white : Styles().colors.background,
+        border: border,
+        borderRadius: borderRadius,
+      );
+
+      TextStyle? textStyle = selected ? Styles().textStyles.getTextStyleEx('widget.button.title.small.fat', color: Styles().colors.fillColorSecondary) : Styles().textStyles.getTextStyle('widget.button.title.small.medium');
+
+      stations.add(Expanded(child:
+        InkWell(onTap: () => _onTapStation(radioStation), child:
+          Container(
+            decoration: decoration,
+            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+            child: Text(_radioStationFrequency(radioStation), style: textStyle, textAlign: TextAlign.center,),
+          ),
+        ),
+      ));
+    }
+    return Row(children: stations,);
   }
 
-  Widget _buildContentCard() {
+  Widget get _stationControl {
     String? buttonTitle, iconKey;
     bool? progress;
-    if (!RadioPlayer().isStationEnabled(widget.radioStation)) {
+    if (!RadioPlayer().isStationEnabled(_radioStation)) {
       buttonTitle = Localization().getStringEx('widget.home.radio.button.not_available.title', 'Not Available');
     }
     else if (RadioPlayer().isCreating) {
       buttonTitle = Localization().getStringEx('widget.home.radio.button.initalize.title', 'Initializing');
       progress = true;
     }
-    else if (!RadioPlayer().isStationCreated(widget.radioStation)) {
+    else if (!RadioPlayer().isStationCreated(_radioStation)) {
       buttonTitle = Localization().getStringEx('widget.home.radio.button.fail.title', 'Initialization Failed');
     }
     else {
-      PlayerState? stationState = RadioPlayer().stationState(widget.radioStation);
+      PlayerState? stationState = RadioPlayer().stationState(_radioStation);
       switch (stationState?.processingState) {
         case ProcessingState.idle:
         case ProcessingState.ready:
@@ -205,74 +222,60 @@ class _RadioControlState extends State<_RadioControl> with NotificationsListener
     }
 
     return GestureDetector(onTap: _onTapPlayPause, child:
-      Container(
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))
-        ]),
-        child:
-        ClipRRect(borderRadius: widget.borderRadius, child:
-          Row(children: <Widget>[
-            Expanded(child:
-              Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
-                  Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
-                    Row(children: <Widget>[
-                      Expanded(child:
-                        Container(color: Styles().colors.white, child:
-                          Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
-                            Row(children: <Widget>[
-                              Expanded(child:
-                                Padding(padding: EdgeInsets.all(16), child:
-                                  Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.fillColorSecondary , width: 3))), child:
-                                    Padding(padding: EdgeInsets.only(left: 10), child:
-                                    Row(children: [Expanded(child: Text(buttonTitle, style: Styles().textStyles.getTextStyle('widget.title.medium.extra_fat')))]))))),
-                            ],),
-                          ),
-                        ),
-                      ),
-                      if (iconKey != null)
-                        Semantics(button: true,
-                          excludeSemantics: true,
-                          label: buttonTitle,
-                          hint: Localization().getStringEx('widget.home.radio.button.add_radio.hint', ''),
-                          child:  IconButton(color: Styles().colors.fillColorPrimary,
-                            icon: Styles().images.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
-                            onPressed: _onTapPlayPause)
-                        ),
-                      if (progress == true)
-                        Padding(padding: const EdgeInsets.all(12), child:
-                          SizedBox(width: 28, height: 28, child:
-                            CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
-                          ),
-                        ),
-                    ]),
-                  ),
-                ),
-              ]),
+      Padding(padding: EdgeInsets.only(left: 12, top: 16), child:
+        Row(children: <Widget>[
+          Expanded(child:
+              Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.fillColorSecondary , width: 2))), child:
+                Padding(padding: EdgeInsets.only(left: 12, top: 8, bottom: 8), child:
+                  Text(buttonTitle, style: Styles().textStyles.getTextStyle('widget.title.medium.extra_fat'))
+                )
+              )
+          ),
+          if (iconKey != null)
+            Semantics(button: true,
+              excludeSemantics: true,
+              label: buttonTitle,
+              hint: Localization().getStringEx('widget.home.radio.button.add_radio.hint', ''),
+              child:  IconButton(color: Styles().colors.fillColorPrimary,
+                icon: Styles().images.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
+                onPressed: _onTapPlayPause)
             ),
-          ]),
-        ),
+          if (progress == true)
+            Padding(padding: const EdgeInsets.all(12), child:
+              SizedBox(width: 28, height: 28, child:
+                CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+              ),
+            ),
+        ]),
       ),
     );
+  }
+
+  void _onTapStation(RadioStation radioStation) {
+    setState(() {
+      _radioStation = radioStation;
+    });
   }
 
 
   void _onTapPlayPause() {
     Analytics().logSelect(
-      target: RadioPlayer().isStationPlaying(widget.radioStation) ? 'Pause' : 'Play',
+      target: RadioPlayer().isStationPlaying(_radioStation) ? 'Pause' : 'Play',
       source: widget.analyticsHost ?? this.runtimeType.toString(),
-      attributes: _radioStationAnalyticsAttributes(widget.radioStation),
+      attributes: _radioStationAnalyticsAttributes(_radioStation),
     );
-    RadioPlayer().toggleStationPlayPause(widget.radioStation);
+    RadioPlayer().toggleStationPlayPause(_radioStation);
   }
+
+
 
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if (((name == RadioPlayer.notifyCreateStatusChanged) && (param == widget.radioStation)) ||
-        ((name == RadioPlayer.notifyPlayerStateChanged) && (param == widget.radioStation))) {
+    if (((name == RadioPlayer.notifyCreateStatusChanged) && (param == _radioStation)) ||
+        ((name == RadioPlayer.notifyPlayerStateChanged) && (param == _radioStation))) {
       if (mounted) {
         setState(() {});
       }
@@ -288,6 +291,16 @@ String _radioStationTitle(RadioStation radioStation) {
     case RadioStation.wpgufm: return Localization().getStringEx('widget.home.radio.wpgufm.title', 'WPGU 107.1 FM');
   }
 }
+
+String _radioStationFrequency(RadioStation radioStation) {
+  switch(radioStation) {
+    case RadioStation.will: return Localization().getStringEx('widget.home.radio.will.frequency', 'АМ 580');
+    case RadioStation.willfm: return Localization().getStringEx('widget.home.radio.willfm.frequency', '90.0 FM');
+    case RadioStation.willhd: return Localization().getStringEx('widget.home.radio.willhd.frequency', '101.1 FM');
+    case RadioStation.wpgufm: return Localization().getStringEx('widget.home.radio.wpgufm.frequency', '107.1 FM');
+  }
+}
+
 
 Map<String, dynamic> _radioStationAnalyticsAttributes(RadioStation radioStation) => <String, dynamic>{
   Analytics.LogAttributeRadioStation: _radioStationTitle(radioStation),
