@@ -25,6 +25,7 @@ import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/Assistant.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -311,7 +312,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                     ])))))))
               ])),
 
-      Visibility(visible: (message.eventsResult?.events?.isNotEmpty == true), child: _buildEventsContainerWidget(message.eventsResult?.events)),
+      Visibility(visible: (message.events?.isNotEmpty == true), child: _buildEventsContainerWidget(message.events)),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
   }
