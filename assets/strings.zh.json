@@ -751,6 +751,9 @@
 	"panel.onboarding.error.button.try_again.title":"請再试一次",
 	"panel.onboarding.error.button.try_again.hint":"",
 
+	"panel.onboarding.alert.button.check_again.title":"Check Again",
+	"panel.onboarding.alert.button.check_again.hint":"",
+
 	"panel.onboarding.base.not_now.hint":"",
 	"panel.onboarding.base.not_now.title":"暂时不",
 

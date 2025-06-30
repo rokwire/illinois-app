@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/onboarding/OnboardingMessagePanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -23,17 +24,12 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
-class OnboardingUpgradePanel extends StatefulWidget {
+class OnboardingUpgradePanel extends StatelessWidget {
   final String? requiredVersion;
   final String? availableVersion;
-  OnboardingUpgradePanel({Key? key, this.requiredVersion, this.availableVersion})
-      : super(key: key);
 
-  @override
-  _OnboardingUpgradePanelState createState() => _OnboardingUpgradePanelState();
-}
-
-class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
+  OnboardingUpgradePanel({Key? key, this.requiredVersion, this.availableVersion}) :
+    super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,136 +37,65 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
     String? appName = Localization().getStringEx('app.title', 'Illinois');
     String? appVersion = Config().appVersion;
     String? title, message;
-    if (widget.requiredVersion != null) {
+    if (requiredVersion != null) {
       title = Localization().getStringEx('panel.onboarding.upgrade.required.label.title', 'Upgrade Required');
-      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.required.label.description', '%s app version %s requires an upgrade to version %s or later.'), [appName, appVersion, widget.requiredVersion])
+      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.required.label.description', '%s app version %s requires an upgrade to version %s or later.'), [appName, appVersion, requiredVersion])
       ;
-    } else if (widget.availableVersion != null) {
+    } else if (availableVersion != null) {
       title = Localization().getStringEx('panel.onboarding.upgrade.available.label.title', 'Upgrade Available');
-      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.available.label.description', '%s app version %s has newer version %s available.'), [appName, appVersion, widget.availableVersion]);
+      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.available.label.description', '%s app version %s has newer version %s available.'), [appName, appVersion, availableVersion]);
     }
+
+    return OnboardingMessagePanel(title: title, message: message, footer: _footerWidget(context),);
+  }
+
+  Widget _footerWidget(BuildContext context) {
     String notNow = Localization().getStringEx('panel.onboarding.upgrade.button.not_now.title', 'Not right now');
     String dontShow = Localization().getStringEx('panel.onboarding.upgrade.button.dont_show.title', 'Don\'t show again');
-    bool canSkip = (widget.requiredVersion == null);
+    bool canSkip = (requiredVersion == null);
 
-    return Scaffold(
-        backgroundColor: Styles().colors.background,
-        body: SafeArea(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Styles().images.getImage(
-              'header-login',
-              fit: BoxFit.fitWidth,
-              width: MediaQuery.of(context).size.width,
-              excludeFromSemantics: true,
-            ) ?? Container(),
-            Expanded(
-                child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 0),
-              child: Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    title!,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies.bold,
-                        fontSize: 32,
-                        color: Styles().colors.fillColorPrimary),
-                  )),
-            )),
-            Expanded(
-                child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Text(
-                        message!,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies.regular,
-                            fontSize: 20,
-                            color: Styles().colors.fillColorPrimary),
-                      ),
-                    ))),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  RoundedButton(
-                    label: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.title', 'Upgrade'),
-                    hint: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.hint', ''),
-                    textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
-                    borderColor: Styles().colors.fillColorSecondary,
-                    backgroundColor: Styles().colors.fillColorSecondary,
-                    onTap: () => _onUpgradeClicked(context),
-                  ),
-                  canSkip
-                      ? Row(
-                          children: <Widget>[
-                            GestureDetector(
-                              onTap: () => _onDontShowAgainClicked(context),
-                              child: Semantics(
-                                  label: dontShow,
-                                  hint: Localization().getStringEx('panel.onboarding.upgrade.button.dont_show.hint', ''),
-                                  button: true,
-                                  excludeSemantics: true,
-                                  child: Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 20),
-                                      child: Text(
-                                        dontShow,
-                                        style: TextStyle(
-                                            fontFamily: Styles().fontFamilies.medium,
-                                            fontSize: 16,
-                                            color: Styles().colors.fillColorPrimary,
-                                            decoration:
-                                                TextDecoration.underline,
-                                            decorationColor:
-                                                Styles().colors.fillColorSecondary,
-                                            decorationThickness: 1,
-                                            decorationStyle:
-                                                TextDecorationStyle.solid),
-                                      ))),
-                            ),
-                            Expanded(child: Container()),
-                            GestureDetector(
-                              onTap: () => _onNotRightNowClicked(context),
-                              child: Semantics(
-                                  label: notNow,
-                                  hint: Localization().getStringEx('panel.onboarding.upgrade.button.not_now.hint', ''),
-                                  button: true,
-                                  excludeSemantics: true,
-                                  child: Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 20),
-                                      child: Text(
-                                        notNow,
-                                        style: TextStyle(
-                                            fontFamily: Styles().fontFamilies.medium,
-                                            fontSize: 16,
-                                            color: Styles().colors.fillColorPrimary,
-                                            decoration:
-                                                TextDecoration.underline,
-                                            decorationColor:
-                                                Styles().colors.fillColorSecondary,
-                                            decorationThickness: 1,
-                                            decorationStyle:
-                                                TextDecorationStyle.solid),
-                                      ))),
-                            ),
-                          ],
-                        )
-                      : Padding(
-                          padding: EdgeInsets.symmetric(vertical: 28),
-                        ),
-                ],
+    return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+      RoundedButton(
+        label: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.title', 'Upgrade'),
+        hint: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.hint', ''),
+        textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
+        borderColor: Styles().colors.fillColorSecondary,
+        backgroundColor: Styles().colors.fillColorSecondary,
+        onTap: () => _onUpgradeClicked(context),
+      ),
+
+      canSkip ? Row(children: <Widget>[
+        Expanded(child:
+          Align(alignment: Alignment.centerLeft, child:
+            InkWell(onTap: () => _onDontShowAgainClicked(context), child:
+              Semantics(label: dontShow, hint: Localization().getStringEx('panel.onboarding.upgrade.button.dont_show.hint', ''), button: true, excludeSemantics: true, child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
+                  Text(dontShow, style:
+                  _linkTextStyle,
+                  )
+                )
               ),
             ),
-          ],
-        )));
+          ),
+        ),
+
+        Expanded(child:
+          Align(alignment: Alignment.centerRight, child:
+            InkWell(onTap: () => _onNotRightNowClicked(context), child:
+              Semantics(label: notNow, hint: Localization().getStringEx('panel.onboarding.upgrade.button.not_now.hint', ''), button: true, excludeSemantics: true, child:
+                Padding(padding:EdgeInsets.symmetric(vertical: 20), child:
+                  Text(notNow, style: _linkTextStyle)
+                )
+              ),
+            ),
+          ),
+        ),
+
+      ],) : Padding(padding: EdgeInsets.symmetric(vertical: 32),),
+    ]);
   }
+
+  TextStyle? get _linkTextStyle => TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary, decorationThickness: 1, decorationStyle: TextDecorationStyle.solid);
 
   void _onUpgradeClicked(BuildContext context) async {
     String? upgradeUrl = Config().upgradeUrl;
@@ -181,16 +106,14 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
   }
 
   void _onNotRightNowClicked(BuildContext context) {
-    if (widget.availableVersion != null) {
-      Config().setUpgradeAvailableVersionReported(widget.availableVersion,
-          permanent: false);
+    if (availableVersion != null) {
+      Config().setUpgradeAvailableVersionReported(availableVersion, permanent: false);
     }
   }
 
   void _onDontShowAgainClicked(BuildContext context) {
-    if (widget.availableVersion != null) {
-      Config().setUpgradeAvailableVersionReported(widget.availableVersion,
-          permanent: true);
+    if (availableVersion != null) {
+      Config().setUpgradeAvailableVersionReported(availableVersion, permanent: true);
     }
   }
 }

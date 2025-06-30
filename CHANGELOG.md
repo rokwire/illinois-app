@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Show arrows for looping between events in the Assistant answers [#5255](https://github.com/rokwire/illinois-app/issues/5255).
+### Fixed
+- Acknowledge the new json format for events in the Assistant [#5255](https://github.com/rokwire/illinois-app/issues/5255).
+
+## [7.2.3] - 2025-06-26
+### Added
+- Added config alerts feature [#5251](https://github.com/rokwire/illinois-app/issues/5251).
+### Changed
+- UI Clean Up - Home Panel / small tweaks [#5205](https://github.com/rokwire/illinois-app/issues/5205).
 
 ## [7.2.2] - 2025-06-25
 ### Changed

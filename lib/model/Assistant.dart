@@ -1,5 +1,4 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -76,7 +75,7 @@ class Message {
   final bool example;
   final List<Link>? links;
   final List<SourceDataEntry>? sourceDatEntries;
-  final Events2ListResult? eventsResult;
+  final AssistantStructOutput? structOutput;
   final bool acceptsFeedback;
   final int? queryLimit;
   MessageFeedback? feedback;
@@ -89,7 +88,7 @@ class Message {
   bool? isNegativeFeedbackMessage;
 
   Message({this.id = '', required this.content, required this.user, this.example = false, this.acceptsFeedback = false,
-    this.links, this.sourceDatEntries, this.eventsResult, this.queryLimit, this.feedback,  this.feedbackExplanation, this.provider,
+    this.links, this.sourceDatEntries, this.structOutput, this.queryLimit, this.feedback,  this.feedbackExplanation, this.provider,
     this.sourcesExpanded, this.feedbackResponseType, this.isNegativeFeedbackMessage});
 
   factory Message.fromAnswerJson(Map<String, dynamic> json) {
@@ -105,10 +104,6 @@ class Message {
       deeplinks.add(Link(name: deeplinkNameMap[deeplink] ?? deeplink.split('.|_').join(' '), link: deeplink));
     }
 
-    List<dynamic>? structOutput = JsonUtils.listValue(answerJson?['struct_output']);
-    Map<String, dynamic>? firstStruct = (structOutput != null && structOutput.isNotEmpty) ? structOutput.first : null;
-    Events2ListResult? events2ListResult = Events2ListResult.fromJson(firstStruct);
-
     return Message(
       id: JsonUtils.stringValue(json['id'])?.trim() ?? '',
       content: JsonUtils.stringValue(answerJson?['answer'])?.trim() ?? '',
@@ -118,7 +113,7 @@ class Message {
       acceptsFeedback: JsonUtils.boolValue(answerJson?['accepts_feedback']) ?? true,
       links: deeplinks,
       sourceDatEntries: SourceDataEntry.listFromJson(answerJson?['source_data_entries']),
-      eventsResult: events2ListResult,
+      structOutput: AssistantStructOutput.fromJson(JsonUtils.mapValue(answerJson?['struct_output'])),
       feedback: _feedbackFromString(JsonUtils.stringValue(feedbackJson?['feedback'])),
       feedbackExplanation: JsonUtils.stringValue(feedbackJson?['explanation']),
     );
@@ -149,6 +144,52 @@ class Message {
   }
 
   bool get isAnswerUnknown => (content.toLowerCase() == _unknownAnswerValue.toLowerCase());
+}
+
+///
+/// AssistantStructOutput
+///
+class AssistantStructOutput {
+  final List<AssistantStructOutputItem>? items;
+
+  AssistantStructOutput({this.items});
+
+  static AssistantStructOutput? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return AssistantStructOutput(items: AssistantStructOutputItem.listFromJson(JsonUtils.listValue(json['items'])));
+  }
+}
+
+///
+/// AssistantStructOutputItem
+///
+class AssistantStructOutputItem {
+  final AssistantStructOutputItemType? type;
+  final Map<String, dynamic>? data;
+
+  AssistantStructOutputItem({this.type, this.data});
+
+  static AssistantStructOutputItem? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return AssistantStructOutputItem(
+        type: assistantStructOutputItemTypeFromString(JsonUtils.stringValue(json['type'])),
+        data: JsonUtils.mapValue(json['data']));
+  }
+
+  static List<AssistantStructOutputItem>? listFromJson(List<dynamic>? jsonList) {
+    List<AssistantStructOutputItem>? items;
+    if (jsonList != null) {
+      items = <AssistantStructOutputItem>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(items, AssistantStructOutputItem.fromJson(jsonEntry));
+      }
+    }
+    return items;
+  }
 }
 
 ///
@@ -355,5 +396,25 @@ String assistantProviderToDisplayString(AssistantProvider? provider) {
       return Localization().getStringEx('model.assistant.provider.openai.label', 'Illinois');
     default:
       return Localization().getStringEx('model.assistant.provider.unknown.label', 'Unknown');
+  }
+}
+
+///
+/// AssistantStructOutputItemType
+///
+enum AssistantStructOutputItemType { event, dining_schedule, menu_items, nutrition_info }
+
+AssistantStructOutputItemType? assistantStructOutputItemTypeFromString(String? value) {
+  switch (value) {
+    case 'event':
+      return AssistantStructOutputItemType.event;
+    case 'dining_schedule':
+      return AssistantStructOutputItemType.dining_schedule;
+    case 'menu_items':
+      return AssistantStructOutputItemType.menu_items;
+    case 'nutrition_info':
+      return AssistantStructOutputItemType.nutrition_info;
+    default:
+      return null;
   }
 }

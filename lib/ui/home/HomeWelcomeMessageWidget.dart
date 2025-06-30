@@ -88,40 +88,18 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
   bool get _isCloseVisible => _isUserVisible;
 
   @override
-  Widget build(BuildContext context) => Visibility(visible: _isWidgetVisible, child:
-    Padding(padding: EdgeInsets.all(16), child:
-      Container(padding: EdgeInsets.only(left: 12, bottom: 12), decoration: HomeMessageCard.defaultDecoration, child:
-        Column(children: [
-          Row(children: [
-            Expanded(child:
-              Padding(padding: EdgeInsets.only(right: 16, top: 12, bottom: 12), child:
-                Text(Localization().getStringEx("widget.home.welcome.title.text", 'Tailor Your App Experience'),
-                  style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
-                ),
-              ),
-            ),
-            Visibility(visible: _isCloseVisible, child:
-              Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
-                InkWell(onTap : _onClose, child:
-                  Padding(padding: EdgeInsets.all(12), child:
-                    Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
-                  ),
-                ),
-              ),
-            ),
-          ],),
-
-          Padding(padding: EdgeInsets.only(right: 12), child:
-            HtmlWidget(_messageHtml,
-              onTapUrl : (url) { _handleLinkTap(context, url, analyticsSource: widget.runtimeType.toString()); return true; },
-              textStyle:  Styles().textStyles.getTextStyle("widget.description.small.semi_fat"),
-              customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
-            ),
-          ),
-        ],),
-      )
-    )
-  );
+  Widget build(BuildContext context) =>
+    Visibility(visible: _isWidgetVisible, child:
+      HomeCardWidget(
+        title: Localization().getStringEx("widget.home.welcome.title.text", 'Tailor Your App Experience'),
+        onClose: _isCloseVisible ? _onClose : null,
+        child: HtmlWidget(_messageHtml,
+          onTapUrl : (url) { _handleLinkTap(context, url, analyticsSource: widget.runtimeType.toString()); return true; },
+          textStyle:  Styles().textStyles.getTextStyle("widget.description.small.semi_fat"),
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+        ),
+      ),
+    );
 
   void _refresh() {
     bool isUserVisible = (Storage().homeWelcomeMessageVisible != false);

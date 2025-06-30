@@ -25,8 +25,10 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/Assistant.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -88,6 +90,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   LocationServicesStatus? _locationStatus;
   AssistantLocation? _currentLocation;
 
+  PageController? _eventsPageController;
+
   late StreamSubscription _streamSubscription;
   bool _loading = false;
   TextEditingController _negativeFeedbackController = TextEditingController();
@@ -137,6 +141,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _streamSubscription.cancel();
     _inputFieldFocus.dispose();
     _negativeFeedbackFocusNode.dispose();
+    _eventsPageController?.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -325,7 +330,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                     ])))))))
               ])),
 
-      Visibility(visible: (message.eventsResult?.events?.isNotEmpty == true), child: _buildEventsContainerWidget(message.eventsResult?.events)),
+      Visibility(visible: (message.events?.isNotEmpty == true), child: _buildEventsContainerWidget(message.events)),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
   }
@@ -489,13 +494,21 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if (events == null || events.isEmpty) {
       return Container();
     }
+    if (_eventsPageController == null) {
+      _eventsPageController = PageController();
+    }
     int eventsCount = events.length;
     List<Widget> pages = <Widget>[];
     for (int index = 0; index < eventsCount; index++) {
       Event2 event = events[index];
       pages.add(Padding(padding: EdgeInsets.only(right: 18, bottom: 8), child: Event2Card(event, displayMode: Event2CardDisplayMode.list, onTap: () => _onTapEvent(event))));
     }
-    return Container(padding: EdgeInsets.only(top: 10), child: ExpandablePageView(allowImplicitScrolling: true, children: pages));
+    return Container(
+        padding: EdgeInsets.only(top: 10),
+        child: Column(children: <Widget>[
+          ExpandablePageView(allowImplicitScrolling: true, controller: _eventsPageController, children: pages),
+          AccessibleViewPagerNavigationButtons(controller: _eventsPageController, pagesCount: () => eventsCount),
+        ]));
   }
 
   void _onTapEvent(Event2 event) {

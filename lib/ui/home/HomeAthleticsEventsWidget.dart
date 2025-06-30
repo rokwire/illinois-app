@@ -158,7 +158,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         Event2 event = _sportEvents![index];
-        pages.add(Padding(key: _contentKeys[event.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
+        pages.add(Padding(key: _contentKeys[event.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 8), child:
           Event2Card(event, onTap: () => _onTapEvent(event))),
         );
       }

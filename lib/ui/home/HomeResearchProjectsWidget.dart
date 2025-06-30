@@ -60,7 +60,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> with Noti
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   final double _pageSpacing = 16;
-  final double _pageBottomPadding = 16;
+  final double _pageBottomPadding = 8;
 
   static const String localScheme = 'local';
   static const String openProjectsHost = 'open_projects';

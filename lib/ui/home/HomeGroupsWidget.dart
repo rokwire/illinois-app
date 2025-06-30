@@ -54,7 +54,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   final double _pageSpacing = 16;
-  final double _pageBottomPadding = 16;
+  final double _pageBottomPadding = 8;
 
   @override
   void initState() {
