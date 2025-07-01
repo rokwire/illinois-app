@@ -226,13 +226,12 @@ extension RadioStationImpl on RadioStation {
   }
 
   static RadioStation? fromJsonString(String? jsonString) {
-    if (jsonString != null) {
-      switch (jsonString) {
-        case 'will': return RadioStation.will;
-        case 'willfm': return RadioStation.willfm;
-        case 'willhd': return RadioStation.willhd;
-        case 'wpgufm': return RadioStation.wpgufm;
-      }
+    switch (jsonString) {
+      case 'will': return RadioStation.will;
+      case 'willfm': return RadioStation.willfm;
+      case 'willhd': return RadioStation.willhd;
+      case 'wpgufm': return RadioStation.wpgufm;
+      default: return null;
     }
   }
 }
