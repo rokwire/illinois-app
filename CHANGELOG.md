@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.2.5] - 2025-07-01
 ### Changed
 - UI Clean Up - combine radio widgets into one Illini Radio widget [#5249](https://github.com/rokwire/illinois-app/issues/5249).
 
