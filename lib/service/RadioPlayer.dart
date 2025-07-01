@@ -214,4 +214,25 @@ extension RadioStationImpl on RadioStation {
       case RadioStation.wpgufm: return Config().wpgufmRadioUrl;
     }
   }
+
+
+  String toJsonString() {
+    switch (this) {
+      case RadioStation.will: return 'will';
+      case RadioStation.willfm: return 'willfm';
+      case RadioStation.willhd: return 'willhd';
+      case RadioStation.wpgufm: return 'wpgufm';
+    }
+  }
+
+  static RadioStation? fromJsonString(String? jsonString) {
+    if (jsonString != null) {
+      switch (jsonString) {
+        case 'will': return RadioStation.will;
+        case 'willfm': return RadioStation.willfm;
+        case 'willhd': return RadioStation.willhd;
+        case 'wpgufm': return RadioStation.wpgufm;
+      }
+    }
+  }
 }

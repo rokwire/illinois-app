@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/RadioPlayer.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:just_audio/just_audio.dart';
@@ -112,7 +113,7 @@ class _RadioControlState extends State<_RadioControl> with NotificationsListener
       RadioPlayer.notifyPlayerStateChanged,
     ]);
 
-    _radioStation = RadioStation.values.first;
+    _radioStation = RadioStationImpl.fromJsonString(Storage().illiniRadioStation) ?? RadioStation.wpgufm;
     widget.onInitState?.call();
     super.initState();
   }
@@ -261,12 +262,15 @@ class _RadioControlState extends State<_RadioControl> with NotificationsListener
   }
 
   void _onTapStation(RadioStation radioStation) {
-    PlayerState? stationState = RadioPlayer().stationState(_radioStation);
-    setState(() {
-      _radioStation = radioStation;
-    });
-    if (stationState?.playing == true) {
-      RadioPlayer().playStation(_radioStation);
+    if (_radioStation != radioStation) {
+      PlayerState? stationState = RadioPlayer().stationState(_radioStation);
+      setState(() {
+        _radioStation = radioStation;
+      });
+      Storage().illiniRadioStation = radioStation.toJsonString();
+      if (stationState?.playing == true) {
+        RadioPlayer().playStation(_radioStation);
+      }
     }
   }
 
