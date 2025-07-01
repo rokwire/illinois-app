@@ -55,9 +55,6 @@ class RadioPopupWidget extends StatelessWidget with AnalyticsInfo {
       (BuildContext context) => RadioPopupWidget()
     );
 
-  static String stationTitle(RadioStation radioStation) =>
-    _radioStationTitle(radioStation);
-
   @override
   Widget build(BuildContext context) =>
     ClipRRect(borderRadius: HomeMessageCard.defaultBorderRadius, child:
@@ -181,7 +178,7 @@ class _RadioControlState extends State<_RadioControl> with NotificationsListener
           Container(
             decoration: decoration,
             padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-            child: Text(_radioStationFrequency(radioStation), style: textStyle, textAlign: TextAlign.center,),
+            child: Text(radioStation.frequency, style: textStyle, textAlign: TextAlign.center,),
           ),
         ),
       ));
@@ -277,31 +274,33 @@ class _RadioControlState extends State<_RadioControl> with NotificationsListener
     Analytics().logSelect(
       target: RadioPlayer().isStationPlaying(_radioStation) ? 'Pause' : 'Play',
       source: widget.analyticsHost ?? this.runtimeType.toString(),
-      attributes: _radioStationAnalyticsAttributes(_radioStation),
+      attributes: _radioStation.analyticsAttributes,
     );
     RadioPlayer().toggleStationPlayPause(_radioStation);
   }
 }
 
-String _radioStationTitle(RadioStation radioStation) {
-  switch(radioStation) {
-    case RadioStation.will: return Localization().getStringEx('widget.home.radio.will.title', 'WILL News & Talk (NPR)');
-    case RadioStation.willfm: return Localization().getStringEx('widget.home.radio.willfm.title', 'WILL Classical & More');
-    case RadioStation.willhd: return Localization().getStringEx('widget.home.radio.willhd.title', 'Illinois Soul 101.1 FM');
-    case RadioStation.wpgufm: return Localization().getStringEx('widget.home.radio.wpgufm.title', 'WPGU 107.1 FM');
+extension RadioStationUi on RadioStation {
+
+  String get title {
+    switch (this) {
+      case RadioStation.will:   return Localization().getStringEx('widget.home.radio.will.title',   'WILL News & Talk (NPR)');
+      case RadioStation.willfm: return Localization().getStringEx('widget.home.radio.willfm.title', 'WILL Classical & More');
+      case RadioStation.willhd: return Localization().getStringEx('widget.home.radio.willhd.title', 'Illinois Soul 101.1 FM');
+      case RadioStation.wpgufm: return Localization().getStringEx('widget.home.radio.wpgufm.title', 'WPGU 107.1 FM');
+    }
   }
-}
 
-String _radioStationFrequency(RadioStation radioStation) {
-  switch(radioStation) {
-    case RadioStation.will: return Localization().getStringEx('widget.home.radio.will.frequency', 'АМ 580');
-    case RadioStation.willfm: return Localization().getStringEx('widget.home.radio.willfm.frequency', '90.0 FM');
-    case RadioStation.willhd: return Localization().getStringEx('widget.home.radio.willhd.frequency', '101.1 FM');
-    case RadioStation.wpgufm: return Localization().getStringEx('widget.home.radio.wpgufm.frequency', '107.1 FM');
+  String get frequency {
+    switch (this) {
+      case RadioStation.will:   return Localization().getStringEx('widget.home.radio.will.frequency',   'АМ 580');
+      case RadioStation.willfm: return Localization().getStringEx('widget.home.radio.willfm.frequency', '90.0 FM');
+      case RadioStation.willhd: return Localization().getStringEx('widget.home.radio.willhd.frequency', '101.1 FM');
+      case RadioStation.wpgufm: return Localization().getStringEx('widget.home.radio.wpgufm.frequency', '107.1 FM');
+    }
   }
+
+  Map<String, dynamic> get analyticsAttributes => <String, dynamic>{
+    Analytics.LogAttributeRadioStation: title,
+  };
 }
-
-
-Map<String, dynamic> _radioStationAnalyticsAttributes(RadioStation radioStation) => <String, dynamic>{
-  Analytics.LogAttributeRadioStation: _radioStationTitle(radioStation),
-};

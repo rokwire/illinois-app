@@ -14,15 +14,6 @@ class RadioPlayer with Service, NotificationsListener {
   static const String notifyCreateStatusChanged  = "edu.illinois.rokwire.wpgufmradio.create.status.changed";
   static const String notifyPlayerStateChanged   = "edu.illinois.rokwire.wpgufmradio.player.state.changed";
 
-  static String? radioStationUrl(RadioStation radioStation) {
-    switch (radioStation) {
-      case RadioStation.will: return Config().willRadioUrl;
-      case RadioStation.willfm: return Config().willFmRadioUrl;
-      case RadioStation.willhd: return Config().willHdRadioUrl;
-      case RadioStation.wpgufm: return Config().wpgufmRadioUrl;
-    }
-  }
-
   AudioSession? _audioSession;
   Map<RadioStation, AudioPlayer> _audioPlayers = <RadioStation, AudioPlayer>{};
   bool _isCreating = false;
@@ -88,7 +79,7 @@ class RadioPlayer with Service, NotificationsListener {
     });
   }
 
-  bool isStationEnabled(RadioStation radioStation) => StringUtils.isNotEmpty(radioStationUrl(radioStation));
+  bool isStationEnabled(RadioStation radioStation) => StringUtils.isNotEmpty(radioStation.url);
   bool isStationCreated(RadioStation radioStation) => (_audioSession != null) && (_audioPlayers[radioStation] != null);
   bool isStationPlaying(RadioStation radioStation) => (_audioPlayers[radioStation]?.playing == true);
   PlayerState? stationState(RadioStation radioStation) => _audioPlayers[radioStation]?.playerState;
@@ -172,17 +163,14 @@ class RadioPlayer with Service, NotificationsListener {
   }
 
   Future<AudioPlayer?> _createAudioPlayer(RadioStation radioStation) async {
-    String? radioUrl = radioStationUrl(radioStation);
-    if (radioUrl != null) {
+    Uri? radioUri = UriExt.tryParse(radioStation.url);
+
+    if (radioUri != null) {
       AudioPlayer player = AudioPlayer();
 
       try {
-        player.playerStateStream.listen((PlayerState state) {
-          _onPlayerState(radioStation, state);
-        });
-
-        await player.setAudioSource(AudioSource.uri(Uri.parse(radioUrl)), preload: false);
-
+        player.playerStateStream.listen((PlayerState state) => _onPlayerState(radioStation, state));
+        await player.setAudioSource(AudioSource.uri(radioUri), preload: false);
         return player;
       } catch (e) {
         print("Error loading audio source: $e");
@@ -213,6 +201,17 @@ class RadioPlayer with Service, NotificationsListener {
         _audioPlayers.remove(radioStation);
         NotificationService().notify(notifyCreateStatusChanged, radioStation);
      }
+    }
+  }
+}
+
+extension RadioStationImpl on RadioStation {
+  String? get url {
+    switch (this) {
+      case RadioStation.will: return Config().willRadioUrl;
+      case RadioStation.willfm: return Config().willFmRadioUrl;
+      case RadioStation.willhd: return Config().willHdRadioUrl;
+      case RadioStation.wpgufm: return Config().wpgufmRadioUrl;
     }
   }
 }
