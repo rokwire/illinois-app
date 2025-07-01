@@ -408,7 +408,7 @@ class HomeCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
     Container(padding: EdgeInsets.only(left: padding.left, bottom: padding.bottom), margin: margin, decoration: HomeMessageCard.defaultDecoration, child:
-      Column(children: [
+      Column(mainAxisSize: MainAxisSize.min, children: [
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: padding.top), child:
@@ -698,7 +698,8 @@ class HomeMessageCard extends StatelessWidget {
   final String? message;
   final EdgeInsetsGeometry margin;
 
-  static BoxDecoration get defaultDecoration => BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] );
+  static BorderRadius get defaultBorderRadius => BorderRadius.all(Radius.circular(4));
+  static BoxDecoration get defaultDecoration => BoxDecoration(color: Styles().colors.surface, borderRadius: defaultBorderRadius, boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] );
 
   HomeMessageCard({Key? key,
     this.title,

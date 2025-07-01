@@ -6,7 +6,7 @@
 
 			"home": ["my_dining", "dinings", "my_laundry", "laundry",
 				"wellness_resources", "wellness_mental_health", "wellness_todo", "wellness_rings", "wellness_tips",
-				"daily_illini", "will_radio", "willfm_radio", "willhd_radio", "wpgufm_radio",
+				"daily_illini", "illini_radio",
 				"all_groups", "my_groups",
 				"open_research_projects", "my_research_projects", "create_poll", "recent_polls", 
 				"event_feed", "my_events", "sport_events", "sport_news", "my_athletics", "my_game_day",
@@ -34,7 +34,7 @@
 			"browse.messages": ["messages"],
 			"browse.mtd": ["all_mtd_stops", "my_mtd_stops", "my_locations"],
 			"browse.polls": ["create_poll", "recent_polls"],
-			"browse.music_and_news": ["will_radio", "willfm_radio", "willhd_radio", "wpgufm_radio", "daily_illini"],
+			"browse.music_and_news": ["illini_radio", "daily_illini"],
 			"browse.recent": ["recent_items"],
 			"browse.safety": ["safewalk_request", "saferides", "safety_resources"],
 			"browse.wellness": ["wellness_recreation", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener"],

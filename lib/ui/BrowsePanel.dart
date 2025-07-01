@@ -16,7 +16,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
@@ -605,10 +604,7 @@ class _BrowseEntry extends StatelessWidget {
       case "events.event_feed":              _onTapEventFeed(context); break;
       case "events.my_events":               _onTapMyEvents(context); break;
 
-      case "music_and_news.will_radio":      _onTapRadioStation(context, RadioStation.will); break;
-      case "music_and_news.willfm_radio":    _onTapRadioStation(context, RadioStation.willfm); break;
-      case "music_and_news.willhd_radio":    _onTapRadioStation(context, RadioStation.willhd); break;
-      case "music_and_news.wpgufm_radio":    _onTapRadioStation(context, RadioStation.wpgufm); break;
+      case "music_and_news.illini_radio":    _onTapIlliniRadio(context); break;
       case "music_and_news.daily_illini":    _onTapDailyIllini(context); break;
 
       case "groups.all_groups":              _onTapAllGroups(context); break;
@@ -780,9 +776,9 @@ class _BrowseEntry extends StatelessWidget {
     _launchUrl(context, Config().dailyIlliniHomepageUrl);
   }
 
-  static void _onTapRadioStation(BuildContext context, RadioStation radioStation) {
-    Analytics().logSelect(target: "Radio Station: ${RadioPopupWidget.stationTitle(radioStation)}");
-    RadioPopupWidget.show(context, radioStation);
+  static void _onTapIlliniRadio(BuildContext context) {
+    Analytics().logSelect(target: "Illini Radio");
+    RadioPopupWidget.show(context);
   }
 
   static void _onTapAllGroups(BuildContext context) {
