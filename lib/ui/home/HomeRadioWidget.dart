@@ -126,6 +126,18 @@ class _RadioControlState extends State<_RadioControl> with NotificationsListener
     super.dispose();
   }
 
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (((name == RadioPlayer.notifyCreateStatusChanged) && (param == _radioStation)) ||
+        ((name == RadioPlayer.notifyPlayerStateChanged) && (param == _radioStation))) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Column(children: [
     _stationsBar,
@@ -252,11 +264,14 @@ class _RadioControlState extends State<_RadioControl> with NotificationsListener
   }
 
   void _onTapStation(RadioStation radioStation) {
+    PlayerState? stationState = RadioPlayer().stationState(_radioStation);
     setState(() {
       _radioStation = radioStation;
     });
+    if (stationState?.playing == true) {
+      RadioPlayer().playStation(_radioStation);
+    }
   }
-
 
   void _onTapPlayPause() {
     Analytics().logSelect(
@@ -265,21 +280,6 @@ class _RadioControlState extends State<_RadioControl> with NotificationsListener
       attributes: _radioStationAnalyticsAttributes(_radioStation),
     );
     RadioPlayer().toggleStationPlayPause(_radioStation);
-  }
-
-
-
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (((name == RadioPlayer.notifyCreateStatusChanged) && (param == _radioStation)) ||
-        ((name == RadioPlayer.notifyPlayerStateChanged) && (param == _radioStation))) {
-      if (mounted) {
-        setState(() {});
-      }
-    }
   }
 }
 
