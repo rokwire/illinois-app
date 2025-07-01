@@ -254,7 +254,7 @@ class _RadioControlState extends State<_RadioControl> with NotificationsListener
             ),
           if (progress == true)
             Padding(padding: const EdgeInsets.all(12), child:
-              SizedBox(width: 28, height: 28, child:
+              SizedBox(width: 26, height: 26, child:
                 CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
               ),
             ),
