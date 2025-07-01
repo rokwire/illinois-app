@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - WEB: Fix parsing survey rules [#5083](https://github.com/rokwire/illinois-app/issues/5083).
 
+## [7.2.5] - 2025-07-01
+### Changed
+- UI Clean Up - combine radio widgets into one Illini Radio widget [#5249](https://github.com/rokwire/illinois-app/issues/5249).
+
 ## [7.2.4] - 2025-06-30
 ### Added
 - Show arrows for looping between events in the Assistant answers [#5255](https://github.com/rokwire/illinois-app/issues/5255).
