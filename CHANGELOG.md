@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Android: Upgrade compileSdkVersion and targetSdkVersion to 36 [#5260](https://github.com/rokwire/illinois-app/issues/5260).
+- UI Clean Up / Illini Radio - updated station control content [#5249](https://github.com/rokwire/illinois-app/issues/5249).
 ### Fixed
 - Fixed load Illini Cash transactions history [#5262](https://github.com/rokwire/illinois-app/issues/5262).
 ### Removed
