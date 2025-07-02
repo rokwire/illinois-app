@@ -60,7 +60,7 @@ repositories{
 }
 
 android {
-    compileSdkVersion 35
+    compileSdkVersion 36
 
     namespace 'edu.illinois.rokwire'
 
@@ -88,7 +88,7 @@ android {
     defaultConfig {
         applicationId "edu.illinois.rokwire"
         minSdkVersion 23
-        targetSdkVersion 34
+        targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -229,7 +229,7 @@ dependencies {
     //Zxing
     implementation 'com.google.zxing:core:3.3.0' //Use zxing 3.3.0 because we have minSdk < 24
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 
     // Origo and mobile keys SDK
     debugImplementation name: '../../libs/hid-origo/android/origo-sdk-debug', version: '1.10.0', ext: 'aar'
