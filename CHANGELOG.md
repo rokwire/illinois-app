@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [7.2.5] - 2025-07-01
 ### Changed
 - UI Clean Up - combine radio widgets into one Illini Radio widget [#5249](https://github.com/rokwire/illinois-app/issues/5249).
+### Fixed
+- Fixed load Illini Cash transactions history [#5262](https://github.com/rokwire/illinois-app/issues/5262).
+### Removed
+- Removed unused standalone response load methods.
 
 ## [7.2.4] - 2025-06-30
 ### Added
