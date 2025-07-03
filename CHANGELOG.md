@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Group post text formatting UX [#5194](https://github.com/rokwire/illinois-app/issues/5194)
 ### Changed
 - Assistant Suggestion card to disappear only on tapping close button [#5254](https://github.com/rokwire/illinois-app/issues/5254).
+### Fixed
+- UI Clean Up / Illini Radio - fixed WILL Classical & More display frequency [#5249](https://github.com/rokwire/illinois-app/issues/5249).
 
 ## [7.2.6] - 2025-07-02
 ### Changed
