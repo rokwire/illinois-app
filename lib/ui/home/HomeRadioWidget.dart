@@ -307,7 +307,7 @@ extension RadioStationUi on RadioStation {
   String get frequency {
     switch (this) {
       case RadioStation.will:   return Localization().getStringEx('widget.home.radio.will.frequency',   'АМ 580');
-      case RadioStation.willfm: return Localization().getStringEx('widget.home.radio.willfm.frequency', '90.0 FM');
+      case RadioStation.willfm: return Localization().getStringEx('widget.home.radio.willfm.frequency', '90.9 FM');
       case RadioStation.willhd: return Localization().getStringEx('widget.home.radio.willhd.frequency', '101.1 FM');
       case RadioStation.wpgufm: return Localization().getStringEx('widget.home.radio.wpgufm.frequency', '107.1 FM');
     }
