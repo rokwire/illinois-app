@@ -838,7 +838,6 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
                               TextSpan(text: Localization().getStringEx('panel.events2.assistant.prompt.header.text', 'Try asking the Illinois Assistant: '), style: Styles().textStyles.getTextStyle('widget.message.regular')),
                               TextSpan(text: Localization().getStringEx('panel.events2.assistant.prompt.question.text', "What's happening this weekend?"), style: Styles().textStyles.getTextStyle('widget.item.regular_underline.thin'), recognizer: TapGestureRecognizer()..onTap = () => _onTapAskAssistant()),
                             ])))
-                    // Text('Try asking the Illinois Assistant', style: Styles().textStyles.getTextStyle('widget.message.regular'))
                   ])),
               Align(alignment: Alignment.topRight, child: GestureDetector(onTap: _onTapCloseAssistantPrompt, child: Padding(padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 16), child: Styles().images.getImage('close-circle-small', excludeFromSemantics: true))))
             ])),
@@ -849,9 +848,6 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
   void _onTapAskAssistant() {
     Analytics().logEventsAssistantPrompt(action: 'clicked');
     AssistantHomePanel.present(context, initialQuestion: Localization().getStringEx('panel.events2.assistant.prompt.question.text', "What's happening this weekend?"));
-    setStateIfMounted(() {
-      Storage().assistantEventsPromptHidden = true;
-    });
   }
 
   void _onTapCloseAssistantPrompt() {
