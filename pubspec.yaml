@@ -73,6 +73,9 @@ dependencies:
   sms_mms: ^0.0.3
   pdf: ^3.11.3
   printing: ^5.14.2
+  flutter_quill_delta_from_html: ^1.5.2
+  flutter_quill: ^11.4.1
+  vsc_quill_delta_to_html: ^1.0.5
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:
@@ -84,7 +87,7 @@ dependencies:
 
   # https://community.flutterflow.io/ask-the-community/post/flutter-barcode-scanner-not-compatible-with-latest-flutter-in-android-build-PCf2OlE2dK64lFU
   # flutter_barcode_scanner: ^2.0.0
-  local_auth_android: 1.0.46
+  local_auth_android: 1.0.49
   flutter_barcode_scanner:
     git:
       url: https://github.com/decodevM/flutter_barcode_scanner.git

@@ -22,11 +22,13 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/widgets/WebEmbed.dart';
@@ -61,8 +63,9 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
-
-import '../directory/DirectoryWidgets.dart';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:flutter_quill_delta_from_html/flutter_quill_delta_from_html.dart';
+import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 
 /////////////////////////////////////
 // GroupSectionTitle
@@ -1608,7 +1611,7 @@ class _GroupReactionState extends State<GroupReaction> {
   bool get _hasEntityId => (widget.entityId != null);
 }
 
-typedef void OnBodyChangedListener(String text);
+typedef OnBodyChangedListener = void Function(String htmlContent);
 
 class PostInputField extends StatefulWidget{
   static const int defaultMaxLines = 15;
@@ -1627,7 +1630,9 @@ class PostInputField extends StatefulWidget{
   final TextStyle? style;
 
   const PostInputField({Key? key, this.padding, this.hint, this.text, this.onBodyChanged, this.title,
-    this.maxLines = defaultMaxLines, this.minLines = defaultMinLines, this.autofocus = false, this.inputDecoration, this.boxDecoration, this.style}) : super(key: key);
+    this.maxLines = defaultMaxLines, this.minLines = defaultMinLines,
+    this.autofocus = false, this.inputDecoration, this.boxDecoration,
+    this.style}) : super(key: key);
 
   static get fieldDecoration => BoxDecoration(
       color: Styles().colors.white,
@@ -1641,28 +1646,53 @@ class PostInputField extends StatefulWidget{
   }
 }
 
-class _PostInputFieldState extends State<PostInputField>{ //TBD localize properly
-  TextEditingController _bodyController = TextEditingController();
+class _PostInputFieldState extends State<PostInputField> {
+  late quill.QuillController _controller;
+  final FocusNode _focusNode = FocusNode();
+  final GlobalKey<EditorState> _editorKey = GlobalKey();
+
   TextEditingController _linkTextController = TextEditingController();
   TextEditingController _linkUrlController = TextEditingController();
-  
-  // EdgeInsets? _padding;
+
   String? _hint;
 
   @override
   void initState() {
     super.initState();
-    // _padding = widget.padding ?? EdgeInsets.only(top: 5);
-    _hint = widget.hint;  /*?? Localization().getStringEx("panel.group.detail.post.reply.create.body.field.hint", "Write a Reply ...");*/
-    _bodyController.text = widget.text ?? "";
+    _hint = widget.hint;
+
+    // Initialize QuillController with HTML content if provided
+    if (widget.text != null && widget.text!.isNotEmpty) {
+      try {
+        // Convert HTML to Delta
+        final converter = HtmlToDelta();
+        final delta = converter.convert(widget.text!);
+        _controller = quill.QuillController(
+          document: quill.Document.fromDelta(delta),
+          selection: const TextSelection.collapsed(offset: 0),
+        );
+      } catch (e) {
+        // Fallback to plain text if HTML parsing fails
+        _controller = quill.QuillController(
+          document: quill.Document()..insert(0, widget.text ?? ''),
+          selection: const TextSelection.collapsed(offset: 0),
+        );
+      }
+    } else {
+      _controller = quill.QuillController.basic();
+    }
+
+    _controller.addListener(_handleContentChange);
   }
-  
+
   @override
   void dispose() {
-    super.dispose();
-    _bodyController.dispose();
+    _controller.removeListener(_handleContentChange);
+    _controller.dispose();
+    _focusNode.dispose();
     _linkTextController.dispose();
     _linkUrlController.dispose();
+    super.dispose();
   }
 
   @override
@@ -1671,207 +1701,358 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
     String? oldBodyInitialText = oldWidget.text;
     String? newBodyInitialText = widget.text;
     if (oldBodyInitialText != newBodyInitialText) {
-      _bodyController.text = StringUtils.ensureNotEmpty(newBodyInitialText);
-      if (mounted) {
-        setState(() {});
+      if (newBodyInitialText != null && newBodyInitialText.isNotEmpty) {
+        try {
+          // Convert HTML to Delta
+          final converter = HtmlToDelta();
+          final delta = converter.convert(newBodyInitialText);
+          _controller.document = quill.Document.fromDelta(delta);
+        } catch (e) {
+          // Fallback to plain text if HTML parsing fails
+          _controller.document = quill.Document()..insert(0, newBodyInitialText);
+        }
+      } else {
+        _controller.document = quill.Document();
       }
+
+      setStateIfMounted(() {});
     }
   }
-  
+
+  void _handleContentChange() {
+    if (widget.onBodyChanged != null) {
+      // Convert Delta to HTML
+      final html = _deltaToHtml();
+      widget.onBodyChanged?.call(html);
+    }
+    setStateIfMounted(() {});
+  }
+
+  String _deltaToHtml() {
+    final deltaOps = _controller.document.toDelta().toJson();
+    final converter = QuillDeltaToHtmlConverter(
+      deltaOps,
+      ConverterOptions(
+        converterOptions: OpConverterOptions(
+          inlineStylesFlag: true,
+        ),
+      ),
+    );
+    return converter.convert();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Visibility(visible: StringUtils.isNotEmpty(widget.title), child:
-              Text(widget.title ?? "", style: Styles().textStyles.getTextStyle("widget.title.small.fat")),
+      padding: widget.padding,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Visibility(
+            visible: StringUtils.isNotEmpty(widget.title),
+            child: Text(
+              widget.title ?? "",
+              style: Styles().textStyles.getTextStyle("widget.title.small.fat"),
             ),
-            Padding(
-                padding: EdgeInsets.only(top: 8, bottom: 8),
-                child: Container(
-                    decoration: widget.boxDecoration ?? PostInputField.fieldDecoration,
-                    child: TextField(
-                      controller: _bodyController,
-                      onChanged: _notifyChanged,
-                      maxLines: widget.maxLines,
-                      minLines: widget.minLines,
-                      autofocus: widget.autofocus,
-                      textCapitalization: TextCapitalization.sentences,
-                      decoration: widget.inputDecoration ?? _defaultInputDecoration,
-                      style: widget.style ?? Styles().textStyles.getTextStyle('')))),
-              Padding(
-                  padding: EdgeInsets.zero,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IconButton(
-                            icon: Styles().images.getImage('bold-dark', semanticLabel: 'Bold') ?? Container(),
-                            onPressed: _onTapBold),
-                        Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: IconButton(
-                                icon: Styles().images.getImage('italic-dark', semanticLabel: 'Italic') ?? Container(),
-                                onPressed: _onTapItalic)),
-                        Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: IconButton(
-                                icon: Styles().images.getImage('underline-dark', semanticLabel: 'Underline') ?? Container(),
-                                onPressed: _onTapUnderline)),
-                        Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: Semantics(button: true, child:
-                            GestureDetector(
-                                onTap: _onTapEditLink,
-                                child: Text(
-                                    Localization().getStringEx(
-                                        'panel.group.detail.post.create.link.label',
-                                        'Link'),
-                                    style: Styles().textStyles.getTextStyle('widget.group.input_field.link')))))
-                      ])),
-          ],
-        )
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 8),
+            child: Container(
+              decoration: widget.boxDecoration ?? PostInputField.fieldDecoration,
+              child: Column(
+                children: [
+                  // Quill Editor
+                  Container(
+                    constraints: BoxConstraints(
+                      minHeight: (widget.minLines ?? PostInputField.defaultMinLines) * 20.0,
+                      maxHeight: (widget.maxLines ?? PostInputField.defaultMaxLines) * 20.0,
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    child: quill.QuillEditor.basic(
+                      controller: _controller,
+                      focusNode: _focusNode,
+                      config: quill.QuillEditorConfig(
+                        editorKey: _editorKey,
+                        autoFocus: widget.autofocus,
+                        placeholder: _hint,
+                        expands: false,
+                        scrollable: true,
+                        padding: EdgeInsets.zero,
+                        customStyles: quill.DefaultStyles(
+                          link: (widget.style ?? Styles().textStyles.getTextStyle('widget.message.regular'))?.apply(color: Styles().colors.fillColorSecondary, decoration: TextDecoration.underline),
+                          paragraph: quill.DefaultTextBlockStyle(
+                            widget.style ?? Styles().textStyles.getTextStyle('widget.message.regular')!,
+                            const quill.HorizontalSpacing(0, 0),
+                            const quill.VerticalSpacing(0, 0),
+                            const quill.VerticalSpacing(0, 0),
+                            null,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          _buildCustomToolbar(),
+        ],
+      ),
     );
   }
 
-  void _notifyChanged(String text) {
-    if (widget.onBodyChanged != null) {
-      widget.onBodyChanged!(text);
-    }
+  Widget _buildCustomToolbar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Styles().colors.surfaceAccent,
+            width: 0.5,
+          ),
+        ),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Bold button
+            _buildFormatButton(
+              icon: Icons.format_bold,
+              isActive: _isFormatActive(quill.Attribute.bold),
+              onPressed: () {
+                Analytics().logSelect(target: 'Bold');
+                _toggleFormat(quill.Attribute.bold);
+              },
+            ),
+            const SizedBox(width: 20),
+            // Italic button
+            _buildFormatButton(
+              icon: Icons.format_italic,
+              isActive: _isFormatActive(quill.Attribute.italic),
+              onPressed: () {
+                Analytics().logSelect(target: 'Italic');
+                _toggleFormat(quill.Attribute.italic);
+              },
+            ),
+            const SizedBox(width: 20),
+            // Underline button
+            _buildFormatButton(
+              icon: Icons.format_underline,
+              isActive: _isFormatActive(quill.Attribute.underline),
+              onPressed: () {
+                Analytics().logSelect(target: 'Underline');
+                _toggleFormat(quill.Attribute.underline);
+              },
+            ),
+            const SizedBox(width: 20),
+            // Link button
+            Semantics(
+              button: true,
+              child: GestureDetector(
+                onTap: _onTapEditLink,
+                child: Text(
+                  Localization().getStringEx(
+                    'panel.group.detail.post.create.link.label',
+                    'Link',
+                  ),
+                  style: Styles().textStyles.getTextStyle('widget.group.input_field.link'),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  //HTML Body input Actions
-  void _onTapBold() {
-    Analytics().logSelect(target: 'Bold');
-    _wrapBodySelection('<b>', '</b>');
+  Widget _buildFormatButton({
+    required IconData icon,
+    required bool isActive,
+    required VoidCallback onPressed,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 2),
+      decoration: BoxDecoration(
+        color: isActive ? Styles().colors.fillColorSecondary : Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            width: 40,
+            height: 40,
+            alignment: Alignment.center,
+            child: Icon(
+              icon,
+              size: 20,
+              color: isActive ? Colors.white : Styles().colors.black,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
-  void _onTapItalic() {
-    Analytics().logSelect(target: 'Italic');
-    _wrapBodySelection('<i>', '</i>');
+  bool _isFormatActive(quill.Attribute attribute) {
+    final style = _controller.getSelectionStyle();
+    return style.attributes.containsKey(attribute.key);
   }
 
-  void _onTapUnderline() {
-    Analytics().logSelect(target: 'Underline');
-    _wrapBodySelection('<u>', '</u>');
+  void _toggleFormat(quill.Attribute attribute) {
+    _controller.formatSelection(
+      _isFormatActive(attribute) ? quill.Attribute.clone(attribute, null) : attribute,
+    );
+    setStateIfMounted(() {});
   }
 
   void _onTapEditLink() {
     Analytics().logSelect(target: 'Edit Link');
-    int linkStartPosition = _bodyController.selection.start;
-    int linkEndPosition = _bodyController.selection.end;
-    _linkTextController.text = StringUtils.ensureNotEmpty(_bodyController.selection.textInside(_bodyController.text));
-    AppAlert.showCustomDialog(
-        context: context,
-        contentWidget: _buildLinkDialog(),
-        actions: [
-          TextButton(
-              onPressed: () {
-                Analytics().logSelect(target: 'Set Link Url');
-                _onTapOkLink(linkStartPosition, linkEndPosition);
-              },
-              child: Text(Localization().getStringEx('dialog.ok.title', 'OK'))),
-          TextButton(
-              onPressed: () {
-                Analytics().logSelect(target: 'Cancel');
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                  Localization().getStringEx('dialog.cancel.title', 'Cancel')))
-        ]);
-  }
 
-  void _onTapOkLink(int startPosition, int endPosition) {
-    Navigator.of(context).pop();
-    if ((startPosition < 0) || (endPosition < 0)) {
-      return;
-    }
-    String linkText = _linkTextController.text;
-    _linkTextController.text = '';
-    String linkUrl = _linkUrlController.text;
+    // Get selected text
+    final selection = _controller.selection;
+    final text = _controller.document.getPlainText(
+      selection.start,
+      selection.end - selection.start,
+    );
+
+    _linkTextController.text = text.trim();
     _linkUrlController.text = '';
-    String currentText = _bodyController.text;
-    currentText =
-        currentText.replaceRange(startPosition, endPosition, linkText);
-    _bodyController.text = currentText;
-    endPosition = startPosition + linkText.length;
-    _wrapBody('<a href="$linkUrl">', '</a>', startPosition, endPosition);
+
+    AppAlert.showCustomDialog(
+      context: context,
+      contentWidget: _buildLinkDialog(),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Analytics().logSelect(target: 'Set Link Url');
+            _onTapOkLink(selection);
+          },
+          child: Text(Localization().getStringEx('dialog.ok.title', 'OK')),
+        ),
+        TextButton(
+          onPressed: () {
+            Analytics().logSelect(target: 'Cancel');
+            Navigator.of(context).pop();
+          },
+          child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')),
+        ),
+      ],
+    );
   }
 
-  void _wrapBodySelection(String firstValue, String secondValue) {
-    int startPosition = _bodyController.selection.start;
-    int endPosition = _bodyController.selection.end;
-    if ((startPosition < 0) || (endPosition < 0)) {
+  void _onTapOkLink(TextSelection selection) {
+    Navigator.of(context).pop();
+
+    final linkText = _linkTextController.text;
+    String linkUrl = _linkUrlController.text;
+    if (!linkUrl.startsWith('http://') && !linkUrl.startsWith('https://')) {
+      linkUrl = 'https://' + linkUrl;
+    }
+
+    if (linkText.isEmpty || linkUrl.isEmpty) {
       return;
     }
-    _wrapBody(firstValue, secondValue, startPosition, endPosition);
+
+    // final selection = _controller.selection;
+    // final length = selection.end - selection.start;
+
+    // Replace selected text with link text and apply link attribute
+    // if (length > 0) {
+    //   _controller.replaceText(
+    //     selection.start,
+    //     length,
+    //     linkText,
+    //     null,
+    //   );
+    // } else {
+    //   _controller.document.insert(selection.start, linkText);
+    // }
+
+    // Apply link formatting
+    _controller.formatText(
+      selection.start,
+      linkText.length,
+      quill.LinkAttribute(linkUrl),
+    );
+
+    // Clear controllers
+    _linkTextController.text = '';
+    _linkUrlController.text = '';
   }
 
-  void _wrapBody(String firstValue, String secondValue, int startPosition,
-      int endPosition) {
-    String currentText = _bodyController.text;
-    String result = StringUtils.wrapRange(
-        currentText, firstValue, secondValue, startPosition, endPosition);
-    _bodyController.text = result;
-    _bodyController.selection = TextSelection.fromPosition(
-        TextPosition(offset: (endPosition + firstValue.length)));
-    _notifyChanged(result);
-  }
-  
-  //Dialog
   Widget _buildLinkDialog() {
     return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-              Localization().getStringEx(
-                  'panel.group.detail.post.create.dialog.link.edit.header',
-                  'Edit Link'),
-              style: Styles().textStyles.getTextStyle('widget.group.input_field.heading')),
-          Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Text(
-                  Localization().getStringEx(
-                      'panel.group.detail.post.create.dialog.link.text.label',
-                      'Link Text:'),
-                  style: Styles().textStyles.getTextStyle('widget.group.input_field.detail'))),
-          Padding(
-              padding: EdgeInsets.only(top: 6),
-              child: TextField(
-                  controller: _linkTextController,
-                  maxLines: 1,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Styles().colors.mediumGray, width: 0.0))),
-                  style: Styles().textStyles.getTextStyle('widget.input_field.text.regular'))),
-          Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Text(
-                  Localization().getStringEx(
-                      'panel.group.detail.post.create.dialog.link.url.label',
-                      'Link URL:'),
-                  style: Styles().textStyles.getTextStyle('widget.group.input_field.detail'))),
-          Padding(
-              padding: EdgeInsets.only(top: 6),
-              child: TextField(
-                  controller: _linkUrlController,
-                  maxLines: 1,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Styles().colors.mediumGray, width: 0.0))),
-                  style: Styles().textStyles.getTextStyle('widget.input_field.text.regular')))
-        ]);
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          Localization().getStringEx(
+            'panel.group.detail.post.create.dialog.link.edit.header',
+            'Edit Link',
+          ),
+          style: Styles().textStyles.getTextStyle('widget.group.input_field.heading'),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: Text(
+            Localization().getStringEx(
+              'panel.group.detail.post.create.dialog.link.text.label',
+              'Link Text:',
+            ),
+            style: Styles().textStyles.getTextStyle('widget.group.input_field.detail'),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 6),
+          child: TextField(
+            controller: _linkTextController,
+            maxLines: 1,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Styles().colors.mediumGray,
+                  width: 0.0,
+                ),
+              ),
+            ),
+            style: Styles().textStyles.getTextStyle('widget.input_field.text.regular'),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: Text(
+            Localization().getStringEx(
+              'panel.group.detail.post.create.dialog.link.url.label',
+              'Link URL:',
+            ),
+            style: Styles().textStyles.getTextStyle('widget.group.input_field.detail'),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 6),
+          child: TextField(
+            controller: _linkUrlController,
+            maxLines: 1,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Styles().colors.mediumGray,
+                  width: 0.0,
+                ),
+              ),
+            ),
+            style: Styles().textStyles.getTextStyle('widget.input_field.text.regular'),
+          ),
+        ),
+      ],
+    );
   }
-
-  InputDecoration get _defaultInputDecoration => InputDecoration(
-      hintText: _hint,
-      border: InputBorder.none,
-      contentPadding: EdgeInsets.all(8)
-  );
 }
 
 class GroupMembersSelectionWidget extends StatefulWidget{
