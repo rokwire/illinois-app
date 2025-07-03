@@ -186,14 +186,6 @@ packages:
     source: hosted
     version: "1.4.0"
   chewie:
-    dependency: transitive
-    description:
-      name: charcode
-      sha256: fb98c0f6d12c920a02ee2d998da788bca066ca5f148492b7085ee23372b12306
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.3.1"
-  chewie:
     dependency: "direct overridden"
     description:
       name: chewie
@@ -699,6 +691,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.27"
+  flutter_quill:
+    dependency: "direct main"
+    description:
+      name: flutter_quill
+      sha256: "7e60963632bbc8615627f0bae8e178515f69ecb378ad49fa68c43c2aabf33e21"
+      url: "https://pub.dev"
+    source: hosted
+    version: "11.4.1"
+  flutter_quill_delta_from_html:
+    dependency: "direct main"
+    description:
+      name: flutter_quill_delta_from_html
+      sha256: "4597bd0853a704696837aa6b05cffd851f587b176204c234edddfed1c1862a09"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.5.2"
   flutter_secure_storage:
     dependency: transitive
     description:
@@ -747,22 +755,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
-  flutter_quill:
-    dependency: "direct main"
-    description:
-      name: flutter_quill
-      sha256: "7e60963632bbc8615627f0bae8e178515f69ecb378ad49fa68c43c2aabf33e21"
-      url: "https://pub.dev"
-    source: hosted
-    version: "11.4.1"
-  flutter_quill_delta_from_html:
-    dependency: "direct main"
-    description:
-      name: flutter_quill_delta_from_html
-      sha256: "4597bd0853a704696837aa6b05cffd851f587b176204c234edddfed1c1862a09"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.5.2"
   flutter_svg:
     dependency: transitive
     description:
