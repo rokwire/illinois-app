@@ -188,45 +188,51 @@ class _RadioControlState extends State<_RadioControl> with NotificationsListener
   }
 
   Widget get _stationControl {
-    String? buttonTitle, iconKey;
     bool? progress;
+    String? iconKey, statusText;
+    TextStyle? titleTextStyle = Styles().textStyles.getTextStyleEx('widget.title.medium.extra_fat', fontHeight: 1); // vs 'widget.title.medium.fat.light'
+    TextStyle? statusTextStyle = Styles().textStyles.getTextStyle('widget.title.small.semi_fat.light'); // vs 'widget.title.small.fat'
+
     if (!RadioPlayer().isStationEnabled(_radioStation)) {
-      buttonTitle = Localization().getStringEx('widget.home.radio.button.not_available.title', 'Not Available');
+      statusText = Localization().getStringEx('widget.home.radio.button.not_available.title', 'Not Available');
+      statusTextStyle = Styles().textStyles.getTextStyle('widget.title.small.fat');
     }
     else if (RadioPlayer().isCreating) {
-      buttonTitle = Localization().getStringEx('widget.home.radio.button.initalize.title', 'Initializing');
+      statusText = Localization().getStringEx('widget.home.radio.button.initalize.title', 'Initializing');
       progress = true;
     }
     else if (!RadioPlayer().isStationCreated(_radioStation)) {
-      buttonTitle = Localization().getStringEx('widget.home.radio.button.fail.title', 'Initialization Failed');
+      statusText = Localization().getStringEx('widget.home.radio.button.fail.title', 'Initialization Failed');
+      statusTextStyle = Styles().textStyles.getTextStyle('widget.title.small.fat');
     }
     else {
       PlayerState? stationState = RadioPlayer().stationState(_radioStation);
       switch (stationState?.processingState) {
         case ProcessingState.idle:
         case ProcessingState.ready:
-          buttonTitle = (stationState?.playing == true) ?
-            Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :
-            Localization().getStringEx('widget.home.radio.button.play.title', 'Tune In');
+          statusText = (stationState?.playing == true) ?
+            Localization().getStringEx('widget.home.radio.button.playing.title', 'Playing') :
+            Localization().getStringEx('widget.home.radio.button.ready.title', 'Ready');
           iconKey = (stationState?.playing == true) ? 'pause-circle-large' : 'play-circle-large';
           break;
 
         case ProcessingState.loading:
-          buttonTitle = Localization().getStringEx('widget.home.radio.button.loading.title', 'Loading');
+          statusText = Localization().getStringEx('widget.home.radio.button.loading.title', 'Loading');
           progress = true;
           break;
 
         case ProcessingState.buffering:
-          buttonTitle = Localization().getStringEx('widget.home.radio.button.buffering.title', 'Buffering');
+          statusText = Localization().getStringEx('widget.home.radio.button.buffering.title', 'Buffering');
           progress = true;
           break;
 
         case ProcessingState.completed:
-          buttonTitle = Localization().getStringEx('widget.home.radio.button.finished.title', 'Finished');
+          statusText = Localization().getStringEx('widget.home.radio.button.finished.title', 'Finished');
+          statusTextStyle = Styles().textStyles.getTextStyle('widget.title.small.fat');
           break;
 
         default:
-          buttonTitle = Localization().getStringEx('widget.home.radio.button.unknown.title', 'Unknown');
+          //statusText = Localization().getStringEx('widget.home.radio.button.unknown.title', 'Unknown');
           break;
       }
     }
@@ -236,15 +242,18 @@ class _RadioControlState extends State<_RadioControl> with NotificationsListener
         Row(children: <Widget>[
           Expanded(child:
               Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.fillColorSecondary , width: 2))), child:
-                Padding(padding: EdgeInsets.only(left: 12, top: 8, bottom: 8), child:
-                  Text(buttonTitle, style: Styles().textStyles.getTextStyle('widget.title.medium.extra_fat'))
+                Padding(padding: EdgeInsets.only(left: 12, top: 2, bottom: 2), child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(_radioStation.title, style: titleTextStyle),
+                    Text(statusText ?? '', style: statusTextStyle),
+                  ],)
                 )
               )
           ),
           if (iconKey != null)
             Semantics(button: true,
               excludeSemantics: true,
-              label: buttonTitle,
+              label: statusText,
               hint: Localization().getStringEx('widget.home.radio.button.add_radio.hint', ''),
               child:  IconButton(color: Styles().colors.fillColorPrimary,
                 icon: Styles().images.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
