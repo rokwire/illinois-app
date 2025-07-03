@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Explore.dart';
@@ -118,7 +120,11 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           builder: (BuildContext context, ScrollController scrollController) {
             _scrollController = scrollController;
 
-            return Container(
+            return ScrollConfiguration(behavior: ScrollConfiguration.of(context).copyWith(dragDevices: {
+              PointerDeviceKind.touch,
+              PointerDeviceKind.mouse,
+              PointerDeviceKind.trackpad,
+            }), child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
@@ -171,7 +177,7 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
                   ),
                 ],
               ),
-            );
+            ));
           },
         ),
       ],

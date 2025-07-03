@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Assistant Suggestion card to disappear only on tapping close button [#5254](https://github.com/rokwire/illinois-app/issues/5254).
+### Fixed
+- WEB: Fix Storied Sites bottom sheet drag behaviour [#5046](https://github.com/rokwire/illinois-app/issues/5046).
 
 ## [7.2.6] - 2025-07-02
 ### Changed
