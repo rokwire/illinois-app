@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
-import 'package:illinois/ui/widgets/WebNetworkImage.dart';
+import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';

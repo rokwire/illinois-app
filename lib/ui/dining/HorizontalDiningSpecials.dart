@@ -19,7 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/widgets/WebNetworkImage.dart';
+import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/dining/LocationsWithDiningSpecialPanel.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';

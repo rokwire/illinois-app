@@ -23,7 +23,7 @@ import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/widgets/WebNetworkImage.dart';
+import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';

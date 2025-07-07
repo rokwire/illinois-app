@@ -15,7 +15,7 @@
  */
 
 
-import 'package:illinois/ui/widgets/WebNetworkImage.dart';
+import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:universal_io/io.dart';
 import 'dart:math';
 

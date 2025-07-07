@@ -21,7 +21,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:illinois/model/Config.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:illinois/model/Questionnaire.dart';
@@ -74,6 +73,7 @@ import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPa
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/cache_image.dart';
 
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/device_calendar.dart';
@@ -199,9 +199,8 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     // Log app create analytics event
     Analytics().logLivecycle(name: Analytics.LogLivecycleEventCreate);
 
-    // Init hive for web network image cache
-    await Hive.initFlutter();
-    await Hive.openBox(AppWebUtils.webNetworkImageCacheKey);
+    // Init WebCacheImageService
+    await WebCacheImageService().init();
 
     runApp(App(initializeError: serviceError));
   }, FirebaseCrashlytics().handleZoneError);
