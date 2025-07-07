@@ -53,7 +53,7 @@ class _ConfidentialResourcesPanelState extends State<ConfidentialResourcesPanel>
   Widget get _bodyWidget =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.only(top: 32, left: 16), child:(
-          Text(Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility'), style: Styles().textStyles.getTextStyle("widget.button.title.large.fat"))
+          Text(Localization().getStringEx('', 'Confidential Resources'), style: Styles().textStyles.getTextStyle("widget.button.title.large.fat"))
         )),
         Padding(padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16,), child:
           Container(height: 1, color: Styles().colors.surfaceAccent,),
@@ -144,8 +144,8 @@ class _ConfidentialResourcesPanelState extends State<ConfidentialResourcesPanel>
             backgroundColor: Styles().colors.white,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             rightIconKey: null,
-            label: _safetyContentTypeToDisplayString(contentType),
-            onTap: () => _onTapDropdownItem(contentType)
+            label: '',
+            onTap: () => {}
         ));
       }
     }
@@ -155,44 +155,6 @@ class _ConfidentialResourcesPanelState extends State<ConfidentialResourcesPanel>
     Column(children: contentList)
     )
     );
-  }
-
-  void _onTapDropdownItem(SafetyContentType contentType) {
-    Analytics().logSelect(target: _safetyContentTypeToDisplayString(contentType), source: widget.runtimeType.toString());
-    if (_preprocessContentType(contentType)) {
-      setState(() {
-        _contentValuesVisible = false;
-      });
-    }
-    else {
-      setState(() {
-        _selectedContentType = contentType;
-        _contentValuesVisible = false;
-      });
-      Analytics().logPageWidget(_contentPage);
-    }
-  }
-
-  bool _preprocessContentType(SafetyContentType contentType) {
-    if (contentType == SafetyContentType.safeRides) {
-      Map<String, dynamic>? safeRidesGuideEntry = Guide().entryById(Config().safeRidesGuideId);
-      if (safeRidesGuideEntry != null) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntry: safeRidesGuideEntry)));
-      }
-      return true;
-    }
-    else if (contentType == SafetyContentType.safetyResources) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-        contentList: Guide().safetyResourcesList,
-        contentTitle: Localization().getStringEx('panel.guide_list.label.safety_resources.section', 'Safety Resources'),
-        contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.safety_resources.empty", "There are no active Campus Safety Resources."),
-        favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
-      )));
-      return true;
-    }
-    else {
-      return false;
-    }
   }
 
   void _onTapContentSwitch() {
@@ -208,11 +170,3 @@ class _ConfidentialResourcesPanelState extends State<ConfidentialResourcesPanel>
   }
 }
 
-String? _safetyContentTypeToDisplayString(SafetyContentType? contentType) {
-  switch (contentType) {
-    case SafetyContentType.safeWalkRequest: return Localization().getStringEx('panel.safety.content_type.safe_walk_request.label', 'Request a SafeWalk');
-    case SafetyContentType.safeRides: return Localization().getStringEx('panel.safety.content_type.safe_rides.label', 'SafeRides (MTD)');
-    case SafetyContentType.safetyResources: return Localization().getStringEx('panel.safety.content_type.safety_resources.label', 'Safety Resources');
-    default: return null;
-  }
-}
