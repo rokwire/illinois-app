@@ -595,8 +595,6 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
             AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
             Navigator.pop(context, logicResult);
             break;
-          default:
-            break;
         }
       });
     }

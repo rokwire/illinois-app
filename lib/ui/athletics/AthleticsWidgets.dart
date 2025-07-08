@@ -121,7 +121,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> with Notificati
               showImage
                   ? Positioned(
                       child: InkWell(
-                          onTap: () => _onTapCardImage(game!.imageUrl!),
+                          onTap: () => _onTapCardImage(game.imageUrl!),
                           child: Image.network(game!.imageUrl!, semanticLabel: "Sports")))
                   : Container(),
               showImage

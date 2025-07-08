@@ -24,7 +24,7 @@ enum AppointmentType { in_person, online }
 ///////////////////////////////
 /// Appointment
 
-class Appointment with Explore, Favorite {
+class Appointment with Explore implements Favorite {
   static final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 
   final String? id;

@@ -618,7 +618,7 @@ class _HomePanelState extends State<HomePanel> with NotificationsListener, Autom
 
 // HomeDragAndDropHost
 
-abstract class HomeDragAndDropHost  {
+mixin HomeDragAndDropHost  {
   set isDragging(bool value);
   void onDragAndDrop({String? dragFavoriteId, String? dropFavoriteId, CrossAxisAlignment? dropAnchor});
   void onAccessibilityMove({String? dragFavoriteId, int? delta});
