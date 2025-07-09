@@ -98,7 +98,7 @@ class SkillsScoreChartState extends State<SkillsScoreChart> {
         break;
       default:
         _maxScore = 100;
-        _processOneSkill(responses, selectedSkill!);
+        _processOneSkill(responses, selectedSkill);
         break;
     }
 

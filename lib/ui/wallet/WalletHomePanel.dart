@@ -416,6 +416,6 @@ extension _StorageWalletExt on Storage {
   set _waletContentType(WalletContentType? value) => walletContentType = value?.jsonString;
 }
 
-class WalletHomePage {
+mixin class WalletHomePage {
   Color get backgroundColor => Styles().colors.white;
 }

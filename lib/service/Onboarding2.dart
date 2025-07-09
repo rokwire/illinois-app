@@ -134,7 +134,7 @@ class Onboarding2 with Service, NotificationsListener {
 
 typedef Onboarding2Context = Map<String, dynamic>;
 
-class Onboarding2Panel {
+mixin class Onboarding2Panel {
 
   // Public API
   String get onboardingCode => '';
@@ -215,7 +215,7 @@ class Onboarding2Panel {
 
 }
 
-abstract class Onboarding2ProgressableState {
+mixin Onboarding2ProgressableState {
   bool get onboarding2Progress;
   set onboarding2Progress(bool progress);
 }
