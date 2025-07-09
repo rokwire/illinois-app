@@ -245,8 +245,6 @@ class _DiningHomePanelState extends State<DiningHomePanel> with NotificationsLis
         return _filterWorkTimeValues;
       case DiningFilterType.payment_type:
         return _filterPaymentTypeValues;
-      default:
-        return null;
     }
   }
 
@@ -256,8 +254,6 @@ class _DiningHomePanelState extends State<DiningHomePanel> with NotificationsLis
         return Localization().getStringEx('panel.explore.filter.worktimes.hint', '');
       case DiningFilterType.payment_type:
         return Localization().getStringEx('panel.explore.filter.payment_types.hint', '');
-      default:
-        return null;
     }
   }
 

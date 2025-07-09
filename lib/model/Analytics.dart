@@ -260,7 +260,7 @@ class AnalyticsFeature {
 /////////////////////////
 // AnalyticsPage
 
-abstract class AnalyticsInfo {
+mixin class AnalyticsInfo {
   String? get analyticsPageName => null;
   Map<String, dynamic>? get analyticsPageAttributes => null;
   AnalyticsFeature? get analyticsFeature => null;

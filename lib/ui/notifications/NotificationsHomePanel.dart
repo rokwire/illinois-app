@@ -856,9 +856,6 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
       case _TimeFilter.LastMonth:
         prefix = Localization().getStringEx('panel.inbox.filter.time.last_month.label', 'Last Month');
         break;
-      default:
-        prefix = '';
-        break;
     }
     return "$prefix's ${Localization().getStringEx('panel.inbox.filter.time.notifications.label', 'Notifications')}";
   }

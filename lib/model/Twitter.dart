@@ -325,7 +325,7 @@ class TweetEntities {
 ///////////////////////
 // TweetEntity
 
-abstract class TweetEntity implements Comparable<TweetEntity> {
+mixin TweetEntity implements Comparable<TweetEntity> {
   int? get start;
   int? get end;
 

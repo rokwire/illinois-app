@@ -409,8 +409,6 @@ class _SettingsManageInterestsState extends State<SettingsInterestsPage> with No
         return Localization().getStringEx('panel.settings.manage_interests.tab.categories', "Categories");
       case _InterestTab.Tags:
         return Localization().getStringEx('panel.settings.manage_interests.tab.tags', "Tags");
-      default:
-        return null;
     }
   }
 }
