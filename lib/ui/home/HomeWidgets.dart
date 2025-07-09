@@ -19,6 +19,7 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/app_notification.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -401,7 +402,7 @@ class HomeCardWidget extends StatelessWidget {
 
   HomeCardWidget({super.key, this.title, this.child,
     this.padding = const EdgeInsets.all(12),
-    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     this.onClose,
   });
 
@@ -704,7 +705,7 @@ class HomeMessageCard extends StatelessWidget {
   HomeMessageCard({Key? key,
     this.title,
     this.message,
-    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 24),
   }) : super(key: key);
   
   @override
@@ -1042,7 +1043,7 @@ class HomeBrowseLinkButton extends LinkButton {
     super.title,
     super.hint,
     super.onTap,
-    super.padding = const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+    super.padding = const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
     TextStyle? textStyle,
     super.textWidget,
   }) : super(
@@ -1053,3 +1054,65 @@ class HomeBrowseLinkButton extends LinkButton {
     textDecorationThickness: 1,
   );
 }
+
+///////////////////////////////
+// HomeFavoriteWidgetSplitter
+
+class HomeFavoriteWidgetSplitter extends StatefulWidget {
+  final Key? favWidgetKey;
+
+  HomeFavoriteWidgetSplitter({super.key, this.favWidgetKey});
+
+  @override
+  State<StatefulWidget> createState() => _HomeFavoriteWidgetSplitterState();
+}
+
+class _HomeFavoriteWidgetSplitterState extends State<HomeFavoriteWidgetSplitter> with NotificationsListener {
+
+  late bool _isVisible;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, [
+      AppNotification.notify,
+    ]);
+    _isVisible = _getVisible();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == AppNotification.notify) {
+      _updateVisible();
+    }
+  }
+
+
+  bool _getVisible() {
+    final GlobalKey? globalKey = JsonUtils.cast(widget.favWidgetKey);
+    final RenderBox? renderBox = JsonUtils.cast(globalKey?.currentContext?.findRenderObject());
+    return (renderBox != null) && renderBox.hasSize && renderBox.size.height.isNotEmpty;
+  }
+
+  void _updateVisible() {
+    bool isVisible = _getVisible();
+    if ((_isVisible != isVisible) && mounted) {
+      setState(() {
+        _isVisible = isVisible;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Visibility(visible: _isVisible, child:
+    Container(height: 1, color: Styles().colors.disabledTextColor,)
+  );
+}
+
+

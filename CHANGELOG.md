@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Upgrade dart sdk [#5273](https://github.com/rokwire/illinois-app/issues/5273).
+### Added
+- Add divider lines in-between Favorites widgets [#5271](https://github.com/rokwire/illinois-app/issues/5271).
 
 ## [7.2.7] - 2025-07-03
 ### Added

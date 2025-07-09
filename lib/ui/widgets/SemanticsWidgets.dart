@@ -36,13 +36,15 @@ class AccessibleViewPagerNavigationButtons extends StatefulWidget{
   final String Function(int index)? semanticsPageLabel;//If want to override default ficus page behaviour
   final SemanticsController? semanticsController;//Used if we want to use the default long press -> focus page
   final Widget? centerWidget;
+  final EdgeInsetsGeometry padding;
   final EdgeInsetsGeometry iconPadding;
 
   const AccessibleViewPagerNavigationButtons({Key? key,
     this.controller, this.initialPage, this.pagesCount,
     this.semanticsPageLabel, this.onSemanticsLongPress, this.semanticsController,
     this.centerWidget,
-    this.iconPadding = const EdgeInsets.all(12),
+    this.padding = EdgeInsets.zero,
+    this.iconPadding = const EdgeInsets.all(16),
   }) : super(key: key);
 
   @override
@@ -68,33 +70,35 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
   @override
   Widget build(BuildContext context) {
     return Material(color: Colors.transparent, child:
-      Row(children: [
-        MergeSemantics(child:
-          Semantics(label: "Previous Page", hint: _iosHint, onLongPressHint: _longPressHint, child:
-            IconButton(
-              icon: Styles().images.getImage(_previousButtonAvailable ? 'chevron-left-bold' :  'chevron-left-gray', size: 12, excludeFromSemantics: true) ?? Container(),
-              padding: widget.iconPadding,
-              constraints: const BoxConstraints(), // make box constraints empty
-              style: const ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap), // And this sstyle
-              onPressed: _previousButtonAvailable ? _onTapPrevious : null,
-              onLongPress: _hasLongPress ? _onLongPress : null,
+      Padding(padding: widget.padding, child:
+        Row(children: [
+          MergeSemantics(child:
+            Semantics(label: "Previous Page", hint: _iosHint, onLongPressHint: _longPressHint, child:
+              IconButton(
+                icon: Styles().images.getImage(_previousButtonAvailable ? 'chevron-left-bold' :  'chevron-left-gray', size: 12, excludeFromSemantics: true) ?? Container(),
+                padding: widget.iconPadding,
+                constraints: const BoxConstraints(), // make box constraints empty
+                style: const ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap), // And this sstyle
+                onPressed: _previousButtonAvailable ? _onTapPrevious : null,
+                onLongPress: _hasLongPress ? _onLongPress : null,
+              )
+            )
+          ),
+          Expanded(child: widget.centerWidget ?? Container()),
+          MergeSemantics(child:
+            Semantics(label: "Next Page", hint:  _iosHint, onLongPressHint: _longPressHint, child:
+              IconButton(
+                icon: Styles().images.getImage(_nextButtonAvailable ? 'chevron-right-bold' :  'chevron-right-gray', size: 12, excludeFromSemantics: true) ?? Container(),
+                padding: widget.iconPadding,
+                constraints: const BoxConstraints(), // make box constraints empty
+                style: const ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap), // And this sstyle
+                onPressed:_nextButtonAvailable? _onTapNext : null,
+                onLongPress: _hasLongPress ? _onLongPress : null,
+              )
             )
           )
-        ),
-        Expanded(child: widget.centerWidget ?? Container()),
-        MergeSemantics(child:
-          Semantics(label: "Next Page", hint:  _iosHint, onLongPressHint: _longPressHint, child:
-            IconButton(
-              icon: Styles().images.getImage(_nextButtonAvailable ? 'chevron-right-bold' :  'chevron-right-gray', size: 12, excludeFromSemantics: true) ?? Container(),
-              padding: widget.iconPadding,
-              constraints: const BoxConstraints(), // make box constraints empty
-              style: const ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap), // And this sstyle
-              onPressed:_nextButtonAvailable? _onTapNext : null,
-              onLongPress: _hasLongPress ? _onLongPress : null,
-            )
-          )
-        )
-      ],),
+        ],),
+      ),
     );
   }
 
