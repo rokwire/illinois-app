@@ -36,7 +36,7 @@ class HomeSafeWalkRequestWidget extends StatelessWidget {
   }
 
   Widget _contentWidget(BuildContext context) =>
-    Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+    Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
       SafetySafeWalkRequestCard(
         backgroundColor: Styles().colors.white,
         borderRadius: BorderRadius.all(Radius.circular(6)),

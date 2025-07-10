@@ -19,7 +19,6 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/app_notification.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -294,7 +293,7 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
 // HomeFavoriteWidget
 
 class HomeFavoriteWidget extends StatefulWidget {
-  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 16);
+  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 24);
 
   final String? title;
   final Widget? child;
@@ -435,7 +434,7 @@ class HomeCardWidget extends StatelessWidget {
 
   HomeCardWidget({super.key, this.title, this.child,
     this.padding = const EdgeInsets.all(12),
-    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
     this.onClose,
   });
 
@@ -779,7 +778,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
 
   HomeMessageHtmlCard({Key? key,
     this.title, this.message,
-    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 24),
     this.padding = const EdgeInsets.all(12),
     this.linkColor, this.onTapLink
   }) : super(key: key);
@@ -984,7 +983,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
         contentList.add(Padding(padding: EdgeInsets.only(bottom: contentInnerSpacing), child: widgetFromCode(code) ?? Container()));
       }
 
-      return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: max(contentSpacing - contentInnerSpacing, 0), ), child:
+      return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: contentSpacing + 2, ), child:
         Column(children: contentList,),
       );
     }
@@ -1089,63 +1088,66 @@ class HomeBrowseLinkButton extends LinkButton {
 }
 
 ///////////////////////////////
-// HomeFavoriteWidgetSplitter
+// HomeFavoriteWidgetWrapper
 
-class HomeFavoriteWidgetSplitter extends StatefulWidget {
-  final Key? favWidgetKey;
+class HomeFavoriteWidgetWrapper extends StatefulWidget {
+  final Widget child;
 
-  HomeFavoriteWidgetSplitter({super.key, this.favWidgetKey});
+  HomeFavoriteWidgetWrapper({super.key, required this.child});
 
   @override
-  State<StatefulWidget> createState() => _HomeFavoriteWidgetSplitterState();
+  State<StatefulWidget> createState() => _HomeFavoriteWidgetWrapperState();
 }
 
-class _HomeFavoriteWidgetSplitterState extends State<HomeFavoriteWidgetSplitter> with NotificationsListener {
+class _HomeFavoriteWidgetWrapperState extends State<HomeFavoriteWidgetWrapper> {
 
-  late bool _isVisible;
+  late bool _isSplitterVisible = true;
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [
-      AppNotification.notify,
-    ]);
-    _isVisible = _getVisible();
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+      _updateSplitterVisibility()
+    );
   }
 
   @override
-  void dispose() {
-    NotificationService().unsubscribe(this);
-    super.dispose();
+  Widget build(BuildContext context) => _isSplitterVisible ? Column(children: [
+    _childNotificationListener,
+    _splitter
+  ],) : _childNotificationListener;
+
+  Widget get _childNotificationListener =>
+    NotificationListener<Notification>(
+      onNotification: _onChildNotification,
+      child: widget.child
+    );
+
+  Widget get _splitter =>
+    Container(height: 1, color: Styles().colors.disabledTextColor);
+
+  bool _onChildNotification(Notification notification) {
+    debugPrint("HomeFavoriteWidgetWrapper: handled ${notification.runtimeType.toString()}");
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+      _updateSplitterVisibility()
+    );
+    return false;
   }
 
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == AppNotification.notify) {
-      _updateVisible();
-    }
-  }
-
-
-  bool _getVisible() {
-    final GlobalKey? globalKey = JsonUtils.cast(widget.favWidgetKey);
+  bool _getSplitterVisibility() {
+    final GlobalKey? globalKey = JsonUtils.cast(widget.child.key);
     final RenderBox? renderBox = JsonUtils.cast(globalKey?.currentContext?.findRenderObject());
     return (renderBox != null) && renderBox.hasSize && renderBox.size.height.isNotEmpty;
   }
 
-  void _updateVisible() {
-    bool isVisible = _getVisible();
-    if ((_isVisible != isVisible) && mounted) {
+  void _updateSplitterVisibility() {
+    bool isSplitterVisible = _getSplitterVisibility();
+    if ((_isSplitterVisible != isSplitterVisible) && mounted) {
       setState(() {
-        _isVisible = isVisible;
+        _isSplitterVisible = isSplitterVisible;
       });
     }
   }
 
-  @override
-  Widget build(BuildContext context) => Visibility(visible: _isVisible, child:
-    Container(height: 1, color: Styles().colors.disabledTextColor,)
-  );
+
 }
-
-

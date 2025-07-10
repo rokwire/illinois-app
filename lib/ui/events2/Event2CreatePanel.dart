@@ -504,6 +504,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   List<Group>? _eventGroups;
   Set<String>? _initialGroupIds;
+  Set<String>? _selectedGroupIds;
   bool _loadingEventGroups = false;
 
   // List<Event2PersonIdentifier>? _initialAdmins;
@@ -2302,10 +2303,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Navigator.push<List<Group>>(context, CupertinoPageRoute(builder: (context) => Event2SetupGroups(selection: _eventGroups ?? <Group>[]))).then((List<Group>? selection) {
       if (selection != null) {
         setStateIfMounted(() {
+          _selectedGroupIds = Group.listToSetIds(selection);
           _eventGroups = selection;
-          if (CollectionUtils.isNotEmpty(_eventGroups) && (_visibility == _Event2Visibility.registered_user)) {
+          if (CollectionUtils.isNotEmpty(_selectedGroupIds) && (_visibility == _Event2Visibility.registered_user)) {
             _visibility = _Event2Visibility.group_member;
-          } else if (CollectionUtils.isEmpty(_eventGroups) && (_visibility == _Event2Visibility.group_member)) {
+          } else if (CollectionUtils.isEmpty(_selectedGroupIds) && (_visibility == _Event2Visibility.group_member)) {
             _visibility = _Event2Visibility.registered_user;
           }
         });
@@ -2317,15 +2319,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     String? eventId = widget.event?.id;
     if (eventId != null) {
       _loadingEventGroups = true;
+      _initialGroupIds = _selectedGroupIds = widget.event!.groupIds;
       Groups().loadGroupsByIds(groupIds: widget.event!.groupIds).then((List<Group>? groups) {
           setStateIfMounted(() {
             _loadingEventGroups = false;
             _eventGroups = groups;
-            _initialGroupIds = Group.listToSetIds(_eventGroups) ?? <String>{};
           });
       });
     }
     else {
+      _initialGroupIds = _selectedGroupIds = Group.listToSetIds(widget.targetGroups);
       _eventGroups = widget.targetGroups;
     }
   }
@@ -2903,7 +2906,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   bool get _private => (_visibility != _Event2Visibility.public);
 
-  bool get _isGroupEvent => CollectionUtils.isNotEmpty(_eventGroups);
+  bool get _isGroupEvent => CollectionUtils.isNotEmpty(_selectedGroupIds);
 
   bool get _hasSurvey => (_survey != null) || (_surveyDetails?.isNotEmpty ?? false);
 
@@ -3031,7 +3034,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         (widget.event?.surveyDetails != _surveyDetails) ||
         (widget.survey != _survey) ||
 
-        !DeepCollectionEquality().equals(Group.listToSetIds(_eventGroups) ?? <String>{}, _initialGroupIds ?? <String>{}) ||
+        !DeepCollectionEquality().equals(_selectedGroupIds ?? <String>{}, _initialGroupIds ?? <String>{}) ||
 
         (widget.event?.sponsor != _sponsor) ||
         (widget.event?.speaker != _speaker) ||
@@ -3051,7 +3054,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   Event2 _createEventFromData({DateTime? recurringStartDateUtc, DateTime? recurringEndDateUtc}) {
-    List<String>? publishedGroupIds = _eventGroups?.map((group) => group.id!).toList();
+    List<String>? publishedGroupIds = _selectedGroupIds?.toList();
     Event2ExternalAdmins? externalAdmins = ((_selectedAdminGroupIds != null) && (_selectedAdminGroupIds?.isNotEmpty == true)) ? Event2ExternalAdmins(groupIds: _selectedAdminGroupIds) : null;
     Event2AuthorizationContext? authorizationContext;
     Event2Context? event2Context;

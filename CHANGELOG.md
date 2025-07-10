@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Redesigned divider lines in-between Favorites widgets, polish spacing between widgets and splitters [#5271](https://github.com/rokwire/illinois-app/issues/5271).
+### Fixed
+- Prevent groups selection when modifying event [#4696](https://github.com/rokwire/illinois-app/issues/4696).
+
 ## [7.2.8] - 2025-07-09
 ### Changed
 - Upgrade dart sdk [#5273](https://github.com/rokwire/illinois-app/issues/5273).
