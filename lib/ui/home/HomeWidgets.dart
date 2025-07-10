@@ -260,7 +260,7 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
 // HomeFavoriteWidget
 
 class HomeFavoriteWidget extends StatefulWidget {
-  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 16);
+  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 24);
 
   final String? title;
   final Widget? child;
@@ -401,7 +401,7 @@ class HomeCardWidget extends StatelessWidget {
 
   HomeCardWidget({super.key, this.title, this.child,
     this.padding = const EdgeInsets.all(12),
-    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
     this.onClose,
   });
 
@@ -745,7 +745,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
 
   HomeMessageHtmlCard({Key? key,
     this.title, this.message,
-    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 24),
     this.padding = const EdgeInsets.all(12),
     this.linkColor, this.onTapLink
   }) : super(key: key);
@@ -950,7 +950,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
         contentList.add(Padding(padding: EdgeInsets.only(bottom: contentInnerSpacing), child: widgetFromCode(code) ?? Container()));
       }
 
-      return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: max(contentSpacing - contentInnerSpacing, 0), ), child:
+      return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: contentSpacing + 2, ), child:
         Column(children: contentList,),
       );
     }
