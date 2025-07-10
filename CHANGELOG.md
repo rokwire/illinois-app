@@ -6,7 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Redesigned divider lines in-between Favorites widgets, polish spacoing between widgets and splitters [#5271](https://github.com/rokwire/illinois-app/issues/5271).
+- Redesigned divider lines in-between Favorites widgets, polish spacing between widgets and splitters [#5271](https://github.com/rokwire/illinois-app/issues/5271).
+### Fixed
+- Prevent groups selection when modifying event [#4696](https://github.com/rokwire/illinois-app/issues/4696).
 
 ## [7.2.8] - 2025-07-09
 ### Changed
