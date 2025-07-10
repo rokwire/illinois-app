@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.2.9] - 2025-07-10
 ### Changed
 - Redesigned divider lines in-between Favorites widgets, polish spacing between widgets and splitters [#5271](https://github.com/rokwire/illinois-app/issues/5271).
 ### Fixed
