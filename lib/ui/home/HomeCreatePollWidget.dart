@@ -68,7 +68,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> with Notifi
     return Visibility(visible: _visible, child:
         HomeFavoriteWidget(favoriteId: widget.favoriteId,
           title: Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"),
-          childPadding: EdgeInsets.symmetric(horizontal: 16),
+          childPadding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
           child: _buildContent(),
       ));
   }
