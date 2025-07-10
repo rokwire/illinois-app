@@ -19,7 +19,6 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/app_notification.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -1056,63 +1055,66 @@ class HomeBrowseLinkButton extends LinkButton {
 }
 
 ///////////////////////////////
-// HomeFavoriteWidgetSplitter
+// HomeFavoriteWidgetWrapper
 
-class HomeFavoriteWidgetSplitter extends StatefulWidget {
-  final Key? favWidgetKey;
+class HomeFavoriteWidgetWrapper extends StatefulWidget {
+  final Widget child;
 
-  HomeFavoriteWidgetSplitter({super.key, this.favWidgetKey});
+  HomeFavoriteWidgetWrapper({super.key, required this.child});
 
   @override
-  State<StatefulWidget> createState() => _HomeFavoriteWidgetSplitterState();
+  State<StatefulWidget> createState() => _HomeFavoriteWidgetWrapperState();
 }
 
-class _HomeFavoriteWidgetSplitterState extends State<HomeFavoriteWidgetSplitter> with NotificationsListener {
+class _HomeFavoriteWidgetWrapperState extends State<HomeFavoriteWidgetWrapper> {
 
-  late bool _isVisible;
+  late bool _isSplitterVisible = true;
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [
-      AppNotification.notify,
-    ]);
-    _isVisible = _getVisible();
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+      _updateSplitterVisibility()
+    );
   }
 
   @override
-  void dispose() {
-    NotificationService().unsubscribe(this);
-    super.dispose();
+  Widget build(BuildContext context) => _isSplitterVisible ? Column(children: [
+    _childNotificationListener,
+    _splitter
+  ],) : _childNotificationListener;
+
+  Widget get _childNotificationListener =>
+    NotificationListener<Notification>(
+      onNotification: _onChildNotification,
+      child: widget.child
+    );
+
+  Widget get _splitter =>
+    Container(height: 1, color: Styles().colors.disabledTextColor);
+
+  bool _onChildNotification(Notification notification) {
+    debugPrint("HomeFavoriteWidgetWrapper: handled ${notification.runtimeType.toString()}");
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+      _updateSplitterVisibility()
+    );
+    return false;
   }
 
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == AppNotification.notify) {
-      _updateVisible();
-    }
-  }
-
-
-  bool _getVisible() {
-    final GlobalKey? globalKey = JsonUtils.cast(widget.favWidgetKey);
+  bool _getSplitterVisibility() {
+    final GlobalKey? globalKey = JsonUtils.cast(widget.child.key);
     final RenderBox? renderBox = JsonUtils.cast(globalKey?.currentContext?.findRenderObject());
     return (renderBox != null) && renderBox.hasSize && renderBox.size.height.isNotEmpty;
   }
 
-  void _updateVisible() {
-    bool isVisible = _getVisible();
-    if ((_isVisible != isVisible) && mounted) {
+  void _updateSplitterVisibility() {
+    bool isSplitterVisible = _getSplitterVisibility();
+    if ((_isSplitterVisible != isSplitterVisible) && mounted) {
       setState(() {
-        _isVisible = isVisible;
+        _isSplitterVisible = isSplitterVisible;
       });
     }
   }
 
-  @override
-  Widget build(BuildContext context) => Visibility(visible: _isVisible, child:
-    Container(height: 1, color: Styles().colors.disabledTextColor,)
-  );
+
 }
-
-
