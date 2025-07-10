@@ -24,6 +24,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWelcomeMessageWidget.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -165,12 +166,21 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
   @override
   Widget build(BuildContext context) {
     List<Widget> systemWidgets = _buildWidgetsFromCodes(_systemCodes, availableCodes: widget.availableSystemCodes);
-    List<Widget> favoriteWidget = _buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes);
+    List<Widget> favoriteWidgets = _buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes);
+
+    // Remove the last added splitter widget
+    if (favoriteWidgets.isNotEmpty) {
+      favoriteWidgets.removeLast();
+    }
+    else if (systemWidgets.isNotEmpty) {
+      systemWidgets.removeLast();
+    }
+
     return Column(children: <Widget>[
-      if (systemWidgets.isNotEmpty)
-        Padding(padding: EdgeInsets.only(top: 8)),
+      //if (systemWidgets.isNotEmpty)
+      //  Padding(padding: EdgeInsets.only(top: 8)),
       ...systemWidgets,
-      ...favoriteWidget,
+      ...favoriteWidgets,
     ],);
   }
 
@@ -182,6 +192,7 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
           Widget? widget = _widgetFromCode(code);
           if (widget is Widget) {
             widgets.add(widget);
+            widgets.add(HomeFavoriteWidgetSplitter(favWidgetKey: widget.key));
           }
         }
       }
@@ -194,7 +205,7 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
       return HomeToutWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController, contentType: HomeContentType.favorites,);
     }
     else if (code == 'emergency') {
-      return FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: widget.updateController);
+      return FlexContent(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController, contentKey: code);
     }
     else if (code == 'voter_registration') {
       return HomeVoterRegistrationWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);

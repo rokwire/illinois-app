@@ -531,7 +531,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
   }
 
   Widget _buildEmpty() {
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
       Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         padding: EdgeInsets.all(16),
         child:  HtmlWidget(

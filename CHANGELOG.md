@@ -5,10 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Fixed
-- WEB: Fix loading images in Big 10 Athletics news [#5240](https://github.com/rokwire/illinois-app/issues/5240).
+## [7.2.8] - 2025-07-09
 ### Changed
 - Upgrade dart sdk [#5273](https://github.com/rokwire/illinois-app/issues/5273).
+### Added
+- Add divider lines in-between Favorites widgets [#5271](https://github.com/rokwire/illinois-app/issues/5271).
+### Fixed
+- WEB: Fix loading images in Big 10 Athletics news [#5240](https://github.com/rokwire/illinois-app/issues/5240).
 
 ## [7.2.7] - 2025-07-03
 ### Added
