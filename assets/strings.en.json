@@ -649,8 +649,7 @@
 
     "panel.onboarding.roles.label.title":"Who Are You?",
     "panel.onboarding.roles.label.title.hint":"Header 1",
-    "panel.onboarding.roles.label.description":"Please check all that apply to create a personalized experience for you",
-    "panel.onboarding.roles.label.description2": "I am a...",
+    "panel.onboarding.roles.label.description":"Check all that apply to personalize your app experience.",
     "panel.onboarding.roles.button.student.title":"University Student",
     "panel.onboarding.roles.button.student.hint":"",
     "panel.onboarding.roles.button.fan.title":"Athletics Fan",
@@ -764,8 +763,7 @@
     
     "panel.onboarding2.roles.label.title": "Who Are You?",
     "panel.onboarding2.roles.label.title.hint": "Header 1",
-    "panel.onboarding2.roles.label.description": "Please check all that apply to create a personalized experience for you",
-    "panel.onboarding2.roles.label.description2": "I am a...",
+    "panel.onboarding2.roles.regular.label": "Check all that apply to personalize your app experience.",
     "panel.onboarding2.roles.button.student.title": "University Student",
     "panel.onboarding2.roles.button.student.hint": "",
     "panel.onboarding2.roles.button.fan.title": "Athletics Fan",
@@ -782,6 +780,9 @@
     "panel.onboarding2.roles.button.parent.hint": "",
     "panel.onboarding2.roles.button.gies.title": "GIES Student",
     "panel.onboarding2.roles.button.gies.hint": "",
+    "panel.onboarding2.roles.button.prospective.label": "Are you considering attending the Univeristy of Illinois? Choose this option:",
+    "panel.onboarding2.roles.button.prospective.title": "Prospective Student",
+    "panel.onboarding2.roles.button.prospective.hint": "",
     "panel.onboarding2.roles.button.continue.title": "Continue",
     "panel.onboarding2.roles.button.continue.hint": "",
 

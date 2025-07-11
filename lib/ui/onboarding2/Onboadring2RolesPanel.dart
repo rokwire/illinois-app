@@ -85,24 +85,14 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
               ],),
             ),
 
-            Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
-              Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-                style: Styles().textStyles.getTextStyle("panel.onboarding2.roles.description"),
-                textAlign: TextAlign.start,
-              ),
-            ),
-
-            Padding(padding: EdgeInsets.only(bottom:  10, left: 20, right: 20), child:
-              Text(Localization().getStringEx('panel.onboarding2.roles.label.description2', 'I am a...'),
-                style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"),
-                textAlign: TextAlign.start,
-              ),
-            ),
-
             Expanded(child:
               SingleChildScrollView(child:
                 Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
-                  RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, textScaler: MediaQuery.of(context).textScaler,)
+                  RoleGridButton.gridFromFlexUI(
+                    selectedRoles: _selectedRoles,
+                    onTap: _onRoleGridButton,
+                    textScaler: MediaQuery.of(context).textScaler,
+                  )
                 ),
               ),
             ),

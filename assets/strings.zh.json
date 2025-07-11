@@ -646,8 +646,7 @@
 
 	"panel.onboarding.roles.label.title":"你是",
 	"panel.onboarding.roles.label.title.hint":"标题1",
-	"panel.onboarding.roles.label.description":"请选取所有适用的选项以为您创建个性化体验。",
-	"panel.onboarding.roles.label.description2": "我是…",
+	"panel.onboarding.roles.label.description":"Check all that apply to personalize your app experience.",
 	"panel.onboarding.roles.button.student.title":"大学生",
 	"panel.onboarding.roles.button.student.hint":"",
 	"panel.onboarding.roles.button.fan.title":"田径迷",
@@ -761,8 +760,7 @@
 
 	"panel.onboarding2.roles.label.title": "您的身分？",
 	"panel.onboarding2.roles.label.title.hint": "Header 1",
-	"panel.onboarding2.roles.label.description": "请选取所有适用的选项以为您创建个性化体验。",
-	"panel.onboarding2.roles.label.description2": "我是…",
+	"panel.onboarding2.roles.regular.label": "Check all that apply to personalize your app experience.",
 	"panel.onboarding2.roles.button.student.title": "大学生",
 	"panel.onboarding2.roles.button.student.hint": "",
 	"panel.onboarding2.roles.button.fan.title": "运动迷",
@@ -779,6 +777,9 @@
 	"panel.onboarding2.roles.button.parent.hint": "",
 	"panel.onboarding2.roles.button.gies.title": "GIES 学生",
 	"panel.onboarding2.roles.button.gies.hint": "",
+	"panel.onboarding2.roles.button.prospective.label": "Are you considering attending the Univeristy of Illinois? Choose this option:",
+	"panel.onboarding2.roles.button.prospective.title": "Prospective Student",
+	"panel.onboarding2.roles.button.prospective.hint": "",
 	"panel.onboarding2.roles.button.continue.title": "继续",
 	"panel.onboarding2.roles.button.continue.hint": "",
 
