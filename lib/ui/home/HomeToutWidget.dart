@@ -25,7 +25,7 @@ class HomeToutWidget extends StatefulWidget {
   final StreamController<String>? updateController;
 
   static double triangleHeight = 40;
-  static double imageAspectRatio = (1080.0 / 810.0);
+  static double imageAspectRatio = (1290.0 / 750.0);
 
   HomeToutWidget({Key? key, this.favoriteId, this.contentType, this.updateController});
 
@@ -189,7 +189,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
 
   void _updateContent({DayPart? dayPart}) {
     _dayPart = dayPart ?? DateTimeUtils.getDayPart();
-    Storage().homeToutImageUrl = _imageUrl = Content().randomImageUrl('home.tout.${dayPartToString(_dayPart)}');
+    Storage().homeToutImageUrl = _imageUrl = Content().randomImageUrl('home.tout_1290x750.${dayPartToString(_dayPart)}');
     Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).millisecondsSinceEpoch;
   }
 
