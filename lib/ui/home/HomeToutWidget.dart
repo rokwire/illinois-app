@@ -24,8 +24,8 @@ class HomeToutWidget extends StatefulWidget {
   final HomeContentType? contentType;
   final StreamController<String>? updateController;
 
-  static double triangleHeight = 40;
   static double imageAspectRatio = (1290.0 / 750.0);
+  static double triangleHeight(BuildContext context) => context.mounted ? (MediaQuery.of(context).size.width / imageAspectRatio * 0.16) : 0; // ~ 40;
 
   HomeToutWidget({Key? key, this.favoriteId, this.contentType, this.updateController});
 
@@ -142,7 +142,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
     ]);
   }
 
-  double get _triangleHeight => HomeToutWidget.triangleHeight;
+  double get _triangleHeight => HomeToutWidget.triangleHeight(context);
   double get _imageAspectRatio => HomeToutWidget.imageAspectRatio;
 
   String? get _title1 {
