@@ -88,10 +88,9 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
             Expanded(child:
               SingleChildScrollView(child:
                 Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
-                  RoleGridButton.gridFromFlexUI(
+                  RoleGridButtonGrid.fromFlexUI(
                     selectedRoles: _selectedRoles,
                     onTap: _onRoleGridButton,
-                    textScaler: MediaQuery.of(context).textScaler,
                   )
                 ),
               ),
@@ -116,15 +115,16 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
       ),
     );
 
-  void _onRoleGridButton(RoleGridButton button) {
-      Analytics().logSelect(target: "Role: ${button.role}");
-      setState(() {
-        if (_selectedRoles.contains(button.role) == true) {
-          _selectedRoles.remove(button.role);
-        } else {
-          _selectedRoles.add(button.role);
-        }
-      });
+  void _onRoleGridButton(UserRole role) {
+    Analytics().logSelect(target: "Role: ${role}");
+    setState(() {
+      if (_selectedRoles.contains(role)) {
+        _selectedRoles.remove(role);
+      } else {
+        _selectedRoles.add(role);
+      }
+    });
+    AppSemantics.announceCheckBoxStateChange(context, _selectedRoles.contains(role), role.displayTitle);
   }
 
   void _onTapBack() {

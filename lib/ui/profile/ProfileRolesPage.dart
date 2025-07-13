@@ -20,7 +20,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -36,13 +35,14 @@ class ProfileRolesPage extends StatefulWidget {
 }
 
 class _ProfileRolesPageState extends State<ProfileRolesPage> {
-  Set<UserRole>? _selectedRoles;
 
+  late Set<UserRole> _selectedRoles;
   Timer? _saveRolesTimer;
 
   @override
   void initState() {
-    _selectedRoles = (Auth2().prefs?.roles != null) ? Set.from(Auth2().prefs!.roles!) : Set<UserRole>();
+    Set<UserRole>? prefsRoles = Auth2().prefs?.roles;
+    _selectedRoles = (prefsRoles != null) ? Set.from (prefsRoles) : Set<UserRole>();
     super.initState();
   }
 
@@ -61,11 +61,15 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
   Widget build(BuildContext context) {
     return Container(color: Styles().colors.background, padding: widget.margin,  child:
       Padding(padding: EdgeInsets.only(left: 4, bottom: 16), child:
-        RoleGridButton.gridFromFlexUI(
+        RoleGridButtonGrid.fromFlexUI(
+          selectedRoles: _selectedRoles,
+          onTap: _onRoleGridButton,
+        ),
+        /* RoleGridButton.gridFromFlexUI(
           selectedRoles: _selectedRoles,
           onTap: _onRoleGridButton,
           textScaler: MediaQuery.of(context).textScaler,
-        ),
+        ), */
       ),
     );
   }
@@ -88,28 +92,17 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
          );
   }*/
 
-  void _onRoleGridButton(RoleGridButton? button) {
-
-    if (button != null) {
-
-      UserRole? role = (button.data is UserRole) ? (button.data as UserRole) : null;
-
-      Analytics().logSelect(target: "Role: " + role.toString());
-
-      if (role != null) {
-        if (_selectedRoles!.contains(role)) {
-          _selectedRoles!.remove(role);
-        } else {
-          _selectedRoles!.add(role);
-        }
+  void _onRoleGridButton(UserRole role) {
+    Analytics().logSelect(target: "Role: ${role}");
+    setState(() {
+      if (_selectedRoles.contains(role) == true) {
+        _selectedRoles.remove(role);
+      } else {
+        _selectedRoles.add(role);
       }
-
-      AppSemantics.announceCheckBoxStateChange(context, _selectedRoles!.contains(role), button.title);
-
-      setState(() {});
-
-      _startSaveRolesTimer();
-    }
+    });
+    AppSemantics.announceCheckBoxStateChange(context, _selectedRoles.contains(role), role.displayTitle);
+    _startSaveRolesTimer();
   }
 
   /*void _onBack() {

@@ -16,115 +16,154 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum RoleGridButtonUsage { regular, standalone }
 
-class RoleGridButton extends TileToggleButton {
-  static final double  minimumTitleRowsCount = 2;
-  static final double  fontSizeHeightFactor = 1.2;
-
-  final TextScaler textScaler;
+class RoleGridButton extends StatelessWidget {
+  final UserRole userRole;
+  final String? title;
+  final String? hint;
+  final String? iconKey;
+  final TextStyle? textStyle;
+  final double? sortOrder;
+  final bool selected;
+  final double aspectRatio;
   final RoleGridButtonUsage usage;
+  final EdgeInsetsGeometry margin;
+  final EdgeInsetsGeometry padding;
+  final void Function(UserRole)? onTap;
 
-  RoleGridButton({
-    required super.title,
-    required super.hint,
-    required super.iconKey,
-    required super.selectedIconKey,
-    required UserRole role,
-    required super.selected,
-    super.selectedTitleColor,
-    super.selectedBackgroundColor,
-    super.sortOrder,
-    super.contentSpacing = 18,
-    super.margin = const EdgeInsets.only(top: 8, right: 8),
-    super.padding = const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-    this.textScaler = TextScaler.noScaling,
+  RoleGridButton(this.userRole, {
+    this.title, this.hint, this.iconKey,
+    this.textStyle, this.sortOrder,
+    this.selected = false,
+    this.aspectRatio = 1,
     this.usage = RoleGridButtonUsage.regular,
-    void Function(RoleGridButton)? onTap,
-  }) : super(
-    selectionMarkerKey: 'check-circle-filled',
-    iconFit: BoxFit.fitWidth,
-    iconWidth: 38,
-    semanticsValue: "${Localization().getStringEx("toggle_button.status.unchecked", "unchecked",)}, ${Localization().getStringEx("toggle_button.status.checkbox", "checkbox")}",
-    selectedSemanticsValue: "${Localization().getStringEx("toggle_button.status.checked", "checked",)}, ${Localization().getStringEx("toggle_button.status.checkbox", "checkbox")}",
-    data: role,
-    onTap: (BuildContext context, TileToggleButton button) => _handleTap(context, button, onTap),
-  );
+    this.margin = const EdgeInsets.only(top: 4, right: 4),
+    this.padding = const EdgeInsets.symmetric(horizontal: 24), // TMP: 16
+    this.onTap,
+  });
 
   factory RoleGridButton.regular(UserRole role, {
     bool? selected,
     double? sortOrder,
-    TextScaler? textScaler,
-    void Function(RoleGridButton)? onTap
-  }) => RoleGridButton(
-      title: role.displayTitle ?? '',
-      hint: role.displayHint ?? '',
-      iconKey: role.displayIconKey ?? '',
-      selectedIconKey: role.displayIconKey ?? '',
-      role: role,
-      selected: selected == true,
-      sortOrder: sortOrder,
-      textScaler: textScaler ?? TextScaler.noScaling,
-      usage: RoleGridButtonUsage.regular,
-      onTap: onTap,
+    void Function(UserRole)? onTap,
+  }) => RoleGridButton(role,
+    title: role.displayTitle,
+    hint: role.displayHint,
+    iconKey: role.displayIconKey,
+    textStyle: Styles().textStyles.getTextStyleEx('widget.button.title.medium.fat', fontHeight: 1.10),
+    aspectRatio: 300 / 200,
+    selected: selected == true,
+    sortOrder: sortOrder,
+    usage: RoleGridButtonUsage.regular,
+    onTap: onTap,
   );
 
   factory RoleGridButton.standalone(UserRole role, {
     bool? selected,
     double? sortOrder,
-    TextScaler? textScaler,
-    void Function(RoleGridButton)? onTap
-  }) => RoleGridButton(
-      title: role.displayTitle ?? '',
-      hint: role.displayHint ?? '',
-      iconKey: role.displayIconKey ?? '',
-      selectedIconKey: role.displayIconKey ?? '',
-      role: role,
-      selected: selected == true,
-      sortOrder: sortOrder,
-      textScaler: textScaler ?? TextScaler.noScaling,
-      usage: RoleGridButtonUsage.standalone,
-      contentSpacing: 4,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      onTap: onTap,
+    void Function(UserRole)? onTap,
+  }) => RoleGridButton(role,
+    title: role.displayTitle,
+    hint: role.displayHint,
+    iconKey: role.displayIconKey,
+    textStyle: Styles().textStyles.getTextStyleEx('widget.button.title.medium.fat', fontHeight: 1.10),
+    aspectRatio: 800 / 200,
+    selected: selected == true,
+    sortOrder: sortOrder,
+    usage: RoleGridButtonUsage.standalone,
+    onTap: onTap,
   );
 
+  @override
+  Widget build(BuildContext context) =>
+    GestureDetector(onTap: _onTap, child:
+      Semantics(label: title, excludeSemantics: true, sortKey: _semanticsSortKey, value: _semanticsValue, child:
+        selected ? Stack(children: [
+          _contentWidget,
+          Positioned.fill(child:
+            Align(alignment: Alignment.topRight, child:
+              _selectionMarker
+            )
+          )
+        ],) : _contentWidget
+     )
+    );
 
-  @protected
-  Widget get defaultIconWidget {
+  Widget get _contentWidget => Padding(padding: margin, child:
+    Padding(padding: margin, child:
+      AspectRatio(aspectRatio: aspectRatio, child:
+        Container(decoration: _contentFrame, child:
+          Padding(padding: padding, child:
+            Column(children: [
+              Expanded(flex: _flex[0], child: Container()),
+              Expanded(flex: _flex[1], child:
+                AspectRatio(aspectRatio: 1, child:
+                  Styles().images.getImage(iconKey, fit: BoxFit.contain) ?? Container(),
+                )
+              ),
+              Expanded(flex: _flex[2], child: Container()),
+              Expanded(flex: _flex[3], child:
+                Text(title ?? '', style: textStyle, textAlign: TextAlign.center,)
+              ),
+              Expanded(flex: _flex[4], child: Container()),
+            ],),
+          ),
+        ),
+      )
+    ),
+  );
+
+  List<int> get _flex {
     switch (usage) {
-      case RoleGridButtonUsage.regular: return Container(constraints: BoxConstraints(minHeight: 40), child:
-        super.defaultIconWidget
-      );
-      default: return super.defaultIconWidget;
+      case RoleGridButtonUsage.regular: return _regularFlex;
+      case RoleGridButtonUsage.standalone: return _standaloneFlex;
     }
   }
 
-  @protected
-  Widget get displayTitleWidget {
-    switch (usage) {
-      case RoleGridButtonUsage.regular: return Container(constraints: BoxConstraints(minHeight: _regularTitleMinHeight), child: super.displayTitleWidget);
-      default: return super.displayTitleWidget;
-    }
-  }
+  static const List<int> _regularFlex    = [15, 30, 10, 30, 15];
+  static const List<int> _standaloneFlex = [10, 50, 10, 30, 10];
 
-  double get _regularTitleMinHeight => textScaler.scale(minimumTitleRowsCount * titleFontSize * fontSizeHeightFactor) ;
-  UserRole get role => (data as UserRole);
+  Decoration get _contentFrame => BoxDecoration(
+      color: Styles().colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(
+        color: selected ? Styles().colors.fillColorPrimary : Styles().colors.white,
+        width: 2
+      ),
+      boxShadow: [
+        const BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))
+      ]
+  );
 
-  static Widget gridFromFlexUI({
+  Widget get _selectionMarker =>
+    Styles().images.getImage('check-circle-filled', excludeFromSemantics: true) ?? Container();
+
+  SemanticsSortKey? get _semanticsSortKey => (sortOrder != null) ? OrdinalSortKey(sortOrder ?? 0) : null;
+
+  String? get _semanticsValue => "$_semanticsStatus, $_semanticsControl";
+  String? get _semanticsStatus => selected ?
+    Localization().getStringEx("toggle_button.status.unchecked", "unchecked",) :
+    Localization().getStringEx("toggle_button.status.checked", "checked",);
+  String? get _semanticsControl =>
+    Localization().getStringEx("toggle_button.status.checkbox", "checkbox");
+
+  void _onTap() => onTap?.call(userRole);
+}
+
+extension RoleGridButtonGrid on RoleGridButton {
+
+  static Widget fromFlexUI({
     Set<UserRole>? selectedRoles,
-    Set<UserRole>? standaloneRoles,
     double gridSpacing = 5,
-    void Function(RoleGridButton)? onTap,
-    TextScaler? textScaler
+    void Function(UserRole)? onTap,
   }) {
     final int numberOfColumns = 2;
     final Widget hSpacer = Container(width: gridSpacing,);
@@ -139,7 +178,6 @@ class RoleGridButton extends TileToggleButton {
       RoleGridButton? button = (role != null) ? RoleGridButton.regular(role,
         selected: selectedRoles?.contains(role) == true,
         sortOrder: (rows.length * numberOfColumns + row.length + 1).toDouble(),
-        textScaler: textScaler,
         onTap: onTap
       ) : null;
 
@@ -182,7 +220,6 @@ class RoleGridButton extends TileToggleButton {
       RoleGridButton? button = (role != null) ? RoleGridButton.standalone(role,
         selected: selectedRoles?.contains(role) == true,
         sortOrder: (rows.length * numberOfColumns + row.length + 1).toDouble(),
-        textScaler: textScaler,
         onTap: onTap
       ) : null;
       if (button != null) {
@@ -204,16 +241,10 @@ class RoleGridButton extends TileToggleButton {
 
   static TextStyle? get _gridLabelTextStyle =>
     Styles().textStyles.getTextStyle("widget.item.small.thin");
-
-  static void _handleTap(BuildContext context, TileToggleButton button, Function(RoleGridButton)? tapCallback) {
-    AppSemantics.announceCheckBoxStateChange(context, !button.selected, button.title);
-    if ((tapCallback != null) && (button is RoleGridButton)) {
-      tapCallback(button);
-    }
-  }
 }
 
-extension _UserRoleUI on UserRole {
+
+extension UserRoleUI on UserRole {
 
   String? get displayTitle {
     switch (this) {
