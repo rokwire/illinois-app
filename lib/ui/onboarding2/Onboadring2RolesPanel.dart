@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -46,16 +48,14 @@ class Onboarding2RolesPanel extends StatefulWidget with Onboarding2Panel {
 }
 
 class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
-  Set<UserRole> _selectedRoles = <UserRole>{};
+  late LinkedHashSet<UserRole> _selectedRoles;
   bool get _allowNext => _selectedRoles.isNotEmpty;
   bool _onboardingProgress = false;
 
   @override
   void initState() {
-    Set<UserRole>? userRoles = Auth2().prefs?.roles;
-    if (userRoles != null) {
-      _selectedRoles = Set.from(userRoles);
-    }
+    Set<UserRole>? savedRoles = Auth2().prefs?.roles;
+    _selectedRoles = (savedRoles != null) ? LinkedHashSet<UserRole>.from(savedRoles) : LinkedHashSet<UserRole>();
     super.initState();
   }
 
@@ -117,14 +117,13 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
 
   void _onRoleGridButton(UserRole role) {
     Analytics().logSelect(target: "Role: ${role}");
+    int selectedCount = _selectedRoles.length;
     setState(() {
-      if (_selectedRoles.contains(role)) {
-        _selectedRoles.remove(role);
-      } else {
-        _selectedRoles.add(role);
-      }
+      UserRoleGroup.toggleSelection(_selectedRoles, role);
     });
-    AppSemantics.announceCheckBoxStateChange(context, _selectedRoles.contains(role), role.displayTitle);
+    if (selectedCount != _selectedRoles.length) {
+      AppSemantics.announceCheckBoxStateChange(context, _selectedRoles.contains(role), role.displayTitle);
+    }
   }
 
   void _onTapBack() {

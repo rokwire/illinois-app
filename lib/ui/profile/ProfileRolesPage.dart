@@ -16,6 +16,7 @@
 
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -36,13 +37,13 @@ class ProfileRolesPage extends StatefulWidget {
 
 class _ProfileRolesPageState extends State<ProfileRolesPage> {
 
-  late Set<UserRole> _selectedRoles;
+  late LinkedHashSet<UserRole> _selectedRoles;
   Timer? _saveRolesTimer;
 
   @override
   void initState() {
-    Set<UserRole>? prefsRoles = Auth2().prefs?.roles;
-    _selectedRoles = (prefsRoles != null) ? Set.from (prefsRoles) : Set<UserRole>();
+    Set<UserRole>? savedRoles = Auth2().prefs?.roles;
+    _selectedRoles = (savedRoles != null) ? LinkedHashSet<UserRole>.from(savedRoles) : LinkedHashSet<UserRole>();
     super.initState();
   }
 
@@ -94,15 +95,14 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
 
   void _onRoleGridButton(UserRole role) {
     Analytics().logSelect(target: "Role: ${role}");
+    int selectedCount = _selectedRoles.length;
     setState(() {
-      if (_selectedRoles.contains(role) == true) {
-        _selectedRoles.remove(role);
-      } else {
-        _selectedRoles.add(role);
-      }
+      UserRoleGroup.toggleSelection(_selectedRoles, role);
     });
-    AppSemantics.announceCheckBoxStateChange(context, _selectedRoles.contains(role), role.displayTitle);
-    _startSaveRolesTimer();
+    if (selectedCount != _selectedRoles.length) {
+      AppSemantics.announceCheckBoxStateChange(context, _selectedRoles.contains(role), role.displayTitle);
+      _startSaveRolesTimer();
+    }
   }
 
   /*void _onBack() {
