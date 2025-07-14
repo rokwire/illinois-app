@@ -252,7 +252,7 @@ extension UserRoleUI on UserRole {
       case UserRole.visitor: return Localization().getStringEx('panel.onboarding2.roles.button.visitor.title', 'Visitor');
       case UserRole.fan: return Localization().getStringEx('panel.onboarding2.roles.button.fan.title', 'Athletics Fan');
       case UserRole.employee: return Localization().getStringEx('panel.onboarding2.roles.button.employee.title', 'University Employee');
-      case UserRole.alumni: return Localization().getStringEx('panel.onboarding2.roles.button.alumni.title', 'Alumni');
+      case UserRole.alumni: return Localization().getStringEx('panel.onboarding2.roles.button.alumni.title', 'Alum');
       case UserRole.parent: return Localization().getStringEx('panel.onboarding2.roles.button.parent.title', 'Parent');
       case UserRole.gies: return Localization().getStringEx('panel.onboarding2.roles.button.gies.title', 'GIES Student');
       case UserRole.prospective: return Localization().getStringEx('panel.onboarding2.roles.button.prospective.title', 'Prospective Student');
