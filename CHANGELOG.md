@@ -5,6 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [7.2.10] - 2025-07-11
+### Changed
+- Updated Home tout images [#5275](https://github.com/rokwire/illinois-app/issues/5275).
+
+## [7.2.9] - 2025-07-10
+### Changed
+- Redesigned divider lines in-between Favorites widgets, polish spacing between widgets and splitters [#5271](https://github.com/rokwire/illinois-app/issues/5271).
+### Fixed
+- Prevent groups selection when modifying event [#4696](https://github.com/rokwire/illinois-app/issues/4696).
+
+## [7.2.8] - 2025-07-09
+### Changed
+- Upgrade dart sdk [#5273](https://github.com/rokwire/illinois-app/issues/5273).
+### Added
+- Add divider lines in-between Favorites widgets [#5271](https://github.com/rokwire/illinois-app/issues/5271).
+
 ## [7.2.7] - 2025-07-03
 ### Added
 - Group post text formatting UX [#5194](https://github.com/rokwire/illinois-app/issues/5194)

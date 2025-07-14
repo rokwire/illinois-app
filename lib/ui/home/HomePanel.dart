@@ -590,7 +590,7 @@ class _HomePanelState extends State<HomePanel> with NotificationsListener, Autom
 
   Widget get _contentWidget => _buildContentWidget(_contentType);
 
-  Widget get _topShaddow => Container(height: HomeToutWidget.triangleHeight, decoration: BoxDecoration(
+  Widget get _topShaddow => Container(height: HomeToutWidget.triangleHeight(context), decoration: BoxDecoration(
     // color: Styles().colors.fillColorPrimaryTransparent03,
     gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
       Styles().colors.fillColorPrimaryTransparent03,
@@ -618,7 +618,7 @@ class _HomePanelState extends State<HomePanel> with NotificationsListener, Autom
 
 // HomeDragAndDropHost
 
-abstract class HomeDragAndDropHost  {
+mixin HomeDragAndDropHost  {
   set isDragging(bool value);
   void onDragAndDrop({String? dragFavoriteId, String? dropFavoriteId, CrossAxisAlignment? dropAnchor});
   void onAccessibilityMove({String? dragFavoriteId, int? delta});

@@ -24,6 +24,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWelcomeMessageWidget.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -164,29 +165,30 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> systemWidgets = _buildWidgetsFromCodes(_systemCodes, availableCodes: widget.availableSystemCodes);
-    List<Widget> favoriteWidget = _buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes);
-    return Column(children: <Widget>[
-      if (systemWidgets.isNotEmpty)
-        Padding(padding: EdgeInsets.only(top: 8)),
-      ...systemWidgets,
-      ...favoriteWidget,
-    ],);
+    List<Widget> widgets = <Widget>[];
+    _buildWidgetsFromCodes(widgets, _systemCodes, availableCodes: widget.availableSystemCodes);
+    _buildWidgetsFromCodes(widgets, _favoriteCodes?.reversed, availableCodes: _availableCodes, processLastWidget: false);
+    return Column(children: widgets);
   }
 
-  List<Widget> _buildWidgetsFromCodes(Iterable<String>? codes, { Set<String>? availableCodes }) {
-    List<Widget> widgets = [];
+  void _buildWidgetsFromCodes(List<Widget> widgets, Iterable<String>? codes, { Set<String>? availableCodes, bool processLastWidget = true }) {
     if (codes != null) {
+      Widget? lastWidget;
       for (String code in codes) {
         if ((availableCodes == null) || availableCodes.contains(code)) {
           Widget? widget = _widgetFromCode(code);
           if (widget is Widget) {
-            widgets.add(widget);
+            if (lastWidget != null) {
+              widgets.add(HomeFavoriteWidgetWrapper(child: lastWidget,));
+            }
+            lastWidget = widget;
           }
         }
       }
+      if (lastWidget != null) {
+        widgets.add(processLastWidget ? HomeFavoriteWidgetWrapper(child: lastWidget,) : lastWidget);
+      }
     }
-    return widgets;
   }
 
   Widget? _widgetFromCode(String code,) {
@@ -194,7 +196,7 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
       return HomeToutWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController, contentType: HomeContentType.favorites,);
     }
     else if (code == 'emergency') {
-      return FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: widget.updateController);
+      return FlexContent(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController, contentKey: code);
     }
     else if (code == 'voter_registration') {
       return HomeVoterRegistrationWidget(key: _widgetKey(code), favoriteId: code, updateController: widget.updateController,);

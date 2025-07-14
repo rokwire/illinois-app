@@ -425,8 +425,6 @@ class PaymentTypeHelper {
         return 'payment-google-pay';
       case PaymentType.ApplePay:
         return 'payment-apple-pay';
-      default:
-        return null;
     }
   }
 

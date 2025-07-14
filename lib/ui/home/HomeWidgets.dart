@@ -260,7 +260,7 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
 // HomeFavoriteWidget
 
 class HomeFavoriteWidget extends StatefulWidget {
-  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 16);
+  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 24);
 
   final String? title;
   final Widget? child;
@@ -401,7 +401,7 @@ class HomeCardWidget extends StatelessWidget {
 
   HomeCardWidget({super.key, this.title, this.child,
     this.padding = const EdgeInsets.all(12),
-    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
     this.onClose,
   });
 
@@ -704,7 +704,7 @@ class HomeMessageCard extends StatelessWidget {
   HomeMessageCard({Key? key,
     this.title,
     this.message,
-    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 24),
   }) : super(key: key);
   
   @override
@@ -745,7 +745,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
 
   HomeMessageHtmlCard({Key? key,
     this.title, this.message,
-    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 24),
     this.padding = const EdgeInsets.all(12),
     this.linkColor, this.onTapLink
   }) : super(key: key);
@@ -950,7 +950,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
         contentList.add(Padding(padding: EdgeInsets.only(bottom: contentInnerSpacing), child: widgetFromCode(code) ?? Container()));
       }
 
-      return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: max(contentSpacing - contentInnerSpacing, 0), ), child:
+      return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: contentSpacing + 2, ), child:
         Column(children: contentList,),
       );
     }
@@ -1042,7 +1042,7 @@ class HomeBrowseLinkButton extends LinkButton {
     super.title,
     super.hint,
     super.onTap,
-    super.padding = const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+    super.padding = const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
     TextStyle? textStyle,
     super.textWidget,
   }) : super(
@@ -1052,4 +1052,69 @@ class HomeBrowseLinkButton extends LinkButton {
     textDecorationStyle: TextDecorationStyle.solid,
     textDecorationThickness: 1,
   );
+}
+
+///////////////////////////////
+// HomeFavoriteWidgetWrapper
+
+class HomeFavoriteWidgetWrapper extends StatefulWidget {
+  final Widget child;
+
+  HomeFavoriteWidgetWrapper({super.key, required this.child});
+
+  @override
+  State<StatefulWidget> createState() => _HomeFavoriteWidgetWrapperState();
+}
+
+class _HomeFavoriteWidgetWrapperState extends State<HomeFavoriteWidgetWrapper> {
+
+  late bool _isSplitterVisible = true;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+      _updateSplitterVisibility()
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => _isSplitterVisible ? Column(children: [
+    _childNotificationListener,
+    _splitter
+  ],) : _childNotificationListener;
+
+  Widget get _childNotificationListener =>
+    NotificationListener<Notification>(
+      onNotification: _onChildNotification,
+      child: widget.child
+    );
+
+  Widget get _splitter =>
+    Container(height: 1, color: Styles().colors.disabledTextColor);
+
+  bool _onChildNotification(Notification notification) {
+    debugPrint("HomeFavoriteWidgetWrapper: handled ${notification.runtimeType.toString()}");
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+      _updateSplitterVisibility()
+    );
+    return false;
+  }
+
+  bool _getSplitterVisibility() {
+    final GlobalKey? globalKey = JsonUtils.cast(widget.child.key);
+    final RenderBox? renderBox = JsonUtils.cast(globalKey?.currentContext?.findRenderObject());
+    return (renderBox != null) && renderBox.hasSize && renderBox.size.height.isNotEmpty;
+  }
+
+  void _updateSplitterVisibility() {
+    bool isSplitterVisible = _getSplitterVisibility();
+    if ((_isSplitterVisible != isSplitterVisible) && mounted) {
+      setState(() {
+        _isSplitterVisible = isSplitterVisible;
+      });
+    }
+  }
+
+
 }

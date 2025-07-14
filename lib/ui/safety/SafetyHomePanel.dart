@@ -193,6 +193,6 @@ String? _safetyContentTypeToDisplayString(SafetyContentType? contentType) {
   }
 }
 
-class SafetyHomeContentPage {
+mixin class SafetyHomeContentPage {
   Color get safetyPageBackgroundColor => Styles().colors.background;
 }

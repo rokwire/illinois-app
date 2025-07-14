@@ -16,7 +16,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
+class Assistant with Service, NotificationsListener implements ContentItemCategoryClient {
 
   static const String notifyFaqsContentChanged = "edu.illinois.rokwire.assistant.content.faqs.changed";
   static const String notifyProvidersChanged = "edu.illinois.rokwire.assistant.providers.changed";
