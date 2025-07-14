@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [7.2.10] - 2025-07-11
+### Changed
+- Updated Home tout images [#5275](https://github.com/rokwire/illinois-app/issues/5275).
 
 ## [7.2.9] - 2025-07-10
 ### Changed
