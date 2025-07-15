@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/localization.dart';
@@ -43,7 +40,7 @@ class _GBVResourceListPanelState extends State<GBVResourceListPanel> {
         }
       ).toList();
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        (resourceList?.title != '')
+        (resourceList.title != '')
         ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: (
           Text(resourceList.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"))
         ))
