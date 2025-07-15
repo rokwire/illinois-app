@@ -90,8 +90,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   LocationServicesStatus? _locationStatus;
   AssistantLocation? _currentLocation;
 
-  PageController? _eventsPageController;
-  PageController? _diningsPageController;
+  PageController? _structsPageController;
 
   late StreamSubscription _streamSubscription;
   bool _loading = false;
@@ -139,8 +138,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _streamSubscription.cancel();
     _inputFieldFocus.dispose();
     _negativeFeedbackFocusNode.dispose();
-    _eventsPageController?.dispose();
-    _diningsPageController?.dispose();
+    _structsPageController?.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -321,8 +319,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                     ])))))))
               ])),
 
-      Visibility(visible: (message.events?.isNotEmpty == true), child: _buildEventsContainerWidget(message.events)),
-      Visibility(visible: (message.dinings?.isNotEmpty == true), child: _buildDiningsContainerWidget(message.dinings)),
+      Visibility(visible: (message.structElements?.isNotEmpty == true), child: _buildStructElementsContainerWidget(message.structElements)),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
   }
@@ -446,24 +443,33 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     });
   }
 
-  Widget _buildEventsContainerWidget(List<Event2>? events) {
-    if (events == null || events.isEmpty) {
+  Widget _buildStructElementsContainerWidget(List<dynamic>? elements) {
+    if (elements == null || elements.isEmpty) {
       return Container();
     }
-    if (_eventsPageController == null) {
-      _eventsPageController = PageController();
+    if (_structsPageController == null) {
+      _structsPageController = PageController();
     }
-    int eventsCount = events.length;
+    int elementsCount = elements.length;
     List<Widget> pages = <Widget>[];
-    for (int index = 0; index < eventsCount; index++) {
-      Event2 event = events[index];
-      pages.add(Padding(padding: EdgeInsets.only(right: 18, bottom: 8), child: Event2Card(event, displayMode: Event2CardDisplayMode.list, onTap: () => _onTapEvent(event))));
+    for (int index = 0; index < elementsCount; index++) {
+      dynamic element = elements[index];
+      Widget? elementCard;
+      if (element is Event2) {
+        elementCard = Event2Card(element, displayMode: Event2CardDisplayMode.list, onTap: () => _onTapEvent(element));
+      } else if (element is Dining) {
+        elementCard = DiningCard(element, onTap: (_) => _onTapDining(element));
+      }
+
+      if (elementCard != null) {
+        pages.add(Padding(padding: EdgeInsets.only(right: 18, bottom: 8), child: elementCard));
+      }
     }
     return Container(
         padding: EdgeInsets.only(top: 10),
         child: Column(children: <Widget>[
-          ExpandablePageView(allowImplicitScrolling: true, controller: _eventsPageController, children: pages),
-          AccessibleViewPagerNavigationButtons(controller: _eventsPageController, pagesCount: () => eventsCount),
+          ExpandablePageView(allowImplicitScrolling: true, controller: _structsPageController, children: pages),
+          AccessibleViewPagerNavigationButtons(controller: _structsPageController, pagesCount: () => elementsCount),
         ]));
   }
 
@@ -474,27 +480,6 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event)));
     }
-  }
-
-  Widget _buildDiningsContainerWidget(List<Dining>? dinings) {
-    if (dinings == null || dinings.isEmpty) {
-      return Container();
-    }
-    if (_diningsPageController == null) {
-      _diningsPageController = PageController();
-    }
-    int diningsCount = dinings.length;
-    List<Widget> pages = <Widget>[];
-    for (int index = 0; index < diningsCount; index++) {
-      Dining dining = dinings[index];
-      pages.add(Padding(padding: EdgeInsets.only(right: 18, bottom: 8), child: DiningCard(dining, onTap: (_) => _onTapDining(dining))));
-    }
-    return Container(
-        padding: EdgeInsets.only(top: 10),
-        child: Column(children: <Widget>[
-          ExpandablePageView(allowImplicitScrolling: true, controller: _diningsPageController, children: pages),
-          AccessibleViewPagerNavigationButtons(controller: _diningsPageController, pagesCount: () => diningsCount),
-        ]));
   }
 
   void _onTapDining(Dining dining) {

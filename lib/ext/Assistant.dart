@@ -23,35 +23,21 @@ import 'package:rokwire_plugin/utils/utils.dart';
 /// Message
 extension MessageExt on Message {
 
-  List<Event2>? get events {
-    List<Event2>? events;
+  List<dynamic>? get structElements {
+    List<dynamic>? elements;
     if (structOutput != null) {
       List<AssistantStructOutputItem>? items = structOutput?.items;
       if ((items != null) && items.isNotEmpty) {
-        events = <Event2>[];
+        elements = <dynamic>[];
         for (AssistantStructOutputItem item in items) {
           if (item.type == AssistantStructOutputItemType.event) {
-            ListUtils.add(events, Event2.fromJson(item.data));
+            ListUtils.add(elements, Event2.fromJson(item.data));
+          } else if (item.type == AssistantStructOutputItemType.dining_schedule) {
+            ListUtils.add(elements, Dining.fromJson(item.data));
           }
         }
       }
     }
-    return events;
-  }
-
-  List<Dining>? get dinings {
-    List<Dining>? dinings;
-    if (structOutput != null) {
-      List<AssistantStructOutputItem>? items = structOutput?.items;
-      if ((items != null) && items.isNotEmpty) {
-        dinings = <Dining>[];
-        for (AssistantStructOutputItem item in items) {
-          if (item.type == AssistantStructOutputItemType.dining_schedule) {
-            ListUtils.add(dinings, Dining.fromJson(item.data));
-          }
-        }
-      }
-    }
-    return dinings;
+    return elements;
   }
 }
