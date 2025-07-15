@@ -261,6 +261,8 @@
     "panel.browse.section.recent.description": "Revisit your recent app activity.",
     "panel.browse.section.safety.title": "Safety",
     "panel.browse.section.safety.description": "Get home safely, prepare for emergencies, and discover support resources.",
+    "panel.browse.section.sexual_misconduct.title": "Concerns about Sexual, Dating, or Harassment Experiences",
+    "panel.browse.section.sexual_misconduct.description": "Did a situation seem unsafe or uncomfortable? It can be sexual or not. Resources are available. (Reminder: your app activity is not shared with others.)",
     "panel.browse.section.surveys.title": "Surveys",
     "panel.browse.section.surveys.description": "Participate in surveys available to you.",
     "panel.browse.section.wallet.title": "Cartera",
@@ -335,6 +337,9 @@
     "panel.browse.entry.safety.safewalk_request.title": "Request a SafeWalk",
     "panel.browse.entry.safety.saferides.title": "SafeRides (MTD)",
     "panel.browse.entry.safety.safety_resources.title": "Safety Resources",
+    "panel.browse.entry.safety.sexual_misconduct.title": "Sexual Misconduct Resources",
+
+    "panel.browse.entry.sexual_misconduct.sexual_misconduct.title": "Sexual Misconduct Resources",
 
     "panel.browse.entry.surveys.public_surveys.title": "Surveys",
 

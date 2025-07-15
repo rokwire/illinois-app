@@ -362,10 +362,6 @@ class _BrowseSection extends StatelessWidget {
       List<Widget> entriesList = <Widget>[];
       int browseEntriesCount = expanded ? (_browseEntriesCodes?.length ?? 0) : 0;
       if (1 < browseEntriesCount) {
-        // Temporarily add sexual_misconduct_resources to sections
-        if (this.sectionId == 'safety' && !_browseEntriesCodes!.contains('sexual_misconduct_resources')) {
-          _browseEntriesCodes!.add('sexual_misconduct_resources');
-        }
         for (String code in _browseEntriesCodes!) {
           entriesList.add(_BrowseEntry(
             sectionId: sectionId,
@@ -624,9 +620,10 @@ class _BrowseEntry extends StatelessWidget {
       case "recent.recent_items":            _onTapRecentItems(context); break;
 
       case "safety.safewalk_request":        _onTapSafewalkRequest(context); break;
-      case "safety.sexual_misconduct_resources": _onTapSexualMisconductResources(context); break;
       case "safety.saferides":               _onTapSafeRides(context); break;
       case "safety.safety_resources":        _onTapSafetyResources(context); break;
+      case "safety.sexual_misconduct":       _onTapSexualMisconduct(context, analyticsTarget: "Sexual Misconduct Resources"); break;
+      case "sexual_misconduct.sexual_misconduct": _onTapSexualMisconduct(context, analyticsTarget: "Concerns about Sexual, Dating, or Harassment Experiences"); break;
 
       case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
       case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
@@ -902,8 +899,8 @@ class _BrowseEntry extends StatelessWidget {
     }
   }
 
-  static void _onTapSexualMisconductResources(BuildContext context) {
-    Analytics().logSelect(target: "Sexual Misconduct Resources");
+  static void _onTapSexualMisconduct(BuildContext context, {String? analyticsTarget}) {
+    Analytics().logSelect(target: analyticsTarget ?? "Sexual Misconduct Resources");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SexualMisconductPathwaysPanel()));
   }
 
