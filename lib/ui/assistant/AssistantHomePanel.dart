@@ -90,6 +90,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   final GlobalKey _pageKey = GlobalKey();
   final GlobalKey _pageHeadingKey = GlobalKey();
   final _clearMessagesNotifier = new StreamController.broadcast();
+  final Map<String, dynamic> pagesContext = <String, dynamic>{};
 
   String? _initialQuestion;
 
@@ -340,7 +341,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
       case AssistantContentType.perplexity: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider, initialQuestion: _initialQuestion);
       case AssistantContentType.openai: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider, initialQuestion: _initialQuestion);
       case AssistantContentType.all: return AssistantProvidersConversationContentWidget();
-      case AssistantContentType.faqs: return AssistantFaqsContentWidget();
+      case AssistantContentType.faqs: return AssistantFaqsContentWidget(pageContext: pagesContext,);
       default: return null;
     }
   }

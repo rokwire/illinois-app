@@ -8,7 +8,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -16,17 +15,14 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Assistant with Service, NotificationsListener implements ContentItemCategoryClient {
+class Assistant with Service, NotificationsListener {
 
-  static const String notifyFaqsContentChanged = "edu.illinois.rokwire.assistant.content.faqs.changed";
   static const String notifyProvidersChanged = "edu.illinois.rokwire.assistant.providers.changed";
   static const String notifySettingsChanged = "edu.illinois.rokwire.assistant.settings.changed";
-  static const String _faqContentCategory = "assistant_faqs";
 
   AssistantUser? _user;
   AssistantSettings? _settings;
   List<AssistantProvider>? _providers;
-  Map<String, dynamic>? _faqsContent;
 
   DateTime?  _pausedDateTime;
 
@@ -55,7 +51,6 @@ class Assistant with Service, NotificationsListener implements ContentItemCatego
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      Content.notifyContentItemsChanged,
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
       AppLivecycle.notifyStateChanged,
@@ -64,7 +59,6 @@ class Assistant with Service, NotificationsListener implements ContentItemCatego
 
   @override
   Future<void> initService() async {
-    _initFaqs();
     if (Auth2().isLoggedIn) {
       _loadSettings();
       _loadUser();
@@ -81,16 +75,14 @@ class Assistant with Service, NotificationsListener implements ContentItemCatego
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Auth2(), Content(), FlexUI()]);
+    return Set.from([Auth2(), FlexUI()]);
   }
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Content.notifyContentItemsChanged) {
-      _onContentItemsChanged(param);
-    } else if (name == Auth2.notifyLoginChanged) {
+    if (name == Auth2.notifyLoginChanged) {
       _loadSettings();
       _loadUser();
       _buildAvailableProviders();
@@ -106,13 +98,6 @@ class Assistant with Service, NotificationsListener implements ContentItemCatego
     }
   }
 
-  void _onContentItemsChanged(Set<String>? categoriesDiff) {
-    if (categoriesDiff?.contains(_faqContentCategory) == true) {
-      _initFaqs();
-      NotificationService().notify(notifyFaqsContentChanged);
-    }
-  }
-
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
@@ -124,27 +109,6 @@ class Assistant with Service, NotificationsListener implements ContentItemCatego
         }
       }
     }
-  }
-
-  // ContentItemCategoryClient
-
-  @override
-  List<String> get contentItemCategory => <String>[_faqContentCategory];
-
-  // FAQs
-
-  void _initFaqs() {
-    _faqsContent = Content().contentItem(_faqContentCategory);
-  }
-
-  String? get faqs {
-    if (_faqsContent == null) {
-      return null;
-    }
-    String defaultLocaleCode = Localization().defaultLocale?.languageCode ?? 'en';
-    String? selectedLocaleCode = Localization().currentLocale?.languageCode;
-    String? defaultFaqs = JsonUtils.stringValue(_faqsContent![defaultLocaleCode]);
-    return JsonUtils.stringValue(_faqsContent![selectedLocaleCode]) ?? defaultFaqs;
   }
 
   // Settings
