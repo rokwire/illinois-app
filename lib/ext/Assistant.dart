@@ -15,6 +15,7 @@
  */
 
 import 'package:illinois/model/Assistant.dart';
+import 'package:illinois/model/Dining.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -22,19 +23,25 @@ import 'package:rokwire_plugin/utils/utils.dart';
 /// Message
 extension MessageExt on Message {
 
-  List<Event2>? get events {
-    List<Event2>? events;
+  List<dynamic>? get structElements {
+    List<dynamic>? elements;
     if (structOutput != null) {
       List<AssistantStructOutputItem>? items = structOutput?.items;
       if ((items != null) && items.isNotEmpty) {
-        events = <Event2>[];
+        elements = <dynamic>[];
         for (AssistantStructOutputItem item in items) {
           if (item.type == AssistantStructOutputItemType.event) {
-            ListUtils.add(events, Event2.fromJson(item.data));
+            ListUtils.add(elements, Event2.fromJson(item.data));
+          } else if (item.type == AssistantStructOutputItemType.dining_schedule) {
+            ListUtils.add(elements, Dining.fromJson(item.data));
+          } else if (item.type == AssistantStructOutputItemType.menu_items) {
+            ListUtils.add(elements, DiningProductItem.fromJson(item.data));
+          } else if (item.type == AssistantStructOutputItemType.nutrition_info) {
+            ListUtils.add(elements, DiningNutritionItem.fromJson(item.data));
           }
         }
       }
     }
-    return events;
+    return elements;
   }
 }
