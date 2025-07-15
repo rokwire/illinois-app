@@ -3,8 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Content.dart' as con;
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -154,7 +154,7 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
 
   Future<void> _loadFileContents() async {
     if (widget.resourceKey != null && Config().essentialSkillsCoachKey != null) {
-      Uint8List? fileContents = await con.Content().getFileContentItem(widget.resourceKey!, Config().essentialSkillsCoachKey!);
+      Uint8List? fileContents = await Content().getFileContentItem(widget.resourceKey!, Config().essentialSkillsCoachKey!);
       if (fileContents != null && mounted) {
         setState(() {
           _fileContents = fileContents;
