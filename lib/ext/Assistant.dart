@@ -15,6 +15,7 @@
  */
 
 import 'package:illinois/model/Assistant.dart';
+import 'package:illinois/model/Dining.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -36,5 +37,21 @@ extension MessageExt on Message {
       }
     }
     return events;
+  }
+
+  List<Dining>? get dinings {
+    List<Dining>? dinings;
+    if (structOutput != null) {
+      List<AssistantStructOutputItem>? items = structOutput?.items;
+      if ((items != null) && items.isNotEmpty) {
+        dinings = <Dining>[];
+        for (AssistantStructOutputItem item in items) {
+          if (item.type == AssistantStructOutputItemType.dining_schedule) {
+            ListUtils.add(dinings, Dining.fromJson(item.data));
+          }
+        }
+      }
+    }
+    return dinings;
   }
 }

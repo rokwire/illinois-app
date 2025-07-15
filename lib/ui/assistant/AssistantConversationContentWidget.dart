@@ -20,9 +20,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:geolocator/geolocator.dart';
@@ -88,6 +91,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   AssistantLocation? _currentLocation;
 
   PageController? _eventsPageController;
+  PageController? _diningsPageController;
 
   late StreamSubscription _streamSubscription;
   bool _loading = false;
@@ -136,6 +140,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _inputFieldFocus.dispose();
     _negativeFeedbackFocusNode.dispose();
     _eventsPageController?.dispose();
+    _diningsPageController?.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -317,6 +322,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
               ])),
 
       Visibility(visible: (message.events?.isNotEmpty == true), child: _buildEventsContainerWidget(message.events)),
+      Visibility(visible: (message.dinings?.isNotEmpty == true), child: _buildDiningsContainerWidget(message.dinings)),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
   }
@@ -468,6 +474,32 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event)));
     }
+  }
+
+  Widget _buildDiningsContainerWidget(List<Dining>? dinings) {
+    if (dinings == null || dinings.isEmpty) {
+      return Container();
+    }
+    if (_diningsPageController == null) {
+      _diningsPageController = PageController();
+    }
+    int diningsCount = dinings.length;
+    List<Widget> pages = <Widget>[];
+    for (int index = 0; index < diningsCount; index++) {
+      Dining dining = dinings[index];
+      pages.add(Padding(padding: EdgeInsets.only(right: 18, bottom: 8), child: DiningCard(dining, onTap: (_) => _onTapDining(dining))));
+    }
+    return Container(
+        padding: EdgeInsets.only(top: 10),
+        child: Column(children: <Widget>[
+          ExpandablePageView(allowImplicitScrolling: true, controller: _diningsPageController, children: pages),
+          AccessibleViewPagerNavigationButtons(controller: _diningsPageController, pagesCount: () => diningsCount),
+        ]));
+  }
+
+  void _onTapDining(Dining dining) {
+    Analytics().logSelect(target: 'Assistant: Event "${dining.title}"');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: dining)));
   }
 
   Widget _buildNegativeFeedbackFormWidget(Message message) {
