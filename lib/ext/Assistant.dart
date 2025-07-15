@@ -36,6 +36,8 @@ extension MessageExt on Message {
             ListUtils.add(elements, Dining.fromJson(item.data));
           } else if (item.type == AssistantStructOutputItemType.menu_items) {
             ListUtils.add(elements, DiningProductItem.fromJson(item.data));
+          } else if (item.type == AssistantStructOutputItemType.nutrition_info) {
+            ListUtils.add(elements, DiningNutritionItem.fromJson(item.data));
           }
         }
       }

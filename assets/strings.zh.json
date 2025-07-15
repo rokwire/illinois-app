@@ -396,6 +396,7 @@
 	"panel.assistant.faqs.missing.msg": "沒有可用的常見問題。",
 	"panel.assistant.dining_product_item.ingredients.label": "原料：",
 	"panel.assistant.dining_product_item.dietary_preferences.label": "飲食偏好：",
+	"panel.assistant.dining_nutrition_item.info.label": "營養資訊：",
 
 	"panel.wallet.header.title": "Wallet",
 	"panel.wallet.offline.label": "The Wallet is not available while offline.",

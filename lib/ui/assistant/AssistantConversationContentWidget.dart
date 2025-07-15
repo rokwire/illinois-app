@@ -472,6 +472,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         elementCard = DiningCard(element, onTap: (_) => _onTapDiningLocation(element));
       } else if (element is DiningProductItem) {
         elementCard = _DiningProductItemCard(item: element, onTap: () => _onTapDiningProductItem(element));
+      } else if (element is DiningNutritionItem) {
+        elementCard = _DiningNutritionItemCard(item: element, onTap: () => _onTapDiningNutritionItem(element, elements));
       }
 
       if (elementCard != null) {
@@ -503,6 +505,27 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   void _onTapDiningProductItem(DiningProductItem item) {
     Analytics().logSelect(target: 'Assistant: Dining Product Item "${item.name}"');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => FoodDetailPanel(productItem: item)));
+  }
+
+  void _onTapDiningNutritionItem(DiningNutritionItem item, List<dynamic>? elements) {
+    Analytics().logSelect(target: 'Assistant: Dining Nutrition Item "${item.name}"');
+    String? itemId = item.itemID;
+    DiningProductItem? productItem;
+    if (itemId != null) {
+      if ((elements != null) && elements.isNotEmpty) {
+        for (dynamic e in elements) {
+          if (e is DiningProductItem) {
+            if (e.itemID == itemId) {
+              productItem = e;
+              break;
+            }
+          }
+        }
+      }
+    }
+    if (productItem != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => FoodDetailPanel(productItem: productItem!)));
+    }
   }
 
   Widget _buildNegativeFeedbackFormWidget(Message message) {
@@ -1315,5 +1338,60 @@ class _DiningProductItemCard extends StatelessWidget {
             ),
           )),
     );
+  }
+}
+
+class _DiningNutritionItemCard extends StatelessWidget {
+  final DiningNutritionItem item;
+  final GestureTapCallback? onTap;
+
+  _DiningNutritionItemCard({required this.item, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Container(
+          decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(8)), boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]),
+          margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            child: Container(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(padding: EdgeInsets.only(top: 2, bottom: 14), child: Row(children: [Expanded(child: Text(item.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), overflow: TextOverflow.ellipsis))])),
+                  Visibility(
+                    visible: (item.nutritionList?.isNotEmpty == true),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(Localization().getStringEx('panel.assistant.dining_nutrition_item.info.label', 'NUTRITION INFO:'), style: Styles().textStyles.getTextStyle('widget.label.small.fat'), overflow: TextOverflow.ellipsis),
+                      _buildNutritionInfoWidget(item.nutritionList),
+                    ]),
+                  ),
+                ],
+              ),
+            ),
+          )),
+    );
+  }
+
+  Widget _buildNutritionInfoWidget(List<NutritionNameValuePair>? nutritionList) {
+    if (nutritionList == null || nutritionList.isEmpty) {
+      return Container();
+    }
+    String nutritionInfo = '';
+    for (NutritionNameValuePair pair in nutritionList) {
+      if (nutritionInfo.isNotEmpty) {
+        nutritionInfo += ', ';
+      }
+      nutritionInfo += '${pair.name}: ${pair.value}';
+    }
+    return Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Expanded(
+        child: Text(nutritionInfo, style: Styles().textStyles.getTextStyle('widget.detail.small'), overflow: TextOverflow.ellipsis, maxLines: 5),
+      ),
+    ]);
   }
 }

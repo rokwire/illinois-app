@@ -399,6 +399,7 @@
     "panel.assistant.faqs.missing.msg": "No FAQs available.",
     "panel.assistant.dining_product_item.ingredients.label": "INGREDIENTS:",
     "panel.assistant.dining_product_item.dietary_preferences.label": "DIETARY PREFERENCES:",
+    "panel.assistant.dining_nutrition_item.info.label": "NUTRITION INFO:",
 
     "panel.wallet.header.title": "Wallet",
     "panel.wallet.offline.label": "The Wallet is not available while offline.",
