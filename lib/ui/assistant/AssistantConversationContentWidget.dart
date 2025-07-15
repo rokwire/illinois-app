@@ -90,7 +90,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   LocationServicesStatus? _locationStatus;
   AssistantLocation? _currentLocation;
 
-  PageController? _structsPageController;
+  Map<String, PageController>? _structsPageControllers;
 
   late StreamSubscription _streamSubscription;
   bool _loading = false;
@@ -138,7 +138,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _streamSubscription.cancel();
     _inputFieldFocus.dispose();
     _negativeFeedbackFocusNode.dispose();
-    _structsPageController?.dispose();
+    _structsPageControllers?.values.forEach((controller) {
+      controller.dispose();
+    });
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -319,7 +321,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                     ])))))))
               ])),
 
-      Visibility(visible: (message.structElements?.isNotEmpty == true), child: _buildStructElementsContainerWidget(message.structElements)),
+      Visibility(visible: (message.structElements?.isNotEmpty == true), child: _buildStructElementsContainerWidget(message)),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
   }
@@ -443,12 +445,20 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     });
   }
 
-  Widget _buildStructElementsContainerWidget(List<dynamic>? elements) {
-    if (elements == null || elements.isEmpty) {
+  Widget _buildStructElementsContainerWidget(Message? message) {
+    List<dynamic>? elements = message?.structElements;
+
+    if ((elements == null) || (elements.isNotEmpty != true)) {
       return Container();
     }
-    if (_structsPageController == null) {
-      _structsPageController = PageController();
+    String messageId = message?.id ?? '';
+    if (_structsPageControllers == null) {
+      _structsPageControllers = <String, PageController>{};
+    }
+    PageController? currentController = _structsPageControllers![messageId];
+    if (currentController == null) {
+      currentController = PageController();
+      _structsPageControllers![messageId] = currentController;
     }
     int elementsCount = elements.length;
     List<Widget> pages = <Widget>[];
@@ -468,8 +478,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     return Container(
         padding: EdgeInsets.only(top: 10),
         child: Column(children: <Widget>[
-          ExpandablePageView(allowImplicitScrolling: true, controller: _structsPageController, children: pages),
-          AccessibleViewPagerNavigationButtons(controller: _structsPageController, pagesCount: () => elementsCount),
+          ExpandablePageView(allowImplicitScrolling: true, controller: currentController, children: pages),
+          AccessibleViewPagerNavigationButtons(controller: currentController, pagesCount: () => elementsCount),
         ]));
   }
 
