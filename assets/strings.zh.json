@@ -394,6 +394,8 @@
 	"panel.assistant.dialog.context.button.profile2.title": "用户二",
 	"panel.assistant.dialog.context.button.save.title": "储存",
 	"panel.assistant.faqs.missing.msg": "沒有可用的常見問題。",
+	"panel.assistant.dining_product_item.ingredients.label": "原料：",
+	"panel.assistant.dining_product_item.dietary_preferences.label": "飲食偏好：",
 
 	"panel.wallet.header.title": "Wallet",
 	"panel.wallet.offline.label": "The Wallet is not available while offline.",

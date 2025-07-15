@@ -397,6 +397,8 @@
     "panel.assistant.dialog.context.button.profile2.title": "Profile 2",
     "panel.assistant.dialog.context.button.save.title": "Save",
     "panel.assistant.faqs.missing.msg": "No FAQs available.",
+    "panel.assistant.dining_product_item.ingredients.label": "INGREDIENTS:",
+    "panel.assistant.dining_product_item.dietary_preferences.label": "DIETARY PREFERENCES:",
 
     "panel.wallet.header.title": "Wallet",
     "panel.wallet.offline.label": "The Wallet is not available while offline.",

@@ -34,6 +34,8 @@ extension MessageExt on Message {
             ListUtils.add(elements, Event2.fromJson(item.data));
           } else if (item.type == AssistantStructOutputItemType.dining_schedule) {
             ListUtils.add(elements, Dining.fromJson(item.data));
+          } else if (item.type == AssistantStructOutputItemType.menu_items) {
+            ListUtils.add(elements, DiningProductItem.fromJson(item.data));
           }
         }
       }
