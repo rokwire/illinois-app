@@ -43,6 +43,7 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
+import 'package:illinois/ui/safety/SexualMisconductPathwaysPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -361,6 +362,10 @@ class _BrowseSection extends StatelessWidget {
       List<Widget> entriesList = <Widget>[];
       int browseEntriesCount = expanded ? (_browseEntriesCodes?.length ?? 0) : 0;
       if (1 < browseEntriesCount) {
+        // Temporarily add sexual_misconduct_resources to sections
+        if (this.sectionId == 'safety' && !_browseEntriesCodes!.contains('sexual_misconduct_resources')) {
+          _browseEntriesCodes!.add('sexual_misconduct_resources');
+        }
         for (String code in _browseEntriesCodes!) {
           entriesList.add(_BrowseEntry(
             sectionId: sectionId,
@@ -619,6 +624,7 @@ class _BrowseEntry extends StatelessWidget {
       case "recent.recent_items":            _onTapRecentItems(context); break;
 
       case "safety.safewalk_request":        _onTapSafewalkRequest(context); break;
+      case "safety.sexual_misconduct_resources": _onTapSexualMisconductResources(context); break;
       case "safety.saferides":               _onTapSafeRides(context); break;
       case "safety.safety_resources":        _onTapSafetyResources(context); break;
 
@@ -894,6 +900,11 @@ class _BrowseEntry extends StatelessWidget {
     else {
       AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safewalks.not_available.text", "SafeWalk feature is not currently available."));
     }
+  }
+
+  static void _onTapSexualMisconductResources(BuildContext context) {
+    Analytics().logSelect(target: "Sexual Misconduct Resources");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SexualMisconductPathwaysPanel()));
   }
 
   static void _onTapSafeRides(BuildContext context) {
