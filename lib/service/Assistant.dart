@@ -212,16 +212,12 @@ class Assistant with Service, NotificationsListener {
       Log.w('Assistant acceptTerms - missing url.');
       return false;
     }
-    if (!Auth2().isLoggedIn) {
-      Log.w('Assistant acceptTerms - user not signed in.');
-      return false;
-    }
     String? url = '${Config().aiProxyUrl}/user-consent';
     Response? response = await Network().post(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      await _loadUser();
+      await _updateUser();
       return true;
     } else {
       Log.w('Failed to accept assistant terms. Reason: $responseCode, $responseString');
