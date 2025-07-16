@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Assistant.dart';
+import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
@@ -59,7 +60,7 @@ class AssistantHomePanel extends StatefulWidget {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(
           context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
-    } else if (!Auth2().isOidcLoggedIn) {
+    } else if (!Auth2().isOidcLoggedIn && (Auth2().prefs?.isProspective != true)) {
       showDialog(context: context, builder: (context) => _AssistantSignInInfoPopup());
     } else if (!Assistant().hasUserAcceptedTerms()) {
       showDialog(context: context, builder: (context) => _AssistantTermsPopup());
