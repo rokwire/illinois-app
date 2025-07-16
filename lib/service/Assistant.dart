@@ -4,7 +4,7 @@ import 'package:http/http.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -17,6 +17,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class Assistant with Service, NotificationsListener {
 
   static const String notifySettingsChanged = "edu.illinois.rokwire.assistant.settings.changed";
+  static const String notifyUserChanged = "edu.illinois.rokwire.assistant.user.changed";
 
   AssistantUser? _user;
   AssistantSettings? _settings;
@@ -54,38 +55,66 @@ class Assistant with Service, NotificationsListener {
   }
 
   @override
-  Future<void> initService() async {
-    if (Auth2().isLoggedIn) {
-      _loadSettings();
-      _loadUser();
-      _loadAllMessages();
-    }
-  }
-
-  @override
   void destroyService() {
     NotificationService().unsubscribe(this);
     super.destroyService();
   }
 
   @override
-  Set<Service> get serviceDependsOn {
-    return Set.from([Auth2(), FlexUI()]);
+  Future<void> initService() async {
+
+    List<Future<dynamic>> initFutures = <Future<dynamic>>[];
+
+    int? futuresSettingsIndex;
+    _settings = AssistantSettings.fromJson(JsonUtils.decodeMap(Storage().assistantSettings));
+    if (_settings == null) {
+      futuresSettingsIndex = initFutures.length;
+      initFutures.add(_loadSettings());
+    }
+    else {
+      _updateSettings();
+    }
+
+    int? futuresUserIndex;
+    _user = AssistantUser.fromJson(JsonUtils.decodeMap(Storage().assistantUser));
+    if (_user == null) {
+      futuresUserIndex = initFutures.length;
+      initFutures.add(_loadUser());
+    }
+    else {
+      _updateUser();
+    }
+
+    // Do not wait for messages loading, load them assynchronically
+    _loadAllMessages();
+
+    if (initFutures.isNotEmpty) {
+      List<dynamic> futuresResults = await Future.wait(initFutures);
+      if (futuresSettingsIndex != null) {
+        _settings = JsonUtils.cast<AssistantSettings>(ListUtils.entry<dynamic>(futuresResults, futuresSettingsIndex)) ;
+      }
+      if (futuresUserIndex != null) {
+        _user = JsonUtils.cast<AssistantUser>(ListUtils.entry<dynamic>(futuresResults, futuresUserIndex)) ;
+      }
+    }
+
+    await super.initService();
   }
+
+
+  @override
+  Set<Service> get serviceDependsOn =>
+    <Service>{ Storage(), Config(), Auth2() };
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
-      _loadSettings();
-      _loadUser();
-      if (Auth2().isLoggedIn) {
-        _loadAllMessages();
-      } else {
-        _clearAllMessages();
-      }
-    } else if (name == AppLivecycle.notifyStateChanged) {
+      _updateUser();
+      _loadAllMessages();
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
   }
@@ -93,53 +122,85 @@ class Assistant with Service, NotificationsListener {
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
-    } else if (state == AppLifecycleState.resumed) {
+    }
+    else if (state == AppLifecycleState.resumed) {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _loadSettings();
+          _updateSettings();
+          _updateUser();
         }
       }
     }
   }
 
   // Settings
+  AssistantSettings? get settings => _settings;
 
-  bool get isAvailable => _settings?.available ?? false;
-  String? get localizedTermsText => _settings?.getTermsText(locale: _localeCode);
-  String? get localizedUnavailableText => _settings?.getUnavailableText(locale: _localeCode);
+  bool get isAvailable => (_settings?.available == true);
 
-  String? get _localeCode => (Localization().currentLocale ?? Localization().defaultLocale)?.languageCode;
-
-  Future<void> _loadSettings() async {
-    AssistantSettings? settings;
-    if (!_isEnabled) {
-      Log.w('Assistant settings - missing url.');
-    } else if (Auth2().isLoggedIn) {
+  Future<AssistantSettings?> _loadSettings() async {
+    if (_isEnabled) {
       String? url = '${Config().aiProxyUrl}/client-settings';
       Response? response = await Network().get(url, auth: Auth2());
       int? responseCode = response?.statusCode;
       String? responseString = response?.body;
       if (responseCode == 200) {
-        settings = AssistantSettings.fromJson(JsonUtils.decodeMap(responseString));
+        return AssistantSettings.fromJson(JsonUtils.decodeMap(responseString));
       } else {
         Log.w('Failed to load assistant settings. Reason: $responseCode, $responseString');
       }
     }
-    if (_settings != settings) {
+    else {
+      Log.w('Assistant settings - missing url.');
+    }
+    return null;
+  }
+
+  Future<void> _updateSettings() async {
+    AssistantSettings? settings = await _loadSettings();
+    if ((settings != null) && (settings != _settings)) {
       _settings = settings;
+      Storage().assistantSettings = JsonUtils.encode(settings.toJson());
       NotificationService().notify(notifySettingsChanged);
     }
   }
 
   // User
 
+  Future<AssistantUser?> _loadUser() async {
+    if (_isEnabled) {
+      String? url = '${Config().aiProxyUrl}/user-settings';
+      Response? response = await Network().get(url, auth: Auth2());
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        return AssistantUser.fromJson(JsonUtils.decodeMap(responseString));
+      } else {
+        Log.w('Failed to load assistant user. Reason: $responseCode, $responseString');
+      }
+    }
+    else {
+      Log.w('Assistant loading user - missing url.');
+    }
+    return null;
+  }
+
+  Future<void> _updateUser() async {
+    AssistantUser? user = await _loadUser();
+    if ((user != null) && (user != _user)) {
+      _user = user;
+      Storage().assistantUser = JsonUtils.encode(user.toJson());
+      NotificationService().notify(notifyUserChanged);
+    }
+  }
+
   bool hasUserAcceptedTerms() {
     DateTime? termsAcceptedDate = _user?.termsAcceptedDateUtc;
     if (termsAcceptedDate == null) {
       return false;
     }
-    DateTime? termsIntroducedDate = _settings?.termsAcceptedDateUtc;
+    DateTime? termsIntroducedDate = _settings?.termsSubmittedDateUtc;
     if (termsIntroducedDate == null) {
       return true;
     }
@@ -168,65 +229,38 @@ class Assistant with Service, NotificationsListener {
     }
   }
 
-  Future<void> _loadUser() async {
-    AssistantUser? user;
-    if (!_isEnabled) {
-      Log.w('Assistant loading user - missing url.');
-    } else if (Auth2().isLoggedIn) {
-      String? url = '${Config().aiProxyUrl}/user-settings';
-      Response? response = await Network().get(url, auth: Auth2());
-      int? responseCode = response?.statusCode;
-      String? responseString = response?.body;
-      if (responseCode == 200) {
-        user = AssistantUser.fromJson(JsonUtils.decodeMap(responseString));
-      } else {
-        Log.w('Failed to load assistant user. Reason: $responseCode, $responseString');
-      }
-    }
-    _user = user;
-  }
-
   // Messages
 
-  List<Message> getMessages({AssistantProvider? provider}) {
-    if (provider != null) {
-      return _displayMessages[provider] ?? List<Message>.empty();
-    } else {
-      return List<Message>.empty();
+  List<Message> getMessages({AssistantProvider? provider}) =>
+    _displayMessages[provider] ?? List<Message>.empty();
+
+  void _applyMessages(List<Message>? messages, { required AssistantProvider provider}) {
+    List<Message> providerMessages = _displayMessages[provider] ??= List<Message>.empty(growable: true);
+    if (messages != null) {
+      providerMessages.clear();
+      providerMessages.add(_initialMessage);
+      providerMessages.addAll(messages);
     }
   }
 
-  void _initMessages({required AssistantProvider provider}) {
-    if (CollectionUtils.isNotEmpty(_displayMessages[provider])) {
-      _displayMessages[provider]!.clear();
-    }
-    addMessage(
-        provider: provider,
-        message: Message(
-            content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
-                '**Ask a question below to explore university resources with the NEW Illinois Assistant!**\nCheck the accuracy of responses. Your feedback ([:thumb_up:] [:thumb_down:]) will help improve the Assistant over time.'),
-            user: false));
-  }
-
-  void _clearAllMessages() {
-    for (AssistantProvider provider in AssistantProvider.values) {
-      if (CollectionUtils.isNotEmpty(_displayMessages[provider])) {
-        _displayMessages[provider]!.clear();
-      }
-    }
-  }
+  Message get _initialMessage => Message(
+    content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
+      '**Ask a question below to explore university resources with the NEW Illinois Assistant!**\nCheck the accuracy of responses. Your feedback ([:thumb_up:] [:thumb_down:]) will help improve the Assistant over time.'),
+    user: false
+  );
 
   void addMessage({required AssistantProvider provider, required Message message}) {
-    _displayMessages[provider]!.add(message);
+    (_displayMessages[provider] ??= List<Message>.empty(growable: true)).add(message);
   }
 
   void removeMessage({required AssistantProvider provider, required Message message}) {
-    _displayMessages[provider]!.remove(message);
+    _displayMessages[provider]?.remove(message);
   }
 
   void removeLastMessage({required AssistantProvider provider}) {
-    if (CollectionUtils.isNotEmpty(_displayMessages[provider])) {
-      _displayMessages[provider]!.removeLast();
+    List<Message>? providerMessages = _displayMessages[provider];
+    if ((providerMessages != null) && providerMessages.isNotEmpty) {
+      providerMessages.removeLast();
     }
   }
 
@@ -246,16 +280,15 @@ class Assistant with Service, NotificationsListener {
   }
 
   Future<void> _loadAllMessages() async {
-    await Future.wait([
-      _loadMessages(provider: AssistantProvider.google),
-      _loadMessages(provider: AssistantProvider.grok),
-      _loadMessages(provider: AssistantProvider.perplexity),
-      _loadMessages(provider: AssistantProvider.openai),
-    ]);
+    List<AssistantProvider> providers = AssistantProvider.values;
+    Iterable<Future<List<Message>?>> providerFutures = providers.map((AssistantProvider provider) => _loadMessages(provider:provider));
+    List<List<Message>?> results = await Future.wait<List<Message>?>(providerFutures);
+    for (int index = 0; index < providers.length; index++) {
+      _applyMessages(ListUtils.entry<List<Message>?>(results, index), provider: providers[index]);
+    }
   }
 
-  Future<void> _loadMessages({required AssistantProvider provider}) async {
-    List<dynamic>? responseJson;
+  Future<List<Message>?> _loadMessages({required AssistantProvider provider}) async {
     if (_isEnabled) {
       String url = '${Config().aiProxyUrl}/messages/load';
       Map<String, String> headers = {'Content-Type': 'application/json'};
@@ -265,26 +298,14 @@ class Assistant with Service, NotificationsListener {
       int? responseCode = response?.statusCode;
       String? responseString = response?.body;
       if (responseCode == 200) {
-        responseJson = JsonUtils.decodeList(responseString);
+        return Message.listFromJsonList(JsonUtils.decodeList(responseString));
       } else {
         Log.i('Failed to load assistant (${provider.key}) messages. Response:\n$responseCode: $responseString');
       }
     } else {
       Log.i('Failed to load assistant (${provider.key}) messages. Missing assistant url.');
     }
-    _buildDisplayMessageList(provider: provider, messagesJsonList: responseJson);
-  }
-
-  void _buildDisplayMessageList({required AssistantProvider provider, List<dynamic>? messagesJsonList}) {
-    _initMessages(provider: provider);
-    if ((messagesJsonList != null) && messagesJsonList.isNotEmpty) {
-      for(dynamic messageJsonEntry in messagesJsonList) {
-        Message question = Message.fromQueryJson(messageJsonEntry);
-        Message answer = Message.fromAnswerJson(messageJsonEntry);
-        _displayMessages[provider]!.add(question);
-        _displayMessages[provider]!.add(answer);
-      }
-    }
+    return null;
   }
 
   // Implementation

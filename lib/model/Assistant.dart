@@ -142,6 +142,23 @@ class Message {
     }
   }
 
+  static List<Message>? listFromJsonList(List<dynamic>? jsonList) {
+    if (jsonList != null) {
+      List<Message> messageList = <Message>[];
+      for (dynamic jsonEntry in jsonList) {
+        Map<String, dynamic>? messageJson = JsonUtils.mapValue(jsonEntry);
+        if (messageJson != null) {
+          messageList.add(Message.fromQueryJson(messageJson));
+          messageList.add(Message.fromAnswerJson(messageJson));
+        }
+      }
+      return messageList;
+    }
+    else {
+      return null;
+    }
+  }
+
   bool get isAnswerUnknown => (content.toLowerCase() == _unknownAnswerValue.toLowerCase());
 }
 
@@ -304,22 +321,27 @@ class AssistantLocation {
 /// AssistantUser
 ///
 class AssistantUser {
+  final int? termsAcceptedEpochTime;
   final DateTime? termsAcceptedDateUtc;
 
-  AssistantUser({this.termsAcceptedDateUtc});
+  AssistantUser({this.termsAcceptedEpochTime}) :
+    this.termsAcceptedDateUtc = DateTimeUtils.dateTimeFromSecondsSinceEpoch(termsAcceptedEpochTime, isUtc: true);
 
-  static AssistantUser? fromJson(Map<String, dynamic>? json) {
-    if (json == null) {
-      return null;
-    }
-    return AssistantUser(termsAcceptedDateUtc: DateTimeUtils.dateTimeFromSecondsSinceEpoch(JsonUtils.intValue(json['terms_accepted_date']), isUtc: true));
-  }
+  static AssistantUser? fromJson(Map<String, dynamic>? json) => (json != null) ? AssistantUser(
+    termsAcceptedEpochTime: JsonUtils.intValue(json['terms_accepted_date'])
+  ) : null;
+
+  Map<String, dynamic> toJson() => {
+    'terms_accepted_date': termsAcceptedEpochTime
+  };
 
   @override
-  bool operator ==(Object other) => (other is AssistantUser) && (termsAcceptedDateUtc == other.termsAcceptedDateUtc);
+  bool operator ==(Object other) => (other is AssistantUser) &&
+    (termsAcceptedDateUtc == other.termsAcceptedDateUtc);
 
   @override
-  int get hashCode => (termsAcceptedDateUtc?.hashCode ?? 0);
+  int get hashCode =>
+    (termsAcceptedDateUtc?.hashCode ?? 0);
 }
 
 ///
@@ -327,35 +349,41 @@ class AssistantUser {
 ///
 class AssistantSettings {
   final bool? available;
-  final DateTime? termsAcceptedDateUtc;
+  final int? termsSubmittedEpochTime;
+  final DateTime? termsSubmittedDateUtc;
   final Map<String, String?>? termsTextJson;
   final Map<String, String?>? unavailableTextJson;
 
-  AssistantSettings({this.available, this.termsAcceptedDateUtc, this.termsTextJson, this.unavailableTextJson});
+  AssistantSettings({this.available, this.termsSubmittedEpochTime, this.termsTextJson, this.unavailableTextJson}) :
+    this.termsSubmittedDateUtc = DateTimeUtils.dateTimeFromSecondsSinceEpoch(termsSubmittedEpochTime, isUtc: true);
 
-  static AssistantSettings? fromJson(Map<String, dynamic>? json) {
-    if (json == null) {
-      return null;
-    }
-    return AssistantSettings(
-        available: JsonUtils.boolValue(json['available']),
-        termsAcceptedDateUtc: DateTimeUtils.dateTimeFromSecondsSinceEpoch(JsonUtils.intValue(json['terms_accepted_date']), isUtc: true),
-        termsTextJson: JsonUtils.mapCastValue<String, String?>(json['terms_text']),
-        unavailableTextJson: JsonUtils.mapCastValue<String, String?>(json['unavailable_text'])
-    );
-  }
+  static AssistantSettings? fromJson(Map<String, dynamic>? json) => (json != null) ? AssistantSettings(
+      available: JsonUtils.boolValue(json['available']),
+      termsSubmittedEpochTime: JsonUtils.intValue(json['terms_accepted_date']), // Variable name does not match JSON field name by design!
+      termsTextJson: JsonUtils.mapCastValue<String, String?>(json['terms_text']),
+      unavailableTextJson: JsonUtils.mapCastValue<String, String?>(json['unavailable_text'])
+    ) : null;
 
-  String? getTermsText({String? locale}) => termsTextJson?[locale ?? 'en'];
-  String? getUnavailableText({String? locale}) => unavailableTextJson?[locale ?? 'en'];
-
-  @override
-  bool operator ==(Object other) => (other is AssistantSettings) && (available == other.available) &&
-      (termsTextJson == other.termsTextJson) && (unavailableTextJson == other.unavailableTextJson) &&
-      (termsAcceptedDateUtc == other.termsAcceptedDateUtc);
+  Map<String, dynamic> toJson() => {
+    'available': available,
+    'terms_accepted_date': termsSubmittedEpochTime,
+    'terms_text': termsTextJson,
+    'unavailable_text': unavailableTextJson,
+  };
 
   @override
-  int get hashCode => (available?.hashCode ?? 0) ^ (termsTextJson?.hashCode ?? 0) ^ (unavailableTextJson?.hashCode ?? 0) ^
-    (termsAcceptedDateUtc?.hashCode ?? 0);
+  bool operator ==(Object other) => (other is AssistantSettings) &&
+      (available == other.available) &&
+      (termsTextJson == other.termsTextJson) &&
+      (unavailableTextJson == other.unavailableTextJson) &&
+      (termsSubmittedEpochTime == other.termsSubmittedEpochTime);
+
+  @override
+  int get hashCode =>
+    (available?.hashCode ?? 0) ^
+    (termsTextJson?.hashCode ?? 0) ^
+    (unavailableTextJson?.hashCode ?? 0) ^
+    (termsSubmittedEpochTime?.hashCode ?? 0);
 }
 
 ///

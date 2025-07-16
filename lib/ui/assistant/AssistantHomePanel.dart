@@ -314,7 +314,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   void _checkAvailable() {
     if (!_isAvailable) {
-      String unavailableMessage = Assistant().localizedUnavailableText ??
+      String unavailableMessage = Assistant().settings?.localizedUnavailableText ??
           Localization().getStringEx('panel.assistant.global.unavailable.default.msg',
           'The Illinois Assistant is currently unavailable due to high demand. Please check back later for restored access.');
       AppAlert.showDialogResult(context, unavailableMessage);
@@ -435,7 +435,7 @@ class _AssistantTermsPopupState extends State<_AssistantTermsPopup> {
 
   @override
   Widget build(BuildContext context) {
-    String text = Assistant().localizedTermsText ??
+    String text = Assistant().settings?.localizedTermsText ??
         Localization().getStringEx('panel.assistant.terms.default.msg',
             'The Illinois Assistant is a search tool that helps you learn more about official university resources. While the feature aims to provide useful information, responses may occasionally be incomplete or inaccurate. **You are responsible for confirming information before taking action based on it.**\n\nBy continuing, you acknowledge that the Illinois Assistant is a supplemental tool and not a substitute for official university sources.');
     return AlertDialog(

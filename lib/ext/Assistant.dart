@@ -89,3 +89,13 @@ extension AssistantProviderUI on AssistantProvider {
     }
   }
 }
+
+extension AssistantSettingsUI on AssistantSettings {
+
+  String? get localizedTermsText => _getTermsText(locale: _localeCode);
+  String? get localizedUnavailableText => _getUnavailableText(locale: _localeCode);
+
+  String? _getTermsText({required String locale}) => JsonUtils.stringValue(termsTextJson?[locale]) ;
+  String? _getUnavailableText({required String locale}) => JsonUtils.stringValue(unavailableTextJson?[locale]);
+  String get _localeCode => Localization().currentLocale?.languageCode ?? Localization().defaultLocale?.languageCode ?? 'en';
+}
