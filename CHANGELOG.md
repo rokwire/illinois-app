@@ -5,16 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.2.12] - 2025-07-16
 ### Fixed
 - Fixed accessing unmounted state on closing Assistant panel.
 - Showing athletics images [#5240](https://github.com/rokwire/illinois-app/issues/5240).
+### Added
+- Add prospective students support [#5270](https://github.com/rokwire/illinois-app/issues/5270).
 
 ## [7.2.11] - 2025-07-15
 ### Changed
 - Do not cache video tutorials in Content service, load them on demand.
 ### Added
 - Show scrollable dining locations, product items and nutrition info in the assistant answer [#5283](https://github.com/rokwire/illinois-app/issues/5283).
-- Add prospective students support [#5270](https://github.com/rokwire/illinois-app/issues/5270).
 
 ## [7.2.10] - 2025-07-11
 ### Changed
