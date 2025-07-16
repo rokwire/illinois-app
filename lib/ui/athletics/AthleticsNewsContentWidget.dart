@@ -181,6 +181,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
       if (StringUtils.isNotEmpty(imageUrl)) {
         card = ImageSlantHeader(
             imageUrl: news.imageUrl,
+            headers: Auth2().networkAuthHeaders,
             slantImageColor: Styles().colors.fillColorPrimaryTransparent03,
             slantImageKey: 'slant-dark',
             child: _buildAthleticsNewsCard(news));
