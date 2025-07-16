@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -171,7 +172,10 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
         RichText(textScaler: MediaQuery.of(context).textScaler, text:
         TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
           TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "), style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
-          TextSpan( text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_2", "Verify your phone number or sign up/in by email.")),
+          TextSpan( text: (Auth2().prefs?.isProspective != true) ?
+            Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_2a", "Verify your phone number or sign up/in by email.") :
+            Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_2b", "Sign in with an email address to access more features.")
+          ),
         ],),
       )),
 

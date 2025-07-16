@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Do not cache video tutorials in Content service, load them on demand.
 ### Added
 - Show scrollable dining locations, product items and nutrition info in the assistant answer [#5283](https://github.com/rokwire/illinois-app/issues/5283).
+- Add prospective students support [#5270](https://github.com/rokwire/illinois-app/issues/5270).
 
 ## [7.2.10] - 2025-07-11
 ### Changed

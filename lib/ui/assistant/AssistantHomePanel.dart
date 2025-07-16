@@ -18,6 +18,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/ext/Assistant.dart';
+import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
@@ -58,7 +60,7 @@ class AssistantHomePanel extends StatefulWidget {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(
           context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
-    } else if (!Auth2().isOidcLoggedIn) {
+    } else if (!Auth2().isOidcLoggedIn && (Auth2().prefs?.isProspective != true)) {
       showDialog(context: context, builder: (context) => _AssistantSignInInfoPopup());
     } else if (!Assistant().hasUserAcceptedTerms()) {
       showDialog(context: context, builder: (context) => _AssistantTermsPopup());
@@ -90,6 +92,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   final GlobalKey _pageKey = GlobalKey();
   final GlobalKey _pageHeadingKey = GlobalKey();
   final _clearMessagesNotifier = new StreamController.broadcast();
+  final Map<String, dynamic> pagesContext = <String, dynamic>{};
 
   String? _initialQuestion;
 
@@ -99,11 +102,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
-      Assistant.notifyProvidersChanged,
       Assistant.notifySettingsChanged,
     ]);
 
-    _contentTypes = _buildAssistantContentTypes();
+    _contentTypes = _buildContentTypes();
     _selectedContentType = widget.contentType?._ensure(availableTypes: _contentTypes) ??
       Storage()._assistantContentType?._ensure(availableTypes: _contentTypes) ??
       AssistantHomePanel._defaultContentType._ensure(availableTypes: _contentTypes) ??
@@ -133,10 +135,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   @override
   void onNotification(String name, param) {
     if (name == Auth2.notifyLoginChanged ||
-        name == FlexUI.notifyChanged ||
-        name == Assistant.notifyProvidersChanged ||
         name == Assistant.notifySettingsChanged) {
       _checkAvailable();
+    }
+    else if (name == FlexUI.notifyChanged) {
       _updateContentTypes();
     }
   }
@@ -273,10 +275,31 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     });
   }
 
-  // Content Codes
+  // Content Types
+
+  List<AssistantContentType> _buildContentTypes() {
+    List<String>? codes = JsonUtils.listStringsValue(FlexUI()['assistant']);
+    List<AssistantProvider>? providers = AssistantProviderUI.listFromCodes(codes);
+    List<AssistantContentType>? contentTypes = AssistantContentTypeImpl.listFromProviders(providers);
+    if (contentTypes != null) {
+      contentTypes.sortAlphabetical();
+
+      int numberOfProviders = contentTypes.length;
+      if ((numberOfProviders > 1) && FlexUI().isAllAssistantsAvailable) {
+        contentTypes.add(AssistantContentType.all);
+      }
+      if ((numberOfProviders > 0) && FlexUI().isAssistantFaqsAvailable) {
+        contentTypes.add(AssistantContentType.faqs);
+      }
+      return contentTypes;
+    }
+    else {
+      return <AssistantContentType>[];
+    }
+  }
 
   void _updateContentTypes() {
-    List<AssistantContentType> contentTypes = _buildAssistantContentTypes();
+    List<AssistantContentType> contentTypes = _buildContentTypes();
     if (!DeepCollectionEquality().equals(_contentTypes, contentTypes) && mounted) {
       setState(() {
         _contentTypes = contentTypes;
@@ -288,31 +311,11 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     }
   }
 
-  static List<AssistantContentType> _buildAssistantContentTypes() {
-    List<AssistantContentType> contentTypes = <AssistantContentType>[];
-    List<AssistantProvider>? availableProviders = Assistant().providers;
-    if (availableProviders != null) {
-      for (AssistantProvider provider in availableProviders) {
-        contentTypes.add(AssistantContentTypeImpl.fromProvider(provider));
-      }
-      contentTypes.sortAlphabetical();
-
-      int numberOfProviders = contentTypes.length;
-      if ((numberOfProviders > 1) && FlexUI().isAllAssistantsAvailable) {
-        contentTypes.add(AssistantContentType.all);
-      }
-      if ((numberOfProviders > 0) && FlexUI().isAssistantFaqsAvailable) {
-        contentTypes.add(AssistantContentType.faqs);
-      }
-    }
-    return contentTypes;
-  }
-
   // Global On/Off / Available
 
   void _checkAvailable() {
     if (!_isAvailable) {
-      String unavailableMessage = Assistant().localizedUnavailableText ??
+      String unavailableMessage = Assistant().settings?.localizedUnavailableText ??
           Localization().getStringEx('panel.assistant.global.unavailable.default.msg',
           'The Illinois Assistant is currently unavailable due to high demand. Please check back later for restored access.');
       AppAlert.showDialogResult(context, unavailableMessage);
@@ -340,7 +343,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
       case AssistantContentType.perplexity: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider, initialQuestion: _initialQuestion);
       case AssistantContentType.openai: return AssistantConversationContentWidget(shouldClearAllMessages: _clearMessagesNotifier.stream, provider: _selectedProvider, initialQuestion: _initialQuestion);
       case AssistantContentType.all: return AssistantProvidersConversationContentWidget();
-      case AssistantContentType.faqs: return AssistantFaqsContentWidget();
+      case AssistantContentType.faqs: return AssistantFaqsContentWidget(pageContext: pagesContext,);
       default: return null;
     }
   }
@@ -433,7 +436,7 @@ class _AssistantTermsPopupState extends State<_AssistantTermsPopup> {
 
   @override
   Widget build(BuildContext context) {
-    String text = Assistant().localizedTermsText ??
+    String text = Assistant().settings?.localizedTermsText ??
         Localization().getStringEx('panel.assistant.terms.default.msg',
             'The Illinois Assistant is a search tool that helps you learn more about official university resources. While the feature aims to provide useful information, responses may occasionally be incomplete or inaccurate. **You are responsible for confirming information before taking action based on it.**\n\nBy continuing, you acknowledge that the Illinois Assistant is a supplemental tool and not a substitute for official university sources.');
     return AlertDialog(
@@ -552,6 +555,19 @@ extension AssistantContentTypeImpl on AssistantContentType {
       case AssistantContentType.perplexity: return AssistantProvider.perplexity;
       case AssistantContentType.openai: return AssistantProvider.openai;
       default: return null;
+    }
+  }
+
+  static List<AssistantContentType>? listFromProviders(List<AssistantProvider>? providers) {
+    if (providers != null) {
+      List<AssistantContentType> contentTypes = <AssistantContentType>[];
+      for (AssistantProvider provider in providers) {
+        contentTypes.add(fromProvider(provider));
+      }
+      return contentTypes;
+    }
+    else {
+      return null;
     }
   }
 

@@ -12,62 +12,118 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AssistantFaqsContentWidget extends StatefulWidget {
-  AssistantFaqsContentWidget();
+  final Map<String, dynamic>? pageContext;
+
+  AssistantFaqsContentWidget({super.key, this.pageContext});
 
   @override
   State<AssistantFaqsContentWidget> createState() => _AssistantFaqsContentWidgetState();
 }
 
-class _AssistantFaqsContentWidgetState extends State<AssistantFaqsContentWidget> with NotificationsListener {
+class _AssistantFaqsContentWidgetState extends State<AssistantFaqsContentWidget> {
+  
+  static const String _faqsContextKey = 'faqs';
+  Map<String, dynamic>? _faqs;
+  bool _loadingFaqs = false;
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [
-      Assistant.notifyFaqsContentChanged,
-    ]);
+    
+    _faqs = JsonUtils.mapValue(widget.pageContext?[_faqsContextKey]);
+    if (_faqs == null) {
+      _loadingFaqs = true;
+      Content().loadContentItem('assistant_faqs').then((dynamic contentItem){
+        setStateIfMounted((){
+          _loadingFaqs = false;
+          widget.pageContext?[_faqsContextKey] = (_faqs = JsonUtils.mapValue(contentItem));
+        });
+      });
+    }
   }
-
+  
   @override
   void dispose() {
-    NotificationService().unsubscribe(this);
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-        child: Padding(
-            padding: EdgeInsets.all(20),
-            child: SafeArea(child: SingleChildScrollView(
-                child: HtmlWidget(_faqsContent,
-                    onTapUrl: (url) {
-                      _launchUrl(url);
-                      return true;
-                    },
-                    textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
-                    customStylesBuilder: (element) {
-                      if (element.localName == "h3") {
-                        String fontFamilyName = Styles().textStyles.getTextStyle('widget.detail.regular.fat')?.fontFamily.toString() ?? '';
-                        String fontSize = Styles().textStyles.getTextStyle('widget.detail.regular.fat')?.fontSize.toString() ?? '0';
-                        return {'font-size': '${fontSize}px', 'font-family': fontFamilyName};
-                      } else {
-                        return null;
-                      }
-                    })))));
+  Widget build(BuildContext context) =>
+    Positioned.fill(child:
+      Padding(padding: EdgeInsets.all(20), child:
+        SafeArea(child:
+          _pageCongent
+        )
+      )
+    );
+  
+  Widget get _pageCongent {
+    if (_loadingFaqs) {
+      return _loadingContent;
+    }
+    else if (_faqsText?.isNotEmpty != true) {
+      return _emptyContent;
+    }
+    else {
+      return _faqsContent;
+    }
   }
+  
+  Widget get _loadingContent =>
+    Center(child:
+      SizedBox(width: 32, height: 32, child:
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
+      )
+    );
+  
+  Widget get _emptyContent =>
+    Center(child:
+      Padding(padding: EdgeInsets.symmetric(horizontal: 48, vertical: 64), child:
+        Row(children: [
+          Expanded(child:
+            Text(Localization().getStringEx('panel.assistant.faqs.missing.msg', 'No FAQs available.'), style: Styles().textStyles.getTextStyle('widget.detail.regular'), textAlign: TextAlign.center,)
+          )
+        ],),
+      )
+    );
+
+  Widget get _faqsContent =>
+    SingleChildScrollView(child:
+      HtmlWidget(_faqsText ?? '',
+        onTapUrl: (url) {
+          _launchUrl(url);
+          return true;
+        },
+        textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+        customStylesBuilder: (element) {
+          if (element.localName == "h3") {
+            String fontFamilyName = Styles().textStyles.getTextStyle('widget.detail.regular.fat')?.fontFamily.toString() ?? '';
+            String fontSize = Styles().textStyles.getTextStyle('widget.detail.regular.fat')?.fontSize.toString() ?? '0';
+            return {'font-size': '${fontSize}px', 'font-family': fontFamilyName};
+          } else {
+            return null;
+          }
+        }
+      )
+    );
+      
+  String? get _faqsText => _faqsTextFromSource(_faqs);
+
+  static String? _faqsTextFromSource(Map<String, dynamic>? faqsSource) => (faqsSource != null) ? (
+    JsonUtils.stringValue(faqsSource[Localization().currentLocale?.languageCode]) ??
+    JsonUtils.stringValue(faqsSource[Localization().defaultLocale?.languageCode ?? 'en'])
+  )  : null;
 
   void _launchUrl(String? url) async {
     Analytics().logSelect(target: 'Assistant FAQs: Open Link');
@@ -81,20 +137,4 @@ class _AssistantFaqsContentWidgetState extends State<AssistantFaqsContentWidget>
     }
   }
 
-  String get _faqsContent {
-    String? faqs = Assistant().faqs;
-    if (StringUtils.isEmpty(faqs)) {
-      faqs = Localization().getStringEx('panel.assistant.faqs.missing.msg', 'No FAQs available.');
-    }
-    return faqs!;
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, param) {
-    if (name == Assistant.notifyFaqsContentChanged) {
-      setStateIfMounted((){});
-    }
-  }
 }
