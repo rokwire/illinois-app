@@ -425,6 +425,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> with Notificati
                   ? ImageSlantHeader(
                       //Only the first item got image
                       imageUrl: news.imageUrl,
+                      headers: Auth2().networkAuthHeaders,
                       slantImageColor: Styles().colors.fillColorPrimaryTransparent03,
                       slantImageKey: 'slant-dark',
                       child: _buildAthleticsNewsCard(news))

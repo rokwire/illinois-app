@@ -899,7 +899,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     return _hideChatBar ? 0 : _keyboardHeight;
   }
 
-  double get _keyboardHeight => context.mounted ? MediaQuery.of(context).viewInsets.bottom : 0.0;
+  double get _keyboardHeight => (mounted && context.mounted) ? MediaQuery.of(context).viewInsets.bottom : 0.0;
 
   double get _chatBarHeight {
     RenderObject? chatBarRenderBox = _chatBarKey.currentContext?.findRenderObject();
