@@ -646,7 +646,7 @@ class _RosterItem extends StatelessWidget {
     double width = 128;
     double height = 144;
     if (StringUtils.isNotEmpty(imageUrl)) {
-      return WebNetworkImage(imageUrl: imageUrl,
+      return WebNetworkImage(imageUrl: imageUrl, headers: Auth2().networkAuthHeaders,
           excludeFromSemantics: true, width: width, height: height, fit: BoxFit.cover, alignment: Alignment.topCenter);
     } else {
       return Container(width: width, height: height, color: Styles().colors.background);

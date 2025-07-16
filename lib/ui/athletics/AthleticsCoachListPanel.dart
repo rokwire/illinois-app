@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -223,7 +224,7 @@ class _CoachItem extends StatelessWidget{
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                     child: (StringUtils.isNotEmpty(coach.thumbPhotoUrl) ?
-                    ModalImageHolder(imageUrl: Config().wrapWebProxyUrl(sourceUrl: coach.fullSizePhotoUrl), child: WebNetworkImage(imageUrl: coach.fullSizePhotoUrl, semanticLabel: "coach", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,)):
+                    ModalImageHolder(imageUrl: coach.fullSizePhotoUrl, child: WebNetworkImage(imageUrl: coach.fullSizePhotoUrl, headers: Auth2().networkAuthHeaders, semanticLabel: "coach", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,)):
                       Container(height: 96, width: 80, color: Colors.white,)),
                   ),
                 ),

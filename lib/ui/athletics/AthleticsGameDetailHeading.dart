@@ -901,7 +901,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     } else {
       //return opponent image
       String? opponentUrl = widget._game!.opponent?.logoImage;
-      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl, excludeFromSemantics: true)) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl, headers: Auth2().networkAuthHeaders, excludeFromSemantics: true)) : null;
     }
   }
 
@@ -912,7 +912,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     } else {
       //return opponent image
       String? opponentUrl = widget._game?.opponent?.logoImage;
-      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl, excludeFromSemantics: true)) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: WebNetworkImage(imageUrl: opponentUrl, headers: Auth2().networkAuthHeaders, excludeFromSemantics: true)) : null;
     }
   }
 

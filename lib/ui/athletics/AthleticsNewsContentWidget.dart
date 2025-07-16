@@ -184,6 +184,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
         double? imageWidth = kIsWeb ? max(MediaQuery.of(context).size.width / 3.0, 500) : null;
         card = ImageSlantHeader(
             imageUrl: news.imageUrl,
+            headers: Auth2().networkAuthHeaders,
             imageWidth: imageWidth,
             slantImageColor: Styles().colors.fillColorPrimaryTransparent03,
             slantImageKey: 'slant-dark',
