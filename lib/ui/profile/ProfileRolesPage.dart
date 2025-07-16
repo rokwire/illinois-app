@@ -18,6 +18,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -95,15 +96,16 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
 
   void _onRoleGridButton(UserRole role) {
     Analytics().logSelect(target: "Role: ${role}");
-    int selectedCount = _selectedRoles.length;
+    LinkedHashSet<UserRole> selectedRoles = LinkedHashSet<UserRole>.from(_selectedRoles);
     setState(() {
       UserRoleGroup.toggleSelection(_selectedRoles, role);
     });
-    if (selectedCount != _selectedRoles.length) {
+    if (!DeepCollectionEquality().equals(selectedRoles, _selectedRoles)) {
       AppSemantics.announceCheckBoxStateChange(context, _selectedRoles.contains(role), role.displayTitle);
       _startSaveRolesTimer();
     }
   }
+
 
   /*void _onBack() {
     if (_saveRolesTimer != null) {
