@@ -18,6 +18,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/ext/Assistant.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
@@ -100,11 +101,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
-      Assistant.notifyProvidersChanged,
       Assistant.notifySettingsChanged,
     ]);
 
-    _contentTypes = _buildAssistantContentTypes();
+    _contentTypes = _buildContentTypes();
     _selectedContentType = widget.contentType?._ensure(availableTypes: _contentTypes) ??
       Storage()._assistantContentType?._ensure(availableTypes: _contentTypes) ??
       AssistantHomePanel._defaultContentType._ensure(availableTypes: _contentTypes) ??
@@ -134,10 +134,10 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   @override
   void onNotification(String name, param) {
     if (name == Auth2.notifyLoginChanged ||
-        name == FlexUI.notifyChanged ||
-        name == Assistant.notifyProvidersChanged ||
         name == Assistant.notifySettingsChanged) {
       _checkAvailable();
+    }
+    else if (name == FlexUI.notifyChanged) {
       _updateContentTypes();
     }
   }
@@ -274,28 +274,13 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     });
   }
 
-  // Content Codes
+  // Content Types
 
-  void _updateContentTypes() {
-    List<AssistantContentType> contentTypes = _buildAssistantContentTypes();
-    if (!DeepCollectionEquality().equals(_contentTypes, contentTypes) && mounted) {
-      setState(() {
-        _contentTypes = contentTypes;
-        _contentValuesVisible = false;
-        if (!_contentTypes.contains(_selectedContentType)) {
-          Storage()._assistantContentType = _selectedContentType = _contentTypes.isNotEmpty ? _contentTypes.first : null;
-        }
-      });
-    }
-  }
-
-  static List<AssistantContentType> _buildAssistantContentTypes() {
-    List<AssistantContentType> contentTypes = <AssistantContentType>[];
-    List<AssistantProvider>? availableProviders = Assistant().providers;
-    if (availableProviders != null) {
-      for (AssistantProvider provider in availableProviders) {
-        contentTypes.add(AssistantContentTypeImpl.fromProvider(provider));
-      }
+  List<AssistantContentType> _buildContentTypes() {
+    List<String>? codes = JsonUtils.listStringsValue(FlexUI()['assistant']);
+    List<AssistantProvider>? providers = AssistantProviderUI.listFromCodes(codes);
+    List<AssistantContentType>? contentTypes = AssistantContentTypeImpl.listFromProviders(providers);
+    if (contentTypes != null) {
       contentTypes.sortAlphabetical();
 
       int numberOfProviders = contentTypes.length;
@@ -305,8 +290,24 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
       if ((numberOfProviders > 0) && FlexUI().isAssistantFaqsAvailable) {
         contentTypes.add(AssistantContentType.faqs);
       }
+      return contentTypes;
     }
-    return contentTypes;
+    else {
+      return <AssistantContentType>[];
+    }
+  }
+
+  void _updateContentTypes() {
+    List<AssistantContentType> contentTypes = _buildContentTypes();
+    if (!DeepCollectionEquality().equals(_contentTypes, contentTypes) && mounted) {
+      setState(() {
+        _contentTypes = contentTypes;
+        _contentValuesVisible = false;
+        if (!_contentTypes.contains(_selectedContentType)) {
+          Storage()._assistantContentType = _selectedContentType = _contentTypes.isNotEmpty ? _contentTypes.first : null;
+        }
+      });
+    }
   }
 
   // Global On/Off / Available
@@ -553,6 +554,19 @@ extension AssistantContentTypeImpl on AssistantContentType {
       case AssistantContentType.perplexity: return AssistantProvider.perplexity;
       case AssistantContentType.openai: return AssistantProvider.openai;
       default: return null;
+    }
+  }
+
+  static List<AssistantContentType>? listFromProviders(List<AssistantProvider>? providers) {
+    if (providers != null) {
+      List<AssistantContentType> contentTypes = <AssistantContentType>[];
+      for (AssistantProvider provider in providers) {
+        contentTypes.add(fromProvider(provider));
+      }
+      return contentTypes;
+    }
+    else {
+      return null;
     }
   }
 

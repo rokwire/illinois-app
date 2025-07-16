@@ -1,6 +1,5 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 ///
@@ -369,33 +368,15 @@ enum MessageFeedback { good, bad }
 ///
 enum AssistantProvider { google, grok, perplexity, openai }
 
-String? assistantProviderToKeyString(AssistantProvider? provider) {
-  switch (provider) {
-    case AssistantProvider.google:
-      return 'google';
-    case AssistantProvider.grok:
-      return 'grok';
-    case AssistantProvider.perplexity:
-      return 'perplexity';
-    case AssistantProvider.openai:
-      return 'openai';
-    default:
-      return null;
-  }
-}
+extension AssistantProviderImpl on AssistantProvider {
 
-String assistantProviderToDisplayString(AssistantProvider? provider) {
-  switch (provider) {
-    case AssistantProvider.google:
-      return Localization().getStringEx('model.assistant.provider.google.label', 'Google');
-    case AssistantProvider.grok:
-      return Localization().getStringEx('model.assistant.provider.grok.label', 'Grok');
-    case AssistantProvider.perplexity:
-      return Localization().getStringEx('model.assistant.provider.perplexity.label', 'Perplexity');
-    case AssistantProvider.openai:
-      return Localization().getStringEx('model.assistant.provider.openai.label', 'Illinois');
-    default:
-      return Localization().getStringEx('model.assistant.provider.unknown.label', 'Unknown');
+  String get key {
+    switch (this) {
+      case AssistantProvider.google: return 'google';
+      case AssistantProvider.grok: return 'grok';
+      case AssistantProvider.perplexity: return 'perplexity';
+      case AssistantProvider.openai: return 'openai';
+    }
   }
 }
 

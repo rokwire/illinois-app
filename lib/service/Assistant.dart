@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:collection/collection.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -17,12 +16,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class Assistant with Service, NotificationsListener {
 
-  static const String notifyProvidersChanged = "edu.illinois.rokwire.assistant.providers.changed";
   static const String notifySettingsChanged = "edu.illinois.rokwire.assistant.settings.changed";
 
   AssistantUser? _user;
   AssistantSettings? _settings;
-  List<AssistantProvider>? _providers;
 
   DateTime?  _pausedDateTime;
 
@@ -52,7 +49,6 @@ class Assistant with Service, NotificationsListener {
   void createService() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
-      FlexUI.notifyChanged,
       AppLivecycle.notifyStateChanged,
     ]);
   }
@@ -63,7 +59,6 @@ class Assistant with Service, NotificationsListener {
       _loadSettings();
       _loadUser();
       _loadAllMessages();
-      _buildAvailableProviders();
     }
   }
 
@@ -85,14 +80,11 @@ class Assistant with Service, NotificationsListener {
     if (name == Auth2.notifyLoginChanged) {
       _loadSettings();
       _loadUser();
-      _buildAvailableProviders();
       if (Auth2().isLoggedIn) {
         _loadAllMessages();
       } else {
         _clearAllMessages();
       }
-    } else if (name == FlexUI.notifyChanged) {
-      _buildAvailableProviders();
     } else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
@@ -194,45 +186,6 @@ class Assistant with Service, NotificationsListener {
     _user = user;
   }
 
-  // Providers
-
-  List<AssistantProvider>? get providers => _providers;
-
-  void _buildAvailableProviders() {
-    List<AssistantProvider>? updatedProviders;
-    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['assistant']);
-    if (contentCodes != null) {
-      updatedProviders = <AssistantProvider>[];
-      for (String code in contentCodes) {
-        AssistantProvider? provider = _providerFromCode(code);
-        if (provider != null) {
-          updatedProviders.add(provider);
-        }
-      }
-    } else {
-      updatedProviders = null;
-    }
-    if (!DeepCollectionEquality().equals(_providers, updatedProviders)) {
-      _providers = updatedProviders;
-      NotificationService().notify(notifyProvidersChanged);
-    }
-  }
-
-  AssistantProvider? _providerFromCode(String? code) {
-    switch (code) {
-      case 'google_assistant':
-        return AssistantProvider.google;
-      case 'grok_assistant':
-        return AssistantProvider.grok;
-      case 'perplexity_assistant':
-        return AssistantProvider.perplexity;
-      case 'openai_assistant':
-        return AssistantProvider.openai;
-      default:
-        return null;
-    }
-  }
-
   // Messages
 
   List<Message> getMessages({AssistantProvider? provider}) {
@@ -306,7 +259,7 @@ class Assistant with Service, NotificationsListener {
     if (_isEnabled) {
       String url = '${Config().aiProxyUrl}/messages/load';
       Map<String, String> headers = {'Content-Type': 'application/json'};
-      Map<String, dynamic> bodyJson = {'sort_by': 'date', 'order': 'asc', 'provider': assistantProviderToKeyString(provider)};
+      Map<String, dynamic> bodyJson = {'sort_by': 'date', 'order': 'asc', 'provider': provider.key};
       String? body = JsonUtils.encode(bodyJson);
       Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: body);
       int? responseCode = response?.statusCode;
@@ -314,10 +267,10 @@ class Assistant with Service, NotificationsListener {
       if (responseCode == 200) {
         responseJson = JsonUtils.decodeList(responseString);
       } else {
-        Log.i('Failed to load assistant (${assistantProviderToKeyString(provider)}) messages. Response:\n$responseCode: $responseString');
+        Log.i('Failed to load assistant (${provider.key}) messages. Response:\n$responseCode: $responseString');
       }
     } else {
-      Log.i('Failed to load assistant (${assistantProviderToKeyString(provider)}) messages. Missing assistant url.');
+      Log.i('Failed to load assistant (${provider.key}) messages. Missing assistant url.');
     }
     _buildDisplayMessageList(provider: provider, messagesJsonList: responseJson);
   }
@@ -353,7 +306,7 @@ class Assistant with Service, NotificationsListener {
       body['context'] = context;
     }
     if (provider != null) {
-      body['provider'] = assistantProviderToKeyString(provider);
+      body['provider'] = provider.key;
     }
     if (location != null) {
       body['params'] = {
