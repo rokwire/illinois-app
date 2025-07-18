@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Event2CreatePanel: Default event visibility changed to group_member when creating a group event [#5269](https://github.com/rokwire/illinois-app/issues/5269).
+- Event2HomePanel: Changed Filters button Accessibility hint to pronounce result count [#4417](https://github.com/rokwire/illinois-app/issues/4417).
 
 ## [7.2.12] - 2025-07-16
 ### Fixed
