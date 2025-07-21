@@ -2420,8 +2420,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   _Event2Visibility get _defaultVisibility {
     return _event2VisibilityFromAuthorizationContext(widget.event?.authorizationContext) ??
-        (Auth2().isCalendarAdmin ? _Event2Visibility.public :
-        (CollectionUtils.isNotEmpty(widget.targetGroups) ? _Event2Visibility.group_member : _Event2Visibility.registered_user));
+        (CollectionUtils.isNotEmpty(widget.targetGroups) ? _Event2Visibility.group_member :
+          (Auth2().isCalendarAdmin ? _Event2Visibility.public : _Event2Visibility.registered_user));
   }
 
   // Published

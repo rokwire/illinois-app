@@ -597,7 +597,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       Padding(padding: EdgeInsets.only(left: 16)),
       Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         MergeSemantics(key: _filtersButtonKey ??= GlobalKey(), child:
-          Semantics(value: _currentFilterParam.descriptionText, child:
+          Semantics(value: _currentFilterParam.descriptionText, hint: _filtersButtonHint, child:
             Event2FilterCommandButton(
               title: Localization().getStringEx('panel.events2.home.bar.button.filter.title', 'Filter'),
               leftIconKey: 'filters',
@@ -638,7 +638,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   Widget get _sortButton {
     _sortDropdownWidth ??= _evaluateSortDropdownWidth();
-    return  MergeSemantics(key: _sortButtonKey ??= GlobalKey(), child: Semantics(value: event2SortTypeToDisplayString(_sortType), child:
+    return  MergeSemantics(key: _sortButtonKey ??= GlobalKey(), child:
+    Semantics(value: event2SortTypeToDisplayString(_sortType), hint: _filtersButtonHint, child:
       DropdownButtonHideUnderline(child:
         DropdownButton2<Event2SortType>(
           dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth, padding: EdgeInsets.zero),
@@ -673,6 +674,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     }
     return items;
   }
+
+  String get _filtersButtonHint =>  "result ${_totalEventsCount?.toString() ?? 0} Events";
 
   double _evaluateSortDropdownWidth() {
     double width = 0;
