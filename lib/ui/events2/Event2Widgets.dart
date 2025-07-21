@@ -1,5 +1,6 @@
 
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
@@ -819,7 +820,12 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
         _pageController = PageController(viewportFraction: pageViewport);
       }
 
-      return Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+      return ScrollConfiguration(behavior: ScrollConfiguration.of(context).copyWith(dragDevices: {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.trackpad,
+      }), child: Container(
+        constraints: BoxConstraints(minHeight: _pageHeight), child:
         ExpandablePageView(
           key: _pageViewKey,
           controller: _pageController,
@@ -828,7 +834,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
           children: pages,
           onPageChanged: _onPageChanged,
         ),
-      );
+      ));
     }
     else {
       // Show it if the event is not the main event
