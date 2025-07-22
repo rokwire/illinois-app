@@ -83,8 +83,9 @@
 			"calendar": ["settings"],
 			"calendar.settings": ["prompt"],
 			
-			"roles": ["student", "employee", "parent", "fan", "alumni", "visitor"],
-			
+			"roles.regular": ["student", "employee", "parent", "fan", "alumni", "visitor"],
+			"roles.standalone": ["prospective"],
+
 			"onboarding2":["get_started", "video_tutorial", "roles", "privacy_statement", "privacy_location_services", "privacy_store_activity", "privacy_share_activity", "privacy_level", "notifications_auth", "login_netid", "login_phone_or_email_statement", "login_phone_or_email", "login_email", "login_phone", "profile_info", "research_questionnaire_participate_prompt", "research_questionnaire", "research_questionnaire_acknowledgement" ],
 
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "meal_plan", "my_illini", "quick_polls", "saved"],

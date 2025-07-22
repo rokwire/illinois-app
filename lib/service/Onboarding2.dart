@@ -20,9 +20,10 @@ import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowle
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2AuthNotificationsPanel.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2AuthNotificationsPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Onboarding2 with Service, NotificationsListener {
@@ -130,6 +131,14 @@ class Onboarding2 with Service, NotificationsListener {
 
   bool get  privacyShareActivitySelection => Storage().onBoarding2PrivacyShareActivitySelection == true;
   set privacyShareActivitySelection(bool value) => Storage().onBoarding2PrivacyShareActivitySelection = value;
+
+  // Video Tutorials
+  Map<String, dynamic>? _videoTutorials;
+  Map<String, dynamic>? get videoTutorials => _videoTutorials;
+
+  Future<void> ensureVideoTutorials() async {
+    _videoTutorials ??= JsonUtils.mapValue(await Content().loadContentItem('video_tutorials'));
+  }
 }
 
 typedef Onboarding2Context = Map<String, dynamic>;

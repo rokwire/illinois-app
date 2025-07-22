@@ -1,6 +1,5 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 ///
@@ -140,6 +139,23 @@ class Message {
         return MessageFeedback.good;
       default:
         return null;
+    }
+  }
+
+  static List<Message>? listFromJsonList(List<dynamic>? jsonList) {
+    if (jsonList != null) {
+      List<Message> messageList = <Message>[];
+      for (dynamic jsonEntry in jsonList) {
+        Map<String, dynamic>? messageJson = JsonUtils.mapValue(jsonEntry);
+        if (messageJson != null) {
+          messageList.add(Message.fromQueryJson(messageJson));
+          messageList.add(Message.fromAnswerJson(messageJson));
+        }
+      }
+      return messageList;
+    }
+    else {
+      return null;
     }
   }
 
@@ -305,22 +321,27 @@ class AssistantLocation {
 /// AssistantUser
 ///
 class AssistantUser {
+  final int? termsAcceptedEpochTime;
   final DateTime? termsAcceptedDateUtc;
 
-  AssistantUser({this.termsAcceptedDateUtc});
+  AssistantUser({this.termsAcceptedEpochTime}) :
+    this.termsAcceptedDateUtc = DateTimeUtils.dateTimeFromSecondsSinceEpoch(termsAcceptedEpochTime, isUtc: true);
 
-  static AssistantUser? fromJson(Map<String, dynamic>? json) {
-    if (json == null) {
-      return null;
-    }
-    return AssistantUser(termsAcceptedDateUtc: DateTimeUtils.dateTimeFromSecondsSinceEpoch(JsonUtils.intValue(json['terms_accepted_date']), isUtc: true));
-  }
+  static AssistantUser? fromJson(Map<String, dynamic>? json) => (json != null) ? AssistantUser(
+    termsAcceptedEpochTime: JsonUtils.intValue(json['terms_accepted_date'])
+  ) : null;
+
+  Map<String, dynamic> toJson() => {
+    'terms_accepted_date': termsAcceptedEpochTime
+  };
 
   @override
-  bool operator ==(Object other) => (other is AssistantUser) && (termsAcceptedDateUtc == other.termsAcceptedDateUtc);
+  bool operator ==(Object other) => (other is AssistantUser) &&
+    (termsAcceptedDateUtc == other.termsAcceptedDateUtc);
 
   @override
-  int get hashCode => (termsAcceptedDateUtc?.hashCode ?? 0);
+  int get hashCode =>
+    (termsAcceptedDateUtc?.hashCode ?? 0);
 }
 
 ///
@@ -328,35 +349,41 @@ class AssistantUser {
 ///
 class AssistantSettings {
   final bool? available;
-  final DateTime? termsAcceptedDateUtc;
+  final int? termsSubmittedEpochTime;
+  final DateTime? termsSubmittedDateUtc;
   final Map<String, String?>? termsTextJson;
   final Map<String, String?>? unavailableTextJson;
 
-  AssistantSettings({this.available, this.termsAcceptedDateUtc, this.termsTextJson, this.unavailableTextJson});
+  AssistantSettings({this.available, this.termsSubmittedEpochTime, this.termsTextJson, this.unavailableTextJson}) :
+    this.termsSubmittedDateUtc = DateTimeUtils.dateTimeFromSecondsSinceEpoch(termsSubmittedEpochTime, isUtc: true);
 
-  static AssistantSettings? fromJson(Map<String, dynamic>? json) {
-    if (json == null) {
-      return null;
-    }
-    return AssistantSettings(
-        available: JsonUtils.boolValue(json['available']),
-        termsAcceptedDateUtc: DateTimeUtils.dateTimeFromSecondsSinceEpoch(JsonUtils.intValue(json['terms_accepted_date']), isUtc: true),
-        termsTextJson: JsonUtils.mapCastValue<String, String?>(json['terms_text']),
-        unavailableTextJson: JsonUtils.mapCastValue<String, String?>(json['unavailable_text'])
-    );
-  }
+  static AssistantSettings? fromJson(Map<String, dynamic>? json) => (json != null) ? AssistantSettings(
+      available: JsonUtils.boolValue(json['available']),
+      termsSubmittedEpochTime: JsonUtils.intValue(json['terms_accepted_date']), // Variable name does not match JSON field name by design!
+      termsTextJson: JsonUtils.mapCastValue<String, String?>(json['terms_text']),
+      unavailableTextJson: JsonUtils.mapCastValue<String, String?>(json['unavailable_text'])
+    ) : null;
 
-  String? getTermsText({String? locale}) => termsTextJson?[locale ?? 'en'];
-  String? getUnavailableText({String? locale}) => unavailableTextJson?[locale ?? 'en'];
-
-  @override
-  bool operator ==(Object other) => (other is AssistantSettings) && (available == other.available) &&
-      (termsTextJson == other.termsTextJson) && (unavailableTextJson == other.unavailableTextJson) &&
-      (termsAcceptedDateUtc == other.termsAcceptedDateUtc);
+  Map<String, dynamic> toJson() => {
+    'available': available,
+    'terms_accepted_date': termsSubmittedEpochTime,
+    'terms_text': termsTextJson,
+    'unavailable_text': unavailableTextJson,
+  };
 
   @override
-  int get hashCode => (available?.hashCode ?? 0) ^ (termsTextJson?.hashCode ?? 0) ^ (unavailableTextJson?.hashCode ?? 0) ^
-    (termsAcceptedDateUtc?.hashCode ?? 0);
+  bool operator ==(Object other) => (other is AssistantSettings) &&
+      (available == other.available) &&
+      (termsTextJson == other.termsTextJson) &&
+      (unavailableTextJson == other.unavailableTextJson) &&
+      (termsSubmittedEpochTime == other.termsSubmittedEpochTime);
+
+  @override
+  int get hashCode =>
+    (available?.hashCode ?? 0) ^
+    (termsTextJson?.hashCode ?? 0) ^
+    (unavailableTextJson?.hashCode ?? 0) ^
+    (termsSubmittedEpochTime?.hashCode ?? 0);
 }
 
 ///
@@ -369,33 +396,15 @@ enum MessageFeedback { good, bad }
 ///
 enum AssistantProvider { google, grok, perplexity, openai }
 
-String? assistantProviderToKeyString(AssistantProvider? provider) {
-  switch (provider) {
-    case AssistantProvider.google:
-      return 'google';
-    case AssistantProvider.grok:
-      return 'grok';
-    case AssistantProvider.perplexity:
-      return 'perplexity';
-    case AssistantProvider.openai:
-      return 'openai';
-    default:
-      return null;
-  }
-}
+extension AssistantProviderImpl on AssistantProvider {
 
-String assistantProviderToDisplayString(AssistantProvider? provider) {
-  switch (provider) {
-    case AssistantProvider.google:
-      return Localization().getStringEx('model.assistant.provider.google.label', 'Google');
-    case AssistantProvider.grok:
-      return Localization().getStringEx('model.assistant.provider.grok.label', 'Grok');
-    case AssistantProvider.perplexity:
-      return Localization().getStringEx('model.assistant.provider.perplexity.label', 'Perplexity');
-    case AssistantProvider.openai:
-      return Localization().getStringEx('model.assistant.provider.openai.label', 'Illinois');
-    default:
-      return Localization().getStringEx('model.assistant.provider.unknown.label', 'Unknown');
+  String get key {
+    switch (this) {
+      case AssistantProvider.google: return 'google';
+      case AssistantProvider.grok: return 'grok';
+      case AssistantProvider.perplexity: return 'perplexity';
+      case AssistantProvider.openai: return 'openai';
+    }
   }
 }
 
