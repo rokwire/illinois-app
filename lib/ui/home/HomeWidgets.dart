@@ -1094,7 +1094,7 @@ class _HomeFavoriteWidgetWrapperState extends State<HomeFavoriteWidgetWrapper> {
     Container(height: 1, color: Styles().colors.disabledTextColor);
 
   bool _onChildNotification(Notification notification) {
-    debugPrint("HomeFavoriteWidgetWrapper: handled ${notification.runtimeType.toString()}");
+    //debugPrint("HomeFavoriteWidgetWrapper: handled ${notification.runtimeType.toString()}");
     WidgetsBinding.instance.addPostFrameCallback((_) =>
       _updateSplitterVisibility()
     );

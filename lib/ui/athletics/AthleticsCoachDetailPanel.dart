@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -47,7 +48,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
   void _onTapPhoto(){
     Analytics().logSelect(target: "Photo");
     if (widget.coach.fullSizePhotoUrl != null) {
-      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalPhotoImagePanel(imageUrl: widget.coach.fullSizePhotoUrl!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Photo"),)));
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalPhotoImagePanel(imageUrl: widget.coach.fullSizePhotoUrl!, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Photo"),)));
     }
   }
 
@@ -183,7 +184,7 @@ class _CoachDetailHeading extends StatelessWidget{
                       margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                       decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                       child: (StringUtils.isNotEmpty(coach?.thumbPhotoUrl) ?
-                      Image.network(coach!.thumbPhotoUrl!, semanticLabel: "coach", width: _photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
+                      Image.network(coach!.thumbPhotoUrl!, headers: Auth2().networkAuthHeaders, semanticLabel: "coach", width: _photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: _photoWidth, color: Colors.white,)
                       ),
                     ),

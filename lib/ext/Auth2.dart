@@ -190,3 +190,7 @@ extension Auth2PublicUserProfile on Auth2UserProfile {
     return Auth2UserProfile.fromFieldsVisibility(this, profileVisibility, permitted: permitted);
   }
 }
+
+extension Auth2UserPrefsUtils on Auth2UserPrefs {
+  bool get isProspective => hasRole(UserRole.prospective);
+}
