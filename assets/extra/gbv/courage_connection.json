@@ -2,11 +2,9 @@
     "id": "courage_connection",
     "type": "panel",
     "title": "McKinley Health Center (Mental Health)",
-    "directoryContent": {
-        "content": [
+    "directoryContent": [
             {"type": "text", "content": "For domestic violence concerns."}
-        ]
-    },
+    ],
     "description": "Courage Connection provides housing and services for individuals or families who are victims of domestic violence. They offer safety planning, domestic violence counseling, court advocacy, assistance in obtaining orders of protection, and other counseling services. Shelter and services are free of charge and available to residential and non-residential clients. \n Domestic violence could include threats or physical or psycholgoical violence from a partner or ex-partner in a long or short term relationship. You do not have to live with this person to be eligible for resources.",
     "detailsList": [
         {

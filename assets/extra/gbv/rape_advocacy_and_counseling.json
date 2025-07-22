@@ -2,11 +2,9 @@
   "id": "rape_advocacy_and_counseling",
   "type": "panel",
   "title": "Rape Advocacy Counseling & Education Services (R.A.C.E.S.)",
-  "directoryContent": {
-    "content": [
+  "directoryContent": [
       {"type": "text", "content": "For sexual assault and stalking concerns."}
-    ]
-  },
+  ],
   "description": "Rape Advocacy, Counseling, & Education Services (R.A.C.E.S.) has a twenty-four crisis hotline, medical and legal advocacy, counseling services, and public education and training. All services are free of charge.",
   "detailsList": [
     {
