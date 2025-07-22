@@ -1,0 +1,50 @@
+{
+    "id": "confidential_advisors",
+    "type": "panel",
+    "title": "Confidential Advisors at WRC",
+    "directoryContent": [
+        {"type": "text", "content": "Available to students and employees of ALL genders"}
+    ],
+    "description": "Confidential Advisors are staff trained and dedicated to provide survivor support and advocacy at the Women’s Resources Center (WRC), an on-campus resource for students and employees of ALL genders.",
+    "detailsList": [
+        {
+            "title": "Address and Contact",
+            "content": [
+                {"type": "address", "content": "616 East Green Street, Suite 213 Champaign, IL 61820"},
+                {"type": "phone", "content": "217-333-3137"},
+                {"type": "email", "content": "wrcadvocacy@illinois.edu"},
+                {"type": "external_link", "content": "https:/wrc.illinois.edu/advocacy/confidential-advising"}
+            ]
+        },
+        {
+            "title": "Hours",
+            "content": [
+                {"type": "text", "content": "In-person services can be accessed on weekdays from 9:00 am to 5:00 pm on a walk-in basis or by making an appointment."},
+                {"type": "text", "content": "To schedule a free appointment over the phone, call us at 217-333-3137 (select extension 2 when prompted) and leave the following limited pieces of information (voicemails are not confidential and we want to keep you as safe as possible):"}
+            ]
+        },
+        {
+            "title": "Staff",
+            "content": [
+                {"type": "text", "content": "Advocacy staff members serve as Confidential Advisors and are available to meet with survivors."},
+                {"type": "text", "content": "To learn more about the entire WRC team, visit https://wrc.illinois.edu/about/our-team."}
+            ]
+        },
+        {
+            "title": "What do I say when seeking support?",
+            "content": [
+                {"type": "text", "content": "Students can make appointments by calling, emailing, or walking into the WRC."},
+                {"type": "text", "content": "[Subject: Request] I am a student at the University of Illinois. I'd like to meet with a confidential advisor. [Your Name]"}
+            ]
+        },
+        {
+            "title": "What should I expect?",
+            "content": [
+                {"type": "text", "content": "After contacting the WRC, you will receive a follow-up email or phone call from a confidential advisor within one business day."},
+                {"type": "text", "content": "When visiting the WRC in person:"},
+                {"type": "text", "content": "The WRC is located at 616 E. Green St, Suite 213, between McDonald’s and Subway on the second floor. When you reach the 2nd floor, Suite 213 is down the hall on the left."},
+                {"type": "text", "content": "You'll be greeted by staff (or student staff) at the front desk. They will offer you coffee/tea/water and invite you to complete an intake form to prepare for your appointment."}
+            ]
+        }
+    ]
+}

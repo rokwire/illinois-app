@@ -3533,6 +3533,8 @@
     "widget.safewalks_request.unknown.user.text": "Unauthenticated User",
     "widget.safewalks_request.unknown.location.text": "Unknwon",
 
+    "panel.sexual_misconduct.header.title": "Inappropriate Sexual Behavior",
+
     "panel.home_canvas_course.header.title": "Curso",
     "panel.home_canvas_course.load.failed.error.msg": "No se ha podido cargar el curso. Vuelve a intentarlo más tarde.",
     "panel.home_canvas_course.button.assignments.title": "Tareas",

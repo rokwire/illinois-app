@@ -16,7 +16,7 @@ class GBVResourceList {
   static GBVResourceList? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? GBVResourceList(
       title: JsonUtils.stringValue(json['title']) ?? "",
-      resourceIds: JsonUtils.listValue(['resourceIds']) ?? []
+      resourceIds: JsonUtils.listValue(json['resourceIds']) ?? []
     ) : null;
   }
 

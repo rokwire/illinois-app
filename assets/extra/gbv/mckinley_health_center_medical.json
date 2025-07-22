@@ -1,0 +1,45 @@
+{
+  "id": "mckinley_health_center_medical",
+  "type": "panel",
+  "title": "McKinley Health Center (Medical)",
+  "directoryContent": [
+      {"type": "text", "content": "Health care professionals at McKinley Health Center can treat injuries and take steps to address concerns of pregnancy and/or sexually transmitted diseases/infections."}
+  ],
+  "detailsList": [
+    {
+      "title": "Address and Contact",
+      "content": [
+        {"type": "address", "content": "1109 South Lincoln Avenue, Urbana, Illinois 61801"},
+        {"type": "phone", "content": "217-333-2700"},
+        {"type": "text", "content": "McKinley Health Center is located at 1109 South Lincoln Avenue, Urbana, Illinois 61801 on the southeast part of campus; South of the Lincoln-Allen Residence Hall and North of the Pennsylvania-Florida Residence Hall."}
+      ]
+    },
+    {
+      "title": "Hours",
+      "content": [
+        {"type": "text", "content": "Dial-a-Nurse Services: 24 hours/day, 365 days/year"},
+        {"type": "text", "content": "Women's Health: 8:00 am–5:00 pm, Monday–Friday"},
+        {"type": "text", "content": "Acute Medical Clinic: 8:00 am–5:30 pm, Monday–Friday; 8:00 am–4:30 pm, Saturday"},
+        {"type": "text", "content": "Offers medical treatment but not evidence collection"}
+      ]
+    },
+    {
+      "title": "Staff",
+      "content": [
+        {"type": "external_link", "content": "https://www.mckinley.illinois.edu/health-care-providers"}
+      ]
+    },
+    {
+      "title": "What do I say when seeking support?",
+      "content": [
+        {"type": "text", "content": "CONTENT NEEDED"}
+      ]
+    },
+    {
+      "title": "What should I expect?",
+      "content": [
+        {"type": "text", "content": "CONTENT NEEDED"}
+      ]
+    }
+  ]
+}
