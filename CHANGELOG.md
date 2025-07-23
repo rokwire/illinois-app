@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Android: use different api keys for the google maps sdk based on the current environment [#5291](https://github.com/rokwire/illinois-app/issues/5291).
+- Hide horizontal scroll with struct output in the Assistant [#5293](https://github.com/rokwire/illinois-app/issues/5293).
 
 ## [7.2.13] - 2025-07-18
 ### Changed
