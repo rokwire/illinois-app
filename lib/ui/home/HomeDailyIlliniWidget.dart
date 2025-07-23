@@ -137,21 +137,13 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
       if (widgetsList.length >= 3) {
         contentWidget = Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Container(
-            decoration: BoxDecoration(
-                color: Styles().colors.white,
-                boxShadow: [
-                  BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
-                ],
-                borderRadius: BorderRadius.all(Radius.circular(4))),
-            child: Column(
-                children: <Widget>[
-                  widgetsList[0],
-                  widgetsList[1],
-                  widgetsList[2],
-                  SizedBox(height: 12),
-                ]
-            ),
+          child: Container(decoration: HomeMessageCard.defaultDecoration, child:
+            Column(children: <Widget>[
+              widgetsList[0],
+              widgetsList[1],
+              widgetsList[2],
+              SizedBox(height: 12),
+            ]),
           ),
         );
       } else {
@@ -233,7 +225,7 @@ class _MainStoryWidget extends _StoryWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                borderRadius: BorderRadius.vertical(top: HomeMessageCard.defaultRadius),
                 child: _buildImage()
           ),
           InkWell(

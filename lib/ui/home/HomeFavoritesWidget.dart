@@ -129,6 +129,25 @@ class HomeFavoritesWidget extends StatefulWidget {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
     }
   }
+
+  static BoxDecoration get defaultCardDecoration => HomeMessageCard.defaultDecoration;
+
+  static Widget defaultHeaderWidget(Color? color) => Container(
+    height: defaultHeaderHeight,
+    decoration: HomeFavoritesWidget.defaultHeaderDecoration(color),
+  );
+
+  static double get defaultHeaderHeight => 7;
+
+  static BoxDecoration defaultHeaderDecoration(Color? color) => BoxDecoration(
+    color: color,
+    borderRadius: BorderRadius.only(
+        topLeft: HomeMessageCard.defaultRadius,
+        topRight: HomeMessageCard.defaultRadius,
+    ),
+  );
+
+
 }
 
 class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with NotificationsListener {
@@ -307,50 +326,52 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: () => _onTapItem(item), child:
       Semantics(label: title, child:
-        Column(children: <Widget>[
-          Container(height: 7, color: headerColor,),
-          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
-            Padding(padding: EdgeInsets.all(16), child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Flex(direction: Axis.vertical, children: <Widget>[
-                    Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                      Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.regular.extra_fat")),
-                      ),
-                      Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
-                        GestureDetector(behavior: HitTestBehavior.opaque, onTap: () => _onTapFavoriteStar(item), child:
-                          Semantics(container: true,
-                            label: isFavorite
-                                ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
-                                : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-                            hint: isFavorite
-                                ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
-                                : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-                            button: true,
-                            excludeSemantics: true,
-                            child: Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: favoriteStarIcon))),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                  Visibility(visible: detailVisible, child:
-                    Semantics(label: cardDetailText, excludeSemantics: true, child:
-                      Padding(padding: EdgeInsets.only(top: 12), child:
-                        (cardDetailImage != null) ? 
-                        Row(children: <Widget>[
-                          Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
-                          Expanded(child:
-                            Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.small.semi_fat")?.copyWith(color: cardDetailTextColor)),
-                          )
-                        ],) :
-                        Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.small.semi_fat")?.copyWith(color: cardDetailTextColor)),
-                  )),)
+        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeMessageCard.defaultShadowBlurRadius), child:
+          Column(children: <Widget>[
+            HomeFavoritesWidget.defaultHeaderWidget(headerColor),
+              Padding(padding: EdgeInsets.all(16), child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                    Flex(direction: Axis.vertical, children: <Widget>[
+                      Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                        Expanded(child:
+                          Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.regular.extra_fat")),
+                        ),
+                        Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
+                          GestureDetector(behavior: HitTestBehavior.opaque, onTap: () => _onTapFavoriteStar(item), child:
+                            Semantics(container: true,
+                              label: isFavorite
+                                  ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+                                  : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+                              hint: isFavorite
+                                  ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+                                  : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+                              button: true,
+                              excludeSemantics: true,
+                              child: Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: favoriteStarIcon))),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                    Visibility(visible: detailVisible, child:
+                      Semantics(label: cardDetailText, excludeSemantics: true, child:
+                        Padding(padding: EdgeInsets.only(top: 12), child:
+                          (cardDetailImage != null) ?
+                          Row(children: <Widget>[
+                            Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
+                            Expanded(child:
+                              Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.small.semi_fat")?.copyWith(color: cardDetailTextColor)),
+                            )
+                          ],) :
+                          Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.small.semi_fat")?.copyWith(color: cardDetailTextColor)),
+                    )),
+                  )
                 ]),
-              ),
-            )
-          ],
-        )),);
+            ),
+          ],)
+        ),
+      ),
+    );
   }
 
   void _refreshFavorites({bool showProgress = true}) {
@@ -532,7 +553,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
 
   Widget _buildEmpty() {
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-      Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      Container(decoration: HomeMessageCard.defaultDecoration,
         padding: EdgeInsets.all(16),
         child:  HtmlWidget(
             HomeFavoritesWidget.emptyMessageHtml(widget.favoriteKey) ?? '',

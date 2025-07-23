@@ -76,7 +76,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
       });
     }
 
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       _loadingPolls = true;
       Polls().getRecentPolls(cursor: PollsCursor(offset: 0, limit: Config().homeRecentPollsCount + 1))?.then((PollsChunk? result) {
         setStateIfMounted(() {
