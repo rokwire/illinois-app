@@ -74,6 +74,7 @@ import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/cache_image.dart';
 
+
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/device_calendar.dart';
@@ -99,6 +100,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/utils/crypt.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
@@ -592,7 +594,8 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
   }
 }
 
-/*void _testSecretKeys() {
+// ignore: unused_element
+void _testSecretKeys() {
   String? encryptionKey = Config().encryptionKey;
   String? encryptionIV = Config().encryptionIV;
   
@@ -611,18 +614,18 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
   secretKeysTestEnc ??= '...';
   secretKeysTest = AESCrypt.decrypt(secretKeysTestEnc, key: encryptionKey, iv: encryptionIV);
   Log.d("$secretKeysTest", lineLength: 912);
-  
+
   // AESCrypt.encrypt
   
-  secretKeysDev ??= '{...}';
+  secretKeysDev ??= JsonUtils.encode({...{}}) ?? '';
   secretKeysDevEnc = AESCrypt.encrypt(secretKeysDev, key: encryptionKey, iv: encryptionIV);
   Log.d("$secretKeysDevEnc", lineLength: 912);
 
-  secretKeysProd ??= '{...}';
+  secretKeysProd ??= JsonUtils.encode({...{}}) ?? '';
   secretKeysProdEnc = AESCrypt.encrypt(secretKeysProd, key: encryptionKey, iv: encryptionIV);
   Log.d("$secretKeysProdEnc", lineLength: 912);
 
-  secretKeysTest ??= '{...}';
+  secretKeysTest ??= JsonUtils.encode({...{}}) ?? '';
   secretKeysTestEnc = AESCrypt.encrypt(secretKeysTest, key: encryptionKey, iv: encryptionIV);
   Log.d("$secretKeysTestEnc", lineLength: 912);
-}*/
+}
