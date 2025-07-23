@@ -41,7 +41,7 @@ class SituationStepPanel extends StatelessWidget {
                   onPressed: () {
                     // TODO: Handle option selection
                   },
-                  child: Text(option.title ?? ''),
+                  child: Text(option.title),
                 ),
               )),
           ],
