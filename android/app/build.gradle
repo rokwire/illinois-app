@@ -150,6 +150,15 @@ android {
             dimension "product"
             applicationId "edu.illinois.rokwire"
 
+            def flavorName = getGradle().getStartParameter().getTaskRequests().toString().toLowerCase()
+            def env = "dev" // default
+
+            if (flavorName.contains("prod")) {
+                env = "prod"
+            } else if (flavorName.contains("tst")) {
+                env = "tst"
+            }
+
             def illinoisKeysProperties = new Properties()
             def illinoisKeysPropertiesFile = rootProject.file('app/src/illinois/keys.properties')
             if (illinoisKeysPropertiesFile.exists()) {
@@ -157,7 +166,7 @@ android {
                     illinoisKeysProperties.load(reader)
                 }
             }
-            manifestPlaceholders = [mapsApiKey: "${illinoisKeysProperties.getProperty('googleMapsApiKey')}"]
+            manifestPlaceholders = [mapsApiKey: "${illinoisKeysProperties.getProperty('googleMapsApiKey-'+env)}"]
 
             //Origo Mobile keys build configurations - see keys.properties
             resValue "string", "hceAidFilter1", "${illinoisKeysProperties.getProperty('origoAidFilter1')}"

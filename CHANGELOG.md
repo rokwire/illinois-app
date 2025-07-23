@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Android: use different api keys for the google maps sdk based on the current environment [#5291](https://github.com/rokwire/illinois-app/issues/5291).
+
 ## [7.2.13] - 2025-07-18
 ### Changed
 - Event2CreatePanel: Default event visibility changed to group_member when creating a group event [#5269](https://github.com/rokwire/illinois-app/issues/5269).
