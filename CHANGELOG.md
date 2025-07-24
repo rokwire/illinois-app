@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.2.15] - 2025-07-24
 ### Changed
 - Add contrast white border to Play button in Onboarding2VideoTutorialPanel [#4873](https://github.com/rokwire/illinois-app/issues/4873).
 ### Fixed
