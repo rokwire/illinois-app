@@ -210,16 +210,16 @@ class MTDStopCard extends StatelessWidget {
 ////////////////////////////
 /// MTDStopScheduleCard
 
-class MTDStopScheduleCard extends StatefulWidget {
+class MTDStopScheduleFavoritesCard extends StatefulWidget {
   final MTDStop stop;
   final void Function()? onTap;
-  MTDStopScheduleCard({Key? key, required this.stop, this.onTap}) : super(key: key);
+  MTDStopScheduleFavoritesCard({Key? key, required this.stop, this.onTap}) : super(key: key);
 
   @override
-  State<MTDStopScheduleCard> createState() => _MTDStopScheduleCardState();
+  State<MTDStopScheduleFavoritesCard> createState() => _MTDStopScheduleFavoritesCardState();
 }
 
-class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> with NotificationsListener {
+class _MTDStopScheduleFavoritesCardState extends State<MTDStopScheduleFavoritesCard> with NotificationsListener {
   
   List<MTDDeparture>? _departures;
   bool _loadingDepartures = false;
@@ -278,7 +278,7 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> with Notifica
       Semantics(label: title, child:
       Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeMessageCard.defaultShadowBlurRadius), child:
         Column(children: <Widget>[
-          Container(height: 7, color: headerColor,),
+          HomeFavoritesWidget.defaultHeaderWidget(headerColor),
           Column(children: [
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[

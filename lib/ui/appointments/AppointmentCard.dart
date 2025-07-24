@@ -23,6 +23,8 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
+import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -31,11 +33,18 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+enum AppointmentCardDisplayType { home, browse }
+
 class AppointmentCard extends StatefulWidget with AnalyticsInfo {
   final Appointment appointment;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
+  final AppointmentCardDisplayType displayType;
+  final void Function()? onTap;
 
-  AppointmentCard({super.key, required this.appointment, this.analyticsFeature});
+  AppointmentCard({super.key,
+    required this.appointment, this.analyticsFeature, this.onTap,
+    this.displayType = AppointmentCardDisplayType.browse,
+  });
 
   @override
   _AppointmentCardState createState() => _AppointmentCardState();
@@ -58,6 +67,47 @@ class _AppointmentCardState extends State<AppointmentCard> with NotificationsLis
 
   @override
   Widget build(BuildContext context) {
+    switch (widget.displayType) {
+      case AppointmentCardDisplayType.home: return _homeDisplayWidget;
+      case AppointmentCardDisplayType.browse: return _browseDisplayWidget;
+    }
+  }
+
+  Widget get _homeDisplayWidget =>
+    InkWell(onTap: widget.onTap ?? _onTapAppointmentCard, child:
+      Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeMessageCard.defaultShadowBlurRadius, ), child:
+        Column(children: <Widget>[
+          HomeFavoritesWidget.defaultHeaderWidget(_headerColor),
+          _contentWidget
+        ]),
+      ),
+    );
+
+  Widget get _browseDisplayWidget =>
+    InkWell(onTap: widget.onTap ?? _onTapAppointmentCard, child:
+      Column(children: <Widget>[
+        Container(height: HomeFavoritesWidget.defaultHeaderHeight, color: _headerColor,),
+        Container(decoration: _browseDecoration, child:
+          _contentWidget
+        ),
+      ]),
+    );
+
+  static BoxDecoration get _browseDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border(left: _browseBorderSide, right: _browseBorderSide, bottom: _browseBorderSide),
+    borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
+  );
+
+  static BorderSide get _browseBorderSide =>
+    BorderSide(color: Styles().colors.surfaceAccent, width: 1);
+
+
+
+  Color get _headerColor => (widget.appointment.isUpcoming ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary);
+
+
+  Widget get _contentWidget {
     const double imageSize = 64;
     const double iconSize = 18;
     String? imageKey = widget.appointment.imageKey;
@@ -65,7 +115,6 @@ class _AppointmentCardState extends State<AppointmentCard> with NotificationsLis
     String semanticsImageHint = 'Double tap to expand image';
 
     String typeImageKey = (widget.appointment.type == AppointmentType.online) ? 'laptop' : 'location';
-    Color? headerColor = (widget.appointment.isUpcoming ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary);
     String? displayTime = widget.appointment.displayShortScheduleTime;
     String? displayType = widget.appointment.displayType;
     String? displayHost = widget.appointment.host?.displayName;
@@ -80,130 +129,115 @@ class _AppointmentCardState extends State<AppointmentCard> with NotificationsLis
       Localization().getStringEx('widget.card.button.favorite.off.hint', '') :
       Localization().getStringEx('widget.card.button.favorite.on.hint', '');
 
-    return InkWell(onTap: _onTapAppointmentCard,child:
-      ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
-        Stack(children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Styles().colors.surface,
-              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(4))
+    return Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: canFavorite ? 0 : 16), child:
+              Text(widget.appointment.category ?? '', style:
+                Styles().textStyles.getTextStyle("widget.item.small.semi_fat")
+              ),
             ),
-            child: Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child:
+          ),
+          Visibility(visible: canFavorite, child:
+            Semantics(label: semanticsFavLabel, hint: semanticsFavHint, button: true, child:
+              GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onTapExploreCardStar, child:
+                Padding(padding: EdgeInsets.all(16), child:
+                  Styles().images.getImage(favImageKey, excludeFromSemantics: true)
+                )
+              )
+            )
+          )
+        ]),
+
+        Padding(padding: EdgeInsets.only(right: 16), child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
-                  Expanded(child:
-                    Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: canFavorite ? 0 : 16), child:
-                      Text(widget.appointment.category ?? '', style:
-                        Styles().textStyles.getTextStyle("widget.item.small.semi_fat")
-                      ),
-                    ),
-                  ),
-                  Visibility(visible: canFavorite, child:
-                    Semantics(label: semanticsFavLabel, hint: semanticsFavHint, button: true, child:
-                      GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onTapExploreCardStar, child:
-                        Padding(padding: EdgeInsets.all(16), child:
-                          Styles().images.getImage(favImageKey, excludeFromSemantics: true)
+
+                Text(widget.appointment.title ?? '', style:
+                  Styles().textStyles.getTextStyle("widget.title.large.extra_fat")
+                ),
+
+                Visibility(visible: StringUtils.isNotEmpty(displayTime), child:
+                  Padding(padding: EdgeInsets.only(top: 4), child:
+                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Padding(padding: EdgeInsets.only(right: 6), child:
+                        SizedBox(width: iconSize, height: iconSize, child:
+                          Styles().images.getImage('calendar', excludeFromSemantics: true)
                         )
+                      ),
+                      Expanded(child:
+                        Text(displayTime ?? '', style:
+                          Styles().textStyles.getTextStyle("widget.item.regular")
+                        )
+                      )
+                    ])
+                  ),
+                ),
+
+                Visibility(visible: StringUtils.isNotEmpty(displayHost), child:
+                  Padding(padding: EdgeInsets.only(top: 4), child:
+                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Padding(padding: EdgeInsets.only(right: 6), child:
+                        SizedBox(width: iconSize, height: iconSize, child:
+                          Styles().images.getImage('person', excludeFromSemantics: true)
+                        )
+                      ),
+                      Expanded(child:
+                        Text(displayHost ?? '', overflow: TextOverflow.ellipsis, style:
+                          Styles().textStyles.getTextStyle("widget.item.regular")
+                        )
+                      ),
+                    ])
+                  ),
+                ),
+
+                Visibility(visible: StringUtils.isNotEmpty(displayType), child:
+                  Padding(padding: EdgeInsets.only(top: 4), child:
+                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Padding(padding: EdgeInsets.only(right: 6), child:
+                        SizedBox(width: iconSize, height: iconSize, child:
+                          Styles().images.getImage(typeImageKey, excludeFromSemantics: true)
+                        )
+                      ),
+                      Expanded(child:
+                        Text(displayType ?? '', overflow: TextOverflow.ellipsis, style:
+                          Styles().textStyles.getTextStyle("widget.item.regular")
+                        )
+                      ),
+                    ])
+                  ),
+                ),
+
+              ]),
+            ),
+
+            Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+              Opacity(opacity: StringUtils.isNotEmpty(imageKey) ? 1 : 0, child:
+                Padding(padding: EdgeInsets.only(left: 16), child:
+                  Semantics(label: semanticsImageLabel, button: true, hint: semanticsImageHint, child:
+                    InkWell(onTap: () => StringUtils.isNotEmpty(imageKey) ? _onTapCardImage(imageKey) : null, child:
+                      SizedBox(width: imageSize, height: imageSize, child:
+                        Styles().images.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders)
                       )
                     )
                   )
-                ]),
-                
-                Padding(padding: EdgeInsets.only(right: 16), child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Expanded(child:
-                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                )
+              ),
 
-                        Text(widget.appointment.title ?? '', style:
-                          Styles().textStyles.getTextStyle("widget.title.large.extra_fat")
-                        ),
-
-                        Visibility(visible: StringUtils.isNotEmpty(displayTime), child:
-                          Padding(padding: EdgeInsets.only(top: 4), child:
-                            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Padding(padding: EdgeInsets.only(right: 6), child: 
-                                SizedBox(width: iconSize, height: iconSize, child:
-                                  Styles().images.getImage('calendar', excludeFromSemantics: true)
-                                )
-                              ),
-                              Expanded(child:
-                                Text(displayTime ?? '', style:
-                                  Styles().textStyles.getTextStyle("widget.item.regular")
-                                )
-                              )
-                            ])
-                          ),
-                        ),
-                        
-                        Visibility(visible: StringUtils.isNotEmpty(displayHost), child:
-                          Padding(padding: EdgeInsets.only(top: 4), child:
-                            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Padding(padding: EdgeInsets.only(right: 6), child:
-                                SizedBox(width: iconSize, height: iconSize, child:
-                                  Styles().images.getImage('person', excludeFromSemantics: true)
-                                )
-                              ),
-                              Expanded(child:
-                                Text(displayHost ?? '', overflow: TextOverflow.ellipsis, style:
-                                  Styles().textStyles.getTextStyle("widget.item.regular")
-                                )
-                              ),
-                            ])
-                          ),
-                        ),
-
-                        Visibility(visible: StringUtils.isNotEmpty(displayType), child:
-                          Padding(padding: EdgeInsets.only(top: 4), child:
-                            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Padding(padding: EdgeInsets.only(right: 6), child:
-                                SizedBox(width: iconSize, height: iconSize, child:
-                                  Styles().images.getImage(typeImageKey, excludeFromSemantics: true)
-                                )
-                              ),
-                              Expanded(child:
-                                Text(displayType ?? '', overflow: TextOverflow.ellipsis, style:
-                                  Styles().textStyles.getTextStyle("widget.item.regular")
-                                )
-                              ),
-                            ])
-                          ),
-                        ),
-
-                      ]),
-                    ),
-
-                    Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                      Opacity(opacity: StringUtils.isNotEmpty(imageKey) ? 1 : 0, child:
-                        Padding(padding: EdgeInsets.only(left: 16), child:
-                          Semantics(label: semanticsImageLabel, button: true, hint: semanticsImageHint, child:
-                            InkWell(onTap: () => StringUtils.isNotEmpty(imageKey) ? _onTapCardImage(imageKey) : null, child:
-                              SizedBox(width: imageSize, height: imageSize, child:
-                                Styles().images.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders)
-                              )
-                            )
-                          )
-                        )
-                      ),
-
-                      Visibility(visible: (widget.appointment.cancelled == true), child:
-                        Padding(padding: EdgeInsets.only(top: 6), child:
-                          Text(Localization().getStringEx('widget.appointment.card.cancelled.label', 'Cancelled'), textAlign: TextAlign.right, style:
-                            Styles().textStyles.getTextStyle("panel.appointment_detail.title.large")
-                          )
-                        ),
-                      )
-
-                    ],)
-                  ]),
+              Visibility(visible: (widget.appointment.cancelled == true), child:
+                Padding(padding: EdgeInsets.only(top: 6), child:
+                  Text(Localization().getStringEx('widget.appointment.card.cancelled.label', 'Cancelled'), textAlign: TextAlign.right, style:
+                    Styles().textStyles.getTextStyle("panel.appointment_detail.title.large")
+                  )
                 ),
+              )
 
-              ])
-            )
-          ),
-          Container(color: headerColor, height: 4)
-        ])
-      )
+            ],)
+          ]),
+        ),
+      ])
     );
   }
 

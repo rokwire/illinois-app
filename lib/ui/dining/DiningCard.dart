@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -40,12 +41,13 @@ class DiningCard extends StatefulWidget {
 }
 
 class _DiningCardState extends State<DiningCard> with NotificationsListener {
-  static Decoration get _listContentDecoration => BoxDecoration(
+  static Decoration get _listContentDecoration => HomeMessageCard.defaultDecoration;
+  /*BoxDecoration(
       color: Styles().colors.surface,
       borderRadius: _listContentBorderRadius,
       // border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
-  );
+  );*/
   static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
   static const EdgeInsets _listContentMargin =  EdgeInsets.symmetric(vertical: 4, horizontal: 4);
   static const EdgeInsets _sectionPadding = EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16);
