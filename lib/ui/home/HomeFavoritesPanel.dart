@@ -24,8 +24,8 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWelcomeMessageWidget.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -127,6 +127,7 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
   List<String>? _favoriteCodes;
   Set<String>? _availableCodes;
   Map<String, GlobalKey> _widgetKeys = <String, GlobalKey>{};
+  Map<GlobalKey, bool> _widgetVisibilities = <GlobalKey, bool>{};
 
   @override
   void initState() {
@@ -141,6 +142,10 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     _systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
     _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
     _favoriteCodes = _buildFavoriteCodes();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+      _updateWidgetVisibilities()
+    );
 
     super.initState();
   }
@@ -165,31 +170,46 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
 
   @override
   Widget build(BuildContext context) {
+    // Build Favorites widgets list
     List<Widget> widgets = <Widget>[];
-    _buildWidgetsFromCodes(widgets, _systemCodes, availableCodes: widget.availableSystemCodes);
-    _buildWidgetsFromCodes(widgets, _favoriteCodes?.reversed, availableCodes: _availableCodes, processLastWidget: false);
-    return Column(children: widgets);
+    widgets.addAll(_buildWidgetsFromCodes(_systemCodes, availableCodes: widget.availableSystemCodes));
+    widgets.addAll(_buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes));
+
+    // Add widget splitters
+    bool hasVisibleWidgets = false;
+    List<Widget> displayList = <Widget>[];
+    for (Widget widget in widgets) {
+      if (hasVisibleWidgets) {
+        displayList.add(_splitterWidget);
+      }
+      displayList.add(widget);
+      hasVisibleWidgets = hasVisibleWidgets || _isWidgetVisibilite(widget);
+    }
+
+    return NotificationListener<Notification>(
+        onNotification: _onContentNotification,
+        child: Column(children: displayList)
+    );
   }
 
-  void _buildWidgetsFromCodes(List<Widget> widgets, Iterable<String>? codes, { Set<String>? availableCodes, bool processLastWidget = true }) {
+  List<Widget> _buildWidgetsFromCodes(Iterable<String>? codes, { Set<String>? availableCodes }) {
+    List<Widget> widgets = <Widget>[];
     if (codes != null) {
-      Widget? lastWidget;
       for (String code in codes) {
         if ((availableCodes == null) || availableCodes.contains(code)) {
           Widget? widget = _widgetFromCode(code);
           if (widget is Widget) {
-            if (lastWidget != null) {
-              widgets.add(HomeFavoriteWidgetWrapper(child: lastWidget,));
-            }
-            lastWidget = widget;
+            widgets.add(widget);
           }
         }
       }
-      if (lastWidget != null) {
-        widgets.add(processLastWidget ? HomeFavoriteWidgetWrapper(child: lastWidget,) : lastWidget);
-      }
     }
+    return widgets;
   }
+
+  static const double _splitterHeight = 1;
+  Widget get _splitterWidget =>
+    Container(height: _splitterHeight, color: Styles().colors.disabledTextColor);
 
   Widget? _widgetFromCode(String code,) {
     if (code == 'tout') {
@@ -217,8 +237,6 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
       return (data is Widget) ? data : FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: widget.updateController);
     }
   }
-
-  GlobalKey _widgetKey(String code) => _widgetKeys[code] ??= GlobalKey();
 
   void _updateContentCodes() {
     Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home']);
@@ -291,6 +309,41 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
       }
     }
     return null;
+  }
+
+  GlobalKey _widgetKey(String code) => _widgetKeys[code] ??= GlobalKey();
+
+  bool _isWidgetVisibilite(Widget widget) => _widgetVisibilities[JsonUtils.cast(widget.key)] ?? true; // treat unevaluated widgets as visible by default
+
+  Map<GlobalKey, bool> _evalWidgetVisibilities() {
+    Map<GlobalKey, bool> widgetVisibilities = <GlobalKey, bool>{};
+    for (GlobalKey globalKey in _widgetKeys.values) {
+      widgetVisibilities[globalKey] = _evalWidgetVisibility(globalKey);
+    }
+    return widgetVisibilities;
+  }
+
+  bool _evalWidgetVisibility(GlobalKey globalKey) {
+    final RenderBox? renderBox = JsonUtils.cast(globalKey.currentContext?.findRenderObject());
+    return (renderBox != null) && renderBox.hasSize && renderBox.size.height.isNotEmpty;
+  }
+
+  void _updateWidgetVisibilities() {
+    Map<GlobalKey, bool> widgetVisibilities = _evalWidgetVisibilities();
+    if (!DeepCollectionEquality().equals(_widgetVisibilities, widgetVisibilities)) {
+      setStateIfMounted(() {
+        _widgetVisibilities = widgetVisibilities;
+      });
+    }
+  }
+
+
+  bool _onContentNotification(Notification notification) {
+    //debugPrint("HomeFavoritesContentWidget: handled ${notification.runtimeType.toString()}");
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+      _updateWidgetVisibilities()
+    );
+    return false;
   }
 }
 
