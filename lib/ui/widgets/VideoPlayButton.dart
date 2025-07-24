@@ -19,16 +19,21 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 class VideoPlayButton extends StatelessWidget {
-  final bool hasBackground;
+  static final Border contrastWhiteBorder = Border.all(color: Styles.appColors.white, style: BorderStyle.solid, width: 1);
 
-  VideoPlayButton({this.hasBackground = true});
+  final bool hasBackground;
+  final Border? border;
+
+  VideoPlayButton({this.hasBackground = true, this.border});
 
   @override
   Widget build(BuildContext context) {
     final double buttonWidth = 80;
     final double buttonHeight = 50;
     return Container(
-            decoration: BoxDecoration(color: (hasBackground ? Styles().colors.iconColor : Colors.transparent), borderRadius: BorderRadius.all(Radius.circular(10))),
+            decoration: BoxDecoration(color: (hasBackground ? Styles().colors.iconColor : Colors.transparent),
+                borderRadius: BorderRadius.all(Radius.circular(10),),
+                border: border ?? Border()),
             width: buttonWidth,
             height: buttonHeight,
             child: Center(
