@@ -130,14 +130,14 @@ class GBVResourceListScreen {
   final String type;
   final String? title;
   final String? description;
-  final List<GBVResourceList>? content;
+  final List<GBVResourceList> content;
 
   GBVResourceListScreen({
     required this.id,
     required this.type,
     this.title,
     this.description,
-    this.content
+    required this.content
   });
 
   static GBVResourceListScreen? fromJson(Map<String, dynamic>? json) {

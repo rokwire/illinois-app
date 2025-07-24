@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/GBV.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -8,7 +7,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:illinois/ui/gbv/SituationStepPanel.dart';
@@ -92,13 +90,7 @@ class SexualMisconductPathwaysPanel extends StatelessWidget {
 
 
   void _onTalkToSomeone(BuildContext context) {
-    // TODO: loading state during _getResourceListScreen execution
-    _getResourceListScreen('confidential_resources').then((resourceListScreen) {
-      if (resourceListScreen != null) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-            GBVResourceListPanel(resourceListScreen: resourceListScreen)));
-      }
-    });
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(id: 'confidential_resources')));
   }
   void _onFileReport(BuildContext context) {
     // Navigate to Filing a Report flow
@@ -126,14 +118,5 @@ class SexualMisconductPathwaysPanel extends StatelessWidget {
       );
     }
   }
-
-  Future<GBVResourceListScreen?> _getResourceListScreen(String id) async {
-    // temporary json load from assets
-    String? json = await AppBundle.loadString('assets/extra/gbv/$id.json');
-    return (json != null)
-        ? GBVResourceListScreen.fromJson(JsonUtils.decodeMap(json))
-        : null;
-  }
-
 
 }
