@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Add contrast white border to Play button in Onboarding2VideoTutorialPanel [#4873](https://github.com/rokwire/illinois-app/issues/4873).
+### Fixed
+- Fixed Home/Favorites splitters build [#5271](https://github.com/rokwire/illinois-app/issues/5271).
 
 ## [7.2.14] - 2025-07-23
 ### Changed
