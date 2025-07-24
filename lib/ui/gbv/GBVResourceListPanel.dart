@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/model/GBV.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -18,17 +19,18 @@ class GBVResourceListPanel extends StatefulWidget {
 
 class _GBVResourceListPanelState extends State<GBVResourceListPanel> {
 
-  GBVResourceListScreen? _resourceListScreen;
-  List<GBVResource?> _resources = [];
+  _GBVResourceListScreenData? _resourceData;
   bool _loading = true;
 
   @override
   void initState() {
-    _loadResources(widget.id).then((_) {
+    _loadResourceScreenData(widget.id).then((_GBVResourceListScreenData? resourceData) {
       setStateIfMounted(() {
         _loading = false;
+        _resourceData = resourceData;
       });
     });
+
     super.initState();
   }
 
@@ -40,36 +42,67 @@ class _GBVResourceListPanelState extends State<GBVResourceListPanel> {
   @override
   Widget build(BuildContext context) =>
       Scaffold(appBar: HeaderBar(),
-          body: (_loading)
-          ? _buildLoadingContent()
-          : _bodyWidget(_resourceListScreen), backgroundColor: Styles().colors.background, bottomNavigationBar: uiuc.TabBar()
+        body: _scaffoldContentWidget(_resourceData),
+        backgroundColor: Styles().colors.background, bottomNavigationBar: uiuc.TabBar()
       );
 
-  Widget? _bodyWidget (GBVResourceListScreen? resourceListScreen) {
-    List<GBVResourceList>? sections = (resourceListScreen != null)
-      ? resourceListScreen.content
-      : [];
+  Widget _scaffoldContentWidget (_GBVResourceListScreenData? resourceData) {
+    if (_loading) {
+      return _buildLoadingContent();
+    }
+    else if (resourceData == null) {
+      return _buildErrorContent();
+    }
+    else {
+      return _bodyWidget(resourceData);
+    }
+  }
+
+  Widget _bodyWidget (_GBVResourceListScreenData resourceData) {
+    GBVResourceListScreen resourceListScreen = resourceData.resourceListScreen;
     return
       SingleChildScrollView(child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Padding(padding: EdgeInsets.only(top: 32, left: 16), child: (
-              Text(resourceListScreen?.title ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")))
+              Text(resourceListScreen.title ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")))
           ),
           Padding(padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16), child:
             Container(height: 1, color: Styles().colors.surfaceAccent)
           ),
           Padding(padding: EdgeInsets.only(right: 16, left: 16, bottom: 32), child: (
-              Text(resourceListScreen?.description ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"))
+              Text(resourceListScreen.description ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"))
           )),
-          ...sections.map((section) => _buildResourceSection(section))
+          ...resourceListScreen.content.map((section) => _buildResourceSection(section, resourceItems: resourceData.resourceItems))
         ])
       );
   }
-  Widget _resourceWidget (String title, List<GBVResourceDetail> content, GBVResourceType type) {
-    Widget descriptionWidget = (content.isNotEmpty)
+
+  Widget _buildResourceSection(GBVResourceList resourceList, { required Map<String, GBVResource> resourceItems }) {
+      List<Widget> resources = resourceList.resourceIds.map((id) {
+        GBVResource? resource = resourceItems[id];
+        return (resource != null)
+            ? _resourceWidget(resource)
+            : Container();
+      }).toList();
+
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        (resourceList.title != '')
+            ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: (
+            Text(resourceList.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"))
+        ))
+            : Container(),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
+          Column(children: resources)
+        )
+      ]);
+
+  }
+
+  Widget _resourceWidget (GBVResource resource) {
+    Widget descriptionWidget = (resource.directoryContent.isNotEmpty)
       ? Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
         Column(children:
-          content.map((detail) => Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"))).toList()
+          resource.directoryContent.map((detail) => Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"))).toList()
         )
       )
       : Container();
@@ -86,18 +119,65 @@ class _GBVResourceListPanelState extends State<GBVResourceListPanel> {
               Expanded(child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                   Padding(padding: EdgeInsets.only(left: 16), child:
-                  Text(title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
+                  Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
                   ),
                   descriptionWidget
                 ])
               ),
               Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
-              Styles().images.getImage((type == GBVResourceType.external_link) ? 'external-link' : 'chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                Styles().images.getImage((resource.type == GBVResourceType.external_link) ? 'external-link' : 'chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
               )
             ])
           )
         )
       );
+  }
+
+  Widget _buildLoadingContent() {
+    return Column(children: <Widget>[
+        Expanded(flex: 1, child: Container()),
+        SizedBox(width: 32, height: 32, child:
+          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+        ),
+        Expanded(flex: 2, child: Container()),
+    ]);
+  }
+
+  Widget _buildErrorContent() {
+    return Column(children: <Widget>[
+        Expanded(flex: 1, child: Container()),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 48), child:
+          Text(Localization().getStringEx('', 'Failed to load resource data.'), style: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'), textAlign: TextAlign.center,),
+        ),
+        Expanded(flex: 3, child: Container()),
+    ]);
+  }
+
+  Future<_GBVResourceListScreenData?> _loadResourceScreenData(String screenId) async {
+    // temporary json load from assets
+    String? json = await AppBundle.loadString('assets/extra/gbv/${screenId}.json');
+    GBVResourceListScreen? resourceListScreen = (json != null)
+        ? GBVResourceListScreen.fromJson(JsonUtils.decodeMap(json))
+        : null;
+
+    if ((resourceListScreen != null) && mounted) {
+      List<GBVResource?> resources = await Future.wait(List.from(resourceListScreen.resourceIds.map((String resourceId) => _loadResourceById(resourceId))));
+
+      Map<String, GBVResource> resourceItems = <String, GBVResource>{};
+      for (GBVResource? resource in resources) {
+        if (resource != null) {
+          resourceItems[resource.id] = resource;
+        }
+      }
+
+      return _GBVResourceListScreenData(
+          resourceListScreen: resourceListScreen,
+          resourceItems: resourceItems,
+      );
+    }
+    else {
+      return null;
+    }
   }
 
   Future<GBVResource?> _loadResourceById(String id) async {
@@ -107,60 +187,15 @@ class _GBVResourceListPanelState extends State<GBVResourceListPanel> {
       ? GBVResource.fromJson(JsonUtils.decodeMap(json))
       : null;
   }
-
-  Widget _buildResourceSection(GBVResourceList resourceList) {
-      List<Widget> resources = resourceList.resourceIds.map((id) {
-        GBVResource? resource = _resources.firstWhere((x) => (x != null && x.id == id));
-        return (resource != null)
-            ? _resourceWidget(resource.title, resource.directoryContent, resource.type)
-            : Container();
-      }).toList();
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        (resourceList.title != '')
-            ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: (
-            Text(resourceList.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"))
-        ))
-            : Container(),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
-        Column(children: resources)
-        )
-      ]);
-
-  }
-
-  Future<void> _loadResources (String id) async {
-    await Future.delayed(Duration(seconds: 2));
-    // temporary json load from assets
-    String? json = await AppBundle.loadString('assets/extra/gbv/$id.json');
-    GBVResourceListScreen? resourceListScreen = (json != null)
-        ? GBVResourceListScreen.fromJson(JsonUtils.decodeMap(json))
-        : null;
-
-    setStateIfMounted(() {
-      _resourceListScreen = resourceListScreen;
-    });
-
-    if (resourceListScreen != null) {
-      resourceListScreen.content.forEach((resourceList) async {
-        Iterable<Future<GBVResource?>> resourceFutures = resourceList.resourceIds.map((resourceId) async {
-           return await _loadResourceById(resourceId);
-        });
-        List<GBVResource?> resourcesInSection = await Future.wait(resourceFutures);
-
-        setStateIfMounted(() {
-          _resources = _resources + resourcesInSection;
-        });
-      });
-    }
-
-  }
-
-  Widget _buildLoadingContent() {
-    return Center(
-        child: Column(children: <Widget>[
-          Container(height: MediaQuery.of(context).size.height / 5),
-          CircularProgressIndicator(),
-        ]));
-  }
-
 }
+
+class _GBVResourceListScreenData {
+  final GBVResourceListScreen resourceListScreen;
+  final Map<String, GBVResource> resourceItems;
+
+  _GBVResourceListScreenData({
+    required this.resourceListScreen,
+    required this.resourceItems,
+  });
+}
+
