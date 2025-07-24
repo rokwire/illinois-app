@@ -160,8 +160,8 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
                           ClosedCaption(
                               text: _currentCaptionText, textStyle: Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.caption.text"))
                         ]),
-                        Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton()),
-                        // Visibility(visible: (_isPlayerInitialized && _isPlaying), child: VideoPauseButton())
+                        Visibility(visible: (_isPlayerInitialized && !_isPlaying), child:
+                          VideoPlayButton(border: VideoPlayButton.contrastWhiteBorder)),
                       ])))));
             } else {
               return Center(child:
