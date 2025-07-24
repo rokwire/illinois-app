@@ -401,7 +401,7 @@ class HomeCardWidget extends StatelessWidget {
 
   HomeCardWidget({super.key, this.title, this.child,
     this.padding = HomeMessageCard.defaultPadding,
-    this.margin = HomeMessageCard.defaultMargin,
+    this.margin = HomeMessageCard.defaultCardMargin,
     this.onClose,
   });
 
@@ -699,6 +699,13 @@ class HomeMessageCard extends StatelessWidget {
   final EdgeInsetsGeometry margin;
   final EdgeInsetsGeometry padding;
 
+  HomeMessageCard({Key? key,
+    this.title,
+    this.message,
+    this.margin = defaultChildMargin,
+    this.padding = defaultPadding,
+  }) : super(key: key);
+
   static BoxDecoration get defaultDecoration => BoxDecoration(
     color: defaultBackColor,
     borderRadius: defaultBorderRadius,
@@ -720,15 +727,9 @@ class HomeMessageCard extends StatelessWidget {
   );
 
   static const EdgeInsets defaultPadding = const EdgeInsets.all(16);
-  static const EdgeInsets defaultMargin = const EdgeInsets.only(left: 16, right: 16, bottom: 24);
+  static const EdgeInsets defaultChildMargin = const EdgeInsets.only(left: 16, right: 16, bottom: 24);
+  static const EdgeInsets defaultCardMargin = const EdgeInsets.symmetric(horizontal: 16, vertical: 24);
 
-  HomeMessageCard({Key? key,
-    this.title,
-    this.message,
-    this.margin = defaultMargin,
-    this.padding = defaultPadding,
-  }) : super(key: key);
-  
   @override
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
@@ -769,7 +770,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
 
   HomeMessageHtmlCard({Key? key,
     this.title, this.message,
-    this.margin = HomeMessageCard.defaultMargin,
+    this.margin = HomeMessageCard.defaultChildMargin,
     this.padding = HomeMessageCard.defaultPadding,
     this.linkColor, this.onTapLink
   }) : super(key: key);
