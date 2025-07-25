@@ -29,6 +29,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
+import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
@@ -178,7 +179,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
       // Config().homeRecentItemsCount
       for (RecentItem item in _recentItems!) {
         pages.add(Padding(key: _contentKeys[item.contentId] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
-          HomeRecentItemCard(recentItem: item),
+          HomeRecentItemCard(recentItem: item, displayMode: HomeRecentItemCardDisplayMode.home,),
         ));
       }
       debugPrint("HomeRecentItemsWidget._contentKeys: $_contentKeys");
@@ -200,7 +201,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
-        HomeRecentItemCard(recentItem: _recentItems!.first)
+        HomeRecentItemCard(recentItem: _recentItems!.first, displayMode: HomeRecentItemCardDisplayMode.home)
       );
     }
 
@@ -410,12 +411,18 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> with Notifi
 
 // HomeRecentItemCard
 
+enum HomeRecentItemCardDisplayMode { home, browse }
+
 class HomeRecentItemCard extends StatefulWidget {
 
   final RecentItem recentItem;
+  final HomeRecentItemCardDisplayMode displayMode;
   final bool showDate;
 
-  HomeRecentItemCard({required this.recentItem, this.showDate = false});
+  HomeRecentItemCard({required this.recentItem,
+    this.displayMode = HomeRecentItemCardDisplayMode.browse,
+    this.showDate = false
+  });
 
   @override
   _HomeRecentItemCardState createState() => _HomeRecentItemCardState();
@@ -452,6 +459,48 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> with Notificati
 
   @override
   Widget build(BuildContext context) {
+    switch (widget.displayMode) {
+      case HomeRecentItemCardDisplayMode.home: return _homeDisplayWidget;
+      case HomeRecentItemCardDisplayMode.browse: return _browseDisplayWidget;
+    }
+  }
+
+  Widget get _homeDisplayWidget =>
+    InkWell(onTap: _onTapItem, child:
+      Semantics(label: widget.recentItem.title, child:
+        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeMessageCard.defaultShadowBlurRadius, ), child:
+          Column(children: <Widget>[
+            HomeFavoritesWidget.defaultHeaderWidget(_headerColor),
+            _contentWidget
+          ]),
+        ),
+      ),
+    );
+
+  Widget get _browseDisplayWidget =>
+    InkWell(onTap: _onTapItem, child:
+      Semantics(label: widget.recentItem.title, child:
+        Column(children: <Widget>[
+          Container(height: HomeFavoritesWidget.defaultHeaderHeight, color: _headerColor,),
+          Container(decoration: _browseDecoration, child:
+            _contentWidget
+          ),
+        ]),
+      ),
+    );
+
+  static BoxDecoration get _browseDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border(left: _browseBorderSide, right: _browseBorderSide, bottom: _browseBorderSide),
+    borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
+  );
+
+  static BorderSide get _browseBorderSide =>
+    BorderSide(color: Styles().colors.surfaceAccent, width: 1);
+
+  Color get _headerColor => widget.recentItem.headerColor ?? Styles().colors.fillColorPrimary;
+
+  Widget get _contentWidget {
     bool isFavorite = Auth2().isFavorite(widget.recentItem.favorite);
 
     String? favLabel = isFavorite ?
@@ -464,35 +513,31 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> with Notificati
 
     Widget? favIcon = Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true);
 
-    return Padding(padding: EdgeInsets.only(bottom: 8), child:
-      Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), clipBehavior: Clip.none, child:
-        ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
-          Stack(children: [
-            GestureDetector(behavior: HitTestBehavior.translucent, onTap: _onTapItem, child:
-              Container(color: Colors.white, padding: EdgeInsets.all(16), child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    Expanded(child:
-                      Padding(padding: EdgeInsets.only(right: 24), child:
-                        Text(widget.recentItem.title ?? '', style: Styles().textStyles.getTextStyle("widget.card.title.regular.extra_fat"))
-                      ),
-                    ),
-                  ]),
-                  Padding(padding: EdgeInsets.only(top: 10), child:
-                    Column(children: _buildDetails()),
-                  )
-                ])
-              )
+    return Stack(children: [
+      Padding(padding: EdgeInsets.all(16), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(right: 24), child:
+                Text(widget.recentItem.title ?? '', style: Styles().textStyles.getTextStyle("widget.card.title.regular.extra_fat"))
+              ),
             ),
-            _topBorder(),
-            Visibility(visible: Auth2().canFavorite, child:
-              Align(alignment: Alignment.topRight, child:
-                GestureDetector(onTap: _onTapFavorite, child:
-                  Semantics(excludeSemantics: true, label: favLabel, hint: favHint, child:
-                    Container(padding: EdgeInsets.all(16), child: favIcon))))),
-          ],),
+          ]),
+          Padding(padding: EdgeInsets.only(top: 10), child:
+            Column(children: _buildDetails()),
+          )
+        ])
       ),
-    ),);
+      Visibility(visible: Auth2().canFavorite, child:
+        Align(alignment: Alignment.topRight, child:
+          GestureDetector(onTap: _onTapFavorite, child:
+            Semantics(excludeSemantics: true, label: favLabel, hint: favHint, child:
+              Container(padding: EdgeInsets.all(16), child: favIcon)
+            )
+          )
+        )
+      ),
+    ],);
   }
 
   List<Widget> _buildDetails() {
@@ -556,10 +601,6 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> with Notificati
     return Semantics(label: widget.recentItem.descripton ?? '', excludeSemantics: true, child:
       Text(widget.recentItem.descripton ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.small.medium")),
     );
-  }
-
-  Widget _topBorder() {
-    return Container(height: 7, color: widget.recentItem.headerColor ?? Styles().colors.fillColorPrimary);
   }
 
   void _onTapFavorite() {
