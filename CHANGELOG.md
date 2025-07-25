@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
-- Set javascript mode for floor panel web view to unrestricted so feature toggles will work
+- Set javascript mode for floor panel web view to unrestricted so feature toggles will work [#5295](https://github.com/rokwire/illinois-app/issues/5295).
+
 ## [7.2.15] - 2025-07-24
 ### Changed
 - Add contrast white border to Play button in Onboarding2VideoTutorialPanel [#4873](https://github.com/rokwire/illinois-app/issues/4873).
