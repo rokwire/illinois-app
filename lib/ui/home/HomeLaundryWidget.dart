@@ -10,6 +10,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Laundries.dart';
+import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
@@ -158,7 +159,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
       List<Widget> pages = <Widget>[];
       for (LaundryRoom room in _laundrySchool!.rooms!) {
         pages.add(Padding(key: _contentKeys[room.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
-          LaundryRoomCard(room: room, onTap: () => _onTapRoom(room))
+          LaundryRoomCard(room: room, displayMode: LaundryRoomCardDisplayMode.home, onTap: () => _onTapRoom(room))
         ));
       }
 
@@ -247,11 +248,14 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
   }
 }
 
+enum LaundryRoomCardDisplayMode { home, browse }
+
 class LaundryRoomCard extends StatefulWidget {
-  final LaundryRoom? room;
+  final LaundryRoom room;
+  final LaundryRoomCardDisplayMode displayMode;
   final GestureTapCallback? onTap;
 
-  LaundryRoomCard({Key? key, this.room, this.onTap}) : super(key: key);
+  LaundryRoomCard({super.key, required this.room, this.displayMode = LaundryRoomCardDisplayMode.browse, this.onTap});
 
   @override
   State<LaundryRoomCard> createState() => _LaundryRoomCardState();
@@ -288,48 +292,85 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> with NotificationsLis
 
   @override
   Widget build(BuildContext context) {
-    bool isFavorite = Auth2().isFavorite(widget.room);
-    Color? headerColor = Styles().colors.accentColor2;
-    String? title = widget.room?.name;
+    switch (widget.displayMode) {
+      case LaundryRoomCardDisplayMode.home: return _homeDisplayWidget;
+      case LaundryRoomCardDisplayMode.browse: return _browseDisplayWidget;
+    }
+  }
 
-    return GestureDetector(onTap: widget.onTap, child:
-      Semantics(label: title, child:
+  Widget get _homeDisplayWidget =>
+    InkWell(onTap: widget.onTap ?? _onTapLaundryCard, child:
+      Semantics(label: widget.room.name, child:
+        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeMessageCard.defaultShadowBlurRadius, ), child:
+          Column(children: <Widget>[
+            HomeFavoritesWidget.defaultHeaderWidget(_headerColor),
+            _contentWidget
+          ]),
+        ),
+      ),
+    );
+
+  Widget get _browseDisplayWidget =>
+    InkWell(onTap: widget.onTap ?? _onTapLaundryCard, child:
+      Semantics(label: widget.room.name, child:
         Column(children: <Widget>[
-          Container(height: 7, color: headerColor,),
-          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
-            Padding(padding: EdgeInsets.all(16), child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Flex(direction: Axis.vertical, children: <Widget>[
-                    Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                      Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.regular.extra_fat")), // widget.title.medium.extra_fat
-                      ),
-                      Visibility(visible: Auth2().canFavorite, child:
-                        GestureDetector(behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            Analytics().logSelect(target: "Favorite: $title");
-                            Auth2().prefs?.toggleFavorite(widget.room);
-                          }, child:
-                          Semantics(container: true,
-                            label: isFavorite
-                                ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
-                                : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-                            hint: isFavorite
-                                ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
-                                : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-                            button: true,
-                            excludeSemantics: true,
-                            child:
-                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ]),
-              ),
+          Container(height: HomeFavoritesWidget.defaultHeaderHeight, color: _headerColor,),
+          Container(decoration: _browseDecoration, child:
+            _contentWidget
+          ),
+        ]),
+      ),
+    );
+
+  static BoxDecoration get _browseDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border(left: _browseBorderSide, right: _browseBorderSide, bottom: _browseBorderSide),
+    borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
+  );
+
+  static BorderSide get _browseBorderSide =>
+    BorderSide(color: Styles().colors.surfaceAccent, width: 1);
+
+  Color get _headerColor => Styles().colors.accentColor2;
+
+  Widget get _contentWidget {
+    bool isFavorite = Auth2().isFavorite(widget.room);
+
+    return Padding(padding: EdgeInsets.all(16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Flex(direction: Axis.vertical, children: <Widget>[
+          Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+            Expanded(child:
+              Text(widget.room.name ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.regular.extra_fat")), // widget.title.medium.extra_fat
+            ),
+            Visibility(visible: Auth2().canFavorite, child:
+              GestureDetector(behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  Analytics().logSelect(target: "Favorite: ${widget.room.name}");
+                  Auth2().prefs?.toggleFavorite(widget.room);
+                }, child:
+                Semantics(container: true,
+                  label: isFavorite
+                      ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+                      : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+                  hint: isFavorite
+                      ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+                      : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+                  button: true,
+                  excludeSemantics: true,
+                  child:
+                    Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))),
+                )
+              ],
             )
           ],
-        )),);
+        ),
+      ]),
+    );
+  }
+
+  void _onTapLaundryCard() {
+    Analytics().logSelect(target: "Laundry: '${widget.room.name}'", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: widget.room,)));
   }
 }
