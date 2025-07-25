@@ -391,7 +391,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     _loadGroupStats();
     _increaseProgress();
     // Load group if the device is online, otherwise - use widget's argument
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       Groups().loadGroup(widget.groupId).then((Group? group) {
         _onGroupLoaded(group, loadEvents: loadEvents);
       });
@@ -559,7 +559,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       setStateIfMounted(() {});
     } 
     else if (name == Connectivity.notifyStatusChanged) {
-      if (Connectivity().isOnline && mounted) {
+      if (Connectivity().isNotOffline && mounted) {
         _loadGroup(loadEvents: true);
       }
     }
@@ -602,7 +602,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     }
     else if (state == AppLifecycleState.resumed) {
       // Refresh group if the device is online
-      if ((_pausedDateTime != null) && Connectivity().isOnline) {
+      if ((_pausedDateTime != null) && Connectivity().isNotOffline) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _refreshGroup(refreshEvents: true);

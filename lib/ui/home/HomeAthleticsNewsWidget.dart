@@ -66,7 +66,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
       });
     }
 
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       _loadingNews = true;
       Sports().loadNews(null, Config().homeAthleticsNewsCount).then((List<News>? news) {
         setStateIfMounted(() {
@@ -205,7 +205,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
   }
 
   void _refreshNews({bool showProgress = false}) {
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       if (showProgress && mounted) {
         setState(() {
           _loadingNews = true;
