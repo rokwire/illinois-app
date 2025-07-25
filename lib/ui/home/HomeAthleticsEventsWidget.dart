@@ -69,7 +69,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
       });
     }
 
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       _loadingGames = true;
       _loadSportEvents().then((List<Event2>? events) {
         setStateIfMounted(() {
@@ -217,7 +217,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
   }
 
   void _refreshGames({bool showProgress = false}) {
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       if (showProgress && mounted) {
         setState(() {
           _loadingGames = true;

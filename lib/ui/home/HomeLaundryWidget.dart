@@ -69,7 +69,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
       });
     }
 
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       _loading = true;
       Laundries().loadSchoolRooms().then((LaundrySchool? laundrySchool) {
         setStateIfMounted(() {
@@ -207,7 +207,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
   }
 
   void _refreshLaundry({bool showProgress = false}) {
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       if (showProgress && mounted) {
         setState(() {
           _loading = true;
