@@ -33,17 +33,17 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum AppointmentCardDisplayType { home, browse }
+enum AppointmentCardDisplayMode { home, browse }
 
 class AppointmentCard extends StatefulWidget with AnalyticsInfo {
   final Appointment appointment;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
-  final AppointmentCardDisplayType displayType;
+  final AppointmentCardDisplayMode displayMode;
   final void Function()? onTap;
 
   AppointmentCard({super.key,
     required this.appointment, this.analyticsFeature, this.onTap,
-    this.displayType = AppointmentCardDisplayType.browse,
+    this.displayMode = AppointmentCardDisplayMode.browse,
   });
 
   @override
@@ -67,30 +67,34 @@ class _AppointmentCardState extends State<AppointmentCard> with NotificationsLis
 
   @override
   Widget build(BuildContext context) {
-    switch (widget.displayType) {
-      case AppointmentCardDisplayType.home: return _homeDisplayWidget;
-      case AppointmentCardDisplayType.browse: return _browseDisplayWidget;
+    switch (widget.displayMode) {
+      case AppointmentCardDisplayMode.home: return _homeDisplayWidget;
+      case AppointmentCardDisplayMode.browse: return _browseDisplayWidget;
     }
   }
 
   Widget get _homeDisplayWidget =>
     InkWell(onTap: widget.onTap ?? _onTapAppointmentCard, child:
-      Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeMessageCard.defaultShadowBlurRadius, ), child:
-        Column(children: <Widget>[
-          HomeFavoritesWidget.defaultHeaderWidget(_headerColor),
-          _contentWidget
-        ]),
+      Semantics(label: widget.appointment.title, child:
+        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeMessageCard.defaultShadowBlurRadius, ), child:
+          Column(children: <Widget>[
+            HomeFavoritesWidget.defaultHeaderWidget(_headerColor),
+            _contentWidget
+          ]),
+        ),
       ),
     );
 
   Widget get _browseDisplayWidget =>
     InkWell(onTap: widget.onTap ?? _onTapAppointmentCard, child:
-      Column(children: <Widget>[
-        Container(height: HomeFavoritesWidget.defaultHeaderHeight, color: _headerColor,),
-        Container(decoration: _browseDecoration, child:
-          _contentWidget
-        ),
-      ]),
+      Semantics(label: widget.appointment.title, child:
+        Column(children: <Widget>[
+          Container(height: HomeFavoritesWidget.defaultHeaderHeight, color: _headerColor,),
+          Container(decoration: _browseDecoration, child:
+            _contentWidget
+          ),
+        ]),
+      ),
     );
 
   static BoxDecoration get _browseDecoration => BoxDecoration(
@@ -102,10 +106,7 @@ class _AppointmentCardState extends State<AppointmentCard> with NotificationsLis
   static BorderSide get _browseBorderSide =>
     BorderSide(color: Styles().colors.surfaceAccent, width: 1);
 
-
-
   Color get _headerColor => (widget.appointment.isUpcoming ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary);
-
 
   Widget get _contentWidget {
     const double imageSize = 64;
