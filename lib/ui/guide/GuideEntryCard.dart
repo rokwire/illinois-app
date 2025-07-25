@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -24,7 +26,7 @@ class GuideEntryCard extends StatefulWidget {
   final String? favoriteKey;
   final Map<String, dynamic>? guideEntry;
   final AnalyticsFeature? analyticsFeature;
-  final GuideEntryCardDisplayMode? displayMode;
+  final GuideEntryCardDisplayMode displayMode;
 
   GuideEntryCard(this.guideEntry, { this.favoriteKey = GuideFavorite.favoriteKeyName, this.displayMode = GuideEntryCardDisplayMode.browse, this.analyticsFeature });
 
@@ -67,6 +69,48 @@ class _GuideEntryCardState extends State<GuideEntryCard> with NotificationsListe
 
   @override
   Widget build(BuildContext context) {
+    switch (widget.displayMode) {
+      case GuideEntryCardDisplayMode.home: return _homeDisplayWidget;
+      case GuideEntryCardDisplayMode.browse: return _browseDisplayWidget;
+    }
+  }
+
+  Widget get _homeDisplayWidget =>
+    InkWell(onTap: _onTapEntry, child:
+      Semantics(label: Guide().entryListTitle(widget.guideEntry, stripHtmlTags: true), child:
+        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeMessageCard.defaultShadowBlurRadius, ), child:
+          Column(children: <Widget>[
+            HomeFavoritesWidget.defaultHeaderWidget(_headerColor),
+            _contentWidget
+          ]),
+        ),
+      ),
+    );
+
+  Widget get _browseDisplayWidget =>
+    InkWell(onTap: _onTapEntry, child:
+      Semantics(label: Guide().entryListTitle(widget.guideEntry, stripHtmlTags: true), child:
+        Column(children: <Widget>[
+          Container(height: HomeFavoritesWidget.defaultHeaderHeight, color: _headerColor,),
+          Container(decoration: _browseDecoration, child:
+            _contentWidget
+          ),
+        ]),
+      ),
+    );
+
+  static BoxDecoration get _browseDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border(left: _browseBorderSide, right: _browseBorderSide, bottom: _browseBorderSide),
+    borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
+  );
+
+  static BorderSide get _browseBorderSide =>
+    BorderSide(color: Styles().colors.surfaceAccent, width: 1);
+
+  Color get _headerColor => Styles().colors.accentColor3;
+
+  Widget get _contentWidget {
     String? titleHtml = Guide().entryListTitle(widget.guideEntry);
     String? descriptionHtml = Guide().entryListDescription(widget.guideEntry);
     bool isReminder = Guide().isEntryReminder(widget.guideEntry);
@@ -98,36 +142,29 @@ class _GuideEntryCardState extends State<GuideEntryCard> with NotificationsListe
       ),
     ];
 
-    return Container(
-      decoration: BoxDecoration(
-          color: Styles().colors.white,
-          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
-      ),
-      child: Stack(children: [
-        InkWell(onTap: _onTapEntry, child:
-          Semantics(button: true, child:
-            Padding(padding: EdgeInsets.all(16), child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
-          ),)),
-        Container(color: Styles().colors.accentColor3, height: 4),
+    return Stack(children: [
+        Padding(padding: EdgeInsets.all(16), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
+        ),
         Visibility(visible: _canFavorite, child:
           Align(alignment: Alignment.topRight, child:
-          Semantics(
-            label: _isFavorite
-                ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
-                : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-            hint: _isFavorite
-                ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
-                : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-            button: true,
-            child:
-            GestureDetector(onTap: _onTapFavorite, child:
-              Container(padding: EdgeInsets.only(top:16, right:16, left: 20, bottom: 20), child:
-              Styles().images.getImage(_isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
-          ),)),),),
-      ],),
-    );
+            Semantics(
+              label: _isFavorite
+                  ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+                  : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+              hint: _isFavorite
+                  ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+                  : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+              button: true,
+              child: InkWell(onTap: _onTapFavorite, child:
+                Container(padding: EdgeInsets.only(top:16, right:16, left: 20, bottom: 20), child:
+                  Styles().images.getImage(_isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
+                ),
+              )
+            ),
+          ),
+        ),
+    ],);
   }
 
   TextStyle? get _reminderDateTextStyle {
