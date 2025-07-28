@@ -203,7 +203,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
       );
     }
     return (resourceButton != null) ? Padding(
-      padding: EdgeInsets.symmetric(vertical: HomeMessageCard.defaultShadowBlurRadius),
+      padding: EdgeInsets.symmetric(vertical: HomeCard.defaultShadowBlurRadius),
       child: resourceButton,
     ) : null;
   }

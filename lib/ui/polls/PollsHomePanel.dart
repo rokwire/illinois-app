@@ -889,7 +889,7 @@ class _PollCardState extends State<PollCard> {
 
     return Semantics(container: true, child:
       Column(children: <Widget>[
-        Container(decoration: HomeMessageCard.defaultDecoration, child:
+        Container(decoration: HomeCard.defaultDecoration, child:
           contentWidget
         ),
       ],),

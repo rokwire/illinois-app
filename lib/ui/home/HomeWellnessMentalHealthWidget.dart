@@ -184,7 +184,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
     String? title = Guide().entryListTitle(resourceItem);
     Favorite favorite = GuideFavorite(id: id, contentType: Guide.wellnessMentalHealthContentType);
 
-    return Padding(padding: EdgeInsets.symmetric(vertical: HomeMessageCard.defaultShadowBlurRadius), child:
+    return Padding(padding: EdgeInsets.symmetric(vertical: HomeCard.defaultShadowBlurRadius), child:
       WellnessLargeResourceButton(
         label: title,
         favorite: favorite,

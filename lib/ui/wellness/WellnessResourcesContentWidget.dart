@@ -272,7 +272,7 @@ class WellnessLargeResourceButton extends StatelessWidget {
 
   BoxDecoration get _cardDecoration {
     switch (displayMode) {
-      case CardDisplayMode.home: return HomeMessageCard.defaultDecoration;
+      case CardDisplayMode.home: return HomeCard.defaultDecoration;
       case CardDisplayMode.browse: return _browseDecoration;
     }
   }
@@ -324,7 +324,7 @@ class WellnessRegularResourceButton extends StatelessWidget {
 
   BoxDecoration? get _cardDecoration {
     switch (displayMode) {
-      case CardDisplayMode.home: return HomeMessageCard.defaultDecoration;
+      case CardDisplayMode.home: return HomeCard.defaultDecoration;
       case CardDisplayMode.browse: return null;
     }
   }

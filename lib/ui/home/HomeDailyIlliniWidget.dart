@@ -137,7 +137,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
       if (widgetsList.length >= 3) {
         contentWidget = Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Container(decoration: HomeMessageCard.defaultDecoration, child:
+          child: Container(decoration: HomeCard.defaultDecoration, child:
             Column(children: <Widget>[
               widgetsList[0],
               widgetsList[1],
@@ -225,7 +225,7 @@ class _MainStoryWidget extends _StoryWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-                borderRadius: BorderRadius.vertical(top: HomeMessageCard.defaultRadius),
+                borderRadius: BorderRadius.vertical(top: HomeCard.defaultRadius),
                 child: _buildImage()
           ),
           InkWell(

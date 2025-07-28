@@ -29,7 +29,7 @@ class HomeRadioWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: favoriteId,
       title: title,
-      child: Container(padding: EdgeInsets.all(16), margin: EdgeInsets.only(left: 16, right: 16, bottom: 24), decoration: HomeMessageCard.defaultDecoration, child:
+      child: Container(padding: EdgeInsets.all(16), margin: EdgeInsets.only(left: 16, right: 16, bottom: 24), decoration: HomeCard.defaultDecoration, child:
         _RadioControl(analyticsHost: this.runtimeType.toString(),),
         /*HomeMessageCard(
           message: Localization().getStringEx('widget.home.radio.disabled.message', 'WPGU 107.1 FM is not enabled.'),
@@ -58,8 +58,8 @@ class RadioPopupWidget extends StatelessWidget with AnalyticsInfo {
 
   @override
   Widget build(BuildContext context) =>
-    ClipRRect(borderRadius: HomeMessageCard.defaultBorderRadius, child:
-      Dialog(shape: RoundedRectangleBorder(borderRadius: HomeMessageCard.defaultBorderRadius,), child:
+    ClipRRect(borderRadius: HomeCard.defaultBorderRadius, child:
+      Dialog(shape: RoundedRectangleBorder(borderRadius: HomeCard.defaultBorderRadius,), child:
         HomeCardWidget(
           title: Localization().getStringEx('widget.home.radio.illini.title', 'Illini Radio'),
           onClose: () => _onClosePopup(context),

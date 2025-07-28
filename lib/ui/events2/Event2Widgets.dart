@@ -355,7 +355,7 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
 
   static Decoration get _pageContentDecoration =>
-    HomeMessageCard.defaultDecoration;
+    HomeCard.defaultDecoration;
   /*BoxDecoration(
     color: Styles().colors.surface,
     borderRadius: _pageContentBorderRadius,
@@ -369,16 +369,16 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   );
 
   static Decoration get _pageBottomContentDecoration => BoxDecoration(
-    color: HomeMessageCard.defaultBackColor,
+    color: HomeCard.defaultBackColor,
     borderRadius: _pageContentBottomBorderRadius,
     boxShadow: _pageContentShadow
   );
 
   static List<BoxShadow> get _pageContentShadow => [
-    HomeMessageCard.defaultShadow
+    HomeCard.defaultShadow
   ];
 
-  static Radius get _pageContentRadius => HomeMessageCard.defaultRadius;
+  static Radius get _pageContentRadius => HomeCard.defaultRadius;
   static BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.all(_pageContentRadius);
   static BorderRadiusGeometry get _pageContentTopBorderRadius => BorderRadius.vertical(top: _pageContentRadius);
   static BorderRadiusGeometry get _pageContentBottomBorderRadius => BorderRadius.vertical(bottom: _pageContentRadius);

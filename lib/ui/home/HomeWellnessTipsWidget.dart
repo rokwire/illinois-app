@@ -110,7 +110,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> with No
 
   Widget _buildContent() {
     return GestureDetector(onTap: _onTap, child:
-      Container(decoration: HomeMessageCard.defaultDecoration, child:
+      Container(decoration: HomeCard.defaultDecoration, child:
         Row(children: <Widget>[
           Expanded(child:
             Column(children: <Widget>[

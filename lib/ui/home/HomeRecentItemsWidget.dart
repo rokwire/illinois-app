@@ -466,7 +466,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> with Notificati
   Widget get _homeDisplayWidget =>
     InkWell(onTap: _onTapItem, child:
       Semantics(label: widget.recentItem.title, child:
-        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeMessageCard.defaultShadowBlurRadius, ), child:
+        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeCard.defaultShadowBlurRadius, ), child:
           Column(children: <Widget>[
             HomeFavoritesWidget.defaultHeaderWidget(_headerColor),
             _contentWidget

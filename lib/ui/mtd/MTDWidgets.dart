@@ -276,7 +276,7 @@ class _MTDStopScheduleFavoritesCardState extends State<MTDStopScheduleFavoritesC
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: widget.onTap, child:
       Semantics(label: title, child:
-      Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeMessageCard.defaultShadowBlurRadius), child:
+      Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeCard.defaultShadowBlurRadius), child:
         Column(children: <Widget>[
           HomeFavoritesWidget.defaultHeaderWidget(headerColor),
           Column(children: [

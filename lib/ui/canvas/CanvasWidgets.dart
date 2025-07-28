@@ -64,7 +64,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
   );
 
   BoxDecoration get _defaultDecoration =>
-      HomeMessageCard.defaultDecoration;
+      HomeCard.defaultDecoration;
   /*BoxDecoration(
     color: Styles().colors.white,
     borderRadius: BorderRadius.all(Radius.circular(10)),

@@ -130,7 +130,7 @@ class HomeFavoritesWidget extends StatefulWidget {
     }
   }
 
-  static BoxDecoration get defaultCardDecoration => HomeMessageCard.defaultDecoration;
+  static BoxDecoration get defaultCardDecoration => HomeCard.defaultDecoration;
 
   static Widget defaultHeaderWidget(Color? color) => Container(
     height: defaultHeaderHeight,
@@ -142,8 +142,8 @@ class HomeFavoritesWidget extends StatefulWidget {
   static BoxDecoration defaultHeaderDecoration(Color? color) => BoxDecoration(
     color: color,
     borderRadius: BorderRadius.only(
-        topLeft: HomeMessageCard.defaultRadius,
-        topRight: HomeMessageCard.defaultRadius,
+        topLeft: HomeCard.defaultRadius,
+        topRight: HomeCard.defaultRadius,
     ),
   );
 
@@ -503,7 +503,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
 
   Widget _buildEmpty() {
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-      Container(decoration: HomeMessageCard.defaultDecoration,
+      Container(decoration: HomeCard.defaultDecoration,
         padding: EdgeInsets.all(16),
         child:  HtmlWidget(
             HomeFavoritesWidget.emptyMessageHtml(widget.favoriteKey) ?? '',
@@ -586,7 +586,7 @@ class HomeFavoritesCard extends StatelessWidget {
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return InkWell(onTap: onTap, child:
       Semantics(label: title, child:
-        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeMessageCard.defaultShadowBlurRadius), child:
+        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeCard.defaultShadowBlurRadius), child:
           Column(children: <Widget>[
             HomeFavoritesWidget.defaultHeaderWidget(headerColor),
             Padding(padding: EdgeInsets.all(16), child:

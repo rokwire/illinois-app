@@ -57,7 +57,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> with 
   }
 
   Widget _buildContent() {
-    return Container(decoration: HomeMessageCard.defaultDecoration, child:
+    return Container(decoration: HomeCard.defaultDecoration, child:
       Padding(padding: EdgeInsets.only(top: 20, right: 13, bottom: 0, left: 2), child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [

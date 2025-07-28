@@ -41,7 +41,7 @@ class DiningCard extends StatefulWidget {
 }
 
 class _DiningCardState extends State<DiningCard> with NotificationsListener {
-  static Decoration get _listContentDecoration => HomeMessageCard.defaultDecoration;
+  static Decoration get _listContentDecoration => HomeCard.defaultDecoration;
   /*BoxDecoration(
       color: Styles().colors.surface,
       borderRadius: _listContentBorderRadius,

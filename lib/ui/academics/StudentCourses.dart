@@ -250,7 +250,7 @@ class StudentCourseCard extends StatelessWidget {
   Widget _homeDisplayWidget(BuildContext context) =>
     InkWell(onTap: () => _onCard(context), child:
       Semantics(label: course.title, child:
-        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeMessageCard.defaultShadowBlurRadius, ), child:
+        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeCard.defaultShadowBlurRadius, ), child:
           Column(children: <Widget>[
             HomeFavoritesWidget.defaultHeaderWidget(_headerColor),
             _contentWidget

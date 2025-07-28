@@ -737,10 +737,10 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   }
 
   BoxDecoration get _cardDecoration => (widget.displayType == GroupCardDisplayType.homeGroups) ?
-      HomeMessageCard.defaultDecoration : _defaultCardDecoration;
+      HomeCard.defaultDecoration : _defaultCardDecoration;
 
   static BoxDecoration get _defaultCardDecoration => BoxDecoration(
-    color: HomeMessageCard.defaultBackColor,
+    color: HomeCard.defaultBackColor,
     borderRadius: defaultCardBorderRadius,
     boxShadow: [_defaultCardShadow]
   );

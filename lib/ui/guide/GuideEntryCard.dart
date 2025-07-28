@@ -76,7 +76,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> with NotificationsListe
   Widget get _homeDisplayWidget =>
     InkWell(onTap: _onTapEntry, child:
       Semantics(label: Guide().entryListTitle(widget.guideEntry, stripHtmlTags: true), child:
-        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeMessageCard.defaultShadowBlurRadius, ), child:
+        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeCard.defaultShadowBlurRadius, ), child:
           Column(children: <Widget>[
             HomeFavoritesWidget.defaultHeaderWidget(_headerColor),
             _contentWidget
