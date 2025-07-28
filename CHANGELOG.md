@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed typo in roles panel [#5270](https://github.com/rokwire/illinois-app/issues/5270).
+### Changed
+- UI Clean Up: Favorite Widget Cards implemented [#5289](https://github.com/rokwire/illinois-app/issues/5289).
 
 ## [7.2.16] - 2025-07-25
 ### Changed

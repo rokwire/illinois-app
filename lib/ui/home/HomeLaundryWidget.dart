@@ -14,6 +14,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
+import 'package:illinois/ui/widgets/AccentCard.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -158,7 +159,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
       List<Widget> pages = <Widget>[];
       for (LaundryRoom room in _laundrySchool!.rooms!) {
         pages.add(Padding(key: _contentKeys[room.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
-          LaundryRoomCard(room: room, onTap: () => _onTapRoom(room))
+          LaundryRoomCard(room: room, displayMode: CardDisplayMode.home, onTap: () => _onTapRoom(room))
         ));
       }
 
@@ -248,10 +249,11 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
 }
 
 class LaundryRoomCard extends StatefulWidget {
-  final LaundryRoom? room;
+  final LaundryRoom room;
+  final CardDisplayMode displayMode;
   final GestureTapCallback? onTap;
 
-  LaundryRoomCard({Key? key, this.room, this.onTap}) : super(key: key);
+  LaundryRoomCard({super.key, required this.room, this.displayMode = CardDisplayMode.browse, this.onTap});
 
   @override
   State<LaundryRoomCard> createState() => _LaundryRoomCardState();
@@ -287,49 +289,55 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> with NotificationsLis
   }
 
   @override
-  Widget build(BuildContext context) {
-    bool isFavorite = Auth2().isFavorite(widget.room);
-    Color? headerColor = Styles().colors.accentColor2;
-    String? title = widget.room?.name;
+  Widget build(BuildContext context) =>
+    InkWell(onTap: widget.onTap ?? _onTapLaundryCard, child:
+      Semantics(label: widget.room.name,
+        child: AccentCard(
+          displayMode: widget.displayMode,
+          accentColor: Styles().colors.accentColor2,
+          child: _contentWidget,
+        )
+      ),
+    );
 
-    return GestureDetector(onTap: widget.onTap, child:
-      Semantics(label: title, child:
-        Column(children: <Widget>[
-          Container(height: 7, color: headerColor,),
-          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
-            Padding(padding: EdgeInsets.all(16), child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Flex(direction: Axis.vertical, children: <Widget>[
-                    Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                      Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.regular.extra_fat")), // widget.title.medium.extra_fat
-                      ),
-                      Visibility(visible: Auth2().canFavorite, child:
-                        GestureDetector(behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            Analytics().logSelect(target: "Favorite: $title");
-                            Auth2().prefs?.toggleFavorite(widget.room);
-                          }, child:
-                          Semantics(container: true,
-                            label: isFavorite
-                                ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
-                                : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-                            hint: isFavorite
-                                ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
-                                : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-                            button: true,
-                            excludeSemantics: true,
-                            child:
-                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ]),
-              ),
+  Widget get _contentWidget {
+    bool isFavorite = Auth2().isFavorite(widget.room);
+
+    return Padding(padding: EdgeInsets.all(16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Flex(direction: Axis.vertical, children: <Widget>[
+          Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+            Expanded(child:
+              Text(widget.room.name ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.regular.extra_fat")), // widget.title.medium.extra_fat
+            ),
+            Visibility(visible: Auth2().canFavorite, child:
+              GestureDetector(behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  Analytics().logSelect(target: "Favorite: ${widget.room.name}");
+                  Auth2().prefs?.toggleFavorite(widget.room);
+                }, child:
+                Semantics(container: true,
+                  label: isFavorite
+                      ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+                      : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+                  hint: isFavorite
+                      ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+                      : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+                  button: true,
+                  excludeSemantics: true,
+                  child:
+                    Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))),
+                )
+              ],
             )
           ],
-        )),);
+        ),
+      ]),
+    );
+  }
+
+  void _onTapLaundryCard() {
+    Analytics().logSelect(target: "Laundry: '${widget.room.name}'", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: widget.room,)));
   }
 }

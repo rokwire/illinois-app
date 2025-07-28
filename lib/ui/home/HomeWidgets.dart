@@ -24,6 +24,8 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+enum CardDisplayMode { home, browse, }
+
 ////////////////////////////
 // HomeHandleWidget
 
@@ -400,14 +402,14 @@ class HomeCardWidget extends StatelessWidget {
   final void Function()? onClose;
 
   HomeCardWidget({super.key, this.title, this.child,
-    this.padding = const EdgeInsets.all(12),
-    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+    this.padding = HomeMessageCard.defaultPadding,
+    this.margin = HomeMessageCard.defaultCardMargin,
     this.onClose,
   });
 
   @override
   Widget build(BuildContext context) =>
-    Container(padding: EdgeInsets.only(left: padding.left, bottom: padding.bottom), margin: margin, decoration: HomeMessageCard.defaultDecoration, child:
+    Container(padding: EdgeInsets.only(left: padding.left, bottom: padding.bottom), margin: margin, decoration: HomeCard.defaultDecoration, child:
       Column(mainAxisSize: MainAxisSize.min, children: [
         Row(children: [
           Expanded(child:
@@ -660,7 +662,7 @@ class HomeCommandButton extends StatelessWidget {
     return Semantics(label: title, hint: description, button: true, child:
       InkWell(onTap: onTap, child: Container(
           padding: EdgeInsets.only(left: 16, bottom: 16),
-          decoration: HomeMessageCard.defaultDecoration,
+          decoration: HomeCard.defaultDecoration,
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
@@ -690,6 +692,34 @@ class HomeCommandButton extends StatelessWidget {
 }
 
 ////////////////////////////
+// HomeCard
+
+class HomeCard {
+  
+  static BoxDecoration get defaultDecoration => BoxDecoration(
+    color: defaultBackColor,
+    borderRadius: defaultBorderRadius,
+    boxShadow: [defaultShadow],
+  );
+
+  static Color get defaultBackColor => Styles().colors.surface;
+
+  static const BorderRadius defaultBorderRadius = const BorderRadius.all(defaultRadius);
+  static const Radius defaultRadius = const Radius.circular(12);
+
+  static BoxShadow get defaultShadow => BoxShadow(
+    color: defaultShadowColor,
+    spreadRadius: defaultShadowSpreadRadius,
+    blurRadius: defaultShadowBlurRadius,
+    offset: defaultShadowOffset
+  );
+  static Color get defaultShadowColor => Styles().colors.dropShadow;
+  static const double defaultShadowSpreadRadius = 1.0;
+  static const double defaultShadowBlurRadius = 3.0;
+  static const Offset defaultShadowOffset = const Offset(1, 1);
+}
+
+////////////////////////////
 // HomeMessageCard
 
 class HomeMessageCard extends StatelessWidget {
@@ -697,37 +727,42 @@ class HomeMessageCard extends StatelessWidget {
   final String? title;
   final String? message;
   final EdgeInsetsGeometry margin;
-
-  static BorderRadius get defaultBorderRadius => BorderRadius.all(Radius.circular(4));
-  static BoxDecoration get defaultDecoration => BoxDecoration(color: Styles().colors.surface, borderRadius: defaultBorderRadius, boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] );
+  final EdgeInsetsGeometry padding;
 
   HomeMessageCard({Key? key,
     this.title,
     this.message,
-    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 24),
+    this.margin = defaultChildMargin,
+    this.padding = defaultPadding,
   }) : super(key: key);
-  
+
+  static const EdgeInsets defaultPadding = const EdgeInsets.all(16);
+  static const EdgeInsets defaultChildMargin = const EdgeInsets.only(left: 16, right: 16, bottom: 24);
+  static const EdgeInsets defaultCardMargin = const EdgeInsets.symmetric(horizontal: 16, vertical: 24);
+
   @override
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
-      Semantics(child:Container(padding: EdgeInsets.all(12),
-        decoration: defaultDecoration,
-        child: Column(children: <Widget>[
-          StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
-            Expanded(child:
-              Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-                Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"))
-              ),
-            )
-          ]) : Container(),
-          StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
-            Expanded(child:
-              Text(message ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.small.semi_fat"))
-            )
-          ]) : Container(),
-        ]),
-      ),
-    ));
+      Semantics(child:
+        Container(padding: padding,
+          decoration: HomeCard.defaultDecoration,
+          child: Column(children: <Widget>[
+            StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
+              Expanded(child:
+                Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
+                  Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"))
+                ),
+              )
+            ]) : Container(),
+            StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
+              Expanded(child:
+                Text(message ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.small.semi_fat"))
+              )
+            ]) : Container(),
+          ]),
+        ),
+      )
+    );
   }
 }
 
@@ -745,8 +780,8 @@ class HomeMessageHtmlCard extends StatelessWidget {
 
   HomeMessageHtmlCard({Key? key,
     this.title, this.message,
-    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 24),
-    this.padding = const EdgeInsets.all(12),
+    this.margin = HomeMessageCard.defaultChildMargin,
+    this.padding = HomeMessageCard.defaultPadding,
     this.linkColor, this.onTapLink
   }) : super(key: key);
 
@@ -754,7 +789,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
       Container(padding: padding,
-        decoration: HomeMessageCard.defaultDecoration,
+        decoration: HomeCard.defaultDecoration,
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
