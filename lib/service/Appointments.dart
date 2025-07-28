@@ -169,6 +169,14 @@ class Appointments with Service, NotificationsListener {
   }
 
   List<Appointment>? getAppointments({required AppointmentsTimeSource timeSource, AppointmentType? type}) {
+    /* TMP: Testing Appointments
+    List<Appointment> result = <Appointment>[];
+    for(AppointmentProvider provider in _sampleProviders) {
+      result.addAll(_sampleAppointments(provider: provider));
+    }
+    return result;
+    */
+
     List<Appointment>? srcAppts;
     switch (timeSource) {
       case AppointmentsTimeSource.past:

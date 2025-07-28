@@ -7,8 +7,9 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/StudentCourses.dart';
-import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
+import 'package:illinois/ui/explore/DisplayFloorPlanPanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/AccentCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -18,8 +19,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-
-import '../explore/DisplayFloorPlanPanel.dart';
 
 class StudentCoursesContentWidget extends StatefulWidget with AnalyticsInfo {
   StudentCoursesContentWidget();
@@ -240,47 +239,16 @@ class StudentCourseCard extends StatelessWidget {
     MediaQuery.of(context).textScaler.scale(36 + 18 + (6 + 16) + 16 + (6 + 18) + (12 + 18));
 
   @override
-  Widget build(BuildContext context) {
-    switch (displayMode) {
-      case CardDisplayMode.home: return _homeDisplayWidget(context);
-      case CardDisplayMode.browse: return _browseDisplayWidget(context);
-    }
-  }
-
-  Widget _homeDisplayWidget(BuildContext context) =>
+  Widget build(BuildContext context) =>
     InkWell(onTap: () => _onCard(context), child:
-      Semantics(label: course.title, child:
-        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeCard.defaultShadowBlurRadius, ), child:
-          Column(children: <Widget>[
-            HomeFavoritesWidget.defaultHeaderWidget(_headerColor),
-            _contentWidget
-          ]),
-        ),
+      Semantics(label: course.title,
+        child: AccentCard(
+          displayMode: displayMode,
+          accentColor: Styles().colors.fillColorSecondary,
+          child: _contentWidget,
+        )
       ),
     );
-
-  Widget _browseDisplayWidget(BuildContext context) =>
-    InkWell(onTap: () => _onCard(context), child:
-      Semantics(label: course.title, child:
-        Column(children: <Widget>[
-          Container(height: HomeFavoritesWidget.defaultHeaderHeight, color: _headerColor,),
-          Container(decoration: _browseDecoration, child:
-            _contentWidget
-          ),
-        ]),
-      ),
-    );
-
-  static BoxDecoration get _browseDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    border: Border(left: _browseBorderSide, right: _browseBorderSide, bottom: _browseBorderSide),
-    borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
-  );
-
-  static BorderSide get _browseBorderSide =>
-    BorderSide(color: Styles().colors.surfaceAccent, width: 1);
-
-  Color get _headerColor => Styles().colors.fillColorSecondary;
 
   Widget get _contentWidget {
     String courseSchedule = course.section?.displaySchedule ?? '';

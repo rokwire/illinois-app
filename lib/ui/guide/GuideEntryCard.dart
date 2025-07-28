@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/AccentCard.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -66,47 +66,16 @@ class _GuideEntryCardState extends State<GuideEntryCard> with NotificationsListe
   }
 
   @override
-  Widget build(BuildContext context) {
-    switch (widget.displayMode) {
-      case CardDisplayMode.home: return _homeDisplayWidget;
-      case CardDisplayMode.browse: return _browseDisplayWidget;
-    }
-  }
-
-  Widget get _homeDisplayWidget =>
+  Widget build(BuildContext context) =>
     InkWell(onTap: _onTapEntry, child:
-      Semantics(label: Guide().entryListTitle(widget.guideEntry, stripHtmlTags: true), child:
-        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeCard.defaultShadowBlurRadius, ), child:
-          Column(children: <Widget>[
-            HomeFavoritesWidget.defaultHeaderWidget(_headerColor),
-            _contentWidget
-          ]),
-        ),
+      Semantics(label: Guide().entryListTitle(widget.guideEntry, stripHtmlTags: true),
+        child: AccentCard(
+          displayMode: widget.displayMode,
+          accentColor: Styles().colors.accentColor3,
+          child: _contentWidget,
+        )
       ),
     );
-
-  Widget get _browseDisplayWidget =>
-    InkWell(onTap: _onTapEntry, child:
-      Semantics(label: Guide().entryListTitle(widget.guideEntry, stripHtmlTags: true), child:
-        Column(children: <Widget>[
-          Container(height: HomeFavoritesWidget.defaultHeaderHeight, color: _headerColor,),
-          Container(decoration: _browseDecoration, child:
-            _contentWidget
-          ),
-        ]),
-      ),
-    );
-
-  static BoxDecoration get _browseDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    border: Border(left: _browseBorderSide, right: _browseBorderSide, bottom: _browseBorderSide),
-    borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
-  );
-
-  static BorderSide get _browseBorderSide =>
-    BorderSide(color: Styles().colors.surfaceAccent, width: 1);
-
-  Color get _headerColor => Styles().colors.accentColor3;
 
   Widget get _contentWidget {
     String? titleHtml = Guide().entryListTitle(widget.guideEntry);

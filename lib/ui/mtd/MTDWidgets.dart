@@ -11,8 +11,8 @@ import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/MTD.dart';
-import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/AccentCard.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -265,70 +265,71 @@ class _MTDStopScheduleFavoritesCardState extends State<MTDStopScheduleFavoritesC
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+    GestureDetector(onTap: widget.onTap, child:
+      Semantics(label: widget.stop.favoriteTitle,
+        child: AccentCard(
+          displayMode: CardDisplayMode.home,
+          accentColor: widget.stop.favoriteHeaderColor,
+          child: _contentWidget,
+        )
+      ),
+    );
+
+  Widget get _contentWidget {
     bool isFavorite = Auth2().isFavorite(widget.stop);
     Widget? favoriteStarIcon = widget.stop.favoriteStarIcon(selected: isFavorite);
-    Color? headerColor = widget.stop.favoriteHeaderColor;
     String? title = widget.stop.favoriteTitle;
     String? cardDetailText = widget.stop.favoriteDetailText;
     Color? cardDetailTextColor = widget.stop.favoriteDetailTextColor ?? Styles().colors.textBackground;
     Widget? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? widget.stop.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
-    return GestureDetector(onTap: widget.onTap, child:
-      Semantics(label: title, child:
-      Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeCard.defaultShadowBlurRadius), child:
-        Column(children: <Widget>[
-          HomeFavoritesWidget.defaultHeaderWidget(headerColor),
-          Column(children: [
-            Padding(padding: EdgeInsets.all(16), child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Flex(direction: Axis.vertical, children: <Widget>[
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+    return Column(children: [
+      Padding(padding: EdgeInsets.all(16), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Flex(direction: Axis.vertical, children: <Widget>[
+            Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+              Expanded(child:
+                Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.title.large")),
+              ),
+              Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
+                GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onTapFavoriteStar, child:
+                  Semantics(container: true,
+                    label: isFavorite
+                        ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+                        : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+                    hint: isFavorite
+                        ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+                        : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+                    button: true,
+                    excludeSemantics: true,
+                    child: Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: favoriteStarIcon))),
+                  )
+                ],
+              )
+            ],
+          ),
+          Visibility(visible: detailVisible, child:
+            Semantics(label: cardDetailText, excludeSemantics: true, child:
+              Padding(padding: EdgeInsets.only(top: 12), child:
+                (cardDetailImage != null) ?
+                  Row(children: <Widget>[
+                    Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
                     Expanded(child:
-                      Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.title.large")),
-                    ),
-                    Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
-                      GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onTapFavoriteStar, child:
-                        Semantics(container: true,
-                          label: isFavorite
-                              ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
-                              : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-                          hint: isFavorite
-                              ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
-                              : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-                          button: true,
-                          excludeSemantics: true,
-                          child: Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: favoriteStarIcon))),
-                        )
-                      ],
+                      Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.item.regular")?.copyWith(color: cardDetailTextColor)),
                     )
-                  ],
-                ),
-                Visibility(visible: detailVisible, child:
-                  Semantics(label: cardDetailText, excludeSemantics: true, child:
-                    Padding(padding: EdgeInsets.only(top: 12), child:
-                      (cardDetailImage != null) ?
-                        Row(children: <Widget>[
-                          Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
-                          Expanded(child:
-                            Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.item.regular")?.copyWith(color: cardDetailTextColor)),
-                          )
-                        ],) :
-                        Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.item.regular")?.copyWith(color: cardDetailTextColor)),
-                    ),
-                  ),
-                ),
-              ]),
+                  ],) :
+                  Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.item.regular")?.copyWith(color: cardDetailTextColor)),
+              ),
             ),
-            Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0), child:
-              _buildDepartures(),
-            ),
-          ],),
-        ],)
-        ),
+          ),
+        ]),
       ),
-    );
+      Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,),
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0), child:
+        _buildDepartures(),
+      ),
+    ],);
   }
 
   Widget _buildDepartures() {

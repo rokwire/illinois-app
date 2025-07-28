@@ -23,8 +23,8 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
-import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/AccentCard.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -64,47 +64,16 @@ class _AppointmentCardState extends State<AppointmentCard> with NotificationsLis
   }
 
   @override
-  Widget build(BuildContext context) {
-    switch (widget.displayMode) {
-      case CardDisplayMode.home: return _homeDisplayWidget;
-      case CardDisplayMode.browse: return _browseDisplayWidget;
-    }
-  }
-
-  Widget get _homeDisplayWidget =>
+  Widget build(BuildContext context) =>
     InkWell(onTap: widget.onTap ?? _onTapAppointmentCard, child:
-      Semantics(label: widget.appointment.title, child:
-        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeCard.defaultShadowBlurRadius, ), child:
-          Column(children: <Widget>[
-            HomeFavoritesWidget.defaultHeaderWidget(_headerColor),
-            _contentWidget
-          ]),
+      Semantics(label: widget.appointment.title,
+        child: AccentCard(
+          displayMode: widget.displayMode,
+          accentColor: (widget.appointment.isUpcoming ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary),
+          child: _contentWidget,
         ),
       ),
     );
-
-  Widget get _browseDisplayWidget =>
-    InkWell(onTap: widget.onTap ?? _onTapAppointmentCard, child:
-      Semantics(label: widget.appointment.title, child:
-        Column(children: <Widget>[
-          Container(height: HomeFavoritesWidget.defaultHeaderHeight, color: _headerColor,),
-          Container(decoration: _browseDecoration, child:
-            _contentWidget
-          ),
-        ]),
-      ),
-    );
-
-  static BoxDecoration get _browseDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    border: Border(left: _browseBorderSide, right: _browseBorderSide, bottom: _browseBorderSide),
-    borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
-  );
-
-  static BorderSide get _browseBorderSide =>
-    BorderSide(color: Styles().colors.surfaceAccent, width: 1);
-
-  Color get _headerColor => (widget.appointment.isUpcoming ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary);
 
   Widget get _contentWidget {
     const double imageSize = 64;

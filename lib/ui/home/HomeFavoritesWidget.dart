@@ -35,6 +35,7 @@ import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:illinois/ui/widgets/AccentCard.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -129,25 +130,6 @@ class HomeFavoritesWidget extends StatefulWidget {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
     }
   }
-
-  static BoxDecoration get defaultCardDecoration => HomeCard.defaultDecoration;
-
-  static Widget defaultHeaderWidget(Color? color) => Container(
-    height: defaultHeaderHeight,
-    decoration: HomeFavoritesWidget.defaultHeaderDecoration(color),
-  );
-
-  static double get defaultHeaderHeight => 7;
-
-  static BoxDecoration defaultHeaderDecoration(Color? color) => BoxDecoration(
-    color: color,
-    borderRadius: BorderRadius.only(
-        topLeft: HomeCard.defaultRadius,
-        topRight: HomeCard.defaultRadius,
-    ),
-  );
-
-
 }
 
 class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with NotificationsListener {
@@ -575,21 +557,26 @@ class HomeFavoritesCard extends StatelessWidget {
   HomeFavoritesCard(this.item, {super.key, this.onTap});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+    InkWell(onTap: onTap, child:
+      Semantics(label: item?.favoriteTitle,
+        child: AccentCard(
+          accentColor: item?.favoriteHeaderColor,
+          displayMode: CardDisplayMode.home,
+          child: _contentWidget,
+        ),
+      ),
+    );
+
+  Widget get _contentWidget {
     bool isFavorite = Auth2().isFavorite(item);
     Widget? favoriteStarIcon = item?.favoriteStarIcon(selected: isFavorite);
-    Color? headerColor = item?.favoriteHeaderColor;
     String? title = item?.favoriteTitle;
     String? cardDetailText = item?.favoriteDetailText;
     Color? cardDetailTextColor = item?.favoriteDetailTextColor ?? Styles().colors.textBackground;
     Widget? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? item?.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
-    return InkWell(onTap: onTap, child:
-      Semantics(label: title, child:
-        Container(decoration: HomeFavoritesWidget.defaultCardDecoration, margin: EdgeInsets.only(bottom: HomeCard.defaultShadowBlurRadius), child:
-          Column(children: <Widget>[
-            HomeFavoritesWidget.defaultHeaderWidget(headerColor),
-            Padding(padding: EdgeInsets.all(16), child:
+    return Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Flex(direction: Axis.vertical, children: <Widget>[
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
@@ -627,11 +614,7 @@ class HomeFavoritesCard extends StatelessWidget {
                   )),
                 )
               ]),
-            ),
-          ],)
-        ),
-      ),
-    );
+            );
   }
 
   void _onTapFavoriteStar(Favorite? item) {
