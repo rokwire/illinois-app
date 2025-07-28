@@ -290,7 +290,7 @@ extension UserRoleUI on UserRole {
 
   String? get displayLabel {
     switch (this) {
-      case UserRole.prospective: return Localization().getStringEx('panel.onboarding2.roles.button.prospective.label', 'Are you considering attending the Univeristy of Illinois? Choose this option:');
+      case UserRole.prospective: return Localization().getStringEx('panel.onboarding2.roles.button.prospective.label', 'Are you considering attending the University of Illinois? Choose this option:');
       default: return null;
     }
   }
