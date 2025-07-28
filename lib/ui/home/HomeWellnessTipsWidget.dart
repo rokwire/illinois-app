@@ -110,50 +110,43 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> with No
 
   Widget _buildContent() {
     return GestureDetector(onTap: _onTap, child:
-      Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
-        ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
-          Row(children: <Widget>[
-            Expanded(child:
-              Column(children: <Widget>[
-                _loadingTipColor ? _buildLoading() : _buildTip()
-              ]),
-            ),
-          ]),
-        ),
+      Container(decoration: HomeMessageCard.defaultDecoration, child:
+        Row(children: <Widget>[
+          Expanded(child:
+            Column(children: <Widget>[
+              _loadingTipColor ? _buildLoading() : _buildTip()
+            ]),
+          ),
+        ]),
       ),
     );
   }
 
   Widget _buildLoading() {
-    return Container(color: Styles().colors.white, child:
-      Padding(padding: EdgeInsets.all(32), child:
-        Row(children: <Widget>[
-          Expanded(child:
-            Center(child:
-              SizedBox(height: 24, width: 24, child:
-                CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_tipColor ?? Styles().colors.fillColorSecondary), ),
-              )
-            ),
+    return Padding(padding: EdgeInsets.all(32), child:
+      Row(children: <Widget>[
+        Expanded(child:
+          Center(child:
+            SizedBox(height: 24, width: 24, child:
+              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_tipColor ?? Styles().colors.fillColorSecondary), ),
+            )
           ),
-        ]),
-      ),
+        ),
+      ]),
     );
   }
 
   Widget _buildTip() {
-    Color? backColor = Styles().colors.white; // _tipColor ?? Styles().colors.accentColor3;
-    return Container(color: backColor, child:
-      Padding(padding: EdgeInsets.all(16), child:
-        Row(children: <Widget>[
-          Expanded(child:
-            HtmlWidget(
-                Wellness().dailyTip ?? '',
-                onTapUrl : (url) {_launchUrl(url); return true;},
-                textStyle:  Styles().textStyles.getTextStyle("widget.detail.small.semi_fat"),
-            )
-          ),
-        ]),
-      ),
+    return Padding(padding: EdgeInsets.all(16), child:
+      Row(children: <Widget>[
+        Expanded(child:
+          HtmlWidget(
+              Wellness().dailyTip ?? '',
+              onTapUrl : (url) {_launchUrl(url); return true;},
+              textStyle:  Styles().textStyles.getTextStyle("widget.detail.small.semi_fat"),
+          )
+        ),
+      ]),
     );
   }
 
