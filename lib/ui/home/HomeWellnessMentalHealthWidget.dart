@@ -184,10 +184,13 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
     String? title = Guide().entryListTitle(resourceItem);
     Favorite favorite = GuideFavorite(id: id, contentType: Guide.wellnessMentalHealthContentType);
 
-    return WellnessLargeResourceButton(
-      label: title,
-      favorite: favorite,
-      onTap: () => _onCommand(resourceItem),
+    return Padding(padding: EdgeInsets.symmetric(vertical: HomeMessageCard.defaultShadowBlurRadius), child:
+      WellnessLargeResourceButton(
+        label: title,
+        favorite: favorite,
+        displayMode: CardDisplayMode.home,
+        onTap: () => _onCommand(resourceItem),
+      ),
     );
   }
 

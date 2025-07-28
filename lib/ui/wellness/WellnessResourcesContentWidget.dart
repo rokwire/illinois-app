@@ -21,6 +21,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -234,15 +235,18 @@ class WellnessLargeResourceButton extends StatelessWidget {
   final bool hasExternalLink;
   final bool hasChevron;
   final bool canFavorite;
+  final CardDisplayMode displayMode;
   final void Function()? onTap;
 
-  WellnessLargeResourceButton({Key? key, this.label, this.favorite, this.hasExternalLink = false,
-    this.onTap, this.hasChevron = false, this.canFavorite = true}) : super(key: key);
+  WellnessLargeResourceButton({Key? key, this.label, this.favorite,
+    this.hasExternalLink = false, this.hasChevron = false, this.canFavorite = true,
+    this.displayMode = CardDisplayMode.browse, this.onTap
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
-      InkWell(onTap: onTap, child:
+    return InkWell(onTap: onTap, child:
+      Container(decoration: _cardDecoration, child:
         Padding(padding: EdgeInsets.only(left: 16), child:
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Expanded(child:
@@ -265,6 +269,20 @@ class WellnessLargeResourceButton extends StatelessWidget {
       ),
     );
   }
+
+  BoxDecoration get _cardDecoration {
+    switch (displayMode) {
+      case CardDisplayMode.home: return HomeMessageCard.defaultDecoration;
+      case CardDisplayMode.browse: return _browseDecoration;
+    }
+  }
+
+  static BoxDecoration get _browseDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    borderRadius: BorderRadius.circular(5)
+  );
+
 }
 
 class WellnessRegularResourceButton extends StatelessWidget {
