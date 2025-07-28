@@ -179,7 +179,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
       // Config().homeRecentItemsCount
       for (RecentItem item in _recentItems!) {
         pages.add(Padding(key: _contentKeys[item.contentId] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
-          HomeRecentItemCard(recentItem: item, displayMode: HomeRecentItemCardDisplayMode.home,),
+          HomeRecentItemCard(recentItem: item, displayMode: CardDisplayMode.home,),
         ));
       }
       debugPrint("HomeRecentItemsWidget._contentKeys: $_contentKeys");
@@ -201,7 +201,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
-        HomeRecentItemCard(recentItem: _recentItems!.first, displayMode: HomeRecentItemCardDisplayMode.home)
+        HomeRecentItemCard(recentItem: _recentItems!.first, displayMode: CardDisplayMode.home)
       );
     }
 
@@ -411,16 +411,14 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> with Notifi
 
 // HomeRecentItemCard
 
-enum HomeRecentItemCardDisplayMode { home, browse }
-
 class HomeRecentItemCard extends StatefulWidget {
 
   final RecentItem recentItem;
-  final HomeRecentItemCardDisplayMode displayMode;
+  final CardDisplayMode displayMode;
   final bool showDate;
 
   HomeRecentItemCard({required this.recentItem,
-    this.displayMode = HomeRecentItemCardDisplayMode.browse,
+    this.displayMode = CardDisplayMode.browse,
     this.showDate = false
   });
 
@@ -460,8 +458,8 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> with Notificati
   @override
   Widget build(BuildContext context) {
     switch (widget.displayMode) {
-      case HomeRecentItemCardDisplayMode.home: return _homeDisplayWidget;
-      case HomeRecentItemCardDisplayMode.browse: return _browseDisplayWidget;
+      case CardDisplayMode.home: return _homeDisplayWidget;
+      case CardDisplayMode.browse: return _browseDisplayWidget;
     }
   }
 

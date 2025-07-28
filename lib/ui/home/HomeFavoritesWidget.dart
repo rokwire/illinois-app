@@ -307,7 +307,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
     else if (item is Appointment) {
       return AppointmentCard(
         appointment: item,
-        displayMode: AppointmentCardDisplayMode.home,
+        displayMode: CardDisplayMode.home,
         onTap: () => _onTapItem(item),
       );
     }

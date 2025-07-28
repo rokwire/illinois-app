@@ -24,6 +24,8 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+enum CardDisplayMode { home, browse, }
+
 ////////////////////////////
 // HomeHandleWidget
 

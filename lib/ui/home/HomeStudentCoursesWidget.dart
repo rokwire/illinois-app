@@ -197,7 +197,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
       List<Widget> coursePages = <Widget>[];
       for (StudentCourse course in _courses!) {
         coursePages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
-          StudentCourseCard(course: course, displayMode: StudentCourseCardDisplayMode.home,),
+          StudentCourseCard(course: course, displayMode: CardDisplayMode.home,),
         ),);
       }
 
@@ -221,7 +221,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        StudentCourseCard(course: _courses!.first, displayMode: StudentCourseCardDisplayMode.home),
+        StudentCourseCard(course: _courses!.first, displayMode: CardDisplayMode.home),
       );
     }
 

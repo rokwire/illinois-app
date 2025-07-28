@@ -225,16 +225,14 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
   }
 }
 
-enum StudentCourseCardDisplayMode { home, browse }
-
 class StudentCourseCard extends StatelessWidget {
   final StudentCourse course;
-  final StudentCourseCardDisplayMode displayMode;
+  final CardDisplayMode displayMode;
   final AnalyticsFeature? analyticsFeature;
   
   StudentCourseCard({super.key,
     required this.course,
-    this.displayMode = StudentCourseCardDisplayMode.browse,
+    this.displayMode = CardDisplayMode.browse,
     this.analyticsFeature
   });
 
@@ -244,8 +242,8 @@ class StudentCourseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (displayMode) {
-      case StudentCourseCardDisplayMode.home: return _homeDisplayWidget(context);
-      case StudentCourseCardDisplayMode.browse: return _browseDisplayWidget(context);
+      case CardDisplayMode.home: return _homeDisplayWidget(context);
+      case CardDisplayMode.browse: return _browseDisplayWidget(context);
     }
   }
 

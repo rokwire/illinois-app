@@ -33,17 +33,15 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum AppointmentCardDisplayMode { home, browse }
-
 class AppointmentCard extends StatefulWidget with AnalyticsInfo {
   final Appointment appointment;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
-  final AppointmentCardDisplayMode displayMode;
+  final CardDisplayMode displayMode;
   final void Function()? onTap;
 
   AppointmentCard({super.key,
     required this.appointment, this.analyticsFeature, this.onTap,
-    this.displayMode = AppointmentCardDisplayMode.browse,
+    this.displayMode = CardDisplayMode.browse,
   });
 
   @override
@@ -68,8 +66,8 @@ class _AppointmentCardState extends State<AppointmentCard> with NotificationsLis
   @override
   Widget build(BuildContext context) {
     switch (widget.displayMode) {
-      case AppointmentCardDisplayMode.home: return _homeDisplayWidget;
-      case AppointmentCardDisplayMode.browse: return _browseDisplayWidget;
+      case CardDisplayMode.home: return _homeDisplayWidget;
+      case CardDisplayMode.browse: return _browseDisplayWidget;
     }
   }
 

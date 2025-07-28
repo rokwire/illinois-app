@@ -20,15 +20,13 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum GuideEntryCardDisplayMode { home, browse, }
-
 class GuideEntryCard extends StatefulWidget {
   final String? favoriteKey;
   final Map<String, dynamic>? guideEntry;
   final AnalyticsFeature? analyticsFeature;
-  final GuideEntryCardDisplayMode displayMode;
+  final CardDisplayMode displayMode;
 
-  GuideEntryCard(this.guideEntry, { this.favoriteKey = GuideFavorite.favoriteKeyName, this.displayMode = GuideEntryCardDisplayMode.browse, this.analyticsFeature });
+  GuideEntryCard(this.guideEntry, { this.favoriteKey = GuideFavorite.favoriteKeyName, this.displayMode = CardDisplayMode.browse, this.analyticsFeature });
 
   _GuideEntryCardState createState() => _GuideEntryCardState();
 }
@@ -70,8 +68,8 @@ class _GuideEntryCardState extends State<GuideEntryCard> with NotificationsListe
   @override
   Widget build(BuildContext context) {
     switch (widget.displayMode) {
-      case GuideEntryCardDisplayMode.home: return _homeDisplayWidget;
-      case GuideEntryCardDisplayMode.browse: return _browseDisplayWidget;
+      case CardDisplayMode.home: return _homeDisplayWidget;
+      case CardDisplayMode.browse: return _browseDisplayWidget;
     }
   }
 
@@ -169,27 +167,27 @@ class _GuideEntryCardState extends State<GuideEntryCard> with NotificationsListe
 
   TextStyle? get _reminderDateTextStyle {
     switch (widget.displayMode) {
-      case GuideEntryCardDisplayMode.home: return Styles().textStyles.getTextStyle("widget.title.medium.extra_fat");
+      case CardDisplayMode.home: return Styles().textStyles.getTextStyle("widget.title.medium.extra_fat");
       default: return Styles().textStyles.getTextStyle("widget.title.medium.extra_fat");
     }
   }
 
   TextStyle? get _reminderTitleTextStyle {
     switch (widget.displayMode) {
-      case GuideEntryCardDisplayMode.home: return Styles().textStyles.getTextStyle("widget.title.small.medium_fat");
+      case CardDisplayMode.home: return Styles().textStyles.getTextStyle("widget.title.small.medium_fat");
       default: return Styles().textStyles.getTextStyle("widget.title.regular.medium_fat");
     }
   }
 
   TextStyle? get _guideTitleTextStyle {
     switch (widget.displayMode) {
-      case GuideEntryCardDisplayMode.home: return Styles().textStyles.getTextStyle("widget.title.medium.extra_fat");
+      case CardDisplayMode.home: return Styles().textStyles.getTextStyle("widget.title.medium.extra_fat");
       default: return Styles().textStyles.getTextStyle("widget.title.large.extra_fat");
     }
   }
   TextStyle? get _guideDescriptionTextStyle {
     switch (widget.displayMode) {
-      case GuideEntryCardDisplayMode.home: return Styles().textStyles.getTextStyle("widget.item.small.thin");
+      case CardDisplayMode.home: return Styles().textStyles.getTextStyle("widget.item.small.thin");
       default: return Styles().textStyles.getTextStyle("widget.item.regular.thin");
     }
   }

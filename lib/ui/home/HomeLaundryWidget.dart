@@ -159,7 +159,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
       List<Widget> pages = <Widget>[];
       for (LaundryRoom room in _laundrySchool!.rooms!) {
         pages.add(Padding(key: _contentKeys[room.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
-          LaundryRoomCard(room: room, displayMode: LaundryRoomCardDisplayMode.home, onTap: () => _onTapRoom(room))
+          LaundryRoomCard(room: room, displayMode: CardDisplayMode.home, onTap: () => _onTapRoom(room))
         ));
       }
 
@@ -248,14 +248,12 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
   }
 }
 
-enum LaundryRoomCardDisplayMode { home, browse }
-
 class LaundryRoomCard extends StatefulWidget {
   final LaundryRoom room;
-  final LaundryRoomCardDisplayMode displayMode;
+  final CardDisplayMode displayMode;
   final GestureTapCallback? onTap;
 
-  LaundryRoomCard({super.key, required this.room, this.displayMode = LaundryRoomCardDisplayMode.browse, this.onTap});
+  LaundryRoomCard({super.key, required this.room, this.displayMode = CardDisplayMode.browse, this.onTap});
 
   @override
   State<LaundryRoomCard> createState() => _LaundryRoomCardState();
@@ -293,8 +291,8 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> with NotificationsLis
   @override
   Widget build(BuildContext context) {
     switch (widget.displayMode) {
-      case LaundryRoomCardDisplayMode.home: return _homeDisplayWidget;
-      case LaundryRoomCardDisplayMode.browse: return _browseDisplayWidget;
+      case CardDisplayMode.home: return _homeDisplayWidget;
+      case CardDisplayMode.browse: return _browseDisplayWidget;
     }
   }
 
