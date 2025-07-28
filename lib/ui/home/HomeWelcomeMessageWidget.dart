@@ -85,7 +85,7 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
   }
 
   bool get _isWidgetVisible => _isUserVisible || _isFavoritesEmpty;
-  bool get _isCloseVisible => _isUserVisible;
+  bool get _isCloseVisible => _isUserVisible && !_isFavoritesEmpty;
 
   @override
   Widget build(BuildContext context) =>
