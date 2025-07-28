@@ -290,38 +290,42 @@ class WellnessRegularResourceButton extends StatelessWidget {
   final Favorite? favorite;
   final bool hasExternalLink;
   final bool hasChevron;
-  final bool hasBorder;
+  final CardDisplayMode displayMode;
   final bool canFavorite;
   final void Function()? onTap;
 
-  WellnessRegularResourceButton({Key? key, this.label, this.favorite, this.hasExternalLink = false,
-    this.hasBorder = false, this.onTap, this.hasChevron = true, this.canFavorite = true}) : super(key: key);
+  WellnessRegularResourceButton({Key? key, this.label, this.favorite,
+    this.hasExternalLink = false, this.hasChevron = true, this.canFavorite = true,
+    this.displayMode = CardDisplayMode.browse, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return hasBorder ? Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: BorderRadius.circular(5)), child:
-      _buildInterior()
-    ) : _buildInterior();
+    return InkWell(onTap: onTap, child:
+      Container(decoration: _cardDecoration, child:
+        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Visibility(visible: canFavorite,
+            child: FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16))
+          ),
+          Expanded(child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 17), child:
+              Text(label ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.extra_fat'))
+            ),
+          ),
+          hasExternalLink ? Padding(padding: EdgeInsets.only(left: 8, top: 18, bottom: 18), child:
+            Styles().images.getImage('external-link', excludeFromSemantics: true)
+          ) : Container(),
+         hasChevron? Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 18, bottom: 18), child:
+              Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)
+          ): Container(width: 16,),
+        ]),
+      ),
+    );
   }
 
-  Widget _buildInterior() {
-    return InkWell(onTap: onTap, child:
-      Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Visibility(visible: canFavorite,
-          child: FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16))
-        ),
-        Expanded(child:
-          Padding(padding: EdgeInsets.symmetric(vertical: 17), child:
-            Text(label ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.extra_fat'))
-          ),
-        ),
-        hasExternalLink ? Padding(padding: EdgeInsets.only(left: 8, top: 18, bottom: 18), child:
-          Styles().images.getImage('external-link', excludeFromSemantics: true)
-        ) : Container(),
-       hasChevron? Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 18, bottom: 18), child:
-            Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)
-        ): Container(width: 16,),
-      ]),
-    );
+  BoxDecoration? get _cardDecoration {
+    switch (displayMode) {
+      case CardDisplayMode.home: return HomeMessageCard.defaultDecoration;
+      case CardDisplayMode.browse: null;
+    }
   }
 }
