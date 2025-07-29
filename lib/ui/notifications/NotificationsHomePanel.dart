@@ -22,6 +22,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -139,9 +140,11 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
   static final double _defaultPaddingValue = 16;
 
   bool _isFilterVisible = false;
+
   bool? _unreadSelectedValue;
   bool? _mutedSelectedValue;
   _DateInterval? _dateIntervalSelectedValue;
+
   bool? _unreadPreviewValue;
   bool? _mutedPreviewValue;
   _TimeFilter? _timeFilterPreviewValue;
@@ -157,24 +160,19 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
   @override
   void initState() {
     super.initState();
+
     NotificationService().subscribe(this, [
       Inbox.notifyInboxUserInfoChanged,
       Inbox.notifyInboxMessageRead,
       Inbox.notifyInboxMessagesDeleted
     ]);
+
     _scrollController.addListener(_scrollListener);
 
     // Show unread notifications only if NotificationsContent.unread content is selected.
-    switch (widget.content) {
-      case NotificationsContent.unread:
-        _unreadSelectedValue = _unreadPreviewValue = true;
-        break;
-      default:
-        break;
-    }
-    _mutedSelectedValue = _mutedPreviewValue = false;
-    _dateIntervalSelectedValue = null;
-    _timeFilterPreviewValue = _getTimeFilterBy(interval: _dateIntervalSelectedValue);
+    _unreadSelectedValue = _unreadPreviewValue = (widget.content == NotificationsContent.unread) ? true : Storage().notificationsFilterUnread;
+    _mutedSelectedValue = _mutedPreviewValue = (Storage().notificationsFilterMuted ?? false);
+    _dateIntervalSelectedValue = _getDateIntervalBy(filter: (_timeFilterPreviewValue = _TimeFilterImpl.fromJson(Storage().notificationsFilterTimeInterval)));
 
     _loadMessages();
   }
@@ -611,9 +609,15 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
 
   void _onTapApplyFilter() {
     Analytics().logSelect(target: 'Apply');
+
     _unreadSelectedValue = _unreadPreviewValue;
     _mutedSelectedValue = _mutedPreviewValue;
     _dateIntervalSelectedValue = _getDateIntervalBy(filter: _timeFilterPreviewValue);
+
+    Storage().notificationsFilterUnread = _unreadPreviewValue;
+    Storage().notificationsFilterMuted = (_mutedPreviewValue != false) ? true : false;
+    Storage().notificationsFilterTimeInterval = _timeFilterPreviewValue?.toJson();
+
     _isFilterVisible = false;
     _refreshMessages();
   }
@@ -626,7 +630,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
   ///
   void _onTapMutedFilter() {
     setStateIfMounted(() {
-      if (_mutedPreviewValue == null) {
+      if (_mutedPreviewValue != false) {
         _mutedPreviewValue = false;
       } else {
         _mutedPreviewValue = null;
@@ -642,10 +646,10 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
   ///
   void _onTapUnreadFilter() {
     setStateIfMounted(() {
-      if (_unreadPreviewValue == true) {
-        _unreadPreviewValue = null;
-      } else {
+      if (_unreadPreviewValue != true) {
         _unreadPreviewValue = true;
+      } else {
+        _unreadPreviewValue = null;
       }
     });
   }
@@ -874,6 +878,31 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
 }
 
 enum _TimeFilter { Today, Yesterday, ThisWeek, LastWeek, ThisMonth, LastMonth }
+
+extension _TimeFilterImpl on _TimeFilter {
+
+  static _TimeFilter? fromJson(String? value) {
+    switch (value) {
+      case 'today': return _TimeFilter.Today;
+      case 'yesterday': return _TimeFilter.Yesterday;
+      case 'thisWeek': return _TimeFilter.ThisWeek;
+      case 'lastWeek': return _TimeFilter.LastWeek;
+      case 'thisMonth': return _TimeFilter.ThisMonth;
+      case 'lastMonth': return _TimeFilter.LastMonth;
+    }
+  }
+
+  String toJson() {
+    switch (this) {
+      case _TimeFilter.Today: return 'today';
+      case _TimeFilter.Yesterday: return 'yesterday';
+      case _TimeFilter.ThisWeek: return 'thisWeek';
+      case _TimeFilter.LastWeek: return 'lastWeek';
+      case _TimeFilter.ThisMonth: return 'thisMonth';
+      case _TimeFilter.LastMonth: return 'lastMonth';
+    }
+  }
+}
 
 class _DateInterval {
   final DateTime? startDate;
