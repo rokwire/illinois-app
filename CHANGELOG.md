@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+
+## [7.2.18] - 2025-07-29
 ### Fixed
 - Update assistant settings on user login/logout [#5302](https://github.com/rokwire/illinois-app/issues/5302).
 ### Changed
