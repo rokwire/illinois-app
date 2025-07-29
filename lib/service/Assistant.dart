@@ -63,13 +63,13 @@ class Assistant with Service, NotificationsListener {
   @override
   Future<void> initService() async {
 
-    List<Future<dynamic>> initFutures = <Future<dynamic>>[];
+    List<Future<String?>> initFutures = <Future<String?>>[];
 
     int? futuresSettingsIndex;
     _settings = AssistantSettings.fromJson(JsonUtils.decodeMap(Storage().assistantSettings));
     if (_settings == null) {
       futuresSettingsIndex = initFutures.length;
-      initFutures.add(_loadSettings());
+      initFutures.add(_loadSettingsStringFromNet());
     }
     else {
       _updateSettings();
@@ -79,7 +79,7 @@ class Assistant with Service, NotificationsListener {
     _user = AssistantUser.fromJson(JsonUtils.decodeMap(Storage().assistantUser));
     if (_user == null) {
       futuresUserIndex = initFutures.length;
-      initFutures.add(_loadUser());
+      initFutures.add(_loadUserStringFromNet());
     }
     else {
       _updateUser();
@@ -89,12 +89,20 @@ class Assistant with Service, NotificationsListener {
     _loadAllMessages();
 
     if (initFutures.isNotEmpty) {
-      List<dynamic> futuresResults = await Future.wait(initFutures);
+      List<String?> futuresResults = await Future.wait<String?>(initFutures);
       if (futuresSettingsIndex != null) {
-        _settings = JsonUtils.cast<AssistantSettings>(ListUtils.entry<dynamic>(futuresResults, futuresSettingsIndex)) ;
+        String? settingsString = ListUtils.entry<String?>(futuresResults, futuresSettingsIndex);
+        if (settingsString != null) {
+          _settings = AssistantSettings.fromJson(JsonUtils.decodeMap(settingsString));
+          Storage().assistantSettings = settingsString;
+        }
       }
       if (futuresUserIndex != null) {
-        _user = JsonUtils.cast<AssistantUser>(ListUtils.entry<dynamic>(futuresResults, futuresUserIndex)) ;
+        String? userString = ListUtils.entry<String?>(futuresResults, futuresUserIndex);
+        if (userString != null) {
+          _user = AssistantUser.fromJson(JsonUtils.decodeMap(userString));
+          Storage().assistantUser = userString;
+        }
       }
     }
 
@@ -139,14 +147,15 @@ class Assistant with Service, NotificationsListener {
 
   bool get isAvailable => (_settings?.available == true);
 
-  Future<AssistantSettings?> _loadSettings() async {
+  Future<String?> _loadSettingsStringFromNet() async {
     if (_isEnabled) {
       String? url = '${Config().aiProxyUrl}/client-settings';
       Response? response = await Network().get(url, auth: Auth2());
       int? responseCode = response?.statusCode;
       String? responseString = response?.body;
       if (responseCode == 200) {
-        return AssistantSettings.fromJson(JsonUtils.decodeMap(responseString));
+        Log.i('Succeeded to load assistant settings:\n$responseString');
+        return responseString;
       } else {
         Log.w('Failed to load assistant settings. Reason: $responseCode, $responseString');
       }
@@ -157,25 +166,29 @@ class Assistant with Service, NotificationsListener {
     return null;
   }
 
+  //Future<AssistantSettings?> _loadSettings() async =>
+  //  AssistantSettings.fromJson(JsonUtils.decodeMap(await _loadSettingsStringFromNet()));
+
   Future<void> _updateSettings() async {
-    AssistantSettings? settings = await _loadSettings();
+    String? settingsString = await _loadSettingsStringFromNet();
+    AssistantSettings? settings = AssistantSettings.fromJson(JsonUtils.decodeMap(settingsString));
     if ((settings != null) && (settings != _settings)) {
       _settings = settings;
-      Storage().assistantSettings = JsonUtils.encode(settings.toJson());
+      Storage().assistantSettings = settingsString;
       NotificationService().notify(notifySettingsChanged);
     }
   }
 
   // User
 
-  Future<AssistantUser?> _loadUser() async {
+  Future<String?> _loadUserStringFromNet() async {
     if (_isEnabled) {
       String? url = '${Config().aiProxyUrl}/user-settings';
       Response? response = await Network().get(url, auth: Auth2());
       int? responseCode = response?.statusCode;
       String? responseString = response?.body;
       if (responseCode == 200) {
-        return AssistantUser.fromJson(JsonUtils.decodeMap(responseString));
+        return responseString;
       } else {
         Log.w('Failed to load assistant user. Reason: $responseCode, $responseString');
       }
@@ -186,11 +199,15 @@ class Assistant with Service, NotificationsListener {
     return null;
   }
 
+  //Future<AssistantUser?> _loadUser() async =>
+  //  AssistantUser.fromJson(JsonUtils.decodeMap(await _loadUserStringFromNet()));
+
   Future<void> _updateUser() async {
-    AssistantUser? user = await _loadUser();
+    String? userString = await _loadUserStringFromNet();
+    AssistantUser? user = AssistantUser.fromJson(JsonUtils.decodeMap(userString));
     if ((user != null) && (user != _user)) {
       _user = user;
-      Storage().assistantUser = JsonUtils.encode(user.toJson());
+      Storage().assistantUser = userString;
       NotificationService().notify(notifyUserChanged);
     }
   }
