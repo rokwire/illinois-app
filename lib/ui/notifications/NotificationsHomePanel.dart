@@ -310,11 +310,62 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
   Widget _buildMessagesHeaderSection() {
     return Container(
         decoration: BoxDecoration(color: Styles().colors.white),
-        padding: EdgeInsets.symmetric(horizontal: _defaultPaddingValue, vertical: 10),
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [_buildFilterButton(), _buildReadAllButton()]));
+        child: Column(children: [
+          Padding(padding: EdgeInsets.symmetric(horizontal: _defaultPaddingValue, vertical: 10), child:
+            Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              _buildFilterButton(),
+              _buildReadAllButton()
+            ]),
+          ),
+          if (_hasFilters)
+            Column(children: [
+              Container(color: Styles().colors.surfaceAccent, height: 1),
+              Padding(padding: EdgeInsets.symmetric(horizontal: _defaultPaddingValue, vertical: 10), child:
+                Row(crossAxisAlignment: CrossAxisAlignment.center, children:[
+                  Expanded(child:
+                    _buildFilterDescription(),
+                  ),
+                ]),
+              ),
+            ]),
+          Container(color: Styles().colors.surfaceAccent, height: 1,),
+        ],)
+    );
+  }
+
+  Widget _buildFilterDescription() {
+    TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+    List<InlineSpan> descriptionList = <InlineSpan>[];
+
+    if (_hasUnreadFilter) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+      }
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.inbox.filter.unread.description', 'Unread'), style: regularStyle,),);
+    }
+
+    if (_hasMutedFilter) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+      }
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.inbox.filter.muted.description', 'Muted'), style: regularStyle,),);
+    }
+
+    _TimeFilter? timeFilter = _getTimeFilterBy(interval: _dateIntervalSelectedValue);
+    if (timeFilter != null) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+      }
+      descriptionList.add(TextSpan(text: timeFilter.toDisplayString(), style: regularStyle,),);
+    }
+
+    if (descriptionList.isNotEmpty) {
+      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.inbox.filter.label.title', 'Filter: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
+    }
+
+    return RichText(text: TextSpan(style: regularStyle, children: descriptionList));
   }
 
   Widget _buildFilterButton() {
@@ -840,31 +891,16 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
     if (timeFilter == null) {
       return Localization().getStringEx('panel.inbox.filter.time.all.label', 'All Notifications');
     }
-    late String prefix;
-    switch (timeFilter) {
-      case _TimeFilter.Today:
-        prefix = Localization().getStringEx('panel.inbox.filter.time.today.label', 'Today');
-        break;
-      case _TimeFilter.Yesterday:
-        prefix = Localization().getStringEx('panel.inbox.filter.time.yesterday.label', 'Yesterday');
-        break;
-      case _TimeFilter.ThisWeek:
-        prefix = Localization().getStringEx('panel.inbox.filter.time.this_week.label', 'This Week');
-        break;
-      case _TimeFilter.LastWeek:
-        prefix = Localization().getStringEx('panel.inbox.filter.time.last_week.label', 'Last Week');
-        break;
-      case _TimeFilter.ThisMonth:
-        prefix = Localization().getStringEx('panel.inbox.filter.time.this_month.label', 'This Month');
-        break;
-      case _TimeFilter.LastMonth:
-        prefix = Localization().getStringEx('panel.inbox.filter.time.last_month.label', 'Last Month');
-        break;
-    }
+    late String prefix = timeFilter.toDisplayString();;
     return "$prefix's ${Localization().getStringEx('panel.inbox.filter.time.notifications.label', 'Notifications')}";
   }
 
   bool get _showBanner => FirebaseMessaging().notificationsPaused ?? false;
+
+  bool get _hasFilters => _hasUnreadFilter || _hasMutedFilter || _hasDateIntervalFilter;
+  bool get _hasUnreadFilter => (_unreadSelectedValue == true);
+  bool get _hasMutedFilter => (_mutedSelectedValue != false);
+  bool get _hasDateIntervalFilter => (_dateIntervalSelectedValue != null);
 
   static final List<_FilterEntry> _dateFilterEntries = [
     _FilterEntry(name: Localization().getStringEx('panel.inbox.filter.time.all.label', 'All Notifications'), value: null),
@@ -889,6 +925,7 @@ extension _TimeFilterImpl on _TimeFilter {
       case 'lastWeek': return _TimeFilter.LastWeek;
       case 'thisMonth': return _TimeFilter.ThisMonth;
       case 'lastMonth': return _TimeFilter.LastMonth;
+      default: return null;
     }
   }
 
@@ -902,6 +939,18 @@ extension _TimeFilterImpl on _TimeFilter {
       case _TimeFilter.LastMonth: return 'lastMonth';
     }
   }
+
+  String toDisplayString() {
+    switch (this) {
+      case _TimeFilter.Today: return Localization().getStringEx('panel.inbox.filter.time.today.label', 'Today');
+      case _TimeFilter.Yesterday: return Localization().getStringEx('panel.inbox.filter.time.yesterday.label', 'Yesterday');
+      case _TimeFilter.ThisWeek: return Localization().getStringEx('panel.inbox.filter.time.this_week.label', 'This Week');
+      case _TimeFilter.LastWeek: return Localization().getStringEx('panel.inbox.filter.time.last_week.label', 'Last Week');
+      case _TimeFilter.ThisMonth: return Localization().getStringEx('panel.inbox.filter.time.this_month.label', 'This Month');
+      case _TimeFilter.LastMonth: return Localization().getStringEx('panel.inbox.filter.time.last_month.label', 'Last Month');
+    }
+  }
+
 }
 
 class _DateInterval {

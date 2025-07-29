@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update assistant settings on user login/logout [#5302](https://github.com/rokwire/illinois-app/issues/5302).
 ### Changed
 - Preserve filters selection in NotificatinsHomePanel [#5281](https://github.com/rokwire/illinois-app/issues/5281).
+### Added
+- Added current filters description in NotificatinsHomePanel [#5281](https://github.com/rokwire/illinois-app/issues/5281).
 
 ## [7.2.17] - 2025-07-28
 ### Fixed

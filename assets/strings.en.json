@@ -3273,6 +3273,9 @@
     "panel.inbox.filter.notifications.toggle.muted.label": "Muted Notifications",
     "panel.inbox.filter.notifications.toggle.muted.description": "View notifications you have turned off.",
     "panel.inbox.filter.apply.button": "Apply",
+    "panel.inbox.filter.unread.description": "Unread",
+    "panel.inbox.filter.muted.description": "Muted",
+    "panel.inbox.filter.label.title": "Filter: ",
 
     "widget.inbox_message_card.selected.hint": "Selected",
     "widget.inbox_message_card.unselected.hint": "Not Selected",
