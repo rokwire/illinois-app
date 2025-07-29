@@ -120,6 +120,7 @@ class Assistant with Service, NotificationsListener {
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
       _updateUser();
+      _updateSettings();
       _loadAllMessages();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
@@ -135,8 +136,8 @@ class Assistant with Service, NotificationsListener {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _updateSettings();
           _updateUser();
+          _updateSettings();
         }
       }
     }
