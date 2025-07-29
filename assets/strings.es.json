@@ -3275,6 +3275,9 @@
     "panel.inbox.filter.notifications.toggle.muted.label": "Notificaciones silenciadas",
     "panel.inbox.filter.notifications.toggle.muted.description": "Ver las notificaciones que has desactivado.",
     "panel.inbox.filter.apply.button": "Aplicar",
+    "panel.inbox.filter.unread.description": "Unread",
+    "panel.inbox.filter.muted.description": "Muted",
+    "panel.inbox.filter.label.title": "Filter: ",
 
     "widget.inbox_message_card.selected.hint": "Seleccionada",
     "widget.inbox_message_card.unselected.hint": "No seleccionada",

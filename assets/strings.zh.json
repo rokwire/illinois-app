@@ -3253,6 +3253,9 @@
 	"panel.inbox.filter.notifications.toggle.muted.label": "靜音通知",
 	"panel.inbox.filter.notifications.toggle.muted.description": "查看您已關閉的通知。",
 	"panel.inbox.filter.apply.button": "申請",
+	"panel.inbox.filter.unread.description": "Unread",
+	"panel.inbox.filter.muted.description": "Muted",
+	"panel.inbox.filter.label.title": "Filter: ",
 
 	"widget.inbox_message_card.selected.hint": "已選",
 	"widget.inbox_message_card.unselected.hint": "未選中的",
