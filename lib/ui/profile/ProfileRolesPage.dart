@@ -16,11 +16,12 @@
 
 
 import 'dart:async';
+import 'dart:collection';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -36,13 +37,14 @@ class ProfileRolesPage extends StatefulWidget {
 }
 
 class _ProfileRolesPageState extends State<ProfileRolesPage> {
-  Set<UserRole>? _selectedRoles;
 
+  late LinkedHashSet<UserRole> _selectedRoles;
   Timer? _saveRolesTimer;
 
   @override
   void initState() {
-    _selectedRoles = (Auth2().prefs?.roles != null) ? Set.from(Auth2().prefs!.roles!) : Set<UserRole>();
+    Set<UserRole>? savedRoles = Auth2().prefs?.roles;
+    _selectedRoles = (savedRoles != null) ? LinkedHashSet<UserRole>.from(savedRoles) : LinkedHashSet<UserRole>();
     super.initState();
   }
 
@@ -60,21 +62,17 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
   @override
   Widget build(BuildContext context) {
     return Container(color: Styles().colors.background, padding: widget.margin,  child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Padding(padding: EdgeInsets.only(top: 16, left: 4, right: 4), child:
-          Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-            style: Styles().textStyles.getTextStyle("widget.item.small.thin")
-          ),
+      Padding(padding: EdgeInsets.only(left: 4, bottom: 16), child:
+        RoleGridButtonGrid.fromFlexUI(
+          selectedRoles: _selectedRoles,
+          onTap: _onRoleGridButton,
         ),
-        Padding(padding: EdgeInsets.only(top: 10,  left: 4, right: 4), child:
-          Text(Localization().getStringEx('panel.onboarding.roles.label.description2', 'I am a...'),
-            style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
-          ),
-        ),
-        Padding(padding: EdgeInsets.only(left: 0, top: 8, right: 8, bottom: 0), child:
-          RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, textScaler: MediaQuery.of(context).textScaler,),
-        ),
-      ],),
+        /* RoleGridButton.gridFromFlexUI(
+          selectedRoles: _selectedRoles,
+          onTap: _onRoleGridButton,
+          textScaler: MediaQuery.of(context).textScaler,
+        ), */
+      ),
     );
   }
 
@@ -96,29 +94,18 @@ class _ProfileRolesPageState extends State<ProfileRolesPage> {
          );
   }*/
 
-  void _onRoleGridButton(RoleGridButton? button) {
-
-    if (button != null) {
-
-      UserRole? role = (button.data is UserRole) ? (button.data as UserRole) : null;
-
-      Analytics().logSelect(target: "Role: " + role.toString());
-
-      if (role != null) {
-        if (_selectedRoles!.contains(role)) {
-          _selectedRoles!.remove(role);
-        } else {
-          _selectedRoles!.add(role);
-        }
-      }
-
-      AppSemantics.announceCheckBoxStateChange(context, _selectedRoles!.contains(role), button.title);
-
-      setState(() {});
-
+  void _onRoleGridButton(UserRole role) {
+    Analytics().logSelect(target: "Role: ${role}");
+    LinkedHashSet<UserRole> selectedRoles = LinkedHashSet<UserRole>.from(_selectedRoles);
+    setState(() {
+      UserRoleGroup.toggleSelection(_selectedRoles, role);
+    });
+    if (!DeepCollectionEquality().equals(selectedRoles, _selectedRoles)) {
+      AppSemantics.announceCheckBoxStateChange(context, _selectedRoles.contains(role), role.displayTitle);
       _startSaveRolesTimer();
     }
   }
+
 
   /*void _onBack() {
     if (_saveRolesTimer != null) {

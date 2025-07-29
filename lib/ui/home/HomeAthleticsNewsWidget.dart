@@ -13,7 +13,6 @@ import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -67,7 +66,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
       });
     }
 
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       _loadingNews = true;
       Sports().loadNews(null, Config().homeAthleticsNewsCount).then((List<News>? news) {
         setStateIfMounted(() {
@@ -120,9 +119,8 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home.athletics_news.text.title', 'Big 10 News'),
-        titleIconKey: 'news',
         child: _buildContent(),
     );
   }
@@ -157,8 +155,8 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         News news = _news![index];
-        pages.add(Padding(key: _contentKeys[news.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
-          AthleticsNewsCard(news: news, onTap: () => _onTapNews(news))
+        pages.add(Padding(key: _contentKeys[news.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 8), child:
+          AthleticsNewsCard(news: news, displayMode: CardDisplayMode.home, onTap: () => _onTapNews(news))
         ));
       }
 
@@ -180,14 +178,14 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
-        AthleticsNewsCard(news: _news!.first, onTap: () => _onTapNews(_news!.first))
+        AthleticsNewsCard(news: _news!.first, displayMode: CardDisplayMode.home, onTap: () => _onTapNews(_news!.first))
       );
     }
 
     return Column(children: <Widget>[
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
-        LinkButton(
+        HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.athletics_news.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.athletics_news.button.all.hint', 'Tap to view all news'),
           onTap: _onTapSeeAll,
@@ -207,7 +205,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
   }
 
   void _refreshNews({bool showProgress = false}) {
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       if (showProgress && mounted) {
         setState(() {
           _loadingNews = true;

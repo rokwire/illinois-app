@@ -4,26 +4,23 @@
 			"tabbar": ["home", "maps", "wallet", "assistant"],
 			"tabbar.default": "favorites",
 
-			"home": ["wallet", "my_dining", "dinings", "my_laundry", "laundry",
+			"home": ["my_dining", "dinings", "my_laundry", "laundry",
 				"wellness_resources", "wellness_mental_health", "wellness_todo", "wellness_rings", "wellness_tips",
-				"daily_illini", "will_radio", "willfm_radio", "willhd_radio", "wpgufm_radio",
-				"twitter", "all_groups", "my_groups",
+				"daily_illini", "illini_radio",
+				"all_groups", "my_groups",
 				"open_research_projects", "my_research_projects", "create_poll", "recent_polls", 
 				"event_feed", "my_events", "sport_events", "sport_news", "my_athletics", "my_game_day",
 				"my_campus_guide", "campus_reminders",
 				"gies_checklist", "new_student_checklist", "student_courses", "canvas_courses",
 				"campus_highlights",
 				"safewalk_request", "saferides", "safety_resources",
-				"recent_items", "public_surveys", "my_news", "my_appointments", "my_mtd_stops", "my_locations"
+				"recent_items", "my_news", "my_appointments", "my_mtd_stops", "my_locations"
 			],
 			"home.system": ["tout", "welcome_message", "emergency", "voter_registration", "connect"],
 			"home.connect": ["netid", "phone_or_email"],
 			"home.dinings": ["dinings_all", "dinings_open"],
-			"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card"],
 
-			"home.twitter.account": ["gies", "", "news", "canvas"],
-			
-			"browse": ["academics", "appointments", "athletics", "campus_guide", "dinings", "directory", "events", "feeds", "laundry", "groups", "messages", "mtd", "my", "polls", "music_and_news", "recent", "safety", "surveys", "research_projects", "wallet", "wellness"],
+			"browse": ["academics", "appointments", "athletics", "campus_guide", "dinings", "directory", "events", "feeds", "laundry", "groups", "messages", "mtd", "my", "polls", "music_and_news", "recent", "safety", "surveys", "research_projects", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "appointments", "my_illini"],
 			"browse.appointments": ["appointments"],
 			"browse.athletics": ["my_athletics", "my_game_day", "my_news", "sport_events", "sport_news", "sport_teams"],
@@ -32,17 +29,14 @@
 			"browse.dinings": ["dinings_all", "dinings_open", "my_dining"],
 			"browse.directory": ["user_directory"],
 			"browse.events": ["event_feed", "my_events"],
-			"browse.feeds": ["twitter"],
 			"browse.groups": ["all_groups", "my_groups"],
 			"browse.research_projects": ["open_research_projects", "my_research_projects"],
 			"browse.messages": ["messages"],
 			"browse.mtd": ["all_mtd_stops", "my_mtd_stops", "my_locations"],
 			"browse.polls": ["create_poll", "recent_polls"],
-			"browse.music_and_news": ["will_radio", "willfm_radio", "willhd_radio", "wpgufm_radio", "daily_illini"],
+			"browse.music_and_news": ["illini_radio", "daily_illini"],
 			"browse.recent": ["recent_items"],
 			"browse.safety": ["safewalk_request", "saferides", "safety_resources"],
-			"browse.surveys": ["public_surveys"],
-			"browse.wallet": ["illini_cash_card", "add_illini_cash", "meal_plan_card", "bus_pass_card", "illini_id_card"],
 			"browse.wellness": ["wellness_recreation", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener"],
 
 			"wallet": ["illini_id", "bus_pass", "library_card", "meal_plan", "illini_cash", "add_illini_cash"],
@@ -88,14 +82,19 @@
 			"calendar": ["settings"],
 			"calendar.settings": ["prompt"],
 			
-			"roles": ["student", "employee", "parent", "fan", "alumni", "visitor"],
-			
+			"roles.regular": ["student", "employee", "parent", "fan", "alumni", "visitor"],
+			"roles.standalone": ["prospective"],
+
 			"onboarding2":["get_started", "video_tutorial", "roles", "privacy_statement", "privacy_location_services", "privacy_store_activity", "privacy_share_activity", "privacy_level", "notifications_auth", "login_netid", "login_phone_or_email_statement", "login_phone_or_email", "login_email", "login_phone", "profile_info", "research_questionnaire_participate_prompt", "research_questionnaire", "research_questionnaire_acknowledgement" ],
 
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "meal_plan", "my_illini", "quick_polls", "saved"],
 			
-			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
-				"gies", "new_student", "canvas", "messages", "mtd_bus_pass", "student", "login", "netid_login", "assistant", "assistant_personalization", "all_assistants", "assistant_faqs", "safewalk_request", "privacy"],
+			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing", "privacy",
+				"login", "netid_login",
+				"gies", "new_student", "canvas",
+				"illini_cash", "add_illini_cash", "mtd_bus_pass", "safewalk_request", "messages", "student",
+				"assistant", "assistant_personalization", "all_assistants", "assistant_faqs"
+			],
 
 			"attributes": ["groups", "research_projects", "events"],
 			"attributes.groups": ["rso"],
@@ -115,7 +114,6 @@
 				"features.student"                         : ["student"]
 			},
 			"groups": {
-				"home.twitter.account.canvas"             : ["${config.settings.groups.canvas}", "AND", ["NOT", "${config.settings.groups.gies}"]],
 				"gies"                                    : ["${config.settings.groups.gies}"],
 				"gies_checklist"                          : ["${config.settings.groups.gies}"],
 				"_new_student"                            : ["${config.settings.groups.new_student}"],
@@ -221,10 +219,7 @@
 			"enable" : {
 				"emergency"                               : false,
 				"explore.map.laundry"                     : false,
-				"twitter"                                 : false,
-				"public_surveys"                          : false,
-				"home.wallet"                             : false,
-				"browse.wallet"                           : false,
+				"voter_registration"                      : "${config.settings.voterRegistrationEnabled}",
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
 				"onboarding2.video_tutorial"              : [["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"], "AND", "${app.storage.onBoarding2ShowTutorial}"],
 				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
@@ -234,14 +229,10 @@
 				"onboarding2.privacy_level"               : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"student_courses"                         : "${config.settings.studentCoursesEnabled}",
 				"illini_cash"                             : "${config.settings.wallet.illiniCashEnabled}",
-				"illini_cash_card"                        : "${config.settings.wallet.illiniCashEnabled}",
 				"add_illini_cash"                         : "${config.settings.wallet.addIlliniCashEnabled}",
 				"illini_id"                               : "${config.settings.wallet.illiniIdEnabled}",
-				"illini_id_card"                          : "${config.settings.wallet.illiniIdEnabled}",
 				"meal_plan"                               : "${config.settings.wallet.mealPlanEnabled}",
-				"meal_plan_card"                          : "${config.settings.wallet.mealPlanEnabled}",
 				"bus_pass"                                : "${config.settings.wallet.busPassEnabled}",
-				"bus_pass_card"                           : "${config.settings.wallet.busPassEnabled}",
 				"safewalk_request"                        : "${config.settings.safety.safeWalkEnabled}",
 				"google_assistant"                        : "${config.settings.assistant.enable.google}",
 				"grok_assistant"                          : "${config.settings.assistant.enable.grok}",

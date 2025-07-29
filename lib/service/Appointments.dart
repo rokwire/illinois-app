@@ -169,6 +169,14 @@ class Appointments with Service, NotificationsListener {
   }
 
   List<Appointment>? getAppointments({required AppointmentsTimeSource timeSource, AppointmentType? type}) {
+    /* TMP: Testing Appointments
+    List<Appointment> result = <Appointment>[];
+    for(AppointmentProvider provider in _sampleProviders) {
+      result.addAll(_sampleAppointments(provider: provider));
+    }
+    return result;
+    */
+
     List<Appointment>? srcAppts;
     switch (timeSource) {
       case AppointmentsTimeSource.past:
@@ -221,8 +229,6 @@ class Appointments with Service, NotificationsListener {
   }
 
   Future<http.Response?> _loadAppointmentseResponse({AppointmentsTimeSource? timeSource}) async {
-    //TMP: assets shortcut
-    //return await AppBundle.loadString('assets/appointments.json');
     if (StringUtils.isNotEmpty(Config().appointmentsUrl) && Auth2().isLoggedIn) {
       String url = "${Config().appointmentsUrl}/services/appointments";
       if (timeSource != null) {
@@ -241,6 +247,8 @@ class Appointments with Service, NotificationsListener {
   }
 
   Future<String?> _loadAppointmentsStringFromNet({required AppointmentsTimeSource timeSource}) async {
+    //TMP: assets shortcut
+    //return AppBundle.loadString('assets/extra/appointments.json');
     http.Response? response = await _loadAppointmentseResponse(timeSource: timeSource);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -460,7 +468,7 @@ class Appointments with Service, NotificationsListener {
   Future<List<AppointmentProvider>?> loadProviders() async {
     if (_useSampleData == true) {
       await Future.delayed(Duration(milliseconds: 1500));
-      return _sampleProviders;
+      return List<AppointmentProvider>.from(_sampleProviders);
     }
     else if (_isServiceAvailable) {
       String? url = "${Config().appointmentsUrl}/services/providers";
@@ -484,7 +492,7 @@ class Appointments with Service, NotificationsListener {
   Future<List<AppointmentUnit>?> loadUnits({ required String providerId }) async {
     if (_useSampleData == true) {
       await Future.delayed(Duration(milliseconds: 1500));
-      return _sampleUnits;
+      return List<AppointmentUnit>.from(_sampleUnits);
     }
     else if (_isServiceAvailable) {
       String? url = "${Config().appointmentsUrl}/services/units?provider-id=$providerId";
@@ -513,7 +521,7 @@ class Appointments with Service, NotificationsListener {
   Future<List<AppointmentPerson>?> loadPersons({ required String providerId, required String unitId }) async {
     if (_useSampleData == true) {
       await Future.delayed(Duration(milliseconds: 1500));
-      return _samplePersons;
+      return List<AppointmentPerson>.from(_samplePersons);
     }
     else if (_isServiceAvailable) {
       String? url = "${Config().appointmentsUrl}/services/people?provider-id=$providerId&unit-id=$unitId";
@@ -549,7 +557,7 @@ class Appointments with Service, NotificationsListener {
       await Future.delayed(Duration(milliseconds: 1500));
       return AppointmentTimeSlotsAndQuestions(
         timeSlots: _sampleTimeSlots(startDateUtc: startDateUtc, endDateUtc: endDateUtc),
-        questions: _sampleQuestions,
+        questions: List<AppointmentQuestion>.from(_sampleQuestions),
       );
     }
     else if (_isServiceAvailable) {

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -46,16 +48,14 @@ class Onboarding2RolesPanel extends StatefulWidget with Onboarding2Panel {
 }
 
 class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
-  Set<UserRole> _selectedRoles = <UserRole>{};
+  late LinkedHashSet<UserRole> _selectedRoles;
   bool get _allowNext => _selectedRoles.isNotEmpty;
   bool _onboardingProgress = false;
 
   @override
   void initState() {
-    Set<UserRole>? userRoles = Auth2().prefs?.roles;
-    if (userRoles != null) {
-      _selectedRoles = Set.from(userRoles);
-    }
+    Set<UserRole>? savedRoles = Auth2().prefs?.roles;
+    _selectedRoles = (savedRoles != null) ? LinkedHashSet<UserRole>.from(savedRoles) : LinkedHashSet<UserRole>();
     super.initState();
   }
 
@@ -85,24 +85,13 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
               ],),
             ),
 
-            Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
-              Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-                style: Styles().textStyles.getTextStyle("panel.onboarding2.roles.description"),
-                textAlign: TextAlign.start,
-              ),
-            ),
-
-            Padding(padding: EdgeInsets.only(bottom:  10, left: 20, right: 20), child:
-              Text(Localization().getStringEx('panel.onboarding2.roles.label.description2', 'I am a...'),
-                style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"),
-                textAlign: TextAlign.start,
-              ),
-            ),
-
             Expanded(child:
               SingleChildScrollView(child:
                 Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
-                  RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, textScaler: MediaQuery.of(context).textScaler,)
+                  RoleGridButtonGrid.fromFlexUI(
+                    selectedRoles: _selectedRoles,
+                    onTap: _onRoleGridButton,
+                  )
                 ),
               ),
             ),
@@ -126,15 +115,15 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
       ),
     );
 
-  void _onRoleGridButton(RoleGridButton button) {
-      Analytics().logSelect(target: "Role: ${button.role}");
-      setState(() {
-        if (_selectedRoles.contains(button.role) == true) {
-          _selectedRoles.remove(button.role);
-        } else {
-          _selectedRoles.add(button.role);
-        }
-      });
+  void _onRoleGridButton(UserRole role) {
+    Analytics().logSelect(target: "Role: ${role}");
+    int selectedCount = _selectedRoles.length;
+    setState(() {
+      UserRoleGroup.toggleSelection(_selectedRoles, role);
+    });
+    if (selectedCount != _selectedRoles.length) {
+      AppSemantics.announceCheckBoxStateChange(context, _selectedRoles.contains(role), role.displayTitle);
+    }
   }
 
   void _onTapBack() {

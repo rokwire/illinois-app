@@ -40,6 +40,7 @@ buildscript {
         mavenCentral()
         flatDir {
             dirs '../lib'
+            dirs '../../libs/hid-origo/android'
         }
         maven { url 'https://jitpack.io' }
     }

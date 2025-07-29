@@ -740,7 +740,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> with Notifications
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
       if(StringUtils.isNotEmpty(opponentUrl)) {
-        return ModalImageHolder(child: Image.network(opponentUrl!, excludeFromSemantics: true));
+        return ModalImageHolder(child: Image.network(opponentUrl!, headers: Auth2().networkAuthHeaders, excludeFromSemantics: true));
       } else {
         return Container();
       }
@@ -792,7 +792,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> with Notifications
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
       if(StringUtils.isNotEmpty(opponentUrl)) {
-        return ModalImageHolder(child: Image.network(opponentUrl!, excludeFromSemantics: true));
+        return ModalImageHolder(child: Image.network(opponentUrl!, headers: Auth2().networkAuthHeaders, excludeFromSemantics: true));
       } else {
         return Container();
       }
@@ -900,7 +900,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     } else {
       //return opponent image
       String? opponentUrl = widget._game!.opponent?.logoImage;
-      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: Image.network(opponentUrl!, excludeFromSemantics: true)) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: Image.network(opponentUrl!, headers: Auth2().networkAuthHeaders, excludeFromSemantics: true)) : null;
     }
   }
 
@@ -911,7 +911,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     } else {
       //return opponent image
       String? opponentUrl = widget._game?.opponent?.logoImage;
-      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: Image.network(opponentUrl!, excludeFromSemantics: true)) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: Image.network(opponentUrl!, headers: Auth2().networkAuthHeaders, excludeFromSemantics: true)) : null;
     }
   }
 

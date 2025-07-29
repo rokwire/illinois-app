@@ -17,6 +17,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:illinois/model/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
@@ -77,6 +78,8 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
 
   Map<String, dynamic> get wellness => JsonUtils.mapValue(content['wellness']) ?? {};
+
+  ConfigAlert? get alert => ConfigAlert.fromJson(JsonUtils.mapValue(content['alert']));
 
   // Getters: Secret Keys
 
@@ -167,10 +170,6 @@ class Config extends rokwire.Config {
   String? get gameDayAllUrl          => JsonUtils.stringValue(thirdPartyServices['gameday_all_url']);
   String? get convergeUrl            => JsonUtils.stringValue(thirdPartyServices['converge_url']);
 
-  // Getters: Twitter
-  String? get twitterUrl             => JsonUtils.stringValue(twitter['url']);
-  int?    get twitterTweetsCount     => JsonUtils.intValue(twitter['tweets_count']);
-  
   // ""     : { "id":"18165866", "name":"illinois_alma" },
   // "gies" : { "id":"19615559", "name":"giesbusiness" }
   Map<String, dynamic>? twitterAccount([String? accountKey]) {
@@ -248,6 +247,10 @@ class Config extends rokwire.Config {
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;
+
+  // Refresh
+
+  Future<void> refresh() => super.updateFromNet();
 
   // Upgrade
 

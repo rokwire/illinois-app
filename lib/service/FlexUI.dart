@@ -73,22 +73,24 @@ class FlexUI extends rokwire.FlexUI {
   }
 
   // Feature
+  bool get isAnalyticsAvailable => hasFeature('analytics');
   bool get isLocationServicesAvailable => hasFeature('location_services');
-  bool get isAuthenticationAvailable => hasFeature('authentication');
-  bool get isSharingAvailable => hasFeature('sharing');
   bool get isPersonalizationAvailable => hasFeature('personalization');
+  bool get isAuthenticationAvailable => hasFeature('authentication');
   bool get isNotificationsAvailable => hasFeature('notifications');
   bool get isPaymentInfornationAvailable => hasFeature('payment_information');
-  bool get isAnalyticsAvailable => hasFeature('analytics');
+  bool get isSharingAvailable => hasFeature('sharing');
+  bool get isPrivacyAvailable => hasFeature('privacy');
 
   bool get isGiesAvailable => hasFeature('gies');
   bool get isNewStudentAvailable => hasFeature('new_student');
   bool get isCanvasAvailable => hasFeature('canvas');
 
+  bool get isIlliniCashAvailable => hasFeature('illini_cash');
+  bool get isAddIlliniCashAvailable => hasFeature('add_illini_cash');
   bool get isMTDBusPassAvailable => hasFeature('mtd_bus_pass');
-  bool get isMessagesAvailable => hasFeature('messages');
   bool get isSafeWalkAvailable => hasFeature('safewalk_request');
-  bool get isPrivacyAvailable => hasFeature('privacy');
+  bool get isMessagesAvailable => hasFeature('messages');
 
   bool get isAllAssistantsAvailable => hasFeature('all_assistants');
   bool get isAssistantFaqsAvailable => hasFeature('assistant_faqs');

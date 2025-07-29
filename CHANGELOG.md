@@ -4,12 +4,116 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
 ## Unreleased
+
+## [7.2.17] - 2025-07-28
+### Fixed
+- Fixed typo in roles panel [#5270](https://github.com/rokwire/illinois-app/issues/5270).
+### Changed
+- UI Clean Up: Favorite Widget Cards implemented [#5289](https://github.com/rokwire/illinois-app/issues/5289).
+
+## [7.2.16] - 2025-07-25
+### Changed
+- Set javascript mode for floor panel web view to unrestricted so feature toggles will work [#5295](https://github.com/rokwire/illinois-app/issues/5295).
+- Prefer inNotOffline Connectivity's API than isOnline.
+
+## [7.2.15] - 2025-07-24
+### Changed
+- Add contrast white border to Play button in Onboarding2VideoTutorialPanel [#4873](https://github.com/rokwire/illinois-app/issues/4873).
+### Fixed
+- Fixed Home/Favorites splitters build [#5271](https://github.com/rokwire/illinois-app/issues/5271).
+
+## [7.2.14] - 2025-07-23
+### Changed
+- Android: use different api keys for the google maps sdk based on the current environment [#5291](https://github.com/rokwire/illinois-app/issues/5291).
+- Hide horizontal scroll with struct output in the Assistant [#5293](https://github.com/rokwire/illinois-app/issues/5293).
+
+## [7.2.13] - 2025-07-18
+### Changed
+- Event2CreatePanel: Default event visibility changed to group_member when creating a group event [#5269](https://github.com/rokwire/illinois-app/issues/5269).
+- Event2HomePanel: Changed Filters button Accessibility hint to pronounce result count [#4417](https://github.com/rokwire/illinois-app/issues/4417).
+
+## [7.2.12] - 2025-07-16
+### Fixed
+- Fixed accessing unmounted state on closing Assistant panel.
+- Showing athletics images [#5240](https://github.com/rokwire/illinois-app/issues/5240).
+### Added
+- Add prospective students support [#5270](https://github.com/rokwire/illinois-app/issues/5270).
+
+## [7.2.11] - 2025-07-15
+### Changed
+- Do not cache video tutorials in Content service, load them on demand.
+### Added
+- Show scrollable dining locations, product items and nutrition info in the assistant answer [#5283](https://github.com/rokwire/illinois-app/issues/5283).
+
+## [7.2.10] - 2025-07-11
+### Changed
+- Updated Home tout images [#5275](https://github.com/rokwire/illinois-app/issues/5275).
+
+## [7.2.9] - 2025-07-10
+### Changed
+- Redesigned divider lines in-between Favorites widgets, polish spacing between widgets and splitters [#5271](https://github.com/rokwire/illinois-app/issues/5271).
+### Fixed
+- Prevent groups selection when modifying event [#4696](https://github.com/rokwire/illinois-app/issues/4696).
+
+## [7.2.8] - 2025-07-09
+### Changed
+- Upgrade dart sdk [#5273](https://github.com/rokwire/illinois-app/issues/5273).
+### Added
+- Add divider lines in-between Favorites widgets [#5271](https://github.com/rokwire/illinois-app/issues/5271).
+
+## [7.2.7] - 2025-07-03
+### Added
+- Group post text formatting UX [#5194](https://github.com/rokwire/illinois-app/issues/5194)
+### Changed
+- Assistant Suggestion card to disappear only on tapping close button [#5254](https://github.com/rokwire/illinois-app/issues/5254).
+### Fixed
+- UI Clean Up / Illini Radio - fixed WILL Classical & More display frequency [#5249](https://github.com/rokwire/illinois-app/issues/5249).
+
+## [7.2.6] - 2025-07-02
+### Changed
+- Android: Upgrade compileSdkVersion and targetSdkVersion to 36 [#5260](https://github.com/rokwire/illinois-app/issues/5260).
+- UI Clean Up / Illini Radio - updated station control content [#5249](https://github.com/rokwire/illinois-app/issues/5249).
+### Fixed
+- Fixed load Illini Cash transactions history [#5262](https://github.com/rokwire/illinois-app/issues/5262).
+### Removed
+- Removed unused standalone response load methods.
+
+## [7.2.5] - 2025-07-01
+### Changed
+- UI Clean Up - combine radio widgets into one Illini Radio widget [#5249](https://github.com/rokwire/illinois-app/issues/5249).
+
+## [7.2.4] - 2025-06-30
+### Added
+- Show arrows for looping between events in the Assistant answers [#5255](https://github.com/rokwire/illinois-app/issues/5255).
+### Fixed
+- Acknowledge the new json format for events in the Assistant [#5255](https://github.com/rokwire/illinois-app/issues/5255).
+
+## [7.2.3] - 2025-06-26
+### Added
+- Added config alerts feature [#5251](https://github.com/rokwire/illinois-app/issues/5251).
+### Changed
+- UI Clean Up - Home Panel / small tweaks [#5205](https://github.com/rokwire/illinois-app/issues/5205).
+
+## [7.2.2] - 2025-06-25
+### Changed
+- UI Clean Up - Home Panel [#5205](https://github.com/rokwire/illinois-app/issues/5205).
+
+## [7.2.1] - 2025-06-23
 
 ## [7.2.0] - 2025-06-05
 ### Added
 - Show events in the assistant as horizontal scroll [#5197](https://github.com/rokwire/illinois-app/issues/5197).
 - Enable Landscape Orientation [#1457](https://github.com/rokwire/illinois-app/issues/1457).
+
+## [7.1.20] - 2025-06-23
+### Changed
+- Updated event filter texts [#5241](https://github.com/rokwire/illinois-app/issues/5241).
+
+## [7.1.19] - 2025-06-18
+### Changed
+- Control "Buy Illini Cash" section availability in Illini Cash page from FlexUI [#5239](https://github.com/rokwire/illinois-app/issues/5239).
 
 ## [7.1.18] - 2025-06-16
 ### Fixed

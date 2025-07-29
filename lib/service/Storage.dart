@@ -16,16 +16,22 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:illinois/model/Assistant.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/storage.dart' as rokwire;
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Storage extends rokwire.Storage {
+class Storage extends rokwire.Storage with NotificationsListener {
 
   static String get notifySettingChanged => rokwire.Storage.notifySettingChanged;
+  static String get notifyHomeFavoriteExpandedChanged => 'edu.illinois.rokwire.storage.home.favorite.expanded.changed';
+
+  late Map<String, bool> _homeFavoriteExpandedStates;
 
   // Singletone Factory
 
@@ -34,6 +40,35 @@ class Storage extends rokwire.Storage {
 
   factory Storage() => ((rokwire.Storage.instance is Storage) ? (rokwire.Storage.instance as Storage) : (rokwire.Storage.instance = Storage.internal()));
 
+  // Service Overrides
+
+  void createService() {
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoriteChanged
+    ]);
+    super.createService();
+  }
+
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+    super.destroyService();
+  }
+
+  @override
+  Future<void> initService() async {
+    await super.initService();
+    _homeFavoriteExpandedStates = _loadHomeFavoriteExpandedStates() ?? <String, bool>{};
+  }
+
+  // NotificationsListener Overrides
+
+  @override
+  void onNotification(String name, param) {
+    if ((name == Auth2UserPrefs.notifyFavoriteChanged) && (param is HomeFavorite)) {
+      _handleFavoriteChanged(param);
+    }
+    super.onNotification(name, param);
+  }
 
   // Overrides
 
@@ -127,11 +162,6 @@ class Storage extends rokwire.Storage {
   static const String illiniStudentClassificationKey  = '_illini_student_classification';
   String? get illiniStudentClassification => getEncryptedStringWithName(illiniStudentClassificationKey);
   set illiniStudentClassification(String? value) =>  setEncryptedStringWithName(illiniStudentClassificationKey, value);
-
-  // Twitter
-  static const String selectedTwitterAccountKey  = 'selected_twitter_account';
-  String? get selectedTwitterAccount => getStringWithName(selectedTwitterAccountKey);
-  set selectedTwitterAccount(String? value) => setStringWithName(selectedTwitterAccountKey, value);
 
   // Date offset
   static const String offsetDateKey  = 'settings_offset_date';
@@ -375,6 +405,31 @@ class Storage extends rokwire.Storage {
   String? get homeContentType => getStringWithName(homeContentTypeKey);
   set homeContentType(String? value) => setStringWithName(homeContentTypeKey, value);
 
+  String get _homeFavoriteExpandedStatesMapKey => 'edu.illinois.rokwire.home.favorite.expanded.state';
+  Map<String, bool>? _loadHomeFavoriteExpandedStates() => JsonUtils.mapCastValue(JsonUtils.decode(getStringWithName(_homeFavoriteExpandedStatesMapKey)));
+  void _saveHomeFavoriteExpandedStatesMap(Map<String, bool>? value) => setStringWithName(_homeFavoriteExpandedStatesMapKey, JsonUtils.encode(value));
+
+  void _handleFavoriteChanged(HomeFavorite favorite) {
+    if (Auth2().isFavorite(favorite) != true) {
+      setHomeFavoriteExpanded(favorite.favoriteId, null);
+    }
+  }
+
+  bool? isHomeFavoriteExpanded(String? key) => _homeFavoriteExpandedStates[key];
+  void setHomeFavoriteExpanded(String? key, bool? value) {
+    if ((key != null) && (value != isHomeFavoriteExpanded(key))) {
+      if (value != null) {
+        _homeFavoriteExpandedStates[key] = value;
+      }
+      else {
+        _homeFavoriteExpandedStates.remove(key);
+      }
+      _saveHomeFavoriteExpandedStatesMap(_homeFavoriteExpandedStates);
+      NotificationService().notify(notifyHomeFavoriteExpandedChanged, key);
+    }
+  }
+
+
   // Browse Tout
   String get browseToutImageUrlKey => 'edu.illinois.rokwire.browse.tout.image.url';
   String? get browseToutImageUrl => getStringWithName(browseToutImageUrlKey);
@@ -516,6 +571,14 @@ class Storage extends rokwire.Storage {
   set athleticsContentType(String? value) => setStringWithName(athleticsContentTypeKey, value);
 
   // Assistant
+  static const String assistantSettingsKey = 'edu.illinois.rokwire.settings.user';
+  String? get assistantSettings => getStringWithName(assistantSettingsKey);
+  set assistantSettings(String? value) => setStringWithName(assistantSettingsKey, value);
+
+  static const String assistantUserKey = 'edu.illinois.rokwire.assistant.user';
+  String? get assistantUser => getStringWithName(assistantUserKey);
+  set assistantUser(String? value) => setStringWithName(assistantUserKey, value);
+
   static const String assistantContentTypeKey = 'edu.illinois.rokwire.assistant.content_type';
   String? get assistantContentType => getStringWithName(assistantContentTypeKey);
   set assistantContentType(String? value) => setStringWithName(assistantContentTypeKey, value);
@@ -523,4 +586,9 @@ class Storage extends rokwire.Storage {
   static const String _assistantEventsPromptHiddenKey = 'edu.illinois.rokwire.assistant.events.prompt.hidden';
   bool? get assistantEventsPromptHidden => getBoolWithName(_assistantEventsPromptHiddenKey);
   set assistantEventsPromptHidden(bool? value) => setBoolWithName(_assistantEventsPromptHiddenKey, value);
+
+  // Illini Radio
+  static const String illiniRadioStationKey = 'edu.illinois.rokwire.illini_radio.station';
+  String? get illiniRadioStation => getStringWithName(illiniRadioStationKey);
+  set illiniRadioStation(String? value) => setStringWithName(illiniRadioStationKey, value);
 }

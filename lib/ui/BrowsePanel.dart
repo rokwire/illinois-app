@@ -16,7 +16,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
@@ -36,7 +35,6 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
-import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
@@ -45,8 +43,6 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
-import 'package:illinois/ui/surveys/PublicSurveysPanel.dart';
-import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -185,8 +181,6 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> with Notifica
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> contentList = <Widget>[];
-
     List<Widget> sectionsList = <Widget>[];
     if (_contentCodes != null) {
       for (String code in _contentCodes!) {
@@ -202,16 +196,9 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> with Notifica
       }
     }
 
-    if (sectionsList.isNotEmpty) {
-      contentList.add(
-        _BrowseSlantWidget(
-          childPadding: _BrowseSlantWidget.defaultChildPadding,
-          child: Column(children: sectionsList,),
-        )
-      );
-    }
-
-    return Column(children: contentList,);
+    return Padding(padding: EdgeInsets.all(16), child:
+      Column(children: sectionsList,),
+    ) ;
   }
 
   void _updateContentCodes() {
@@ -617,12 +604,7 @@ class _BrowseEntry extends StatelessWidget {
       case "events.event_feed":              _onTapEventFeed(context); break;
       case "events.my_events":               _onTapMyEvents(context); break;
 
-      case "feeds.twitter":                  _onTapTwitter(context); break;
-
-      case "music_and_news.will_radio":      _onTapRadioStation(context, RadioStation.will); break;
-      case "music_and_news.willfm_radio":    _onTapRadioStation(context, RadioStation.willfm); break;
-      case "music_and_news.willhd_radio":    _onTapRadioStation(context, RadioStation.willhd); break;
-      case "music_and_news.wpgufm_radio":    _onTapRadioStation(context, RadioStation.wpgufm); break;
+      case "music_and_news.illini_radio":    _onTapIlliniRadio(context); break;
       case "music_and_news.daily_illini":    _onTapDailyIllini(context); break;
 
       case "groups.all_groups":              _onTapAllGroups(context); break;
@@ -640,17 +622,9 @@ class _BrowseEntry extends StatelessWidget {
       case "safety.saferides":               _onTapSafeRides(context); break;
       case "safety.safety_resources":        _onTapSafetyResources(context); break;
 
-      case "surveys.public_surveys":         _onTapPublicSurveys(context); break;
-
-      case "wallet.illini_cash_card":        _onTapIlliniCash(context); break;
-      case "wallet.add_illini_cash":         _onTapAddIlliniCash(context); break;
-      case "wallet.meal_plan_card":          _onTapMealPlan(context); break;
-      case "wallet.bus_pass_card":           _onTapBusPass(context); break;
-      case "wallet.illini_id_card":          _onTapIlliniId(context); break;
-
       case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
       case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
-      case "wellness.wellness_recreation":   _onTapWellnessRecreation(context); break;
+      case "wellness.wellness_recreation":      _onTapWellnessRecreation(context); break;
       case "wellness.wellness_rings":           _onTapWellnessRings(context); break;
       case "wellness.wellness_todo":            _onTapWellnessToDo(context); break;
       case "wellness.my_appointments":          _onTapWellnessAppointments(context); break;
@@ -797,19 +771,14 @@ class _BrowseEntry extends StatelessWidget {
     );
   }
 
-  static void _onTapTwitter(BuildContext context) {
-    Analytics().logSelect(target: "Twitter");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return TwitterPanel(); } ));
-  }
-
   static void _onTapDailyIllini(BuildContext context) {
     Analytics().logSelect(target: "Daily Illini");
     _launchUrl(context, Config().dailyIlliniHomepageUrl);
   }
 
-  static void _onTapRadioStation(BuildContext context, RadioStation radioStation) {
-    Analytics().logSelect(target: "Radio Station: ${RadioPopupWidget.stationTitle(radioStation)}");
-    RadioPopupWidget.show(context, radioStation);
+  static void _onTapIlliniRadio(BuildContext context) {
+    Analytics().logSelect(target: "Illini Radio");
+    RadioPopupWidget.show(context);
   }
 
   static void _onTapAllGroups(BuildContext context) {
@@ -954,36 +923,6 @@ class _BrowseEntry extends StatelessWidget {
     }
   }
 
-  static void _onTapPublicSurveys(BuildContext context) {
-    Analytics().logSelect(target: "Public Surveys");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => PublicSurveysPanel()));
-  }
-
-  static void _onTapIlliniCash(BuildContext context) {
-    Analytics().logSelect(target: "Illini Cash");
-    WalletHomePanel.present(context, contentType: WalletContentType.illiniCash);
-  }
-
-  static void _onTapAddIlliniCash(BuildContext context) {
-    Analytics().logSelect(target: "Add Illini Cash");
-    WalletHomePanel.present(context, contentType: WalletContentType.addIlliniCash);
-  }
-
-  static void _onTapMealPlan(BuildContext context) {
-    Analytics().logSelect(target: "Meal Plan");
-    WalletHomePanel.present(context, contentType: WalletContentType.mealPlan);
-  }
-
-  static void _onTapBusPass(BuildContext context) {
-    Analytics().logSelect(target: "Bus Pass");
-    WalletHomePanel.present(context, contentType: WalletContentType.busPass);
-  }
-
-  static void _onTapIlliniId(BuildContext context) {
-    Analytics().logSelect(target: "Illini ID");
-    WalletHomePanel.present(context, contentType: WalletContentType.illiniId);
-  }
-
   static void _onTapWellnessRings(BuildContext context) {
     Analytics().logSelect(target: "Wellness Daily Rings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.rings,)));
@@ -1034,6 +973,8 @@ class _BrowseToutWidget extends StatefulWidget {
 
   final StreamController<String>? updateController;
 
+  static double imageAspectRatio = (1080.0 / 810.0);
+
   _BrowseToutWidget({Key? key, this.updateController}) : super(key: key);
 
   @override
@@ -1078,14 +1019,14 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> with Notifications
     return (_imageUrl != null) ? Stack(children: [
       ModalImageHolder(child: Image.network(_imageUrl!, semanticLabel: 'tout', loadingBuilder:(  BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
-        double imageHeight = imageWidth * 810 / 1080;
+        double imageHeight = imageWidth / _imageAspectRatio;
         return (loadingProgress != null) ?
           Container(color: Styles().colors.fillColorPrimary, width: imageWidth, height: imageHeight, child:
             Center(child:
               CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white), )
             ),
           ) :
-          AspectRatio(aspectRatio: (1080.0 / 810.0), child:
+          AspectRatio(aspectRatio: _imageAspectRatio, child:
             Container(color: Styles().colors.fillColorPrimary, child: child)
           );
       })),
@@ -1102,6 +1043,8 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> with Notifications
     ],) : Container();
 
   }
+
+  double get _imageAspectRatio => _BrowseToutWidget.imageAspectRatio;
 
   bool get _shouldUpdateImage {
     return (_imageUrl == null) || (_imageDateTime == null) || (DateTimeUtils.midnight(_imageDateTime)!.compareTo(DateTimeUtils.midnight(DateTime.now())!) < 0);
@@ -1138,37 +1081,5 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> with Notifications
     else if (name == Content.notifyContentImagesChanged) {
       _update();
     }
-  }
-}
-
-class _BrowseSlantWidget extends StatelessWidget {
-
-  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 16);
-  final double flatHeight = 40;
-  final double slantHeight = 60;
-  final EdgeInsetsGeometry childPadding;
-  final Widget child;
-
-  const _BrowseSlantWidget({Key? key, required this.child,  required this.childPadding}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return
-      Stack(children:<Widget>[
-        // Slant
-        Column(children: <Widget>[
-          Container(color: Styles().colors.fillColorPrimary, height: flatHeight,),
-          Container(color: Styles().colors.fillColorPrimary, child:
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
-              Container(height: slantHeight,),
-            ),
-          ),
-        ],),
-
-        // Content
-        Padding(padding: childPadding, child:
-          child
-        )
-      ]);
   }
 }

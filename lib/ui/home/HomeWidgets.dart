@@ -12,16 +12,19 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+enum CardDisplayMode { home, browse, }
 
 ////////////////////////////
 // HomeHandleWidget
@@ -256,97 +259,180 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
 }
 
 ////////////////////////////
-// HomeSlantWidget
+// HomeFavoriteWidget
 
-class HomeSlantWidget extends StatelessWidget {
-
-  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 16);
+class HomeFavoriteWidget extends StatefulWidget {
+  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 24);
 
   final String? title;
-  final String? titleIconKey;
-  final CrossAxisAlignment headerAxisAlignment;
-
-  final double flatHeight;
-  final double slantHeight;
-  
   final Widget? child;
+  final String? favoriteId;
+  final List<Widget>? actions;
   final EdgeInsetsGeometry childPadding;
 
-  final List<Widget>? actions;
-  final String? favoriteId;
 
-  const HomeSlantWidget({Key? key,
+  const HomeFavoriteWidget({Key? key,
     this.title,
-    this.titleIconKey,
-    this.headerAxisAlignment = CrossAxisAlignment.center,
-    
-    this.flatHeight = 40,
-    this.slantHeight = 65,
-
     this.child,
     this.childPadding = EdgeInsets.zero,
-    
-    this.actions,
     this.favoriteId,
+    this.actions,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  State<StatefulWidget> createState() => _HomeFavoriteWidgetState();
 
-    EdgeInsetsGeometry titleTextPadding = EdgeInsets.only(top: 12, bottom: 12,
-      left: (titleIconKey == null) ? 16 : 0,
-      right: ((actions == null) && (favoriteId == null)) ? 16 : 0,
-    );
+  bool get isExpanded => (Storage().isHomeFavoriteExpanded(favoriteId) != false);
+}
 
-    return Column(children: [
-      
-      // Title Row
-      Padding(padding: EdgeInsets.zero, child: 
-        Semantics(container: true, header: true,
-          child: Container(color: Styles().colors.fillColorPrimary, child:
-            Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
+class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with NotificationsListener {
+  late bool _expanded;
 
-              if (titleIconKey != null)
-                HomeTitleIcon(image: Styles().images.getImage(titleIconKey, excludeFromSemantics: true)),
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      Storage.notifyHomeFavoriteExpandedChanged
+    ]);
+    _expanded = widget.isExpanded;
+    super.initState();
+  }
 
-              Expanded(child:
-                Padding(padding: titleTextPadding, child:
-                  Semantics(label: title, header: true, excludeSemantics: true, child:
-                    Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat"))
-                  )
-                )
-              ),
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
 
-              if (actions != null)
-                ...actions!,
+  @override
+  void onNotification(String name, param) {
+    if ((name == Storage.notifyHomeFavoriteExpandedChanged) && (param == widget.favoriteId)) {
+      _handleHomeFavoriteExpandedStatesChanged();
+    }
+    super.onNotification(name, param);
+  }
 
-              if (favoriteId != null)
-                HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: FavoriteIconStyle.SlantHeader, prompt: true),
-            ],),
-        ),),
+  @override
+  Widget build(BuildContext context) => Column(children: [
+    _headerWidget,
+    if (_expanded)
+      Padding(padding: widget.childPadding, child:
+        widget.child,
       ),
-      
-      Stack(children:<Widget>[
-      
-        // Slant
-        Column(children: <Widget>[
-          Container(color: Styles().colors.fillColorPrimary, height: flatHeight,),
-          Container(color: Styles().colors.fillColorPrimary, child:
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.rightToLeft), child:
-              Container(height: slantHeight,),
-            ),
-          ),
-        ],),
-        
-        // Content
-        Padding(padding: childPadding, child:
-          child ?? Container()
-        )
-      ])
+  ],);
 
+  Widget get _headerWidget {
+    List<Widget>? actions = _expanded ? widget.actions : null;
+    String? favoriteId = widget.favoriteId;
+    double titleRightPadding = (((actions != null) && actions.isNotEmpty) || (favoriteId == null)) ? 12 : 0;
+    double actionsRightPadding = ((actions != null) && actions.isNotEmpty && (favoriteId == null)) ? 12 : 0;
+
+    return Row(children: [
+      Expanded(child:
+        _titleWidget(rightPadding: titleRightPadding)
+      ),
+
+      if ((actions != null) && actions.isNotEmpty)
+        Padding(padding: EdgeInsets.only(right: actionsRightPadding), child:
+          Row(mainAxisSize: MainAxisSize.min, children:
+            actions,
+          )
+        ),
+
+      if (favoriteId != null)
+        HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: FavoriteIconStyle.Button, prompt: true),
     ],);
   }
 
+  Widget _titleWidget({ double rightPadding = 0 }) {
+    Widget? dropdownIcon = _dropdownIcon;
+    return InkWell(onTap : _onToggleExoanded, child:
+      Row(children: [
+        if (dropdownIcon != null)
+          Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 12, bottom: 12), child:
+            dropdownIcon
+          ),
+        Expanded(child:
+          Padding(padding: EdgeInsets.only(left: (dropdownIcon == null) ? 16 : 0, right: rightPadding, top: 12, bottom: 12), child:
+            Text(widget.title?.toUpperCase() ?? '',
+              style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
+            ),
+          ),
+        )
+      ],)
+    );
+  }
+
+  Widget? get _dropdownIcon =>
+    Styles().images.getImage(_expanded ? 'chevron2-up' : 'chevron2-down', color: Styles().colors.fillColorSecondary, excludeFromSemantics: true);
+
+  String get _dropdownAccLabel => _expanded ?
+    Localization().getStringEx('panel.browse.section.status.colapse.title', 'Collapse') :
+    Localization().getStringEx('panel.browse.section.status.expand.title', 'Expand');
+
+  //String get _dropdownAccHint => _expanded ?
+  //  Localization().getStringEx('panel.browse.section.status.colapse.hint', 'Tap to collapse section content') :
+  //  Localization().getStringEx('panel.browse.section.status.expand.hint', 'Tap to expand section content');
+
+  void _onToggleExoanded() {
+    Analytics().logSelect(target: _dropdownAccLabel, source: "Favorite ${widget.favoriteId}" );
+    setState(() {
+      _expanded = !_expanded;
+      Storage().setHomeFavoriteExpanded(widget.favoriteId, _expanded);
+    });
+  }
+
+  void _handleHomeFavoriteExpandedStatesChanged() {
+    bool expanded = widget.isExpanded;
+    if ((_expanded != expanded) && mounted) {
+      setState(() {
+        _expanded = expanded;
+      });
+    }
+  }
+}
+
+////////////////////////////
+// HomeCardWidget
+
+class HomeCardWidget extends StatelessWidget {
+  final String? title;
+  final Widget? child;
+  final EdgeInsets padding;
+  final EdgeInsets margin;
+  final void Function()? onClose;
+
+  HomeCardWidget({super.key, this.title, this.child,
+    this.padding = HomeMessageCard.defaultPadding,
+    this.margin = HomeMessageCard.defaultCardMargin,
+    this.onClose,
+  });
+
+  @override
+  Widget build(BuildContext context) =>
+    Container(padding: EdgeInsets.only(left: padding.left, bottom: padding.bottom), margin: margin, decoration: HomeCard.defaultDecoration, child:
+      Column(mainAxisSize: MainAxisSize.min, children: [
+        Row(children: [
+          Expanded(child:
+            Padding(padding: EdgeInsets.symmetric(vertical: padding.top), child:
+              Text(title?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
+            ),
+          ),
+          Visibility(visible: (onClose != null), child:
+            Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
+              InkWell(onTap : onClose, child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: padding.right, vertical: padding.top), child:
+                  Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
+                ),
+              ),
+            ),
+          ),
+        ],),
+
+        Padding(padding: EdgeInsets.only(right: padding.right), child:
+          child
+        ),
+      ],),
+    );
 }
 
 ////////////////////////////
@@ -576,12 +662,12 @@ class HomeCommandButton extends StatelessWidget {
     return Semantics(label: title, hint: description, button: true, child:
       InkWell(onTap: onTap, child: Container(
           padding: EdgeInsets.only(left: 16, bottom: 16),
-          decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+          decoration: HomeCard.defaultDecoration,
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 15, bottom: 7), child:
-                  Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'), semanticsLabel: "",),
+                  Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.extra_fat'), semanticsLabel: "",),
                 )
               ),
               // Styles().images.getImage('images/chevron-right.png', excludeFromSemantics: true)
@@ -596,13 +682,41 @@ class HomeCommandButton extends StatelessWidget {
             ],),
             StringUtils.isNotEmpty(description)
               ? Padding(padding: EdgeInsets.only(top: 5, right: 16), child:
-                  Text(description ?? '', style: Styles().textStyles.getTextStyle("widget.info.regular.thin"), semanticsLabel: "",),
+                  Text(description ?? '', style: Styles().textStyles.getTextStyle("widget.info.small.semi_fat"), semanticsLabel: "",),
                 )
               : Container(),
         ],),),),
       );
   }
 
+}
+
+////////////////////////////
+// HomeCard
+
+class HomeCard {
+  
+  static BoxDecoration get defaultDecoration => BoxDecoration(
+    color: defaultBackColor,
+    borderRadius: defaultBorderRadius,
+    boxShadow: [defaultShadow],
+  );
+
+  static Color get defaultBackColor => Styles().colors.surface;
+
+  static const BorderRadius defaultBorderRadius = const BorderRadius.all(defaultRadius);
+  static const Radius defaultRadius = const Radius.circular(12);
+
+  static BoxShadow get defaultShadow => BoxShadow(
+    color: defaultShadowColor,
+    spreadRadius: defaultShadowSpreadRadius,
+    blurRadius: defaultShadowBlurRadius,
+    offset: defaultShadowOffset
+  );
+  static Color get defaultShadowColor => Styles().colors.dropShadow;
+  static const double defaultShadowSpreadRadius = 1.0;
+  static const double defaultShadowBlurRadius = 3.0;
+  static const Offset defaultShadowOffset = const Offset(1, 1);
 }
 
 ////////////////////////////
@@ -613,34 +727,42 @@ class HomeMessageCard extends StatelessWidget {
   final String? title;
   final String? message;
   final EdgeInsetsGeometry margin;
+  final EdgeInsetsGeometry padding;
 
   HomeMessageCard({Key? key,
     this.title,
     this.message,
-    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+    this.margin = defaultChildMargin,
+    this.padding = defaultPadding,
   }) : super(key: key);
-  
+
+  static const EdgeInsets defaultPadding = const EdgeInsets.all(16);
+  static const EdgeInsets defaultChildMargin = const EdgeInsets.only(left: 16, right: 16, bottom: 24);
+  static const EdgeInsets defaultCardMargin = const EdgeInsets.symmetric(horizontal: 16, vertical: 24);
+
   @override
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
-      Semantics(child:Container(padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
-        child: Column(children: <Widget>[
-          StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
-            Expanded(child:
-              Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-                Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.card.title.medium.fat"))
-              ),
-            )
-          ]) : Container(),
-          StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
-            Expanded(child:
-              Text(message ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.regular"))
-            )
-          ]) : Container(),
-        ]),
-      ),
-    ));
+      Semantics(child:
+        Container(padding: padding,
+          decoration: HomeCard.defaultDecoration,
+          child: Column(children: <Widget>[
+            StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
+              Expanded(child:
+                Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
+                  Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.card.title.regular.fat"))
+                ),
+              )
+            ]) : Container(),
+            StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
+              Expanded(child:
+                Text(message ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.small.semi_fat"))
+              )
+            ]) : Container(),
+          ]),
+        ),
+      )
+    );
   }
 }
 
@@ -658,8 +780,8 @@ class HomeMessageHtmlCard extends StatelessWidget {
 
   HomeMessageHtmlCard({Key? key,
     this.title, this.message,
-    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-    this.padding = const EdgeInsets.all(16),
+    this.margin = HomeMessageCard.defaultChildMargin,
+    this.padding = HomeMessageCard.defaultPadding,
     this.linkColor, this.onTapLink
   }) : super(key: key);
 
@@ -667,7 +789,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
       Container(padding: padding,
-        decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        decoration: HomeCard.defaultDecoration,
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
@@ -675,7 +797,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
                 HtmlWidget(
                     StringUtils.ensureNotEmpty(title),
                     onTapUrl : (url) { _onTapLink(url); return true; },
-                    textStyle:  Styles().textStyles.getTextStyle("widget.card.title.medium.fat"),
+                    textStyle:  Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),
                     customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary)} : null
                 )
               ),
@@ -686,7 +808,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
                 HtmlWidget(
                   StringUtils.ensureNotEmpty(message),
                   onTapUrl : (url) { _onTapLink(url); return true; },
-                  textStyle:  Styles().textStyles.getTextStyle("widget.card.detail.regular"),
+                  textStyle:  Styles().textStyles.getTextStyle("widget.card.detail.small.semi_fat"),
                   customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors.fillColorSecondary)} : null
                )
             )
@@ -745,8 +867,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   String  get contentKey => 'home.$favoriteId';
   
   String? get title;
-  String?  get titleIconKey => 'campus-tools';
-  
+
   String? get emptyTitle => null;
   String? get emptyMessage;
 
@@ -814,9 +935,8 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: favoriteId,
+    return HomeFavoriteWidget(favoriteId: favoriteId,
       title: title,
-      titleIconKey: titleIconKey,
       childPadding: EdgeInsets.zero,
       child: _buildContent(),
     );
@@ -834,7 +954,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
     else if (direction == Axis.horizontal) {
       List<Widget> pages = <Widget>[];
       for (String code in _displayCodes!) {
-        pages.add(Padding(key: _contentKeys[code] ??= GlobalKey(), padding: EdgeInsets.only(right: pageSpacing, bottom: contentSpacing), child: widgetFromCode(code) ?? Container()));
+        pages.add(Padding(key: _contentKeys[code] ??= GlobalKey(), padding: EdgeInsets.only(right: pageSpacing, bottom: contentSpacing / 2), child: widgetFromCode(code) ?? Container()));
       }
 
       if (_pageController == null) {
@@ -865,7 +985,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
         contentList.add(Padding(padding: EdgeInsets.only(bottom: contentInnerSpacing), child: widgetFromCode(code) ?? Container()));
       }
 
-      return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: max(contentSpacing - contentInnerSpacing, 0), ), child:
+      return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: contentSpacing + 2, ), child:
         Column(children: contentList,),
       );
     }
@@ -947,4 +1067,24 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
       _pageController?.jumpToPage(0);
     }
   }
+}
+
+////////////////////////////
+// HomeBrowseLinkButton
+
+class HomeBrowseLinkButton extends LinkButton {
+  HomeBrowseLinkButton({super.key,
+    super.title,
+    super.hint,
+    super.onTap,
+    super.padding = const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+    TextStyle? textStyle,
+    super.textWidget,
+  }) : super(
+    textStyle: textStyle ?? Styles().textStyles.getTextStyle('widget.button.title.small.semi_fat.underline'),
+    textAlign: TextAlign.center,
+    textDecoration: TextDecoration.underline,
+    textDecorationStyle: TextDecorationStyle.solid,
+    textDecorationThickness: 1,
+  );
 }

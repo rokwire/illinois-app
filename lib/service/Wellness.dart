@@ -42,7 +42,7 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
-class Wellness with Service, NotificationsListener, ContentItemCategoryClient {
+class Wellness with Service, NotificationsListener implements ContentItemCategoryClient {
   static const String notifyToDoCategoryChanged = "edu.illinois.rokwire.wellness.todo.category.changed";
   static const String notifyToDoCategoryDeleted = "edu.illinois.rokwire.wellness.todo.category.deleted";
   static const String notifyToDoItemCreated = "edu.illinois.rokwire.wellness.todo.item.created";

@@ -16,6 +16,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
+import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
@@ -197,6 +198,9 @@ extension FavoriteExt on Favorite {
     }
     else if (this is GuideFavorite) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as GuideFavorite).id, analyticsFeature: AnalyticsFeature.Guide,)));
+    }
+    else if (this is Appointment) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: (this as Appointment),)));
     }
     else if (this is ExplorePOI) {
       (this as ExplorePOI).launchDirections();

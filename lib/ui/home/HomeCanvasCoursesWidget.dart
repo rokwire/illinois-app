@@ -9,7 +9,6 @@ import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -83,9 +82,8 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
   @override
   Widget build(BuildContext context) {
 
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: widget.isGies ? HomeCanvasCoursesWidget.giesTitle : HomeCanvasCoursesWidget.canvasTitle,
-      titleIconKey: 'courses',
       child: _buildContent(),
     );
   }
@@ -150,7 +148,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
         )
       ),
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => coursePages.length, centerWidget:
-        LinkButton(
+        HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.gies_canvas_courses.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.gies_canvas_courses.button.all.hint', 'Tap to view all courses'),
           onTap: _onViewAll,

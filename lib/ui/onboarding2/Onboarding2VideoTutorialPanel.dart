@@ -21,7 +21,6 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
@@ -57,6 +56,7 @@ class Onboarding2VideoTutorialPanel extends StatefulWidget with Onboarding2Panel
 
 class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorialPanel> with NotificationsListener {
   Video? _video;
+  GlobalKey? _videoContent;
   VideoPlayerController? _controller;
   Future<void>? _initializeVideoPlayerFuture;
   bool _isVideoEnded = false;
@@ -65,16 +65,28 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   bool _ccEnabled = false;
   bool _ccVisible = false;
   bool _onboardingProgress = false;
-
-  GlobalKey? _videoContent;
+  bool _loadingVideoTutorials = false;
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [AppNavigation.notifyEvent]);
-    _enableLandscapeOrientations();
-    _loadOnboardingVideoTutorial();
-    _initVideoPlayer();
+
+    NotificationService().subscribe(this, [
+      AppNavigation.notifyEvent
+    ]);
+
+    if (Onboarding2().videoTutorials == null) {
+      _loadingVideoTutorials = true;
+      Onboarding2().ensureVideoTutorials().then((_){
+        setStateIfMounted((){
+          _loadingVideoTutorials = false;
+          _prepareVideoPlay();
+        });
+      });
+    }
+    else {
+      _prepareVideoPlay();
+    }
   }
 
   @override
@@ -91,22 +103,23 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
       SafeArea(child:
           Stack(children: [
             Positioned.fill(child:
-            SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
+              SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
                 Container(color: Styles().colors.blackTransparent06,)
               )
             ),
+
             Center(child:
-              _buildVideoContent(),
+              _loadingVideoTutorials ? _VideoTutorialProgress() : _buildVideoContent(),
             ),
-            // MergeSemantics(
-            //   child: Semantics(/*focused: false,*/ child:
-                Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27), onTap: _onTapBack),
-              // )),
+
+            Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27), onTap: _onTapBack),
+
             Positioned.fill(child:
               Align(alignment: (_isPortrait ? Alignment.bottomCenter : Alignment.bottomLeft), child:
                 LinkButton(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), title: _skipButtonLabel(), onTap: _onTapContinue, textColor: Styles().colors.white)
               ),
             ),
+
             Positioned.fill(child:
               Align(alignment: Alignment.bottomRight, child:
                 _buildCcButton()
@@ -147,11 +160,13 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
                           ClosedCaption(
                               text: _currentCaptionText, textStyle: Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.caption.text"))
                         ]),
-                        Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton()),
-                        // Visibility(visible: (_isPlayerInitialized && _isPlaying), child: VideoPauseButton())
+                        Visibility(visible: (_isPlayerInitialized && !_isPlaying), child:
+                          VideoPlayButton(border: VideoPlayButton.contrastWhiteBorder)),
                       ])))));
             } else {
-              return const Center(child: CircularProgressIndicator());
+              return Center(child:
+                _VideoTutorialProgress()
+              );
             }
           });
     } else {
@@ -176,6 +191,12 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
         )
       )
     );
+
+  void _prepareVideoPlay() {
+    _enableLandscapeOrientations();
+    _loadOnboardingVideoTutorial();
+    _initVideoPlayer();
+  }
 
   void _initVideoPlayer() {
     if (_video != null) {
@@ -214,10 +235,6 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   void _pauseVideo() {
     _logAnalyticsVideoEvent(event: Analytics.LogAttributeVideoEventPaused);
     _controller!.pause();
-  }
-
-  void _loadOnboardingVideoTutorial() {
-    _video = widget.video ?? _loadVideoTutorial();
   }
 
   Future<ClosedCaptionFile> _loadClosedCaptions(String? closedCaptionsUrl) async {
@@ -383,8 +400,12 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     }
   }
 
-  static Video? _loadVideoTutorial(){
-    Map<String, dynamic>? videoTutorials = Content().videoTutorials;
+  void _loadOnboardingVideoTutorial() {
+    _video = widget.video ?? _loadVideoTutorial();
+  }
+
+  static Video? _loadVideoTutorial() {
+    Map<String, dynamic>? videoTutorials = Onboarding2().videoTutorials;
     List<dynamic>? videos = JsonUtils.listValue(videoTutorials?['videos']) ;
     if (CollectionUtils.isEmpty(videos)) {
       return null;
@@ -423,36 +444,58 @@ class VideoTutorialThumbButton extends StatefulWidget{
 }
 
 class _VideoTutorialThumbState extends State<VideoTutorialThumbButton>{
+
   Video? _video;
+  bool _loadingVideoTutorials = false;
 
   @override
   void initState() {
-  _video = _Onboarding2VideoTutorialPanelState._loadVideoTutorial();
+    if (Onboarding2().videoTutorials == null) {
+      _loadingVideoTutorials = true;
+      Onboarding2().ensureVideoTutorials().then((_){
+        setStateIfMounted((){
+          _loadingVideoTutorials = false;
+          _video = _Onboarding2VideoTutorialPanelState._loadVideoTutorial();
+        });
+      });
+    }
+    else {
+      _video = _Onboarding2VideoTutorialPanelState._loadVideoTutorial();
+    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) =>
-    Semantics(label: "Onboarding video tutorial",
-      hint: "Double tap to Play video",
-      button: true,
-      excludeSemantics: true,
-      child: InkWell(
-        onTap: widget.onTap,
-          // () {
-          // Onboarding2().privacyReturningUser = false;
-          // Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-          //     Onboarding2VideoTutorialPanel(onboardingCode: widget.onboardingCode, onboardingContext: widget.onboardingContext, video: _video,)));
-          // },
-        child: Container(
-            child: Visibility(visible:_video?.thumbUrl != null,
-              child: Stack(alignment: Alignment.center, children: [
-                _video?.thumbUrl != null ? Image.network(_video?.thumbUrl ?? "") : Container(),
-                VideoPlayButton()
-              ])
-            )
-          )
+    Visibility(visible: (_video?.thumbUrl != null) || _loadingVideoTutorials, child:
+      Semantics(label: "Onboarding video tutorial", hint: "Double tap to Play video", button: true, excludeSemantics: true, child:
+        InkWell(onTap: widget.onTap, child:
+          Stack(alignment: Alignment.center, children: [
+            AspectRatio(aspectRatio: _videoAspect, child:
+              Container(color: Styles().colors.fillColorPrimary,),
+            ),
+            if (_video?.thumbUrl != null)
+              AspectRatio(aspectRatio: _videoAspect, child:
+                Image.network(_video?.thumbUrl ?? "", fit: BoxFit.cover,)
+              ),
+            _loadingVideoTutorials ? _loadingProgress : VideoPlayButton()
+          ])
         )
+      )
     );
 
+  Widget get _loadingProgress => SizedBox(width: 24, height: 24, child:
+    CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+  );
+
+  double get _videoAspect => 1920.0 / 1080.0;
+
+}
+
+class _VideoTutorialProgress extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) =>
+    SizedBox(width: 32, height: 32, child:
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+    );
 }
