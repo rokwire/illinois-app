@@ -1,6 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Config.dart';
+import 'package:illinois/model/Content.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -12,7 +12,7 @@ import 'package:illinois/ui/onboarding/OnboardingMessagePanel.dart';
 class OnboardingConfigAlertPanel extends StatefulWidget {
   static const String notifyCheckAgain  = "edu.illinois.rokwire.onboarding.alert.check_again";
 
-  final ConfigAlert? alert;
+  final ContentAlert? alert;
 
   OnboardingConfigAlertPanel({super.key, this.alert});
 

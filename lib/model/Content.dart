@@ -1,16 +1,15 @@
-
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ConfigAlert {
+class ContentAlert {
   final String? title;
   final String? message;
   final DateTime? startTime;
   final DateTime? endTime;
   final bool? enabled;
 
-  ConfigAlert({this.title, this.message, this.startTime, this.endTime, this.enabled });
+  ContentAlert({this.title, this.message, this.startTime, this.endTime, this.enabled });
 
-  static ConfigAlert? fromJson(Map<String, dynamic>? json) => (json != null) ? ConfigAlert(
+  static ContentAlert? fromJson(Map<String, dynamic>? json) => (json != null) ? ContentAlert(
     title: JsonUtils.stringValue(json['title']),
     message: JsonUtils.stringValue(json['message']),
     startTime: DateTimeUtils.dateTimeFromSecondsSinceEpoch(JsonUtils.intValue(json['startTime']), isUtc: true),
@@ -20,7 +19,7 @@ class ConfigAlert {
 
   @override
   bool operator ==(other) =>
-    (other is ConfigAlert) &&
+    (other is ContentAlert) &&
       (other.title == title) &&
       (other.message == message) &&
       (other.startTime == startTime) &&
