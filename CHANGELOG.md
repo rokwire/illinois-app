@@ -6,8 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+
+## [7.2.19] - 2025-07-29
 ### Changed
-- Config alert converted to ContentAlert [#5251](https://github.com/rokwire/illinois-app/issues/5251).
+- Config alert converted to Content аlert [#5251](https://github.com/rokwire/illinois-app/issues/5251).
 
 ## [7.2.18] - 2025-07-29
 ### Fixed
