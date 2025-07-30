@@ -39,7 +39,7 @@ class OnboardingMessagePanel extends StatelessWidget {
   Widget _contentWidget(BuildContext context) {
 
     Widget? titleWidget;
-    if (titleHtml != null) {
+    if (titleHtml?.isNotEmpty == true) {
       titleWidget = HtmlWidget(
         titleHtml ?? "",
         onTapUrl : (url) => _onTapLink(context, url),
@@ -47,12 +47,12 @@ class OnboardingMessagePanel extends StatelessWidget {
         customStylesBuilder: _getHtmlStyle,
       );
     }
-    else if (title != null) {
+    else if (title?.isNotEmpty == true) {
       titleWidget = Text(title ?? '', textAlign: TextAlign.center, style: _titleTextStyle,);
     }
 
     Widget? messageWidget;
-    if (messageHtml != null) {
+    if (messageHtml?.isNotEmpty == true) {
       messageWidget = HtmlWidget(
         messageHtml ?? "",
         onTapUrl : (url) => _onTapLink(context, url),
@@ -60,7 +60,7 @@ class OnboardingMessagePanel extends StatelessWidget {
         customStylesBuilder: _getHtmlStyle,
       );
     }
-    else if (message != null) {
+    else if (message?.isNotEmpty == true) {
       messageWidget = Text(message ?? '', textAlign: TextAlign.center, style: _messageTextStyle);
     }
 
