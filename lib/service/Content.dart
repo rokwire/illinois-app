@@ -58,6 +58,7 @@ class Content extends rokwire.Content {
   void _onContentAlertChanged() {
     ContentAlert? contentAlert = _contentMapAlert();
     if (_contentAlert != contentAlert) {
+      _contentAlert = contentAlert;
       NotificationService().notify(notifyContentAlertChanged);
     }
   }
