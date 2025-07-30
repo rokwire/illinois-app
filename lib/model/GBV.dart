@@ -149,4 +149,12 @@ class GBVResourceListScreen {
       content: GBVResourceList.listFromJson(JsonUtils.listValue(json['content'])),
     ) : null;
   }
+
+  Set<String> get resourceIds {
+    Set<String> resourceIds = <String>{};
+    for (GBVResourceList resourceList in content) {
+      resourceIds.addAll(resourceList.resourceIds);
+    }
+    return resourceIds;
+  }
 }
