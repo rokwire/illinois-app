@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Fixed
+- Fixed disabled toggle buttons display in GroupMemberNotificationsPanel [#5312](https://github.com/rokwire/illinois-app/issues/5312).
 
 ## [7.2.19] - 2025-07-29
 ### Changed
