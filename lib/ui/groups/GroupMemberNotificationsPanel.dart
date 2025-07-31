@@ -71,11 +71,19 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
             title: Localization().getStringEx('panel.group_member_notifications.header.title', 'Group Notifications'),
             textAlign: TextAlign.center),
         body: Column(children: [
-          Expanded(child: SingleChildScrollView(child: Container(color: Styles().colors.background, child: _buildContent()))),
-          Visibility(visible: (!_isLoading && (_member != null) && _toggleButtonEnabled), child:
-            Padding(padding: EdgeInsets.all(16), child:
-              RoundedButton(label: Localization().getStringEx('panel.group_member_notifications.save.button', 'Save'), onTap: _onTapSave)
+          Expanded(child:
+            SingleChildScrollView(child:
+              Container(color: Styles().colors.white, child:
+                _buildContent()
+              )
             )
+          ),
+          SafeArea(child:
+            Visibility(visible: (!_isLoading && (_member != null) && _toggleButtonEnabled), child:
+              Padding(padding: EdgeInsets.all(16), child:
+                RoundedButton(label: Localization().getStringEx('panel.group_member_notifications.save.button', 'Save'), onTap: _onTapSave)
+              )
+            ),
           )
         ]),
         backgroundColor: Styles().colors.white);
