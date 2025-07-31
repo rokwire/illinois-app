@@ -66,7 +66,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
       });
     }
 
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       _loadingNews = true;
       Sports().loadNews(null, Config().homeAthleticsNewsCount).then((List<News>? news) {
         setStateIfMounted(() {
@@ -156,7 +156,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
       for (int index = 0; index < visibleCount; index++) {
         News news = _news![index];
         pages.add(Padding(key: _contentKeys[news.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 8), child:
-          AthleticsNewsCard(news: news, onTap: () => _onTapNews(news))
+          AthleticsNewsCard(news: news, displayMode: CardDisplayMode.home, onTap: () => _onTapNews(news))
         ));
       }
 
@@ -178,7 +178,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
-        AthleticsNewsCard(news: _news!.first, onTap: () => _onTapNews(_news!.first))
+        AthleticsNewsCard(news: _news!.first, displayMode: CardDisplayMode.home, onTap: () => _onTapNews(_news!.first))
       );
     }
 
@@ -205,7 +205,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
   }
 
   void _refreshNews({bool showProgress = false}) {
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       if (showProgress && mounted) {
         setState(() {
           _loadingNews = true;

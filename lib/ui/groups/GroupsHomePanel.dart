@@ -768,7 +768,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
       }
     }
     else if (name == Connectivity.notifyStatusChanged) {
-      if (Connectivity().isOnline && mounted) {
+      if (Connectivity().isNotOffline && mounted) {
         _reloadGroupsContent();
       }
     }

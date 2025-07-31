@@ -33,6 +33,7 @@ import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/WebEmbed.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -708,7 +709,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     return Semantics(container: true, child:
       GestureDetector(onTap: () => _onTapCard(context), child:
         Padding(padding: widget.margin, child:
-          Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
+          Container(padding: EdgeInsets.all(16), decoration: _cardDecoration, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               _buildHeading(),
               Container(height: 6),
@@ -736,6 +737,21 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       )
     );
   }
+
+  BoxDecoration get _cardDecoration => (widget.displayType == GroupCardDisplayType.homeGroups) ?
+      HomeCard.defaultDecoration : _defaultCardDecoration;
+
+  static BoxDecoration get _defaultCardDecoration => BoxDecoration(
+    color: HomeCard.defaultBackColor,
+    borderRadius: defaultCardBorderRadius,
+    boxShadow: [_defaultCardShadow]
+  );
+
+  static Radius get defaultCardRadius => Radius.circular(4);
+  static BorderRadius get defaultCardBorderRadius => BorderRadius.all(defaultCardRadius);
+
+  static BoxShadow get _defaultCardShadow =>
+    BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2));
 
   Widget _buildHeading() {
     

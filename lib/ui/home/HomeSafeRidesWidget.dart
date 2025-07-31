@@ -34,7 +34,7 @@ class HomeSafeRidesRequestWidget extends StatelessWidget {
 
   Widget _contentWidget(BuildContext context) =>
     Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-      GuideEntryCard(Guide().entryById(Config().safeRidesGuideId), favoriteKey: null, analyticsFeature: AnalyticsFeature.Safety, displayMode: GuideEntryCardDisplayMode.home)
+      GuideEntryCard(Guide().entryById(Config().safeRidesGuideId), favoriteKey: null, analyticsFeature: AnalyticsFeature.Safety, displayMode: CardDisplayMode.home)
     );
 
 }

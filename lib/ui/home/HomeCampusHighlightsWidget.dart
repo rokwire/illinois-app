@@ -132,7 +132,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
       for (int index = 0; index < visibleCount; index++) {
         Map<String, dynamic>? promotedItem = JsonUtils.mapValue(_promotedItems![index]);
         pages.add(Padding(key: _contentKeys[Guide().entryId(promotedItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8), child:
-          GuideEntryCard(promotedItem, displayMode: GuideEntryCardDisplayMode.home)
+          GuideEntryCard(promotedItem, displayMode: CardDisplayMode.home)
         ));
       }
 
@@ -155,7 +155,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        GuideEntryCard(_promotedItems?.first, displayMode: GuideEntryCardDisplayMode.home)
+        GuideEntryCard(_promotedItems?.first, displayMode: CardDisplayMode.home)
       );
     }
 

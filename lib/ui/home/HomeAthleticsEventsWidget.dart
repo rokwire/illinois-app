@@ -69,7 +69,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
       });
     }
 
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       _loadingGames = true;
       _loadSportEvents().then((List<Event2>? events) {
         setStateIfMounted(() {
@@ -159,7 +159,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
       for (int index = 0; index < visibleCount; index++) {
         Event2 event = _sportEvents![index];
         pages.add(Padding(key: _contentKeys[event.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 8), child:
-          Event2Card(event, onTap: () => _onTapEvent(event))),
+          Event2Card(event, displayMode: Event2CardDisplayMode.page, onTap: () => _onTapEvent(event))),
         );
       }
 
@@ -180,7 +180,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8), child:
-        Event2Card(_sportEvents!.first, onTap: () => _onTapEvent(_sportEvents!.first))
+        Event2Card(_sportEvents!.first, displayMode: Event2CardDisplayMode.page, onTap: () => _onTapEvent(_sportEvents!.first))
       );
     }
     
@@ -217,7 +217,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
   }
 
   void _refreshGames({bool showProgress = false}) {
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       if (showProgress && mounted) {
         setState(() {
           _loadingGames = true;

@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/foundation.dart';
-import 'package:illinois/model/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
@@ -77,8 +76,6 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
 
   Map<String, dynamic> get wellness => JsonUtils.mapValue(content['wellness']) ?? {};
-
-  ConfigAlert? get alert => ConfigAlert.fromJson(JsonUtils.mapValue(content['alert']));
 
   // Getters: Secret Keys
 

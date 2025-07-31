@@ -21,8 +21,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
-import 'package:illinois/model/Config.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:illinois/model/Content.dart';
 import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppReview.dart';
@@ -32,6 +32,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/service/CheckList.dart';
+import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/MobileAccess.dart';
@@ -76,7 +77,6 @@ import 'package:rokwire_plugin/service/cache_image.dart';
 
 
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
-import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/device_calendar.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -249,7 +249,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
   String? _lastRunVersion;
   String? _upgradeRequiredVersion;
   String? _upgradeAvailableVersion;
-  ConfigAlert? _configAlert;
+  ContentAlert? _contentAlert;
   Widget? _launchPopup;
   ServiceError? _initializeError;
   Future<ServiceError?>? _retryInitialzeFuture;
@@ -267,7 +267,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       Config.notifyUpgradeAvailable,
       Config.notifyUpgradeRequired,
       Config.notifyOnboardingRequired,
-      Config.notifyConfigChanged,
+      Content.notifyContentAlertChanged,
       Storage.notifySettingChanged,
       Auth2.notifyUserDeleted,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
@@ -280,7 +280,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
     _lastRunVersion = Storage().lastRunVersion;
     _upgradeRequiredVersion = Config().upgradeRequiredVersion;
     _upgradeAvailableVersion = Config().upgradeAvailableVersion;
-    _configAlert = Config().alert;
+    _contentAlert = Content().contentAlert;
 
     _checkForceOnboarding();
 
@@ -357,8 +357,8 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
     else if (_upgradeAvailableVersion != null) {
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
     }
-    else if (_configAlert?.isCurrent == true) {
-      return OnboardingConfigAlertPanel(alert: _configAlert,);
+    else if (_contentAlert?.isCurrent == true) {
+      return OnboardingConfigAlertPanel(alert: _contentAlert,);
     }
     else if (Storage().onBoardingPassed != true) {
       return Onboarding2().first ?? Container();
@@ -531,8 +531,8 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
         _resetUI();
       }
     }
-    else if (name == Config.notifyConfigChanged) {
-      _updateConfigAlert();
+    else if (name == Content.notifyContentAlertChanged) {
+      _updateContentAlert();
     }
     else if (name == Auth2.notifyUserDeleted) {
       _resetUI();
@@ -571,7 +571,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       if (_initializeError != null) {
         _retryInitialze();
       }
-      else if (_configAlert?.hasTimeLimits == true) {
+      else if (_contentAlert?.hasTimeLimits == true) {
         setStateIfMounted(() {}); // setState will acknolwedge the time limits
       }
       else if (_pausedDateTime != null) {
@@ -584,11 +584,11 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
     }
   }
 
-  void _updateConfigAlert() {
-    ConfigAlert? configAlert = Config().alert;
-    if ((_configAlert != configAlert) && mounted) {
+  void _updateContentAlert() {
+    ContentAlert? contentAlert = Content().contentAlert;
+    if ((_contentAlert != contentAlert) && mounted) {
       setState(() {
-        _configAlert = configAlert;
+        _contentAlert = contentAlert;
       });
     }
   }

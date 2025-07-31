@@ -783,7 +783,7 @@
     "panel.onboarding2.roles.button.parent.hint": "",
     "panel.onboarding2.roles.button.gies.title": "Estudiante de Gies",
     "panel.onboarding2.roles.button.gies.hint": "",
-    "panel.onboarding2.roles.button.prospective.label": "Are you considering attending the Univeristy of Illinois? Choose this option:",
+    "panel.onboarding2.roles.button.prospective.label": "Are you considering attending the University of Illinois? Choose this option:",
     "panel.onboarding2.roles.button.prospective.title": "Prospective Student",
     "panel.onboarding2.roles.button.prospective.hint": "",
     "panel.onboarding2.roles.button.continue.title": "Continuar",
@@ -3294,6 +3294,9 @@
     "panel.inbox.filter.notifications.toggle.muted.label": "Notificaciones silenciadas",
     "panel.inbox.filter.notifications.toggle.muted.description": "Ver las notificaciones que has desactivado.",
     "panel.inbox.filter.apply.button": "Aplicar",
+    "panel.inbox.filter.unread.description": "Unread",
+    "panel.inbox.filter.muted.description": "Muted",
+    "panel.inbox.filter.label.title": "Filter: ",
 
     "widget.inbox_message_card.selected.hint": "Seleccionada",
     "widget.inbox_message_card.unselected.hint": "No seleccionada",

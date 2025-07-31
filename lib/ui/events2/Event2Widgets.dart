@@ -358,12 +358,14 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
 
   static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
 
-  static Decoration get _pageContentDecoration => BoxDecoration(
+  static Decoration get _pageContentDecoration =>
+    HomeCard.defaultDecoration;
+  /*BoxDecoration(
     color: Styles().colors.surface,
     borderRadius: _pageContentBorderRadius,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     boxShadow: _pageContentShadow
-  );
+  );*/
 
   static Decoration get _pageTopContentDecoration => BoxDecoration(
     borderRadius: _pageContentTopBorderRadius,
@@ -371,21 +373,16 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   );
 
   static Decoration get _pageBottomContentDecoration => BoxDecoration(
-    color: Styles().colors.surface,
+    color: HomeCard.defaultBackColor,
     borderRadius: _pageContentBottomBorderRadius,
-    border: Border(
-      left: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
-      right: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
-      bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
-    ),
     boxShadow: _pageContentShadow
   );
 
   static List<BoxShadow> get _pageContentShadow => [
-    BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))
+    HomeCard.defaultShadow
   ];
 
-  static Radius get _pageContentRadius => Radius.circular(4.0);
+  static Radius get _pageContentRadius => HomeCard.defaultRadius;
   static BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.all(_pageContentRadius);
   static BorderRadiusGeometry get _pageContentTopBorderRadius => BorderRadius.vertical(top: _pageContentRadius);
   static BorderRadiusGeometry get _pageContentBottomBorderRadius => BorderRadius.vertical(bottom: _pageContentRadius);

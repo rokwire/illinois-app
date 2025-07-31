@@ -100,19 +100,23 @@ class Storage extends rokwire.Storage with NotificationsListener {
   }
 
   // Notifications
-
-  bool? getNotifySetting(String name) {
-    return getBoolWithName(name);
-  }
-
-  void setNotifySetting(String name, bool? value) {
-    return setBoolWithName(name, value);
-  }
-
-  // Polls
   static const String selectedPollTypeKey  = 'selected_poll_type';
   int? get selectedPollType => getIntWithName(selectedPollTypeKey);
   set selectedPollType(int? value) => setIntWithName(selectedPollTypeKey, value);
+
+
+  // Polls
+  static const String notificationsFilterUnreadKey  = 'edu.illinois.rokwire.notifications.filter.unread';
+  bool? get notificationsFilterUnread => getBoolWithName(notificationsFilterUnreadKey);
+  set notificationsFilterUnread(bool? value) => setBoolWithName(notificationsFilterUnreadKey, value);
+
+  static const String notificationsFilterMutedKey  = 'edu.illinois.rokwire.notifications.filter.muted';
+  bool? get notificationsFilterMuted => getBoolWithName(notificationsFilterMutedKey);
+  set notificationsFilterMuted(bool? value) => setBoolWithName(notificationsFilterMutedKey, value);
+
+  static const String notificationsFilterTimeIntervalKey  = 'edu.illinois.rokwire.notifications.filter.time_interval';
+  String? get notificationsFilterTimeInterval => getStringWithName(notificationsFilterTimeIntervalKey);
+  set notificationsFilterTimeInterval(String? value) => setStringWithName(notificationsFilterTimeIntervalKey, value);
 
   // On Boarding
   static const String onBoardingPassedKey  = 'on_boarding_passed';
@@ -254,6 +258,9 @@ class Storage extends rokwire.Storage with NotificationsListener {
   @override String get inboxFirebaseMessagingTokenKey => 'inbox_firebase_messaging_token';
   @override String get inboxFirebaseMessagingUserIdKey => 'inbox_firebase_messaging_user_id';
   @override String get inboxUserInfoKey => 'inbox_user_info';
+
+  bool? getNotifySetting(String name) => getBoolWithName(name);
+  void setNotifySetting(String name, bool? value) => setBoolWithName(name, value);
 
   // Polls
   @override String get activePollsKey  => 'active_polls';
