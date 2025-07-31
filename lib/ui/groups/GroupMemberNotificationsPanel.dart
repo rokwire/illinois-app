@@ -31,8 +31,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
-import 'GroupWidgets.dart';
-
 class GroupMemberNotificationsPanel extends StatefulWidget {
   final String? groupId;
   final String? memberId;
@@ -74,12 +72,11 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
             textAlign: TextAlign.center),
         body: Column(children: [
           Expanded(child: SingleChildScrollView(child: Container(color: Styles().colors.background, child: _buildContent()))),
-          Visibility(
-              visible: (!_isLoading && (_member != null) && _toggleButtonEnabled),
-              child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: RoundedButton(
-                      label: Localization().getStringEx('panel.group_member_notifications.save.button', 'Save'), onTap: _onTapSave)))
+          Visibility(visible: (!_isLoading && (_member != null) && _toggleButtonEnabled), child:
+            Padding(padding: EdgeInsets.all(16), child:
+              RoundedButton(label: Localization().getStringEx('panel.group_member_notifications.save.button', 'Save'), onTap: _onTapSave)
+            )
+          )
         ]),
         backgroundColor: Styles().colors.white);
   }
@@ -120,16 +117,16 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
     MemberNotificationsPreferences? memberPreferences = _member?.notificationsPreferences;
     preferenceWidgets.add(_buildGlobalNotificationsInfo());
 
-    preferenceWidgets.add(EnabledToggleButton(
-        enabled: _toggleButtonEnabled,
-        borderRadius: BorderRadius.zero,
-        label: Localization().getStringEx(
-            "panel.group_member_notifications.override_notifications.label", "Use these custom notification preferences below"),
-        toggled: memberPreferences?.overridePreferences ?? false,
-        onTap: _toggleButtonEnabled ? _onToggleOverrideNotificationPreferences : null,
-        textStyle: _toggleButtonEnabled
-            ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
-            : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")));
+    preferenceWidgets.add(ToggleRibbonButton(
+      borderRadius: BorderRadius.zero,
+      label: Localization().getStringEx("panel.group_member_notifications.override_notifications.label", "Use these custom notification preferences below"),
+      toggled: memberPreferences?.overridePreferences ?? false,
+      onTap: _toggleButtonEnabled ? _onToggleOverrideNotificationPreferences : null,
+      rightIconKeys: _toggleButtonEnabled ? ToggleRibbonButton.defaultRightIconKeys : ToggleRibbonButton.disabledRightIconKeys,
+      textStyle: _toggleButtonEnabled
+          ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
+          : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")
+    ));
     preferenceWidgets.add(Row(children: [
       Expanded(
           child: Container(
@@ -137,46 +134,50 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
               child: Padding(
                   padding: EdgeInsets.only(left: 10),
                   child: Column(children: [
-                    _EnabledToggleButton(
-                        enabled: _groupSubNotificationsEnabled,
-                        borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.group_member_notifications.posts.label", "Posts"),
-                        toggled: !(memberPreferences?.mutePosts ?? false),
-                        defaultValue: (FirebaseMessaging().notifyGroupPostUpdates == true),
-                        onTap: _groupSubNotificationsEnabled ? _onTogglePosts : null,
-                        textStyle: _groupSubNotificationsEnabled
-                            ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    _EnabledToggleButton(
-                        enabled: _groupSubNotificationsEnabled,
-                        borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.group_member_notifications.events.label", "Events"),
-                        toggled: !(memberPreferences?.muteEvents ?? false),
-                        defaultValue: FirebaseMessaging().notifyGroupEventsUpdates == true,
-                        onTap: _groupSubNotificationsEnabled ? _onToggleEvents : null,
-                        textStyle: _groupSubNotificationsEnabled
-                            ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    _EnabledToggleButton(
-                        enabled: _groupSubNotificationsEnabled,
-                        borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.group_member_notifications.invitations.label", "Group membership"),
-                        toggled: !(memberPreferences?.muteInvitations ?? false),
-                        defaultValue: (FirebaseMessaging().notifyGroupInvitationsUpdates == true),
-                        onTap: _groupSubNotificationsEnabled ? _onToggleInvitations : null,
-                        textStyle: _groupSubNotificationsEnabled
-                            ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    _EnabledToggleButton(
-                        enabled: _groupSubNotificationsEnabled,
+                    ToggleRibbonButton(
+                      borderRadius: BorderRadius.zero,
+                      label: Localization().getStringEx("panel.group_member_notifications.posts.label", "Posts"),
+                      toggled: !(memberPreferences?.mutePosts ?? false),
+                      //defaultValue: (FirebaseMessaging().notifyGroupPostUpdates == true),
+                      onTap: _groupSubNotificationsEnabled ? _onTogglePosts : null,
+                      rightIconKeys: _groupSubNotificationsEnabled ? ToggleRibbonButton.defaultRightIconKeys : ToggleRibbonButton.disabledRightIconKeys,
+                      textStyle: _groupSubNotificationsEnabled
+                          ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                          : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")
+                    ),
+                    ToggleRibbonButton(
+                      borderRadius: BorderRadius.zero,
+                      label: Localization().getStringEx("panel.group_member_notifications.events.label", "Events"),
+                      toggled: !(memberPreferences?.muteEvents ?? false),
+                      //defaultValue: FirebaseMessaging().notifyGroupEventsUpdates == true,
+                      onTap: _groupSubNotificationsEnabled ? _onToggleEvents : null,
+                      rightIconKeys: _groupSubNotificationsEnabled ? ToggleRibbonButton.defaultRightIconKeys : ToggleRibbonButton.disabledRightIconKeys,
+                      textStyle: _groupSubNotificationsEnabled
+                          ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                          : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")
+                    ),
+                    ToggleRibbonButton(
+                      borderRadius: BorderRadius.zero,
+                      label: Localization().getStringEx("panel.group_member_notifications.invitations.label", "Group membership"),
+                      toggled: !(memberPreferences?.muteInvitations ?? false),
+                      //defaultValue: (FirebaseMessaging().notifyGroupInvitationsUpdates == true),
+                      onTap: _groupSubNotificationsEnabled ? _onToggleInvitations : null,
+                      rightIconKeys: _groupSubNotificationsEnabled ? ToggleRibbonButton.defaultRightIconKeys : ToggleRibbonButton.disabledRightIconKeys,
+                      textStyle: _groupSubNotificationsEnabled
+                          ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                          : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")
+                    ),
+                    ToggleRibbonButton(
                         borderRadius: BorderRadius.zero,
                         label: Localization().getStringEx("panel.group_member_notifications.polls.label", "Polls"),
                         toggled: !(memberPreferences?.mutePolls ?? false ),
-                        defaultValue: (FirebaseMessaging().notifyGroupPollsUpdates == true),
+                        //defaultValue: (FirebaseMessaging().notifyGroupPollsUpdates == true),
                         onTap: _groupSubNotificationsEnabled ? _onTogglePolls : null,
+                        rightIconKeys: _groupSubNotificationsEnabled ? ToggleRibbonButton.defaultRightIconKeys : ToggleRibbonButton.disabledRightIconKeys,
                         textStyle: _groupSubNotificationsEnabled
                             ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled"))
+                            : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")
+                    ),
                   ]))))
     ]));
 
@@ -460,23 +461,3 @@ class _DisabledToggleButton extends ToggleRibbonButton{
       : super(label: label, toggled: (toggled == true), onTap: onTap, textStyle: textStyle, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),rightIcons: _rightIcons);
 }
 
-class _EnabledToggleButton extends ToggleRibbonButton {
-  final bool? enabled;
-  final bool? defaultValue;
-
-  _EnabledToggleButton(
-      {String? label,
-        bool? toggled,
-        void Function()? onTap,
-        BoxBorder? border,
-        BorderRadius? borderRadius,
-        TextStyle? textStyle,
-        this.enabled = false, this.defaultValue = false})
-      : super(label: label, toggled: (toggled == true), onTap: onTap, border: border, borderRadius: borderRadius, textStyle: textStyle);
-
-  // @override
-  // bool get toggled => (enabled == true) ? super.toggled == true : this.defaultValue == true;
-
-  @override
-  Widget? get rightIconImage => Styles().images.getImage((toggled) ? 'toggle-on' : 'toggle-off');  //Workaround for blurry images
-}
