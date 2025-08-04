@@ -1,8 +1,8 @@
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/model/Config.dart';
+import 'package:illinois/model/Content.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -12,7 +12,7 @@ import 'package:illinois/ui/onboarding/OnboardingMessagePanel.dart';
 class OnboardingConfigAlertPanel extends StatefulWidget {
   static const String notifyCheckAgain  = "edu.illinois.rokwire.onboarding.alert.check_again";
 
-  final ConfigAlert? alert;
+  final ContentAlert? alert;
 
   OnboardingConfigAlertPanel({super.key, this.alert});
 
@@ -27,7 +27,9 @@ class _OnboardingConfigAlertPanelState extends State<OnboardingConfigAlertPanel>
   @override
   Widget build(BuildContext context) => OnboardingMessagePanel(
     title: widget.alert?.title,
+    titleHtml: widget.alert?.titleHtml,
     message: widget.alert?.message,
+    messageHtml: widget.alert?.messageHtml,
     footer: _footerWidget,
   );
 
@@ -53,7 +55,7 @@ class _OnboardingConfigAlertPanelState extends State<OnboardingConfigAlertPanel>
         _progress = true;
       });
 
-      Config().refresh().then((_){
+      Content().refreshContentItems().then((_){
         if (mounted) {
           setState(() {
             _progress = false;

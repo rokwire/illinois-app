@@ -20,7 +20,6 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
@@ -34,7 +33,6 @@ import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -127,17 +125,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
       .replaceAll(localUrlMacro, '$localScheme://$favoriteKey')
       .replaceAll(privacyUrlMacro, privacyUrl);
 
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-      Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
-        padding: EdgeInsets.all(16),
-        child: HtmlWidget(
-            message,
-            onTapUrl : (url) {_handleLocalUrl(url); return true;},
-            textStyle:  Styles().textStyles.getTextStyle("widget.item.small.semi_fat"),
-            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
-        )
-      ),
-    );
+    return HomeMessageHtmlCard(message: message, onTapLink: _handleLocalUrl,);
   }
 
   Widget _buildResourceContent() {
@@ -195,26 +183,29 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     Favorite favorite = WellnessFavorite(id, category: WellnessResourcesContentWidget.wellnessCategoryKey);
     String? url = JsonUtils.stringValue(command['url']);
     String? type = JsonUtils.stringValue(command['type']);
+    Widget? resourceButton;
     if (type == 'large') {
-      return WellnessLargeResourceButton(
+      resourceButton = WellnessLargeResourceButton(
         label: _getString(id),
         favorite: favorite,
         hasExternalLink: UrlUtils.isWebScheme(url),
+        displayMode: CardDisplayMode.home,
         onTap: () => _onCommand(command),
       );
     }
     else if (type == 'regular') {
-      return WellnessRegularResourceButton(
+      resourceButton = WellnessRegularResourceButton(
         label: _getString(id),
         favorite: favorite,
         hasExternalLink: UrlUtils.isWebScheme(url),
-        hasBorder: true,
+        displayMode: CardDisplayMode.home,
         onTap: () => _onCommand(command),
       );
     }
-    else {
-      return null;
-    }
+    return (resourceButton != null) ? Padding(
+      padding: EdgeInsets.symmetric(vertical: HomeCard.defaultShadowBlurRadius),
+      child: resourceButton,
+    ) : null;
   }
 
   void _initContent() {

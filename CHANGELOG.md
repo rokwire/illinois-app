@@ -4,9 +4,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
 ## Unreleased
 ### Changed
+- Do not initialize the unread filter externally [#5281](https://github.com/rokwire/illinois-app/issues/5281).
+- Require NetID login to make profile / share page available [#5315](https://github.com/rokwire/illinois-app/issues/5315).
+
+## [7.2.20] - 2025-07-30
+### Fixed
+- Fixed disabled toggle buttons display in GroupMemberNotificationsPanel [#5312](https://github.com/rokwire/illinois-app/issues/5312).
+
+## [7.2.19] - 2025-07-29
+### Changed
+- Config alert converted to Content аlert [#5251](https://github.com/rokwire/illinois-app/issues/5251).
+
+## [7.2.18] - 2025-07-29
+### Fixed
+- Update assistant settings on user login/logout [#5302](https://github.com/rokwire/illinois-app/issues/5302).
+### Changed
+- Preserve filters selection in NotificatinsHomePanel [#5281](https://github.com/rokwire/illinois-app/issues/5281).
+### Added
+- Added current filters description in NotificatinsHomePanel [#5281](https://github.com/rokwire/illinois-app/issues/5281).
+
+## [7.2.17] - 2025-07-28
+### Fixed
+- Fixed typo in roles panel [#5270](https://github.com/rokwire/illinois-app/issues/5270).
+### Changed
+- UI Clean Up: Favorite Widget Cards implemented [#5289](https://github.com/rokwire/illinois-app/issues/5289).
+
+## [7.2.16] - 2025-07-25
+### Changed
+- Set javascript mode for floor panel web view to unrestricted so feature toggles will work [#5295](https://github.com/rokwire/illinois-app/issues/5295).
+- Prefer inNotOffline Connectivity's API than isOnline.
+
+## [7.2.15] - 2025-07-24
+### Changed
 - Add contrast white border to Play button in Onboarding2VideoTutorialPanel [#4873](https://github.com/rokwire/illinois-app/issues/4873).
+### Fixed
+- Fixed Home/Favorites splitters build [#5271](https://github.com/rokwire/illinois-app/issues/5271).
 
 ## [7.2.14] - 2025-07-23
 ### Changed

@@ -440,8 +440,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> with NotificationsListene
     String? currentRouteName = ModalRoute.of(context)?.settings.name;
     if (currentRouteName != NotificationsHomePanel.routeName) {
       Analytics().logSelect(target: "Notifications");
-      NotificationsHomePanel.present(context,
-          content: (Inbox().unreadMessagesCount > 0) ? NotificationsContent.unread : NotificationsContent.all);
+      NotificationsHomePanel.present(context);
     }
   }
 

@@ -169,7 +169,7 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
       for (int index = 0; index < visibleCount; index++) {
         Map<String, dynamic>? reminderItem = JsonUtils.mapValue(_resourceItems![index]);
         pages.add(Padding(key: _contentKeys[Guide().entryId(reminderItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 2), child:
-          GuideEntryCard(reminderItem, favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType), displayMode: GuideEntryCardDisplayMode.home,)
+          GuideEntryCard(reminderItem, favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType), displayMode: CardDisplayMode.home,)
         ));
       }
 
@@ -192,7 +192,7 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        GuideEntryCard(_resourceItems?.first, favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType), displayMode: GuideEntryCardDisplayMode.home)
+        GuideEntryCard(_resourceItems?.first, favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType), displayMode: CardDisplayMode.home)
       );
     }
     return Column(children: <Widget>[

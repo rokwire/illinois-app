@@ -69,7 +69,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with Notifica
   }
 
   Widget _buildContent() {
-    if(CheckList(widget.contentKey).isLoading){
+    if (CheckList(widget.contentKey).isLoading){
       return _buildLoadingContent();
     }
     if (!_isStarted) {
@@ -88,7 +88,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with Notifica
         Container(
           constraints: BoxConstraints(maxHeight: 100),
           padding: EdgeInsets.all(16),
-            decoration: HomeMessageCard.defaultDecoration,
+            decoration: HomeCard.defaultDecoration,
             child: Column(children: <Widget>[
               Expanded(
                 child: Center(
@@ -101,8 +101,8 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with Notifica
 
   Widget _buildStartContent() {
     return 
-        Container(padding: EdgeInsets.all(12),
-            decoration: HomeMessageCard.defaultDecoration,
+        Container(padding: EdgeInsets.all(16),
+            decoration: HomeCard.defaultDecoration,
             child: Column(
               children: [
                 Row(children: [
@@ -128,7 +128,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with Notifica
   Widget _buildEndedContent() {
     return 
         Container(padding: EdgeInsets.all(16),
-            decoration: HomeMessageCard.defaultDecoration,
+            decoration: HomeCard.defaultDecoration,
             child: Column(
               children: [
                 Row(children: [
@@ -137,12 +137,12 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with Notifica
                       container: true,
                       child:
                       Text(Localization().getStringEx('widget.gies.message.finished', 'You’ve completed the checklist.'),
-                        style: Styles().textStyles.getTextStyle("widget.message.huge.extra_fat")))),
+                        style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")))),
                 ],),
                 Container(height: 24,),
                 RoundedButton(
                   label: Localization().getStringEx('widget.gies.button.title.review', "Review Checklist"),
-                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                   backgroundColor: Styles().colors.white,
                   borderColor: Styles().colors.fillColorSecondary,
                   onTap: () => _onTapContinue(analyticsAction: 'Review Checklist'),
@@ -156,8 +156,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with Notifica
   Widget _buildProgressContent() {
     return 
         Container(padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(color: Styles().colors.white,
-                borderRadius: BorderRadius.circular(5)),
+            decoration: HomeCard.defaultDecoration,
             child: Column(
               children: [
                 Row(children: [
@@ -165,12 +164,12 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with Notifica
                     Semantics(
                       container: true,
                       child: Text(_progressText,
-                        style: Styles().textStyles.getTextStyle("widget.message.extra_large.extra_fat")))),
+                        style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")))),
                     ],),
                 Container(height: 24,),
                 RoundedButton(
                   label: Localization().getStringEx('widget.gies.button.title.continue', "Continue"),
-                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                   backgroundColor: Styles().colors.white,
                   borderColor: Styles().colors.fillColorSecondary,
                   onTap: () => _onTapContinue(analyticsAction: 'Continue'),

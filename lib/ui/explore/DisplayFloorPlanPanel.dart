@@ -4,6 +4,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:webview_flutter/webview_flutter.dart' as flutter_webview;
 
 import '../../model/StudentCourse.dart';
 
@@ -61,6 +62,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
       } else {
         _htmlWithFloorPlan = '${Localization().getStringEx('panel.display_floor_plan_panel.html_svg_header', 'Floor Plan')} $floorPlanSvg ${Localization().getStringEx('panel.display_floor_plan_panel.html_svg_footer', 'Floor Plan')}';
       }
+      _controller.setJavaScriptMode(flutter_webview.JavaScriptMode.unrestricted);
       _controller.loadHtmlString(_htmlWithFloorPlan);
     });
   }

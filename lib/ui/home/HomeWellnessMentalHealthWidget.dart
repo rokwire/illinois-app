@@ -18,7 +18,6 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
@@ -32,7 +31,6 @@ import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -124,17 +122,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
       .replaceAll(localUrlMacro, '$localScheme://$favoriteKey')
       .replaceAll(privacyUrlMacro, privacyUrl);
 
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-      Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
-        padding: EdgeInsets.all(16),
-        child: HtmlWidget(
-            message,
-            onTapUrl : (url) {_handleLocalUrl(url); return true;},
-            textStyle:  Styles().textStyles.getTextStyle("widget.item.small.semi_fat"),
-            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
-        )
-      ),
-    );
+    return HomeMessageHtmlCard(message: message, onTapLink: _handleLocalUrl,);
   }
 
   Widget _buildResourceContent() {
@@ -148,7 +136,11 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
         Widget? button = (resourceItem != null) ? _buildResourceButton(resourceItem) : null;
         if (button != null) {
           String? resourceId = Guide().entryId(resourceItem);
-          pages.add(Padding(key: _contentKeys[resourceId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child: button));
+          pages.add(Padding(
+            key: _contentKeys[resourceId ?? ''] ??= GlobalKey(),
+            padding: EdgeInsets.only(right: _pageSpacing),
+            child: button
+          ));
         }
       }
 
@@ -192,10 +184,13 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
     String? title = Guide().entryListTitle(resourceItem);
     Favorite favorite = GuideFavorite(id: id, contentType: Guide.wellnessMentalHealthContentType);
 
-    return WellnessLargeResourceButton(
-      label: title,
-      favorite: favorite,
-      onTap: () => _onCommand(resourceItem),
+    return Padding(padding: EdgeInsets.symmetric(vertical: HomeCard.defaultShadowBlurRadius), child:
+      WellnessLargeResourceButton(
+        label: title,
+        favorite: favorite,
+        displayMode: CardDisplayMode.home,
+        onTap: () => _onCommand(resourceItem),
+      ),
     );
   }
 
