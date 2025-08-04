@@ -37,16 +37,12 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
-enum NotificationsContent { all, unread }
-
 class NotificationsHomePanel extends StatefulWidget {
   static final String routeName = 'settings_notifications_content_panel';
 
-  final NotificationsContent? content;
+  NotificationsHomePanel._();
 
-  NotificationsHomePanel._({this.content});
-
-  static void present(BuildContext context, {NotificationsContent? content}) {
+  static void present(BuildContext context) {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(
           context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
@@ -66,7 +62,7 @@ class NotificationsHomePanel extends StatefulWidget {
           constraints: BoxConstraints(maxHeight: height, minHeight: height),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
           builder: (context) {
-            return NotificationsHomePanel._(content: content);
+            return NotificationsHomePanel._();
           });
     }
   }
@@ -170,7 +166,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
     _scrollController.addListener(_scrollListener);
 
     // Show unread notifications only if NotificationsContent.unread content is selected.
-    _unreadSelectedValue = _unreadPreviewValue = (widget.content == NotificationsContent.unread) ? true : Storage().notificationsFilterUnread;
+    _unreadSelectedValue = _unreadPreviewValue = Storage().notificationsFilterUnread;
     _mutedSelectedValue = _mutedPreviewValue = (Storage().notificationsFilterMuted ?? false);
     _dateIntervalSelectedValue = _getDateIntervalBy(filter: (_timeFilterPreviewValue = _TimeFilterImpl.fromJson(Storage().notificationsFilterTimeInterval)));
 
