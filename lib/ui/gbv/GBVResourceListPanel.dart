@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -154,14 +155,20 @@ class _GBVResourceListPanelState extends State<GBVResourceListPanel> {
   }
 
   Future<_GBVResourceListScreenData?> _loadResourceScreenData(String screenId) async {
+    String? resourceJson = await AppBundle.loadString('assets/extra/gbv/resources.json');
+    List<GBVResource?> allResources = (resourceJson != null)
+        ? List.from((JsonUtils.decodeList(resourceJson)!.map((r) => GBVResource.fromJson(r))))
+        : [];
+
     // temporary json load from assets
     String? json = await AppBundle.loadString('assets/extra/gbv/${screenId}.json');
     GBVResourceListScreen? resourceListScreen = (json != null)
         ? GBVResourceListScreen.fromJson(JsonUtils.decodeMap(json))
         : null;
 
+
     if ((resourceListScreen != null) && mounted) {
-      List<GBVResource?> resources = await Future.wait(List.from(resourceListScreen.resourceIds.map((String resourceId) => _loadResourceById(resourceId))));
+      List<GBVResource?> resources = List.from(resourceListScreen.resourceIds.map((String resourceId) => allResources.firstWhereOrNull((x) => (x != null && x.id == resourceId))));
 
       Map<String, GBVResource> resourceItems = <String, GBVResource>{};
       for (GBVResource? resource in resources) {
@@ -180,13 +187,6 @@ class _GBVResourceListPanelState extends State<GBVResourceListPanel> {
     }
   }
 
-  Future<GBVResource?> _loadResourceById(String id) async {
-    // temporary json load from assets
-    String? json = await AppBundle.loadString('assets/extra/gbv/$id.json');
-    return (json != null)
-      ? GBVResource.fromJson(JsonUtils.decodeMap(json))
-      : null;
-  }
 }
 
 class _GBVResourceListScreenData {
