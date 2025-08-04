@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Changed
+- Do not initialize the unread filter externally [#5281](https://github.com/rokwire/illinois-app/issues/5281).
+
 ## [7.2.20] - 2025-07-30
 ### Fixed
 - Fixed disabled toggle buttons display in GroupMemberNotificationsPanel [#5312](https://github.com/rokwire/illinois-app/issues/5312).
