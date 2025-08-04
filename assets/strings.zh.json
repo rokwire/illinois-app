@@ -2318,6 +2318,7 @@
 	"panel.profile.info_and_directory.message.signed_out.feature.info": "your profile",
 	"panel.profile.info_and_directory.message.signed_out.feature.share": "your Digital Business Card",
 	"panel.profile.info_and_directory.message.signed_out.link.login": "sign in",
+	"panel.profile.info_and_directory.message.signed_out.link_oidc.login": "sign in with your NetID",
 	"panel.profile.info_and_directory.message.signed_out.link.privacy": "set your privacy level",
  	"panel.profile.info_and_directory.tab.accounts.directory.title": "Directory of Users",
 

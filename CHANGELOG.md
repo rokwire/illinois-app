@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Do not initialize the unread filter externally [#5281](https://github.com/rokwire/illinois-app/issues/5281).
+- Require NetID login to make profile / share page available [#5315](https://github.com/rokwire/illinois-app/issues/5315).
 
 ## [7.2.20] - 2025-07-30
 ### Fixed
