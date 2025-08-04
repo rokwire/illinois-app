@@ -18,12 +18,12 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
 import 'package:collection/collection.dart';
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
@@ -150,7 +150,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
       }
 
       contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
+        AccessiblePageView(
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,

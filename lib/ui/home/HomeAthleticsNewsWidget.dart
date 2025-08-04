@@ -2,12 +2,12 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Sports.dart';
+import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
@@ -167,7 +167,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
       }
 
       contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
+        AccessiblePageView(
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,

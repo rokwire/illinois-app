@@ -3,7 +3,6 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -27,6 +26,7 @@ import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
+import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -248,7 +248,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
       }
 
       contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
+        AccessiblePageView(
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,

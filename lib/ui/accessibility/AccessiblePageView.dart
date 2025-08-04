@@ -6,15 +6,22 @@ import 'dart:math';
 class AccessiblePageView extends StatefulWidget {
   final MainAxisSize mainAxisSize;
   final AlignmentGeometry alignment;
+
+  final double estimatedPageSize;
+  final bool allowImplicitScrolling;
+  final ValueChanged<int>? onPageChanged;
   final List<Widget> children;
   final PageController? controller;
 
   const AccessiblePageView({
     super.key,
     required this.children,
+    this.onPageChanged,
     this.controller,
-    this.mainAxisSize = MainAxisSize.min,
-    this.alignment = Alignment.centerLeft
+    this.mainAxisSize = MainAxisSize.max,
+    this.alignment = Alignment.centerLeft,
+    this.estimatedPageSize = 0.0,
+    this.allowImplicitScrolling = false,
   });
 
   @override
@@ -34,14 +41,14 @@ class _AccessiblePageViewState extends State<AccessiblePageView> {
     }
 
     // Measure widgets after the first frame is rendered
-    if(_needMeasure)
+    if(_needSizing)
       WidgetsBinding.instance.addPostFrameCallback((_) => _measureWidgets());
   }
 
   @override
-  Widget build(BuildContext context) => (_needMeasure && _maxHeight == 0.0) ?   // If height is not calculated yet, show a measurement layout
+  Widget build(BuildContext context) => (_needSizing && _maxHeight == 0.0) ?   // If height is not calculated yet, show a measurement layout
     _measurementLayout : // Once measured, build the PageView with a fixed height
-    _pageViewLayout;
+      _needSizing ? _sizedLayout : _pageViewLayout;
 
   void _measureWidgets() {
     if (!mounted) return;
@@ -76,15 +83,24 @@ class _AccessiblePageViewState extends State<AccessiblePageView> {
           }),
         ),
       );
+  Widget get _sizedLayout => SizedBox(
+    height: _maxHeight,
+    child: PageView(
+      controller: widget.controller,
+      children: widget.children,
+      onPageChanged: widget.onPageChanged,
+      allowImplicitScrolling: widget.allowImplicitScrolling,
+    )
+  );
 
-  Widget get _pageViewLayout =>
-      SizedBox(
-        height: _maxHeight,
-        child: ExpandablePageView(
+    Widget get _pageViewLayout =>
+      ExpandablePageView(
           controller: widget.controller,
           children: widget.children,
-        ),
+          onPageChanged: widget.onPageChanged,
+          estimatedPageSize: widget.estimatedPageSize,
+          allowImplicitScrolling: widget.allowImplicitScrolling,
       );
 
-  bool get _needMeasure => widget.mainAxisSize == MainAxisSize.max;
+  bool get _needSizing => widget.mainAxisSize == MainAxisSize.max;
 }

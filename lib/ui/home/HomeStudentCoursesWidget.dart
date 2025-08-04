@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/StudentCourse.dart';
@@ -9,6 +8,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
+import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
@@ -210,7 +210,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
       double pageHeight = StudentCourseCard.height(context);
 
       contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        ExpandablePageView(
+        AccessiblePageView(
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: pageHeight,
