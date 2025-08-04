@@ -76,7 +76,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
       });
     }
 
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       _loadingPolls = true;
       Polls().getRecentPolls(cursor: PollsCursor(offset: 0, limit: Config().homeRecentPollsCount + 1))?.then((PollsChunk? result) {
         setStateIfMounted(() {
@@ -106,7 +106,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
   @override
   void onNotification(String name, dynamic param) {
     if (name == Connectivity.notifyStatusChanged) {
-      _onContentAvailabilityChanged(Connectivity().isOnline);
+      _onContentAvailabilityChanged(Connectivity().isNotOffline);
     }
     else if (name == Auth2.notifyLoginChanged) {
       _onContentAvailabilityChanged(Auth2().isLoggedIn);
@@ -262,7 +262,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
   }
 
   void _refreshPolls({bool showProgress = false, bool initResult = false}) {
-    if (Connectivity().isOnline && Auth2().isLoggedIn && (_loadingPolls != true)) {
+    if (Connectivity().isNotOffline && Auth2().isLoggedIn && (_loadingPolls != true)) {
       if (showProgress && mounted) {
         setState(() {
           _loadingPolls = true;
@@ -297,7 +297,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
   }
 
   void _loadNextPollsPage() {
-    if (Connectivity().isOnline && _hasMorePolls && !_loadingPollsPage) {
+    if (Connectivity().isNotOffline && _hasMorePolls && !_loadingPollsPage) {
       setStateIfMounted(() {
         _loadingPollsPage = true;
       });

@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -888,7 +889,7 @@ class _PollCardState extends State<PollCard> {
 
     return Semantics(container: true, child:
       Column(children: <Widget>[
-        Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(5)), child:
+        Container(decoration: HomeCard.defaultDecoration, child:
           contentWidget
         ),
       ],),
