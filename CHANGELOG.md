@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Changed
+- Add space in the text for polls timestamp [#5321](https://github.com/rokwire/illinois-app/issues/5321).
 
 ## [7.2.21] - 2025-08-04
 ### Changed
