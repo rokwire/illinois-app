@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add space in the text for polls timestamp [#5321](https://github.com/rokwire/illinois-app/issues/5321).
 ### Fixed
 - Fixed Digital Business Card initialization [#5322](https://github.com/rokwire/illinois-app/issues/5322).
+- Fixed Group Polls loading [#5320](https://github.com/rokwire/illinois-app/issues/5320).
 
 ## [7.2.21] - 2025-08-04
 ### Changed

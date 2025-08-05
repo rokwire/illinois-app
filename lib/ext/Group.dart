@@ -180,7 +180,8 @@ extension GroupExt on Group {
     try {
       return (id != null) ? Polls().getGroupPolls(
         groupIds: {id!},
-        pollStatuses: currentUserIsAdmin ? null /* no status filter */ : { PollStatus.opened }
+        pollStatuses: currentUserIsAdmin ? null /* no status filter */ : { PollStatus.opened },
+        cursor: cursor
       ) : null;
     }
     catch (e) {
