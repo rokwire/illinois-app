@@ -22,69 +22,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sms_mms/sms_mms.dart';
 //import 'package:share_plus/share_plus.dart';
 
-class ProfileInfoShareSheet extends StatelessWidget {
-  final Auth2UserProfile? publicProfile;
-  final Auth2UserProfile? profile;
-  final Auth2UserPrivacy? privacy;
-  final Uint8List? photoImageData;
-  final Uint8List? pronunciationAudioData;
-
-  ProfileInfoShareSheet._({this.profile, this.privacy, this.photoImageData, this.pronunciationAudioData}) :
-    publicProfile = profile?.buildPublic(privacy, permitted: { Auth2FieldVisibility.public });
-
-  static void present(BuildContext context, {
-    Auth2UserProfile? profile,
-    Auth2UserPrivacy? privacy,
-    Uint8List? photoImageData,
-    Uint8List? pronunciationAudioData,
-  }) {
-    MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
-    double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      isDismissible: true,
-      clipBehavior: Clip.antiAlias,
-      backgroundColor: Styles().colors.white,
-      constraints: BoxConstraints(maxHeight: height),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
-      builder: (context) => ProfileInfoShareSheet._(
-        profile: profile,
-        privacy: privacy,
-        photoImageData: photoImageData,
-        pronunciationAudioData: pronunciationAudioData,
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) => Stack(children: [
-      ProfileInfoShareWidget(
-        publicProfile: publicProfile,
-        photoImageData: photoImageData,
-        pronunciationAudioData: pronunciationAudioData,
-        topOffset: 24 + 2 * 16 /* close button size */,
-        contentPaddingX: 16,
-      ),
-      Align(alignment: Alignment.topRight, child: _closeButton(context)),
-    ],);
-
-  Widget _closeButton(BuildContext context) =>
-    Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-      InkWell(onTap : () => _onTapClose(context), child:
-        Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-          Styles().images.getImage('close-circle', excludeFromSemantics: true),
-        ),
-      ),
-    );
-
-  void _onTapClose(BuildContext context) {
-    Analytics().logSelect(target: 'Close', source: runtimeType.toString());
-    Navigator.of(context).pop();
-  }
-}
-
-class ProfileInfoSharePage extends StatefulWidget {
+class ProfileBusinessCardPage extends StatefulWidget {
 
   static const String profileResultKey = 'profile_result';
 
@@ -94,7 +32,7 @@ class ProfileInfoSharePage extends StatefulWidget {
   final Uint8List? _pronunciationAudioData;
   final Map<String, dynamic>? params;
 
-  ProfileInfoSharePage({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? photoImageData, Uint8List? pronunciationAudioData, this.params, super.key}) :
+  ProfileBusinessCardPage({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? photoImageData, Uint8List? pronunciationAudioData, this.params, super.key}) :
     _profile = profile,
     _privacy = privacy,
     _photoImageData = photoImageData,
@@ -108,10 +46,10 @@ class ProfileInfoSharePage extends StatefulWidget {
   ProfileInfoLoadResult? get _profileResultParam => JsonUtils.cast(params?[profileResultKey]);
 
   @override
-  State<StatefulWidget> createState() => _ProfileInfoSharePageState();
+  State<StatefulWidget> createState() => _ProfileBusinessCardPageState();
 }
 
-class _ProfileInfoSharePageState extends State<ProfileInfoSharePage> {
+class _ProfileBusinessCardPageState extends State<ProfileBusinessCardPage> {
   Auth2UserProfile? _publicProfile;
   Auth2UserProfile? _profile;
   Auth2UserPrivacy? _privacy;
@@ -129,7 +67,7 @@ class _ProfileInfoSharePageState extends State<ProfileInfoSharePage> {
   Widget build(BuildContext context) => _loading ?
     _loadingContent : _pageContent;
 
-  Widget get _pageContent => ProfileInfoShareWidget(
+  Widget get _pageContent => ProfileBusinessCardWidget(
     publicProfile: _publicProfile,
     photoImageData: _photoImageData,
     pronunciationAudioData: _pronunciationAudioData
@@ -169,7 +107,69 @@ class _ProfileInfoSharePageState extends State<ProfileInfoSharePage> {
   }
 }
 
-class ProfileInfoShareWidget extends StatefulWidget {
+class ProfileBusinessCardPanel extends StatelessWidget {
+  final Auth2UserProfile? publicProfile;
+  final Auth2UserProfile? profile;
+  final Auth2UserPrivacy? privacy;
+  final Uint8List? photoImageData;
+  final Uint8List? pronunciationAudioData;
+
+  ProfileBusinessCardPanel._({this.profile, this.privacy, this.photoImageData, this.pronunciationAudioData}) :
+    publicProfile = profile?.buildPublic(privacy, permitted: { Auth2FieldVisibility.public });
+
+  static void present(BuildContext context, {
+    Auth2UserProfile? profile,
+    Auth2UserPrivacy? privacy,
+    Uint8List? photoImageData,
+    Uint8List? pronunciationAudioData,
+  }) {
+    MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
+    double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      clipBehavior: Clip.antiAlias,
+      backgroundColor: Styles().colors.white,
+      constraints: BoxConstraints(maxHeight: height),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (context) => ProfileBusinessCardPanel._(
+        profile: profile,
+        privacy: privacy,
+        photoImageData: photoImageData,
+        pronunciationAudioData: pronunciationAudioData,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => Stack(children: [
+      ProfileBusinessCardWidget(
+        publicProfile: publicProfile,
+        photoImageData: photoImageData,
+        pronunciationAudioData: pronunciationAudioData,
+        topOffset: 24 + 2 * 16 /* close button size */,
+        contentPaddingX: 16,
+      ),
+      Align(alignment: Alignment.topRight, child: _closeButton(context)),
+    ],);
+
+  Widget _closeButton(BuildContext context) =>
+    Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+      InkWell(onTap : () => _onTapClose(context), child:
+        Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+          Styles().images.getImage('close-circle', excludeFromSemantics: true),
+        ),
+      ),
+    );
+
+  void _onTapClose(BuildContext context) {
+    Analytics().logSelect(target: 'Close', source: runtimeType.toString());
+    Navigator.of(context).pop();
+  }
+}
+
+class ProfileBusinessCardWidget extends StatefulWidget {
 
   final Auth2UserProfile? publicProfile;
   final Uint8List? photoImageData;
@@ -177,16 +177,16 @@ class ProfileInfoShareWidget extends StatefulWidget {
   final double topOffset;
   final double contentPaddingX;
 
-  ProfileInfoShareWidget({this.publicProfile, this.photoImageData, this.pronunciationAudioData,
+  ProfileBusinessCardWidget({this.publicProfile, this.photoImageData, this.pronunciationAudioData,
     this.topOffset = 16,
     this.contentPaddingX = 0,
   });
 
   @override
-  State<StatefulWidget> createState() => _ProfileInfoShareWidgetState();
+  State<StatefulWidget> createState() => _ProfileBusinessCardWidgetState();
 }
 
-class _ProfileInfoShareWidgetState extends State<ProfileInfoShareWidget> {
+class _ProfileBusinessCardWidgetState extends State<ProfileBusinessCardWidget> {
 
   final GlobalKey _repaintBoundaryKey = GlobalKey();
   bool _savingToPhotos = false;
