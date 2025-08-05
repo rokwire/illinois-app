@@ -97,7 +97,8 @@ class _ProfileBusinessCardPageState extends State<ProfileBusinessCardPage> {
       });
       ProfileInfoLoadResult loadResult = await ProfileInfoLoad.loadInitial();
       setStateIfMounted(() {
-        _profile = loadResult.publicProfile();
+        _profile = loadResult.profile;
+        _privacy = loadResult.privacy;
         _photoImageData = loadResult.photoImageData;
         _pronunciationAudioData = loadResult.pronunciationAudioData;
         _publicProfile = _profile?.buildPublic(_privacy, permitted: { Auth2FieldVisibility.public });
