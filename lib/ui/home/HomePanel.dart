@@ -31,7 +31,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
-import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
 import 'package:illinois/ui/home/HomeSafetyResourcesWidget.dart';
@@ -43,7 +42,6 @@ import 'package:illinois/ui/home/HomeDiningWidget.dart';
 import 'package:illinois/ui/home/HomeEvent2Widget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
-import 'package:illinois/ui/home/HomePublicSurveysWidget.dart';
 import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeResearchProjectsWidget.dart';
 import 'package:illinois/ui/home/HomeSafeRidesWidget.dart';
@@ -51,7 +49,6 @@ import 'package:illinois/ui/home/HomeSafeWalkRequestWidget.dart';
 import 'package:illinois/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeRadioWidget.dart';
-import 'package:illinois/ui/home/HomeWalletWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessMentalHealthWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessToDoWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessRingsWidget.dart';
@@ -70,7 +67,6 @@ import 'package:illinois/ui/home/HomeAthleticsGameDayWidget.dart';
 import 'package:illinois/ui/home/HomeGroupsWidget.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeCampusHighlightsWidget.dart';
-import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -187,15 +183,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeRecentItemsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == 'public_surveys') {
-      if (title) {
-        return HomePublicSurveysWidget.title;
-      } else if (handle) {
-        return HomePublicSurveysWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomePublicSurveysWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
     else if (code == 'campus_highlights') {
       if (title) {
         return HomeCampusHighlightsWidget.title;
@@ -203,15 +190,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeCampusHighlightsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeCampusHighlightsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'twitter') {
-      if (title) {
-        return HomeTwitterWidget.title;
-      } else if (handle) {
-        return HomeTwitterWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeTwitterWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'daily_illini') {
@@ -367,49 +345,13 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeDiningWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == 'wallet') {
+    else if (code == 'illini_radio') {
       if (title) {
-        return HomeWalletWidget.title;
+        return HomeRadioWidget.title;
       } else if (handle) {
-        return HomeWalletWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeRadioWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeWalletWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'will_radio') {
-      if (title) {
-        return HomeRadioWidget.stationTitle(RadioStation.will);
-      } else if (handle) {
-        return HomeRadioWidget.handle(RadioStation.will, key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeRadioWidget(RadioStation.will, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'willfm_radio') {
-      if (title) {
-        return HomeRadioWidget.stationTitle(RadioStation.willfm);
-      } else if (handle) {
-        return HomeRadioWidget.handle(RadioStation.willfm, key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeRadioWidget(RadioStation.willfm, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'willhd_radio') {
-      if (title) {
-        return HomeRadioWidget.stationTitle(RadioStation.willhd);
-      } else if (handle) {
-        return HomeRadioWidget.handle(RadioStation.willhd, key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeRadioWidget(RadioStation.willhd, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'wpgufm_radio') {
-      if (title) {
-        return HomeRadioWidget.stationTitle(RadioStation.wpgufm);
-      } else if (handle) {
-        return HomeRadioWidget.handle(RadioStation.wpgufm, key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeRadioWidget(RadioStation.wpgufm, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+        return HomeRadioWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
 
@@ -648,7 +590,7 @@ class _HomePanelState extends State<HomePanel> with NotificationsListener, Autom
 
   Widget get _contentWidget => _buildContentWidget(_contentType);
 
-  Widget get _topShaddow => Container(height: HomeToutWidget.triangleHeight, decoration: BoxDecoration(
+  Widget get _topShaddow => Container(height: HomeToutWidget.triangleHeight(context), decoration: BoxDecoration(
     // color: Styles().colors.fillColorPrimaryTransparent03,
     gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
       Styles().colors.fillColorPrimaryTransparent03,
@@ -676,7 +618,7 @@ class _HomePanelState extends State<HomePanel> with NotificationsListener, Autom
 
 // HomeDragAndDropHost
 
-abstract class HomeDragAndDropHost  {
+mixin HomeDragAndDropHost  {
   set isDragging(bool value);
   void onDragAndDrop({String? dragFavoriteId, String? dropFavoriteId, CrossAxisAlignment? dropAnchor});
   void onAccessibilityMove({String? dragFavoriteId, int? delta});

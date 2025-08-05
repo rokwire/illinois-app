@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -33,16 +34,14 @@ class CanvasCourseCard extends StatefulWidget {
 }
 
 class _CanvasCourseCardState extends State<CanvasCourseCard> {
+
   @override
   Widget build(BuildContext context) {
     final double cardHeight = CanvasCourseCard.height(context, isSmall: widget.small);
     final double cardHorizontalPadding = 16;
     return Container(
         height: cardHeight,
-        decoration: BoxDecoration(
-            color: Styles().colors.white,
-            borderRadius: widget.embedded ? null : BorderRadius.all(Radius.circular(10)),
-            boxShadow: widget.embedded ? null : [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(0, 0))]),
+        decoration: widget.embedded ? _embeddedDecoration : _defaultDecoration,
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(
               child: Padding(
@@ -59,4 +58,21 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
               child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)))
         ]));
   }
+
+  BoxDecoration get _embeddedDecoration => BoxDecoration(
+    color: Styles().colors.white,
+  );
+
+  BoxDecoration get _defaultDecoration =>
+      HomeCard.defaultDecoration;
+  /*BoxDecoration(
+    color: Styles().colors.white,
+    borderRadius: BorderRadius.all(Radius.circular(10)),
+    boxShadow: [BoxShadow(
+      color: Styles().colors.blackTransparent018,
+      spreadRadius: 1.0,
+      blurRadius: 3.0,
+      offset: Offset(0, 0)
+    )]
+  )*/
 }

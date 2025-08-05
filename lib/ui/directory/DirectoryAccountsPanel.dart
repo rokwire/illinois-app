@@ -57,7 +57,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
   }
 
   void _onShareProfile() {
-    /*ProfileInfoShareSheet.present(context,
+    /*ProfileBusinessCardPanel.present(context,
       profile: Auth2().account?.previewProfile(permitted: contentType.profileInfo.permitedVisibility),
     );*/
     ProfileHomePanel.present(context,

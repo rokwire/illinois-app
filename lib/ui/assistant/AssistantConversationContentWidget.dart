@@ -15,11 +15,23 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:illinois/model/Dining.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/dining/DiningCard.dart';
+import 'package:illinois/ui/dining/FoodDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/Assistant.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
@@ -33,6 +45,7 @@ import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -77,6 +90,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   LocationServicesStatus? _locationStatus;
   AssistantLocation? _currentLocation;
+
+  Map<String, PageController>? _structsPageControllers;
 
   late StreamSubscription _streamSubscription;
   bool _loading = false;
@@ -124,6 +139,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _streamSubscription.cancel();
     _inputFieldFocus.dispose();
     _negativeFeedbackFocusNode.dispose();
+    _structsPageControllers?.values.forEach((controller) {
+      controller.dispose();
+    });
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -304,6 +322,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                     ])))))))
               ])),
 
+      //DD: Hide the horizontal scroll with struct elements - #5293
+      Visibility(visible: false/*(message.structElements?.isNotEmpty == true)*/, child: _buildStructElementsContainerWidget(message)),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
   }
@@ -425,6 +445,88 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         _shouldScrollToBottom = true;
       }
     });
+  }
+
+  Widget _buildStructElementsContainerWidget(Message? message) {
+    List<dynamic>? elements = message?.structElements;
+
+    if ((elements == null) || (elements.isNotEmpty != true)) {
+      return Container();
+    }
+    String messageId = message?.id ?? '';
+    if (_structsPageControllers == null) {
+      _structsPageControllers = <String, PageController>{};
+    }
+    PageController? currentController = _structsPageControllers![messageId];
+    if (currentController == null) {
+      currentController = PageController();
+      _structsPageControllers![messageId] = currentController;
+    }
+    int elementsCount = elements.length;
+    List<Widget> pages = <Widget>[];
+    for (int index = 0; index < elementsCount; index++) {
+      dynamic element = elements[index];
+      Widget? elementCard;
+      if (element is Event2) {
+        elementCard = Event2Card(element, displayMode: Event2CardDisplayMode.list, onTap: () => _onTapEvent(element));
+      } else if (element is Dining) {
+        elementCard = DiningCard(element, onTap: (_) => _onTapDiningLocation(element));
+      } else if (element is DiningProductItem) {
+        elementCard = _DiningProductItemCard(item: element, onTap: () => _onTapDiningProductItem(element));
+      } else if (element is DiningNutritionItem) {
+        elementCard = _DiningNutritionItemCard(item: element, onTap: () => _onTapDiningNutritionItem(element, elements));
+      }
+
+      if (elementCard != null) {
+        pages.add(Padding(padding: EdgeInsets.only(right: 18, bottom: 8), child: elementCard));
+      }
+    }
+    return Container(
+        padding: EdgeInsets.only(top: 10),
+        child: Column(children: <Widget>[
+          ExpandablePageView(allowImplicitScrolling: true, controller: currentController, children: pages),
+          AccessibleViewPagerNavigationButtons(controller: currentController, pagesCount: () => elementsCount),
+        ]));
+  }
+
+  void _onTapEvent(Event2 event) {
+    Analytics().logSelect(target: 'Assistant: Event "${event.name}"');
+    if (event.hasGame) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game)));
+    } else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event)));
+    }
+  }
+
+  void _onTapDiningLocation(Dining dining) {
+    Analytics().logSelect(target: 'Assistant: Dining Location "${dining.title}"');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: dining)));
+  }
+
+  void _onTapDiningProductItem(DiningProductItem item) {
+    Analytics().logSelect(target: 'Assistant: Dining Product Item "${item.name}"');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => FoodDetailPanel(productItem: item)));
+  }
+
+  void _onTapDiningNutritionItem(DiningNutritionItem item, List<dynamic>? elements) {
+    Analytics().logSelect(target: 'Assistant: Dining Nutrition Item "${item.name}"');
+    String? itemId = item.itemID;
+    DiningProductItem? productItem;
+    if (itemId != null) {
+      if ((elements != null) && elements.isNotEmpty) {
+        for (dynamic e in elements) {
+          if (e is DiningProductItem) {
+            if (e.itemID == itemId) {
+              productItem = e;
+              break;
+            }
+          }
+        }
+      }
+    }
+    if (productItem != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => FoodDetailPanel(productItem: productItem!)));
+    }
   }
 
   Widget _buildNegativeFeedbackFormWidget(Message message) {
@@ -1189,5 +1291,108 @@ class _AssistantMarkdownIconBuilder extends MarkdownElementBuilder {
   @override
   Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     return RichText(text: TextSpan(children: [WidgetSpan(child: Icon(icon, color: color, size: size), alignment: PlaceholderAlignment.middle)]));
+  }
+}
+
+class _DiningProductItemCard extends StatelessWidget {
+  final DiningProductItem item;
+  final GestureTapCallback? onTap;
+
+  _DiningProductItemCard({required this.item, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Container(
+          decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(8)), boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]),
+          margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            child: Container(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, children: [
+                    Text(item.category ?? '', style: Styles().textStyles.getTextStyle('widget.card.title.tiny.fat'), overflow: TextOverflow.ellipsis, maxLines: 1),
+                    Visibility(visible: (item.meal?.isNotEmpty == true), child: Text(' (${item.meal ?? ''})', style: Styles().textStyles.getTextStyle('common.title.secondary'), overflow: TextOverflow.ellipsis, maxLines: 1)),
+                  ]),
+                  Padding(padding: EdgeInsets.only(top: 2, bottom: 14), child: Row(children: [Expanded(child: Text(item.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), overflow: TextOverflow.ellipsis))])),
+                  Visibility(
+                      visible: item.ingredients.isNotEmpty,
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text(Localization().getStringEx('panel.assistant.dining_product_item.ingredients.label', 'INGREDIENTS:'), style: Styles().textStyles.getTextStyle('widget.label.small.fat'), overflow: TextOverflow.ellipsis),
+                        Row(children: [Expanded(child: Text(item.ingredients.join(', '), style: Styles().textStyles.getTextStyle('widget.detail.small'), overflow: TextOverflow.ellipsis))])
+                      ])),
+                  Visibility(
+                      visible: item.dietaryPreferences.isNotEmpty,
+                      child: Padding(
+                          padding: EdgeInsets.only(top: (item.ingredients.isNotEmpty ? 8 : 0)),
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Text(Localization().getStringEx('panel.assistant.dining_product_item.dietary_preferences.label', 'DIETARY PREFERENCES:'), style: Styles().textStyles.getTextStyle('widget.label.small.fat'), overflow: TextOverflow.ellipsis),
+                            Row(children: [Expanded(child: Text(item.dietaryPreferences.join(', '), style: Styles().textStyles.getTextStyle('widget.detail.small'), overflow: TextOverflow.ellipsis))])
+                          ]))),
+                ],
+              ),
+            ),
+          )),
+    );
+  }
+}
+
+class _DiningNutritionItemCard extends StatelessWidget {
+  final DiningNutritionItem item;
+  final GestureTapCallback? onTap;
+
+  _DiningNutritionItemCard({required this.item, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Container(
+          decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(8)), boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]),
+          margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            child: Container(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(padding: EdgeInsets.only(top: 2, bottom: 14), child: Row(children: [Expanded(child: Text(item.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), overflow: TextOverflow.ellipsis))])),
+                  Visibility(
+                    visible: (item.nutritionList?.isNotEmpty == true),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(Localization().getStringEx('panel.assistant.dining_nutrition_item.info.label', 'NUTRITION INFO:'), style: Styles().textStyles.getTextStyle('widget.label.small.fat'), overflow: TextOverflow.ellipsis),
+                      _buildNutritionInfoWidget(item.nutritionList),
+                    ]),
+                  ),
+                ],
+              ),
+            ),
+          )),
+    );
+  }
+
+  Widget _buildNutritionInfoWidget(List<NutritionNameValuePair>? nutritionList) {
+    if (nutritionList == null || nutritionList.isEmpty) {
+      return Container();
+    }
+    String nutritionInfo = '';
+    for (NutritionNameValuePair pair in nutritionList) {
+      if (nutritionInfo.isNotEmpty) {
+        nutritionInfo += ', ';
+      }
+      nutritionInfo += '${pair.name}: ${pair.value}';
+    }
+    return Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Expanded(
+        child: Text(nutritionInfo, style: Styles().textStyles.getTextStyle('widget.detail.small'), overflow: TextOverflow.ellipsis, maxLines: 5),
+      ),
+    ]);
   }
 }

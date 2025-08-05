@@ -167,10 +167,6 @@ class Config extends rokwire.Config {
   String? get gameDayAllUrl          => JsonUtils.stringValue(thirdPartyServices['gameday_all_url']);
   String? get convergeUrl            => JsonUtils.stringValue(thirdPartyServices['converge_url']);
 
-  // Getters: Twitter
-  String? get twitterUrl             => JsonUtils.stringValue(twitter['url']);
-  int?    get twitterTweetsCount     => JsonUtils.intValue(twitter['tweets_count']);
-  
   // ""     : { "id":"18165866", "name":"illinois_alma" },
   // "gies" : { "id":"19615559", "name":"giesbusiness" }
   Map<String, dynamic>? twitterAccount([String? accountKey]) {
@@ -248,6 +244,10 @@ class Config extends rokwire.Config {
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;
+
+  // Refresh
+
+  Future<void> refresh() => super.updateFromNet();
 
   // Upgrade
 

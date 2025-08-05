@@ -1,12 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/home/HomeEmptyFavoritesWidget.dart';
+import 'package:illinois/ui/BrowsePanel.dart';
+import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -25,6 +30,20 @@ class HomeWelcomeMessageWidget extends StatefulWidget {
 }
 
 class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> with NotificationsListener {
+
+  static const String _localScheme = 'local';
+
+  static const String _browseLocalUrlMacro          = '{{browse_local_url}}';
+  static const String _browseLocalUrl               = 'browse';
+
+  static const String _customizeFavsLocalUrlMacro   = '{{customize_favorites_local_url}}';
+  static const String _customizeFavsLocalUrl        = 'customize_favorites';
+
+  static const String _signInLocalUrlMacro          = '{{sign_in_local_url}}';
+  static const String _signInLocalUrl               = 'sign_in';
+
+  static const String _privacySettingsLocalUrlMacro = '{{privacy_settings_local_url}}';
+  static const String _privacySettingsLocalUrl      = 'privacy_settings';
 
   late bool _isUserVisible;
   late bool _isFavoritesEmpty;
@@ -66,38 +85,21 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
   }
 
   bool get _isWidgetVisible => _isUserVisible || _isFavoritesEmpty;
-  bool get _isCloseVisible => _isUserVisible;
+  bool get _isCloseVisible => _isUserVisible && !_isFavoritesEmpty;
 
   @override
-  Widget build(BuildContext context) => Visibility(visible: _isWidgetVisible, child:
-    Container(color: Styles().colors.fillColorPrimary, child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(height: 1, color: Styles().colors.disabledTextColor),
-        Row(children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
-              Text(Localization().getStringEx("widget.home.welcome_message.title.text", 'Tailor Your App Experience'),
-                style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat")
-              ),
-            ),
-          ),
-          Visibility(visible: _isCloseVisible, child:
-            Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
-              InkWell(onTap : _onClose, child:
-                Padding(padding: EdgeInsets.all(16), child:
-                  Styles().images.getImage('close-circle-white', excludeFromSemantics: true)
-                ),
-              ),
-            ),
-          ),
-        ],),
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child:
-          HomeFavoritesInstructionsMessageCard()
+  Widget build(BuildContext context) =>
+    Visibility(visible: _isWidgetVisible, child:
+      HomeCardWidget(
+        title: Localization().getStringEx("widget.home.welcome.title.text", 'Tailor Your App Experience'),
+        onClose: _isCloseVisible ? _onClose : null,
+        child: HtmlWidget(_messageHtml,
+          onTapUrl : (url) { _handleLinkTap(context, url, analyticsSource: widget.runtimeType.toString()); return true; },
+          textStyle:  Styles().textStyles.getTextStyle("widget.description.small.semi_fat"),
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
         ),
-        Container(height: 1, color: Styles().colors.disabledTextColor),
-      ],),
-    )
-  );
+      ),
+    );
 
   void _refresh() {
     bool isUserVisible = (Storage().homeWelcomeMessageVisible != false);
@@ -132,4 +134,33 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
       Storage().homeWelcomeMessageVisible = _isUserVisible = false;
     });
   }
+
+  String get _messageHtml => Localization().getStringEx("widget.home.favorites.instructions.message.text", "Tap the \u2606s in <a href='$_browseLocalUrlMacro'>Sections</a> or <a href='$_customizeFavsLocalUrlMacro'>Customize</a> to add shortcuts to Favorites. Note that some features require specific <a href='$_privacySettingsLocalUrlMacro'>privacy settings</a> and <a href='$_signInLocalUrlMacro'>signing in</a> with your NetID, phone number, or email address.")
+    .replaceAll(_browseLocalUrlMacro, '$_localScheme://$_browseLocalUrl')
+    .replaceAll(_customizeFavsLocalUrlMacro, '$_localScheme://$_customizeFavsLocalUrl')
+    .replaceAll(_signInLocalUrlMacro, '$_localScheme://$_signInLocalUrl')
+    .replaceAll(_privacySettingsLocalUrlMacro, '$_localScheme://$_privacySettingsLocalUrl');
+
+  void _handleLinkTap(BuildContext context, String? url, {String? analyticsSource}) {
+    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+    if (uri?.scheme == _localScheme) {
+      if (uri?.host == _browseLocalUrl) {
+        Analytics().logSelect(target: 'Sections', source: analyticsSource);
+        NotificationService().notify(BrowsePanel.notifySelect);
+      }
+      if (uri?.host == _customizeFavsLocalUrl) {
+        Analytics().logSelect(target: 'Customize', source: analyticsSource);
+        HomeCustomizeFavoritesPanel.present(context);
+      }
+      else if (uri?.host == _signInLocalUrl) {
+        Analytics().logSelect(target: 'Sign In', source: analyticsSource);
+        ProfileHomePanel.present(context, contentType: ProfileContentType.login);
+      }
+      else if (uri?.host == _privacySettingsLocalUrl) {
+        Analytics().logSelect(target: 'Privacy Settings', source: analyticsSource);
+        SettingsHomePanel.present(context, content: SettingsContentType.privacy);
+      }
+    }
+  }
+
 }

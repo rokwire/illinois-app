@@ -50,9 +50,8 @@ class _AthleticsGameDayWidgetState extends State<AthleticsGameDayWidget> {
   Widget build(BuildContext context) {
 
     return (widget.favoriteId != null) ?
-      HomeSlantWidget(favoriteId: widget.favoriteId,
+      HomeFavoriteWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
-        titleIconKey: widget.sportDefinition?.iconPath,
         child: Padding(padding: EdgeInsets.only(bottom: 48), child:
           AthleticsGameDetailHeading(game: widget.game),
         ),

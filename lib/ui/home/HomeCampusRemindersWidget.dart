@@ -22,7 +22,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -108,9 +107,8 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.campus_reminders.label.campus_reminders', 'Campus Reminders'),
-      titleIconKey: 'reminder',
       child: _buildContent()
     );
   }
@@ -130,7 +128,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
       for (int index = 0; index < visibleCount; index++) {
         Map<String, dynamic>? reminderItem = JsonUtils.mapValue(_reminderItems![index]);
         pages.add(Padding(key: _contentKeys[Guide().entryId(reminderItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8), child:
-          GuideEntryCard(reminderItem)
+          GuideEntryCard(reminderItem, displayMode: CardDisplayMode.home,)
         ));
       }
 
@@ -153,13 +151,13 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        GuideEntryCard(_reminderItems?.first)
+        GuideEntryCard(_reminderItems?.first, displayMode: CardDisplayMode.home)
       );
     }
     return Column(children: <Widget>[
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
-        LinkButton(
+      HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.campus_reminders.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.campus_reminders.button.all.hint', 'Tap to view all reminders'),
           onTap: _onViewAll,

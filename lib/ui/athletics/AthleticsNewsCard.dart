@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/News.dart';
@@ -26,10 +27,11 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsNewsCard extends StatefulWidget {
-  final GestureTapCallback? onTap;
   final News? news;
+  final CardDisplayMode displayMode;
+  final GestureTapCallback? onTap;
 
-  AthleticsNewsCard({Key? key, this.onTap, this.news}) : super(key: key);
+  AthleticsNewsCard({Key? key, this.news, this.displayMode = CardDisplayMode.browse, this.onTap}) : super(key: key);
 
   @override
   _AthleticsNewsCardState createState() => _AthleticsNewsCardState();
@@ -76,11 +78,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> with Notification
             alignment: Alignment.topCenter,
             children: [
               Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                    boxShadow: [const BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
-                ),
+                decoration: _cardDecoration,
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 24),
                   child: Column(
@@ -96,6 +94,19 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> with Notification
               _topBorder(),
             ]));
   }
+
+  BoxDecoration get _cardDecoration {
+    switch (widget.displayMode) {
+      case CardDisplayMode.home: return HomeCard.defaultDecoration;
+      case CardDisplayMode.browse: return _browseDecoration;
+    }
+  }
+
+  BoxDecoration get _browseDecoration => BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.all(Radius.circular(4)),
+      boxShadow: [const BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+  );
 
   Widget _newsCategory() {
     bool isFavorite = Auth2().isFavorite(widget.news);

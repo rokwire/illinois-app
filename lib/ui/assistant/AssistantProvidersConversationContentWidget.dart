@@ -18,6 +18,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/Assistant.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
@@ -51,7 +52,7 @@ class AssistantProvidersConversationContentWidget extends StatefulWidget {
 class _AssistantProvidersConversationContentWidgetState extends State<AssistantProvidersConversationContentWidget>
     with NotificationsListener, WidgetsBindingObserver, AutomaticKeepAliveClientMixin<AssistantProvidersConversationContentWidget> {
 
-  List<AssistantProvider>? _availableProviders;
+  late List<AssistantProvider> _availableProviders;
 
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
@@ -89,12 +90,11 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
       LocationServices.notifyStatusChanged,
       LocationServices.notifyLocationChanged,
       FlexUI.notifyChanged,
-      Assistant.notifyProvidersChanged,
     ]);
     _scrollController = ScrollController(initialScrollOffset: _scrollPosition ?? 0);
     _scrollController.addListener(_scrollListener);
+    _availableProviders = _buildAvailableProviders();
 
-    _buildAvailableProviders();
     _loadLocationStatus();
     _onPullToRefresh();
 
@@ -118,9 +118,8 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     super.dispose();
   }
 
-  void _buildAvailableProviders() {
-    _availableProviders = Assistant().providers;
-  }
+  List<AssistantProvider> _buildAvailableProviders() =>
+    AssistantProviderUI.listFromCodes(JsonUtils.listStringsValue(FlexUI()['assistant'])) ?? <AssistantProvider>[];
 
   // AutomaticKeepAliveClientMixin
   @override
@@ -151,9 +150,8 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
         _currentLocation = null;
       }
     } else if (name == FlexUI.notifyChanged) {
+      _availableProviders = _buildAvailableProviders();
       _onPullToRefresh();
-    } else if (name == Assistant.notifyProvidersChanged) {
-      _buildAvailableProviders();
     }
   }
 
@@ -252,7 +250,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                                                               child: Icon(Icons.thumb_down, size: 18, color: Styles().colors.white)))),
                                                   WidgetSpan(
                                                       child: MarkdownBody(
-                                                          data: (message.user ? message.content : '**[${assistantProviderToDisplayString(message.provider)}]** ${message.content}'),
+                                                          data: (message.user ? message.content : '**[${message.providerDisplayString}]** ${message.content}'),
                                                           styleSheet: MarkdownStyleSheet(p: message.user ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular') : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'), a: TextStyle(decoration: TextDecoration.underline)),
                                                           onTapLink: (text, href, title) {
                                                             AppLaunchUrl.launch(url: href, context: context);
@@ -708,7 +706,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
       return;
     }
 
-    if (CollectionUtils.isEmpty(_availableProviders)) {
+    if (_availableProviders.isEmpty) {
       // Do not allow sending message if there is no available providers
       return;
     }
@@ -741,8 +739,8 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
 
     List<Future<dynamic>> assistantFutures = [];
     Map<int, AssistantProvider> providerPositions = {};
-    for (int i = 0; i < _availableProviders!.length; i++) {
-      AssistantProvider provider = _availableProviders![i];
+    for (int i = 0; i < _availableProviders.length; i++) {
+      AssistantProvider provider = _availableProviders[i];
       providerPositions.addAll({i: provider});
       assistantFutures.add(Assistant().sendQuery(message, provider: provider, location: _currentLocation, context: userContext));
     }
@@ -751,7 +749,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
 
     for (int j = 0; j<queryResults.length;j++) {
       dynamic result = queryResults[j];
-      AssistantProvider provider = _availableProviders![j];
+      AssistantProvider provider = _availableProviders[j];
       if (result is Message) {
         result.provider = provider;
         _addMessage(result);
@@ -899,7 +897,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     return _hideChatBar ? 0 : _keyboardHeight;
   }
 
-  double get _keyboardHeight => context.mounted ? MediaQuery.of(context).viewInsets.bottom : 0.0;
+  double get _keyboardHeight => (mounted && context.mounted) ? MediaQuery.of(context).viewInsets.bottom : 0.0;
 
   double get _chatBarHeight {
     RenderObject? chatBarRenderBox = _chatBarKey.currentContext?.findRenderObject();

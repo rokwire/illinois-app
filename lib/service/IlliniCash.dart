@@ -158,11 +158,6 @@ class IlliniCash with Service, NetworkAuthProvider, NotificationsListener {
     return _ballance;
   }
 
-  Future<Response?> _loadBalanceRequest() async => _enabled ?
-    Network().get("${Config().illiniCashUrl}/Balances/${Auth2().uin}", auth: this,
-      analyticsUrl: "${Config().illiniCashUrl}/Balances/${Analytics.LogAnonymousUin}",
-    ) : null;
-
   Future<void> updateBalance() async {
     if(_enabled) {
       dynamic studentSummary = await _loadStudentSummary();
@@ -172,7 +167,10 @@ class IlliniCash with Service, NetworkAuthProvider, NotificationsListener {
         
         bool? eligible = studentSummary.eligibility?.eligible;
         if (eligible == true) {
-          Response? response = await _loadBalanceRequest();
+          Response? response = _enabled ?
+            await Network().get("${Config().illiniCashUrl}/Balances/${Auth2().uin}", auth: this,
+              analyticsUrl: "${Config().illiniCashUrl}/Balances/${Analytics.LogAnonymousUin}",
+            ) : null;
           if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
             IlliniCashBallance? ballance = IlliniCashBallance.fromJson(JsonUtils.decode(response.body));
             if (ballance != null) {
@@ -251,36 +249,17 @@ class IlliniCash with Service, NetworkAuthProvider, NotificationsListener {
     }
   }
 
-  Future<Response?> _loadTransactionHistoryResponse(DateTime? startDate, DateTime? endDate) async {
-    if (_enabled && startDate != null && endDate != null && endDate.isAfter(startDate)) {
+
+  Future<List<IlliniCashTransaction>?> loadTransactionHistory(DateTime? startDate, DateTime? endDate) async {
+    if (_enabled && (startDate != null) && (endDate != null) && endDate.isAfter(startDate)) {
       String uin = Auth2().uin ?? "";
       String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
       String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
       String transactionHistoryUrl = "${Config().illiniCashUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
       String analyticsUrl = "${Config().illiniCashUrl}/IlliniCashTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
-      final result = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
-      return result;
-    }
-    else {
-      return null;
-    }
-  }
-
-  Future<List<IlliniCashTransaction>?> loadTransactionHistory(DateTime? startDate, DateTime? endDate) async {
-    Response? response = await _loadTransactionHistoryResponse(startDate, endDate);
-    return (response != null && response.statusCode >= 200 && response.statusCode <= 301) ?
-      IlliniCashTransaction.listFromJson(JsonUtils.listValue(response.body)) : null;
-  }
-
-  Future<Response?> _loadMealPlanTransactionHistoryResponse(DateTime? startDate, DateTime? endDate) async {
-    if (_enabled && startDate != null && endDate != null && endDate.isAfter(startDate)) {
-      String uin = Auth2().uin ?? "";
-      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-      String transactionHistoryUrl = "${Config().illiniCashUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
-      String analyticsUrl = "${Config().illiniCashUrl}/MealPlanTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
-      final result = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
-      return result;
+      Response? response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
+      return (response != null && response.statusCode >= 200 && response.statusCode <= 301) ?
+        IlliniCashTransaction.listFromJson(JsonUtils.decodeList(response.body)) : null;
     }
     else {
       return null;
@@ -289,20 +268,15 @@ class IlliniCash with Service, NetworkAuthProvider, NotificationsListener {
 
   Future<List<MealPlanTransaction>?> loadMealPlanTransactionHistory(DateTime? startDate, DateTime? endDate) async {
     // TMP: "[{\"Amount\":\"1\",\"Date\":\"2017-01-19 18:24:09 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-19 11:41:07 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 18:42:01 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 11:36:14 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 18:40:11 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 11:27:49 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 18:40:20 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 12:42:43 \",\"Location\":\"IKE\",\"Description\":\"Lunch\"}]";
-    Response? response = await _loadMealPlanTransactionHistoryResponse(startDate, endDate);
-    return (response != null && response.statusCode >= 200 && response.statusCode <= 301) ?
-      MealPlanTransaction.listFromJson(JsonUtils.decodeList(response.body)) : null;
-  }
-
-  Future<Response?> _loadCafeCreditTransactionHistoryResponse(DateTime? startDate, DateTime? endDate) async {
     if (_enabled && startDate != null && endDate != null && endDate.isAfter(startDate)) {
       String uin = Auth2().uin ?? "";
       String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
       String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-      String transactionHistoryUrl = "${Config().illiniCashUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
-      String analyticsUrl = "${Config().illiniCashUrl}/CafeCreditTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
-      final result = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
-      return result;
+      String transactionHistoryUrl = "${Config().illiniCashUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
+      String analyticsUrl = "${Config().illiniCashUrl}/MealPlanTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
+      Response? response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
+      return (response != null && response.statusCode >= 200 && response.statusCode <= 301) ?
+        MealPlanTransaction.listFromJson(JsonUtils.decodeList(response.body)) : null;
     }
     else {
       return null;
@@ -311,9 +285,19 @@ class IlliniCash with Service, NetworkAuthProvider, NotificationsListener {
 
   Future<List<CafeCreditTransaction>?> loadCafeCreditTransactionHistory(DateTime? startDate, DateTime? endDate) async {
     // TMP "[{\"Date\":\"1/18/2019 10:55:06 AM\",\"Description\":\"Rollover\",\"Location\":\"OFFICE-CDHAYES1\",\"Amount\":\"100.0\"}]";
-    Response? response = await _loadCafeCreditTransactionHistoryResponse(startDate, endDate);
-    return (response != null && response.statusCode >= 200 && response.statusCode <= 301) ?
-    CafeCreditTransaction.listFromJson(JsonUtils.decodeList(response.body)) : null;
+    if (_enabled && startDate != null && endDate != null && endDate.isAfter(startDate)) {
+      String uin = Auth2().uin ?? "";
+      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+      String transactionHistoryUrl = "${Config().illiniCashUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
+      String analyticsUrl = "${Config().illiniCashUrl}/CafeCreditTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
+      Response? response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
+      return (response != null && response.statusCode >= 200 && response.statusCode <= 301) ?
+        CafeCreditTransaction.listFromJson(JsonUtils.decodeList(response.body)) : null;
+    }
+    else {
+      return null;
+    }
   }
 
   Future<void> _saveCreditCard(_TransactionContext context) async{

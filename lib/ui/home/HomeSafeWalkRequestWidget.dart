@@ -29,18 +29,18 @@ class HomeSafeWalkRequestWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: favoriteId,
+    return HomeFavoriteWidget(favoriteId: favoriteId,
       title: title,
-      titleIconKey: 'person-walking',
       child: _contentWidget(context),
     );
   }
 
   Widget _contentWidget(BuildContext context) =>
-    Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+    Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
       SafetySafeWalkRequestCard(
-        backgroundColor: Styles().colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(6)),
+        backgroundColor: HomeCard.defaultBackColor,
+        borderRadius: HomeCard.defaultBorderRadius,
+        shadow: HomeCard.defaultShadow,
         headerWidget: _cardHeaderWidget(context),
       )
     );

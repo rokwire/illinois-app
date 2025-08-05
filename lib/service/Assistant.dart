@@ -1,14 +1,12 @@
 import 'dart:ui';
 
-import 'package:collection/collection.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -16,17 +14,13 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
+class Assistant with Service, NotificationsListener {
 
-  static const String notifyFaqsContentChanged = "edu.illinois.rokwire.assistant.content.faqs.changed";
-  static const String notifyProvidersChanged = "edu.illinois.rokwire.assistant.providers.changed";
   static const String notifySettingsChanged = "edu.illinois.rokwire.assistant.settings.changed";
-  static const String _faqContentCategory = "assistant_faqs";
+  static const String notifyUserChanged = "edu.illinois.rokwire.assistant.user.changed";
 
   AssistantUser? _user;
   AssistantSettings? _settings;
-  List<AssistantProvider>? _providers;
-  Map<String, dynamic>? _faqsContent;
 
   DateTime?  _pausedDateTime;
 
@@ -55,22 +49,9 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      Content.notifyContentItemsChanged,
       Auth2.notifyLoginChanged,
-      FlexUI.notifyChanged,
       AppLivecycle.notifyStateChanged,
     ]);
-  }
-
-  @override
-  Future<void> initService() async {
-    _initFaqs();
-    if (Auth2().isLoggedIn) {
-      _loadSettings();
-      _loadUser();
-      _loadAllMessages();
-      _buildAvailableProviders();
-    }
   }
 
   @override
@@ -80,110 +61,164 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
   }
 
   @override
-  Set<Service> get serviceDependsOn {
-    return Set.from([Auth2(), Content(), FlexUI()]);
+  Future<void> initService() async {
+
+    List<Future<String?>> initFutures = <Future<String?>>[];
+
+    int? futuresSettingsIndex;
+    _settings = AssistantSettings.fromJson(JsonUtils.decodeMap(Storage().assistantSettings));
+    if (_settings == null) {
+      futuresSettingsIndex = initFutures.length;
+      initFutures.add(_loadSettingsStringFromNet());
+    }
+    else {
+      _updateSettings();
+    }
+
+    int? futuresUserIndex;
+    _user = AssistantUser.fromJson(JsonUtils.decodeMap(Storage().assistantUser));
+    if (_user == null) {
+      futuresUserIndex = initFutures.length;
+      initFutures.add(_loadUserStringFromNet());
+    }
+    else {
+      _updateUser();
+    }
+
+    // Do not wait for messages loading, load them assynchronically
+    _loadAllMessages();
+
+    if (initFutures.isNotEmpty) {
+      List<String?> futuresResults = await Future.wait<String?>(initFutures);
+      if (futuresSettingsIndex != null) {
+        String? settingsString = ListUtils.entry<String?>(futuresResults, futuresSettingsIndex);
+        if (settingsString != null) {
+          _settings = AssistantSettings.fromJson(JsonUtils.decodeMap(settingsString));
+          Storage().assistantSettings = settingsString;
+        }
+      }
+      if (futuresUserIndex != null) {
+        String? userString = ListUtils.entry<String?>(futuresResults, futuresUserIndex);
+        if (userString != null) {
+          _user = AssistantUser.fromJson(JsonUtils.decodeMap(userString));
+          Storage().assistantUser = userString;
+        }
+      }
+    }
+
+    await super.initService();
   }
+
+
+  @override
+  Set<Service> get serviceDependsOn =>
+    <Service>{ Storage(), Config(), Auth2() };
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Content.notifyContentItemsChanged) {
-      _onContentItemsChanged(param);
-    } else if (name == Auth2.notifyLoginChanged) {
-      _loadSettings();
-      _loadUser();
-      _buildAvailableProviders();
-      if (Auth2().isLoggedIn) {
-        _loadAllMessages();
-      } else {
-        _clearAllMessages();
-      }
-    } else if (name == FlexUI.notifyChanged) {
-      _buildAvailableProviders();
-    } else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == Auth2.notifyLoginChanged) {
+      _updateUser();
+      _updateSettings();
+      _loadAllMessages();
     }
-  }
-
-  void _onContentItemsChanged(Set<String>? categoriesDiff) {
-    if (categoriesDiff?.contains(_faqContentCategory) == true) {
-      _initFaqs();
-      NotificationService().notify(notifyFaqsContentChanged);
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
     }
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
-    } else if (state == AppLifecycleState.resumed) {
+    }
+    else if (state == AppLifecycleState.resumed) {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _loadSettings();
+          _updateUser();
+          _updateSettings();
         }
       }
     }
   }
 
-  // ContentItemCategoryClient
-
-  @override
-  List<String> get contentItemCategory => <String>[_faqContentCategory];
-
-  // FAQs
-
-  void _initFaqs() {
-    _faqsContent = Content().contentItem(_faqContentCategory);
-  }
-
-  String? get faqs {
-    if (_faqsContent == null) {
-      return null;
-    }
-    String defaultLocaleCode = Localization().defaultLocale?.languageCode ?? 'en';
-    String? selectedLocaleCode = Localization().currentLocale?.languageCode;
-    String? defaultFaqs = JsonUtils.stringValue(_faqsContent![defaultLocaleCode]);
-    return JsonUtils.stringValue(_faqsContent![selectedLocaleCode]) ?? defaultFaqs;
-  }
-
   // Settings
+  AssistantSettings? get settings => _settings;
 
-  bool get isAvailable => _settings?.available ?? false;
-  String? get localizedTermsText => _settings?.getTermsText(locale: _localeCode);
-  String? get localizedUnavailableText => _settings?.getUnavailableText(locale: _localeCode);
+  bool get isAvailable => (_settings?.available == true);
 
-  String? get _localeCode => (Localization().currentLocale ?? Localization().defaultLocale)?.languageCode;
-
-  Future<void> _loadSettings() async {
-    AssistantSettings? settings;
-    if (!_isEnabled) {
-      Log.w('Assistant settings - missing url.');
-    } else if (Auth2().isLoggedIn) {
+  Future<String?> _loadSettingsStringFromNet() async {
+    if (_isEnabled) {
       String? url = '${Config().aiProxyUrl}/client-settings';
       Response? response = await Network().get(url, auth: Auth2());
       int? responseCode = response?.statusCode;
       String? responseString = response?.body;
       if (responseCode == 200) {
-        settings = AssistantSettings.fromJson(JsonUtils.decodeMap(responseString));
+        Log.i('Succeeded to load assistant settings:\n$responseString');
+        return responseString;
       } else {
         Log.w('Failed to load assistant settings. Reason: $responseCode, $responseString');
       }
     }
-    if (_settings != settings) {
+    else {
+      Log.w('Assistant settings - missing url.');
+    }
+    return null;
+  }
+
+  //Future<AssistantSettings?> _loadSettings() async =>
+  //  AssistantSettings.fromJson(JsonUtils.decodeMap(await _loadSettingsStringFromNet()));
+
+  Future<void> _updateSettings() async {
+    String? settingsString = await _loadSettingsStringFromNet();
+    AssistantSettings? settings = AssistantSettings.fromJson(JsonUtils.decodeMap(settingsString));
+    if ((settings != null) && (settings != _settings)) {
       _settings = settings;
+      Storage().assistantSettings = settingsString;
       NotificationService().notify(notifySettingsChanged);
     }
   }
 
   // User
 
+  Future<String?> _loadUserStringFromNet() async {
+    if (_isEnabled) {
+      String? url = '${Config().aiProxyUrl}/user-settings';
+      Response? response = await Network().get(url, auth: Auth2());
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        return responseString;
+      } else {
+        Log.w('Failed to load assistant user. Reason: $responseCode, $responseString');
+      }
+    }
+    else {
+      Log.w('Assistant loading user - missing url.');
+    }
+    return null;
+  }
+
+  //Future<AssistantUser?> _loadUser() async =>
+  //  AssistantUser.fromJson(JsonUtils.decodeMap(await _loadUserStringFromNet()));
+
+  Future<void> _updateUser() async {
+    String? userString = await _loadUserStringFromNet();
+    AssistantUser? user = AssistantUser.fromJson(JsonUtils.decodeMap(userString));
+    if ((user != null) && (user != _user)) {
+      _user = user;
+      Storage().assistantUser = userString;
+      NotificationService().notify(notifyUserChanged);
+    }
+  }
+
   bool hasUserAcceptedTerms() {
     DateTime? termsAcceptedDate = _user?.termsAcceptedDateUtc;
     if (termsAcceptedDate == null) {
       return false;
     }
-    DateTime? termsIntroducedDate = _settings?.termsAcceptedDateUtc;
+    DateTime? termsIntroducedDate = _settings?.termsSubmittedDateUtc;
     if (termsIntroducedDate == null) {
       return true;
     }
@@ -195,16 +230,12 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
       Log.w('Assistant acceptTerms - missing url.');
       return false;
     }
-    if (!Auth2().isLoggedIn) {
-      Log.w('Assistant acceptTerms - user not signed in.');
-      return false;
-    }
     String? url = '${Config().aiProxyUrl}/user-consent';
     Response? response = await Network().post(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      await _loadUser();
+      await _updateUser();
       return true;
     } else {
       Log.w('Failed to accept assistant terms. Reason: $responseCode, $responseString');
@@ -212,104 +243,38 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
     }
   }
 
-  Future<void> _loadUser() async {
-    AssistantUser? user;
-    if (!_isEnabled) {
-      Log.w('Assistant loading user - missing url.');
-    } else if (Auth2().isLoggedIn) {
-      String? url = '${Config().aiProxyUrl}/user-settings';
-      Response? response = await Network().get(url, auth: Auth2());
-      int? responseCode = response?.statusCode;
-      String? responseString = response?.body;
-      if (responseCode == 200) {
-        user = AssistantUser.fromJson(JsonUtils.decodeMap(responseString));
-      } else {
-        Log.w('Failed to load assistant user. Reason: $responseCode, $responseString');
-      }
-    }
-    _user = user;
-  }
-
-  // Providers
-
-  List<AssistantProvider>? get providers => _providers;
-
-  void _buildAvailableProviders() {
-    List<AssistantProvider>? updatedProviders;
-    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['assistant']);
-    if (contentCodes != null) {
-      updatedProviders = <AssistantProvider>[];
-      for (String code in contentCodes) {
-        AssistantProvider? provider = _providerFromCode(code);
-        if (provider != null) {
-          updatedProviders.add(provider);
-        }
-      }
-    } else {
-      updatedProviders = null;
-    }
-    if (!DeepCollectionEquality().equals(_providers, updatedProviders)) {
-      _providers = updatedProviders;
-      NotificationService().notify(notifyProvidersChanged);
-    }
-  }
-
-  AssistantProvider? _providerFromCode(String? code) {
-    switch (code) {
-      case 'google_assistant':
-        return AssistantProvider.google;
-      case 'grok_assistant':
-        return AssistantProvider.grok;
-      case 'perplexity_assistant':
-        return AssistantProvider.perplexity;
-      case 'openai_assistant':
-        return AssistantProvider.openai;
-      default:
-        return null;
-    }
-  }
-
   // Messages
 
-  List<Message> getMessages({AssistantProvider? provider}) {
-    if (provider != null) {
-      return _displayMessages[provider] ?? List<Message>.empty();
-    } else {
-      return List<Message>.empty();
+  List<Message> getMessages({AssistantProvider? provider}) =>
+    _displayMessages[provider] ?? List<Message>.empty();
+
+  void _applyMessages(List<Message>? messages, { required AssistantProvider provider}) {
+    List<Message> providerMessages = _displayMessages[provider] ??= List<Message>.empty(growable: true);
+    if (messages != null) {
+      providerMessages.clear();
+      providerMessages.add(_initialMessage);
+      providerMessages.addAll(messages);
     }
   }
 
-  void _initMessages({required AssistantProvider provider}) {
-    if (CollectionUtils.isNotEmpty(_displayMessages[provider])) {
-      _displayMessages[provider]!.clear();
-    }
-    addMessage(
-        provider: provider,
-        message: Message(
-            content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
-                '**Ask a question below to explore university resources with the NEW Illinois Assistant!**\nCheck the accuracy of responses. Your feedback ([:thumb_up:] [:thumb_down:]) will help improve the Assistant over time.'),
-            user: false));
-  }
-
-  void _clearAllMessages() {
-    for (AssistantProvider provider in AssistantProvider.values) {
-      if (CollectionUtils.isNotEmpty(_displayMessages[provider])) {
-        _displayMessages[provider]!.clear();
-      }
-    }
-  }
+  Message get _initialMessage => Message(
+    content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
+      '**Ask a question below to explore university resources with the NEW Illinois Assistant!**\nCheck the accuracy of responses. Your feedback ([:thumb_up:] [:thumb_down:]) will help improve the Assistant over time.'),
+    user: false
+  );
 
   void addMessage({required AssistantProvider provider, required Message message}) {
-    _displayMessages[provider]!.add(message);
+    (_displayMessages[provider] ??= List<Message>.empty(growable: true)).add(message);
   }
 
   void removeMessage({required AssistantProvider provider, required Message message}) {
-    _displayMessages[provider]!.remove(message);
+    _displayMessages[provider]?.remove(message);
   }
 
   void removeLastMessage({required AssistantProvider provider}) {
-    if (CollectionUtils.isNotEmpty(_displayMessages[provider])) {
-      _displayMessages[provider]!.removeLast();
+    List<Message>? providerMessages = _displayMessages[provider];
+    if ((providerMessages != null) && providerMessages.isNotEmpty) {
+      providerMessages.removeLast();
     }
   }
 
@@ -329,45 +294,32 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
   }
 
   Future<void> _loadAllMessages() async {
-    await Future.wait([
-      _loadMessages(provider: AssistantProvider.google),
-      _loadMessages(provider: AssistantProvider.grok),
-      _loadMessages(provider: AssistantProvider.perplexity),
-      _loadMessages(provider: AssistantProvider.openai),
-    ]);
+    List<AssistantProvider> providers = AssistantProvider.values;
+    Iterable<Future<List<Message>?>> providerFutures = providers.map((AssistantProvider provider) => _loadMessages(provider:provider));
+    List<List<Message>?> results = await Future.wait<List<Message>?>(providerFutures);
+    for (int index = 0; index < providers.length; index++) {
+      _applyMessages(ListUtils.entry<List<Message>?>(results, index), provider: providers[index]);
+    }
   }
 
-  Future<void> _loadMessages({required AssistantProvider provider}) async {
-    List<dynamic>? responseJson;
+  Future<List<Message>?> _loadMessages({required AssistantProvider provider}) async {
     if (_isEnabled) {
       String url = '${Config().aiProxyUrl}/messages/load';
       Map<String, String> headers = {'Content-Type': 'application/json'};
-      Map<String, dynamic> bodyJson = {'sort_by': 'date', 'order': 'asc', 'provider': assistantProviderToKeyString(provider)};
+      Map<String, dynamic> bodyJson = {'sort_by': 'date', 'order': 'asc', 'provider': provider.key};
       String? body = JsonUtils.encode(bodyJson);
       Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: body);
       int? responseCode = response?.statusCode;
       String? responseString = response?.body;
       if (responseCode == 200) {
-        responseJson = JsonUtils.decodeList(responseString);
+        return Message.listFromJsonList(JsonUtils.decodeList(responseString));
       } else {
-        Log.i('Failed to load assistant (${assistantProviderToKeyString(provider)}) messages. Response:\n$responseCode: $responseString');
+        Log.i('Failed to load assistant (${provider.key}) messages. Response:\n$responseCode: $responseString');
       }
     } else {
-      Log.i('Failed to load assistant (${assistantProviderToKeyString(provider)}) messages. Missing assistant url.');
+      Log.i('Failed to load assistant (${provider.key}) messages. Missing assistant url.');
     }
-    _buildDisplayMessageList(provider: provider, messagesJsonList: responseJson);
-  }
-
-  void _buildDisplayMessageList({required AssistantProvider provider, List<dynamic>? messagesJsonList}) {
-    _initMessages(provider: provider);
-    if ((messagesJsonList != null) && messagesJsonList.isNotEmpty) {
-      for(dynamic messageJsonEntry in messagesJsonList) {
-        Message question = Message.fromQueryJson(messageJsonEntry);
-        Message answer = Message.fromAnswerJson(messageJsonEntry);
-        _displayMessages[provider]!.add(question);
-        _displayMessages[provider]!.add(answer);
-      }
-    }
+    return null;
   }
 
   // Implementation
@@ -389,7 +341,7 @@ class Assistant with Service, NotificationsListener, ContentItemCategoryClient {
       body['context'] = context;
     }
     if (provider != null) {
-      body['provider'] = assistantProviderToKeyString(provider);
+      body['provider'] = provider.key;
     }
     if (location != null) {
       body['params'] = {

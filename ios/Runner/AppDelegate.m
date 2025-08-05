@@ -98,7 +98,13 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	
 	// Setup supported & preffered orientation
 	_preferredInterfaceOrientation = UIInterfaceOrientationPortrait;
-	_supportedInterfaceOrientations = [NSSet setWithObject:@(_preferredInterfaceOrientation)];
+
+	//_supportedInterfaceOrientations = [NSSet setWithObject:@(_preferredInterfaceOrientation)];
+	_supportedInterfaceOrientations = [NSSet setWithObjects:
+		@(UIInterfaceOrientationPortrait),
+		@(UIInterfaceOrientationLandscapeLeft),
+		@(UIInterfaceOrientationLandscapeRight),
+	nil];
 
 	// Setup root ViewController
 	UIViewController *rootViewController = self.window.rootViewController;

@@ -1840,8 +1840,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         return Localization().getStringEx('panel.explore.filter.tags.hint', '');
       case ExploreFilterType.student_course_terms:
         return Localization().getStringEx('panel.explore.filter.terms.hint', '');
-      default:
-        return null;
     }
   }
 

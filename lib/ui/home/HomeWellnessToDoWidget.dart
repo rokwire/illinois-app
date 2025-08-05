@@ -59,60 +59,47 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> with No
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessToDoWidget.title,
-      titleIconKey: 'todo',
-      childPadding: HomeSlantWidget.defaultChildPadding,
+      childPadding: HomeFavoriteWidget.defaultChildPadding,
       child: _buildContent(),
     );
   }
 
   Widget _buildContent() {
     return GestureDetector(child:
-      Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
-        ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
-          Row(children: <Widget>[
-            Expanded(child:
-              Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
-                  Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
-                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Row(children: [Expanded(child: Text(Localization().getStringEx('widget.home.wellness.todo.items.today.label', 'TODAY\'S ITEMS'), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.label.tiny.fat")))]),
-                      Stack(alignment: Alignment.center, children: [
-                        Visibility(visible: !_loading, child: _buildTodayItemsWidget()),
-                        _buildLoadingIndicator()
-                      ]),
-                      Padding(padding: EdgeInsets.only(top: 15), child: Row(children: [Expanded(child: Text(Localization().getStringEx('widget.home.wellness.todo.items.unassigned.label', 'UNASSIGNED ITEMS'), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.label.tiny.fat")))])),
-                      Stack(alignment: Alignment.center, children: [
-                        Visibility(visible: !_loading, child: _buildUnAssignedItemsWidget()),
-                        _buildLoadingIndicator()
-                      ]),
-                      Padding(padding: EdgeInsets.only(top: 20), child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                        RoundedButton(
-                          label: Localization().getStringEx('widget.home.wellness.todo.items.add.button', 'Add Item'), borderColor: Styles().colors.fillColorSecondary,
-                            textStyle: Styles().textStyles.getTextStyle("widget.button.title.small"),
-                          leftIcon: Styles().images.getImage('plus-circle', excludeFromSemantics: true),
-                          iconPadding: 8, rightIconPadding: EdgeInsets.only(right: 8), contentWeight: 0, padding: EdgeInsets.zero, onTap: _onTapAddItem),
-                        LinkButton(
-                          title: Localization().getStringEx('widget.home.wellness.todo.items.view_all.label', 'View All'),
-                          hint: Localization().getStringEx('widget.home.wellness.todo.items.view_all.hint', 'Tap to view all To Do items'),
-                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.medium.underline"),
-                          onTap: _onTapViewAll,
-                        ),
-                      ]))
-                    ]),
-                  ),
-                ),
-              ]),
-            ),
-          ]),
-        ),
+      Container(decoration: HomeCard.defaultDecoration, child:
+              Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Padding(padding: EdgeInsets.only(top: 0), child: Row(children: [Expanded(child: Text(Localization().getStringEx('widget.home.wellness.todo.items.today.label', 'TODAY\'S ITEMS'), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.label.tiny.fat")))])),
+                  _loading ? _buildLoadingIndicator() : _buildTodayItemsWidget(),
+                  Padding(padding: EdgeInsets.only(top: 15), child: Row(children: [Expanded(child: Text(Localization().getStringEx('widget.home.wellness.todo.items.unassigned.label', 'UNASSIGNED ITEMS'), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.label.tiny.fat")))])),
+                  _loading ? _buildLoadingIndicator() : _buildUnAssignedItemsWidget(),
+                  Padding(padding: EdgeInsets.only(top: 20), child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    RoundedButton(
+                      label: Localization().getStringEx('widget.home.wellness.todo.items.add.button', 'Add Item'), borderColor: Styles().colors.fillColorSecondary,
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.small"),
+                      leftIcon: Styles().images.getImage('plus-circle', excludeFromSemantics: true),
+                      iconPadding: 8, rightIconPadding: EdgeInsets.only(right: 8), contentWeight: 0, padding: EdgeInsets.zero, onTap: _onTapAddItem),
+                    LinkButton(
+                      title: Localization().getStringEx('widget.home.wellness.todo.items.view_all.label', 'View All'),
+                      hint: Localization().getStringEx('widget.home.wellness.todo.items.view_all.hint', 'Tap to view all To Do items'),
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.medium.underline"),
+                      onTap: _onTapViewAll,
+                    ),
+                  ]))
+                ]),
+              ),
       ),
     );
   }
 
   Widget _buildLoadingIndicator() {
-    return Visibility(visible: _loading, child: SizedBox(width: 30, height: 30, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2)));
+    return Padding(padding: EdgeInsets.only(top: 4), child:
+      SizedBox(width: 18, height: 18, child:
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2)
+      )
+    );
   }
 
   Widget _buildTodayItemsWidget() {

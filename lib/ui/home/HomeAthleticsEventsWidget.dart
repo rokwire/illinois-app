@@ -14,7 +14,6 @@ import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -70,7 +69,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
       });
     }
 
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       _loadingGames = true;
       _loadSportEvents().then((List<Event2>? events) {
         setStateIfMounted(() {
@@ -123,9 +122,8 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.athletics_events.text.title', 'Big 10 Events'),
-      titleIconKey: 'calendar',
       child: _buildContent(),
     );
   }
@@ -160,8 +158,8 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         Event2 event = _sportEvents![index];
-        pages.add(Padding(key: _contentKeys[event.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
-          Event2Card(event, onTap: () => _onTapEvent(event))),
+        pages.add(Padding(key: _contentKeys[event.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 8), child:
+          Event2Card(event, displayMode: Event2CardDisplayMode.page, onTap: () => _onTapEvent(event))),
         );
       }
 
@@ -182,14 +180,14 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8), child:
-        Event2Card(_sportEvents!.first, onTap: () => _onTapEvent(_sportEvents!.first))
+        Event2Card(_sportEvents!.first, displayMode: Event2CardDisplayMode.page, onTap: () => _onTapEvent(_sportEvents!.first))
       );
     }
     
     return Column(children: <Widget>[
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
-        LinkButton(
+        HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.athletics_events.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.athletics_events.button.all.hint', 'Tap to view all events'),
           onTap: _onTapSeeAll,
@@ -219,7 +217,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
   }
 
   void _refreshGames({bool showProgress = false}) {
-    if (Connectivity().isOnline) {
+    if (Connectivity().isNotOffline) {
       if (showProgress && mounted) {
         setState(() {
           _loadingGames = true;

@@ -597,7 +597,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       Padding(padding: EdgeInsets.only(left: 16)),
       Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         MergeSemantics(key: _filtersButtonKey ??= GlobalKey(), child:
-          Semantics(value: _currentFilterParam.descriptionText, child:
+          Semantics(value: _currentFilterParam.descriptionText, hint: _filtersButtonHint, child:
             Event2FilterCommandButton(
               title: Localization().getStringEx('panel.events2.home.bar.button.filter.title', 'Filter'),
               leftIconKey: 'filters',
@@ -638,7 +638,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   Widget get _sortButton {
     _sortDropdownWidth ??= _evaluateSortDropdownWidth();
-    return  MergeSemantics(key: _sortButtonKey ??= GlobalKey(), child: Semantics(value: event2SortTypeToDisplayString(_sortType), child:
+    return  MergeSemantics(key: _sortButtonKey ??= GlobalKey(), child:
+    Semantics(value: event2SortTypeToDisplayString(_sortType), hint: _filtersButtonHint, child:
       DropdownButtonHideUnderline(child:
         DropdownButton2<Event2SortType>(
           dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth, padding: EdgeInsets.zero),
@@ -673,6 +674,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     }
     return items;
   }
+
+  String get _filtersButtonHint =>  "result ${_totalEventsCount?.toString() ?? 0} Events";
 
   double _evaluateSortDropdownWidth() {
     double width = 0;
@@ -838,7 +841,6 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
                               TextSpan(text: Localization().getStringEx('panel.events2.assistant.prompt.header.text', 'Try asking the Illinois Assistant: '), style: Styles().textStyles.getTextStyle('widget.message.regular')),
                               TextSpan(text: Localization().getStringEx('panel.events2.assistant.prompt.question.text', "What's happening this weekend?"), style: Styles().textStyles.getTextStyle('widget.item.regular_underline.thin'), recognizer: TapGestureRecognizer()..onTap = () => _onTapAskAssistant()),
                             ])))
-                    // Text('Try asking the Illinois Assistant', style: Styles().textStyles.getTextStyle('widget.message.regular'))
                   ])),
               Align(alignment: Alignment.topRight, child: GestureDetector(onTap: _onTapCloseAssistantPrompt, child: Padding(padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 16), child: Styles().images.getImage('close-circle-small', excludeFromSemantics: true))))
             ])),
@@ -849,9 +851,6 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
   void _onTapAskAssistant() {
     Analytics().logEventsAssistantPrompt(action: 'clicked');
     AssistantHomePanel.present(context, initialQuestion: Localization().getStringEx('panel.events2.assistant.prompt.question.text', "What's happening this weekend?"));
-    setStateIfMounted(() {
-      Storage().assistantEventsPromptHidden = true;
-    });
   }
 
   void _onTapCloseAssistantPrompt() {

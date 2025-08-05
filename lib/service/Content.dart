@@ -1,13 +1,20 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:illinois/model/Content.dart';
 import 'package:rokwire_plugin/service/content.dart' as rokwire;
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class Content extends rokwire.Content {
 
-  static const String notifyVideoTutorialsChanged = "edu.illinois.rokwire.content.video_tutorials.changed";
+  static String get notifyContentItemsChanged           => rokwire.Content.notifyContentItemsChanged;
+  static String get notifyContentAttributesChanged      => rokwire.Content.notifyContentAttributesChanged;
+  static String get notifyContentImagesChanged          => rokwire.Content.notifyContentImagesChanged;
+  static String get notifyContentWidgetsChanged         => rokwire.Content.notifyContentWidgetsChanged;
+  static String get notifyUserProfilePictureChanged     => rokwire.Content.notifyUserProfilePictureChanged;
+  static const String notifyContentAlertChanged         = "edu.illinois.rokwire.content.alert.changed";
 
-  static const String _videoTutorialsContentCategory = "video_tutorials";
+  static const String _alertContentCategory = "alert";
+
+  ContentAlert? _contentAlert;
 
   // Singletone Factory
 
@@ -16,19 +23,12 @@ class Content extends rokwire.Content {
 
   factory Content() => ((rokwire.Content.instance is Content) ? (rokwire.Content.instance as Content) : (rokwire.Content.instance = Content.internal()));
 
+  // Service
+
   @override
   Future<void> initService() async {
     await super.initService();
-  }
-
-  // Content Items
-
-  @override
-  void onContentItemsChanged(Set<String> categoriesDiff) {
-    if (categoriesDiff.contains(videoTutorialsContentCategory)) {
-      _onVideoTutorialsChanged();
-    }
-    super.onContentItemsChanged(categoriesDiff);
+    _contentAlert = _contentMapAlert();
   }
 
   // ContentItemCategoryClient
@@ -36,23 +36,30 @@ class Content extends rokwire.Content {
   @override
   List<String> get contentItemCategory => <String>[
     ...super.contentItemCategory,
-    videoTutorialsContentCategory,
+    _alertContentCategory,
   ];
 
-  // Video Tutorials Content Items
+  // ContentItems
 
   @protected
-  String get videoTutorialsContentCategory =>
-    _videoTutorialsContentCategory;
-
-  Map<String, dynamic>? get videoTutorials =>
-    contentMapItem(videoTutorialsContentCategory);
-
-  List<dynamic>? get videos =>
-    JsonUtils.listValue(MapUtils.get(videoTutorials, 'videos'));
-
-  void _onVideoTutorialsChanged() {
-    NotificationService().notify(notifyVideoTutorialsChanged);
+  void onContentItemsChanged(Set<String> categoriesDiff) {
+    if (categoriesDiff.contains(_alertContentCategory)) {
+      _onContentAlertChanged();
+    }
+    super.onContentItemsChanged(categoriesDiff);
   }
 
+  // Alert Content Item
+
+  ContentAlert? get contentAlert => _contentAlert;
+
+  ContentAlert? _contentMapAlert() => ContentAlert.fromJson(contentMapItem(_alertContentCategory)) ;
+
+  void _onContentAlertChanged() {
+    ContentAlert? contentAlert = _contentMapAlert();
+    if (_contentAlert != contentAlert) {
+      _contentAlert = contentAlert;
+      NotificationService().notify(notifyContentAlertChanged);
+    }
+  }
 }

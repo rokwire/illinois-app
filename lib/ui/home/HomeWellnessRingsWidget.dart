@@ -9,7 +9,6 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -50,66 +49,41 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> with 
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessRingsWidget.title,
-      titleIconKey: 'wellness',
-      childPadding: HomeSlantWidget.defaultChildPadding,
+      childPadding: HomeFavoriteWidget.defaultChildPadding,
       child: _buildContent(),
     );
   }
 
   Widget _buildContent() {
-    return 
-      Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
-        ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
-          Row(children: <Widget>[
-            Expanded(child:
-              Column(children: <Widget>[
-                Container(color: Styles().colors.white, child:
-                  Padding(padding: EdgeInsets.only(top: 20, right: 13, bottom: 0, left: 2), child:
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Expanded(child:
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                            // Expanded( child:
-                            Container(width: 13,),
-                            Container(
-                              child: WellnessRing(backgroundColor: Colors.white, size: 130, strokeSize: 15, borderWidth: 2,accomplishmentDialogEnabled: false,),
-                            ),
-                            // ),
-                            Container(width: 18,),
-                            Expanded(
-                                child: Container(
-                                    child: _buildButtons()
-                                )
-                            )
-                          ],)
-                          ),
-                        ]),
-                        LinkButton(
-                          title: Localization().getStringEx('widget.home.wellness.rings.view_all.label', 'View All'),
-                          hint: Localization().getStringEx('widget.home.wellness.rings.view_all.hint', 'Tap to view all rings'),
-                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.medium.underline"),
-                          onTap: _onTapViewAll,
-                        ),
-                      ],
-                    )
-                  ),
-                ),
-              ]),
+    return Container(decoration: HomeCard.defaultDecoration, child:
+      Padding(padding: EdgeInsets.only(top: 20, right: 13, bottom: 0, left: 2), child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Padding(padding: EdgeInsets.symmetric(horizontal: 13), child:
+              WellnessRing(
+                backgroundColor: Colors.white,
+                size: 130,
+                strokeSize: 15,
+                borderWidth: 2,
+                accomplishmentDialogEnabled: false,
+              ),
             ),
-          ]),
-        ),
-      );
+            Expanded(child:
+              Container(child:
+                _buildButtons()
+              )
+            )
+          ],),
+          HomeBrowseLinkButton(
+            title: Localization().getStringEx('widget.home.wellness.rings.view_all.label', 'View All'),
+            hint: Localization().getStringEx('widget.home.wellness.rings.view_all.hint', 'Tap to view all rings'),
+            onTap: _onTapViewAll,
+          ),
+        ],)
+      ),
+    );
   }
 
   Widget _buildButtons(){

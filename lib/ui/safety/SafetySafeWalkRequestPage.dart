@@ -266,10 +266,16 @@ class SafetySafeWalkRequestCard extends StatefulWidget {
   final Widget? headerWidget;
   final Color? backgroundColor;
   final BorderRadius borderRadius;
+  final BoxShadow shadow;
   final Map<String, dynamic>? origin;
   final Map<String, dynamic>? destination;
 
-  SafetySafeWalkRequestCard({super.key, this.headerWidget, this.backgroundColor, this.borderRadius = const BorderRadius.all(const Radius.circular(16)), this.origin, this.destination});
+  SafetySafeWalkRequestCard({super.key,
+    this.headerWidget, this.backgroundColor,
+    this.borderRadius = const BorderRadius.all(const Radius.circular(16)),
+    this.shadow = const BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2)),
+    this.origin, this.destination
+  });
 
   @override
   State<StatefulWidget> createState() => _SafetySafeWalkRequestCardState();
@@ -414,7 +420,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
     color: widget.backgroundColor ?? Styles().colors.background,
     //border: Border.all(color: Styles().colors.mediumGray2, width: 1),
     borderRadius: widget.borderRadius,
-    boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+    boxShadow: [widget.shadow],
   );
 
   BoxDecoration get _dropdownButtonDecoration => BoxDecoration(

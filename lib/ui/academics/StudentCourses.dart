@@ -7,6 +7,9 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/StudentCourses.dart';
+import 'package:illinois/ui/explore/DisplayFloorPlanPanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/AccentCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -16,8 +19,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-
-import '../explore/DisplayFloorPlanPanel.dart';
 
 class StudentCoursesContentWidget extends StatefulWidget with AnalyticsInfo {
   StudentCoursesContentWidget();
@@ -225,86 +226,87 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
 
 class StudentCourseCard extends StatelessWidget {
   final StudentCourse course;
+  final CardDisplayMode displayMode;
   final AnalyticsFeature? analyticsFeature;
   
-  StudentCourseCard({Key? key, required this.course, this.analyticsFeature}) : super(key: key);
+  StudentCourseCard({super.key,
+    required this.course,
+    this.displayMode = CardDisplayMode.browse,
+    this.analyticsFeature
+  });
 
   static double height(BuildContext context) =>
-  MediaQuery.of(context).textScaler.scale(36 + 18 + (6 + 16) + 16 + (6 + 18) + (12 + 18));
+    MediaQuery.of(context).textScaler.scale(36 + 18 + (6 + 16) + 16 + (6 + 18) + (12 + 18));
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+    InkWell(onTap: () => _onCard(context), child:
+      Semantics(label: course.title,
+        child: AccentCard(
+          displayMode: displayMode,
+          accentColor: Styles().colors.fillColorSecondary,
+          child: _contentWidget,
+        )
+      ),
+    );
+
+  Widget get _contentWidget {
     String courseSchedule = course.section?.displaySchedule ?? '';
     String courseLocation = course.section?.displayLocation ?? '';
     
-    return InkWell(onTap: () => _onCard(context), child:
-      ClipRRect(borderRadius: BorderRadius.all(Radius.circular(4)), child:
-        Stack(children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Styles().colors.surface,
-              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(4)),
-            ),
-            child:
-              Padding(padding: EdgeInsets.all(16), child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  
-                  Row(children: [Expanded(child:
-                    Text(course.title ?? '', style: Styles().textStyles.getTextStyle("widget.card.title.regular.extra_fat")),
-                  )]),
-                  
-                  Padding(padding: EdgeInsets.only(top: 6), child:
-                    Row(children: [Expanded(child:
-                      Text(course.displayInfo, style: Styles().textStyles.getTextStyle("widget.card.detail.medium")),
-                    )]),
-                  ),
-                  
-                  Padding(padding: EdgeInsets.zero, child:
-                    Row(children: [Expanded(child:
-                      Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [course.section?.instructor ?? '']), style: Styles().textStyles.getTextStyle("widget.card.detail.medium"),)
-                    )]),
-                  ),
-                  
-                  Visibility(visible: courseSchedule.isNotEmpty, child:
-                    Padding(padding: EdgeInsets.only(top: 6), child:
-                      Row(children: [
-                        Padding(padding: EdgeInsets.only(right: 6), child:
-                          Styles().images.getImage('calendar', excludeFromSemantics: true),
-                        ),
-                        Expanded(child:
-                          Text(courseSchedule, style: Styles().textStyles.getTextStyle("widget.card.detail.medium")),
-                        )
-                        
-                      ],),
-                    ),
-                  ),
-                  
-                  Visibility(visible: courseLocation.isNotEmpty, child:
-                    InkWell(onTap: course.hasValidLocation ? _onLocaltion : null, child:
-                      Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
-                        Row(children: [
-                          Padding(padding: EdgeInsets.only(right: 6), child:
-                            Styles().images.getImage('location', excludeFromSemantics: true),
-                          ),
-                          Expanded(child:
-                            Text(courseLocation, style: course.hasValidLocation ?
-                              Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline") :
-                              Styles().textStyles.getTextStyle("widget.button.light.title.medium")
-                            ),
-                          )
-                          
-                        ],),
-                      ),
-                    ),
-                  ),
+    return Padding(padding: EdgeInsets.all(16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-                ],)
+        Row(children: [Expanded(child:
+          Text(course.title ?? '', style: Styles().textStyles.getTextStyle("widget.card.title.regular.extra_fat")),
+        )]),
+
+        Padding(padding: EdgeInsets.only(top: 6), child:
+          Row(children: [Expanded(child:
+            Text(course.displayInfo, style: Styles().textStyles.getTextStyle("widget.card.detail.medium")),
+          )]),
+        ),
+
+        Padding(padding: EdgeInsets.zero, child:
+          Row(children: [Expanded(child:
+            Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [course.section?.instructor ?? '']), style: Styles().textStyles.getTextStyle("widget.card.detail.medium"),)
+          )]),
+        ),
+
+        Visibility(visible: courseSchedule.isNotEmpty, child:
+          Padding(padding: EdgeInsets.only(top: 6), child:
+            Row(children: [
+              Padding(padding: EdgeInsets.only(right: 6), child:
+                Styles().images.getImage('calendar', excludeFromSemantics: true),
               ),
+              Expanded(child:
+                Text(courseSchedule, style: Styles().textStyles.getTextStyle("widget.card.detail.medium")),
+              )
+
+            ],),
           ),
-          Container(color: Styles().colors.fillColorSecondary, height: 4),
-        ]),
-      ),
+        ),
+
+        Visibility(visible: courseLocation.isNotEmpty, child:
+          InkWell(onTap: course.hasValidLocation ? _onLocaltion : null, child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
+              Row(children: [
+                Padding(padding: EdgeInsets.only(right: 6), child:
+                  Styles().images.getImage('location', excludeFromSemantics: true),
+                ),
+                Expanded(child:
+                  Text(courseLocation, style: course.hasValidLocation ?
+                    Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline") :
+                    Styles().textStyles.getTextStyle("widget.button.light.title.medium")
+                  ),
+                )
+
+              ],),
+            ),
+          ),
+        ),
+
+      ],)
     );
   }
 
