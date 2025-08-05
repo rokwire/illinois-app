@@ -51,15 +51,22 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> with Notificati
   String? _pollsError;
   bool _pollsLoading = false;
 
-  ScrollController? _scrollController;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Polls.notifyCreated, Polls.notifyStatusChanged, Polls.notifyVoteChanged, Polls.notifyResultsChanged]);
-    _loadPolls();
+    NotificationService().subscribe(this, [
+      Polls.notifyCreated,
+      Polls.notifyStatusChanged,
+      Polls.notifyVoteChanged,
+      Polls.notifyResultsChanged
+    ]);
+
     _scrollController = ScrollController();
-    _scrollController!.addListener(_scrollListener);
+    _scrollController.addListener(_scrollListener);
+
+    _loadPolls();
   }
 
   @override
@@ -196,7 +203,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> with Notificati
   }
 
   void _scrollListener() {
-    if (_scrollController!.offset >= _scrollController!.position.maxScrollExtent) {
+    if (_scrollController.offset >= _scrollController.position.maxScrollExtent) {
       _loadPolls();
     }
   }

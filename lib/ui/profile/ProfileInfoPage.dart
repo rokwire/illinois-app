@@ -12,7 +12,7 @@ import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileInfoEditPage.dart';
 import 'package:illinois/ui/profile/ProfileInfoPreviewPage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
-import 'package:illinois/ui/profile/ProfileInfoSharePanel.dart';
+import 'package:illinois/ui/profile/ProfileBusinessCardPage.dart';
 import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/profile/ProfileStoredDataPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
@@ -452,7 +452,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
     NotificationService().notify(ProfileHomePanel.notifySelectContent, [
       ProfileContentType.share,
       <String, dynamic>{
-        ProfileInfoSharePage.profileResultKey : ProfileInfoLoadResult(
+        ProfileBusinessCardPage.profileResultKey : ProfileInfoLoadResult(
           profile: _profile,
           privacy: _privacy,
           photoImageData: _photoImageData,
@@ -730,8 +730,4 @@ class ProfileInfoLoadResult {
   final Uint8List? pronunciationAudioData;
 
   ProfileInfoLoadResult({this.profile, this.privacy, this.photoImageData, this.pronunciationAudioData});
-
-  Auth2UserProfile? publicProfile({Set<Auth2FieldVisibility> permitted = const <Auth2FieldVisibility>{Auth2FieldVisibility.public}}) =>
-    profile?.buildPublic(privacy, permitted: permitted);
-
 }

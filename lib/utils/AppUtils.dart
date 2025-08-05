@@ -372,21 +372,27 @@ class AppDateTimeUtils {
     final difference = date2.difference(date);
 
     if (difference.inDays >= 2) {
-      return '${difference.inDays} days ago';
+      return '${difference.inDays} ${Localization().getStringEx('logic.date_time.time_ago.days', 'days ago')}';
     } else if (difference.inDays >= 1) {
-      return (numericDates) ? '1 day ago' : 'Yesterday';
+      return (numericDates) ?
+        Localization().getStringEx('logic.date_time.time_ago.one_day', '1 day ago') :
+        Localization().getStringEx('logic.date_time.time_ago.yesterday', 'Yesterday');
     } else if (difference.inHours >= 2) {
-      return '${difference.inHours} hours ago';
+      return '${difference.inHours} ${Localization().getStringEx('logic.date_time.time_ago.hours', 'hours ago')}';
     } else if (difference.inHours >= 1) {
-      return (numericDates) ? '1 hour ago' : 'An hour ago';
+      return (numericDates) ?
+        Localization().getStringEx('logic.date_time.time_ago.one_hour', '1 hour ago') :
+        Localization().getStringEx('logic.date_time.time_ago.an_hour', 'An hour ago');
     } else if (difference.inMinutes >= 2) {
-      return '${difference.inMinutes} minutes ago';
+      return '${difference.inMinutes} ${Localization().getStringEx('logic.date_time.time_ago.minutes', 'minutes ago')}';
     } else if (difference.inMinutes >= 1) {
-      return (numericDates) ? '1 minute ago' : 'A minute ago';
+      return (numericDates) ?
+        Localization().getStringEx('logic.date_time.time_ago.one_minute', '1 minute ago') :
+        Localization().getStringEx('logic.date_time.time_ago.a_minute', 'A minute ago');
     } else if (difference.inSeconds >= 3) {
-      return '${difference.inSeconds} seconds ago';
+      return '${difference.inSeconds} ${Localization().getStringEx('logic.date_time.time_ago.seconds', 'seconds ago')}';
     } else {
-      return 'Just now';
+      return Localization().getStringEx('logic.date_time.time_ago.just_now', 'Just now');
     }
   }
 }
