@@ -20,7 +20,7 @@ class AccentCard extends StatelessWidget {
   }
 
   Widget get _homeDisplayWidget =>
-    Container(decoration: HomeCard.defaultDecoration, margin: EdgeInsets.only(bottom: HomeCard.defaultShadowBlurRadius, ), child:
+    Container(decoration: HomeCard.defaultDecoration, child:
       Column(children: <Widget>[
         Container(height: defaultHeaderHeight(displayMode), decoration: defaultHeaderDecoration(accentColor),),
         child ?? Container()

@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Fixed
+- Fixed shadow cut off of home cards when embedded in ExpandablePageView [#5389](https://github.com/rokwire/illinois-app/issues/5389).
 
 ## [7.2.22] - 2025-08-05
 ### Changed

@@ -236,7 +236,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
       List<Widget> pages = [];
       for (int index = 0; index < visibleCount; index++) {
         Favorite favorite = _favorites![index];
-        pages.add(Padding(key: _contentKeys[favorite] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
+        pages.add(Padding(key: _contentKeys[favorite] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: HomeCard.defaultShadowBlurRadius), child:
           _buildItemCard(favorite)),
         );
       }

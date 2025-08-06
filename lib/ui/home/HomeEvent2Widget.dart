@@ -311,7 +311,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
         String contentKey = "${event.id}-$index";
         pages.add(Padding(
           key: _contentKeys[contentKey] ??= GlobalKey(),
-          padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
+          padding: EdgeInsets.only(right: _pageSpacing + 2, top: HomeCard.defaultShadowBlurRadius, bottom: HomeCard.defaultShadowBlurRadius),
           child: Event2Card(event, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, onTap: () => _onTapEvent2(event),)));
       }
 

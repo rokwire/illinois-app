@@ -168,7 +168,7 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         Map<String, dynamic>? reminderItem = JsonUtils.mapValue(_resourceItems![index]);
-        pages.add(Padding(key: _contentKeys[Guide().entryId(reminderItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 2), child:
+        pages.add(Padding(key: _contentKeys[Guide().entryId(reminderItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: HomeCard.defaultShadowBlurRadius), child:
           GuideEntryCard(reminderItem, favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType), displayMode: CardDisplayMode.home,)
         ));
       }

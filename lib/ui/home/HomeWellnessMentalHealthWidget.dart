@@ -138,7 +138,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
           String? resourceId = Guide().entryId(resourceItem);
           pages.add(Padding(
             key: _contentKeys[resourceId ?? ''] ??= GlobalKey(),
-            padding: EdgeInsets.only(right: _pageSpacing),
+            padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.defaultShadowBlurRadius, bottom: HomeCard.defaultShadowBlurRadius),
             child: button
           ));
         }
@@ -161,7 +161,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: HomeCard.defaultShadowBlurRadius), child:
         _buildResourceButton(JsonUtils.mapValue(_resourceItems?.first) ?? {})
       );
     }
@@ -184,13 +184,11 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
     String? title = Guide().entryListTitle(resourceItem);
     Favorite favorite = GuideFavorite(id: id, contentType: Guide.wellnessMentalHealthContentType);
 
-    return Padding(padding: EdgeInsets.symmetric(vertical: HomeCard.defaultShadowBlurRadius), child:
-      WellnessLargeResourceButton(
-        label: title,
-        favorite: favorite,
-        displayMode: CardDisplayMode.home,
-        onTap: () => _onCommand(resourceItem),
-      ),
+    return WellnessLargeResourceButton(
+      label: title,
+      favorite: favorite,
+      displayMode: CardDisplayMode.home,
+      onTap: () => _onCommand(resourceItem),
     );
   }
 
