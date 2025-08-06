@@ -99,22 +99,24 @@ class SexualMisconductPathwaysPanel extends StatelessWidget {
     // Navigate to Supporting a Friend Resources
   }
   void _onNotSure(BuildContext context) async {
-    // Load the survey by its ID
     Survey? survey = await Surveys().loadSurvey("cabb1338-48df-4299-8c2a-563e021f82ca");
 
-    // Extract the "situation" step
-    SurveyData? situation = survey?.data['situation'];
+    if (survey != null) {
+      final SurveyTracker responseTracker = SurveyTracker();
 
-    if (situation != null) {
       Navigator.push(
         context,
-        CupertinoPageRoute(
-          builder: (context) => SituationStepPanel(situation: situation),
+        MaterialPageRoute(
+          builder: (context) => SituationStepPanel(
+            stepKey: 'situation',     
+            responseTracker: responseTracker,
+            surveyData: survey.data,
+          ),
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Unable to load the survey step.")),
+        SnackBar(content: Text("Unable to load the survey.")),
       );
     }
   }
