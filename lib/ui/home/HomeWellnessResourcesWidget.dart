@@ -139,7 +139,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
         Widget? button = (command != null) ? _buildResourceButton(command) : null;
         if (button != null) {
           String? commandId = JsonUtils.stringValue(command!['id']);
-          pages.add(Padding(key: _contentKeys[commandId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child: button));
+          pages.add(Padding(key: _contentKeys[commandId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.defaultShadowBlurRadius, bottom: HomeCard.defaultShadowBlurRadius), child: button));
         }
       }
 
@@ -161,7 +161,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: HomeCard.defaultShadowBlurRadius), child:
         _buildResourceButton(JsonUtils.mapValue(_favoriteCommands?.first) ?? {})
       );
     }
@@ -185,7 +185,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     String? type = JsonUtils.stringValue(command['type']);
     Widget? resourceButton;
     if (type == 'large') {
-      resourceButton = WellnessLargeResourceButton(
+      return WellnessLargeResourceButton(
         label: _getString(id),
         favorite: favorite,
         hasExternalLink: UrlUtils.isWebScheme(url),
@@ -194,7 +194,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
       );
     }
     else if (type == 'regular') {
-      resourceButton = WellnessRegularResourceButton(
+      return WellnessRegularResourceButton(
         label: _getString(id),
         favorite: favorite,
         hasExternalLink: UrlUtils.isWebScheme(url),
@@ -202,10 +202,9 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
         onTap: () => _onCommand(command),
       );
     }
-    return (resourceButton != null) ? Padding(
-      padding: EdgeInsets.symmetric(vertical: HomeCard.defaultShadowBlurRadius),
-      child: resourceButton,
-    ) : null;
+    else {
+      return null;
+    }
   }
 
   void _initContent() {

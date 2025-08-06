@@ -54,7 +54,6 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   final double _pageSpacing = 16;
-  final double _pageBottomPadding = 8;
 
   @override
   void initState() {
@@ -179,7 +178,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
       List<Widget> pages = <Widget>[];
       for (Group group in visibleGroups!) {
         GlobalKey groupKey = (_groupCardKeys[group.id!] ??= GlobalKey());
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: _pageBottomPadding), child:
+        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.defaultShadowBlurRadius, bottom: HomeCard.defaultShadowBlurRadius), child:
           // Semantics(/*excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ container: true,  child:
             GroupCard(key: groupKey, group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
           // )
