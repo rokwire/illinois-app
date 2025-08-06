@@ -182,7 +182,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
           HomeRecentItemCard(recentItem: item, displayMode: CardDisplayMode.home,),
         ));
       }
-      debugPrint("HomeRecentItemsWidget._contentKeys: $_contentKeys");
+      //debugPrint("HomeRecentItemsWidget._contentKeys: $_contentKeys");
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
