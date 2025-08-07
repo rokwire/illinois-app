@@ -224,13 +224,15 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
           _loadingGames = true;
         });
       }
-      _loadSportEvents().then((List<Event2>? event) {
-        if (mounted && !DeepCollectionEquality().equals(_sportEvents, event)) {
+      _loadSportEvents().then((List<Event2>? events) {
+        if (mounted && !DeepCollectionEquality().equals(_sportEvents, events)) {
           setState(() {
-            _sportEvents = event;
+            _sportEvents = events;
             _pageViewKey = UniqueKey();
             // _pageController = null;
-            _pageController?.jumpToPage(0);
+            if (_sportEvents?.isNotEmpty == true) {
+              _pageController?.jumpToPage(0);
+            }
             _contentKeys.clear();
           });
         }

@@ -379,7 +379,9 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
 
       _pageViewKey = UniqueKey();
       // _pageController = null; //Doing this will break the listener in the buttons, instead reset to first page
-      _pageController?.jumpToPage(0);
+      if (_favorites?.isNotEmpty == true) {
+        _pageController?.jumpToPage(0);
+      }
       _contentKeys.clear();
     }
   }

@@ -272,7 +272,9 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
           setStateIfMounted(() {
             _recentPolls = result?.polls;
             _pageViewKey = UniqueKey();
-            _pageController?.jumpToPage(0);
+            if (_recentPolls?.isNotEmpty == true) {
+              _pageController?.jumpToPage(0);
+            }
             _contentKeys.clear();
           });
         }
@@ -281,7 +283,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
           setStateIfMounted(() {
             _recentPolls = null;
             _pageViewKey = UniqueKey();
-            _pageController?.jumpToPage(0);
+            //_pageController?.jumpToPage(0);
             _contentKeys.clear();
           });
         }

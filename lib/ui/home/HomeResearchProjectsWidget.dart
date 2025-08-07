@@ -120,7 +120,9 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> with Noti
           _researchProjectsCardKeys.clear();
           _pageViewKey = UniqueKey();
           // _pageController = null;
-          _pageController?.jumpToPage(0);
+          if (_researchProjects?.isNotEmpty == true) {
+            _pageController?.jumpToPage(0);
+          }
         });
       }
     });

@@ -218,7 +218,9 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
             _news = news;
             _pageViewKey = UniqueKey();
             // _pageController = null;
-            _pageController?.jumpToPage(0);
+            if (_news?.isNotEmpty == true) {
+              _pageController?.jumpToPage(0);
+            }
             _contentKeys.clear();
           });
         }

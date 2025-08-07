@@ -174,7 +174,9 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
         _reminderItems = List<Map<String, dynamic>>.from(reminderItems);
         _pageViewKey = UniqueKey();
         // _pageController = null;
-        _pageController?.jumpToPage(0);
+        if (_reminderItems?.isNotEmpty == true) {
+          _pageController?.jumpToPage(0);
+        }
         _contentKeys.clear();
       });
     }

@@ -211,7 +211,9 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
         _resourceItems = resourceItems;
         _pageViewKey = UniqueKey();
         // _pageController = null;
-        _pageController?.jumpToPage(0);
+        if (_resourceItems?.isNotEmpty == true) {
+          _pageController?.jumpToPage(0);
+        }
         _contentKeys.clear();
       });
     }

@@ -218,7 +218,7 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
         _resourceItems = resourceItems;
         _pageViewKey = UniqueKey();
         // _pageController = null;
-        if (resourceItems.isNotEmpty) {
+        if (_resourceItems?.isNotEmpty == true) {
           _pageController?.jumpToPage(0);
         }
         _contentKeys.clear();

@@ -139,7 +139,9 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
           _pageViewKey = UniqueKey();
           _groupCardKeys.clear();
           // _pageController = null;
-          _pageController?.jumpToPage(0);
+          if (_groups?.isNotEmpty == true) {
+            _pageController?.jumpToPage(0);
+          }
         });
       }
     });

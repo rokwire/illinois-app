@@ -158,7 +158,9 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
       _courses = widget.isGies ? Canvas().giesCourses : Canvas().courses;
       _pageViewKey = UniqueKey();
       // _pageController = null;
-      _pageController?.jumpToPage(0);
+      if (_courses?.isNotEmpty == true) {
+        _pageController?.jumpToPage(0);
+      }
     });
   }
 
