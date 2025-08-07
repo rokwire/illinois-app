@@ -53,7 +53,6 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
 
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
-  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -178,7 +177,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
       List<Widget> pages = <Widget>[];
       for (Group group in visibleGroups!) {
         GlobalKey groupKey = (_groupCardKeys[group.id!] ??= GlobalKey());
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.verticalMargin, bottom: HomeCard.verticalMargin), child:
+        pages.add(Padding(padding: HomeCard.defaultPageMargin, child:
           // Semantics(/*excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ container: true,  child:
             GroupCard(key: groupKey, group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
           // )
@@ -187,7 +186,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport);
       }
 
@@ -202,7 +201,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
       );
     }
     else if (visibleCount == 1) {
-      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: _pageSpacing), child:
+      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ container: true, child:
           GroupCard(group: visibleGroups!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
       ));

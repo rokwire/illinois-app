@@ -83,7 +83,6 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
-  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -178,15 +177,17 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
 
       // Config().homeRecentItemsCount
       for (RecentItem item in _recentItems!) {
-        pages.add(Padding(key: _contentKeys[item.contentId] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: HomeCard.verticalMargin), child:
-          HomeRecentItemCard(recentItem: item, displayMode: CardDisplayMode.home,),
+        pages.add(Padding(
+          key: _contentKeys[item.contentId] ??= GlobalKey(),
+          padding: HomeCard.defaultPageMargin,
+          child: HomeRecentItemCard(recentItem: item, displayMode: CardDisplayMode.home,),
         ));
       }
       //debugPrint("HomeRecentItemsWidget._contentKeys: $_contentKeys");
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport);
       }
 
@@ -200,7 +201,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
+      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         HomeRecentItemCard(recentItem: _recentItems!.first, displayMode: CardDisplayMode.home)
       );
     }

@@ -143,7 +143,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
   Map<Favorite, GlobalKey> _contentKeys = <Favorite, GlobalKey>{};
   Favorite? _currentFavorite;
   int _currentPage = -1;
-  final double _pageSpacing = 16;
   
   @override
   void initState() {
@@ -236,14 +235,16 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
       List<Widget> pages = [];
       for (int index = 0; index < visibleCount; index++) {
         Favorite favorite = _favorites![index];
-        pages.add(Padding(key: _contentKeys[favorite] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: HomeCard.verticalMargin), child:
-          _buildItemCard(favorite)),
-        );
+        pages.add(Padding(
+          key: _contentKeys[favorite] ??= GlobalKey(),
+          padding: HomeCard.defaultPageMargin,
+          child: _buildItemCard(favorite)
+        ),);
       }
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage);
       }
 
@@ -259,7 +260,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         _buildItemCard(_favorites!.first),
       );
     }

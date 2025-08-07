@@ -59,7 +59,6 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> with Noti
 
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
-  final double _pageSpacing = 16;
 
   static const String localScheme = 'local';
   static const String openProjectsHost = 'open_projects';
@@ -165,15 +164,17 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> with Noti
       List<Widget> pages = <Widget>[];
       for (Group researchProject in visibleResearchProjects!) {
         GlobalKey researchProjectKey = (_researchProjectsCardKeys[researchProject.id!] ??= GlobalKey());
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.verticalMargin, bottom: HomeCard.verticalMargin), child:
-          Semantics(// excludeSemantics: !(_pageController?.page == _researchProjects?.indexOf(researchProject)),
+        pages.add(Padding(
+          padding: HomeCard.defaultPageMargin,
+          child: Semantics(// excludeSemantics: !(_pageController?.page == _researchProjects?.indexOf(researchProject)),
            child: GroupCard(key: researchProjectKey, group: researchProject, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
-        )));
+          )
+        ));
       }
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport);
       }
 
@@ -188,10 +189,11 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> with Noti
       );
     }
     else if (visibleCount == 1) {
-      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: _pageSpacing), child:
+      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
-        GroupCard(group: visibleResearchProjects!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
-      ));
+         GroupCard(group: visibleResearchProjects!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+        )
+      );
     }
 
     return (contentWidget != null) ? Column(children: [

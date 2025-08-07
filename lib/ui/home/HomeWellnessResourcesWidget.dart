@@ -65,7 +65,6 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   String? _currentFavoriteId;
   int _currentPage = -1;
-  final double _pageSpacing = 16;
 
   static const String localScheme = 'local';
   static const String localUrlMacro = '{{local_url}}';
@@ -139,13 +138,17 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
         Widget? button = (command != null) ? _buildResourceButton(command) : null;
         if (button != null) {
           String? commandId = JsonUtils.stringValue(command!['id']);
-          pages.add(Padding(key: _contentKeys[commandId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.verticalMargin, bottom: HomeCard.verticalMargin), child: button));
+          pages.add(Padding(
+            key: _contentKeys[commandId ?? ''] ??= GlobalKey(),
+            padding: HomeCard.defaultPageMargin,
+            child: button
+          ));
         }
       }
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage);
       }
 
@@ -161,7 +164,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: HomeCard.verticalMargin), child:
+      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         _buildResourceButton(JsonUtils.mapValue(_favoriteCommands?.first) ?? {})
       );
     }
