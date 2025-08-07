@@ -326,7 +326,7 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
     double titleRightPadding = (((actions != null) && actions.isNotEmpty) || (favoriteId == null)) ? 12 : 0;
     double actionsRightPadding = ((actions != null) && actions.isNotEmpty && (favoriteId == null)) ? 12 : 0;
 
-    return Padding(padding: EdgeInsets.only(top: HomeCard.shadowMargin, bottom: _expanded ? 0 : HomeCard.shadowMargin), child:
+    return Padding(padding: _headerPadding, child:
       Row(children: [
         Expanded(child:
           _titleWidget(rightPadding: titleRightPadding)
@@ -350,16 +350,19 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
     );
   }
 
+  EdgeInsets get _headerPadding =>
+    EdgeInsets.only(top: HomeCard.shadowMargin, bottom: _expanded ? 0 : HomeCard.shadowMargin);
+
   Widget _titleWidget({ double rightPadding = 0 }) {
     Widget? dropdownIcon = _dropdownIcon;
     return InkWell(onTap : _onToggleExoanded, child:
       Row(children: [
         if (dropdownIcon != null)
-          Padding(padding: EdgeInsets.only(left: 16, right: 8), child:
+          Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
             dropdownIcon
           ),
         Expanded(child:
-          Padding(padding: EdgeInsets.only(left: (dropdownIcon == null) ? 16 : 0, right: rightPadding), child:
+          Padding(padding: EdgeInsets.only(left: (dropdownIcon == null) ? 16 : 0, right: rightPadding, top: 10, bottom: 10), child:
             Text(widget.title?.toUpperCase() ?? '',
               style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
             ),
