@@ -196,7 +196,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
     if (1 < visibleCount) {
       List<Widget> coursePages = <Widget>[];
       for (StudentCourse course in _courses!) {
-        coursePages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: HomeCard.defaultShadowBlurRadius), child:
+        coursePages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: HomeCard.verticalMargin), child:
           StudentCourseCard(course: course, displayMode: CardDisplayMode.home,),
         ),);
       }

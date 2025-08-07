@@ -138,7 +138,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
           String? resourceId = Guide().entryId(resourceItem);
           pages.add(Padding(
             key: _contentKeys[resourceId ?? ''] ??= GlobalKey(),
-            padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.defaultShadowBlurRadius, bottom: HomeCard.defaultShadowBlurRadius),
+            padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.verticalMargin, bottom: HomeCard.verticalMargin),
             child: button
           ));
         }
@@ -161,7 +161,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: HomeCard.defaultShadowBlurRadius), child:
+      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: HomeCard.verticalMargin), child:
         _buildResourceButton(JsonUtils.mapValue(_resourceItems?.first) ?? {})
       );
     }

@@ -73,7 +73,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> with Notifi
       ));
   }
 
-  Widget _buildContent() => Container(decoration: HomeCard.defaultDecoration, padding: EdgeInsets.all(16), child:
+  Widget _buildContent() => Container(decoration: HomeCard.boxDecoration, padding: EdgeInsets.all(16), child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Text(Localization().getStringEx("widget.home_create_poll.text.title", "Quickly Create and Share Polls."),
         style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")

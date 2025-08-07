@@ -158,7 +158,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
 
       List<Widget> pages = <Widget>[];
       for (LaundryRoom room in _laundrySchool!.rooms!) {
-        pages.add(Padding(key: _contentKeys[room.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: HomeCard.defaultShadowBlurRadius), child:
+        pages.add(Padding(key: _contentKeys[room.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: HomeCard.verticalMargin), child:
           LaundryRoomCard(room: room, displayMode: CardDisplayMode.home, onTap: () => _onTapRoom(room))
         ));
       }

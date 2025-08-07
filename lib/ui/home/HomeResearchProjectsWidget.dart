@@ -165,7 +165,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> with Noti
       List<Widget> pages = <Widget>[];
       for (Group researchProject in visibleResearchProjects!) {
         GlobalKey researchProjectKey = (_researchProjectsCardKeys[researchProject.id!] ??= GlobalKey());
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.defaultShadowBlurRadius, bottom: HomeCard.defaultShadowBlurRadius), child:
+        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.verticalMargin, bottom: HomeCard.verticalMargin), child:
           Semantics(// excludeSemantics: !(_pageController?.page == _researchProjects?.indexOf(researchProject)),
            child: GroupCard(key: researchProjectKey, group: researchProject, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
         )));

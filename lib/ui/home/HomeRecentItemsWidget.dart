@@ -178,7 +178,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
 
       // Config().homeRecentItemsCount
       for (RecentItem item in _recentItems!) {
-        pages.add(Padding(key: _contentKeys[item.contentId] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: HomeCard.defaultShadowBlurRadius), child:
+        pages.add(Padding(key: _contentKeys[item.contentId] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: HomeCard.verticalMargin), child:
           HomeRecentItemCard(recentItem: item, displayMode: CardDisplayMode.home,),
         ));
       }

@@ -170,14 +170,14 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
     if (1 < (_recentPolls?.length ?? 0)) {
 
       for (Poll poll in _recentPolls!) {
-        pages.add(Padding(key: _contentKeys[poll.pollId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.defaultShadowBlurRadius, bottom: HomeCard.defaultShadowBlurRadius), child:
+        pages.add(Padding(key: _contentKeys[poll.pollId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.verticalMargin, bottom: HomeCard.verticalMargin), child:
           PollCard(poll: poll, group: _getGroup(poll.groupId)),
         ));
       }
 
       if (_loadingPollsPage) {
-        pages.add(Padding(key: _contentKeys['last'] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.defaultShadowBlurRadius, bottom: HomeCard.defaultShadowBlurRadius), child:
-          Container(decoration: HomeCard.defaultDecoration, child:
+        pages.add(Padding(key: _contentKeys['last'] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.verticalMargin, bottom: HomeCard.verticalMargin), child:
+          Container(decoration: HomeCard.boxDecoration, child:
             HomeProgressWidget(
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: (_pageHeight - 24) / 2),
               progessSize: Size(24, 24),

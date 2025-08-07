@@ -155,7 +155,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         News news = _news![index];
-        pages.add(Padding(key: _contentKeys[news.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.defaultShadowBlurRadius, bottom: HomeCard.defaultShadowBlurRadius), child:
+        pages.add(Padding(key: _contentKeys[news.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.verticalMargin, bottom: HomeCard.verticalMargin), child:
           AthleticsNewsCard(news: news, displayMode: CardDisplayMode.home, onTap: () => _onTapNews(news))
         ));
       }

@@ -236,7 +236,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
       List<Widget> pages = [];
       for (int index = 0; index < visibleCount; index++) {
         Favorite favorite = _favorites![index];
-        pages.add(Padding(key: _contentKeys[favorite] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: HomeCard.defaultShadowBlurRadius), child:
+        pages.add(Padding(key: _contentKeys[favorite] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: HomeCard.verticalMargin), child:
           _buildItemCard(favorite)),
         );
       }
@@ -485,7 +485,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
 
   Widget _buildEmpty() {
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-      Container(decoration: HomeCard.defaultDecoration,
+      Container(decoration: HomeCard.boxDecoration,
         padding: EdgeInsets.all(16),
         child:  HtmlWidget(
             HomeFavoritesWidget.emptyMessageHtml(widget.favoriteKey) ?? '',

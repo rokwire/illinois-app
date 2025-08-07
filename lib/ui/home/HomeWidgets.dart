@@ -409,7 +409,7 @@ class HomeCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-    Container(padding: EdgeInsets.only(left: padding.left, bottom: padding.bottom), margin: margin, decoration: HomeCard.defaultDecoration, child:
+    Container(padding: EdgeInsets.only(left: padding.left, bottom: padding.bottom), margin: margin, decoration: HomeCard.boxDecoration, child:
       Column(mainAxisSize: MainAxisSize.min, children: [
         Row(children: [
           Expanded(child:
@@ -662,7 +662,7 @@ class HomeCommandButton extends StatelessWidget {
     return Semantics(label: title, hint: description, button: true, child:
       InkWell(onTap: onTap, child: Container(
           padding: EdgeInsets.only(left: 16, bottom: 16),
-          decoration: HomeCard.defaultDecoration,
+          decoration: HomeCard.boxDecoration,
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
@@ -696,27 +696,29 @@ class HomeCommandButton extends StatelessWidget {
 
 class HomeCard {
   
-  static BoxDecoration get defaultDecoration => BoxDecoration(
-    color: defaultBackColor,
-    borderRadius: defaultBorderRadius,
-    boxShadow: [defaultShadow],
+  static BoxDecoration get boxDecoration => BoxDecoration(
+    color: backColor,
+    borderRadius: borderRadius,
+    boxShadow: [boxShadow],
   );
 
-  static Color get defaultBackColor => Styles().colors.surface;
+  static Color get backColor => Styles().colors.surface;
 
-  static const BorderRadius defaultBorderRadius = const BorderRadius.all(defaultRadius);
-  static const Radius defaultRadius = const Radius.circular(12);
+  static const BorderRadius borderRadius = const BorderRadius.all(radius);
+  static const Radius radius = const Radius.circular(12);
 
-  static BoxShadow get defaultShadow => BoxShadow(
-    color: defaultShadowColor,
-    spreadRadius: defaultShadowSpreadRadius,
-    blurRadius: defaultShadowBlurRadius,
-    offset: defaultShadowOffset
+  static BoxShadow get boxShadow => BoxShadow(
+    color: shadowColor,
+    spreadRadius: shadowSpreadRadius,
+    blurRadius: shadowBlurRadius,
+    offset: shadowOffset
   );
-  static Color get defaultShadowColor => Styles().colors.dropShadow;
-  static const double defaultShadowSpreadRadius = 1.0;
-  static const double defaultShadowBlurRadius = 3.0;
-  static const Offset defaultShadowOffset = const Offset(1, 1);
+  static Color get shadowColor => Styles().colors.dropShadow;
+  static const double shadowSpreadRadius = 1.0;
+  static const double shadowBlurRadius = 3.0;
+  static const Offset shadowOffset = const Offset(1, 1);
+  
+  static const double verticalMargin = shadowBlurRadius;
 }
 
 ////////////////////////////
@@ -745,7 +747,7 @@ class HomeMessageCard extends StatelessWidget {
     return Padding(padding: margin, child:
       Semantics(child:
         Container(padding: padding,
-          decoration: HomeCard.defaultDecoration,
+          decoration: HomeCard.boxDecoration,
           child: Column(children: <Widget>[
             StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
               Expanded(child:
@@ -789,7 +791,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
       Container(padding: padding,
-        decoration: HomeCard.defaultDecoration,
+        decoration: HomeCard.boxDecoration,
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:

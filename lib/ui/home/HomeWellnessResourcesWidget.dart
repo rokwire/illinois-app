@@ -139,7 +139,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
         Widget? button = (command != null) ? _buildResourceButton(command) : null;
         if (button != null) {
           String? commandId = JsonUtils.stringValue(command!['id']);
-          pages.add(Padding(key: _contentKeys[commandId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.defaultShadowBlurRadius, bottom: HomeCard.defaultShadowBlurRadius), child: button));
+          pages.add(Padding(key: _contentKeys[commandId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.verticalMargin, bottom: HomeCard.verticalMargin), child: button));
         }
       }
 
@@ -161,7 +161,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: HomeCard.defaultShadowBlurRadius), child:
+      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: HomeCard.verticalMargin), child:
         _buildResourceButton(JsonUtils.mapValue(_favoriteCommands?.first) ?? {})
       );
     }
@@ -183,7 +183,6 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     Favorite favorite = WellnessFavorite(id, category: WellnessResourcesContentWidget.wellnessCategoryKey);
     String? url = JsonUtils.stringValue(command['url']);
     String? type = JsonUtils.stringValue(command['type']);
-    Widget? resourceButton;
     if (type == 'large') {
       return WellnessLargeResourceButton(
         label: _getString(id),
