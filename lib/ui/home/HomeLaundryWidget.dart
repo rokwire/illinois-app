@@ -51,7 +51,6 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
-  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -158,14 +157,16 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
 
       List<Widget> pages = <Widget>[];
       for (LaundryRoom room in _laundrySchool!.rooms!) {
-        pages.add(Padding(key: _contentKeys[room.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: HomeCard.defaultShadowBlurRadius), child:
-          LaundryRoomCard(room: room, displayMode: CardDisplayMode.home, onTap: () => _onTapRoom(room))
+        pages.add(Padding(
+          key: _contentKeys[room.id ?? ''] ??= GlobalKey(),
+          padding: HomeCard.defaultPageMargin,
+          child: LaundryRoomCard(room: room, displayMode: CardDisplayMode.home, onTap: () => _onTapRoom(room))
         ));
       }
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport);
       }
 
@@ -180,7 +181,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         LaundryRoomCard(room: _laundrySchool!.rooms!.first, onTap: () => _onTapRoom(_laundrySchool!.rooms!.single))
       );
     }
@@ -220,7 +221,9 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
             _laundrySchool = laundrySchool;
             _pageViewKey = UniqueKey();
             // _pageController = null;
-            _pageController?.jumpToPage(0);
+            if (_laundrySchool?.rooms?.isNotEmpty == true) {
+              _pageController?.jumpToPage(0);
+            }
             _contentKeys.clear();
           });
         }

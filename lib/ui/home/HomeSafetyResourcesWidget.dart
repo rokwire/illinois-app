@@ -91,7 +91,6 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
-  final double _pageSpacing = 16;
 
   static const String localScheme = 'local';
   static const String privacyScheme = 'privacy';
@@ -168,14 +167,19 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         Map<String, dynamic>? reminderItem = JsonUtils.mapValue(_resourceItems![index]);
-        pages.add(Padding(key: _contentKeys[Guide().entryId(reminderItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: HomeCard.defaultShadowBlurRadius), child:
-          GuideEntryCard(reminderItem, favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType), displayMode: CardDisplayMode.home,)
+        pages.add(Padding(
+          key: _contentKeys[Guide().entryId(reminderItem) ?? ''] ??= GlobalKey(),
+          padding: HomeCard.defaultPageMargin,
+          child: GuideEntryCard(reminderItem,
+            favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
+            displayMode: CardDisplayMode.home,
+          )
         ));
       }
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport);
       }
 
@@ -214,7 +218,9 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
         _resourceItems = resourceItems;
         _pageViewKey = UniqueKey();
         // _pageController = null;
-        _pageController?.jumpToPage(0);
+        if (_resourceItems?.isNotEmpty == true) {
+          _pageController?.jumpToPage(0);
+        }
         _contentKeys.clear();
       });
     }

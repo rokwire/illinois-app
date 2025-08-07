@@ -61,7 +61,6 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   int _currentPage = -1;
-  final double _pageSpacing = 16;
 
   static const String localScheme = 'local';
   static const String localUrlMacro = '{{local_url}}';
@@ -138,7 +137,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
           String? resourceId = Guide().entryId(resourceItem);
           pages.add(Padding(
             key: _contentKeys[resourceId ?? ''] ??= GlobalKey(),
-            padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.defaultShadowBlurRadius, bottom: HomeCard.defaultShadowBlurRadius),
+            padding: HomeCard.defaultPageMargin,
             child: button
           ));
         }
@@ -146,7 +145,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage);
       }
 
@@ -161,7 +160,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: HomeCard.defaultShadowBlurRadius), child:
+      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         _buildResourceButton(JsonUtils.mapValue(_resourceItems?.first) ?? {})
       );
     }
@@ -212,7 +211,9 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
         _resourceItems = resourceItems;
         _pageViewKey = UniqueKey();
         // _pageController = null;
-        _pageController?.jumpToPage(0);
+        if (_resourceItems?.isNotEmpty == true) {
+          _pageController?.jumpToPage(0);
+        }
         _contentKeys.clear();
       });
     }

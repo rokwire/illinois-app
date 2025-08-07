@@ -44,7 +44,6 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
 
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
-  final double _pageSpacing = 16;
   
   @override
   void initState() {
@@ -136,6 +135,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
         DropdownButton<String>(
           icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('chevron-down', excludeFromSemantics: true)),
           isExpanded: false,
+          isDense: true,
           style: getTermDropDownItemStyle(selected: false),
           hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: Styles().textStyles.getTextStyle("widget.title.small.semi_fat")) : null,
           alignment: AlignmentDirectional.centerEnd,
@@ -196,14 +196,14 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
     if (1 < visibleCount) {
       List<Widget> coursePages = <Widget>[];
       for (StudentCourse course in _courses!) {
-        coursePages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: HomeCard.defaultShadowBlurRadius), child:
+        coursePages.add(Padding(padding: HomeCard.defaultPageMargin, child:
           StudentCourseCard(course: course, displayMode: CardDisplayMode.home,),
         ),);
       }
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport);
       }
 
@@ -220,7 +220,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         StudentCourseCard(course: _courses!.first, displayMode: CardDisplayMode.home),
       );
     }

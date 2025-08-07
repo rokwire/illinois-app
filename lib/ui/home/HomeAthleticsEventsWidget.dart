@@ -50,7 +50,6 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
-  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -158,14 +157,16 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         Event2 event = _sportEvents![index];
-        pages.add(Padding(key: _contentKeys[event.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.defaultShadowBlurRadius, bottom: HomeCard.defaultShadowBlurRadius), child:
-          Event2Card(event, displayMode: Event2CardDisplayMode.page, onTap: () => _onTapEvent(event))),
-        );
+        pages.add(Padding(
+          key: _contentKeys[event.id ?? ''] ??= GlobalKey(),
+          padding: HomeCard.defaultPageMargin,
+          child: Event2Card(event, displayMode: Event2CardDisplayMode.page, onTap: () => _onTapEvent(event))
+        ),);
       }
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport);
       }
 
@@ -179,7 +180,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8), child:
+      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         Event2Card(_sportEvents!.first, displayMode: Event2CardDisplayMode.page, onTap: () => _onTapEvent(_sportEvents!.first))
       );
     }
@@ -223,13 +224,15 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
           _loadingGames = true;
         });
       }
-      _loadSportEvents().then((List<Event2>? event) {
-        if (mounted && !DeepCollectionEquality().equals(_sportEvents, event)) {
+      _loadSportEvents().then((List<Event2>? events) {
+        if (mounted && !DeepCollectionEquality().equals(_sportEvents, events)) {
           setState(() {
-            _sportEvents = event;
+            _sportEvents = events;
             _pageViewKey = UniqueKey();
             // _pageController = null;
-            _pageController?.jumpToPage(0);
+            if (_sportEvents?.isNotEmpty == true) {
+              _pageController?.jumpToPage(0);
+            }
             _contentKeys.clear();
           });
         }

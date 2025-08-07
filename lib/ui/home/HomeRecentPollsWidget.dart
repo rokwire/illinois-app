@@ -52,7 +52,6 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
-  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -170,14 +169,16 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
     if (1 < (_recentPolls?.length ?? 0)) {
 
       for (Poll poll in _recentPolls!) {
-        pages.add(Padding(key: _contentKeys[poll.pollId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.defaultShadowBlurRadius, bottom: HomeCard.defaultShadowBlurRadius), child:
-          PollCard(poll: poll, group: _getGroup(poll.groupId)),
+        pages.add(Padding(
+          key: _contentKeys[poll.pollId ?? ''] ??= GlobalKey(),
+          padding: HomeCard.defaultPageMargin,
+          child: PollCard(poll: poll, group: _getGroup(poll.groupId)),
         ));
       }
 
       if (_loadingPollsPage) {
-        pages.add(Padding(key: _contentKeys['last'] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, top: HomeCard.defaultShadowBlurRadius, bottom: HomeCard.defaultShadowBlurRadius), child:
-          Container(decoration: HomeCard.defaultDecoration, child:
+        pages.add(Padding(key: _contentKeys['last'] ??= GlobalKey(), padding: HomeCard.defaultPageMargin, child:
+          Container(decoration: HomeCard.boxDecoration, child:
             HomeProgressWidget(
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: (_pageHeight - 24) / 2),
               progessSize: Size(24, 24),
@@ -189,7 +190,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport);
       }
 
@@ -206,11 +207,9 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
     }
     else {
       Poll? firstPoll = _recentPolls?.first;
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
-        (firstPoll != null) ?
-          PollCard(poll: firstPoll, group: _getGroup(firstPoll.groupId)) :
-          Container()
-      );
+      contentWidget = (firstPoll != null) ? Padding(padding: HomeCard.defaultSingleCardMargin, child:
+        PollCard(poll: firstPoll, group: _getGroup(firstPoll.groupId))
+      ) : Container();
     }
 
     return Column(children: <Widget>[
@@ -273,7 +272,9 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
           setStateIfMounted(() {
             _recentPolls = result?.polls;
             _pageViewKey = UniqueKey();
-            _pageController?.jumpToPage(0);
+            if (_recentPolls?.isNotEmpty == true) {
+              _pageController?.jumpToPage(0);
+            }
             _contentKeys.clear();
           });
         }
@@ -282,7 +283,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
           setStateIfMounted(() {
             _recentPolls = null;
             _pageViewKey = UniqueKey();
-            _pageController?.jumpToPage(0);
+            //_pageController?.jumpToPage(0);
             _contentKeys.clear();
           });
         }
