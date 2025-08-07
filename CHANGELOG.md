@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ## [7.3.0] - XXXX-XX-XX
+### Changed
+- Show list items in Assistant response [#5334](https://github.com/rokwire/illinois-app/issues/5334).
 
 ## [7.2.22] - 2025-08-05
 ### Changed
