@@ -42,7 +42,6 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
 
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
-  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -91,8 +90,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
   Widget _buildContent() {
     if (Connectivity().isOffline) {
       String offlineMessage = widget.isGies
-          ? Localization()
-              .getStringEx('panel.gies_canvas_courses.load.offline.error.msg', 'My Gies Canvas Courses not available while offline.')
+          ? Localization().getStringEx('panel.gies_canvas_courses.load.offline.error.msg', 'My Gies Canvas Courses not available while offline.')
           : Localization().getStringEx('panel.canvas_courses.load.offline.error.msg', 'My Canvas Courses not available while offline.');
       return HomeMessageCard(message: offlineMessage);
     }
@@ -103,14 +101,13 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
       return HomeMessageCard(message: AppTextUtils.loggedOutFeatureNA(signedOutMsg, verbose: true));
     }
     else if (_courses == null) {
-      return HomeMessageCard(message: Localization().getStringEx('panel.gies_canvas_courses.load.failed.error.msg', 'Unable to load courses.'),);
+      String failedMsg = Localization().getStringEx('panel.gies_canvas_courses.load.failed.error.msg', 'Unable to load courses.');
+      return HomeMessageCard(message: failedMsg,);
     }
     else if (_courses?.isEmpty ?? true) {
       String emptyMsg = widget.isGies
-          ? Localization()
-              .getStringEx('panel.gies_canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Gies Canvas courses.')
-          : Localization()
-              .getStringEx('panel.canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Canvas courses.');
+          ? Localization().getStringEx('panel.gies_canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Gies Canvas courses.')
+          : Localization().getStringEx('panel.canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Canvas courses.');
       return HomeMessageCard(message: emptyMsg);
     }
     else {
@@ -119,12 +116,11 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
   }
 
   Widget _buildCoursesContent() {
-    final double verticalPadding = 5;
-
     List<Widget> coursePages = <Widget>[];
     for (CanvasCourse course in _courses!) {
-      coursePages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, top: verticalPadding, bottom: verticalPadding), child:
-        GestureDetector(onTap: () => _onTapCourse(course), child:
+      coursePages.add(Padding(
+        padding: HomeCard.defaultPageMargin,
+        child: GestureDetector(onTap: () => _onTapCourse(course), child:
           CanvasCourseCard(course: course, small: true)
         ),
       ),);
@@ -132,11 +128,11 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
 
     if (_pageController == null) {
       double screenWidth = MediaQuery.of(context).size.width;
-      double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+      double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
       _pageController = PageController(viewportFraction: pageViewport);
     }
 
-    double pageHeight = CanvasCourseCard.height(context, isSmall: true) + (verticalPadding * verticalPadding);
+    double pageHeight = CanvasCourseCard.height(context, isSmall: true) + (2 * HomeCard.shadowMargin);
 
     return Column(children: [
       Container(height: pageHeight, child:
@@ -162,7 +158,9 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
       _courses = widget.isGies ? Canvas().giesCourses : Canvas().courses;
       _pageViewKey = UniqueKey();
       // _pageController = null;
-      _pageController?.jumpToPage(0);
+      if (_courses?.isNotEmpty == true) {
+        _pageController?.jumpToPage(0);
+      }
     });
   }
 

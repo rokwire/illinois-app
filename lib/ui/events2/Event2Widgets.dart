@@ -355,7 +355,7 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
 
   static Decoration get _pageContentDecoration =>
-    HomeCard.defaultDecoration;
+    HomeCard.boxDecoration;
   /*BoxDecoration(
     color: Styles().colors.surface,
     borderRadius: _pageContentBorderRadius,
@@ -369,16 +369,16 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   );
 
   static Decoration get _pageBottomContentDecoration => BoxDecoration(
-    color: HomeCard.defaultBackColor,
+    color: HomeCard.backColor,
     borderRadius: _pageContentBottomBorderRadius,
     boxShadow: _pageContentShadow
   );
 
   static List<BoxShadow> get _pageContentShadow => [
-    HomeCard.defaultShadow
+    HomeCard.boxShadow
   ];
 
-  static Radius get _pageContentRadius => HomeCard.defaultRadius;
+  static Radius get _pageContentRadius => HomeCard.radius;
   static BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.all(_pageContentRadius);
   static BorderRadiusGeometry get _pageContentTopBorderRadius => BorderRadius.vertical(top: _pageContentRadius);
   static BorderRadiusGeometry get _pageContentBottomBorderRadius => BorderRadius.vertical(bottom: _pageContentRadius);
@@ -731,7 +731,6 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
-  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -781,7 +780,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
           String contentKey = "${event.id}-$index";
           pages.add(Padding(
             key: _contentKeys[contentKey] ??= GlobalKey(),
-            padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 4),
+            padding: HomeCard.defaultPageMargin,
             child: Event2Card(event,
               displayMode: Event2CardDisplayMode.cardLink,
               linkType: CollectionUtils.isNotEmpty(widget.linkedGroupingQueries) ? widget.linkedGroupingQueries.first.type : null,
@@ -795,7 +794,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
       if (_hasMoreEvents != false) {
         pages.add(Padding(
           key: _contentKeys[_progressContentKey] ??= GlobalKey(),
-          padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
+          padding: EdgeInsets.only(right: HomeCard.pageSpacing, bottom: 8),
           child: HomeProgressWidget(
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 36),
           ),
@@ -804,7 +803,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width - 32;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport);
       }
 
@@ -821,14 +820,16 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
     }
     else {
       // Show it if the event is not the main event
-      return Visibility(visible: !_isMainEvent(_events?.first.id), child: Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-        Event2Card(_events!.first,
-          displayMode: Event2CardDisplayMode.cardLink,
-          linkType: CollectionUtils.isNotEmpty(widget.linkedGroupingQueries) ? widget.linkedGroupingQueries.first.type : null,
-          userLocation: widget.userLocation,
-          onTap: () => _onTapEvent2(_events!.first)
+      return Visibility(visible: !_isMainEvent(_events?.first.id), child:
+        Padding(padding: HomeCard.defaultChildMargin, child:
+          Event2Card(_events!.first,
+            displayMode: Event2CardDisplayMode.cardLink,
+            linkType: CollectionUtils.isNotEmpty(widget.linkedGroupingQueries) ? widget.linkedGroupingQueries.first.type : null,
+            userLocation: widget.userLocation,
+            onTap: () => _onTapEvent2(_events!.first)
+          )
         )
-      ));
+      );
     }
   }
 
