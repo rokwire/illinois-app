@@ -20,7 +20,7 @@ class AccentCard extends StatelessWidget {
   }
 
   Widget get _homeDisplayWidget =>
-    Container(decoration: HomeCard.defaultDecoration, margin: EdgeInsets.only(bottom: HomeCard.defaultShadowBlurRadius, ), child:
+    Container(decoration: HomeCard.boxDecoration, child:
       Column(children: <Widget>[
         Container(height: defaultHeaderHeight(displayMode), decoration: defaultHeaderDecoration(accentColor),),
         child ?? Container()
@@ -47,15 +47,15 @@ class AccentCard extends StatelessWidget {
   static BoxDecoration defaultHeaderDecoration(Color? accentColor) => BoxDecoration(
     color: accentColor,
     borderRadius: BorderRadius.only(
-        topLeft: HomeCard.defaultRadius,
-        topRight: HomeCard.defaultRadius,
+        topLeft: HomeCard.radius,
+        topRight: HomeCard.radius,
     ),
   );
 
   // Browse Decoration
 
   static BoxDecoration get defaultBrowseDecoration => BoxDecoration(
-    color: HomeCard.defaultBackColor,
+    color: HomeCard.backColor,
     border: defaultBrowseBorder,
     borderRadius: defaultBorderRadius,
   );

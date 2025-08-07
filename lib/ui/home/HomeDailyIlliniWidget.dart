@@ -59,7 +59,6 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
   bool _loadingItems = false;
   DateTime? _pausedDateTime;
   PageController? _pageController;
-  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -75,7 +74,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
     }
 
     double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+    double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
     _pageController = PageController(viewportFraction: pageViewport);
 
     _loadFeedItems();
@@ -133,14 +132,13 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
     }
 
     if (widgetsList.isEmpty && !_loadingItems) {
-      return HomeMessageCard(
-          message: Localization().getStringEx('widget.home.daily_illini.text.empty.description', 'Failed to load daily illini feed.'));
+      return HomeMessageCard(message: Localization().getStringEx('widget.home.daily_illini.text.empty.description', 'Failed to load daily illini feed.'));
     } else {
       Widget contentWidget;
       if (widgetsList.length >= 3) {
         contentWidget = Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Container(decoration: HomeCard.defaultDecoration, child:
+          padding: HomeCard.defaultSingleCardMargin,
+          child: Container(decoration: HomeCard.boxDecoration, child:
             Column(children: <Widget>[
               widgetsList[0],
               widgetsList[1],
@@ -151,7 +149,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
         );
       } else {
         contentWidget = Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: HomeCard.defaultSingleCardMargin,
           child: _DailyIlliniLoadingWidget(
             progressColor: Styles().colors.white,
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -228,7 +226,7 @@ class _MainStoryWidget extends _StoryWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-                borderRadius: BorderRadius.vertical(top: HomeCard.defaultRadius),
+                borderRadius: BorderRadius.vertical(top: HomeCard.radius),
                 child: _buildImage(context)
           ),
           InkWell(
