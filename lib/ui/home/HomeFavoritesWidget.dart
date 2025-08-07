@@ -266,9 +266,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
     }
 
     return Column(children: <Widget>[
-      Padding(padding: EdgeInsets.only(top: 8), child:
-        contentWidget,
-      ),
+      contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
        HomeBrowseLinkButton(
           title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
@@ -485,7 +483,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
   }
 
   Widget _buildEmpty() {
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
+    return Padding(padding: HomeCard.defaultChildMargin, child:
       Container(decoration: HomeCard.boxDecoration,
         padding: EdgeInsets.all(16),
         child:  HtmlWidget(
