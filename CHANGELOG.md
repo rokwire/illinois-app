@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+## [7.3.0] - 2025-08-07
+### Fixed
+- UI Clean Up: fixed shadow cut off of home cards when embedded in ExpandablePageView [#5289](https://github.com/rokwire/illinois-app/issues/5289).
+- UI Clean Up: fixed spacings within favorites widget headings and bodies [#5331](https://github.com/rokwire/illinois-app/issues/5331).
+### Changed
+- Show list items in Assistant response [#5334](https://github.com/rokwire/illinois-app/issues/5334).
+
+## [7.2.22] - 2025-08-05
+### Changed
+- Add space in the text for polls timestamp [#5321](https://github.com/rokwire/illinois-app/issues/5321).
+### Fixed
+- Fixed Digital Business Card initialization [#5322](https://github.com/rokwire/illinois-app/issues/5322).
+- Fixed Group Polls loading [#5320](https://github.com/rokwire/illinois-app/issues/5320).
+
+## [7.2.21] - 2025-08-04
 ### Changed
 - Do not initialize the unread filter externally [#5281](https://github.com/rokwire/illinois-app/issues/5281).
 - Require NetID login to make profile / share page available [#5315](https://github.com/rokwire/illinois-app/issues/5315).

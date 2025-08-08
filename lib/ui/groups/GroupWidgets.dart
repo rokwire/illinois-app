@@ -737,10 +737,10 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   }
 
   BoxDecoration get _cardDecoration => (widget.displayType == GroupCardDisplayType.homeGroups) ?
-      HomeCard.defaultDecoration : _defaultCardDecoration;
+      HomeCard.boxDecoration : _defaultCardDecoration;
 
   static BoxDecoration get _defaultCardDecoration => BoxDecoration(
-    color: HomeCard.defaultBackColor,
+    color: HomeCard.backColor,
     borderRadius: defaultCardBorderRadius,
     boxShadow: [_defaultCardShadow]
   );
@@ -2577,7 +2577,8 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
 
 
   String? get _pollDateText =>
-      "Quick Poll,Updated ${widget.poll?.displayUpdateTime}";
+      sprintf(Localization().getStringEx('panel.polls_home.card.updated_quick_poll.label', 'Quick Poll, Updated %s'),
+          ['${widget.poll?.displayUpdateTime}']);
 
   List<Widget> _buildCheckboxOptions() {
     bool isClosed = widget.poll!.status == PollStatus.closed;

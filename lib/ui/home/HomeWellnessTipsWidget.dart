@@ -103,14 +103,15 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> with No
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessTipsWidget.title,
-      childPadding: HomeFavoriteWidget.defaultChildPadding,
-      child: _buildContent(),
+      child: Padding(padding: HomeCard.defaultChildMargin,
+        child: _buildContent(),
+      ),
     );
   }
 
   Widget _buildContent() {
     return GestureDetector(onTap: _onTap, child:
-      Container(decoration: HomeCard.defaultDecoration, child:
+      Container(decoration: HomeCard.boxDecoration, child:
         Row(children: <Widget>[
           Expanded(child:
             Column(children: <Widget>[

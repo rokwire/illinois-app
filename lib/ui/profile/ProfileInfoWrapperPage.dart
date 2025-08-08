@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
-import 'package:illinois/ui/profile/ProfileInfoSharePanel.dart';
+import 'package:illinois/ui/profile/ProfileBusinessCardPage.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -83,7 +83,7 @@ class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> with Not
         params: widget.contentParams(ProfileInfoWrapperContent.info),
       );
 
-      case ProfileInfoWrapperContent.share: return ProfileInfoSharePage(
+      case ProfileInfoWrapperContent.share: return ProfileBusinessCardPage(
         params: widget.contentParams(ProfileInfoWrapperContent.share)
       );
     }
