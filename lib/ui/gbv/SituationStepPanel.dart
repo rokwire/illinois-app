@@ -160,7 +160,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              resourceData.text ?? "No Title",
+              resourceData.text,
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 12),
