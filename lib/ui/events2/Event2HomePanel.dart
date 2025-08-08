@@ -94,7 +94,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
         eventSelector: eventSelector, analyticsFeature: analyticsFeature,
       )));
     }
-    else if (Storage().events2Attributes != null) {
+    else if (Storage().events2Attributes != null && false /* TMP */) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
         eventSelector: eventSelector, analyticsFeature: analyticsFeature,
       )));
@@ -376,12 +376,15 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
       dynamic result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
         title: Localization().getStringEx('panel.events2.home.attributes.filters.header.title', 'Event Filters'),
         description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
+        footerBuilder: _buildFiltersFooter,
+
         contentAttributes: contentAttributes,
         selection: selection,
+
         scope: Events2.contentAttributesScope,
         sortType: ContentAttributesSortType.native,
         filtersMode: true,
-        footerBuilder: _buildFiltersFooter,
+
         handleAttributeValue: handleAttributeValue,
         countAttributeValues: countAttributeValues,
       )));
@@ -1240,10 +1243,14 @@ class _Event2OnboardingFiltersPanel extends ContentAttributesPanel {
     sectionRequiredMarkTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.extra_fat.highlight'),
     applyBuilder: Event2HomePanel._buildOnboardingApply,
     continueBuilder: Event2HomePanel._buildOnboardingContinue,
+
     contentAttributes: Event2HomePanel.buildContentAttributesV1(status: status),
-    sortType: ContentAttributesSortType.native,
+
     scope: Events2.contentAttributesScope,
+    sortType: ContentAttributesSortType.native,
     filtersMode: true,
+
+    countAttributeValues: Event2HomePanel.countAttributeValues,
   );
 }
 
