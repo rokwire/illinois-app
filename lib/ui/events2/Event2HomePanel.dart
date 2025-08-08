@@ -258,6 +258,10 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
 
   static ContentAttributes? buildContentAttributesV1({LocationServicesStatus? status}) {
     ContentAttributes? contentAttributes = ContentAttributes.fromOther(Events2().contentAttributes);
+
+    final Set<String> removeAttributeIds = <String>{'college', 'department'};
+    contentAttributes?.attributes?.removeWhere((ContentAttribute attribute) => removeAttributeIds.contains(attribute.id));
+
     contentAttributes?.attributes?.insert(0, buildEventDetailsContentAttribute());
     contentAttributes?.attributes?.add(buildEventLimitsContentAttribute(status: status));
     return contentAttributes;
@@ -325,8 +329,15 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
   // ContentAttributes + EventTime & EventType filter
 
   static ContentAttributes? buildContentAttributesV2({LocationServicesStatus? status, TZDateTime? customStartTime, TZDateTime? customEndTime }) {
-    ContentAttributes? contentAttributes = ContentAttributes.fromOther(buildContentAttributesV1(status: status));
-    contentAttributes?.attributes?.insert(0, Event2HomePanel.eventTimeContentAttribute(customStartTime: customStartTime, customEndTime: customEndTime));
+    ContentAttributes? contentAttributes = ContentAttributes.fromOther(Events2().contentAttributes);
+
+    contentAttributes?.attributes?.insertAll(0, <ContentAttribute>[
+      eventTimeContentAttribute(customStartTime: customStartTime, customEndTime: customEndTime),
+      buildEventDetailsContentAttribute(),
+    ]);
+
+    contentAttributes?.attributes?.add(buildEventLimitsContentAttribute(status: status));
+
     return contentAttributes;
   }
 
