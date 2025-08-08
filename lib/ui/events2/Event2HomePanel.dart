@@ -94,7 +94,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
         eventSelector: eventSelector, analyticsFeature: analyticsFeature,
       )));
     }
-    else if (Storage().events2Attributes != null && false /* TMP */) {
+    else if (Storage().events2Attributes != null) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
         eventSelector: eventSelector, analyticsFeature: analyticsFeature,
       )));
