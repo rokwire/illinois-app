@@ -130,7 +130,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
   }
 
   static Widget _buildOnboardingDescription(BuildContext context) {
-    String decriptionHtml = Localization().getStringEx("panel.events2.home.attributes.launch.header.description", "Customize your events feed by setting the below filters or <a href='{{events2_url}}'>view all events now<a> and choose your event filters later.").
+    String decriptionHtml = Localization().getStringEx("panel.events2.home.attributes.launch.header.description", "Customize your event feed by setting the filters below.").
       replaceAll('{{events2_url}}', url);
     TextStyle? descriptionTextStyle = Styles().textStyles.getTextStyle('widget.description.medium.fat.highlight'); // TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.white);
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
