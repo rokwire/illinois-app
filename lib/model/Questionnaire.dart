@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -196,8 +197,9 @@ class Answer {
   final String? id;
   final String? title;
   final String? hint;
+  final AnswerInterval? interval;
 
-  Answer({this.id, this.title, this.hint});
+  Answer({this.id, this.title, this.hint, this.interval});
 
   // JSON serialization
 
@@ -206,6 +208,7 @@ class Answer {
       id: JsonUtils.stringValue(json['id']),
       title: JsonUtils.stringValue(json['title']),
       hint: JsonUtils.stringValue(json['hint']),
+      interval: AnswerInterval.fromJson(JsonUtils.mapValue(json['interval'])),
     ) : null;
   }
 
@@ -213,6 +216,7 @@ class Answer {
     'id': id,
     'title': title,
     'hint': hint,
+    'interval': interval?.toJson(),
   };
 
   // Equality
@@ -222,13 +226,15 @@ class Answer {
     (other is Answer) &&
     (id == other.id) &&
     (title == other.title) &&
-    (hint == other.hint);
+    (hint == other.hint) &&
+    (interval == other.interval);
 
   @override
   int get hashCode =>
     (id?.hashCode ?? 0) ^
     (title?.hashCode ?? 0) ^
-    (hint?.hashCode ?? 0);
+    (hint?.hashCode ?? 0) ^
+    (interval?.hashCode ?? 0);
 
   // Accessories
   
@@ -274,6 +280,98 @@ class Answer {
   // Accessories
 
   String? get displayHint => hint ?? title;
+}
+
+class AnswerInterval {
+  final AnswerIntervalDelta? startDelta;
+  final AnswerIntervalDelta? endDelta;
+
+  static const String delimiter = ';';
+
+  AnswerInterval({this.startDelta, this.endDelta});
+
+  static AnswerInterval? fromJson(Map<String, dynamic>? json) => (json != null) ? AnswerInterval(
+    startDelta: AnswerIntervalDelta.fromJsonString(JsonUtils.stringValue(json['start'])),
+    endDelta: AnswerIntervalDelta.fromJsonString(JsonUtils.stringValue(json['end'])),
+  ) : null;
+
+  Map<String, dynamic> toJson() => {
+    'start': startDelta?.toJsonString(),
+    'end': endDelta?.toJsonString(),
+  };
+
+  String toStringValue() {
+    DateTime now = DateUtils.dateOnly(DateTime.now());
+    String startValue = startDelta?.apply(now).difference(DOBQuestion.dobOrgDate).inDays.toString() ?? '';
+    String endValue = endDelta?.apply(now).difference(DOBQuestion.dobOrgDate).inDays.toString() ?? '';
+    return [startValue, endValue].join(delimiter);
+  }
+
+  // Equality
+
+  @override
+  bool operator==(Object other) =>
+    (other is AnswerInterval) &&
+    (startDelta == other.startDelta) &&
+    (endDelta == other.endDelta);
+
+  @override
+  int get hashCode =>
+    (startDelta?.hashCode ?? 0) ^
+    (endDelta?.hashCode ?? 0);
+}
+
+class AnswerIntervalDelta {
+  final int? years;
+  final int? months;
+  final int? days;
+
+  static const String delimiter = ';';
+
+  AnswerIntervalDelta({this.years, this.months, this.days});
+
+  static AnswerIntervalDelta? fromJsonString(String? value) {
+    if (value != null) {
+      List<String> items = value.split(delimiter);
+      return AnswerIntervalDelta(
+        years: (0 < items.length) ? int.tryParse(items[0]) : null,
+        months: (1 < items.length) ? int.tryParse(items[1]) : null,
+        days: (2 < items.length) ? int.tryParse(items[2]) : null
+      );
+    }
+    else {
+      return null;
+    }
+  }
+
+  String toJsonString() => [_yearsString, _monthsString, _daysString].join(delimiter);
+
+  String get _yearsString => (years != null) ? years.toString() : '';
+  String get _monthsString => (months != null) ? months.toString() : '';
+  String get _daysString => (days != null) ? days.toString() : '';
+
+  // Equality
+
+  @override
+  bool operator==(Object other) =>
+    (other is AnswerIntervalDelta) &&
+    (years == other.years) &&
+    (months == other.months) &&
+    (days == other.days);
+
+  @override
+  int get hashCode =>
+    (years?.hashCode ?? 0) ^
+    (months?.hashCode ?? 0) ^
+    (days?.hashCode ?? 0);
+
+  // Functinality
+
+  DateTime apply(DateTime origin) => DateTime(
+    origin.year + (years ?? 0),
+    origin.month + (months ?? 0),
+    origin.day + (days ?? 0)
+  );
 }
 
 extension DOBQuestion on Question {

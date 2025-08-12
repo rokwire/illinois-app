@@ -299,7 +299,14 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
   Widget _buildAnswer(Answer answer, { required Question question }) {
     LinkedHashSet<String>? selectedAnswers = _selection[question.id];
-    bool selected = selectedAnswers?.contains(answer.id) ?? false;
+    String? answerId;
+    if (question.type == QuestionType.dateOfBirth) {
+      answerId = answer.interval?.toStringValue();
+    }
+    else {
+      answerId = answer.id;
+    }
+    bool selected = selectedAnswers?.contains(answerId) ?? false;
     String title = _questionnaireStringEx(answer.title);
     return
       Semantics(
@@ -308,7 +315,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
         button: true,
         child: Padding(padding: EdgeInsets.only(left: _hPadding - 12, right: _hPadding), child:
           Row(children: [
-            InkWell(onTap: (){ _onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(selected == true), title); }, child:
+            InkWell(onTap: () => _onAnswer(answer, question: question), child:
               Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 8, ), child:
                 Styles().images.getImage(selected ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true),
               ),
@@ -328,22 +335,31 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
     String questionTitle = _questionnaireStringEx(question.title, languageCode: 'en');
     Analytics().logSelect(target: '$questionTitle => $answerTitle');
 
-    String? answerId = answer.id;
+    String? answerId;
+    if (question.type == QuestionType.dateOfBirth) {
+      answerId = answer.interval?.toStringValue();
+    }
+    else {
+      answerId = answer.id;
+    }
     String? questionId = question.id;
+
     if ((questionId != null) && (answerId != null)) {
+      LinkedHashSet<String>? selectedAnswers = _selection[questionId];
+      bool selected = selectedAnswers?.contains(answerId) == true;
       setState(() {
-        LinkedHashSet<String>? selectedAnswers = _selection[questionId];
-        if ((selectedAnswers != null) && selectedAnswers.contains(answerId)) {
-          selectedAnswers.remove(answerId);
-          if (selectedAnswers.isEmpty) {
+        if (selected) {
+          selectedAnswers?.remove(answerId);
+          if (selectedAnswers?.isEmpty == true) {
             _selection.remove(questionId);
           }
         }
         else {
           selectedAnswers ??= (_selection[questionId] = LinkedHashSet<String>());
-          selectedAnswers.add(answerId);
+          selectedAnswers?.add(answerId!);
         }
       });
+      AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/ !selected, _questionnaireStringEx(answer.title));
       _updateTargetAudienceCount();
     }
   }
