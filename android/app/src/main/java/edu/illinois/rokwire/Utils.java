@@ -16,7 +16,11 @@
 
 package edu.illinois.rokwire;
 
+import android.util.Log;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Utils {
 
@@ -65,6 +69,21 @@ public class Utils {
         public static boolean isNotEmpty(String value) { return (value != null) && !value.isEmpty(); }
         public static boolean isEmpty(String value) {
             return (value == null) || value.isEmpty();
+        }
+    }
+
+    public static class List {
+        public static java.util.List<String> stringList(Object value) {
+            if (value instanceof java.util.List<?> rawList) {
+                java.util.List<String> resultList = new ArrayList<>();
+                for (Object item : rawList) {
+                    if (item instanceof String) {
+                        resultList.add((String) item);
+                    }
+                }
+                return resultList;
+            }
+            return null;
         }
     }
 }

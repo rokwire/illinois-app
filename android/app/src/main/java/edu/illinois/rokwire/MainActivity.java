@@ -167,9 +167,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 }
             }
         }
-        List<String> orientationsList;
-        if (orientations instanceof List) {
-            orientationsList = (List<String>) orientations;
+        List<String> orientationsList = Utils.List.stringList(orientations);
+        if (orientationsList != null) {
             int preferredOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
             Set<Integer> supportedOrientations = new HashSet<>();
             for (String orientationString : orientationsList) {
