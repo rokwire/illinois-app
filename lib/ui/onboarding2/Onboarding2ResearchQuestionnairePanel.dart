@@ -354,9 +354,10 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
     showDatePicker(context: context,
       initialDate: selectedDate,
+      initialDatePickerMode: DatePickerMode.year,
+      initialEntryMode: DatePickerEntryMode.calendar,
       firstDate: DOBQuestion.dobOrgDate,
       lastDate: now,
-      currentDate: now,
       builder: (context, child) => _datePickerTransitionBuilder(context, child!),
     ).then((DateTime? result) => _didDateOfBirthAnswer(question, result));
   }
