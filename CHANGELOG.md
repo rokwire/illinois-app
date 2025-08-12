@@ -6,7 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
-## [7.3.0] - XXXX-XX-XX
 ### Fixed
 - UI Clean Up: fixed shadow cut off of home cards when embedded in ExpandablePageView [#5289](https://github.com/rokwire/illinois-app/issues/5289).
 - UI Clean Up: fixed spacings within favorites widget headings and bodies [#5331](https://github.com/rokwire/illinois-app/issues/5331).
