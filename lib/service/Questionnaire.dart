@@ -18,7 +18,8 @@ class Questionnaires /* with Service */ {
   // Implementation
 
   Future<Questionnaire?> loadResearch() async {
-    //TMP: return Questionnaire.fromJson(JsonUtils.decodeMap(await AppBundle.loadString('assets/questionnaire.demographics.json')));
+    //TMP:
+    return Questionnaire.fromJson(JsonUtils.decodeMap(await AppBundle.loadString('assets/extra/questionnaire.demographics.json')));
     const String researchQuestionnaireCategory = 'research_questionnaire';
     dynamic contentItem = await Content().loadContentItem(researchQuestionnaireCategory);
     return Questionnaire.fromJson(JsonUtils.mapValue((contentItem is List) ? contentItem.first : contentItem));
