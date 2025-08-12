@@ -9,6 +9,7 @@ import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -53,8 +54,6 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   bool _onboardingProgress = false;
   Questionnaire? _questionnaire;
   Map<String, LinkedHashSet<String>> _selection = <String, LinkedHashSet<String>>{};
-
-  final double _hPadding = 24;
 
   @override
   void initState() {
@@ -237,6 +236,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.backgroundVariant, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
             Container(height: 40,),
           ),
+          Container(height: 10,),
         ],),
       ],),
       Column(children: contentList,),
@@ -245,17 +245,28 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   }
 
   List<Widget> _buildAnswers(Question question) {
+    switch (question.type) {
+      case QuestionType.dateOfBirth: return _buildDateOfBirthAnswers(question);
+      default: return _buildCheckListAnswers(question);
+    }
+  }
+
+  // Check List
+
+  List<Widget> _buildCheckListAnswers(Question question) {
     List<Widget> answersList = <Widget>[];
     List<Answer>? answers = question.answers;
     if (answers != null) {
       for (Answer answer in answers) {
-        answersList.add(Padding(padding: EdgeInsets.only(top: answersList.isNotEmpty ? 5 : 0), child:_buildAnswer(answer, question: question)));
+        answersList.add(Padding(padding: EdgeInsets.only(top: answersList.isNotEmpty ? 5 : 0), child:
+          _buildCheckListAnswer(answer, question: question)
+        ));
       }
     }
     return answersList;
   }
 
-  Widget _buildAnswer(Answer answer, { required Question question }) {
+  Widget _buildCheckListAnswer(Answer answer, { required Question question }) {
     LinkedHashSet<String>? selectedAnswers = _selection[question.id];
     bool selected = selectedAnswers?.contains(answer.id) ?? false;
     String title = _questionnaireString(answer.title);
@@ -266,10 +277,9 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       Semantics(
         label: title, button: true,
         value: selected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
-        child: InkWell(onTap: () { _onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context, !selected, title);}, child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
-        Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: selected ? Styles().colors.fillColorPrimary : Styles().colors.white, width: 1)), child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
+        child: Padding(padding: _controlMargin, child:
+        InkWell(onTap: () => _onCheckListAnswer(answer, question: question), child:
+          Container(decoration: _controlDecoration(selected: selected), padding: _controlPadding, child:
             Row(children: [
               Padding(padding: EdgeInsets.only(right: 12), child:
                 Styles().images.getImage(imageAsset, excludeFromSemantics: true),
@@ -281,12 +291,12 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
               ),
             ]),
           ),
-        ),
-      ),
-    ));
+       ),
+      )
+    );
   }
 
-  void _onAnswer(Answer answer, { required Question question }) {
+  void _onCheckListAnswer(Answer answer, { required Question question }) {
 
     //String answerTitle = _questionnaireString(answer.title, languageCode: 'en');
     //String? questionTitle = _questionnaireString(question.title, languageCode: 'en');
@@ -310,8 +320,94 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
           }
         }
       });
+      AppSemantics.announceCheckBoxStateChange(context, selectedAnswers.contains(answer.id) != true, _questionnaireString(answer.title));
     }
   }
+
+  // Date Of Birth
+
+  List<Widget> _buildDateOfBirthAnswers(Question question) => <Widget>[
+    _buildDateOfBirthAnswer(question)
+  ];
+
+  Widget _buildDateOfBirthAnswer(Question question) {
+    LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+    String? selectedAnswer = (selectedAnswers?.isNotEmpty == true) ? selectedAnswers?.first : null;
+    DateTime? selectedDate = DOBQuestion.fromDOBString(selectedAnswer);
+    String? label = (selectedDate != null) ? DateFormat('MM-dd-yyyy').format(selectedDate) : null;
+
+    return Padding(padding: _controlMargin, child:
+      InkWell(onTap: () => _onDateOfBirthAnswer(question), child:
+        Container(decoration: _controlDecoration(selected: (selectedDate != null)), padding: _controlPadding2, child:
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+            Text(label ??  '-', style: Styles().textStyles.getTextStyle('widget.title.regular'),),
+            Styles().images.getImage('chevron-down') ?? Container()
+          ],),
+        ),
+      )
+    );
+  }
+
+  void _onDateOfBirthAnswer(Question question) {
+    LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+    String? selectedAnswer = (selectedAnswers?.isNotEmpty == true) ? selectedAnswers?.first : null;
+    DateTime? selectedDate = DOBQuestion.fromDOBString(selectedAnswer);
+    DateTime now = DateUtils.dateOnly(DateTime.now());
+
+    showDatePicker(context: context,
+      initialDate: selectedDate,
+      firstDate: DOBQuestion.dobOrgDate,
+      lastDate: now,
+      currentDate: now,
+      builder: (context, child) => _datePickerTransitionBuilder(context, child!),
+    ).then((DateTime? result) => _didDateOfBirthAnswer(question, result));
+  }
+
+  void _didDateOfBirthAnswer(Question question, DateTime? value) {
+    String? questionId = question.id;
+    if (questionId != null) {
+      if (value != null) {
+        setState(() {
+          _selection[questionId] = LinkedHashSet<String>.from(<String>[
+            DOBQuestion.toDOBString(value)
+          ]);
+        });
+      }
+      // On Cancel value is null
+      /*else {
+        setState(() {
+          _selection.remove(questionId);
+        });
+      }*/
+    }
+  }
+
+  Widget _datePickerTransitionBuilder(BuildContext context, Widget child) => Theme(
+    data: Theme.of(context).copyWith(datePickerTheme: DatePickerThemeData(backgroundColor: Styles().colors.white)),
+    child: child
+  );
+
+  // Shared UI
+  EdgeInsetsGeometry get _controlMargin => EdgeInsets.symmetric(horizontal: _hPadding);
+  EdgeInsetsGeometry get _controlPadding => EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2);
+  EdgeInsetsGeometry get _controlPadding2 => EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding);
+  static const double _hPadding = 24;
+
+  BoxDecoration _controlDecoration({bool selected = false}) => selected ? _selectedControlDecoration : _regularControlDecoration;
+
+  BoxDecoration get _regularControlDecoration => BoxDecoration(color: _controlDecorationColor, border: _regularControlBorder);
+  BoxBorder get _regularControlBorder => Border.all(color: _regularControlBorderColor, width: _controlBorderWidth);
+  Color get _regularControlBorderColor => Styles().colors.surfaceAccent;
+
+  BoxDecoration get _selectedControlDecoration => BoxDecoration(color: _controlDecorationColor, border: _selectedControlBorder);
+  BoxBorder get _selectedControlBorder => Border.all(color: _selectedControlBorderColor, width: _controlBorderWidth);
+  Color get _selectedControlBorderColor => Styles().colors.fillColorPrimary;
+
+  Color get _controlDecorationColor => Styles().colors.surface;
+  static const double _controlBorderWidth = 1.0;
+
+
+  // General Flow
 
   void _onCancel() {
     Analytics().logSelect(target: "Cancel");

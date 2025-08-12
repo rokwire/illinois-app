@@ -91,8 +91,11 @@ class Questionnaire {
   }
 }
 
+enum QuestionType { checkList, dateOfBirth }
+
 class Question {
   final String? id;
+  final QuestionType? type;
   final String? title;
   final String? hint;
   final String? descriptionPrefix;
@@ -101,13 +104,14 @@ class Question {
   final int? maxAnswers;
   final List<Answer>? answers;
 
-  Question({this.id, this.title, this.hint, this.descriptionPrefix, this.descriptionSuffix, this.minAnswers, this.maxAnswers, this.answers});
+  Question({this.id, this.type, this.title, this.hint, this.descriptionPrefix, this.descriptionSuffix, this.minAnswers, this.maxAnswers, this.answers});
 
   // JSON serialization
 
   static Question? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Question(
       id: JsonUtils.stringValue(json['id']),
+      type: QuestionTypeImpl.fromJsonString(JsonUtils.stringValue(json['type'])) ,
       title: JsonUtils.stringValue(json['title']),
       hint: JsonUtils.stringValue(json['hint']),
       descriptionPrefix: JsonUtils.stringValue(json['description_prefix']),
@@ -120,6 +124,7 @@ class Question {
 
   toJson() => {
     'id': id,
+    'type': type?.toJsonString(),
     'title': title,
     'hint': hint,
     'description_prefix': descriptionPrefix,
@@ -135,6 +140,7 @@ class Question {
   bool operator==(Object other) =>
     (other is Question) &&
     (id == other.id) &&
+    (type == other.type) &&
     (title == other.title) &&
     (hint == other.hint) &&
     (descriptionPrefix == other.descriptionPrefix) &&
@@ -146,6 +152,7 @@ class Question {
   @override
   int get hashCode =>
     (id?.hashCode ?? 0) ^
+    (type?.hashCode ?? 0) ^
     (title?.hashCode ?? 0) ^
     (hint?.hashCode ?? 0) ^
     (descriptionPrefix?.hashCode ?? 0) ^
@@ -267,4 +274,36 @@ class Answer {
   // Accessories
 
   String? get displayHint => hint ?? title;
+}
+
+extension DOBQuestion on Question {
+  static const int dobOrgYear = 1900;
+  static final DateTime dobOrgDate = DateTime(dobOrgYear, 1, 1);
+
+  static DateTime? fromDOBString(String? value) {
+    int? numberOfDays = (value != null) ? int.tryParse(value) : null;
+    return (numberOfDays != null) ? dobOrgDate.add(Duration(days: numberOfDays)) : null;
+  }
+
+  static String toDOBString(DateTime value) =>
+    value.difference(dobOrgDate).inDays.toString();
+}
+
+extension QuestionTypeImpl on QuestionType {
+
+  String toJsonString() {
+    switch (this) {
+      case QuestionType.checkList: return 'check-list';
+      case QuestionType.dateOfBirth: return 'date-of-birth';
+    }
+  }
+
+  static QuestionType? fromJsonString(String? value) {
+    switch (value) {
+      case 'check-list': return QuestionType.checkList;
+      case 'date-of-birth': return QuestionType.dateOfBirth;
+      default: return null;
+    }
+  }
+
 }
