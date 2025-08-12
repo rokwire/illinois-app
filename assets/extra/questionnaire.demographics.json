@@ -3,10 +3,11 @@
 	"title":"Research Interest Form",
 	"description": "Please fill out this questionnaire to receive invitations to participate in research studies that match your demographics.",
 	"questions": [{
-		"id":"q01.1",
+		"id":"q01-dob",
 		"type": "date-of-birth",
 		"title":"What is your date of birth?",
 		"hint":"Date of Birth",
+		"min_answers":1,
 		"answers": [
 			{"id":"a01", "title":"Under 18 (I will NOT be 18 years old by January 16, 2026)", "hint":"Under 18"},
 			{"id":"a02", "title":"Under 18 (I will be 18 years old by January 16, 2026)", "hint":"Under 18"},
@@ -22,7 +23,7 @@
 			{"id":"a12", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
-		"id":"q01.0",
+		"id":"q01",
 		"title":"How old are you?",
 		"hint":"Age",
 		"description_prefix":null,

@@ -957,6 +957,7 @@
     "panel.onboarding2.research.questionnaire.button.cancel.hint": "",
     "panel.onboarding2.research.questionnaire.error.select.single": "Please choose at least {{MinQuestionAnswers}} answer for \"{{QuestionTitle}}\".",
     "panel.onboarding2.research.questionnaire.error.select.multi": "Please choose at least {{MinQuestionAnswers}} answers for \"{{QuestionTitle}}\".",
+    "panel.onboarding2.research.questionnaire.error.enter.value": "Please enter a value for \"{{QuestionTitle}}\".",
     "panel.onboarding2.research.questionnaire.error.load": "Failed to load research questionnaire.",
 
     "panel.explore.header.events.title":"Events",

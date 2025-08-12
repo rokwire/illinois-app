@@ -421,16 +421,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       int index = this._failSubmitQuestion;
       Question? failQuestion = ((0 <= index) && (index < questions.length)) ? questions[index] : null;
       if (failQuestion != null) {
-        int minQuestionAnswers = failQuestion.minAnswers ?? 0;
-        String questionTitle = _displayQuestionTitle(failQuestion, index: index + 1);
-        String promptFormat = (1 < minQuestionAnswers) ?
-          Localization().getStringEx('panel.onboarding2.research.questionnaire.error.select.multi', 'Please choose at least {{MinQuestionAnswers}} aswers of "{{QuestionTitle}}".') :
-          Localization().getStringEx('panel.onboarding2.research.questionnaire.error.select.single', 'Please choose at least {{MinQuestionAnswers}} aswer of "{{QuestionTitle}}".');
-        String displayPrompt = promptFormat.
-          replaceAll('{{MinQuestionAnswers}}', '$minQuestionAnswers').
-          replaceAll('{{QuestionTitle}}', '$questionTitle');
-
-        AppAlert.showDialogResult(context, displayPrompt);
+        AppAlert.showDialogResult(context, _failSubmitPrompt(failQuestion, index: index));
       }
       else {
         Analytics().logResearchQuestionnaiire(answers: _analyticsAnswers);
@@ -457,6 +448,25 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       }
     }
     return -1;
+  }
+
+  String _failSubmitPrompt(Question question, { int? index }) {
+    final String titleMacro = "{{QuestionTitle}}";
+    final String minAnswersMacro = "{{MinQuestionAnswers}}";
+    int minQuestionAnswers = question.minAnswers ?? 0;
+    String questionTitle = _displayQuestionTitle(question, index: (index != null) ? (index + 1) : null);
+    String promptFormat;
+    if (question.type == QuestionType.dateOfBirth) {
+      promptFormat = Localization().getStringEx('panel.onboarding2.research.questionnaire.error.enter.value', 'Please enter a value for "$titleMacro".');
+    }
+    else {
+      promptFormat = (1 < minQuestionAnswers) ?
+        Localization().getStringEx('panel.onboarding2.research.questionnaire.error.select.multi', 'Please choose at least $minAnswersMacro aswers of "$titleMacro".') :
+        Localization().getStringEx('panel.onboarding2.research.questionnaire.error.select.single', 'Please choose at least $minAnswersMacro aswer of "$titleMacro".');
+    }
+    return promptFormat.
+      replaceAll(minAnswersMacro, '$minQuestionAnswers').
+      replaceAll(titleMacro, '$questionTitle');
   }
 
   List<dynamic>? get _analyticsAnswers {

@@ -954,6 +954,7 @@
     "panel.onboarding2.research.questionnaire.button.cancel.hint": "",
     "panel.onboarding2.research.questionnaire.error.select.single": "Favor de elijir al menos {{MinQuestionAnswers}} respuesta para \"{{QuestionTitle}}\".",
     "panel.onboarding2.research.questionnaire.error.select.multi": "Favor de elegir al menos {{MinQuestionAnswers}} respuestas para \"{{QuestionTitle}}\".",
+    "panel.onboarding2.research.questionnaire.error.enter.value": "Please enter a value for \"{{QuestionTitle}}\".",
     "panel.onboarding2.research.questionnaire.error.load": "No se pudo cargar el cuestionario de investigación.",
 
     "panel.explore.header.events.title":"Eventos",

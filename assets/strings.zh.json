@@ -954,6 +954,7 @@
 	"panel.onboarding2.research.questionnaire.button.cancel.hint": "",
 	"panel.onboarding2.research.questionnaire.error.select.single": "请选择至少 {{MinQuestionAnswers}} 个选项 \"{{QuestionTitle}}\"。",
 	"panel.onboarding2.research.questionnaire.error.select.multi": "请选择至少 {{MinQuestionAnswers}} 个选项 \"{{QuestionTitle}}\"。",
+	"panel.onboarding2.research.questionnaire.error.enter.value": "Please enter a value for \"{{QuestionTitle}}\".",
 	"panel.onboarding2.research.questionnaire.error.load": "无法加载研究问卷。",
 
 	"panel.explore.header.events.title":"活动",
