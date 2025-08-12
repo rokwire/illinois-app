@@ -285,9 +285,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
                 Styles().images.getImage(imageAsset, excludeFromSemantics: true),
               ),
               Expanded(child:
-                Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
-                  Text(title, style: Styles().textStyles.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left, semanticsLabel: "",)
-                ),
+                Text(title, style: Styles().textStyles.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left, semanticsLabel: "",)
               ),
             ]),
           ),
@@ -338,7 +336,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
     return Padding(padding: _controlMargin, child:
       InkWell(onTap: () => _onDateOfBirthAnswer(question), child:
-        Container(decoration: _controlDecoration(selected: (selectedDate != null)), padding: _controlPadding2, child:
+        Container(decoration: _controlDecoration(selected: (selectedDate != null)), padding: _controlPadding, child:
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
             Text(label ??  '-', style: Styles().textStyles.getTextStyle('widget.title.regular'),),
             Styles().images.getImage('chevron-down') ?? Container()
@@ -389,9 +387,9 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
   // Shared UI
   EdgeInsetsGeometry get _controlMargin => EdgeInsets.symmetric(horizontal: _hPadding);
-  EdgeInsetsGeometry get _controlPadding => EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2);
-  EdgeInsetsGeometry get _controlPadding2 => EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding);
+  EdgeInsetsGeometry get _controlPadding => EdgeInsets.symmetric(horizontal: _hPadding, vertical: _vPadding);
   static const double _hPadding = 24;
+  static const double _vPadding = 16;
 
   BoxDecoration _controlDecoration({bool selected = false}) => selected ? _selectedControlDecoration : _regularControlDecoration;
 
