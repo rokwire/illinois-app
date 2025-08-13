@@ -301,35 +301,30 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
   }
 
   Widget _buildAnswer(Answer answer, { required Question question }) {
-    LinkedHashSet<String>? selectedAnswers = _selection[question.id];
-    String? answerId;
-    if (question.type == QuestionType.dateOfBirth) {
-      answerId = answer.interval?.toDateOfBirthValue();
-    }
-    else {
-      answerId = answer.id;
-    }
-    bool selected = selectedAnswers?.contains(answerId) ?? false;
+    String? questionId = question.id;
+    String? answerId = _answerId(answer, question: question);
+    LinkedHashSet<String>? selectedAnswers = _selection[questionId];
+    bool selected = (selectedAnswers?.contains(answerId) == true);
     String title = _questionnaireStringEx(answer.title);
-    return
-      Semantics(
-        label: title,
-        value: selected?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
-        button: true,
-        child: Padding(padding: EdgeInsets.only(left: _hPadding - 12, right: _hPadding), child:
-          Row(children: [
-            InkWell(onTap: () => _onAnswer(answer, question: question), child:
-              Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 8, ), child:
-                Styles().images.getImage(selected ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true),
-              ),
+    return Semantics(
+      label: title,
+      value: selected ? Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
+      button: true,
+      child: Padding(padding: EdgeInsets.only(left: _hPadding - 12, right: _hPadding), child:
+        Row(children: [
+          InkWell(onTap: () => _onAnswer(answer, question: question), child:
+            Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 8, ), child:
+              Styles().images.getImage(selected ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true),
             ),
-            Expanded(child:
-              Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
-                Text(title, style: Styles().textStyles.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
-              ),
+          ),
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
+              Text(title, style: Styles().textStyles.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
             ),
-          ]),
-        ));
+          ),
+        ]),
+      )
+    );
   }
 
   void _onAnswer(Answer answer, { required Question question }) {
@@ -338,15 +333,8 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
     String questionTitle = _questionnaireStringEx(question.title, languageCode: 'en');
     Analytics().logSelect(target: '$questionTitle => $answerTitle');
 
-    String? answerId;
-    if (question.type == QuestionType.dateOfBirth) {
-      answerId = answer.interval?.toDateOfBirthValue();
-    }
-    else {
-      answerId = answer.id;
-    }
     String? questionId = question.id;
-
+    String? answerId = _answerId(answer, question: question);
     if ((questionId != null) && (answerId != null)) {
       LinkedHashSet<String>? selectedAnswers = _selection[questionId];
       bool selected = selectedAnswers?.contains(answerId) == true;
@@ -359,11 +347,19 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
         }
         else {
           selectedAnswers ??= (_selection[questionId] = LinkedHashSet<String>());
-          selectedAnswers?.add(answerId!);
+          selectedAnswers?.add(answerId);
         }
       });
       AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/ !selected, _questionnaireStringEx(answer.title));
       _updateTargetAudienceCount();
+    }
+  }
+
+  String? _answerId(Answer answer, { required Question question }) {
+    switch (question.type) {
+      case QuestionType.dateOfBirth: return answer.interval?.toDateOfBirthFilterValue() ?? answer.id;
+      case QuestionType.schoolYear: return answer.interval?.toSchoolYearFilterValue() ?? answer.id;
+      default: return answer.id;
     }
   }
 

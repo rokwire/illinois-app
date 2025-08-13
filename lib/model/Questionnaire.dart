@@ -311,13 +311,6 @@ class AnswerInterval {
     'end': endDelta?.toJsonString(),
   };
 
-  String toDateOfBirthValue() {
-    DateTime now = DateUtils.dateOnly(DateTime.now());
-    String startValue = startDelta?.applyOnDate(now).difference(DateOfBirthQuestion.dobOrgDate).inDays.toString() ?? '';
-    String endValue = endDelta?.applyOnDate(now).difference(DateOfBirthQuestion.dobOrgDate).inDays.toString() ?? '';
-    return [startValue, endValue].join(delimiter);
-  }
-
   String? matchSchoolYearSelection(Iterable<String>? selection) {
     if (selection != null) {
       int currentSchoolYear = SchoolYearQuestion.currentSchoolYear;
@@ -336,14 +329,26 @@ class AnswerInterval {
     return null;
   }
 
-  String? get schoolYearValue {
+  String? toSchoolYearSelectionValue() {
     int currentSchoolYear = SchoolYearQuestion.currentSchoolYear;
-    int? startYear = startDelta?.applyOnYear(currentSchoolYear);
-    int? endYear = endDelta?.applyOnYear(currentSchoolYear);
-    return startYear?.toString() ?? endYear.toString();
+    String? startValue = startDelta?.applyOnYear(currentSchoolYear).toString();
+    String? endValue = endDelta?.applyOnYear(currentSchoolYear).toString();
+    return startValue ?? endValue;
   }
 
+  String toSchoolYearFilterValue() {
+    int currentSchoolYear = SchoolYearQuestion.currentSchoolYear;
+    String startValue = startDelta?.applyOnYear(currentSchoolYear).toString() ?? '';
+    String endValue = endDelta?.applyOnYear(currentSchoolYear).toString() ?? '';
+    return [startValue, endValue].join(delimiter);
+  }
 
+  String toDateOfBirthFilterValue() {
+    DateTime now = DateUtils.dateOnly(DateTime.now());
+    String startValue = startDelta?.applyOnDate(now).difference(DateOfBirthQuestion.dobOrgDate).inDays.toString() ?? '';
+    String endValue = endDelta?.applyOnDate(now).difference(DateOfBirthQuestion.dobOrgDate).inDays.toString() ?? '';
+    return [startValue, endValue].join(delimiter);
+  }
 
   // Equality
 

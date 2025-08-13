@@ -457,7 +457,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
             selectedAnswers.remove(selectedAnswer);
           }
           else {
-            selectedAnswer = answer.interval?.schoolYearValue;
+            selectedAnswer = answer.interval?.toSchoolYearSelectionValue();
             if (selectedAnswer != null) {
               selectedAnswers.add(selectedAnswer);
             }
