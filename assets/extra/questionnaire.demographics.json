@@ -23,9 +23,10 @@
 		]
 	},{
 		"id":"q01",
-		"title":"How old are you?",
+		"visibility": "research",
+		"title":"How old were you?",
 		"hint":"Age",
-		"description_prefix":null,
+		"description_prefix": "Backward compatability question",
 		"description_suffix":null,
 		"min_answers":1,
 		"max_answers":1,
@@ -78,9 +79,10 @@
 		]
 	},{
 		"id":"q04",
+		"visibility": "research",
 		"title":"What was your year in college?",
 		"hint":"Year",
-		"description_prefix":null,
+		"description_prefix": "Backward compatability question",
 		"description_suffix":null,
 		"min_answers":1,
 		"max_answers":1,

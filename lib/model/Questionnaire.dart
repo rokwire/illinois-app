@@ -93,26 +93,34 @@ class Questionnaire {
 }
 
 enum QuestionType { checkList, dateOfBirth, schoolYear }
+enum QuestionVisibilty { public, research }
 
 class Question {
   final String? id;
   final QuestionType? type;
+  final QuestionVisibilty? visibility;
+
   final String? title;
   final String? hint;
   final String? descriptionPrefix;
   final String? descriptionSuffix;
+
   final int? minAnswers;
   final int? maxAnswers;
   final List<Answer>? answers;
 
-  Question({this.id, this.type, this.title, this.hint, this.descriptionPrefix, this.descriptionSuffix, this.minAnswers, this.maxAnswers, this.answers});
+  Question({this.id, this.type, this.visibility,
+    this.title, this.hint, this.descriptionPrefix, this.descriptionSuffix,
+    this.minAnswers, this.maxAnswers, this.answers
+  });
 
   // JSON serialization
 
   static Question? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Question(
       id: JsonUtils.stringValue(json['id']),
-      type: QuestionTypeImpl.fromJsonString(JsonUtils.stringValue(json['type'])) ,
+      type: QuestionTypeImpl.fromJsonString(JsonUtils.stringValue(json['type'])),
+      visibility: QuestionVisibiltyImpl.fromJsonString(JsonUtils.stringValue(json['visibility'])),
       title: JsonUtils.stringValue(json['title']),
       hint: JsonUtils.stringValue(json['hint']),
       descriptionPrefix: JsonUtils.stringValue(json['description_prefix']),
@@ -126,6 +134,7 @@ class Question {
   toJson() => {
     'id': id,
     'type': type?.toJsonString(),
+    'visibility': visibility?.toJsonString(),
     'title': title,
     'hint': hint,
     'description_prefix': descriptionPrefix,
@@ -142,6 +151,7 @@ class Question {
     (other is Question) &&
     (id == other.id) &&
     (type == other.type) &&
+    (visibility == other.visibility) &&
     (title == other.title) &&
     (hint == other.hint) &&
     (descriptionPrefix == other.descriptionPrefix) &&
@@ -154,6 +164,7 @@ class Question {
   int get hashCode =>
     (id?.hashCode ?? 0) ^
     (type?.hashCode ?? 0) ^
+    (visibility?.hashCode ?? 0) ^
     (title?.hashCode ?? 0) ^
     (hint?.hashCode ?? 0) ^
     (descriptionPrefix?.hashCode ?? 0) ^
@@ -425,7 +436,29 @@ extension QuestionTypeImpl on QuestionType {
       default: return null;
     }
   }
+}
 
+ extension QuestionVisibiltyImpl on QuestionVisibilty {
+
+  String toJsonString() {
+    switch (this) {
+      case QuestionVisibilty.public: return 'public';
+      case QuestionVisibilty.research: return 'research';
+    }
+  }
+
+  static QuestionVisibilty? fromJsonString(String? value) {
+    switch (value) {
+      case 'public': return QuestionVisibilty.public;
+      case 'research': return QuestionVisibilty.research;
+      default: return null;
+    }
+  }
+}
+
+extension QuestionVisibilityExt on Question {
+  bool get isPubliclyVisible => (visibility == null) || (visibility == QuestionVisibilty.public);
+  bool get isResearhVisible => isPubliclyVisible || (visibility == QuestionVisibilty.research);
 }
 
 extension DateOfBirthQuestion on Question {

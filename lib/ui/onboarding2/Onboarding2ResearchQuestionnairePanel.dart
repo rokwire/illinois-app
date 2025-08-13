@@ -174,8 +174,11 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   List<Widget> _buildQuestions(List<Question>? questions) {
     List<Widget> questionsList = <Widget>[];
     if (questions != null) {
-      for (int index = 0; index < questions.length; index++) {
-        questionsList.add(_buildQuestion(questions[index], index: index + 1));
+      int index = 0;
+      for (Question question in questions) {
+        if (question.isPubliclyVisible) {
+          questionsList.add(_buildQuestion(question, index: ++index));
+        }
       }
     }
     return questionsList;

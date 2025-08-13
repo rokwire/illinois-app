@@ -228,8 +228,11 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
   List<Widget> _buildQuestions(List<Question>? questions) {
     List<Widget> questionsList = <Widget>[];
     if (questions != null) {
-      for (int index = 0; index < questions.length; index++) {
-        questionsList.add(_buildQuestion(questions[index], index: index + 1));
+      int index = 0;
+      for (Question question in questions) {
+        if (question.isResearhVisible) {
+          questionsList.add(_buildQuestion(question, index: ++index));
+        }
       }
     }
     return questionsList;
