@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Fixed
+- Android: Fix various compilation warnings [#5339](https://github.com/rokwire/illinois-app/issues/5339).
+
 ## [7.3.1] - 2025-08-08
 ### Changed
 - Updates to Event Feed Intro Screen [#5332](https://github.com/rokwire/illinois-app/issues/5332)
