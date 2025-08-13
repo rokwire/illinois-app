@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Android: Fix various compilation warnings [#5339](https://github.com/rokwire/illinois-app/issues/5339).
+### Added
+- Acknowledge Reaction innerContext field [#5238](https://github.com/rokwire/illinois-app/issues/5238).
 
 ## [7.3.1] - 2025-08-08
 ### Changed
@@ -17,8 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - UI Clean Up: fixed shadow cut off of home cards when embedded in ExpandablePageView [#5289](https://github.com/rokwire/illinois-app/issues/5289).
 - UI Clean Up: fixed spacings within favorites widget headings and bodies [#5331](https://github.com/rokwire/illinois-app/issues/5331).
-### Changed
-- Show list items in Assistant response [#5334](https://github.com/rokwire/illinois-app/issues/5334).
 
 ## [7.2.22] - 2025-08-05
 ### Changed
