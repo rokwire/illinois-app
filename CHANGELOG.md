@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+## [7.3.2] - 2025-08-13
 ### Fixed
 - Android: Fix various compilation warnings [#5339](https://github.com/rokwire/illinois-app/issues/5339).
 ### Added
