@@ -25,6 +25,7 @@ import android.media.AudioManager;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -164,7 +165,6 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
                 }
             } catch (OrigoMobileKeysException e) {
                 Log.e(TAG, String.format("Failed to list mobile keys. Cause message: %s \nError code: %s", e.getCauseMessage(), e.getErrorCode()));
-                e.printStackTrace();
             }
         }
         return null;
@@ -337,7 +337,6 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
             isEndpointSetup = mobileKeys.isEndpointSetupComplete();
         } catch (OrigoMobileKeysException e) {
             Log.d(TAG, "isEndpointSetUpComplete: exception: " + e.getCauseMessage() + "\n\n" + e.getMessage());
-            e.printStackTrace();
         }
         return isEndpointSetup;
     }
@@ -504,8 +503,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
                         List<OrigoMobileKey> keys = getMobileKeys().listMobileKeys();
                         canScan = (keys != null) && !keys.isEmpty();
                     } catch (OrigoMobileKeysException e) {
-                        Log.e(TAG, "canStartScanning: listMobileKeys threw exception.");
-                        e.printStackTrace();
+                        Log.e(TAG, "canStartScanning: listMobileKeys threw exception: " + e);
                     }
                 }
             }
@@ -606,9 +604,19 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
 
     //region Device Specific
 
+    /**
+     * Handle device vibration based on the version of the Android. Even though the compiler throws warnings so that leave suppress deprecated clause.
+     * **/
+    @SuppressWarnings("deprecation")
     private void vibrateDevice() {
         final long durationInMilliSeconds = 500;
-        Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+        Vibrator vibrator;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            VibratorManager vibratorManager = (VibratorManager) activity.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+            vibrator = vibratorManager.getDefaultVibrator();
+        } else {
+            vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(VibrationEffect.createOneShot(durationInMilliSeconds, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
