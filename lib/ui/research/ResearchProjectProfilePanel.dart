@@ -301,7 +301,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
     LinkedHashSet<String>? selectedAnswers = _selection[question.id];
     String? answerId;
     if (question.type == QuestionType.dateOfBirth) {
-      answerId = answer.interval?.toStringValue();
+      answerId = answer.interval?.toDateOfBirthValue();
     }
     else {
       answerId = answer.id;
@@ -337,7 +337,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
     String? answerId;
     if (question.type == QuestionType.dateOfBirth) {
-      answerId = answer.interval?.toStringValue();
+      answerId = answer.interval?.toDateOfBirthValue();
     }
     else {
       answerId = answer.id;

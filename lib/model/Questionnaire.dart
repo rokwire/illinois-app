@@ -92,7 +92,7 @@ class Questionnaire {
   }
 }
 
-enum QuestionType { checkList, dateOfBirth }
+enum QuestionType { checkList, dateOfBirth, schoolYear }
 
 class Question {
   final String? id;
@@ -300,12 +300,39 @@ class AnswerInterval {
     'end': endDelta?.toJsonString(),
   };
 
-  String toStringValue() {
+  String toDateOfBirthValue() {
     DateTime now = DateUtils.dateOnly(DateTime.now());
-    String startValue = startDelta?.apply(now).difference(DOBQuestion.dobOrgDate).inDays.toString() ?? '';
-    String endValue = endDelta?.apply(now).difference(DOBQuestion.dobOrgDate).inDays.toString() ?? '';
+    String startValue = startDelta?.applyOnDate(now).difference(DateOfBirthQuestion.dobOrgDate).inDays.toString() ?? '';
+    String endValue = endDelta?.applyOnDate(now).difference(DateOfBirthQuestion.dobOrgDate).inDays.toString() ?? '';
     return [startValue, endValue].join(delimiter);
   }
+
+  String? matchSchoolYearSelection(Iterable<String>? selection) {
+    if (selection != null) {
+      int currentSchoolYear = SchoolYearQuestion.currentSchoolYear;
+      int? startYear = startDelta?.applyOnYear(currentSchoolYear);
+      int? endYear = endDelta?.applyOnYear(currentSchoolYear);
+      for (String selectedEntry in selection) {
+        int? selectedYear = int.tryParse(selectedEntry);
+        if ((selectedYear != null) &&
+            ((startYear == null) || (startYear <= selectedYear )) &&
+            ((endYear == null) || (selectedYear <= endYear)))
+        {
+          return selectedEntry;
+        }
+      }
+    }
+    return null;
+  }
+
+  String? get schoolYearValue {
+    int currentSchoolYear = SchoolYearQuestion.currentSchoolYear;
+    int? startYear = startDelta?.applyOnYear(currentSchoolYear);
+    int? endYear = endDelta?.applyOnYear(currentSchoolYear);
+    return startYear?.toString() ?? endYear.toString();
+  }
+
+
 
   // Equality
 
@@ -367,14 +394,41 @@ class AnswerIntervalDelta {
 
   // Functinality
 
-  DateTime apply(DateTime origin) => DateTime(
-    origin.year + (years ?? 0),
-    origin.month + (months ?? 0),
-    origin.day + (days ?? 0)
+  DateTime applyOnDate(DateTime origin) => DateTime(
+    origin.year + _years,
+    origin.month + _months,
+    origin.day + _days,
   );
+
+  int applyOnYear(int origin) => origin + _years;
+
+  int get _years => years ?? 0;
+  int get _months => months ?? 0;
+  int get _days => days ?? 0;
 }
 
-extension DOBQuestion on Question {
+extension QuestionTypeImpl on QuestionType {
+
+  String toJsonString() {
+    switch (this) {
+      case QuestionType.checkList: return 'check-list';
+      case QuestionType.dateOfBirth: return 'date-of-birth';
+      case QuestionType.schoolYear: return 'school-year';
+    }
+  }
+
+  static QuestionType? fromJsonString(String? value) {
+    switch (value) {
+      case 'check-list': return QuestionType.checkList;
+      case 'date-of-birth': return QuestionType.dateOfBirth;
+      case 'school-year': return QuestionType.schoolYear;
+      default: return null;
+    }
+  }
+
+}
+
+extension DateOfBirthQuestion on Question {
   static const int dobOrgYear = 1900;
   static final DateTime dobOrgDate = DateTime(dobOrgYear, 1, 1);
 
@@ -387,21 +441,16 @@ extension DOBQuestion on Question {
     value.difference(dobOrgDate).inDays.toString();
 }
 
-extension QuestionTypeImpl on QuestionType {
+extension SchoolYearQuestion on Question {
 
-  String toJsonString() {
-    switch (this) {
-      case QuestionType.checkList: return 'check-list';
-      case QuestionType.dateOfBirth: return 'date-of-birth';
-    }
+  // We asume the school year starts on Aug 20
+  static const int schoolYearOrgMonth = 8;
+  static const int schoolYearOrgDay = 20;
+  
+  static int get currentSchoolYear {
+    DateTime now = DateTime.now();
+    int schoolYear = now.year;
+    DateTime schoolYearOrg = DateTime(schoolYear, schoolYearOrgMonth, schoolYearOrgDay);
+    return schoolYearOrg.isBefore(now) ? schoolYear : (schoolYear - 1);
   }
-
-  static QuestionType? fromJsonString(String? value) {
-    switch (value) {
-      case 'check-list': return QuestionType.checkList;
-      case 'date-of-birth': return QuestionType.dateOfBirth;
-      default: return null;
-    }
-  }
-
 }

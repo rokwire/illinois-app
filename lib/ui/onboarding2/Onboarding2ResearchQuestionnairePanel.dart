@@ -247,6 +247,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   List<Widget> _buildAnswers(Question question) {
     switch (question.type) {
       case QuestionType.dateOfBirth: return _buildDateOfBirthAnswers(question);
+      case QuestionType.schoolYear: return _buildSchoolYearAnswers(question);
       default: return _buildCheckListAnswers(question);
     }
   }
@@ -331,7 +332,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   Widget _buildDateOfBirthAnswer(Question question) {
     LinkedHashSet<String>? selectedAnswers = _selection[question.id];
     String? selectedAnswer = (selectedAnswers?.isNotEmpty == true) ? selectedAnswers?.first : null;
-    DateTime? selectedDate = DOBQuestion.fromDOBString(selectedAnswer);
+    DateTime? selectedDate = DateOfBirthQuestion.fromDOBString(selectedAnswer);
     String? label = (selectedDate != null) ? DateFormat('MM-dd-yyyy').format(selectedDate) : null;
 
     return Padding(padding: _controlMargin, child:
@@ -349,14 +350,14 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   void _onDateOfBirthAnswer(Question question) {
     LinkedHashSet<String>? selectedAnswers = _selection[question.id];
     String? selectedAnswer = (selectedAnswers?.isNotEmpty == true) ? selectedAnswers?.first : null;
-    DateTime? selectedDate = DOBQuestion.fromDOBString(selectedAnswer);
+    DateTime? selectedDate = DateOfBirthQuestion.fromDOBString(selectedAnswer);
     DateTime now = DateUtils.dateOnly(DateTime.now());
 
     showDatePicker(context: context,
       initialDate: selectedDate,
       initialDatePickerMode: DatePickerMode.year,
       initialEntryMode: DatePickerEntryMode.calendar,
-      firstDate: DOBQuestion.dobOrgDate,
+      firstDate: DateOfBirthQuestion.dobOrgDate,
       lastDate: now,
       builder: (context, child) => _datePickerTransitionBuilder(context, child!),
     ).then((DateTime? result) => _didDateOfBirthAnswer(question, result));
@@ -368,7 +369,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       if (value != null) {
         setState(() {
           _selection[questionId] = LinkedHashSet<String>.from(<String>[
-            DOBQuestion.toDOBString(value)
+            DateOfBirthQuestion.toDOBString(value)
           ]);
         });
       }
@@ -386,7 +387,103 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     child: child
   );
 
+  // Check List
+
+  List<Widget> _buildSchoolYearAnswers(Question question) {
+    List<Widget> answersList = <Widget>[];
+    List<Answer>? answers = question.answers;
+    if (answers != null) {
+      for (Answer answer in answers) {
+        answersList.add(Padding(padding: EdgeInsets.only(top: answersList.isNotEmpty ? 5 : 0), child:
+          _buildSchoolYearAnswer(answer, question: question)
+        ));
+      }
+    }
+    return answersList;
+  }
+
+  Widget _buildSchoolYearAnswer(Answer answer, { required Question question }) {
+    LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+
+    bool selected = false;
+    if (answer.interval != null) {
+      selected = (answer.interval?.matchSchoolYearSelection(selectedAnswers) != null);
+    }
+    else {
+      selected = (selectedAnswers?.contains(answer.id) == true);
+    }
+
+    String title = _questionnaireString(answer.title);
+    String imageAsset = (question.maxAnswers == 1) ?
+      (selected ? "radio-button-on" : "radio-button-off") :
+      (selected ? "check-box-filled" : "box-outline-gray");
+    return
+      Semantics(
+        label: title, button: true,
+        value: selected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
+        child: Padding(padding: _controlMargin, child:
+        InkWell(onTap: () => _onSchoolYearAnswer(answer, question: question), child:
+          Container(decoration: _controlDecoration(selected: selected), padding: _controlPadding, child:
+            Row(children: [
+              Padding(padding: EdgeInsets.only(right: 12), child:
+                Styles().images.getImage(imageAsset, excludeFromSemantics: true),
+              ),
+              Expanded(child:
+                Text(title, style: Styles().textStyles.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left, semanticsLabel: "",)
+              ),
+            ]),
+          ),
+       ),
+      )
+    );
+  }
+
+  void _onSchoolYearAnswer(Answer answer, { required Question question }) {
+
+    //String answerTitle = _questionnaireString(answer.title, languageCode: 'en');
+    //String? questionTitle = _questionnaireString(question.title, languageCode: 'en');
+    //Analytics().logSelect(target: '$questionTitle => $answerTitle');
+
+    String? questionId = question.id;
+    if (questionId != null) {
+      LinkedHashSet<String> selectedAnswers = _selection[questionId] ??= LinkedHashSet<String>();
+      setState(() {
+        if (answer.interval != null) {
+          String? selectedAnswer = answer.interval?.matchSchoolYearSelection(selectedAnswers);
+          if (selectedAnswers.contains(selectedAnswer)) {
+            selectedAnswers.remove(selectedAnswer);
+          }
+          else {
+            selectedAnswer = answer.interval?.schoolYearValue;
+            if (selectedAnswer != null) {
+              selectedAnswers.add(selectedAnswer);
+            }
+          }
+        }
+        else {
+          String? answerId = answer.id;
+          if (selectedAnswers.contains(answerId)) {
+            selectedAnswers.remove(answerId);
+          }
+          else if (answerId != null) {
+            selectedAnswers.add(answerId);
+          }
+        }
+
+        if (question.maxAnswers != null) {
+          while (question.maxAnswers! < selectedAnswers.length) {
+            selectedAnswers.remove(selectedAnswers.first);
+          }
+        }
+
+      });
+
+      AppSemantics.announceCheckBoxStateChange(context, selectedAnswers.contains(answer.id) != true, _questionnaireString(answer.title));
+    }
+  }
+
   // Shared UI
+
   EdgeInsetsGeometry get _controlMargin => EdgeInsets.symmetric(horizontal: _hPadding);
   EdgeInsetsGeometry get _controlPadding => EdgeInsets.symmetric(horizontal: _hPadding, vertical: _vPadding);
   static const double _hPadding = 24;

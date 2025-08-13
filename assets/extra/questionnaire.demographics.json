@@ -3,7 +3,7 @@
 	"title":"Research Interest Form",
 	"description": "Please fill out this questionnaire to receive invitations to participate in research studies that match your demographics.",
 	"questions": [{
-		"id":"q01-dob",
+		"id":"date-of-birth",
 		"type": "date-of-birth",
 		"title":"What is your date of birth?",
 		"hint":"Date of Birth",
@@ -60,8 +60,25 @@
 			{"id":"a06", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
-		"id":"q04",
+		"id":"school-year",
+		"type":"school-year",
 		"title":"What is your year in college?",
+		"hint":"Year",
+		"min_answers":1,
+		"max_answers":1,
+		"answers": [
+			{"id":"a01", "title":"Freshman or first-year student", "hint":"Freshman", "interval": {"start": "0", "end": "0"}},
+			{"id":"a02", "title":"Sophomore", "interval": {"start": "-1", "end": "-1"}},
+			{"id":"a03", "title":"Junior", "interval": {"start": "-2", "end": "-2"}},
+			{"id":"a04", "title":"Senior", "interval": {"start": "-3", "end": "-3"}},
+			{"id":"a05", "title":"Graduate student", "hint":"Graduate", "interval": {"end": "-4"} },
+			{"id":"a06", "title":"Other (e.g. non-degree student)", "hint":"Other"},
+			{"id":"a07", "title":"I am not a student", "hint":"Not a student"},
+			{"id":"a08", "title":"I'd rather not answer", "hint":"NA"}
+		]
+	},{
+		"id":"q04",
+		"title":"What was your year in college?",
 		"hint":"Year",
 		"description_prefix":null,
 		"description_suffix":null,
