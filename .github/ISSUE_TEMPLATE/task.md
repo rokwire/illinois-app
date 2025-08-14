@@ -1,10 +1,9 @@
 ---
 name: Task
-about: 'Record a task that is not related to a specific feature, bug, or epic (e.g.,
-  go through documentation, install/update software etc.). '
+about: Submit a single task that is not related to a bug.
 title: "[TASK] "
-labels: task
-assignees: ''
+labels: ''
+assignees: pmarkhennessy
 
 ---
 
