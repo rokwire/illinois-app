@@ -53,6 +53,8 @@
     "tabbar.favorites.hint":"Favorites Page",
     "tabbar.map.title":"Map",
     "tabbar.map.hint":"Map Page",
+    "tabbar.map2.title":"Map2",
+    "tabbar.map2.hint":"Map2 Page",
     "tabbar.academics.title":"Academics",
     "tabbar.academics.hint":"Academics Page",
     "tabbar.wellness.title":"Wellness",
@@ -429,6 +431,7 @@
     "panel.search.field.search.hint": "Type a search term",
 
     "panel.maps.header.title": "Map",
+    "panel.maps2.header.title": "Map2",
 
     "panel.map.select.header.title": "Select Location",
     "panel.map.select.button.select.title": "Select",

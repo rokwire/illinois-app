@@ -50,6 +50,8 @@
     "tabbar.favorites.hint":"Página de favoritos",
     "tabbar.map.title":"Mapa",
     "tabbar.map.hint":"Página del mapa",
+    "tabbar.map2.title":"Map2",
+    "tabbar.map2.hint":"Map2 Page",
     "tabbar.academics.title":"Académica",
     "tabbar.academics.hint":"Página académica",
     "tabbar.wellness.title":"Bienestar",
@@ -426,6 +428,7 @@
     "panel.search.field.search.hint": "Escriba un término de búsqueda",
 
     "panel.maps.header.title": "Mapa",
+    "panel.maps2.header.title": "Map2",
 
     "panel.map.select.header.title": "Elegir el Sitio",
     "panel.map.select.button.select.title": "Elegir",
