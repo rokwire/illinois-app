@@ -95,7 +95,8 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
       _buildTitle(),
       _buildLocation(),
       _buildShare(),
-      _buildFloorPlansAndAmenities(),
+      if (_building?.floors?.isNotEmpty == true)
+        _buildFloorPlansAndAmenities(),
       _buildSelectLocation(),
       if (_building?.features?.isNotEmpty == true)
         _buildFeatureList(),
