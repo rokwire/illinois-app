@@ -9,6 +9,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/maps2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -16,6 +17,8 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+
+enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, Laundries, BusStops, Therapists, MyLocations }
 
 class Map2Panel extends StatefulWidget with AnalyticsInfo {
   Map2Panel({super.key});
@@ -124,7 +127,15 @@ class _Map2PanelState extends State<Map2Panel>
   }
 
   Widget get _scaffoldBody =>
-    _map2View;
+    Stack(children: [
+      _map2View,
+      Positioned.fill(child:
+        Align(alignment: Alignment.topCenter, child:
+          _contentTypesBar,
+        ),
+      ),
+    ],)
+    ;
 
   Widget get _map2View => Container(decoration: _mapViewDecoration, child:
     GoogleMap(
@@ -214,6 +225,50 @@ class _Map2PanelState extends State<Map2Panel>
           }
         }
       }
+    }
+  }
+
+  // Content Types
+
+  Widget get _contentTypesBar => 
+    SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: EdgeInsets.only(top: 16),
+      child: Row(mainAxisSize: MainAxisSize.min, children: _contentTypesEntries,)
+    );
+  
+  List<Widget> get _contentTypesEntries {
+    List<Widget> entries = <Widget>[];
+    for (Map2ContentType contentType in Map2ContentType.values) {
+      EdgeInsetsGeometry padding = EdgeInsets.only(
+        left: (contentType == Map2ContentType.values.first) ? 16 : 0,
+        right: (contentType == Map2ContentType.values.last) ? 16 : 8,
+      );
+      entries.add(Padding(padding: padding, child: Map2ContentTypeButton(
+        title: contentType.displayTitle,
+        onTap: () => _onContentTypeEntry(contentType),
+      )));
+    }
+    return entries;
+  }
+
+  void _onContentTypeEntry(Map2ContentType contentType) {
+  }
+}
+
+extension _Map2ContentType on Map2ContentType {
+  String get displayTitle => displayTitleEx();
+
+  String displayTitleEx({String? language}) {
+    switch(this) {
+      case Map2ContentType.CampusBuildings:      return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings', language: language);
+      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses', language: language);
+      case Map2ContentType.DiningLocations:      return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining', language: language);
+      case Map2ContentType.Events2:              return Localization().getStringEx('panel.explore.button.events2.title', 'Events', language: language);
+      case Map2ContentType.Laundries:            return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry', language: language);
+      case Map2ContentType.BusStops:             return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Stops', language: language);
+      case Map2ContentType.Therapists:           return Localization().getStringEx('panel.explore.button.mental_health.title', 'Find a Therapist', language: language);
+      case Map2ContentType.MyLocations:          return Localization().getStringEx('panel.explore.button.my_locations.title', 'My Locations', language: language);
     }
   }
 }
