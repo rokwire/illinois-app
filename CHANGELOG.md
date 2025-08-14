@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - UI Clean Up: fixed shadow cut off of home cards when embedded in ExpandablePageView [#5289](https://github.com/rokwire/illinois-app/issues/5289).
 - UI Clean Up: fixed spacings within favorites widget headings and bodies [#5331](https://github.com/rokwire/illinois-app/issues/5331).
+- Hide link to floorplans if the building has no floors in the campus data [#5340](https://github.com/rokwire/illinois-app/issues/5340).
 
 ## [7.2.22] - 2025-08-05
 ### Changed
