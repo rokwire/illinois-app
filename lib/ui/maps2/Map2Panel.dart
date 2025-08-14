@@ -1,4 +1,5 @@
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -38,9 +39,11 @@ class _Map2PanelState extends State<Map2Panel>
 
   UniqueKey _mapKey = UniqueKey();
   GoogleMapController? _mapController;
+  CameraPosition? _lastCameraPosition;
   Set<Marker>? _mapMarkers;
 
-  CameraPosition? _lastCameraPosition;
+  late Set<Map2ContentType> _availableContentTypes;
+  Map2ContentType? _selectedContentType;
 
   DateTime? _pausedDateTime;
   Position? _currentLocation;
@@ -58,13 +61,16 @@ class _Map2PanelState extends State<Map2Panel>
       LocationServices.notifyStatusChanged,
       FlexUI.notifyChanged,
     ]);
+
+    _availableContentTypes = _Map2ContentType.availableTypes;
+
     _updateLocationServicesStatus(init: true);
     super.initState();
   }
 
   @override
   void dispose() {
-     NotificationService().unsubscribe(this);
+    NotificationService().unsubscribe(this);
     super.dispose();
   }
 
@@ -83,7 +89,8 @@ class _Map2PanelState extends State<Map2Panel>
       _updateLocationServicesStatus(status: param);
     }
     else if (name == FlexUI.notifyChanged) {
-
+      _updateAvailableContentTypes();
+      _updateLocationServicesStatus();
     }
   }
 
@@ -131,11 +138,13 @@ class _Map2PanelState extends State<Map2Panel>
       _map2View,
       Positioned.fill(child:
         Align(alignment: Alignment.topCenter, child:
-          _contentTypesBar,
+          _map2Heading,
         ),
       ),
-    ],)
-    ;
+    ],);
+
+  Widget get _map2Heading => (_selectedContentType != null) ?
+    _contentTypeHeading : _contentTypesBar;
 
   Widget get _map2View => Container(decoration: _mapViewDecoration, child:
     GoogleMap(
@@ -164,7 +173,7 @@ class _Map2PanelState extends State<Map2Panel>
   );
 
   BoxDecoration get _mapViewDecoration =>
-    BoxDecoration(border: Border.all(color: Styles().colors.disabledTextColor, width: 1));
+    BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent, width: 1));
 
   // Map Events
 
@@ -234,25 +243,77 @@ class _Map2PanelState extends State<Map2Panel>
     SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: EdgeInsets.only(top: 16),
-      child: Row(mainAxisSize: MainAxisSize.min, children: _contentTypesEntries,)
+      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        Row(mainAxisSize: MainAxisSize.min, children: _contentTypesEntries,)
+      )
     );
   
   List<Widget> get _contentTypesEntries {
     List<Widget> entries = <Widget>[];
     for (Map2ContentType contentType in Map2ContentType.values) {
-      EdgeInsetsGeometry padding = EdgeInsets.only(
-        left: (contentType == Map2ContentType.values.first) ? 16 : 0,
-        right: (contentType == Map2ContentType.values.last) ? 16 : 8,
-      );
-      entries.add(Padding(padding: padding, child: Map2ContentTypeButton(
-        title: contentType.displayTitle,
-        onTap: () => _onContentTypeEntry(contentType),
-      )));
+      if (_availableContentTypes.contains(contentType)) {
+        entries.add(Padding(
+          padding: EdgeInsets.only(left: entries.isNotEmpty ? 8 : 0),
+          child: Map2ContentTypeButton(
+            title: contentType.displayTitle,
+            onTap: () => _onContentTypeEntry(contentType),
+          )
+        ));
+      }
     }
     return entries;
   }
 
+  void _updateAvailableContentTypes() {
+    Set<Map2ContentType> availableContentTypes = _Map2ContentType.availableTypes;
+    if (!DeepCollectionEquality().equals(_availableContentTypes, availableContentTypes) && mounted) {
+      setState(() {
+        _availableContentTypes = availableContentTypes;
+        if ((_selectedContentType != null) && !_availableContentTypes.contains(_selectedContentType)) {
+          _selectedContentType = null;
+        }
+      });
+    }
+  }
+
   void _onContentTypeEntry(Map2ContentType contentType) {
+    setState(() {
+      _selectedContentType = contentType;
+    });
+  }
+
+  // Content Type
+
+  Widget get _contentTypeHeading => Container(decoration: _contentHeadingDecoration, child:
+      Column(mainAxisSize: MainAxisSize.min, children: [
+        Row(children: [
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(left: 16, top: 8, bottom: 8), child:
+              Text(_selectedContentType?.displayTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
+            ),
+          ),
+          Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
+            InkWell(onTap : _onUnselectContentType, child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+                Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
+              ),
+            ),
+          ),
+        ],)
+      ],)
+  );
+    
+  BoxDecoration get _contentHeadingDecoration =>
+    BoxDecoration(
+      color: Styles().colors.background,
+      border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1),),
+      boxShadow: [BoxShadow(color: Styles().colors.dropShadow, spreadRadius: 1, blurRadius: 3, offset: Offset(1, 1) )],
+    );
+
+  void _onUnselectContentType() {
+    setState(() {
+      _selectedContentType = null;
+    });
   }
 }
 
@@ -271,4 +332,34 @@ extension _Map2ContentType on Map2ContentType {
       case Map2ContentType.MyLocations:          return Localization().getStringEx('panel.explore.button.my_locations.title', 'My Locations', language: language);
     }
   }
+
+  static Map2ContentType? fromJsonString(String? value) {
+    switch (value) {
+      case 'buildings': return Map2ContentType.CampusBuildings;
+      case 'student_courses': return Map2ContentType.StudentCourses;
+      case 'dining': return Map2ContentType.DiningLocations;
+      case 'events2': return Map2ContentType.Events2;
+      case 'laundry': return Map2ContentType.Laundries;
+      case 'mtd_stops': return Map2ContentType.BusStops;
+      case 'mental_health': return Map2ContentType.Therapists;
+      case 'my_locations': return Map2ContentType.MyLocations;
+      default: return null;
+    }
+  }
+
+  static Set<Map2ContentType> get availableTypes {
+    List<dynamic>? codes = FlexUI()['explore.map'];
+    Set<Map2ContentType> availableTypes = <Map2ContentType>{};
+    if (codes != null) {
+      for (dynamic code in codes) {
+        Map2ContentType? contentType = fromJsonString(code);
+        if (contentType != null) {
+          availableTypes.add(contentType);
+        }
+      }
+    }
+    return availableTypes;
+  }
+
 }
+
