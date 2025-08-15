@@ -18,7 +18,7 @@ class Questionnaires /* with Service */ {
   // Implementation
 
   Future<Questionnaire?> loadResearch() async {
-    //TMP:
+    //TMP: Remove when get finished with questionnaire model update [#5188].
     return Questionnaire.fromJson(JsonUtils.decodeMap(await AppBundle.loadString('assets/extra/questionnaire.demographics.json')));
     const String researchQuestionnaireCategory = 'research_questionnaire';
     dynamic contentItem = await Content().loadContentItem(researchQuestionnaireCategory);
