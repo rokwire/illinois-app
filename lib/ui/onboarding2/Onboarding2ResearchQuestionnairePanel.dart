@@ -588,7 +588,8 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   bool _isAnalyticsQuestionAnswered(Question question) {
     LinkedHashSet<dynamic>? selectedAnswers = _selection[question.id];
     if (selectedAnswers != null) {
-      for (String answerId in selectedAnswers) {
+      for (dynamic selectedAnswer in selectedAnswers) {
+        String? answerId = JsonUtils.stringValue(selectedAnswer);
         Answer? answer = Answer.answerInList(question.answers, answerId: answerId);
         if ((answer != null) && !answer.isAnalyticsSkipAnswer) {
           return true;

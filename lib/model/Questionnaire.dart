@@ -251,6 +251,35 @@ class Answer {
   
   bool get isAnalyticsSkipAnswer => hint == _analyticsSkipHint; // TBD: better skip answer identification
 
+  Answered answered({QuestionType? questionType}) {
+    switch (questionType) {
+      case QuestionType.dateOfBirth: return _answeredDateOfBirth;
+      case QuestionType.schoolYear: return _answeredSchoolYear;
+      default: return _answeredCheckList;
+    }
+  }
+
+  Answered get _answeredCheckList => Answered(
+    id: id,
+  );
+
+  Answered get _answeredDateOfBirth {
+    DateTime now = DateUtils.dateOnly(DateTime.now());
+    return Answered(id: id,
+      start: interval?.startDelta?.applyOnDate(now).difference(DateOfBirthQuestion.dobOrgDate).inDays,
+      end: interval?.endDelta?.applyOnDate(now).difference(DateOfBirthQuestion.dobOrgDate).inDays,
+    );
+  }
+
+  Answered get _answeredSchoolYear {
+    int currentSchoolYear = SchoolYearQuestion.currentSchoolYear;
+    return Answered(id: id,
+      start: interval?.startDelta?.applyOnYear(currentSchoolYear),
+      end: interval?.endDelta?.applyOnYear(currentSchoolYear)
+    );
+  }
+
+
   // List<Answer> JSON Serialization
 
   static List<Answer>? listFromJson(List<dynamic>? jsonList) {
@@ -278,9 +307,9 @@ class Answer {
   // List<Answer> Accessories
 
   static Answer? answerInList(List<Answer>? answers, { String? answerId }) {
-    if (answers != null) {
+    if ((answers != null) && (answerId != null)) {
       for (Answer answer in answers) {
-        if ((answerId != null) && (answerId == answer.id)) {
+        if (answerId == answer.id) {
           return answer;
         }
       }
@@ -336,19 +365,6 @@ class AnswerInterval {
     return startValue ?? endValue;
   }
 
-  String toSchoolYearFilterValue() {
-    int currentSchoolYear = SchoolYearQuestion.currentSchoolYear;
-    String startValue = startDelta?.applyOnYear(currentSchoolYear).toString() ?? '';
-    String endValue = endDelta?.applyOnYear(currentSchoolYear).toString() ?? '';
-    return [startValue, endValue].join(delimiter);
-  }
-
-  String toDateOfBirthFilterValue() {
-    DateTime now = DateUtils.dateOnly(DateTime.now());
-    String startValue = startDelta?.applyOnDate(now).difference(DateOfBirthQuestion.dobOrgDate).inDays.toString() ?? '';
-    String endValue = endDelta?.applyOnDate(now).difference(DateOfBirthQuestion.dobOrgDate).inDays.toString() ?? '';
-    return [startValue, endValue].join(delimiter);
-  }
 
   // Equality
 
@@ -421,6 +437,129 @@ class AnswerIntervalDelta {
   int get _years => years ?? 0;
   int get _months => months ?? 0;
   int get _days => days ?? 0;
+}
+
+class Answered {
+  final String? id;
+  final int? start;
+  final int? end;
+
+  Answered({this.id, this.start, this.end});
+
+  // JSON serialization
+
+  static Answered? fromJson(json) {
+    if (json is String) {
+      return Answered(id: json);
+    }
+    else if (json is Map) {
+      return Answered(
+        id: JsonUtils.stringValue(json['id']),
+        start: JsonUtils.intValue(json['start']),
+        end: JsonUtils.intValue(json['end']),
+      );
+    }
+    else {
+      return null;
+    }
+  }
+
+  toJson() => isInterval ? {
+    'id': id,
+    'start': start,
+    'end': end,
+  } : id;
+
+  // Equality
+
+  @override
+  bool operator==(Object other) =>
+    (other is Answered) &&
+    (id == other.id) &&
+    (start == other.start) &&
+    (end == other.end);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (start?.hashCode ?? 0) ^
+    (end?.hashCode ?? 0);
+
+  // Accessories
+  bool get isInterval => (start != null) || (end != null);
+
+  // List<Answered> JSON Serialization
+
+  static List<Answered>? listFromJson(List<dynamic>? jsonList) {
+    List<Answered>? values;
+    if (jsonList != null) {
+      values = <Answered>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(values, Answered.fromJson(jsonEntry));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<Answered>? values) {
+    List<dynamic>? jsonList;
+    if (values != null) {
+      jsonList = <dynamic>[];
+      for (Answered value in values) {
+        ListUtils.add(jsonList, value.toJson());
+      }
+    }
+    return jsonList;
+  }
+
+  // Set<Answered> JSON Serialization
+
+  static Set<Answered>? setFromJson(List<dynamic>? jsonList) {
+    Set<Answered>? values;
+    if (jsonList != null) {
+      values = <Answered>{};
+      for (dynamic jsonEntry in jsonList) {
+        SetUtils.add(values, Answered.fromJson(jsonEntry));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? setToJson(Set<Answered>? values) {
+    List<dynamic>? jsonList;
+    if (values != null) {
+      jsonList = <dynamic>[];
+      for (Answered value in values) {
+        ListUtils.add(jsonList, value.toJson());
+      }
+    }
+    return jsonList;
+  }
+
+  // Map<String, Set<Answered>> JSON Serialization
+
+  static Map<String, Set<Answered>>? mapOfStringToAnsweredSetFromJson(Map<String, dynamic>? json) {
+    Map<String, Set<Answered>>? result;
+    if (json != null) {
+      result = <String, Set<Answered>>{};
+      for (String mapKey in json.keys) {
+        MapUtils.set(result, mapKey, setFromJson(JsonUtils.listValue(json[mapKey])));
+      }
+    }
+    return result;
+  }
+
+  static Map<String, dynamic>? mapOfStringToAnsweredSetToJson(Map<String, Set<Answered>>? values) {
+    Map<String, dynamic>? jsonMap;
+    if (values != null) {
+      jsonMap = <String, dynamic>{};
+      for (String mapKey in values.keys) {
+        MapUtils.set(jsonMap, mapKey, setToJson(values[mapKey]));
+      }
+    }
+    return jsonMap;
+
+  }
 }
 
 extension QuestionTypeImpl on QuestionType {

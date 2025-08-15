@@ -1,6 +1,4 @@
 
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -27,7 +25,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
   bool _loading = false;
   Questionnaire? _questionnaire;
-  Map<String, LinkedHashSet<String>> _selection = <String, LinkedHashSet<String>>{};
+  Map<String, Set<Answered>> _selection = <String, Set<Answered>>{};
 
   int? _allAudienceCount;
   int? _targetAudienceCount;
@@ -41,23 +39,13 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
     _loading = true;
 
-    Groups().loadResearchProjectTragetAudienceCount(<String, dynamic>{}).then((int? count) {
-      if (mounted) {
-        if ((count != null) && (_allAudienceCount != count)) {
-          setState(() {
-            _allAudienceCount = count;
-          });
-        }
-      }
-    });
-
     Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
       if (mounted) {
         setState(() {
           _loading = false;
           _questionnaire = questionnaire;
           if ((widget.profile != null) && (_questionnaire?.id != null)) {
-            Map<String, LinkedHashSet<String>>? selection = JsonUtils.mapOfStringToLinkedHashSetOfStringsValue(widget.profile![questionnaire?.id]);
+            Map<String, Set<Answered>>? selection = Answered.mapOfStringToAnsweredSetFromJson(JsonUtils.mapValue(widget.profile?[questionnaire?.id]));
             if (selection != null) {
               _selection.addAll(selection);
             }
@@ -66,6 +54,17 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
         _updateTargetAudienceCount();
       }
     });
+
+    // Load initial audience
+    /* Groups().loadResearchProjectTragetAudienceCount(<String, dynamic>{}).then((int? count) {
+      if (mounted) {
+        if ((count != null) && (_allAudienceCount != count)) {
+          setState(() {
+            _allAudienceCount = count;
+          });
+        }
+      }
+    }); */
 
     super.initState();
   }
@@ -79,10 +78,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: HeaderBar(
-        title: 'Target Audience',
-        leadingIconKey: 'close-circle-white',
-      ),
+      appBar: HeaderBar(title: 'Target Audience', leadingIconKey: 'close-circle-white',),
       body: _buildContent(),
       backgroundColor: Styles().colors.background,
     );
@@ -301,10 +297,9 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
   }
 
   Widget _buildAnswer(Answer answer, { required Question question }) {
-    String? questionId = question.id;
-    String? answerId = _answerId(answer, question: question);
-    LinkedHashSet<String>? selectedAnswers = _selection[questionId];
-    bool selected = (selectedAnswers?.contains(answerId) == true);
+    Set<Answered>? answeredSelection = _selection[question.id];
+    Answered answered = answer.answered(questionType: question.type);
+    bool selected = (answeredSelection?.contains(answered) == true);
     String title = _questionnaireStringEx(answer.title);
     return Semantics(
       label: title,
@@ -334,20 +329,24 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
     Analytics().logSelect(target: '$questionTitle => $answerTitle');
 
     String? questionId = question.id;
-    String? answerId = _answerId(answer, question: question);
-    if ((questionId != null) && (answerId != null)) {
-      LinkedHashSet<String>? selectedAnswers = _selection[questionId];
-      bool selected = selectedAnswers?.contains(answerId) == true;
+    if (questionId != null) {
+      Set<Answered>? answeredSelection = _selection[questionId];
+      Answered answered = answer.answered(questionType: question.type);
+      bool selected = (answeredSelection?.contains(answered) == true);
       setState(() {
         if (selected) {
-          selectedAnswers?.remove(answerId);
-          if (selectedAnswers?.isEmpty == true) {
+          answeredSelection?.remove(answered);
+          if (answeredSelection?.isEmpty == true) {
             _selection.remove(questionId);
           }
         }
         else {
-          selectedAnswers ??= (_selection[questionId] = LinkedHashSet<String>());
-          selectedAnswers?.add(answerId);
+          if (answeredSelection != null) {
+            answeredSelection.add(answered);
+          }
+          else {
+            _selection[questionId] = <Answered>{answered};
+          }
         }
       });
       AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/ !selected, _questionnaireStringEx(answer.title));
@@ -355,17 +354,9 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
     }
   }
 
-  String? _answerId(Answer answer, { required Question question }) {
-    switch (question.type) {
-      case QuestionType.dateOfBirth: return answer.interval?.toDateOfBirthFilterValue() ?? answer.id;
-      case QuestionType.schoolYear: return answer.interval?.toSchoolYearFilterValue() ?? answer.id;
-      default: return answer.id;
-    }
-  }
-
   void _onSubmit() {
     Analytics().logSelect(target: 'Submit');
-    Navigator.of(context).pop(_projectProfile);
+    Navigator.of(context).pop(_buildProjectProfile());
   }
 
   void _onDescriptionInfo() {
@@ -380,9 +371,12 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
     );
   }
 
-  Map<String, dynamic> get _projectProfile => {
-    (_questionnaire?.id ?? '') : JsonUtils.mapOfStringToLinkedHashSetOfStringsJsonValue(_selection)
-  };
+  Map<String, dynamic> _buildProjectProfile() {
+    String? questionnaireId = _questionnaire?.id;
+    return (questionnaireId != null) ? <String, dynamic> {
+      questionnaireId: Answered.mapOfStringToAnsweredSetToJson(_selection),
+    } : <String, dynamic> {};
+  }
 
   String? _questionnaireString(String? key, { String? languageCode}) => _questionnaire?.stringValue(key, languageCode: languageCode) ?? key;
   String _questionnaireStringEx(String? key, { String? languageCode}) => _questionnaireString(key, languageCode: languageCode) ?? '';
@@ -399,12 +393,12 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       for (Question question in questions) {
         String? questionHint = _questionnaireString(question.displayHint);
         List<Answer>? answers = question.answers;
-        LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+        Set<Answered>? selectedAnswers = _selection[question.id];
         if ((questionHint != null) && questionHint.isNotEmpty && (answers != null) && answers.isNotEmpty && (selectedAnswers != null) && selectedAnswers.isNotEmpty) {
           List<String> answerHints = <String>[];
           for (Answer answer in answers) {
             String? answerHint = _questionnaireString(answer.displayHint);
-            if ((answerHint != null) && selectedAnswers.contains(answer.id) && !answerHints.contains(answerHint)) {
+            if ((answerHint != null) && selectedAnswers.contains(answer.answered(questionType: question.type)) && !answerHints.contains(answerHint)) {
               answerHints.add(answerHint);
             }
           }
@@ -427,12 +421,12 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       for (Question question in questions) {
         String? questionHint = _questionnaireString(question.displayHint);
         List<Answer>? answers = question.answers;
-        LinkedHashSet<String>? selectedAnswers = _selection[question.id];
-        if ((questionHint != null) && questionHint.isNotEmpty && (answers != null) && answers.isNotEmpty && (selectedAnswers != null) && selectedAnswers.isNotEmpty) {
+        Set<Answered>? answeredSelection = _selection[question.id];
+        if ((questionHint != null) && questionHint.isNotEmpty && (answers != null) && answers.isNotEmpty && (answeredSelection != null) && answeredSelection.isNotEmpty) {
           List<String> answerHints = <String>[];
           for (Answer answer in answers) {
             String? answerHint = _questionnaireString(answer.displayHint);
-            if ((answerHint != null) && selectedAnswers.contains(answer.id) && !answerHints.contains(answerHint)) {
+            if ((answerHint != null) && answeredSelection.contains(answer.id) && !answerHints.contains(answerHint)) {
               answerHints.add(answerHint);
             }
           }
@@ -459,7 +453,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
         _shouldUpdateTargetAudienceCount = false;
       });
       _updatingTargetAudienceCount = true;
-      Groups().loadResearchProjectTragetAudienceCount(_projectProfile).then((int? count) {
+      Groups().loadResearchProjectTragetAudienceCount(_buildProjectProfile()).then((int? count) {
         if (mounted) {
           if ((count != null) && (_targetAudienceCount != count)) {
             setState(() {
