@@ -101,6 +101,7 @@ class Question {
   final QuestionVisibilty? visibility;
 
   final String? title;
+  final String? title2;
   final String? hint;
   final String? descriptionPrefix;
   final String? descriptionSuffix;
@@ -110,7 +111,7 @@ class Question {
   final List<Answer>? answers;
 
   Question({this.id, this.type, this.visibility,
-    this.title, this.hint, this.descriptionPrefix, this.descriptionSuffix,
+    this.title, this.title2, this.hint, this.descriptionPrefix, this.descriptionSuffix,
     this.minAnswers, this.maxAnswers, this.answers
   });
 
@@ -122,6 +123,7 @@ class Question {
       type: QuestionTypeImpl.fromJsonString(JsonUtils.stringValue(json['type'])),
       visibility: QuestionVisibiltyImpl.fromJsonString(JsonUtils.stringValue(json['visibility'])),
       title: JsonUtils.stringValue(json['title']),
+      title2: JsonUtils.stringValue(json['title2']),
       hint: JsonUtils.stringValue(json['hint']),
       descriptionPrefix: JsonUtils.stringValue(json['description_prefix']),
       descriptionSuffix: JsonUtils.stringValue(json['description_suffix']),
@@ -136,6 +138,7 @@ class Question {
     'type': type?.toJsonString(),
     'visibility': visibility?.toJsonString(),
     'title': title,
+    'title2': title2,
     'hint': hint,
     'description_prefix': descriptionPrefix,
     'description_suffix': descriptionSuffix,
@@ -153,6 +156,7 @@ class Question {
     (type == other.type) &&
     (visibility == other.visibility) &&
     (title == other.title) &&
+    (title2 == other.title2) &&
     (hint == other.hint) &&
     (descriptionPrefix == other.descriptionPrefix) &&
     (descriptionSuffix == other.descriptionSuffix) &&
@@ -166,6 +170,7 @@ class Question {
     (type?.hashCode ?? 0) ^
     (visibility?.hashCode ?? 0) ^
     (title?.hashCode ?? 0) ^
+    (title2?.hashCode ?? 0) ^
     (hint?.hashCode ?? 0) ^
     (descriptionPrefix?.hashCode ?? 0) ^
     (descriptionSuffix?.hashCode ?? 0) ^
@@ -199,7 +204,7 @@ class Question {
 
   // Accessories
 
-  String? get displayHint => hint ?? title;
+  String? get displayHint => hint ?? title2 ?? title;
 }
 
 class Answer {

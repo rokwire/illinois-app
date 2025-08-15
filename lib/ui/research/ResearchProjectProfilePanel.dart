@@ -382,7 +382,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
   String _questionnaireStringEx(String? key, { String? languageCode}) => _questionnaireString(key, languageCode: languageCode) ?? '';
 
   String _displayQuestionTitle(Question question, { int? index, String? languageCode }) {
-    String title = _questionnaireStringEx(question.title, languageCode: languageCode);
+    String title = _questionnaireStringEx(question.title2 ?? question.title, languageCode: languageCode);
     return ((index != null) && title.isNotEmpty) ? "$index. $title" : title;
   }
 
@@ -393,12 +393,12 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       for (Question question in questions) {
         String? questionHint = _questionnaireString(question.displayHint);
         List<Answer>? answers = question.answers;
-        Set<Answered>? selectedAnswers = _selection[question.id];
-        if ((questionHint != null) && questionHint.isNotEmpty && (answers != null) && answers.isNotEmpty && (selectedAnswers != null) && selectedAnswers.isNotEmpty) {
+        Set<Answered>? answeredSelection = _selection[question.id];
+        if ((questionHint != null) && questionHint.isNotEmpty && (answers != null) && answers.isNotEmpty && (answeredSelection != null) && answeredSelection.isNotEmpty) {
           List<String> answerHints = <String>[];
           for (Answer answer in answers) {
             String? answerHint = _questionnaireString(answer.displayHint);
-            if ((answerHint != null) && selectedAnswers.contains(answer.answered(questionType: question.type)) && !answerHints.contains(answerHint)) {
+            if ((answerHint != null) && answeredSelection.contains(answer.answered(questionType: question.type)) && !answerHints.contains(answerHint)) {
               answerHints.add(answerHint);
             }
           }
@@ -426,7 +426,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
           List<String> answerHints = <String>[];
           for (Answer answer in answers) {
             String? answerHint = _questionnaireString(answer.displayHint);
-            if ((answerHint != null) && answeredSelection.contains(answer.id) && !answerHints.contains(answerHint)) {
+            if ((answerHint != null) && answeredSelection.contains(answer.answered(questionType: question.type)) && !answerHints.contains(answerHint)) {
               answerHints.add(answerHint);
             }
           }
