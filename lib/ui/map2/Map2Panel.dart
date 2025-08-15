@@ -12,6 +12,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -20,6 +21,8 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, Laundries, BusStops, Therapists, MyLocations }
+
+typedef Future<List<Explore>?> LoadExploresTask();
 
 class Map2Panel extends StatefulWidget with AnalyticsInfo {
   Map2Panel({super.key});
@@ -44,6 +47,9 @@ class _Map2PanelState extends State<Map2Panel>
 
   late Set<Map2ContentType> _availableContentTypes;
   Map2ContentType? _selectedContentType;
+
+  List<Explore>? _explores;
+  LoadExploresTask? _loadExploresTask;
 
   DateTime? _pausedDateTime;
   Position? _currentLocation;
@@ -280,6 +286,7 @@ class _Map2PanelState extends State<Map2Panel>
     setState(() {
       _selectedContentType = contentType;
     });
+
   }
 
   // Content Type
@@ -314,6 +321,12 @@ class _Map2PanelState extends State<Map2Panel>
     setState(() {
       _selectedContentType = null;
     });
+  }
+
+  // Explores
+
+  Future<List<Explore>?> _loadExplores() async {
+    return null;
   }
 }
 
@@ -360,6 +373,9 @@ extension _Map2ContentType on Map2ContentType {
     }
     return availableTypes;
   }
+}
+
+extension _Map2ExploreContent on Map2ContentType {
 
 }
 
