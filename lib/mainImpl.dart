@@ -353,7 +353,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
     if (participateInResearch == true) {
       panel.onboardingProgress = true;
       Questionnaire? questionnaire = await Questionnaires().loadResearch();
-      Map<String, LinkedHashSet<String>>? questionnaireAnswers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
+      Map<String, LinkedHashSet<dynamic>>? questionnaireAnswers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
       panel.onboardingProgress = false;
       if (questionnaireAnswers?.isNotEmpty ?? false) {
         _didFinishParticipateInResearch(context);

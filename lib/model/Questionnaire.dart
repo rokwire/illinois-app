@@ -311,28 +311,28 @@ class AnswerInterval {
     'end': endDelta?.toJsonString(),
   };
 
-  String? matchSchoolYearSelection(Iterable<String>? selection) {
+  int? matchSchoolYear(Iterable<dynamic>? selection) {
     if (selection != null) {
       int currentSchoolYear = SchoolYearQuestion.currentSchoolYear;
       int? startYear = startDelta?.applyOnYear(currentSchoolYear);
       int? endYear = endDelta?.applyOnYear(currentSchoolYear);
-      for (String selectedEntry in selection) {
-        int? selectedYear = int.tryParse(selectedEntry);
+      for (dynamic selectedEntry in selection) {
+        int? selectedYear = JsonUtils.intValue(selectedEntry);
         if ((selectedYear != null) &&
             ((startYear == null) || (startYear <= selectedYear )) &&
             ((endYear == null) || (selectedYear <= endYear)))
         {
-          return selectedEntry;
+          return selectedYear;
         }
       }
     }
     return null;
   }
 
-  String? toSchoolYearSelectionValue() {
+  int? toSchoolYear() {
     int currentSchoolYear = SchoolYearQuestion.currentSchoolYear;
-    String? startValue = startDelta?.applyOnYear(currentSchoolYear).toString();
-    String? endValue = endDelta?.applyOnYear(currentSchoolYear).toString();
+    int? startValue = startDelta?.applyOnYear(currentSchoolYear);
+    int? endValue = endDelta?.applyOnYear(currentSchoolYear);
     return startValue ?? endValue;
   }
 
@@ -470,13 +470,11 @@ extension DateOfBirthQuestion on Question {
   static const int dobOrgYear = 1900;
   static final DateTime dobOrgDate = DateTime(dobOrgYear, 1, 1);
 
-  static DateTime? fromDOBString(String? value) {
-    int? numberOfDays = (value != null) ? int.tryParse(value) : null;
-    return (numberOfDays != null) ? dobOrgDate.add(Duration(days: numberOfDays)) : null;
-  }
+  static DateTime? fromNumberOfDays(int? value) =>
+    (value != null) ? dobOrgDate.add(Duration(days: value)) : null;
 
-  static String toDOBString(DateTime value) =>
-    value.difference(dobOrgDate).inDays.toString();
+  static int toNumberOfDays(DateTime value) =>
+    value.difference(dobOrgDate).inDays;
 }
 
 extension SchoolYearQuestion on Question {

@@ -37,7 +37,7 @@ class Onboarding2ResearchQuestionnairePanel extends StatefulWidget with Onboardi
       if (questionnaire == null) {
         onboardingContext?["questionanire"] = (questionnaire = await Questionnaires().loadResearch());
       }
-      Map<String, LinkedHashSet<String>>? questionnaireAnswers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
+      Map<String, LinkedHashSet<dynamic>>? questionnaireAnswers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
       return (questionnaireAnswers?.isNotEmpty != true);
     } else {
       return false;
@@ -53,14 +53,14 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   bool _loading = false;
   bool _onboardingProgress = false;
   Questionnaire? _questionnaire;
-  Map<String, LinkedHashSet<String>> _selection = <String, LinkedHashSet<String>>{};
+  Map<String, LinkedHashSet<dynamic>> _selection = <String, LinkedHashSet<dynamic>>{};
 
   @override
   void initState() {
     dynamic contextParam = widget.onboardingContext?["questionanire"];
     if (contextParam is Questionnaire) {
       _questionnaire = contextParam;
-      _selection.addAll(Auth2().profile?.getResearchQuestionnaireAnswers(_questionnaire?.id) ?? <String, LinkedHashSet<String>>{});
+      _selection.addAll(Auth2().profile?.getResearchQuestionnaireAnswers(_questionnaire?.id) ?? <String, LinkedHashSet<dynamic>>{});
     }
     else {
       _loading = true;
@@ -69,7 +69,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
           setState(() {
             _loading = false;
             _questionnaire = questionnaire;
-            _selection.addAll(Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id) ?? <String, LinkedHashSet<String>>{});
+            _selection.addAll(Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id) ?? <String, LinkedHashSet<dynamic>>{});
           });
         }
       });
@@ -271,7 +271,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   }
 
   Widget _buildCheckListAnswer(Answer answer, { required Question question }) {
-    LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+    LinkedHashSet<dynamic>? selectedAnswers = _selection[question.id];
     bool selected = selectedAnswers?.contains(answer.id) ?? false;
     String title = _questionnaireString(answer.title);
     String imageAsset = (question.maxAnswers == 1) ?
@@ -307,7 +307,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     String? answerId = answer.id;
     String? questionId = question.id;
     if ((questionId != null) && (answerId != null)) {
-      LinkedHashSet<String> selectedAnswers = _selection[questionId] ?? (_selection[questionId] = LinkedHashSet<String>());
+      LinkedHashSet<dynamic> selectedAnswers = _selection[questionId] ?? (_selection[questionId] = LinkedHashSet<dynamic>());
       setState(() {
         if (selectedAnswers.contains(answerId)) {
           selectedAnswers.remove(answerId);
@@ -333,9 +333,9 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   ];
 
   Widget _buildDateOfBirthAnswer(Question question) {
-    LinkedHashSet<String>? selectedAnswers = _selection[question.id];
-    String? selectedAnswer = (selectedAnswers?.isNotEmpty == true) ? selectedAnswers?.first : null;
-    DateTime? selectedDate = DateOfBirthQuestion.fromDOBString(selectedAnswer);
+    LinkedHashSet<dynamic>? selectedAnswers = _selection[question.id];
+    int? numberOfDays = (selectedAnswers?.isNotEmpty == true) ? JsonUtils.intValue(selectedAnswers?.first) : null;
+    DateTime? selectedDate = DateOfBirthQuestion.fromNumberOfDays(numberOfDays);
     String? label = (selectedDate != null) ? DateFormat('MM-dd-yyyy').format(selectedDate) : null;
 
     return Padding(padding: _controlMargin, child:
@@ -351,9 +351,9 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   }
 
   void _onDateOfBirthAnswer(Question question) {
-    LinkedHashSet<String>? selectedAnswers = _selection[question.id];
-    String? selectedAnswer = (selectedAnswers?.isNotEmpty == true) ? selectedAnswers?.first : null;
-    DateTime? selectedDate = DateOfBirthQuestion.fromDOBString(selectedAnswer);
+    LinkedHashSet<dynamic>? selectedAnswers = _selection[question.id];
+    int? numberOfDays = (selectedAnswers?.isNotEmpty == true) ? JsonUtils.intValue(selectedAnswers?.first) : null;
+    DateTime? selectedDate = DateOfBirthQuestion.fromNumberOfDays(numberOfDays);
     DateTime now = DateUtils.dateOnly(DateTime.now());
 
     showDatePicker(context: context,
@@ -363,7 +363,9 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       firstDate: DateOfBirthQuestion.dobOrgDate,
       lastDate: now,
       builder: (context, child) => _datePickerTransitionBuilder(context, child!),
-    ).then((DateTime? result) => _didDateOfBirthAnswer(question, result));
+    ).then((DateTime? result) =>
+      _didDateOfBirthAnswer(question, result)
+    );
   }
 
   void _didDateOfBirthAnswer(Question question, DateTime? value) {
@@ -371,8 +373,8 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     if (questionId != null) {
       if (value != null) {
         setState(() {
-          _selection[questionId] = LinkedHashSet<String>.from(<String>[
-            DateOfBirthQuestion.toDOBString(value)
+          _selection[questionId] = LinkedHashSet<dynamic>.from(<dynamic>[
+            DateOfBirthQuestion.toNumberOfDays(value)
           ]);
         });
       }
@@ -406,11 +408,11 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   }
 
   Widget _buildSchoolYearAnswer(Answer answer, { required Question question }) {
-    LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+    LinkedHashSet<dynamic>? selectedAnswers = _selection[question.id];
 
     bool selected = false;
     if (answer.interval != null) {
-      selected = (answer.interval?.matchSchoolYearSelection(selectedAnswers) != null);
+      selected = (answer.interval?.matchSchoolYear(selectedAnswers) != null);
     }
     else {
       selected = (selectedAnswers?.contains(answer.id) == true);
@@ -449,17 +451,17 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
     String? questionId = question.id;
     if (questionId != null) {
-      LinkedHashSet<String> selectedAnswers = _selection[questionId] ??= LinkedHashSet<String>();
+      LinkedHashSet<dynamic> selectedAnswers = _selection[questionId] ??= LinkedHashSet<dynamic>();
       setState(() {
         if (answer.interval != null) {
-          String? selectedAnswer = answer.interval?.matchSchoolYearSelection(selectedAnswers);
-          if (selectedAnswers.contains(selectedAnswer)) {
-            selectedAnswers.remove(selectedAnswer);
+          int? selectedYear = answer.interval?.matchSchoolYear(selectedAnswers);
+          if (selectedAnswers.contains(selectedYear)) {
+            selectedAnswers.remove(selectedYear);
           }
           else {
-            selectedAnswer = answer.interval?.toSchoolYearSelectionValue();
-            if (selectedAnswer != null) {
-              selectedAnswers.add(selectedAnswer);
+            int? selectedSchoolYear = answer.interval?.toSchoolYear();
+            if (selectedSchoolYear != null) {
+              selectedAnswers.add(selectedSchoolYear);
             }
           }
         }
@@ -540,7 +542,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         Question question = questions[index];
         int? minQuestionAnswers = question.minAnswers;
         if (minQuestionAnswers != null) {
-          LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+          LinkedHashSet<dynamic>? selectedAnswers = _selection[question.id];
           int selectedAnswersCount = selectedAnswers?.length ?? 0;
           if (selectedAnswersCount < minQuestionAnswers) {
             return index;
@@ -584,7 +586,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   }
 
   bool _isAnalyticsQuestionAnswered(Question question) {
-    LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+    LinkedHashSet<dynamic>? selectedAnswers = _selection[question.id];
     if (selectedAnswers != null) {
       for (String answerId in selectedAnswers) {
         Answer? answer = Answer.answerInList(question.answers, answerId: answerId);
