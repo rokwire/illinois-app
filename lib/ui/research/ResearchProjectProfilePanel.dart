@@ -140,7 +140,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       submitText = sprintf('Target %s potential participants', [_targetAudienceCount]);
     }
 
-    String profileDescription = _profileDescription;
+    List<InlineSpan> profileDescription = _buildProfileDescription();
 
     return Column(children: <Widget>[
       Stack(children: [
@@ -160,9 +160,12 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
                   style: Styles().textStyles.getTextStyle("widget.title.small.fat")),
               ),
               Padding(padding: EdgeInsets.only(right: 12), child:
-                Text(profileDescription, maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: Styles().textStyles.getTextStyle("panel.research_project.profile.detail.small")
-                ),
+                // Text(profileDescription, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("panel.research_project.profile.detail.small")),
+                RichText(maxLines: 1, overflow: TextOverflow.ellipsis, text:
+                  TextSpan(style: _regularProfileDescriptionTextStyle, children:
+                    profileDescription
+                  )
+                )
               ),
             ]),
           ),
@@ -386,8 +389,8 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
     return ((index != null) && title.isNotEmpty) ? "$index. $title" : title;
   }
 
-  String get _profileDescription {
-    String description = '';
+  List<InlineSpan> _buildProfileDescription() {
+    List<InlineSpan> description = <InlineSpan>[];
     List<Question>? questions = _questionnaire?.questions;
     if (questions != null) {
       for (Question question in questions) {
@@ -404,15 +407,22 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
           }
           if (answerHints.isNotEmpty) {
             if (description.isNotEmpty) {
-              description += '; ';
+              description.add(TextSpan(text: '; ', style: _regularProfileDescriptionTextStyle));
             }
-            description += "$questionHint: ${answerHints.join(', ')}";
+            description.add(TextSpan(text: '$questionHint: ', style: _boldProfileDescriptionTextStyle));
+            description.add(TextSpan(text: answerHints.join(', '), style: _regularProfileDescriptionTextStyle));
           }
         }
       }
     }
+    if (description.isNotEmpty) {
+      description.add(TextSpan(text: '.', style: _regularProfileDescriptionTextStyle));
+    }
     return description;
   }
+
+  TextStyle? get _regularProfileDescriptionTextStyle => Styles().textStyles.getTextStyle('panel.research_project.profile.detail.small');
+  TextStyle? get _boldProfileDescriptionTextStyle => Styles().textStyles.getTextStyle('panel.research_project.profile.detail.small.fat');
 
   Widget get _profileDescriptionPopupContent {
     List<Widget> contentList = <Widget>[];
