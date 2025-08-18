@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Changed
+- Group Event Notifications redirect to Group Detail Panel and after that to EventDetailPanel [#5348](https://github.com/rokwire/illinois-app/issues/5348).
+### Added
+- Show list items in Assistant response [#5334](https://github.com/rokwire/illinois-app/issues/5334).
+### Fixed
+- Hide link to floorplans if the building has no floors in the campus data [#5340](https://github.com/rokwire/illinois-app/issues/5340).
+
 ## [7.3.2] - 2025-08-13
 ### Fixed
 - Android: Fix various compilation warnings [#5339](https://github.com/rokwire/illinois-app/issues/5339).
