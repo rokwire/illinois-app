@@ -63,8 +63,9 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with Notifica
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: widget._title,
-      childPadding: HomeFavoriteWidget.defaultChildPadding,
-      child: _buildContent(),
+      child: Padding(padding: HomeCard.defaultChildMargin,
+        child: _buildContent(),
+      ),
     );
   }
 
@@ -72,15 +73,15 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with Notifica
     if (CheckList(widget.contentKey).isLoading){
       return _buildLoadingContent();
     }
-    if (!_isStarted) {
+    else if (!_isStarted) {
       return _buildStartContent();
     }
-
-    if (_isEnded) {
+    else if (_isEnded) {
       return _buildEndedContent();
     }
-
-    return _buildProgressContent();
+    else {
+      return _buildProgressContent();
+    }
   }
 
   Widget _buildLoadingContent(){
@@ -88,7 +89,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with Notifica
         Container(
           constraints: BoxConstraints(maxHeight: 100),
           padding: EdgeInsets.all(16),
-            decoration: HomeCard.defaultDecoration,
+            decoration: HomeCard.boxDecoration,
             child: Column(children: <Widget>[
               Expanded(
                 child: Center(
@@ -102,7 +103,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with Notifica
   Widget _buildStartContent() {
     return 
         Container(padding: EdgeInsets.all(16),
-            decoration: HomeCard.defaultDecoration,
+            decoration: HomeCard.boxDecoration,
             child: Column(
               children: [
                 Row(children: [
@@ -128,7 +129,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with Notifica
   Widget _buildEndedContent() {
     return 
         Container(padding: EdgeInsets.all(16),
-            decoration: HomeCard.defaultDecoration,
+            decoration: HomeCard.boxDecoration,
             child: Column(
               children: [
                 Row(children: [
@@ -156,7 +157,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with Notifica
   Widget _buildProgressContent() {
     return 
         Container(padding: EdgeInsets.all(16),
-            decoration: HomeCard.defaultDecoration,
+            decoration: HomeCard.boxDecoration,
             child: Column(
               children: [
                 Row(children: [

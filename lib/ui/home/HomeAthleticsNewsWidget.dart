@@ -47,7 +47,6 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
-  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -155,14 +154,16 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         News news = _news![index];
-        pages.add(Padding(key: _contentKeys[news.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 8), child:
-          AthleticsNewsCard(news: news, displayMode: CardDisplayMode.home, onTap: () => _onTapNews(news))
+        pages.add(Padding(
+          key: _contentKeys[news.id ?? ''] ??= GlobalKey(),
+          padding: HomeCard.defaultPageMargin,
+          child: AthleticsNewsCard(news: news, displayMode: CardDisplayMode.home, onTap: () => _onTapNews(news))
         ));
       }
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport);
       }
 
@@ -177,7 +178,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         AthleticsNewsCard(news: _news!.first, displayMode: CardDisplayMode.home, onTap: () => _onTapNews(_news!.first))
       );
     }
@@ -217,7 +218,9 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> with 
             _news = news;
             _pageViewKey = UniqueKey();
             // _pageController = null;
-            _pageController?.jumpToPage(0);
+            if (_news?.isNotEmpty == true) {
+              _pageController?.jumpToPage(0);
+            }
             _contentKeys.clear();
           });
         }

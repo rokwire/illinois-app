@@ -61,14 +61,15 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> with No
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessToDoWidget.title,
-      childPadding: HomeFavoriteWidget.defaultChildPadding,
-      child: _buildContent(),
+      child: Padding(padding: HomeCard.defaultChildMargin,
+        child: _buildContent(),
+      ),
     );
   }
 
   Widget _buildContent() {
     return GestureDetector(child:
-      Container(decoration: HomeCard.defaultDecoration, child:
+      Container(decoration: HomeCard.boxDecoration, child:
               Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Padding(padding: EdgeInsets.only(top: 0), child: Row(children: [Expanded(child: Text(Localization().getStringEx('widget.home.wellness.todo.items.today.label', 'TODAY\'S ITEMS'), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.label.tiny.fat")))])),

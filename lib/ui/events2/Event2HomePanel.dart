@@ -130,7 +130,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
   }
 
   static Widget _buildOnboardingDescription(BuildContext context) {
-    String decriptionHtml = Localization().getStringEx("panel.events2.home.attributes.launch.header.description", "Customize your events feed by setting the below filters or <a href='{{events2_url}}'>view all events now<a> and choose your event filters later.").
+    String decriptionHtml = Localization().getStringEx("panel.events2.home.attributes.launch.header.description", "Customize your event feed by setting the filters below.").
       replaceAll('{{events2_url}}', url);
     TextStyle? descriptionTextStyle = Styles().textStyles.getTextStyle('widget.description.medium.fat.highlight'); // TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.white);
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
@@ -258,6 +258,10 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
 
   static ContentAttributes? buildContentAttributesV1({LocationServicesStatus? status}) {
     ContentAttributes? contentAttributes = ContentAttributes.fromOther(Events2().contentAttributes);
+
+    final Set<String> removeAttributeIds = <String>{'college', 'department'};
+    contentAttributes?.attributes?.removeWhere((ContentAttribute attribute) => removeAttributeIds.contains(attribute.id));
+
     contentAttributes?.attributes?.insert(0, buildEventDetailsContentAttribute());
     contentAttributes?.attributes?.add(buildEventLimitsContentAttribute(status: status));
     return contentAttributes;
@@ -325,8 +329,15 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
   // ContentAttributes + EventTime & EventType filter
 
   static ContentAttributes? buildContentAttributesV2({LocationServicesStatus? status, TZDateTime? customStartTime, TZDateTime? customEndTime }) {
-    ContentAttributes? contentAttributes = ContentAttributes.fromOther(buildContentAttributesV1(status: status));
-    contentAttributes?.attributes?.insert(0, Event2HomePanel.eventTimeContentAttribute(customStartTime: customStartTime, customEndTime: customEndTime));
+    ContentAttributes? contentAttributes = ContentAttributes.fromOther(Events2().contentAttributes);
+
+    contentAttributes?.attributes?.insertAll(0, <ContentAttribute>[
+      eventTimeContentAttribute(customStartTime: customStartTime, customEndTime: customEndTime),
+      buildEventDetailsContentAttribute(),
+    ]);
+
+    contentAttributes?.attributes?.add(buildEventLimitsContentAttribute(status: status));
+
     return contentAttributes;
   }
 
@@ -376,12 +387,15 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
       dynamic result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
         title: Localization().getStringEx('panel.events2.home.attributes.filters.header.title', 'Event Filters'),
         description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
+        footerBuilder: _buildFiltersFooter,
+
         contentAttributes: contentAttributes,
         selection: selection,
+
         scope: Events2.contentAttributesScope,
         sortType: ContentAttributesSortType.native,
         filtersMode: true,
-        footerBuilder: _buildFiltersFooter,
+
         handleAttributeValue: handleAttributeValue,
         countAttributeValues: countAttributeValues,
       )));
@@ -1240,10 +1254,14 @@ class _Event2OnboardingFiltersPanel extends ContentAttributesPanel {
     sectionRequiredMarkTextStyle: Styles().textStyles.getTextStyle('widget.title.tiny.extra_fat.highlight'),
     applyBuilder: Event2HomePanel._buildOnboardingApply,
     continueBuilder: Event2HomePanel._buildOnboardingContinue,
+
     contentAttributes: Event2HomePanel.buildContentAttributesV1(status: status),
-    sortType: ContentAttributesSortType.native,
+
     scope: Events2.contentAttributesScope,
+    sortType: ContentAttributesSortType.native,
     filtersMode: true,
+
+    countAttributeValues: Event2HomePanel.countAttributeValues,
   );
 }
 

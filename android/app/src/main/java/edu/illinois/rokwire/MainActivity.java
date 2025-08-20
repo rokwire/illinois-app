@@ -30,13 +30,11 @@ import androidx.annotation.NonNull;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -169,9 +167,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 }
             }
         }
-        List<String> orientationsList;
-        if (orientations instanceof List) {
-            orientationsList = (List<String>) orientations;
+        List<String> orientationsList = Utils.List.stringList(orientations);
+        if (orientationsList != null) {
             int preferredOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
             Set<Integer> supportedOrientations = new HashSet<>();
             for (String orientationString : orientationsList) {
@@ -186,7 +183,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             if ((preferredOrientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) && (preferredScreenOrientation != preferredOrientation)) {
                 preferredScreenOrientation = preferredOrientation;
             }
-            if ((supportedOrientations.size() > 0) && !supportedOrientations.equals(supportedScreenOrientations)) {
+            if (!supportedOrientations.isEmpty() && !supportedOrientations.equals(supportedScreenOrientations)) {
                 supportedScreenOrientations = supportedOrientations;
                 int currentOrientation = getRequestedOrientation();
                 if (!supportedScreenOrientations.contains(currentOrientation)) {
@@ -199,16 +196,21 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private String getScreenOrientationToString(int orientationValue) {
         switch (orientationValue) {
-            case ActivityInfo.SCREEN_ORIENTATION_PORTRAIT:
+            case ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> {
                 return "portraitUp";
-            case ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT:
+            }
+            case ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT -> {
                 return "portraitDown";
-            case ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE:
+            }
+            case ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -> {
                 return "landscapeLeft";
-            case ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE:
+            }
+            case ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> {
                 return "landscapeRight";
-            default:
+            }
+            default -> {
                 return null;
+            }
         }
     }
 
@@ -217,16 +219,21 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
         }
         switch (orientationString) {
-            case "portraitUp":
+            case "portraitUp" -> {
                 return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-            case "portraitDown":
+            }
+            case "portraitDown" -> {
                 return ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
-            case "landscapeLeft":
+            }
+            case "landscapeLeft" -> {
                 return ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
-            case "landscapeRight":
+            }
+            case "landscapeRight" -> {
                 return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-            default:
+            }
+            default -> {
                 return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+            }
         }
     }
 
@@ -321,11 +328,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                     byte[] byteArray = byteArrayOutputStream.toByteArray();
-                    barcodeImageData = (byteArray != null) ? Base64.encodeToString(byteArray, Base64.NO_WRAP) : null;
+                    barcodeImageData = Base64.encodeToString(byteArray, Base64.NO_WRAP);
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Failed to encode image:");
-                e.printStackTrace();
+                Log.e(TAG, "Failed to encode image: " + e);
             }
         }
         return barcodeImageData;
@@ -408,9 +414,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
             }
         } catch (IllegalStateException exception) {
-            String errorMsg = String.format("Ignoring exception '%s'. See https://github.com/flutter/flutter/issues/29092 for details.", exception.toString());
+            String errorMsg = String.format("Ignoring exception '%s'. See https://github.com/flutter/flutter/issues/29092 for details.", exception);
             Log.e(TAG, errorMsg);
-            exception.printStackTrace();
         }
     }
 }

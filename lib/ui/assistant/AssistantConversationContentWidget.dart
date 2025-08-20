@@ -322,8 +322,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                     ])))))))
               ])),
 
-      //DD: Hide the horizontal scroll with struct elements - #5293
-      Visibility(visible: false/*(message.structElements?.isNotEmpty == true)*/, child: _buildStructElementsContainerWidget(message)),
+      Visibility(visible: (message.structElements?.isNotEmpty == true), child: _buildStructElementsContainerWidget(message)),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
   }

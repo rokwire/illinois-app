@@ -143,7 +143,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
   Map<Favorite, GlobalKey> _contentKeys = <Favorite, GlobalKey>{};
   Favorite? _currentFavorite;
   int _currentPage = -1;
-  final double _pageSpacing = 16;
   
   @override
   void initState() {
@@ -236,14 +235,16 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
       List<Widget> pages = [];
       for (int index = 0; index < visibleCount; index++) {
         Favorite favorite = _favorites![index];
-        pages.add(Padding(key: _contentKeys[favorite] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
-          _buildItemCard(favorite)),
-        );
+        pages.add(Padding(
+          key: _contentKeys[favorite] ??= GlobalKey(),
+          padding: HomeCard.defaultPageMargin,
+          child: _buildItemCard(favorite)
+        ),);
       }
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage);
       }
 
@@ -259,15 +260,13 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         _buildItemCard(_favorites!.first),
       );
     }
 
     return Column(children: <Widget>[
-      Padding(padding: EdgeInsets.only(top: 8), child:
-        contentWidget,
-      ),
+      contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
        HomeBrowseLinkButton(
           title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
@@ -380,7 +379,9 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
 
       _pageViewKey = UniqueKey();
       // _pageController = null; //Doing this will break the listener in the buttons, instead reset to first page
-      _pageController?.jumpToPage(0);
+      if (_favorites?.isNotEmpty == true) {
+        _pageController?.jumpToPage(0);
+      }
       _contentKeys.clear();
     }
   }
@@ -484,8 +485,8 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
   }
 
   Widget _buildEmpty() {
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-      Container(decoration: HomeCard.defaultDecoration,
+    return Padding(padding: HomeCard.defaultChildMargin, child:
+      Container(decoration: HomeCard.boxDecoration,
         padding: EdgeInsets.all(16),
         child:  HtmlWidget(
             HomeFavoritesWidget.emptyMessageHtml(widget.favoriteKey) ?? '',
