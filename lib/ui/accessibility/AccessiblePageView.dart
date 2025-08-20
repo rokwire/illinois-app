@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'dart:math';
 
 class AccessiblePageView extends StatefulWidget {
@@ -15,11 +17,11 @@ class AccessiblePageView extends StatefulWidget {
   const AccessiblePageView({
     super.key,
     required this.children,
+    required this.estimatedPageSize,
     this.onPageChanged,
     this.controller,
     this.mainAxisSize = MainAxisSize.max,
     this.alignment = Alignment.centerLeft,
-    this.estimatedPageSize = 0.0,
     this.allowImplicitScrolling = false,
   });
 
@@ -29,115 +31,69 @@ class AccessiblePageView extends StatefulWidget {
 
 class _AccessiblePageViewState extends State<AccessiblePageView> {
   double _maxHeight = 0.0;
-  double _oldMaxHeight = 0.0;
   final List<GlobalKey> _keys = [];
-  final GlobalKey _sizedPageViewKey = GlobalKey();
-
-  int _lastKnownPage = 0;
-  bool _isAfterMeasurement = false;
 
   @override
   void initState() {
     super.initState();
-  _constructChildrenKeys();
-    if (widget.controller != null) {
-      try {
-        _lastKnownPage = widget.controller!.initialPage;
-      } catch (e) {
-        // If controller.initialPage throws (e.g., if it's a late final not yet set, though unlikely for PageController)
-        _lastKnownPage = 0;
-      }
-      widget.controller!.addListener(_updateLastKnownPage);
-    }
-  // _prepareCopiedChildren();
-    // Measure widgets after the first frame is rendered
-    if(_needSizing)
-      WidgetsBinding.instance.addPostFrameCallback((_) => _measureWidgets());
-  }
 
-  @override
-  void dispose() {
-    widget.controller?.removeListener(_updateLastKnownPage);
-    super.dispose();
+    if(_needExpanding){
+      _constructKeys();
+      WidgetsBinding.instance.addPostFrameCallback((_) => _measureAllPages()); //Calculate the max height of the first chink of children
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isAfterMeasurement && _needSizing && !_needMeasure) {
-      // We just finished measuring, and _sizedLayout is about to be built.
-      // Schedule page restoration for after this frame.
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          _restorePagePosition();
-        }
-      });
-    }
-    if (_needSizing) {
-      if (_needMeasure) { // _maxHeight == 0.0
-        return _measurementLayout;
-      } else {
-        // _maxHeight > 0.0
-        return _sizedLayout;
-      }
+    if (_needExpanding) {
+      return _needMeasure ? _measurementLayout : _expandedLayout;
     } else {
-      return _pageViewLayout; // ExpandablePageView
+      return _shrinkLayout;
     }
   }
 
   @override
   void didUpdateWidget(AccessiblePageView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.controller != widget.controller) {
-      oldWidget.controller?.removeListener(_updateLastKnownPage);
-      if (widget.controller != null) {
-        try {
-          _lastKnownPage = widget.controller!.initialPage;
-        } catch (e) {
-          _lastKnownPage = 0;
-        }
-        widget.controller!.addListener(_updateLastKnownPage);
-      } else {
-        _lastKnownPage = 0;
+    if(_needExpanding) {
+      if (widget.children != oldWidget.children ||
+          widget.children.length != oldWidget.children.length) {
+        //When children are updated we need to update the keys
+        //Don't measure all children again because this cause flicking effect when hiding and then showing the PageView
+        _constructKeys();
       }
-    }
-
-    if (widget.children != oldWidget.children || widget.children.length != oldWidget.children.length) {
-      _keys.clear();
-      _constructChildrenKeys();
-      if (_maxHeight > 0) { // If it was previously measured
-        _isAfterMeasurement = true; // Signal that the next build of _sizedLayout is after a re-measurement
-      }
-      _oldMaxHeight = _maxHeight;
-      _maxHeight = 0;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) { // Ensure the widget is still in the tree
-          _measureWidgets();
-        }
-      });
     }
   }
 
-  void _constructChildrenKeys(){
+  void _onPageChanged(int position){
+    widget.onPageChanged?.call(position);
+    //Instead of measuring all children after update, measure just the current page to reduce flicking but still ensure that the page will fit
+    if(_needExpanding)
+      _measurePage(position);
+  }
+
+  void _constructKeys(){
+    _keys.clear();
     for (int i = 0; i < widget.children.length; i++) {
       _keys.add(GlobalKey());
     }
   }
 
-  void _measureWidgets() {
+  void _measureAllPages() {
     if (!mounted) return;
-
-    double maxHeight = _oldMaxHeight;
-    for (final key in _keys) {
-      final RenderBox? renderBox = key.currentContext?.findRenderObject() as RenderBox?;
-      if (renderBox != null) {
-        maxHeight = max(maxHeight, renderBox.size.height);
-      }
+    for (int i = 0; i < _keys.length; i ++) {
+      _measurePage(i);
     }
+  }
 
-    if (maxHeight > 0 && maxHeight != _maxHeight) {
-      setState(() {
-        _maxHeight = maxHeight;
-      });
+  void _measurePage(int position){
+    final RenderBox? renderBox = _keys[position].currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      double pageHeight =renderBox.size.height;
+      if(_maxHeight < pageHeight)
+        setStateIfMounted(() =>
+        _maxHeight = max(_maxHeight, pageHeight)
+        );
     }
   }
 
@@ -156,52 +112,36 @@ class _AccessiblePageViewState extends State<AccessiblePageView> {
           }),
         ),
       );
-  Widget get _sizedLayout => Offstage(
-    offstage: _needMeasure == true,
-    child: SizedBox(
+
+  Widget get _expandedLayout =>
+    SizedBox(
       height: _maxHeight,
-      child: PageView(
-        key: _sizedPageViewKey,
+      child: ExpandablePageView(
+        onPageChanged: _onPageChanged,
+        children: List.generate(widget.children.length, (index) =>
+          Container(
+            key: _keys[index],
+            child: widget.children[index],
+          )
+        ),
+        controller: widget.controller,
+        allowImplicitScrolling: widget.allowImplicitScrolling,
+        estimatedPageSize: widget.estimatedPageSize,
+      )
+  );
+
+  Widget get _shrinkLayout =>
+    ExpandablePageView(
         controller: widget.controller,
         children: widget.children,
-        onPageChanged: widget.onPageChanged,
+        onPageChanged: _onPageChanged,
+        estimatedPageSize: widget.estimatedPageSize,
         allowImplicitScrolling: widget.allowImplicitScrolling,
-      )
-  ));
-
-    Widget get _pageViewLayout =>
-      ExpandablePageView(
-          controller: widget.controller,
-          children: widget.children,
-          onPageChanged: widget.onPageChanged,
-          estimatedPageSize: widget.estimatedPageSize,
-          allowImplicitScrolling: widget.allowImplicitScrolling,
-      );
-
-  void _updateLastKnownPage() {
-    if (widget.controller != null && widget.controller!.hasClients && widget.controller!.page != null) {
-      final currentPage = widget.controller!.page!.round();
-      if (currentPage != _lastKnownPage) {
-        _lastKnownPage = currentPage;
-        // print("ACCESSIBLE_PV: Controller page changed to $_lastKnownPage");
-      }
-    }
-  }
-
-  void _restorePagePosition() {
-    if (widget.controller != null && widget.controller!.hasClients) {
-      // Check if the current page on the controller is different from our last known page.
-      // This can happen if the PageView reset itself to 0 despite the controller.
-      final controllerCurrentPage = widget.controller!.page!.round();
-      if (controllerCurrentPage != _lastKnownPage) {
-        print("ACCESSIBLE_PV: Restoring page to $_lastKnownPage from ${controllerCurrentPage}");
-        widget.controller!.jumpToPage(_lastKnownPage);
-      }
-    }
-    _isAfterMeasurement = false; // Reset the flag
-  }
-
-  bool get _needSizing => widget.mainAxisSize == MainAxisSize.max;
+    );
 
   bool get _needMeasure => _maxHeight == 0;
+
+  bool get _needExpanding => widget.mainAxisSize == MainAxisSize.max || _forcedExpanding;
+
+  bool get _forcedExpanding => false;  //TBD
 }
