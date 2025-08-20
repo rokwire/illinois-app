@@ -331,7 +331,114 @@
       "action":"alert","data":"data.courage","data_key":null,"priority":null
     }
   },
+
+  {
+    "condition": {
+      "operator": "==",
+      "data_key": "data.next.response",
+      "compare_to": "Talk to someone confidentially"
+    },
+    "true_result": {
+      "action": "alert",
+      "data": "data.placeholder_setA_default"
+    }
+  },
+
+  {
+    "condition": {
+      "operator": "and",
+      "conditions": [
+        { "operator": "==", "data_key": "data.next.response", "compare_to": "Talk to someone confidentially" },
+        { "operator": "==", "data_key": "data.prioritize.response", "compare_to": "On-campus services" }
+      ]
+    },
+    "true_result": {
+      "action": "alert",
+      "data": "data.placeholder_setA_oncampus"
+    }
+  },
+
+  {
+    "condition": {
+      "operator": "and",
+      "conditions": [
+        { "operator": "==", "data_key": "data.next.response", "compare_to": "Talk to someone confidentially" },
+        { "operator": "==", "data_key": "data.prioritize.response", "compare_to": "Off-campus services" }
+      ]
+    },
+    "true_result": {
+      "action": "alert",
+      "data": "data.placeholder_setA_offcampus"
+    }
+  },
+
+  {
+    "condition": {
+      "operator": "and",
+      "conditions": [
+        { "operator": "==", "data_key": "data.next.response", "compare_to": "Talk to someone confidentially" },
+        { "operator": "==", "data_key": "data.prioritize.response", "compare_to": "24/7 options" }
+      ]
+    },
+    "true_result": {
+      "action": "alert",
+      "data": "data.placeholder_setA_247"
+    }
+  },
+
+  {
+    "condition": {
+      "operator": "==",
+      "data_key": "data.next.response",
+      "compare_to": "Find out about reporting options"
+    },
+    "true_result": {
+      "action": "alert",
+      "data": "data.placeholder_setB_default"
+    }
+  },
+
+  {
+    "condition": {
+      "operator": "==",
+      "data_key": "data.next.response",
+      "compare_to": "Seek medical help"
+    },
+    "true_result": {
+      "action": "alert",
+      "data": "data.placeholder_setC_default"
+    }
+  },
+
+  {
+    "condition": {
+      "operator": "==",
+      "data_key": "data.next.response",
+      "compare_to": "Access educational materials on my own"
+    },
+    "true_result": {
+      "action": "alert",
+      "data": "data.placeholder_setD_default"
+    }
+  },
+
+
+  {
+    "condition": {
+      "operator": "and",
+      "conditions": [
+        { "operator": "==", "data_key": "data.next.response", "compare_to": "Access educational materials on my own" },
+        { "operator": "==", "data_key": "data.situation.response", "compare_to": "I want to support a friend" }
+      ]
+    },
+    "true_result": {
+      "action": "alert",
+      "data": "data.placeholder_setD_supportfriend"
+    }
+  },
+
   {
     "action":"save","data":null,"data_key":null,"priority":null
   }
 ]
+
