@@ -40,8 +40,8 @@ class _AccessiblePageViewState extends State<AccessiblePageView> with Notificati
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [Storage.notifySettingChanged]);
+    _constructKeys();
     if(_needExpanding){
-      _constructKeys();
       WidgetsBinding.instance.addPostFrameCallback((_) => _measureAllPages()); //Calculate the max height of the first chink of children
     }
   }
@@ -51,9 +51,8 @@ class _AccessiblePageViewState extends State<AccessiblePageView> with Notificati
     super.onNotification(name, param);
     if (name == Storage.notifySettingChanged && param == Storage.accessibilityReduceMotionKey) {
       if(_needExpanding) {
-        // _maxHeight = widget.estimatedPageSize;
-        // _constructKeys();
-        // WidgetsBinding.instance.addPostFrameCallback((_) => _measureAllPages());
+        _maxHeight = max(_maxHeight, widget.estimatedPageSize);
+        WidgetsBinding.instance.addPostFrameCallback((_) => _measureAllPages());
       }
 
       setStateIfMounted();
@@ -61,25 +60,20 @@ class _AccessiblePageViewState extends State<AccessiblePageView> with Notificati
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (_needExpanding) {
-      return _needMeasure ? _measurementLayout : _expandedLayout;
-    } else {
-      return _shrinkLayout;
-    }
-  }
+  Widget build(BuildContext context) =>
+       _needMeasure ? _measurementLayout : _layoutWidget;
 
   @override
   void didUpdateWidget(AccessiblePageView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if(_needExpanding) {
+    // if(_needExpanding) {
       if (widget.children != oldWidget.children ||
           widget.children.length != oldWidget.children.length) {
         //When children are updated we need to update the keys
         //Don't measure all children again because this cause flicking effect when hiding and then showing the PageView
         _constructKeys();
       }
-    }
+    // }
   }
 
   void _onPageChanged(int position){
@@ -108,7 +102,7 @@ class _AccessiblePageViewState extends State<AccessiblePageView> with Notificati
       double pageHeight =renderBox.size.height;
       if(_maxHeight < pageHeight)
         setStateIfMounted(() =>
-        _maxHeight = max(_maxHeight, pageHeight)
+          _maxHeight = max(_maxHeight, pageHeight)
         );
     }
   }
@@ -129,15 +123,19 @@ class _AccessiblePageViewState extends State<AccessiblePageView> with Notificati
         ),
       );
 
-  Widget get _expandedLayout =>
+  Widget get _layoutWidget =>
     SizedBox(
-      height: _maxHeight,
+      height: _layoutHeight,
       child: ExpandablePageView(
         onPageChanged: _onPageChanged,
         children: List.generate(widget.children.length, (index) =>
+          // Container(
+          //     key: _keys.length > index ? _keys[index] : GlobalKey(),
+          //     child: widget.children.length > index ? widget.children[index] : Container()
+          // )
           Container(
-              key: _keys.length > index ? _keys[index] : GlobalKey(),
-              child: widget.children.length > index ? widget.children[index] : Container()
+              key: _keys[index],
+              child: widget.children[index]
           )
         ),
         controller: widget.controller,
@@ -146,16 +144,9 @@ class _AccessiblePageViewState extends State<AccessiblePageView> with Notificati
       )
   );
 
-  Widget get _shrinkLayout =>
-    ExpandablePageView(
-        controller: widget.controller,
-        children: widget.children,
-        onPageChanged: _onPageChanged,
-        estimatedPageSize: widget.estimatedPageSize,
-        allowImplicitScrolling: widget.allowImplicitScrolling,
-    );
+  double? get _layoutHeight => _needExpanding ? _maxHeight : null;
 
-  bool get _needMeasure => _maxHeight == 0;
+  bool get _needMeasure => _needExpanding && _maxHeight == 0;
 
   bool get _needExpanding => widget.mainAxisSize == MainAxisSize.max || _forcedExpanding;
 
