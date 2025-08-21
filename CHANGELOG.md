@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Added
+- Introduce AccessibleViewPage used to reduce resize animation of the ExpandableViewPage widget. Depends on Storage.accessibilityReduceMotionKey setting [#5259](https://github.com/rokwire/illinois-app/issues/5259).
+
 ### Changed
 - Group Event Notifications redirect to Group Detail Panel and after that to EventDetailPanel [#5348](https://github.com/rokwire/illinois-app/issues/5348).
 ### Added
