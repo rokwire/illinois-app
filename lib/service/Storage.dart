@@ -598,4 +598,9 @@ class Storage extends rokwire.Storage with NotificationsListener {
   static const String illiniRadioStationKey = 'edu.illinois.rokwire.illini_radio.station';
   String? get illiniRadioStation => getStringWithName(illiniRadioStationKey);
   set illiniRadioStation(String? value) => setStringWithName(illiniRadioStationKey, value);
+
+  // Accessibility
+  static const String accessibilityReduceMotionKey = 'edu.illinois.rokwire.setting.accessibility.motion';
+  bool? get accessibilityReduceMotion => getBoolWithName(accessibilityReduceMotionKey);
+  set accessibilityReduceMotion(bool? value) => setBoolWithName(accessibilityReduceMotionKey, value);
 }

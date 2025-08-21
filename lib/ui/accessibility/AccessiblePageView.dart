@@ -1,8 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'dart:math';
+
+import 'package:rokwire_plugin/service/notification_service.dart';
 
 class AccessiblePageView extends StatefulWidget {
   final MainAxisSize mainAxisSize;
@@ -20,7 +23,7 @@ class AccessiblePageView extends StatefulWidget {
     required this.estimatedPageSize,
     this.onPageChanged,
     this.controller,
-    this.mainAxisSize = MainAxisSize.max,
+    this.mainAxisSize = MainAxisSize.min,
     this.alignment = Alignment.centerLeft,
     this.allowImplicitScrolling = false,
   });
@@ -29,17 +32,31 @@ class AccessiblePageView extends StatefulWidget {
   State<AccessiblePageView> createState() => _AccessiblePageViewState();
 }
 
-class _AccessiblePageViewState extends State<AccessiblePageView> {
+class _AccessiblePageViewState extends State<AccessiblePageView> with NotificationsListener{
   double _maxHeight = 0.0;
   final List<GlobalKey> _keys = [];
 
   @override
   void initState() {
     super.initState();
-
+    NotificationService().subscribe(this, [Storage.notifySettingChanged]);
     if(_needExpanding){
       _constructKeys();
       WidgetsBinding.instance.addPostFrameCallback((_) => _measureAllPages()); //Calculate the max height of the first chink of children
+    }
+  }
+
+  @override
+  void onNotification(String name, param) {
+    super.onNotification(name, param);
+    if (name == Storage.notifySettingChanged && param == Storage.accessibilityReduceMotionKey) {
+      if(_needExpanding) {
+        // _maxHeight = widget.estimatedPageSize;
+        // _constructKeys();
+        // WidgetsBinding.instance.addPostFrameCallback((_) => _measureAllPages());
+      }
+
+      setStateIfMounted();
     }
   }
 
@@ -74,9 +91,8 @@ class _AccessiblePageViewState extends State<AccessiblePageView> {
 
   void _constructKeys(){
     _keys.clear();
-    for (int i = 0; i < widget.children.length; i++) {
-      _keys.add(GlobalKey());
-    }
+    widget.children.forEach((widget) =>
+        _keys.add(GlobalKey()));
   }
 
   void _measureAllPages() {
@@ -105,8 +121,8 @@ class _AccessiblePageViewState extends State<AccessiblePageView> {
               // Use alignment to prevent children from overlapping and taking up screen space
               alignment: widget.alignment,
               child: Container(
-                key: _keys[index],
-                child: widget.children[index]
+                key: _keys.length > index ? _keys[index] : GlobalKey(),
+                child: widget.children.length > index ? widget.children[index] : Container()
               ),
             );
           }),
@@ -120,8 +136,8 @@ class _AccessiblePageViewState extends State<AccessiblePageView> {
         onPageChanged: _onPageChanged,
         children: List.generate(widget.children.length, (index) =>
           Container(
-            key: _keys[index],
-            child: widget.children[index],
+              key: _keys.length > index ? _keys[index] : GlobalKey(),
+              child: widget.children.length > index ? widget.children[index] : Container()
           )
         ),
         controller: widget.controller,
@@ -143,5 +159,5 @@ class _AccessiblePageViewState extends State<AccessiblePageView> {
 
   bool get _needExpanding => widget.mainAxisSize == MainAxisSize.max || _forcedExpanding;
 
-  bool get _forcedExpanding => false;  //TBD
+  bool get _forcedExpanding => Storage().accessibilityReduceMotion ?? false;
 }
