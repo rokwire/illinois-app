@@ -95,7 +95,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
   @override
   Widget build(BuildContext context) {
 
-    return Column(children: [
+    return SafeArea(child: Column(children: [
       Container(color: Styles().colors.white, child:
         Row(children: [
           Expanded(child:
@@ -126,7 +126,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
           ),
         ),
       ),
-    ],);
+    ],));
   }
 
   List<Widget> _buildContentList() {

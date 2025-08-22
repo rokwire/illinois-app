@@ -6,12 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+## [7.3.3] - 2025-08-21
 ### Changed
 - Group Event Notifications redirect to Group Detail Panel and after that to EventDetailPanel [#5348](https://github.com/rokwire/illinois-app/issues/5348).
 ### Added
 - Show list items in Assistant response [#5334](https://github.com/rokwire/illinois-app/issues/5334).
+- Introduce AccessibleViewPage used to reduce resize animation of the ExpandableViewPage widget. Depends on Storage.accessibilityReduceMotionKey setting [#5259](https://github.com/rokwire/illinois-app/issues/5259).
 ### Fixed
 - Hide link to floorplans if the building has no floors in the campus data [#5340](https://github.com/rokwire/illinois-app/issues/5340).
+- Ensure that the content in Customize panel is visible [#5354](https://github.com/rokwire/illinois-app/issues/5354).
 
 ## [7.3.2] - 2025-08-13
 ### Fixed

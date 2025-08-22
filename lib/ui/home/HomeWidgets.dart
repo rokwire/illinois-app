@@ -5,7 +5,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -13,6 +12,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -1046,7 +1046,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
       return
         Column(children: [
           Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-            ExpandablePageView(
+            AccessiblePageView(
               key: _pageViewKey,
               controller: _pageController,
               estimatedPageSize: _pageHeight,
