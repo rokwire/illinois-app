@@ -4,6 +4,20 @@ enum GBVResourceType {panel, external_link}
 
 enum GBVResourceDetailType {text, address, phone, email, external_link}
 
+class GBV {
+  final List<GBVResource> resources;
+
+  GBV({
+    required this.resources
+  });
+
+  static GBV? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? GBV(
+      resources: GBVResource.listFromJson(JsonUtils.listValue(json['resources'])),
+    ) : null;
+  }
+}
+
 class GBVResourceList {
   final String title;
   final List<String> resourceIds;
@@ -32,12 +46,12 @@ class GBVResourceList {
 }
 
 class GBVDetailListSection {
-  final String? title;
-  final List<GBVResourceDetail>? content;
+  final String title;
+  final List<GBVResourceDetail> content;
 
   GBVDetailListSection({
-    this.title,
-    this.content
+    required this.title,
+    required this.content
   });
 
   static List<GBVDetailListSection> listFromJson(List<dynamic>? jsonList) {
@@ -61,6 +75,7 @@ class GBVDetailListSection {
 class GBVResource {
   final String id;
   final GBVResourceType type;
+  final String category;
   final String title;
   final List<GBVResourceDetail> directoryContent;
   final String? description;
@@ -69,6 +84,7 @@ class GBVResource {
   GBVResource({
     required this.id,
     required this.type,
+    required this.category,
     required this.title,
     required this.directoryContent,
     this.description,
@@ -79,11 +95,22 @@ class GBVResource {
     return (json != null) ? GBVResource(
       id: JsonUtils.stringValue(json['id']) ?? "",
       type: (JsonUtils.stringValue(json['title']) == 'external_link' ? GBVResourceType.external_link : GBVResourceType.panel),
+      category: JsonUtils.stringValue(json['category']) ?? "",
       title: JsonUtils.stringValue(json['title']) ?? "",
       directoryContent: GBVResourceDetail.listFromJson(JsonUtils.listValue(json['directoryContent'])),
       description: JsonUtils.stringValue(json['description']),
       detailsList: GBVDetailListSection.listFromJson(JsonUtils.listValue(json['detailsList'])),
     ) : null;
+  }
+
+  static List<GBVResource> listFromJson(List<dynamic>? jsonList) {
+    List<GBVResource>? values = [];
+    if (jsonList != null) {
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(values, GBVResource.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return values;
   }
 }
 
@@ -119,7 +146,7 @@ class GBVResourceDetail {
 
   static GBVResourceDetail? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? GBVResourceDetail(
-      type: _typeFromString(JsonUtils.stringValue(json['title']) ?? "text"),
+      type: _typeFromString(JsonUtils.stringValue(json['type']) ?? "text"),
       content: JsonUtils.stringValue(json['content'])
     ) : null;
   }

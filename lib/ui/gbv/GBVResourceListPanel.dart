@@ -1,5 +1,8 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/gbv/QuickExitWidget.dart';
+import 'package:illinois/ui/gbv/ResourceDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -10,8 +13,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class GBVResourceListPanel extends StatefulWidget {
   final String id;
+  final List<GBVResource> resources;
 
-  GBVResourceListPanel({ super.key, required this.id });
+  GBVResourceListPanel({ super.key, required this.id, required this.resources });
 
   @override
   State<StatefulWidget> createState() => _GBVResourceListPanelState();
@@ -64,7 +68,8 @@ class _GBVResourceListPanelState extends State<GBVResourceListPanel> {
     return
       SingleChildScrollView(child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Padding(padding: EdgeInsets.only(top: 32, left: 16), child: (
+          QuickExitWidget(),
+          Padding(padding: EdgeInsets.only(top: 16, left: 16), child: (
               Text(resourceListScreen.title ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")))
           ),
           Padding(padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16), child:
@@ -103,6 +108,7 @@ class _GBVResourceListPanelState extends State<GBVResourceListPanel> {
     Widget descriptionWidget = (resource.directoryContent.isNotEmpty)
       ? Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
         Column(children:
+          // Map different directory content types here
           resource.directoryContent.map((detail) => Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"))).toList()
         )
       )
@@ -125,8 +131,10 @@ class _GBVResourceListPanelState extends State<GBVResourceListPanel> {
                   descriptionWidget
                 ])
               ),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
-                Styles().images.getImage((resource.type == GBVResourceType.external_link) ? 'external-link' : 'chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+              GestureDetector(onTap: () => _onTapResource(resource), child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
+                  Styles().images.getImage((resource.type == GBVResourceType.external_link) ? 'external-link' : 'chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                )
               )
             ])
           )
@@ -144,6 +152,10 @@ class _GBVResourceListPanelState extends State<GBVResourceListPanel> {
     ]);
   }
 
+  void _onTapResource(GBVResource resource) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource)));
+  }
+
   Widget _buildErrorContent() {
     return Column(children: <Widget>[
         Expanded(flex: 1, child: Container()),
@@ -155,16 +167,17 @@ class _GBVResourceListPanelState extends State<GBVResourceListPanel> {
   }
 
   Future<_GBVResourceListScreenData?> _loadResourceScreenData(String screenId) async {
-    String? resourceJson = await AppBundle.loadString('assets/extra/gbv/resources.json');
-    List<GBVResource?> allResources = (resourceJson != null)
-        ? List.from((JsonUtils.decodeList(resourceJson)!.map((r) => GBVResource.fromJson(r))))
-        : [];
-
     // temporary json load from assets
     String? json = await AppBundle.loadString('assets/extra/gbv/${screenId}.json');
     GBVResourceListScreen? resourceListScreen = (json != null)
         ? GBVResourceListScreen.fromJson(JsonUtils.decodeMap(json))
         : null;
+
+    String? GBVjson = await AppBundle.loadString('assets/extra/gbv/gbv.json');
+    GBV? gbv = (GBVjson != null)
+        ? GBV.fromJson(JsonUtils.decodeMap(GBVjson))
+        : null;
+    List<GBVResource?> allResources = (gbv != null) ? gbv.resources : [];
 
 
     if ((resourceListScreen != null) && mounted) {
