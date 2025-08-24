@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/SurveyTracker.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
+import 'package:illinois/ui/gbv/ResourceDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -30,13 +31,15 @@ class SexualMisconductPathwaysPanel extends StatefulWidget {
 class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathwaysPanel> {
   List<GBVResource> _resources = [];
   bool _loading = true;
+  GBVResourceListScreens? _resourceListScreens;
 
   @override
   void initState() {
-    _loadResources().then((resources) {
+    _loadResources().then((gbv) {
       setStateIfMounted(() {
         _loading = false;
-        _resources = resources;
+        _resources = gbv?.resources ?? [];
+        _resourceListScreens = gbv?.resourceListScreens;
       });
     });
 
@@ -92,11 +95,20 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
         )
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-        Text(Localization().getStringEx('', 'Choose one of the below pathways or view a list of resources.'),
-          style: Styles().textStyles.getTextStyle('widget.description.regular.highlight'), textAlign: TextAlign.left,
-        )
+          RichText(text: TextSpan(children: [
+        TextSpan(
+          text: Localization().getStringEx('', 'Choose one of the below pathways or '),
+          style: Styles().textStyles.getTextStyle('widget.description.regular.highlight')
         ),
-        _buildPathwayButton(context, 'Talk to someone confidentially', () => _onTalkToSomeone(context)),
+        TextSpan(
+            text: Localization().getStringEx('', 'view a list of resources.'),
+            style: Styles().textStyles.getTextStyle('widget.description.tiny.highlight')
+        )
+    ]))
+        ),
+        Visibility(visible: (_resourceListScreens?.confidentialResources != null), child:
+          _buildPathwayButton(context, 'Talk to someone confidentially', () => _onTalkToSomeone(context)),
+        ),
         _buildPathwayButton(context, 'File a report', () => _onFileReport(context)),
         _buildPathwayButton(context, 'Support a friend', () => _onSupportFriend(context)),
         _buildPathwayButton(context, "I'm not sure yet", () => _onNotSure(context)),
@@ -208,9 +220,10 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
   }
   
   void _onTalkToSomeone(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(id: 'confidential_resources', resources: _resources)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: _resourceListScreens!.confidentialResources!, resources: _resources)));
   }
   void _onFileReport(BuildContext context) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: _resources.firstWhere((r) => r.id == 'filing_a_report'))));
     // Navigate to Filing a Report flow
   }
   void _onSupportFriend(BuildContext context) {
@@ -226,6 +239,7 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
         context,
         MaterialPageRoute(
           builder: (context) => SituationStepPanel(
+            resources: _resources,
             stepKey: 'situation',     
             responseTracker: responseTracker,
             surveyData: survey.data,
@@ -239,15 +253,15 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
     }
   }
 
-  Future<List<GBVResource>> _loadResources() async {
+  Future<GBV?> _loadResources() async {
     // temporary json load from assets
     String? GBVjson = await AppBundle.loadString('assets/extra/gbv/gbv.json');
     GBV? gbv = (GBVjson != null)
         ? GBV.fromJson(JsonUtils.decodeMap(GBVjson))
         : null;
-    List<GBVResource> allResources = (gbv != null) ? gbv.resources : [];
+    // List<GBVResource> allResources = (gbv != null) ? gbv.resources : [];
     await Future.delayed(Duration(seconds: 1));
-    return allResources;
+    return gbv;
   }
 
 }

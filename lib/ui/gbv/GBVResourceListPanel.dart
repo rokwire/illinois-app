@@ -12,10 +12,11 @@ import 'package:illinois/model/GBV.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class GBVResourceListPanel extends StatefulWidget {
-  final String id;
+  // final String id;
+  final GBVResourceListScreen resourceListScreen;
   final List<GBVResource> resources;
 
-  GBVResourceListPanel({ super.key, required this.id, required this.resources });
+  GBVResourceListPanel({ super.key, required this.resourceListScreen, required this.resources });
 
   @override
   State<StatefulWidget> createState() => _GBVResourceListPanelState();
@@ -29,7 +30,7 @@ class _GBVResourceListPanelState extends State<GBVResourceListPanel> {
 
   @override
   void initState() {
-    _loadResourceScreenData(widget.id).then((_GBVResourceListScreenData? resourceData) {
+    _loadResourceScreenData(widget.resourceListScreen).then((_GBVResourceListScreenData? resourceData) {
       setStateIfMounted(() {
         _loading = false;
         _resourceData = resourceData;
@@ -166,12 +167,12 @@ class _GBVResourceListPanelState extends State<GBVResourceListPanel> {
     ]);
   }
 
-  Future<_GBVResourceListScreenData?> _loadResourceScreenData(String screenId) async {
+  Future<_GBVResourceListScreenData?> _loadResourceScreenData(GBVResourceListScreen resourceListScreen) async {
     // temporary json load from assets
-    String? json = await AppBundle.loadString('assets/extra/gbv/${screenId}.json');
-    GBVResourceListScreen? resourceListScreen = (json != null)
-        ? GBVResourceListScreen.fromJson(JsonUtils.decodeMap(json))
-        : null;
+    // String? json = await AppBundle.loadString('assets/extra/gbv/${screenId}.json');
+    // GBVResourceListScreen? resourceListScreen = (json != null)
+    //     ? GBVResourceListScreen.fromJson(JsonUtils.decodeMap(json))
+    //     : null;
 
     String? GBVjson = await AppBundle.loadString('assets/extra/gbv/gbv.json');
     GBV? gbv = (GBVjson != null)

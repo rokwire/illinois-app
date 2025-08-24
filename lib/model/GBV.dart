@@ -1,3 +1,4 @@
+import 'package:illinois/service/GBVRules.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum GBVResourceType {panel, external_link}
@@ -6,14 +7,30 @@ enum GBVResourceDetailType {text, address, phone, email, external_link}
 
 class GBV {
   final List<GBVResource> resources;
+  final GBVResourceListScreens? resourceListScreens;
 
   GBV({
-    required this.resources
+    required this.resources,
+    required this.resourceListScreens
   });
 
   static GBV? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? GBV(
       resources: GBVResource.listFromJson(JsonUtils.listValue(json['resources'])),
+      resourceListScreens: GBVResourceListScreens.fromJson(JsonUtils.mapValue(json['screens'])),
+    ) : null;
+  }
+}
+class GBVResourceListScreens {
+  final GBVResourceListScreen? confidentialResources;
+
+  GBVResourceListScreens({
+    required this.confidentialResources
+  });
+
+  static GBVResourceListScreens? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? GBVResourceListScreens(
+      confidentialResources: GBVResourceListScreen.fromJson(JsonUtils.mapValue(json['confidential_resources'])),
     ) : null;
   }
 }
@@ -153,14 +170,12 @@ class GBVResourceDetail {
 }
 
 class GBVResourceListScreen {
-  final String id;
   final String type;
   final String? title;
   final String? description;
   final List<GBVResourceList> content;
 
   GBVResourceListScreen({
-    required this.id,
     required this.type,
     this.title,
     this.description,
@@ -169,7 +184,6 @@ class GBVResourceListScreen {
 
   static GBVResourceListScreen? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? GBVResourceListScreen(
-      id: JsonUtils.stringValue(json['id']) ?? "",
       type: JsonUtils.stringValue(json['type']) ?? "",
       title: JsonUtils.stringValue(json['title']),
       description: JsonUtils.stringValue(json['description']),
