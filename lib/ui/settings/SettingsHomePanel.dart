@@ -24,6 +24,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/settings/SettingsAccessibilityPage.dart';
 import 'package:illinois/ui/settings/SettingsAppointmentsPage.dart';
 import 'package:illinois/ui/settings/SettingsAssessmentsPage.dart';
 import 'package:illinois/ui/settings/SettingsCalendarPage.dart';
@@ -46,7 +47,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum SettingsContentType { food_filters, sports, favorites, assessments, calendar, recent_items, appointments, i_card, language, contact, maps, research, privacy, notifications}
+enum SettingsContentType { food_filters, sports, favorites, assessments, calendar, recent_items, appointments, i_card, language, contact, maps, research, privacy, notifications, accessibility}
 
 class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'settings_home_content_panel';
@@ -64,6 +65,7 @@ class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
     SettingsContentType.privacy,
     SettingsContentType.notifications,
     SettingsContentType.i_card,
+    SettingsContentType.accessibility,
   };
 
   static final SettingsContentType _defaultContentType = SettingsContentType.contact;
@@ -308,6 +310,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
       case SettingsContentType.research: return SettingsResearchPage(parentRouteName: SettingsHomePanel.routeName);
       case SettingsContentType.privacy: return SettingsPrivacyCenterPage();
       case SettingsContentType.notifications: return SettingsNotificationPreferencesPage();
+      case SettingsContentType.accessibility: return SettingsAccessibilityPage();
       default: return null;
     }
   }
@@ -397,6 +400,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case SettingsContentType.research: return Localization().getStringEx('panel.settings.home.settings.sections.research.label', 'My Participation in Research', language: language);
       case SettingsContentType.privacy: return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings', language: language);
       case SettingsContentType.notifications: return Localization().getStringEx('panel.settings.home.settings.sections.notifications.label', 'My Notification Preferences', language: language);
+      case SettingsContentType.accessibility: return Localization().getStringEx('panel.settings.home.settings.sections.accessibility.label', 'Accessibility Settings', language: language);
     }
   }
 
@@ -416,6 +420,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case SettingsContentType.research: return 'research';
       case SettingsContentType.privacy: return 'privacy';
       case SettingsContentType.notifications: return 'notifications';
+      case SettingsContentType.accessibility: return 'accessibility';
     }
   }
 
@@ -435,6 +440,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case 'research': return SettingsContentType.research;
       case 'privacy': return SettingsContentType.privacy;
       case 'notifications': return SettingsContentType.notifications;
+      case 'accessibility': return SettingsContentType.accessibility;
       default: return null;
     }
   }

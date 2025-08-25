@@ -17,10 +17,10 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
@@ -184,7 +184,7 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
       }
 
       contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
+        AccessiblePageView(
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,
