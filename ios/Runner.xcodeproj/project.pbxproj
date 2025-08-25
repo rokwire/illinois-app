@@ -159,7 +159,6 @@
 		26E0DD782525FB8A002B7B11 /* Dev.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Dev.xcconfig; path = Flutter/Dev.xcconfig; sourceTree = "<group>"; };
 		26E0DD792525FB8A002B7B11 /* Release-Dev.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Release-Dev.xcconfig"; path = "Flutter/Release-Dev.xcconfig"; sourceTree = "<group>"; };
 		26E0DD7A2525FB8A002B7B11 /* Debug-Dev.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Debug-Dev.xcconfig"; path = "Flutter/Debug-Dev.xcconfig"; sourceTree = "<group>"; };
-		26E0DD8425260783002B7B11 /* build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
 		26ECB3212487938C00479487 /* CommonCrypto+UIUCUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CommonCrypto+UIUCUtils.h"; sourceTree = "<group>"; };
 		26ECB3222487938C00479487 /* CommonCrypto+UIUCUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CommonCrypto+UIUCUtils.m"; sourceTree = "<group>"; };
 		26ECB3242487AD0900479487 /* Security+UIUCUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Security+UIUCUtils.h"; sourceTree = "<group>"; };
@@ -174,6 +173,10 @@
 		26FA06BD22CCA9B5003B78E4 /* NSDictionary+InaTypedValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+InaTypedValue.h"; sourceTree = "<group>"; };
 		26FAB1CA22EB35C7008E987C /* NSDate+InaUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+InaUtils.m"; sourceTree = "<group>"; };
 		26FAB1CB22EB35C7008E987C /* NSDate+InaUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+InaUtils.h"; sourceTree = "<group>"; };
+		26FDEBF92E5C4E85009E507B /* crashlytics.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = crashlytics.sh; sourceTree = "<group>"; };
+		26FDEBFA2E5C4E85009E507B /* google-service.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "google-service.sh"; sourceTree = "<group>"; };
+		26FDEBFB2E5C51FB009E507B /* GoogleService-Info-Test.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Test.plist"; sourceTree = "<group>"; };
+		26FDEBFC2E5C5236009E507B /* GoogleService-Info-Test.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Test.plist"; sourceTree = "<group>"; };
 		27D62877E29DB9D266B90C0F /* Pods-Illinois.debug-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-prod.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-prod.xcconfig"; sourceTree = "<group>"; };
 		27E14EAA11DDFC5FFA409F36 /* Pods-Illinois.profile-tst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-tst.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-tst.xcconfig"; sourceTree = "<group>"; };
 		2D004407AA6D37A12A942F4E /* Pods-Illinois.debug-tst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-tst.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-tst.xcconfig"; sourceTree = "<group>"; };
@@ -294,6 +297,7 @@
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */,
 				2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */,
+				26FDEBFB2E5C51FB009E507B /* GoogleService-Info-Test.plist */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -307,6 +311,7 @@
 				26AAA20628CA34BA00BE694B /* Assets.xcassets */,
 				26D32C4728EEFD760037E12C /* GoogleService-Info-Dev.plist */,
 				26D32C4828EEFD760037E12C /* GoogleService-Info-Prod.plist */,
+				26FDEBFC2E5C5236009E507B /* GoogleService-Info-Test.plist */,
 			);
 			path = Illinois;
 			sourceTree = "<group>";
@@ -369,6 +374,15 @@
 			path = UIUC;
 			sourceTree = "<group>";
 		};
+		26FDEBF82E5C4E33009E507B /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				26FDEBF92E5C4E85009E507B /* crashlytics.sh */,
+				26FDEBFA2E5C4E85009E507B /* google-service.sh */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
@@ -392,13 +406,13 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
+				26FDEBF82E5C4E33009E507B /* Scripts */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
 				26AAA1FF28CA28AA00BE694B /* Resources */,
 				97C146EF1CF9000F007C117D /* Products */,
 				A4FE37309F85C78E8A871D27 /* Pods */,
 				F8180DF05DB99BBF17C34614 /* Frameworks */,
-				26E0DD8425260783002B7B11 /* build.sh */,
 			);
 			sourceTree = "<group>";
 		};
@@ -526,7 +540,8 @@
 				261784D728C8ED6A009172BB /* Embed Frameworks */,
 				261784D828C8ED6A009172BB /* Thin Binary */,
 				261784D928C8ED6A009172BB /* [CP] Embed Pods Frameworks */,
-				261784DA28C8ED6A009172BB /* ShellScript */,
+				261784DA28C8ED6A009172BB /* [CP] GoogleService-Info.plist */,
+				26FDEBFE2E5C59CC009E507B /* [UPL] Upload Crashlytics DSYMs */,
 				261784DB28C8ED6A009172BB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -550,7 +565,8 @@
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				A6EAEE2D144BCA7DA3F58188 /* [CP] Embed Pods Frameworks */,
-				263F851F234C9C8B00397B65 /* ShellScript */,
+				263F851F234C9C8B00397B65 /* [CP] Copy GoogleService-Info.plist */,
+				26FDEBFD2E5C578B009E507B /* [UPL] Upload Crashlytics DSYMs */,
 				D342115EA394D132F0E49A18 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -706,7 +722,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Illinois/Pods-Illinois-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		261784DA28C8ED6A009172BB /* ShellScript */ = {
+		261784DA28C8ED6A009172BB /* [CP] GoogleService-Info.plist */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -714,15 +730,17 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"${PROJECT_DIR}/Resources/${TARGET_NAME}/GoogleService-Info-${ENVIRONMENT}.plist",
 			);
+			name = "[CP] GoogleService-Info.plist";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${CODESIGNING_FOLDER_PATH}/GoogleService-Info.plist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./build.sh\n";
+			shellScript = "./Scripts/google-service.sh\n";
 		};
 		261784DB28C8ED6A009172BB /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -741,7 +759,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Illinois/Pods-Illinois-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		263F851F234C9C8B00397B65 /* ShellScript */ = {
+		263F851F234C9C8B00397B65 /* [CP] Copy GoogleService-Info.plist */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -749,15 +767,65 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"${PROJECT_DIR}/Resources/${TARGET_NAME}/GoogleService-Info-${ENVIRONMENT}.plist",
 			);
+			name = "[CP] Copy GoogleService-Info.plist";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${CODESIGNING_FOLDER_PATH}/GoogleService-Info.plist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Scripts/google-service.sh\n";
+		};
+		26FDEBFD2E5C578B009E507B /* [UPL] Upload Crashlytics DSYMs */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "[UPL] Upload Crashlytics DSYMs";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./build.sh\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n./Scripts/crashlytics.sh\n";
+		};
+		26FDEBFE2E5C59CC009E507B /* [UPL] Upload Crashlytics DSYMs */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "[UPL] Upload Crashlytics DSYMs";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Scripts/crashlytics.sh\n";
 		};
 		3B06AD1E1E4923F5004D2608 /* Thin Binary */ = {
 			isa = PBXShellScriptBuildPhase;

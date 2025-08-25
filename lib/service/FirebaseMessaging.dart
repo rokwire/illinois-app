@@ -60,6 +60,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String notifyAthleticsTeamRoster                        = "$notifyBase.athletics.team.roster";
   static const String notifySettingUpdated                             = "$notifyBase.setting.updated";
   static const String notifyGroupPostNotification                      = "$notifyBase.group.posts.updated";
+  static const String notifyGroupEventNotification                      = "$notifyBase.group.events.updated";
   static const String notifyGroupPostReactionNotification        = "$notifyBase.group.post.reaction.updated";
   static const String notifySocialMessageNotification                  = "$notifyBase.conversation";
   static const String notifyHomeNotification                           = "$notifyBase.home";
@@ -416,6 +417,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
       }
       else if ((entityType == 'event.self_checkin') && (operation == 'self_checkin_invite')) {
         NotificationService().notify(notifyEventSelfCheckIn, data);
+      } else if (entityType == 'event' && operation == 'group_event_added') {
+        // Handle group event notification
+        NotificationService().notify(notifyGroupEventNotification, data);
       } else if (entityType == 'event') {
         // Handle 'upcoming_event' and 'event_notification' operations as showing event detail
         NotificationService().notify(notifyEventDetail, data);
