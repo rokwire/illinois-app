@@ -287,6 +287,7 @@
     "widget.description.regular": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.description.regular.highlight": { "extends": "widget.description.regular", "color": "white"},
     "widget.description.regular.underline": { "extends": "widget.description.regular", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.description.regular.highlight.underline": { "extends": "widget.description.regular.highlight", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "white"},
     "widget.description.regular.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.description.small": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.description.small.underline": { "font_family": "medium", "size": 14.0, "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},

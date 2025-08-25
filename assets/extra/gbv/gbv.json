@@ -1,4 +1,5 @@
 {
+    "directoryCategories": ["EMERGENCY", "24/7 HOTLINES", "ON CAMPUS (PRIMARY)", "ON CAMPUS (OTHER)", "OFF CAMPUS", "EDUCATIONAL"],
     "screens": {
         "confidential_resources": {
             "type": "panel",

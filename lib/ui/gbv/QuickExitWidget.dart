@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
@@ -15,7 +13,7 @@ class QuickExitWidget extends StatelessWidget {
     Row(crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(padding: EdgeInsets.only(right: 8), child:
-        GestureDetector(onTap: () => onQuickExitInfo(context), child:
+        GestureDetector(onTap: () => _onQuickExitInfo(context), child:
         Styles().images.getImage('info', excludeFromSemantics: true) ?? Container(),
         )
         ),
@@ -31,14 +29,16 @@ class QuickExitWidget extends StatelessWidget {
         ),
         Padding(padding: EdgeInsets.symmetric(horizontal: 4)),
         GestureDetector(onTap: () => _onQuickExit(context), child:
-            quickExitIcon
+            _quickExitIcon
         )
       ],
     )
     );
   }
 
-  Widget get quickExitIcon =>
+  Widget quickExitButton(BuildContext context) => GestureDetector(onTap: () => _onQuickExit(context), child: _quickExitIcon);
+
+  Widget get _quickExitIcon =>
     Container(height: 50, width: 50, decoration: BoxDecoration(
     color: Styles().colors.white,
     border: Border.all(color: Colors.grey),
@@ -52,7 +52,7 @@ class QuickExitWidget extends StatelessWidget {
     Styles().images.getImage('person-to-door', excludeFromSemantics: true, width: 25) ?? Container()
   );
 
-  void onQuickExitInfo(BuildContext context) {
+  void _onQuickExitInfo(BuildContext context) {
     showDialog(context: context, builder: (_) => InfoPopup(
       backColor: Styles().colors.surface,
       padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),

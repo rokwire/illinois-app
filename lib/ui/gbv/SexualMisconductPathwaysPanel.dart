@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/SurveyTracker.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
@@ -18,6 +19,7 @@ import 'package:illinois/ui/gbv/QuickExitWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import '../../model/GBV.dart';
+import 'ResourceDirectoryPanel.dart';
 
 class SexualMisconductPathwaysPanel extends StatefulWidget {
 
@@ -30,6 +32,7 @@ class SexualMisconductPathwaysPanel extends StatefulWidget {
 
 class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathwaysPanel> {
   List<GBVResource> _resources = [];
+  List<String> _categories = [];
   bool _loading = true;
   GBVResourceListScreens? _resourceListScreens;
 
@@ -39,6 +42,7 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
       setStateIfMounted(() {
         _loading = false;
         _resources = gbv?.resources ?? [];
+        _categories = gbv?.directoryCategories ?? [];
         _resourceListScreens = gbv?.resourceListScreens;
       });
     });
@@ -102,7 +106,8 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
         ),
         TextSpan(
             text: Localization().getStringEx('', 'view a list of resources.'),
-            style: Styles().textStyles.getTextStyle('widget.description.tiny.highlight')
+            style: Styles().textStyles.getTextStyle('widget.description.regular.highlight.underline'),
+            recognizer: TapGestureRecognizer()..onTap = () => _onResourceDirectory(context)
         )
     ]))
         ),
@@ -155,20 +160,7 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
             )
           ),
           Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
-          Container(height: 50, width: 50, decoration: BoxDecoration(
-              color: Styles().colors.white,
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(40),
-              boxShadow: [
-                BoxShadow(
-                color: Colors.black26,
-                blurRadius: 10.0,
-                ),
-              ]), child:
-            GestureDetector(onTap: () => _onQuickExit(context), child:
-              Styles().images.getImage('person-to-door', excludeFromSemantics: true, width: 25) ?? Container()
-            )
-          )
+          QuickExitWidget().quickExitButton(context)
         ],
       )
     );
@@ -186,11 +178,6 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
     );
   }
 
-
-  void _onQuickExit(BuildContext context) {
-    Navigator.of(context).popUntil((route) => route.isFirst);
-  }
-  
   void _onQuickExitInfo(BuildContext context) {
     showDialog(context: context, builder: (_) => InfoPopup(
       backColor: Styles().colors.surface,
@@ -218,13 +205,16 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
       closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
     ),);
   }
-  
+
+  void _onResourceDirectory(BuildContext context) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDirectoryPanel(categories: _categories, resources: _resources)));
+  }
+
   void _onTalkToSomeone(BuildContext context) {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: _resourceListScreens!.confidentialResources!, resources: _resources)));
   }
   void _onFileReport(BuildContext context) {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: _resources.firstWhere((r) => r.id == 'filing_a_report'))));
-    // Navigate to Filing a Report flow
   }
   void _onSupportFriend(BuildContext context) {
     // Navigate to Supporting a Friend Resources
@@ -259,7 +249,6 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
     GBV? gbv = (GBVjson != null)
         ? GBV.fromJson(JsonUtils.decodeMap(GBVjson))
         : null;
-    // List<GBVResource> allResources = (gbv != null) ? gbv.resources : [];
     await Future.delayed(Duration(seconds: 1));
     return gbv;
   }

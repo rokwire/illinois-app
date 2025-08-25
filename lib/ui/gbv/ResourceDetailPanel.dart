@@ -1,13 +1,9 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/gbv/QuickExitWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/model/GBV.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class ResourceDetailPanel extends StatefulWidget {
   final GBVResource resource;
@@ -21,18 +17,11 @@ class ResourceDetailPanel extends StatefulWidget {
 
 class _ResourceDetailPanelState extends State<ResourceDetailPanel> {
 
-  String expandedSection = '';
+  String _expandedSection = '';
 
   @override
   void initState() {
-    // _loadResourceScreenData(widget.id).then((_GBVResourceListScreenData? resourceData) {
-    //   setStateIfMounted(() {
-    //     _loading = false;
-    //     _resourceData = resourceData;
-    //   });
-    // });
-    //
-    // super.initState();
+    super.initState();
   }
 
   @override
@@ -102,14 +91,14 @@ class _ResourceDetailPanelState extends State<ResourceDetailPanel> {
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
                     Styles().images.getImage((isExternalLink)
                         ? 'external-link'
-                        : (expandedSection == section.title) ? 'chevron-up' : 'chevron-down',
+                        : (_expandedSection == section.title) ? 'chevron-up' : 'chevron-down',
                         width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                   )
               ])
             )
           )
         ),
-        Visibility(visible: expandedSection == section.title, child:
+        Visibility(visible: _expandedSection == section.title, child:
           Container(decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
             Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), child:
               Column(children: List.from(section.content.map((detail) =>
@@ -125,7 +114,7 @@ class _ResourceDetailPanelState extends State<ResourceDetailPanel> {
 
   void _expandSection(GBVDetailListSection section) {
     setState(() {
-      this.expandedSection = (expandedSection == section.title) ? '' : section.title;
+      this._expandedSection = (_expandedSection == section.title) ? '' : section.title;
     });
   }
 
