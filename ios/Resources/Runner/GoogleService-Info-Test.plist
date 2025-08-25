@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>200971840602-afekn8cai1pcsp0djm5bcd3q1vi0l21a.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.200971840602-afekn8cai1pcsp0djm5bcd3q1vi0l21a</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCVaSxjIKuw8VQtd32jrGldmCns2gCpQSo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>200971840602</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>edu.illinois.rokwire.ios</string>
+	<key>PROJECT_ID</key>
+	<string>rokwire-mvp01-dev</string>
+	<key>STORAGE_BUCKET</key>
+	<string>rokwire-mvp01-dev.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:200971840602:ios:73b18018ff5a5907c0fc63</string>
+	<key>DATABASE_URL</key>
+	<string>https://rokwire-mvp01-dev.firebaseio.com</string>
+</dict>
+</plist>

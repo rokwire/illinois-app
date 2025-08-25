@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Changed
+- Split iOS build script into copying GoogleService-Info.plist and uploading DSYMs for Crashlytics, fixed run script's input & output files.
+
 ## [7.3.3] - 2025-08-21
 ### Changed
 - Group Event Notifications redirect to Group Detail Panel and after that to EventDetailPanel [#5348](https://github.com/rokwire/illinois-app/issues/5348).
