@@ -71,30 +71,30 @@ class GBVResourceListPanel extends StatelessWidget {
       : Container();
     return
       Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-        Container(decoration:
-          BoxDecoration(
-            color: Styles().colors.white,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-            borderRadius: BorderRadius.all(Radius.circular(8)),
-          ), child:
-          Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
-            Row(children: [
-              Expanded(child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                  Padding(padding: EdgeInsets.only(left: 16), child:
-                    Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
-                  ),
-                  descriptionWidget
-                ])
-              ),
-              GestureDetector(onTap: () => _onTapResource(context, resource), child:
+        GestureDetector(onTap: () => _onTapResource(context, resource), child:
+          Container(decoration:
+            BoxDecoration(
+              color: Styles().colors.white,
+              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ), child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
+              Row(children: [
+                Expanded(child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                    Padding(padding: EdgeInsets.only(left: 16), child:
+                      Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
+                    ),
+                    descriptionWidget
+                  ])
+                ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
                   Styles().images.getImage((resource.type == GBVResourceType.external_link) ? 'external-link' : 'chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                 )
-              )
-            ])
+              ])
+            )
           )
-          )
+        )
       );
   }
 

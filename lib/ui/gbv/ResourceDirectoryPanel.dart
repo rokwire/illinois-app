@@ -101,22 +101,22 @@ class _ResourceDirectoryPanelState extends State<ResourceDirectoryPanel> {
       : Container();
     return
       Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-        Container(decoration:
-          BoxDecoration(
-            color: Styles().colors.white,
-            border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
-          ), child:
-          Padding(padding: EdgeInsets.only(top: 20), child:
-            Row(children: [
-              Expanded(child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                  Padding(padding: EdgeInsets.only(left: 16), child:
-                    Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
-                  ),
-                  descriptionWidget
-                ])
-              ),
-              GestureDetector(onTap: () => _onTapResource(resource), child:
+        GestureDetector(onTap: () => _onTapResource(resource), child:
+          Container(decoration:
+            BoxDecoration(
+              color: Styles().colors.white,
+              border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
+            ), child:
+            Padding(padding: EdgeInsets.only(top: 20), child:
+              Row(children: [
+                Expanded(child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                    Padding(padding: EdgeInsets.only(left: 16), child:
+                      Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
+                    ),
+                    descriptionWidget
+                  ])
+                ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: (resource.type == GBVResourceType.panel)
                   ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                   : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link))
@@ -124,8 +124,8 @@ class _ResourceDirectoryPanelState extends State<ResourceDirectoryPanel> {
                     : Container()
                   // Styles().images.getImage((resource.type == GBVResourceType.panel) ? 'chevron-right' : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link) ? 'external-link' : ''), width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                 )
-              )
-            ])
+              ])
+            )
           )
         )
       );
