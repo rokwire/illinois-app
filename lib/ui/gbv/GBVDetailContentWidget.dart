@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/GBV.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GBVDetailContentWidget extends StatelessWidget {
   final GBVResourceDetail resourceDetail;
@@ -11,26 +14,31 @@ class GBVDetailContentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-      Row(children: _buildDetailContent(resourceDetail))
+      Row(children: _buildDetailContent(context, resourceDetail))
     );
   }
 
-  List<Widget> _buildDetailContent(GBVResourceDetail detail) {
+  List<Widget> _buildDetailContent(BuildContext context, GBVResourceDetail detail) {
     switch (detail.type) {
       case GBVResourceDetailType.address:
         return [
           Styles().images.getImage('location', excludeFromSemantics: true) ?? Container(),
           Padding(padding: EdgeInsets.symmetric(horizontal: 4)),
           Expanded(child:
-            GestureDetector(child: Text(detail.content ?? ''))
+            GestureDetector(
+              onTap: () => GeoMapUtils.launchLocation(detail.content),
+              child: Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
           )
         ];
       case GBVResourceDetailType.email:
+        Uri uri = Uri.parse('mailto:${detail.content}');
         return [
           Styles().images.getImage('envelope', excludeFromSemantics: true) ?? Container(),
           Padding(padding: EdgeInsets.symmetric(horizontal: 4)),
           Expanded(child:
-            GestureDetector(child: Text(detail.content ?? ''))
+            GestureDetector(
+              onTap: () => launchUrl(uri),
+              child: Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
           )
         ];
       case GBVResourceDetailType.external_link:
@@ -38,21 +46,26 @@ class GBVDetailContentWidget extends StatelessWidget {
           Styles().images.getImage('external-link', excludeFromSemantics: true) ?? Container(),
           Padding(padding: EdgeInsets.symmetric(horizontal: 4)),
           Expanded(child:
-            GestureDetector(child: Text(detail.content ?? ''))
+            GestureDetector(
+                onTap: () => AppLaunchUrl.launch(context: context, url: detail.content),
+                child: Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
           )
         ];
       case GBVResourceDetailType.phone:
+        Uri uri = Uri.parse('tel:${detail.content}');
         return [
           Styles().images.getImage('phone', excludeFromSemantics: true) ?? Container(),
           Padding(padding: EdgeInsets.symmetric(horizontal: 4)),
           Expanded(child:
-            GestureDetector(child: Text(detail.content ?? ''))
+            GestureDetector(
+              onTap: () => launchUrl(uri),
+              child: Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
           )
         ];
       case GBVResourceDetailType.text:
         return [
           Expanded(child:
-            GestureDetector(child: Text(detail.content ?? ''))
+            Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small"))
           )
         ];
     }

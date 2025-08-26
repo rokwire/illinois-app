@@ -22,6 +22,21 @@
                     ]
                 }
             ]
+        },
+        "supporting_a_friend": {
+            "type": "panel",
+            "title": "Supporting a Friend",
+            "description": "",
+            "content": [
+                {
+                    "title": "",
+                    "resourceIds": [
+                        "strive_to_support_a_friend",
+                        "learn_about_resources",
+                        "become_an_ally"
+                    ]
+                }
+            ]
         }
     },
     "resources": [
@@ -756,6 +771,43 @@
                     ]
                 }
             ]
+        },
+        {
+            "id": "strive_to_support_a_friend",
+            "type": "panel",
+            "category": "",
+            "title": "STRIVE to support a friend",
+            "directoryContent": [],
+            "description": "Your support can be extremely helpful to a survivor. Be as supportive and non-judgmental as possible. There is no one-size-fits-all response. Your response can significantly impact whether the survivor feels validated and/or seeks help.\n\nIf someone shares their experience with you, you can show support through STRIVE.",
+            "detailsList": [
+                {
+                    "title": "Start by believing.",
+                    "content": [
+                        {"type": "text", "content": "Believe the person's experience. Don’t question or minimize what the survivor tells you. It's important to recognize the impact on the survivor. Something that seems minor to you might be harmful to the survivor."},
+                        {"type": "text", "content": "It is very common for survivors to blame themselves, but the blame rests squarely and only with the person who chose to harm them."}
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "learn_about_resources",
+            "type": "directory",
+            "category": "",
+            "title": "Learn about resources to support a friend.",
+            "directoryContent": [],
+            "description": "",
+            "detailsList": []
+        },
+        {
+            "id": "become_an_ally",
+            "type": "external_link",
+            "category": "",
+            "title": "Become an ally, educator, or advocate in the prevention of sex-based misconduct.",
+            "directoryContent": [
+                {"type": "external_link", "content": "https://wecare.illinois.edu/prevention/students/"}
+            ],
+            "description": "",
+            "detailsList": []
         }
     ]
 }

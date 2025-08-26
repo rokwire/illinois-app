@@ -1,6 +1,6 @@
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum GBVResourceType {panel, external_link}
+enum GBVResourceType {panel, external_link, directory}
 
 enum GBVResourceDetailType {text, address, phone, email, external_link}
 
@@ -25,14 +25,17 @@ class GBV {
 }
 class GBVResourceListScreens {
   final GBVResourceListScreen? confidentialResources;
+  final GBVResourceListScreen? supportingAFriend;
 
   GBVResourceListScreens({
-    required this.confidentialResources
+    required this.confidentialResources,
+    required this.supportingAFriend
   });
 
   static GBVResourceListScreens? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? GBVResourceListScreens(
       confidentialResources: GBVResourceListScreen.fromJson(JsonUtils.mapValue(json['confidential_resources'])),
+      supportingAFriend: GBVResourceListScreen.fromJson(JsonUtils.mapValue(json['supporting_a_friend'])),
     ) : null;
   }
 }
@@ -111,9 +114,10 @@ class GBVResource {
   });
 
   static GBVResource? fromJson(Map<String, dynamic>? json) {
+    String? typeString = (json != null) ? JsonUtils.stringValue(json['type']) : null;
     return (json != null) ? GBVResource(
       id: JsonUtils.stringValue(json['id']) ?? "",
-      type: (JsonUtils.stringValue(json['type']) == 'external_link' ? GBVResourceType.external_link : GBVResourceType.panel),
+      type: (typeString == 'external_link') ? GBVResourceType.external_link : (typeString == 'panel') ? GBVResourceType.panel : GBVResourceType.directory,
       category: JsonUtils.stringValue(json['category']) ?? "",
       title: JsonUtils.stringValue(json['title']) ?? "",
       directoryContent: GBVResourceDetail.listFromJson(JsonUtils.listValue(json['directoryContent'])),

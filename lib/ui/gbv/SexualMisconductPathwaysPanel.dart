@@ -211,12 +211,13 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
   }
 
   void _onTalkToSomeone(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: _resourceListScreens!.confidentialResources!, resources: _resources)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: _resourceListScreens!.confidentialResources!, resources: _resources, categories: _categories)));
   }
   void _onFileReport(BuildContext context) {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: _resources.firstWhere((r) => r.id == 'filing_a_report'))));
   }
   void _onSupportFriend(BuildContext context) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: _resourceListScreens!.supportingAFriend!, resources: _resources, categories: _categories)));
     // Navigate to Supporting a Friend Resources
   }
   void _onNotSure(BuildContext context) async {

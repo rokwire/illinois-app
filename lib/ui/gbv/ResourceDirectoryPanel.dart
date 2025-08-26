@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
@@ -5,6 +6,7 @@ import 'package:illinois/ui/gbv/QuickExitWidget.dart';
 import 'package:illinois/ui/gbv/ResourceDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/model/GBV.dart';
 
@@ -136,7 +138,16 @@ class _ResourceDirectoryPanelState extends State<ResourceDirectoryPanel> {
   }
 
   void _onTapResource(GBVResource resource) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource)));
+    switch (resource.type) {
+      case GBVResourceType.external_link: {
+        GBVResourceDetail? externalLinkDetail = resource.directoryContent.firstWhereOrNull((detail) => detail.type == GBVResourceDetailType.external_link);
+        if (externalLinkDetail != null) {
+          AppLaunchUrl.launch(context: context, url: externalLinkDetail.content);
+        } else break;
+      }
+      case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource))); break;
+      case GBVResourceType.directory: break;
+    }
   }
 
 }

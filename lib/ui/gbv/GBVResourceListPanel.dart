@@ -1,18 +1,22 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
 import 'package:illinois/ui/gbv/QuickExitWidget.dart';
 import 'package:illinois/ui/gbv/ResourceDetailPanel.dart';
+import 'package:illinois/ui/gbv/ResourceDirectoryPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/model/GBV.dart';
+import 'package:illinois/utils/AppUtils.dart';
 
 class GBVResourceListPanel extends StatelessWidget {
   final GBVResourceListScreen resourceListScreen;
   final List<GBVResource> resources;
+  final List<String> categories;
 
-  GBVResourceListPanel({ super.key, required this.resourceListScreen, required this.resources });
+  GBVResourceListPanel({ super.key, required this.resourceListScreen, required this.resources, required this.categories });
 
   @override
   Widget build(BuildContext context) =>
@@ -94,7 +98,20 @@ class GBVResourceListPanel extends StatelessWidget {
       );
   }
 
+  // void _onTapResource(BuildContext context, GBVResource resource) {
+  //   Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource)));
+  // }
+
   void _onTapResource(BuildContext context, GBVResource resource) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource)));
+    switch (resource.type) {
+      case GBVResourceType.external_link: {
+        GBVResourceDetail? externalLinkDetail = resource.directoryContent.firstWhereOrNull((detail) => detail.type == GBVResourceDetailType.external_link);
+        if (externalLinkDetail != null) {
+          AppLaunchUrl.launch(context: context, url: externalLinkDetail.content);
+        } else break;
+      }
+      case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource))); break;
+      case GBVResourceType.directory: Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDirectoryPanel(resources: this.resources, categories: this.categories))); break;
+    }
   }
 }
