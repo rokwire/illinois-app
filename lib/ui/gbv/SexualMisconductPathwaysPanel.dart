@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/SurveyTracker.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
 import 'package:illinois/ui/gbv/ResourceDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -11,9 +10,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
-import 'package:rokwire_plugin/service/surveys.dart';
-import 'package:rokwire_plugin/model/survey.dart';
-import 'package:illinois/ui/gbv/SituationStepPanel.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/gbv/QuickExitWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -216,27 +212,6 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
     // Navigate to Supporting a Friend Resources
   }
   void _onNotSure(BuildContext context) async {
-    Survey? survey = await Surveys().loadSurvey("cabb1338-48df-4299-8c2a-563e021f82ca");
-
-    if (survey != null) {
-      final SurveyTracker responseTracker = SurveyTracker();
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SituationStepPanel(
-            resources: _resources,
-            stepKey: 'situation',     
-            responseTracker: responseTracker,
-            surveyData: survey.data,
-          ),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Unable to load the survey.")),
-      );
-    }
   }
 
   Future<GBV?> _loadResources() async {
