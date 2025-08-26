@@ -190,18 +190,7 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
       padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
       alignment: Alignment.center,
       infoTextWidget: Column(children: [
-        Container(height: 50, width: 50, decoration: BoxDecoration(
-            color: Styles().colors.white,
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(40),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 10.0,
-              ),
-            ]), child:
-          Styles().images.getImage('person-to-door', excludeFromSemantics: true, width: 25) ?? Container()
-        ),
+        GBVQuickExitIcon(),
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
         Text(Localization().getStringEx('', 'Use the quick exit icon at any time to be routed to the Illinois app home screen.'),
           style: Styles().textStyles.getTextStyle('widget.description.regular'), textAlign: TextAlign.left,
