@@ -144,6 +144,9 @@ flutter:
   - app/assets/
   - app/media/
 
+  # Temporarily include GBV assets directory until a final solution for its data access is found [#4954]
+  - assets/extra/gbv/
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

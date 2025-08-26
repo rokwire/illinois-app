@@ -262,6 +262,8 @@
  	"panel.browse.section.recent.description": "Revisit your recent app activity.",
 	"panel.browse.section.safety.title": "Safety",
 	"panel.browse.section.safety.description": "Get home safely, prepare for emergencies, and discover support resources.",
+	"panel.browse.section.sexual_misconduct.title": "Concerns about Sexual, Dating, or Harassment Experiences",
+ "panel.browse.section.sexual_misconduct.description": "Did a situation seem unsafe or uncomfortable? It can be sexual or not. Resources are available. (Reminder: your app activity is not shared with others.)",
 	"panel.browse.section.surveys.title": "Surveys",
 	"panel.browse.section.surveys.description": "Participate in surveys available to you.",
 	"panel.browse.section.wallet.title": "錢包",
@@ -336,6 +338,9 @@
 	"panel.browse.entry.safety.safewalk_request.title": "Request a SafeWalk",
 	"panel.browse.entry.safety.saferides.title": "SafeRides (MTD)",
 	"panel.browse.entry.safety.safety_resources.title": "Safety Resources",
+	"panel.browse.entry.safety.sexual_misconduct.title": "Sexual Misconduct Resources",
+
+	"panel.browse.entry.sexual_misconduct.sexual_misconduct.title": "Sexual Misconduct Resources",
 
 	"panel.browse.entry.surveys.public_surveys.title": "Surveys",
 
@@ -3509,6 +3514,8 @@
 	"widget.safewalks_request.message.sms.logged_out.text": "Hi, I'd like to request a SafeWalk.\n\nMy Current Location:\n{{safewalk_origin}}\n{{safewalk_origin_url}}\n\nMy Destination:\n{{safewalk_destination}}\n{{safewalk_destination_url}}",
 	"widget.safewalks_request.unknown.user.text": "Unauthenticated User",
 	"widget.safewalks_request.unknown.location.text": "Unknwon",
+
+	"panel.sexual_misconduct.header.title": "Inappropriate Sexual Behavior",
 
 	"panel.home_canvas_course.header.title": "課程",
 	"panel.home_canvas_course.load.failed.error.msg": "無法加載課程. 請稍後再試.",
