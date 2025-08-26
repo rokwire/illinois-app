@@ -74,15 +74,17 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
   }
 
   Widget _buildContent(BuildContext context) {
-    return SectionSlantHeader(
-      headerWidget: _buildHeader(context),
-      slantColor: Styles().colors.gradientColorPrimary,
-      slantPainterHeadingHeight: 0,
-      backgroundColor: Styles().colors.background,
-      children: [
-      ],
-      childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-      allowOverlap: false,
+    return SingleChildScrollView(scrollDirection: Axis.vertical, child:
+      SectionSlantHeader(
+        headerWidget: _buildHeader(context),
+        slantColor: Styles().colors.gradientColorPrimary,
+        slantPainterHeadingHeight: 0,
+        backgroundColor: Styles().colors.background,
+        children: [
+        ],
+        childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        allowOverlap: false,
+      )
     );
   }
 
