@@ -31,13 +31,16 @@ class SexualMisconductPathwaysPanel extends StatefulWidget {
 }
 
 class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathwaysPanel> {
-  List<GBVResource> _resources = [];
   List<String> _categories = [];
-  bool _loading = true;
+  List<GBVResource> _resources = [];
   GBVResourceListScreens? _resourceListScreens;
+  bool _loading = true;
+  GestureRecognizer? _resourceDirectoryRecognizer;
 
   @override
   void initState() {
+    _resourceDirectoryRecognizer = TapGestureRecognizer()..onTap = () => _onResourceDirectory(context);
+
     _loadResources().then((gbv) {
       setStateIfMounted(() {
         _loading = false;
@@ -52,6 +55,7 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
 
   @override
   void dispose() {
+    _resourceDirectoryRecognizer?.dispose();
     super.dispose();
   }
   @override
@@ -109,7 +113,7 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
         TextSpan(
             text: Localization().getStringEx('', 'view a list of resources.'),
             style: Styles().textStyles.getTextStyle('widget.description.regular.highlight.underline'),
-            recognizer: TapGestureRecognizer()..onTap = () => _onResourceDirectory(context)
+            recognizer: _resourceDirectoryRecognizer,
         )
     ]))
         ),
