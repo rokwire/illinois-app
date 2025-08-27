@@ -7,14 +7,27 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Map2.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Explore.dart';
+import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/MTD.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Gateway.dart';
+import 'package:illinois/service/Laundries.dart';
+import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/service/StudentCourses.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -22,7 +35,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, Laundries, BusStops, Therapists, MyLocations }
 
-typedef Future<List<Explore>?> LoadExploresTask();
+typedef LoadExploresTask = Future<List<Explore>?>;
 
 class Map2Panel extends StatefulWidget with AnalyticsInfo {
   Map2Panel({super.key});
@@ -49,7 +62,8 @@ class _Map2PanelState extends State<Map2Panel>
   Map2ContentType? _selectedContentType;
 
   List<Explore>? _explores;
-  LoadExploresTask? _loadExploresTask;
+  LoadExploresTask? _exploresTask;
+  bool _exploresProgress = false;
 
   DateTime? _pausedDateTime;
   Position? _currentLocation;
@@ -141,16 +155,22 @@ class _Map2PanelState extends State<Map2Panel>
 
   Widget get _scaffoldBody =>
     Stack(children: [
-      _map2View,
+      if (_exploresProgress == false)
+        _map2View,
+
       Positioned.fill(child:
         Align(alignment: Alignment.topCenter, child:
           _map2Heading,
         ),
       ),
-    ],);
 
-  Widget get _map2Heading => (_selectedContentType != null) ?
-    _contentTypeHeading : _contentTypesBar;
+      if (_exploresProgress == true)
+        Positioned.fill(child:
+          Center(child:
+            _map2Progress,
+          ),
+        ),
+    ],);
 
   Widget get _map2View => Container(decoration: _mapViewDecoration, child:
     GoogleMap(
@@ -180,6 +200,14 @@ class _Map2PanelState extends State<Map2Panel>
 
   BoxDecoration get _mapViewDecoration =>
     BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent, width: 1));
+
+  Widget get _map2Heading => (_selectedContentType != null) ?
+    _contentTypeHeading : _contentTypesBar;
+
+  Widget get _map2Progress =>
+    SizedBox(width: 32, height: 32, child:
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+    );
 
   // Map Events
 
@@ -275,10 +303,13 @@ class _Map2PanelState extends State<Map2Panel>
     if (!DeepCollectionEquality().equals(_availableContentTypes, availableContentTypes) && mounted) {
       setState(() {
         _availableContentTypes = availableContentTypes;
-        if ((_selectedContentType != null) && !_availableContentTypes.contains(_selectedContentType)) {
-          _selectedContentType = null;
-        }
       });
+      if ((_selectedContentType != null) && !_availableContentTypes.contains(_selectedContentType)) {
+        setState(() {
+          _selectedContentType = null;
+        });
+        _initExplores();
+      }
     }
   }
 
@@ -286,7 +317,7 @@ class _Map2PanelState extends State<Map2Panel>
     setState(() {
       _selectedContentType = contentType;
     });
-
+    _initExplores();
   }
 
   // Content Type
@@ -321,14 +352,126 @@ class _Map2PanelState extends State<Map2Panel>
     setState(() {
       _selectedContentType = null;
     });
+    _initExplores();
   }
 
   // Explores
 
-  Future<List<Explore>?> _loadExplores() async {
-    return null;
+  Future<void> _initExplores() async {
+    if (mounted) {
+      LoadExploresTask? exploresTask = _loadExplores();
+      if (exploresTask != null) {
+        // start loading
+        setState(() {
+          _exploresTask = exploresTask;
+          _exploresProgress = true;
+          _explores = null;
+        });
+
+        // wait for explores load
+        List<Explore>? explores = await exploresTask;
+
+        if (mounted && (exploresTask == _exploresTask)) {
+          // TBD: await Build map markers
+          if (mounted && (exploresTask == _exploresTask)) {
+            setState(() {
+              _explores = explores;
+              _exploresTask = null;
+              _exploresProgress = false;
+              _mapKey = UniqueKey(); // force map rebuild
+            });
+          }
+        }
+      }
+      else {
+        setState(() {
+          _explores = null;
+          _exploresTask = null;
+          _exploresProgress = false;
+        });
+      }
+    }
   }
+
+  LoadExploresTask? _loadExplores() async {
+    switch (_selectedContentType) {
+      case Map2ContentType.CampusBuildings:      return _loadCampusBuildings();
+      case Map2ContentType.StudentCourses:       return _loadStudentCourses();
+      case Map2ContentType.DiningLocations:      return _loadDiningLocations();
+      case Map2ContentType.Events2:              return _loadEvents2();
+      case Map2ContentType.Laundries:            return _loadLaundries();
+      case Map2ContentType.BusStops:             return _loadBusStops();
+      case Map2ContentType.Therapists:           return _loadTherapists();
+      case Map2ContentType.MyLocations:          return _loadMyLocations();
+      default: return null;
+    }
+  }
+
+  Future<List<Explore>?> _loadCampusBuildings() =>
+    Gateway().loadBuildings();
+
+  Future<List<Explore>?> _loadStudentCourses() async {
+    String? termId = StudentCourses().displayTermId;
+    return (termId != null) ? await StudentCourses().loadCourses(termId: termId) : null;
+  }
+
+  Future<List<Explore>?> _loadDiningLocations() async {
+    PaymentType? paymentType = null;
+    bool onlyOpened = false;
+    return await Dinings().loadBackendDinings(onlyOpened, paymentType, null);
+  }
+
+  Future<List<Explore>?> _loadEvents2() async =>
+    Events2().loadEventsList(await _event2QueryParam());
+
+  Future<Events2Query> _event2QueryParam() async {
+    return Events2Query(
+      searchText: null,
+      timeFilter: null,
+      customStartTimeUtc: null,
+      customEndTimeUtc: null,
+      types: null,
+      attributes: null,
+      location: _currentLocation,
+    );
+  }
+
+  Future<List<Explore>?> _loadLaundries() async {
+    LaundrySchool? laundrySchool = await Laundries().loadSchoolRooms();
+    return laundrySchool?.rooms;
+  }
+
+  Future<List<Explore>?> _loadBusStops() async {
+    if (MTD().stops == null) {
+      await MTD().refreshStops();
+    }
+    List<Explore>? result;
+    if (MTD().stops != null) {
+      _collectBusStops(result = <Explore>[], stops: MTD().stops?.stops);
+    }
+    return result;
+  }
+
+  void _collectBusStops(List<Explore> result, { List<MTDStop>? stops }) {
+    if (stops != null) {
+      for(MTDStop stop in stops) {
+        if (stop.hasLocation) {
+          result.add(stop);
+        }
+        if (stop.points != null) {
+          _collectBusStops(result, stops: stop.points);
+        }
+      }
+    }
+  }
+
+  Future<List<Explore>?> _loadTherapists() =>
+    Wellness().loadMentalHealthBuildings();
+
+  List<Explore>? _loadMyLocations() =>
+    ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
 }
+
 
 extension _Map2ContentType on Map2ContentType {
   String get displayTitle => displayTitleEx();
