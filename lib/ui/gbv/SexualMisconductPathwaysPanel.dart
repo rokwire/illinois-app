@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/SurveyTracker.dart';
+import 'package:illinois/ui/gbv/SituationStepPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
 import 'package:illinois/ui/gbv/ResourceDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/model/survey.dart';
-import 'package:illinois/ui/gbv/SituationStepPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -237,6 +237,8 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
       );
     }
 }
+
+
 
   Future<GBV?> _loadResources() async {
     // temporary json load from assets
