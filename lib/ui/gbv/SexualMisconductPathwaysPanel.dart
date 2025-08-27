@@ -236,7 +236,7 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
         SnackBar(content: Text("Unable to load the survey.")),
       );
     }
-  }
+}
 
   Future<GBV?> _loadResources() async {
     // temporary json load from assets
