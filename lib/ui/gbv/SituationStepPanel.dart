@@ -406,7 +406,6 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Recommended Resource'),
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: () {
@@ -519,12 +518,14 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
 
     return Scaffold(
       appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-        onPressed: _onBackPressed,
-      ),title: Text('Step $_currentStepKey')),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: _onBackPressed,
+        ),
+      ),
       body: _buildQuestionView(stepData),
     );
+
   }
 
   @override
