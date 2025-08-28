@@ -61,8 +61,10 @@ class _Map2PanelState extends State<Map2Panel>
   with NotificationsListener, SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Map2Panel>
 {
 
+  final GlobalKey _mapWrapperKey = GlobalKey();
+  final GlobalKey _contentHeadingBarKey = GlobalKey();
+
   UniqueKey _mapKey = UniqueKey();
-  final GlobalKey _scaffoldKey = GlobalKey();
   GoogleMapController? _mapController;
   CameraPosition? _lastCameraPosition;
   CameraUpdate? _targetCameraUpdate;
@@ -178,36 +180,87 @@ class _Map2PanelState extends State<Map2Panel>
     );
   }
 
-  Widget get _scaffoldBody =>
-    Stack(key: _scaffoldKey, children: [
-      if (_exploresProgress == false)
-        _mapView,
+/*  Widget get _scaffoldBody => Stack(key: _mapWrapperKey, children: [
 
+    Positioned.fill(child:
+      Opacity(opacity: (_exploresProgress == false) ? 1 : 0, child:
+        _mapView
+      ),
+    ),
+
+    Positioned.fill(child:
+      Align(alignment: Alignment.topCenter, child:
+        Opacity(opacity: (_selectedContentType != null) ? 1 : 0, child:
+          _contentHeadingBar
+        ),
+      ),
+    ),
+
+    Positioned.fill(child:
+      Align(alignment: Alignment.topCenter, child:
+        Opacity(opacity: (_selectedContentType == null) ? 1 : 0, child:
+          _contentTypesBar
+        ),
+      ),
+    ),
+
+    if (_exploresProgress == true)
       Positioned.fill(child:
-        Align(alignment: Alignment.topCenter, child:
-          _mapHeading,
+        Center(child:
+          _exploresProgressIndicator,
         ),
       ),
 
-      if (_exploresProgress == true)
+    if (_markersProgress == true)
+      Positioned.fill(child:
+        Center(child:
+          _mapProgressIndicator,
+        ),
+      ),
+  ],);*/
+
+  Widget get _scaffoldBody => Column(children: [
+    if (_selectedContentType != null)
+      _contentHeadingBar,
+
+    Expanded(child:
+      Stack(key: _mapWrapperKey, children: [
         Positioned.fill(child:
-          Center(child:
-            _exploresProgressIndicator,
+          Visibility(visible: _exploresProgress == false, child:
+            _mapView
           ),
         ),
 
-      if (_markersProgress == true)
-        Positioned.fill(child:
-          Center(child:
-            _mapProgressIndicator,
+        if (_selectedContentType == null)
+          Positioned.fill(child:
+            Align(alignment: Alignment.topCenter, child:
+              _contentTypesBar,
+            ),
           ),
-        ),
-    ],);
+
+        if (_exploresProgress == true)
+          Positioned.fill(child:
+            Center(child:
+              _exploresProgressIndicator,
+            ),
+          ),
+
+        if (_markersProgress == true)
+          Positioned.fill(child:
+            Center(child:
+              _mapProgressIndicator,
+            ),
+          ),
+
+      ],)
+    )
+  ],);
+
 
   Widget get _mapView => Container(decoration: _mapViewDecoration, child:
     GoogleMap(
       key: _mapKey,
-      initialCameraPosition: _lastCameraPosition ??= _defaultCameraPosition,
+      initialCameraPosition: _lastCameraPosition ?? _defaultCameraPosition,
       onMapCreated: _onMapCreated,
       onCameraIdle: _onMapCameraIdle,
       onCameraMove: _onMapCameraMove,
@@ -219,7 +272,7 @@ class _Map2PanelState extends State<Map2Panel>
       markers: _mapMarkers ?? const <Marker>{},
       style: null,
       indoorViewEnabled: true,
-    //trafficEnabled: true,
+      //trafficEnabled: true,
       // This fixes #4306. The gestureRecognizers parameter is needed because of PopScopeFix wrapper in RootPanel,
       // which uses BackGestureDetector in iOS, that disables scroll, pan and zoom of the map view.
       gestureRecognizers: <Factory<OneSequenceGestureRecognizer>> {
@@ -233,8 +286,6 @@ class _Map2PanelState extends State<Map2Panel>
   BoxDecoration get _mapViewDecoration =>
     BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent, width: 1));
 
-  Widget get _mapHeading => (_selectedContentType != null) ?
-    _contentTypeHeading : _contentTypesBar;
 
   Widget get _mapProgressIndicator =>
     SizedBox(width: 24, height: 24, child:
@@ -390,7 +441,7 @@ class _Map2PanelState extends State<Map2Panel>
 
   // Content Type
 
-  Widget get _contentTypeHeading => Container(decoration: _contentHeadingDecoration, child:
+  Widget get _contentHeadingBar => Container(key: _contentHeadingBarKey, decoration: _contentHeadingDecoration, child:
       Column(mainAxisSize: MainAxisSize.min, children: [
         Row(children: [
           Expanded(child:
@@ -419,8 +470,24 @@ class _Map2PanelState extends State<Map2Panel>
   void _onUnselectContentType() {
     setState(() {
       _selectedContentType = null;
+      _explores = null;
+      _exploresTask = null;
+      _exploresProgress = false;
+
+      _mapMarkers = null;
+      _exploreMapGroups = null;
+      _targetCameraUpdate = null;
+      _buildMarkersTask = null;
+      _lastMapZoom = null;
+      _markersProgress = false;
     });
-    _initExplores();
+
+    double? contentHeadingHeight = _contentHeadingBarKey.renderBoxSize?.height;
+    if (contentHeadingHeight != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _mapController?.moveCamera(CameraUpdate.scrollBy(0, -contentHeadingHeight / 2));
+      });
+    }
   }
 
   // Explores
@@ -564,7 +631,7 @@ class _Map2PanelState extends State<Map2Panel>
       }
     }
 
-    Size? mapSize = _scaffoldKey.renderBoxSize;
+    Size? mapSize = _mapWrapperKey.renderBoxSize;
     if ((exploresBounds != null) && (mapSize != null)) {
 
       double thresoldDistance;
