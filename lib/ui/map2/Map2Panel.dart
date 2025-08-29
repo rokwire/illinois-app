@@ -70,6 +70,9 @@ class _Map2PanelState extends State<Map2Panel>
   CameraUpdate? _targetCameraUpdate;
   double? _lastMapZoom;
 
+  final UniqueKey _traySheetKey = UniqueKey();
+  final DraggableScrollableController _traySheetController = DraggableScrollableController();
+
   late Set<Map2ContentType> _availableContentTypes;
   Map2ContentType? _selectedContentType;
 
@@ -118,6 +121,7 @@ class _Map2PanelState extends State<Map2Panel>
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _traySheetController.dispose();
     super.dispose();
   }
 
@@ -189,9 +193,17 @@ class _Map2PanelState extends State<Map2Panel>
         ),
       ),
 
-      Positioned.fill(child:
+      Positioned.fill(child: (_selectedContentType != null) ?
+        Column(children: [
+          _contentHeadingBar,
+          Expanded(child:
+            Visibility(visible: (_exploresProgress == false), child:
+              _traySheet,
+            ),
+          )
+        ],) :
         Align(alignment: Alignment.topCenter, child:
-          (_selectedContentType != null) ? _contentHeadingBar : _contentTypesBar
+          _contentTypesBar
         ),
       ),
 
@@ -474,6 +486,64 @@ class _Map2PanelState extends State<Map2Panel>
     });
   }
 
+  // Tray Sheet
+
+  Widget get _traySheet =>
+    DraggableScrollableSheet(
+      key: _traySheetKey, controller: _traySheetController,
+      initialChildSize: 0.25, minChildSize: 0.03, maxChildSize: 0.97,
+      snap: true, snapSizes: [0.03, 0.35, 0.65, 0.97],
+      builder: (BuildContext context, ScrollController scrollController) =>
+        Container(decoration: _traySheetDecoration, child:
+          Column(children: [
+          _traySheetDragHandle,
+            Expanded(child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 12,), child:
+                SingleChildScrollView(
+                  controller: scrollController,
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: _traySheetListContent,
+                ),
+              )
+            ),
+          ],)
+        ),
+    );
+
+
+  BoxDecoration get _traySheetDecoration => BoxDecoration(
+    color: Styles().colors.white,
+    borderRadius: BorderRadius.vertical(top: Radius.circular(32.0)),
+    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018 /* Colors.black26 */, blurRadius: 12.0,),],
+  );
+
+  Widget get _traySheetDragHandle => Container(
+    width: _traySheetWidth / 4, height: 3.0,
+    margin: const EdgeInsets.symmetric(vertical: 8.0),
+    decoration: BoxDecoration(color: Styles().colors.lightGray, borderRadius: BorderRadius.circular(2.0),),
+  );
+
+  double get _traySheetWidth => _scaffoldKey.renderBoxSize?.width ?? _screenWidth;
+  double get _screenWidth => context.mounted ? MediaQuery.of(context).size.width : 0;
+
+  Widget get _traySheetListContent {
+    List<Widget> items = <Widget>[];
+    for (int i = 0; i < 100; i++) {
+      items.add(Container(
+        decoration: BoxDecoration(
+          color: Styles().colors.fillColorPrimary,
+          borderRadius: BorderRadius.all(Radius.circular(12.0)),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        margin: EdgeInsets.only(bottom: 4),
+        child: Row(children: [Expanded(child:
+          Text('Item ${i + 1}', style: Styles().textStyles.getTextStyle('widget.dialog.message.medium'),),
+        )],)
+      ));
+    }
+    return Column(children: items,);
+  }
+
   // Explores
 
   Future<void> _initExplores() async {
@@ -491,7 +561,7 @@ class _Map2PanelState extends State<Map2Panel>
         List<Explore>? explores = await exploresTask;
 
         if (mounted && (exploresTask == _exploresTask)) {
-          await _buildMapContentData(explores, pinnedExplore: null, updateCamera: true);
+          await _buildMapContentData(explores, updateCamera: true);
           if (mounted && (exploresTask == _exploresTask)) {
             setState(() {
               _explores = explores;
@@ -599,7 +669,7 @@ class _Map2PanelState extends State<Map2Panel>
 
   // Map Content
 
-  Future<void> _buildMapContentData(List<Explore>? explores, {Explore? pinnedExplore, bool updateCamera = false, bool showProgress = false, double? zoom}) async {
+  Future<void> _buildMapContentData(List<Explore>? explores, { bool updateCamera = false, bool showProgress = false, double? zoom}) async {
     LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
 
     CameraUpdate? targetCameraUpdate;
@@ -636,7 +706,7 @@ class _Map2PanelState extends State<Map2Panel>
         exploreMapGroups =  (explores != null) ? <dynamic>{ ExploreMap.validFromList(explores) } : null;
       }
       if (!DeepCollectionEquality().equals(_exploreMapGroups, exploreMapGroups)) {
-        BuildMarkersTask buildMarkersTask = _buildMarkers(context, exploreGroups: exploreMapGroups, pinnedExplore: pinnedExplore);
+        BuildMarkersTask buildMarkersTask = _buildMarkers(context, exploreGroups: exploreMapGroups, );
         _buildMarkersTask = buildMarkersTask;
         if (showProgress && mounted) {
           setState(() {
@@ -759,7 +829,7 @@ class _Map2PanelState extends State<Map2Panel>
 
   // Map Markers
 
-  Future<Set<Marker>> _buildMarkers(BuildContext context, { Set<dynamic>? exploreGroups, Explore? pinnedExplore }) async {
+  Future<Set<Marker>> _buildMarkers(BuildContext context, { Set<dynamic>? exploreGroups }) async {
     Set<Marker> markers = <Marker>{};
     ImageConfiguration imageConfiguration = createLocalImageConfiguration(context);
     if (exploreGroups != null) {
@@ -774,13 +844,6 @@ class _Map2PanelState extends State<Map2Panel>
         if (marker != null) {
           markers.add(marker);
         }
-      }
-    }
-
-    if (pinnedExplore != null) {
-      Marker? marker = await _createExploreMarker(pinnedExplore, imageConfiguration: imageConfiguration);
-      if (marker != null) {
-        markers.add(marker);
       }
     }
 
