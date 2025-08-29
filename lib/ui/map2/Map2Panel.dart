@@ -61,7 +61,7 @@ class _Map2PanelState extends State<Map2Panel>
   with NotificationsListener, SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Map2Panel>
 {
 
-  final GlobalKey _mapWrapperKey = GlobalKey();
+  final GlobalKey _scaffoldKey = GlobalKey();
   final GlobalKey _contentHeadingBarKey = GlobalKey();
 
   UniqueKey _mapKey = UniqueKey();
@@ -90,7 +90,7 @@ class _Map2PanelState extends State<Map2Panel>
   static const CameraPosition _defaultCameraPosition = CameraPosition(target: _defaultCameraTarget, zoom: _defaultCameraZoom);
   static const LatLng _defaultCameraTarget = LatLng(40.102116, -88.227129);
   static const double _defaultCameraZoom = 17;
-  static const double _mapPadding = 50;
+  static const double _mapPadding = 30;
   static const double _mapGroupMarkerSize = 24;
   static const double _groupMarkersUpdateThresoldDelta = 0.3;
   static const List<double> _thresoldDistanceByZoom = [
@@ -180,46 +180,37 @@ class _Map2PanelState extends State<Map2Panel>
     );
   }
 
-/*  Widget get _scaffoldBody => Stack(key: _mapWrapperKey, children: [
+  Widget get _scaffoldBody =>
+    Stack(key: _scaffoldKey, children: [
 
-    Positioned.fill(child:
-      Opacity(opacity: (_exploresProgress == false) ? 1 : 0, child:
-        _mapView
-      ),
-    ),
-
-    Positioned.fill(child:
-      Align(alignment: Alignment.topCenter, child:
-        Opacity(opacity: (_selectedContentType != null) ? 1 : 0, child:
-          _contentHeadingBar
-        ),
-      ),
-    ),
-
-    Positioned.fill(child:
-      Align(alignment: Alignment.topCenter, child:
-        Opacity(opacity: (_selectedContentType == null) ? 1 : 0, child:
-          _contentTypesBar
-        ),
-      ),
-    ),
-
-    if (_exploresProgress == true)
       Positioned.fill(child:
-        Center(child:
-          _exploresProgressIndicator,
+        Visibility(visible: (_exploresProgress == false), child:
+          _mapView
         ),
       ),
 
-    if (_markersProgress == true)
       Positioned.fill(child:
-        Center(child:
-          _mapProgressIndicator,
+        Align(alignment: Alignment.topCenter, child:
+          (_selectedContentType != null) ? _contentHeadingBar : _contentTypesBar
         ),
       ),
-  ],);*/
 
-  Widget get _scaffoldBody => Column(children: [
+      if (_exploresProgress == true)
+        Positioned.fill(child:
+          Center(child:
+            _exploresProgressIndicator,
+          ),
+        ),
+
+      if (_markersProgress == true)
+        Positioned.fill(child:
+          Center(child:
+            _mapProgressIndicator,
+          ),
+        ),
+    ],);
+
+  /* Widget get _scaffoldBody => Column(children: [
     if (_selectedContentType != null)
       _contentHeadingBar,
 
@@ -254,8 +245,7 @@ class _Map2PanelState extends State<Map2Panel>
 
       ],)
     )
-  ],);
-
+  ],); */
 
   Widget get _mapView => Container(decoration: _mapViewDecoration, child:
     GoogleMap(
@@ -441,7 +431,8 @@ class _Map2PanelState extends State<Map2Panel>
 
   // Content Type
 
-  Widget get _contentHeadingBar => Container(key: _contentHeadingBarKey, decoration: _contentHeadingDecoration, child:
+  Widget get _contentHeadingBar =>
+    Container(key: _contentHeadingBarKey, decoration: _contentHeadingDecoration, child:
       Column(mainAxisSize: MainAxisSize.min, children: [
         Row(children: [
           Expanded(child:
@@ -458,7 +449,7 @@ class _Map2PanelState extends State<Map2Panel>
           ),
         ],)
       ],)
-  );
+    );
     
   BoxDecoration get _contentHeadingDecoration =>
     BoxDecoration(
@@ -481,13 +472,6 @@ class _Map2PanelState extends State<Map2Panel>
       _lastMapZoom = null;
       _markersProgress = false;
     });
-
-    double? contentHeadingHeight = _contentHeadingBarKey.renderBoxSize?.height;
-    if (contentHeadingHeight != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _mapController?.moveCamera(CameraUpdate.scrollBy(0, -contentHeadingHeight / 2));
-      });
-    }
   }
 
   // Explores
@@ -627,11 +611,11 @@ class _Map2PanelState extends State<Map2Panel>
         targetCameraUpdate = CameraUpdate.newCameraPosition(CameraPosition(target: exploresBounds.northeast, zoom: _defaultCameraPosition.zoom));
       }
       else {
-        targetCameraUpdate = CameraUpdate.newLatLngBounds(exploresBounds, _mapPadding);
+        targetCameraUpdate = CameraUpdate.newLatLngBounds(_updateBoundsForHeadingBar(exploresBounds), _mapPadding);
       }
     }
 
-    Size? mapSize = _mapWrapperKey.renderBoxSize;
+    Size? mapSize = _scaffoldKey.renderBoxSize;
     if ((exploresBounds != null) && (mapSize != null)) {
 
       double thresoldDistance;
@@ -751,6 +735,26 @@ class _Map2PanelState extends State<Map2Panel>
       return thresoldDistance;
     }
     return 0;
+  }
+
+  LatLngBounds _updateBoundsForHeadingBar(LatLngBounds bounds) {
+    double northLat = bounds.northeast.latitude;
+    double southLat = bounds.southwest.latitude;
+    double? mapHeight = _scaffoldKey.renderBoxSize?.height;
+    double? headingBarHeight = _contentHeadingBarKey.renderBoxSize?.height;
+    if ((northLat != southLat) &&
+        (mapHeight != null) && (mapHeight > 0) &&
+        (headingBarHeight != null) && (headingBarHeight > 0))
+    {
+      double boundHeight = northLat - southLat;
+      double scaleFactor = headingBarHeight / mapHeight;
+      double north2Lat = northLat + (scaleFactor * boundHeight);
+      return LatLngBounds(
+        northeast: LatLng(north2Lat, bounds.northeast.longitude),
+        southwest: LatLng(southLat, bounds.southwest.longitude)
+      );
+    }
+    return bounds;
   }
 
   // Map Markers
