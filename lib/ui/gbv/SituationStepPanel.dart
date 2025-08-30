@@ -4,6 +4,7 @@ import 'package:rokwire_plugin/model/survey.dart';
 import 'package:illinois/service/GBVRules.dart';
 import 'package:illinois/model/SurveyTracker.dart';
 import 'package:illinois/ui/gbv/QuickExitWidget.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/ui/gbv/ResourceDetailPanel.dart';
@@ -567,6 +568,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
         ),
       ),
       body: _buildQuestionView(stepData),
+        bottomNavigationBar: uiuc.TabBar()
     );
 
   }
