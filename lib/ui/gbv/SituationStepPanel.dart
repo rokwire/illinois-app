@@ -464,6 +464,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
         ),
       ),
       body: _bodyWidget(),
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
@@ -567,8 +568,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
           onPressed: _onBackPressed,
         ),
       ),
-      body: _buildQuestionView(stepData),
-        bottomNavigationBar: uiuc.TabBar()
+      body: _buildQuestionView(stepData), bottomNavigationBar: uiuc.TabBar()
     );
 
   }
