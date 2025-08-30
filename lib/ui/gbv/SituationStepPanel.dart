@@ -7,9 +7,31 @@ import 'package:illinois/ui/gbv/QuickExitWidget.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/ui/gbv/ResourceDetailPanel.dart';
-
 import '../../model/GBV.dart';
 //TODO: Use Styles, localize texts, check all state mounting, fix back button
+
+const Map<String, Map<String, dynamic>> stepIcons = {
+  'situation': {
+    'image': 'compass',
+    'color': Color(0xFF9318BB),
+  },
+  'whats_happening': {
+    'image': 'ban',
+    'color': Color(0xFFF09842),
+  },
+  'involved': {
+    'image': 'user',
+    'color': Color(0xFF5182CF),
+  },
+  'next': {
+    'image': 'signs-post',
+    'color': Color(0xFF5FA7A3),
+  },
+  'prioritize': {
+    'image': 'timeline',
+    'color': Color(0xFF9318BB),
+  },
+};
 
 class SituationStepPanel extends StatefulWidget {
   final Map<String, SurveyData> surveyData;
@@ -281,9 +303,6 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
   }
 
   Widget _buildQuestionView(SurveyData stepData) {
-    // Static keys representing the 5 survey steps (in order)
-    // Need to do this since survey json doesn't have a length property
-    //Move this out of scope of _buildQuestionView
     const questionKeys = [
       'situation',
       'whats_happening',
@@ -305,28 +324,55 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
           children: [
             QuickExitWidget(),
             // Helper/More Info Textbox
-            if (stepData.moreInfo != null && stepData.moreInfo!.isNotEmpty)
-              Container(
-                width: double.infinity,
-                margin: const EdgeInsets.only(top: 12.0, bottom: 24),
-                padding: const EdgeInsets.all(18.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
+            if (stepData.moreInfo != null && stepData.moreInfo!.isNotEmpty) ...[
+              // Determine which icon/color to use based on current step
+              Builder(
+                builder: (_) {
+                  final iconData = stepIcons[_currentStepKey] ?? {
+                    'image': 'compass',//fallback
+                    'color': Color(0xFF9318BB),
+                  };
+                  return Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(top: 12.0, bottom: 24),
+                    padding: const EdgeInsets.all(18.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                  ],
-                ),
-                child: Text(
-                  stepData.moreInfo!,
-                  style: TextStyle(fontSize: 14),
-                ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 67,
+                          height: 67,
+                          decoration: BoxDecoration(
+                            color: iconData['color'],
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Styles().images.getImage(
+                              iconData['image'],
+                              excludeFromSemantics: true,
+                              size: 36,
+                              fit: BoxFit.contain,
+                              color: Colors.white,
+                            ) ?? Container(),
+                          ),
+                        ),
+                        SizedBox(width: 18),
+                        Expanded(
+                          child: Text(
+                            stepData.moreInfo!,
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
-
+            ],
             // Question Text
             Padding(
               padding: const EdgeInsets.only(bottom: 18.0),
@@ -339,8 +385,8 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
             LinearProgressIndicator(
               value: currentStepNumber > 0 ? currentStepNumber / totalSteps : 0,
               minHeight: 6,
-              backgroundColor: Colors.grey[300], //progress bar background color
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFED6647)), //progress bar color
+              backgroundColor: Colors.grey[300],
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFED6647)),
             ),
             SizedBox(height: 24),
             // Option Buttons
@@ -367,8 +413,6 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
                   ),
                 ),
               ),
-
-
             // Loading Indicator
             if (_loading)
               Padding(
@@ -428,7 +472,6 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           QuickExitWidget(),
-
           Padding(
             padding: EdgeInsets.only(top: 16, left: 16),
             child: Text(
