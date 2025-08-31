@@ -1,27 +1,31 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
-import 'package:illinois/ui/gbv/QuickExitWidget.dart';
-import 'package:illinois/ui/gbv/ResourceDetailPanel.dart';
-import 'package:illinois/ui/gbv/ResourceDirectoryPanel.dart';
+import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
+import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
+import 'package:illinois/ui/gbv/GBVResourceDirectoryPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/model/GBV.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/service/Config.dart';
 
 class GBVResourceListPanel extends StatelessWidget {
   final GBVResourceListScreen resourceListScreen;
-  final List<GBVResource> resources;
-  final List<String> categories;
+  final GBVData gbvData;
 
-  GBVResourceListPanel({ super.key, required this.resourceListScreen, required this.resources, required this.categories });
+  GBVResourceListPanel({ super.key, required this.resourceListScreen, required this.gbvData });
 
   @override
   Widget build(BuildContext context) =>
       Scaffold(appBar: HeaderBar(),
-          body: _bodyWidget(context, this.resourceListScreen, this.resources),
+          body: _bodyWidget(context, this.resourceListScreen, this.gbvData.resources),
           backgroundColor: Styles().colors.background, bottomNavigationBar: uiuc.TabBar()
       );
 
@@ -36,10 +40,11 @@ class GBVResourceListPanel extends StatelessWidget {
           Padding(padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16), child:
           Container(height: 1, color: Styles().colors.surfaceAccent)
           ),
-          Padding(padding: EdgeInsets.only(right: 16, left: 16, bottom: 32), child: (
+          Padding(padding: EdgeInsets.only(right: 16, left: 16, bottom: 0), child: (
               Text(resourceListScreen.description ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"))
           )),
-          ...resourceListScreen.content.map((section) => _buildResourceSection(context, section, resources))
+          ...resourceListScreen.content.map((section) => _buildResourceSection(context, section, resources)),
+          _buildUrlDetail(context) ?? Container()
         ])
       );
   }
@@ -50,7 +55,7 @@ class GBVResourceListPanel extends StatelessWidget {
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       (resourceList.title != '')
-          ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: (
+          ? Padding(padding: EdgeInsets.only(top: 30, left: 16, right: 16), child: (
           Text(resourceList.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"))
       ))
           : Container(),
@@ -62,8 +67,8 @@ class GBVResourceListPanel extends StatelessWidget {
   }
 
   Widget _resourceWidget (BuildContext context, GBVResource resource) {
-    Widget descriptionWidget = (resource.directoryContent.isNotEmpty)
-      ? Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+    Widget descriptionWidget = (resource.directoryContent.isNotEmpty && resource.type != GBVResourceType.external_link)
+      ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(children:
           List.from(resource.directoryContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail)))
         )
@@ -111,7 +116,42 @@ class GBVResourceListPanel extends StatelessWidget {
         } else break;
       }
       case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource))); break;
-      case GBVResourceType.directory: Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDirectoryPanel(resources: this.resources, categories: this.categories))); break;
+      case GBVResourceType.directory: Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDirectoryPanel(gbvData: this.gbvData))); break;
+    }
+  }
+
+  Widget? _buildUrlDetail(BuildContext context) {
+    String? url = Config().gbvWeCareUrl;
+    return (url != null) ?
+    Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
+    RichText(text: TextSpan(children: [
+      TextSpan(
+          text: Localization().getStringEx('', 'View additional confidential resources on the '),
+          style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
+      ),
+      TextSpan(
+          text: Localization().getStringEx('', 'Illinois We Care website'),
+          style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
+          recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(context, url)
+      ),
+      WidgetSpan(child:
+      Padding(padding: EdgeInsets.only(left: 4), child:
+      Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+      )
+      )
+    ]))
+    )
+        : null;
+  }
+
+  void _launchUrl(BuildContext context, String? url) async {
+    if (StringUtils.isNotEmpty(url)) {
+      if (StringUtils.isNotEmpty(url)) {
+        Uri? uri = Uri.tryParse(url!);
+        if ((uri != null) && (await canLaunchUrl(uri))) {
+          AppLaunchUrl.launch(context: context, url: url);
+        }
+      }
     }
   }
 }

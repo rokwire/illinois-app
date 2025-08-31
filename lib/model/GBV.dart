@@ -4,19 +4,19 @@ enum GBVResourceType {panel, external_link, directory}
 
 enum GBVResourceDetailType {text, address, phone, email, external_link}
 
-class GBV {
+class GBVData {
   final List<String> directoryCategories;
   final List<GBVResource> resources;
   final GBVResourceListScreens? resourceListScreens;
 
-  GBV({
+  GBVData({
     required this.directoryCategories,
     required this.resources,
     required this.resourceListScreens
   });
 
-  static GBV? fromJson(Map<String, dynamic>? json) {
-    return (json != null) ? GBV(
+  static GBVData? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? GBVData(
       directoryCategories: JsonUtils.listValue(json["directoryCategories"]) ?? [],
       resources: GBVResource.listFromJson(JsonUtils.listValue(json['resources'])),
       resourceListScreens: GBVResourceListScreens.fromJson(JsonUtils.mapValue(json['screens'])),
@@ -97,7 +97,7 @@ class GBVDetailListSection {
 class GBVResource {
   final String id;
   final GBVResourceType type;
-  final String category;
+  final List<String> categories;
   final String title;
   final List<GBVResourceDetail> directoryContent;
   final String? description;
@@ -106,7 +106,7 @@ class GBVResource {
   GBVResource({
     required this.id,
     required this.type,
-    required this.category,
+    required this.categories,
     required this.title,
     required this.directoryContent,
     this.description,
@@ -118,7 +118,7 @@ class GBVResource {
     return (json != null) ? GBVResource(
       id: JsonUtils.stringValue(json['id']) ?? "",
       type: (typeString == 'external_link') ? GBVResourceType.external_link : (typeString == 'panel') ? GBVResourceType.panel : GBVResourceType.directory,
-      category: JsonUtils.stringValue(json['category']) ?? "",
+      categories: JsonUtils.listValue(json['categories']) ?? [],
       title: JsonUtils.stringValue(json['title']) ?? "",
       directoryContent: GBVResourceDetail.listFromJson(JsonUtils.listValue(json['directoryContent'])),
       description: JsonUtils.stringValue(json['description']),

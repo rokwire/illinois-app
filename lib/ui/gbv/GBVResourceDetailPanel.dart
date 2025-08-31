@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
-import 'package:illinois/ui/gbv/QuickExitWidget.dart';
+import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';

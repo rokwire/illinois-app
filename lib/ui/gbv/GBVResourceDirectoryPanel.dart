@@ -1,20 +1,24 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
-import 'package:illinois/ui/gbv/QuickExitWidget.dart';
-import 'package:illinois/ui/gbv/ResourceDetailPanel.dart';
+import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
+import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/model/GBV.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class ResourceDirectoryPanel extends StatefulWidget {
-  final List<String> categories;
-  final List<GBVResource> resources;
+  final GBVData gbvData;
 
-  ResourceDirectoryPanel({ super.key, required this.categories, required this.resources });
+  ResourceDirectoryPanel({ super.key, required this.gbvData});
 
   @override
   State<StatefulWidget> createState() => _ResourceDirectoryPanelState();
@@ -24,14 +28,17 @@ class ResourceDirectoryPanel extends StatefulWidget {
 class _ResourceDirectoryPanelState extends State<ResourceDirectoryPanel> {
 
   String _expandedSection = '';
+  GestureRecognizer? _weCareRecognizer;
 
   @override
   void initState() {
+    // _weCareRecognizer = TapGestureRecognizer()..onTap = () => _onWeCare(context);
     super.initState();
   }
 
   @override
   void dispose() {
+    _weCareRecognizer?.dispose();
     super.dispose();
   }
 
@@ -49,15 +56,16 @@ class _ResourceDirectoryPanelState extends State<ResourceDirectoryPanel> {
           QuickExitWidget(),
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
             Column(children: [
-            ...widget.categories.map((category) => _buildCategory(category, widget.resources))
+              ...widget.gbvData.directoryCategories.map((category) => _buildCategory(category, widget.gbvData.resources)),
             ])
-          )
+          ),
+          _buildWeCareUrlWidget() ?? Container()
         ])
       );
   }
 
   Widget _buildCategory(String category, List<GBVResource> allResources) {
-    List<GBVResource> resources = List.from(allResources.where((resource) => category == resource.category));
+    List<GBVResource> resources = List.from(allResources.where((resource) => resource.categories.contains(category)));
     return
       Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
         Container(decoration:
@@ -85,15 +93,15 @@ class _ResourceDirectoryPanelState extends State<ResourceDirectoryPanel> {
                  List.from(resources.map((resource) => _resourceWidget(resource)))
                 )
               )
-            )
+            ),
           ])
         )
       );
   }
 
   Widget _resourceWidget (GBVResource resource) {
-    Widget descriptionWidget = (resource.directoryContent.isNotEmpty)
-      ? Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+    Widget descriptionWidget = (resource.directoryContent.isNotEmpty && resource.type != GBVResourceType.external_link)
+      ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(children:
           List.from(resource.directoryContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail)))
         )
@@ -147,6 +155,42 @@ class _ResourceDirectoryPanelState extends State<ResourceDirectoryPanel> {
       }
       case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource))); break;
       case GBVResourceType.directory: break;
+    }
+  }
+
+  Widget? _buildWeCareUrlWidget() {
+    String? url = Config().gbvWeCareUrl;
+    return (url != null) ?
+      Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
+            RichText(text: TextSpan(children: [
+              TextSpan(
+                text: Localization().getStringEx('', 'View additional resources on the '),
+                style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
+                ),
+              TextSpan(
+              text: Localization().getStringEx('', 'Illinois We Care website'),
+              style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
+              recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(url)
+              ),
+              WidgetSpan(child:
+                Padding(padding: EdgeInsets.only(left: 4), child:
+                  Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                )
+              )
+            ]))
+      )
+      : null;
+  }
+
+  void _launchUrl(String? url) async {
+    if (StringUtils.isNotEmpty(url)) {
+      if (StringUtils.isNotEmpty(url)) {
+        Uri? uri = Uri.tryParse(url!);
+        if ((uri != null) && (await canLaunchUrl(uri))) {
+          AppLaunchUrl.launch(context: context, url: url);
+          // launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
+      }
     }
   }
 

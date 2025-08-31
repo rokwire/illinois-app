@@ -43,7 +43,7 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
-import 'package:illinois/ui/gbv/SexualMisconductPathwaysPanel.dart';
+import 'package:illinois/ui/gbv/GBVPathwaysPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -901,7 +901,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapSexualMisconduct(BuildContext context, {String? analyticsTarget}) {
     Analytics().logSelect(target: analyticsTarget ?? "Sexual Misconduct Resources");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SexualMisconductPathwaysPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVPathwaysPanel()));
   }
 
   static void _onTapSafeRides(BuildContext context) {

@@ -598,4 +598,9 @@ class Storage extends rokwire.Storage with NotificationsListener {
   static const String illiniRadioStationKey = 'edu.illinois.rokwire.illini_radio.station';
   String? get illiniRadioStation => getStringWithName(illiniRadioStationKey);
   set illiniRadioStation(String? value) => setStringWithName(illiniRadioStationKey, value);
+
+  // GBV
+  static const String _gbvQuickExitPromptedKey = 'edu.illinois.rokwire.gbv.quick_exit_prompted';
+  bool? get gbvQuickExitPrompted => getBoolWithName(_gbvQuickExitPromptedKey);
+  set gbvQuickExitPrompted(bool? value) => setBoolWithName(_gbvQuickExitPromptedKey, value);
 }
