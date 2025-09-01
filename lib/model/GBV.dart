@@ -2,7 +2,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum GBVResourceType {panel, external_link, directory}
 
-enum GBVResourceDetailType {text, address, phone, email, external_link}
+enum GBVResourceDetailType {text, address, phone, email, external_link, button}
 
 class GBVData {
   final List<String> directoryCategories;
@@ -139,10 +139,12 @@ class GBVResource {
 
 class GBVResourceDetail {
   final GBVResourceDetailType type;
+  final String? title;
   final String? content;
 
   GBVResourceDetail({
     required this.type,
+    this.title,
     this.content
   });
 
@@ -163,6 +165,7 @@ class GBVResourceDetail {
       case "phone": return GBVResourceDetailType.phone;
       case "external_link": return GBVResourceDetailType.external_link;
       case "email": return GBVResourceDetailType.email;
+      case "button": return GBVResourceDetailType.button;
       default: return GBVResourceDetailType.text;
     }
   }
@@ -170,6 +173,7 @@ class GBVResourceDetail {
   static GBVResourceDetail? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? GBVResourceDetail(
       type: _typeFromString(JsonUtils.stringValue(json['type']) ?? "text"),
+      title: JsonUtils.stringValue(json['title']),
       content: JsonUtils.stringValue(json['content'])
     ) : null;
   }

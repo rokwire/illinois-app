@@ -4,6 +4,7 @@ import 'package:illinois/model/GBV.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GBVDetailContentWidget extends StatelessWidget {
@@ -59,6 +60,19 @@ class GBVDetailContentWidget extends StatelessWidget {
             )
           )
         ];
+      case GBVResourceDetailType.button:
+        return [
+          Expanded(child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12), child:
+              RoundedButton(
+                  label: detail.title ?? detail.content ?? '',
+                  textStyle: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
+                  rightIcon: Styles().images.getImage('external-link', excludeFromSemantics: true) ?? Container(),
+                  onTap: () => AppLaunchUrl.launch(context: context, url: detail.content)
+              )
+            )
+          )
+        ];
       case GBVResourceDetailType.phone:
         Uri uri = Uri.parse('tel:${detail.content}');
         return [
@@ -74,7 +88,9 @@ class GBVDetailContentWidget extends StatelessWidget {
       case GBVResourceDetailType.text:
         return [
           Expanded(child:
-            Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small"))
+            Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12), child:
+              Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small"))
+            )
           )
         ];
     }

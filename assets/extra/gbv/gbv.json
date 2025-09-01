@@ -746,7 +746,7 @@
                     "title": "University Reporting Form (Title IX Office)",
                     "content": [
                         {"type": "text", "content": "Submit a report to the University of Illinois Title IX Office."},
-                        {"type": "button", "content": {"text": "University Reporting Form", "external_link": "https://wecare.illinois.edu/report/"}},
+                        {"type": "button", "title": "University Reporting Form", "content": "https://wecare.illinois.edu/report/"},
                         {"type": "text", "content": "An individual may report an incident using this form  without disclosing their name, identifying the respondent, or requesting any action. Please note that choosing to make an anonymous report can significantly limit the ability of the university to respond."}
                     ]
                 },
