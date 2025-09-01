@@ -63,6 +63,7 @@ class _Map2PanelState extends State<Map2Panel>
 
   final GlobalKey _scaffoldKey = GlobalKey();
   final GlobalKey _contentHeadingBarKey = GlobalKey();
+  final GlobalKey _traySheetKey = GlobalKey();
 
   UniqueKey _mapKey = UniqueKey();
   GoogleMapController? _mapController;
@@ -70,13 +71,13 @@ class _Map2PanelState extends State<Map2Panel>
   CameraUpdate? _targetCameraUpdate;
   double? _lastMapZoom;
 
-  final UniqueKey _traySheetKey = UniqueKey();
   final DraggableScrollableController _traySheetController = DraggableScrollableController();
 
   late Set<Map2ContentType> _availableContentTypes;
   Map2ContentType? _selectedContentType;
 
   List<Explore>? _explores;
+  List<Explore>? _visibleExplores;
   LoadExploresTask? _exploresTask;
   bool _exploresProgress = false;
 
@@ -107,6 +108,10 @@ class _Map2PanelState extends State<Map2Panel>
   static const Size _traySheetPadding = const Size(16, 20);
   static const double _traySheetDragHandleHeight = 3.0;
   static const double _traySheetDragHandleWidthFactor = 0.25;
+  static const List<double> _traySnapSizes = [0.03, 0.35, 0.65, 0.97];
+  final double _trayInitialSize = _traySnapSizes[1];
+  final double _trayMinSize = _traySnapSizes.first;
+  final double _trayMaxSize = _traySnapSizes.last;
 
   @override
   void initState() {
@@ -202,7 +207,7 @@ class _Map2PanelState extends State<Map2Panel>
         Column(children: [
           _contentHeadingBar,
           Expanded(child:
-            Visibility(visible: (_exploresProgress == false), child:
+            Visibility(visible: ((_exploresProgress == false) && (_visibleExplores?.isNotEmpty == true)), child:
               _traySheet,
             ),
           )
@@ -293,7 +298,6 @@ class _Map2PanelState extends State<Map2Panel>
   BoxDecoration get _mapViewDecoration =>
     BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent, width: 1));
 
-
   Widget get _mapProgressIndicator =>
     SizedBox(width: 24, height: 24, child:
       CircularProgressIndicator(color: Styles().colors.accentColor2, strokeWidth: 3,),
@@ -337,14 +341,8 @@ class _Map2PanelState extends State<Map2Panel>
 
   void _onMapCameraIdle() {
     // debugPrint('Map2 camera idle' );
-    _mapController?.getZoomLevel().then((double value) {
-      if (_lastMapZoom == null) {
-        _lastMapZoom = value;
-      }
-      else if ((_lastMapZoom! - value).abs() > _groupMarkersUpdateThresoldDelta) {
-        _buildMapContentData(_explores, updateCamera: false, showProgress: true, zoom: value,);
-      }
-    });
+    _updateVisibleExplores();
+    _updateMapContentForZoom();
   }
 
   void _onMapTap(LatLng coordinate) {
@@ -357,6 +355,12 @@ class _Map2PanelState extends State<Map2Panel>
 
   void _onTapMarker(dynamic origin) {
     // debugPrint('Map2 Marker tap' );
+    if (origin is Explore) {
+      origin.exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
+    }
+    else if (origin is List<Explore>) {
+      _ensureExploresVisibility(origin);
+    }
   }
 
   // Locaction Services
@@ -478,7 +482,7 @@ class _Map2PanelState extends State<Map2Panel>
   void _onUnselectContentType() {
     setState(() {
       _selectedContentType = null;
-      _explores = null;
+      _explores = _visibleExplores = null;
       _exploresTask = null;
       _exploresProgress = false;
 
@@ -495,11 +499,14 @@ class _Map2PanelState extends State<Map2Panel>
 
   Widget get _traySheet =>
     DraggableScrollableSheet(
-      key: _traySheetKey, controller: _traySheetController,
-      initialChildSize: 0.25, minChildSize: 0.03, maxChildSize: 0.97,
-      snap: true, snapSizes: [0.03, 0.35, 0.65, 0.97],
+      controller: _traySheetController,
+      snap: true, snapSizes: _traySnapSizes,
+      initialChildSize: _trayInitialSize,
+      minChildSize: _trayMinSize,
+      maxChildSize: _trayMaxSize,
+
       builder: (BuildContext context, ScrollController scrollController) =>
-        Container(decoration: _traySheetDecoration, child:
+        Container(key: _traySheetKey, decoration: _traySheetDecoration, child:
           ClipRRect(borderRadius: _traySheetBorderRadius, child:
             CustomScrollView(controller: scrollController, /* physics: AlwaysScrollableScrollPhysics(), */ slivers: [
               SliverAppBar(
@@ -535,23 +542,25 @@ class _Map2PanelState extends State<Map2Panel>
 
   List<Widget> get _traySheetListContent {
     List<Widget> items = <Widget>[];
-    for (int i = 0; i < 100; i++) {
-      if (items.isNotEmpty) {
-        items.add(SizedBox(height: 4,));
+    if (_visibleExplores != null) {
+      for (Explore explore in _visibleExplores!) {
+        if (items.isNotEmpty) {
+          items.add(SizedBox(height: 4,));
+        }
+        items.add(Container(
+          decoration: BoxDecoration(
+            color: Styles().colors.accentColor3,
+            borderRadius: BorderRadius.all(Radius.circular(6.0)),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+          margin: EdgeInsets.symmetric(horizontal: _traySheetPadding.width),
+          child: Row(children: [Expanded(child:
+            Text("${explore.exploreTitle ?? ''} / ${_visibleExplores?.length}" , style: Styles().textStyles.getTextStyle('widget.dialog.message.medium'),),
+          )],)
+        ));
       }
-      items.add(Container(
-        decoration: BoxDecoration(
-          color: Styles().colors.accentColor3,
-          borderRadius: BorderRadius.all(Radius.circular(6.0)),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-        margin: EdgeInsets.symmetric(horizontal: _traySheetPadding.width),
-        child: Row(children: [Expanded(child:
-          Text('Item ${i + 1}', style: Styles().textStyles.getTextStyle('widget.dialog.message.medium'),),
-        )],)
-      ));
+      items.add(SizedBox(height: _traySheetPadding.height / 2,));
     }
-    items.add(SizedBox(height: _traySheetPadding.height,));
     return items;
   }
 
@@ -565,7 +574,7 @@ class _Map2PanelState extends State<Map2Panel>
         setState(() {
           _exploresTask = exploresTask;
           _exploresProgress = true;
-          _explores = null;
+          _explores = _visibleExplores = null;
         });
 
         // wait for explores load
@@ -585,7 +594,7 @@ class _Map2PanelState extends State<Map2Panel>
       }
       else {
         setState(() {
-          _explores = null;
+          _explores = _visibleExplores = null;
           _exploresTask = null;
           _exploresProgress = false;
 
@@ -678,25 +687,64 @@ class _Map2PanelState extends State<Map2Panel>
   List<Explore>? _loadMyLocations() =>
     ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
 
-  // Map Content
+  // Visible Explores
 
-  Future<void> _buildMapContentData(List<Explore>? explores, { bool updateCamera = false, bool showProgress = false, double? zoom}) async {
-    LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
-
-    CameraUpdate? targetCameraUpdate;
-    if (updateCamera) {
-      if (exploresBounds == null) {
-        targetCameraUpdate = CameraUpdate.newCameraPosition(_defaultCameraPosition);
-      }
-      else if (exploresBounds.northeast == exploresBounds.southwest) {
-        targetCameraUpdate = CameraUpdate.newCameraPosition(CameraPosition(target: exploresBounds.northeast, zoom: _defaultCameraPosition.zoom));
-      }
-      else {
-        targetCameraUpdate = CameraUpdate.newLatLngBounds(_updateBoundsForHeadingBar(exploresBounds), _mapPadding);
+  Future<List<Explore>?> _buildVisibleExplores(List<Explore>? explores) async {
+    List<Explore>? visibleExplores;
+    if ((_mapController != null) && (explores != null) && explores.isNotEmpty) {
+      visibleExplores = <Explore>[];
+      LatLngBounds mapBounds = await _mapController!.getVisibleRegion();
+      LatLngBounds clipBounds = _updateBoundsForSiblings(mapBounds, padding: _mapPadding, shrink: true);
+      for (Explore explore in explores) {
+        LatLng? exploreLocation = explore.exploreLocation?.exploreLocationMapCoordinate;
+        if ((exploreLocation != null) && clipBounds.contains(exploreLocation)) {
+          visibleExplores.add(explore);
+        }
       }
     }
+    return visibleExplores;
+  }
 
+  Future<void> _updateVisibleExplores() async {
+    List<Explore>? visibleExplores = await _buildVisibleExplores(_explores);
+    if (mounted && !DeepCollectionEquality().equals(_visibleExplores, visibleExplores)) {
+      setState(() {
+        _visibleExplores = visibleExplores;
+      });
+    }
+  }
+
+  // Map Content
+
+  Future<void> _updateMapContentForZoom() async {
+    double? mapZoom = await _mapController?.getZoomLevel();
+    if (mapZoom != null) {
+      if (_lastMapZoom == null) {
+        _lastMapZoom = mapZoom;
+      }
+      else if ((_lastMapZoom! - mapZoom).abs() > _groupMarkersUpdateThresoldDelta) {
+        _buildMapContentData(_explores, updateCamera: false, showProgress: true, zoom: mapZoom,);
+      }
+    }
+  }
+
+  Future<void> _ensureExploresVisibility(List<Explore>? explores) async {
+    LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
+    CameraUpdate? targetCameraUpdate = (exploresBounds != null) ? _cameraUpdateForBounds(exploresBounds) : null;
+    if (targetCameraUpdate != null) {
+      _mapController?.animateCamera(targetCameraUpdate).then((_){
+        if (mounted) {
+          _updateVisibleExplores();
+          _updateMapContentForZoom();
+        }
+      });
+    }
+  }
+
+  Future<void> _buildMapContentData(List<Explore>? explores, { bool updateCamera = false, bool showProgress = false, double? zoom}) async {
     Size? mapSize = _scaffoldKey.renderBoxSize;
+    LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
+    CameraUpdate? targetCameraUpdate = updateCamera ? ((exploresBounds != null) ? _cameraUpdateForBounds(exploresBounds) : CameraUpdate.newCameraPosition(_defaultCameraPosition)) : null;
     if ((exploresBounds != null) && (mapSize != null)) {
 
       double thresoldDistance;
@@ -818,22 +866,48 @@ class _Map2PanelState extends State<Map2Panel>
     return 0;
   }
 
-  LatLngBounds _updateBoundsForHeadingBar(LatLngBounds bounds) {
+
+  CameraUpdate _cameraUpdateForBounds(LatLngBounds bounds) => (bounds.northeast == bounds.southwest) ?
+    CameraUpdate.newCameraPosition(CameraPosition(target: bounds.northeast, zoom: _defaultCameraPosition.zoom)) :
+    CameraUpdate.newLatLngBounds(_updateBoundsForSiblings(bounds, padding: _mapPadding), _mapPadding);
+
+  LatLngBounds _updateBoundsForSiblings(LatLngBounds bounds, { double? padding, bool shrink = false, }) {
     double northLat = bounds.northeast.latitude;
     double southLat = bounds.southwest.latitude;
+    double boundHeight = northLat - southLat;
     double? mapHeight = _scaffoldKey.renderBoxSize?.height;
-    double? headingBarHeight = _contentHeadingBarKey.renderBoxSize?.height;
-    if ((northLat != southLat) &&
-        (mapHeight != null) && (mapHeight > 0) &&
-        (headingBarHeight != null) && (headingBarHeight > 0))
+    if ((northLat != southLat) && (mapHeight != null) && (mapHeight > 0))
     {
-      double boundHeight = northLat - southLat;
-      double scaleFactor = headingBarHeight / mapHeight;
-      double north2Lat = northLat + (scaleFactor * boundHeight);
-      return LatLngBounds(
-        northeast: LatLng(north2Lat, bounds.northeast.longitude),
-        southwest: LatLng(southLat, bounds.southwest.longitude)
-      );
+      double northDelta = 0;
+      double southDelta = 0;
+
+      double headingBarHeight = _contentHeadingBarKey.renderBoxSize?.height ?? 0.0;
+      if (0 < headingBarHeight) {
+        northDelta += (headingBarHeight / mapHeight) * boundHeight;
+      }
+
+      double trayHeight = _traySheetKey.renderBoxSize?.height ?? 0;
+      if (trayHeight == 0) {
+        trayHeight = _trayInitialSize * math.max(mapHeight - headingBarHeight, 0);
+      }
+      if (0 < trayHeight) {
+        southDelta += (trayHeight / mapHeight) * boundHeight;
+      }
+
+      if ((padding != null) && (0 < padding)) {
+        northDelta += (padding / mapHeight) * boundHeight;
+        southDelta += (padding / mapHeight) * boundHeight;
+      }
+
+      double north2Lat = shrink ? (northLat - northDelta) : (northLat + northDelta);
+      double south2Lat = shrink ? (southLat + southDelta) : (southLat - southDelta);
+      if (south2Lat <= north2Lat) {
+        debugPrint("[${northLat.toStringAsFixed(6)}, ${southLat.toStringAsFixed(6)}] => [${north2Lat.toStringAsFixed(6)}, ${south2Lat.toStringAsFixed(6)}]");
+        return LatLngBounds(
+          northeast: LatLng(north2Lat, bounds.northeast.longitude),
+          southwest: LatLng(south2Lat, bounds.southwest.longitude)
+        );
+      }
     }
     return bounds;
   }
