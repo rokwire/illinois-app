@@ -37,12 +37,17 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
   void initState() {
 
     _loadResources().then((gbv) {
-        setStateIfMounted(() {
+      if (mounted) {
+        setState(() {
           _gbv = gbv;
           _loading = false;
         });
-      if (_gbv != null) _resourceDirectoryRecognizer = TapGestureRecognizer()..onTap = () => _onResourceDirectory(context, _gbv!);
-      if (Storage().gbvQuickExitPrompted == null || Storage().gbvQuickExitPrompted == false) _onQuickExitInfo(context);
+
+        if (_gbv != null) {
+          _resourceDirectoryRecognizer = TapGestureRecognizer()..onTap = () => _onResourceDirectory(context, _gbv!);
+          if (Storage().gbvQuickExitPrompted != true) _onQuickExitInfo(context);
+        }
+      }
     });
 
     super.initState();
