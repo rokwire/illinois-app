@@ -15,17 +15,17 @@ import 'package:illinois/service/Config.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ResourceDirectoryPanel extends StatefulWidget {
+class GBVResourceDirectoryPanel extends StatefulWidget {
   final GBVData gbvData;
 
-  ResourceDirectoryPanel({ super.key, required this.gbvData});
+  GBVResourceDirectoryPanel({ super.key, required this.gbvData});
 
   @override
-  State<StatefulWidget> createState() => _ResourceDirectoryPanelState();
+  State<StatefulWidget> createState() => _GBVResourceDirectoryPanelState();
 
 }
 
-class _ResourceDirectoryPanelState extends State<ResourceDirectoryPanel> {
+class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
 
   String _expandedSection = '';
   GestureRecognizer? _weCareRecognizer;
@@ -53,7 +53,7 @@ class _ResourceDirectoryPanelState extends State<ResourceDirectoryPanel> {
     return
       SingleChildScrollView(child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          QuickExitWidget(),
+          GBVQuickExitWidget(),
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
             Column(children: [
               ...widget.gbvData.directoryCategories.map((category) => _buildCategory(category, widget.gbvData.resources)),
@@ -160,7 +160,7 @@ class _ResourceDirectoryPanelState extends State<ResourceDirectoryPanel> {
           AppLaunchUrl.launch(context: context, url: externalLinkDetail.content);
         } else break;
       }
-      case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource))); break;
+      case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: resource))); break;
       case GBVResourceType.directory: break;
     }
   }

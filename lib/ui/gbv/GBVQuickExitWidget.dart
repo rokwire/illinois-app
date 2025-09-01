@@ -3,9 +3,9 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 
-class QuickExitWidget extends StatelessWidget {
+class GBVQuickExitWidget extends StatelessWidget {
 
-  QuickExitWidget({super.key});
+  GBVQuickExitWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

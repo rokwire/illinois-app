@@ -33,7 +33,7 @@ class GBVResourceListPanel extends StatelessWidget {
     return
       SingleChildScrollView(child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          QuickExitWidget(),
+          GBVQuickExitWidget(),
           Padding(padding: EdgeInsets.only(top: 16, left: 16), child: (
               Text(resourceListScreen.title ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")))
           ),
@@ -122,8 +122,8 @@ class GBVResourceListPanel extends StatelessWidget {
           AppLaunchUrl.launch(context: context, url: externalLinkDetail.content);
         } else break;
       }
-      case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource))); break;
-      case GBVResourceType.directory: Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDirectoryPanel(gbvData: this.gbvData))); break;
+      case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: resource))); break;
+      case GBVResourceType.directory: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDirectoryPanel(gbvData: this.gbvData))); break;
     }
   }
 

@@ -167,7 +167,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
             )
           ),
           Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
-          QuickExitWidget().quickExitButton(context)
+          GBVQuickExitWidget().quickExitButton(context)
         ],
       )
     );
@@ -205,14 +205,14 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
   }
 
   void _onResourceDirectory(BuildContext context, GBVData gbvContent) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDirectoryPanel(gbvData: gbvContent)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDirectoryPanel(gbvData: gbvContent)));
   }
 
   void _onTalkToSomeone(BuildContext context, GBVData gbvContent) {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: _gbv!.resourceListScreens!.confidentialResources!, gbvData: gbvContent)));
   }
   void _onFileReport(BuildContext context, GBVData gbvContent) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: gbvContent.resources.firstWhere((r) => r.id == 'filing_a_report'))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: gbvContent.resources.firstWhere((r) => r.id == 'filing_a_report'))));
   }
   void _onSupportFriend(BuildContext context, GBVData gbvContent) {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: gbvContent.resourceListScreens!.supportingAFriend!, gbvData: gbvContent)));
