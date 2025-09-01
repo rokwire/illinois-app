@@ -100,13 +100,20 @@ class _ResourceDirectoryPanelState extends State<ResourceDirectoryPanel> {
   }
 
   Widget _resourceWidget (GBVResource resource) {
-    Widget descriptionWidget = (resource.directoryContent.isNotEmpty && resource.type != GBVResourceType.external_link)
+    Widget descriptionWidget = (resource.type == GBVResourceType.external_link)
       ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        Column(children:
+          List.from(
+              resource.directoryContent.where((detail) => detail.type != GBVResourceDetailType.external_link)
+                .map((detail) => GBVDetailContentWidget(resourceDetail: detail))
+          )
+        )
+      )
+      : Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(children:
           List.from(resource.directoryContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail)))
         )
-      )
-      : Container();
+      );
     return
       Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
         GestureDetector(onTap: () => _onTapResource(resource), child:
