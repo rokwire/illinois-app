@@ -68,6 +68,7 @@ class GBVDetailContentWidget extends StatelessWidget {
                   label: detail.title ?? detail.content ?? '',
                   textStyle: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
                   rightIcon: Styles().images.getImage('external-link', excludeFromSemantics: true) ?? Container(),
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                   onTap: () => AppLaunchUrl.launch(context: context, url: detail.content)
               )
             )
