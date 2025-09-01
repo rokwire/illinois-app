@@ -103,6 +103,11 @@ class _Map2PanelState extends State<Map2Panel>
 		    100,     50,      0                  // zoom 15 - 16
   ];
 
+  static const double _traySheetTopRadius = 24.0;
+  static const Size _traySheetPadding = const Size(16, 20);
+  static const double _traySheetDragHandleHeight = 3.0;
+  static const double _traySheetDragHandleWidthFactor = 0.25;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -495,53 +500,59 @@ class _Map2PanelState extends State<Map2Panel>
       snap: true, snapSizes: [0.03, 0.35, 0.65, 0.97],
       builder: (BuildContext context, ScrollController scrollController) =>
         Container(decoration: _traySheetDecoration, child:
-          Column(children: [
-          _traySheetDragHandle,
-            Expanded(child:
-              Padding(padding: EdgeInsets.symmetric(horizontal: 12,), child:
-                SingleChildScrollView(
-                  controller: scrollController,
-                  physics: AlwaysScrollableScrollPhysics(),
-                  child: _traySheetListContent,
-                ),
-              )
-            ),
-          ],)
+          ClipRRect(borderRadius: _traySheetBorderRadius, child:
+            CustomScrollView(controller: scrollController, /* physics: AlwaysScrollableScrollPhysics(), */ slivers: [
+              SliverAppBar(
+                pinned: true,
+                toolbarHeight: _traySheetDragHandleHeight + _traySheetPadding.height,
+                backgroundColor: Colors.transparent,
+                title: _traySheetDragHandle,
+              ),
+              //SliverPadding(padding: EdgeInsets.only(top: 42), sliver:
+              SliverList(
+                delegate: SliverChildListDelegate(_traySheetListContent),
+              ),
+            ],),
+          ),
         ),
     );
 
-
   BoxDecoration get _traySheetDecoration => BoxDecoration(
     color: Styles().colors.white,
-    borderRadius: BorderRadius.vertical(top: Radius.circular(32.0)),
-    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018 /* Colors.black26 */, blurRadius: 12.0,),],
+    borderRadius: _traySheetBorderRadius,
+    boxShadow: [_traySheetBoxShadow],
   );
+  BorderRadius get _traySheetBorderRadius => BorderRadius.vertical(top: Radius.circular(_traySheetTopRadius));
+  BoxShadow get _traySheetBoxShadow => BoxShadow(color: Styles().colors.blackTransparent018 /* Colors.black26 */, blurRadius: 12.0,);
 
   Widget get _traySheetDragHandle => Container(
-    width: _traySheetWidth / 4, height: 3.0,
-    margin: const EdgeInsets.symmetric(vertical: 8.0),
+    width: _traySheetWidth * _traySheetDragHandleWidthFactor, height: _traySheetDragHandleHeight,
     decoration: BoxDecoration(color: Styles().colors.lightGray, borderRadius: BorderRadius.circular(2.0),),
   );
 
   double get _traySheetWidth => _scaffoldKey.renderBoxSize?.width ?? _screenWidth;
   double get _screenWidth => context.mounted ? MediaQuery.of(context).size.width : 0;
 
-  Widget get _traySheetListContent {
+  List<Widget> get _traySheetListContent {
     List<Widget> items = <Widget>[];
     for (int i = 0; i < 100; i++) {
+      if (items.isNotEmpty) {
+        items.add(SizedBox(height: 4,));
+      }
       items.add(Container(
         decoration: BoxDecoration(
-          color: Styles().colors.fillColorPrimary,
-          borderRadius: BorderRadius.all(Radius.circular(12.0)),
+          color: Styles().colors.accentColor3,
+          borderRadius: BorderRadius.all(Radius.circular(6.0)),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        margin: EdgeInsets.only(bottom: 4),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+        margin: EdgeInsets.symmetric(horizontal: _traySheetPadding.width),
         child: Row(children: [Expanded(child:
           Text('Item ${i + 1}', style: Styles().textStyles.getTextStyle('widget.dialog.message.medium'),),
         )],)
       ));
     }
-    return Column(children: items,);
+    items.add(SizedBox(height: _traySheetPadding.height,));
+    return items;
   }
 
   // Explores
