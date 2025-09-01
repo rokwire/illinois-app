@@ -490,7 +490,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
           Padding(
             padding: EdgeInsets.only(right: 16, left: 16, bottom: 32),
             child: Text(
-              'Here are resources based on your answers:',
+              'Based on what you shared, here are some options that may help. You’re in control of what happens next—take your time and explore what feels right. You’re not alone, and support is available if you need it.',
               style: Styles().textStyles.getTextStyle("widget.detail.regular"),
             ),
           ),
@@ -504,7 +504,6 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
     Widget descriptionWidget = (resource.directoryContent.isNotEmpty)
         ? Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
     Column(children:
-    // Map different directory content types here
     resource.directoryContent.map((detail) => Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"))).toList()
     )
     )
