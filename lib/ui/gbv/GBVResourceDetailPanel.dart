@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
-import 'package:illinois/ui/gbv/QuickExitWidget.dart';
+import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/model/GBV.dart';
 import 'package:illinois/utils/AppUtils.dart';
 
-class ResourceDetailPanel extends StatefulWidget {
+class GBVResourceDetailPanel extends StatefulWidget {
   final GBVResource resource;
 
-  ResourceDetailPanel({ super.key, required this.resource});
+  GBVResourceDetailPanel({ super.key, required this.resource});
 
   @override
-  State<StatefulWidget> createState() => _ResourceDetailPanelState();
+  State<StatefulWidget> createState() => _GBVResourceDetailPanelState();
 
 }
 
-class _ResourceDetailPanelState extends State<ResourceDetailPanel> {
+class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
 
   String _expandedSection = '';
 
@@ -36,7 +36,7 @@ class _ResourceDetailPanelState extends State<ResourceDetailPanel> {
     return
       SingleChildScrollView(child:
         Column(children: [
-          QuickExitWidget(),
+          GBVQuickExitWidget(),
             Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 // Padding(padding: EdgeInsets.only(top: 16, left: 16), child: (

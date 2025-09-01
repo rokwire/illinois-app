@@ -801,6 +801,9 @@
 
     "panel.assistant.popup.detail.small": {"extends": "widget.detail.small", "height": 1.5},
 
+    "panel.gbv.footer.regular.italic": {"extends": "widget.description.regular", "color": "mediumGray1", "font_family": "regular_italic"},
+    "panel.gbv.footer.regular.italic.underline":  {"extends": "panel.gbv.footer.regular.italic", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "mediumGray1"},
+
     "common.panel.title": {"font_family": "extra_bold", "size": 20.0, "color": "fillColorPrimary", "height":  1.2},
     "common.title.secondary": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
     "common.body": {"font_family": "regular", "size": 14.0, "color": "textSurface"},
