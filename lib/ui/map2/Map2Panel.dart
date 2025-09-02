@@ -522,7 +522,7 @@ class _Map2PanelState extends State<Map2Panel>
                 pinned: true,
                 toolbarHeight: _traySheetDragHandleHeight + _traySheetPadding.height,
                 backgroundColor: Colors.transparent,
-                title: _traySheetDragHandle,
+                title: _traySheetDebugDragHandle,
               ),
               //SliverPadding(padding: EdgeInsets.only(top: 42), sliver:
               SliverList(
@@ -540,6 +540,15 @@ class _Map2PanelState extends State<Map2Panel>
   );
   BorderRadius get _traySheetBorderRadius => BorderRadius.vertical(top: Radius.circular(_traySheetTopRadius));
   BoxShadow get _traySheetBoxShadow => BoxShadow(color: Styles().colors.blackTransparent018 /* Colors.black26 */, blurRadius: 12.0,);
+  
+  Widget get _traySheetDebugDragHandle => Row(children: [
+    Expanded(child: Container()),
+    _traySheetDragHandle,
+    Expanded(child: Align(alignment: Alignment.centerRight, child: _traySheetDebugDragInfo))
+  ],);
+
+  Widget get _traySheetDebugDragInfo =>
+    Text('${_visibleExplores?.length} / ${_explores?.length}', style: Styles().textStyles.getTextStyle('widget.message.tiny'),);
 
   Widget get _traySheetDragHandle => Container(
     width: _traySheetWidth * _traySheetDragHandleWidthFactor, height: _traySheetDragHandleHeight,
@@ -554,23 +563,37 @@ class _Map2PanelState extends State<Map2Panel>
     if (_visibleExplores != null) {
       for (Explore explore in _visibleExplores!) {
         if (items.isNotEmpty) {
-          items.add(SizedBox(height: 4,));
+          items.add(SizedBox(height: 8,));
         }
-        items.add(Container(
-          decoration: BoxDecoration(
-            color: Styles().colors.accentColor3,
-            borderRadius: BorderRadius.all(Radius.circular(6.0)),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-          margin: EdgeInsets.symmetric(horizontal: _traySheetPadding.width),
-          child: Row(children: [Expanded(child:
-            Text("${explore.exploreTitle ?? ''} / ${_visibleExplores?.length}" , style: Styles().textStyles.getTextStyle('widget.dialog.message.medium'),),
-          )],)
-        ));
+        items.add(_traySheetDebugListCard(explore));
       }
       items.add(SizedBox(height: _traySheetPadding.height / 2,));
     }
     return items;
+  }
+
+  Widget _traySheetDebugListCard(Explore explore) =>
+    InkWell(onTap: () => _onTapListCard(explore), child:
+      Container(
+        decoration: BoxDecoration(
+          color: explore.uiColor ?? Styles().colors.disabledTextColor,
+          borderRadius: BorderRadius.all(Radius.circular(6.0)),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        margin: EdgeInsets.symmetric(horizontal: _traySheetPadding.width),
+        child: Row(children: [
+          Expanded(child:
+            Text("${explore.exploreTitle ?? ''} / ${_visibleExplores?.length}", style: Styles().textStyles.getTextStyle('widget.dialog.message.medium'),),
+          ),
+          Padding(padding: EdgeInsets.only(left: 8), child:
+            Styles().images.getImage('chevron-right', color: Styles().colors.white)
+          )
+        ],)
+      )
+    );
+
+  void _onTapListCard(Explore explore) {
+    explore.exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
   }
 
   // Map Styles
