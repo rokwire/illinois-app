@@ -1,53 +1,52 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/SurveyTracker.dart';
-import 'package:illinois/ui/gbv/SituationStepPanel.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
-import 'package:illinois/ui/gbv/ResourceDetailPanel.dart';
+import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:rokwire_plugin/service/surveys.dart';
-import 'package:rokwire_plugin/model/survey.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
-import 'package:illinois/ui/gbv/QuickExitWidget.dart';
+import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 
 import '../../model/GBV.dart';
-import 'ResourceDirectoryPanel.dart';
+import 'GBVResourceDirectoryPanel.dart';
 
-class SexualMisconductPathwaysPanel extends StatefulWidget {
+class GBVPathwaysPanel extends StatefulWidget {
 
-  SexualMisconductPathwaysPanel({ super.key });
+  GBVPathwaysPanel({ super.key });
 
   @override
-  State<StatefulWidget> createState() => _SexualMisconductPathwaysPanelState();
+  State<StatefulWidget> createState() => _GBVPathwaysPanelState();
 
 }
 
-class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathwaysPanel> {
-  List<String> _categories = [];
-  List<GBVResource> _resources = [];
-  GBVResourceListScreens? _resourceListScreens;
+class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
+  GBVData? _gbv;
   bool _loading = true;
   GestureRecognizer? _resourceDirectoryRecognizer;
 
   @override
   void initState() {
-    _resourceDirectoryRecognizer = TapGestureRecognizer()..onTap = () => _onResourceDirectory(context);
 
     _loadResources().then((gbv) {
-      setStateIfMounted(() {
-        _loading = false;
-        _resources = gbv?.resources ?? [];
-        _categories = gbv?.directoryCategories ?? [];
-        _resourceListScreens = gbv?.resourceListScreens;
-      });
+      if (mounted) {
+        setState(() {
+          _gbv = gbv;
+          _loading = false;
+        });
+
+        if (_gbv != null) {
+          _resourceDirectoryRecognizer = TapGestureRecognizer()..onTap = () => _onResourceDirectory(context, _gbv!);
+          if (Storage().gbvQuickExitPrompted != true) _onQuickExitInfo(context);
+        }
+      }
     });
 
     super.initState();
@@ -62,8 +61,9 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.sexual_misconduct.header.title', 'Inappropriate Sexual Behavior')),
-      body: (_loading) ? _buildLoadingContent() : _buildContent(context),
+      body: (_loading) ? _buildLoadingContent() : (_gbv != null && _gbv!.resources.isNotEmpty) ? _buildContent(context, _gbv!) : _buildErrorContent(),
       bottomNavigationBar: uiuc.TabBar(),
+      backgroundColor: Styles().colors.background
     );
   }
 
@@ -77,22 +77,29 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
     ]);
   }
 
-  Widget _buildContent(BuildContext context) {
+  Widget _buildErrorContent() {
+    return Center(
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('', 'Failed to load resources.'),
+            textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.medium.thin"))));
+  }
+
+  Widget _buildContent(BuildContext context, GBVData gbvContent) {
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
       SectionSlantHeader(
-        headerWidget: _buildHeader(context),
+        headerWidget: _buildHeader(context, gbvContent),
         slantColor: Styles().colors.gradientColorPrimary,
         slantPainterHeadingHeight: 0,
         backgroundColor: Styles().colors.background,
         children: [
+          _buildLinkDetail('Browsing History Settings')
         ],
-        childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 38),
         allowOverlap: false,
       )
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, GBVData gbvContent) {
     Widget content;
     content = Padding(padding: EdgeInsets.symmetric(horizontal: 12), child:
       Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -106,22 +113,20 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           RichText(text: TextSpan(children: [
-        TextSpan(
-          text: Localization().getStringEx('', 'Choose one of the below pathways or '),
-          style: Styles().textStyles.getTextStyle('widget.description.regular.highlight')
+            TextSpan(
+              text: Localization().getStringEx('', 'Choose one of the below pathways or '),
+              style: Styles().textStyles.getTextStyle('widget.description.regular.highlight')
+            ),
+            TextSpan(
+                text: Localization().getStringEx('', 'view a list of resources.'),
+                style: Styles().textStyles.getTextStyle('widget.description.regular.highlight.underline'),
+                recognizer: _resourceDirectoryRecognizer,
+            )
+          ]))
         ),
-        TextSpan(
-            text: Localization().getStringEx('', 'view a list of resources.'),
-            style: Styles().textStyles.getTextStyle('widget.description.regular.highlight.underline'),
-            recognizer: _resourceDirectoryRecognizer,
-        )
-    ]))
-        ),
-        Visibility(visible: (_resourceListScreens?.confidentialResources != null), child:
-          _buildPathwayButton(context, 'Talk to someone confidentially', () => _onTalkToSomeone(context)),
-        ),
-        _buildPathwayButton(context, 'File a report', () => _onFileReport(context)),
-        _buildPathwayButton(context, 'Support a friend', () => _onSupportFriend(context)),
+        if (gbvContent.resourceListScreens?.confidentialResources != null) _buildPathwayButton(context, 'Talk to someone confidentially', () => _onTalkToSomeone(context, gbvContent)),
+        if (gbvContent.resources.any((resource) => resource.id == 'filing_a_report')) _buildPathwayButton(context, 'File a report', () => _onFileReport(context, gbvContent)),
+        if (gbvContent.resourceListScreens?.supportingAFriend != null) _buildPathwayButton(context, 'Support a friend', () => _onSupportFriend(context, gbvContent)),
         _buildPathwayButton(context, "I'm not sure yet", () => _onNotSure(context)),
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
         _buildQuickExit(context),
@@ -166,7 +171,7 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
             )
           ),
           Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
-          QuickExitWidget().quickExitButton(context)
+          GBVQuickExitWidget().quickExitButton(context)
         ],
       )
     );
@@ -198,21 +203,23 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
       ]
       ),
       closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
-    ),);
+    ),).then((_) => {
+      if (Storage().gbvQuickExitPrompted != true) Storage().gbvQuickExitPrompted = true
+    });
   }
 
-  void _onResourceDirectory(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDirectoryPanel(categories: _categories, resources: _resources)));
+  void _onResourceDirectory(BuildContext context, GBVData gbvContent) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDirectoryPanel(gbvData: gbvContent)));
   }
 
-  void _onTalkToSomeone(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: _resourceListScreens!.confidentialResources!, resources: _resources, categories: _categories)));
+  void _onTalkToSomeone(BuildContext context, GBVData gbvContent) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: _gbv!.resourceListScreens!.confidentialResources!, gbvData: gbvContent)));
   }
-  void _onFileReport(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: _resources.firstWhere((r) => r.id == 'filing_a_report'))));
+  void _onFileReport(BuildContext context, GBVData gbvContent) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: gbvContent.resources.firstWhere((r) => r.id == 'filing_a_report'))));
   }
-  void _onSupportFriend(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: _resourceListScreens!.supportingAFriend!, resources: _resources, categories: _categories)));
+  void _onSupportFriend(BuildContext context, GBVData gbvContent) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: gbvContent.resourceListScreens!.supportingAFriend!, gbvData: gbvContent)));
     // Navigate to Supporting a Friend Resources
   }
   void _onNotSure(BuildContext context) async {
@@ -240,14 +247,33 @@ class _SexualMisconductPathwaysPanelState extends State<SexualMisconductPathways
 
 
 
-  Future<GBV?> _loadResources() async {
+  Future<GBVData?> _loadResources() async {
     // temporary json load from assets
     String? GBVjson = await AppBundle.loadString('assets/extra/gbv/gbv.json');
-    GBV? gbv = (GBVjson != null)
-        ? GBV.fromJson(JsonUtils.decodeMap(GBVjson))
+    GBVData? gbv = (GBVjson != null)
+        ? GBVData.fromJson(JsonUtils.decodeMap(GBVjson))
         : null;
     await Future.delayed(Duration(seconds: 1));
     return gbv;
+  }
+
+  Widget _buildLinkDetail(String? text) =>
+      Semantics(label: text, button: true, child:
+        InkWell(onTap: _onTapDisplaySettings, child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Padding(padding: EdgeInsets.only(right: 5, top: 12, bottom: 12), child:
+              Styles().images.getImage('settings', excludeFromSemantics: true)),
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(top: 8), child:
+                Text(text ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.medium.underline'), semanticsLabel: "",)
+              )
+            )
+          ])
+        ),
+      );
+
+  void _onTapDisplaySettings() {
+    SettingsHomePanel.present(context, content: SettingsContentType.recent_items);
   }
 
 }

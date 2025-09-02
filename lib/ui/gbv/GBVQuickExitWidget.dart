@@ -3,9 +3,9 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 
-class QuickExitWidget extends StatelessWidget {
+class GBVQuickExitWidget extends StatelessWidget {
 
-  QuickExitWidget({super.key});
+  GBVQuickExitWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -72,11 +72,12 @@ class GBVQuickExitIcon extends StatelessWidget {
     Container(height: size, width: size,
       decoration: BoxDecoration(
         color: Styles().colors.white,
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: Styles().colors.lightGray),
         borderRadius: BorderRadius.circular(size / 2),
         boxShadow: [BoxShadow(
           color: Colors.black26,
-          blurRadius: 10.0,
+          blurRadius: 5.0,
+          offset: Offset(2, 2)
         ),]
       ),
       child: Center(child:
