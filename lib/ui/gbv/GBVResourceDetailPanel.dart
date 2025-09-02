@@ -74,7 +74,11 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
             Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
               Row(children: [
                 Expanded(child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                    if (section.label != null)
+                      Padding(padding: EdgeInsets.only(left: 16), child:
+                        Text(section.label ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"))
+                      ),
                     Padding(padding: EdgeInsets.only(left: 16), child:
                       Text(section.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
                     ),

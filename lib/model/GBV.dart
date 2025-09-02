@@ -70,10 +70,12 @@ class GBVResourceList {
 class GBVDetailListSection {
   final String title;
   final List<GBVResourceDetail> content;
+  final String? label;
 
   GBVDetailListSection({
     required this.title,
-    required this.content
+    required this.content,
+    this.label
   });
 
   static List<GBVDetailListSection> listFromJson(List<dynamic>? jsonList) {
@@ -90,6 +92,7 @@ class GBVDetailListSection {
     return (json != null) ? GBVDetailListSection(
       title: JsonUtils.stringValue(json['title']) ?? "",
       content: GBVResourceDetail.listFromJson(JsonUtils.listValue(json['content'])),
+      label: JsonUtils.stringValue(json['label']),
     ) : null;
   }
 }
