@@ -129,9 +129,12 @@ class _Map2PanelState extends State<Map2Panel>
     ]);
 
     _availableContentTypes = _Map2ContentType.availableTypes;
+    _selectedContentType = _Map2ContentType.initialType(availableTypes: _availableContentTypes);
 
-    _initMapStyles();
     _updateLocationServicesStatus(init: true);
+    _initMapStyles();
+    _initExplores();
+
     super.initState();
   }
 
@@ -454,7 +457,7 @@ class _Map2PanelState extends State<Map2Panel>
 
   void _onContentTypeEntry(Map2ContentType contentType) {
     setState(() {
-      _selectedContentType = contentType;
+      Storage()._storedMap2ContentType = _selectedContentType = contentType;
     });
     _initExplores();
   }
@@ -490,7 +493,7 @@ class _Map2PanelState extends State<Map2Panel>
 
   void _onUnselectContentType() {
     setState(() {
-      _selectedContentType = null;
+      Storage()._storedMap2ContentType = _selectedContentType = null;
       _explores = _visibleExplores = null;
       _exploresTask = null;
       _exploresProgress = false;
@@ -1157,7 +1160,7 @@ extension _Map2ContentType on Map2ContentType {
     }
   }
 
-  static Map2ContentType? fromJsonString(String? value) {
+  static Map2ContentType? fromJson(String? value) {
     switch (value) {
       case 'buildings': return Map2ContentType.CampusBuildings;
       case 'student_courses': return Map2ContentType.StudentCourses;
@@ -1171,12 +1174,35 @@ extension _Map2ContentType on Map2ContentType {
     }
   }
 
+  String toJson() {
+    switch(this) {
+      case Map2ContentType.CampusBuildings:      return 'buildings';
+      case Map2ContentType.StudentCourses:       return 'student_courses';
+      case Map2ContentType.DiningLocations:      return 'dining';
+      case Map2ContentType.Events2:              return 'events2';
+      case Map2ContentType.Laundries:            return 'laundry';
+      case Map2ContentType.BusStops:             return 'mtd_stops';
+      case Map2ContentType.Therapists:           return 'mental_health';
+      case Map2ContentType.MyLocations:          return 'my_locations';
+    }
+  }
+
+  static const Map2ContentType _defaultType = Map2ContentType.CampusBuildings;
+
+  static Map2ContentType? initialType({ Iterable<Map2ContentType>? availableTypes }) {
+    dynamic storedType = Storage()._storedAvailableMap2ContentType(availableTypes: availableTypes);
+    return (storedType is Map2ContentType?) ? storedType : (
+      (_defaultType._ensure(availableTypes: availableTypes)) ??
+      ((availableTypes?.isNotEmpty == true) ? availableTypes?.first : null)
+    );
+  }
+
   static Set<Map2ContentType> get availableTypes {
     List<dynamic>? codes = FlexUI()['explore.map'];
     Set<Map2ContentType> availableTypes = <Map2ContentType>{};
     if (codes != null) {
       for (dynamic code in codes) {
-        Map2ContentType? contentType = fromJsonString(code);
+        Map2ContentType? contentType = fromJson(code);
         if (contentType != null) {
           availableTypes.add(contentType);
         }
@@ -1184,9 +1210,37 @@ extension _Map2ContentType on Map2ContentType {
     }
     return availableTypes;
   }
+
+  Map2ContentType? _ensure({ Iterable<Map2ContentType>? availableTypes }) =>
+      (availableTypes?.contains(this) != false) ? this : null;
 }
 
-extension _Map2ExploreContent on Map2ContentType {
+extension _StorageMapExt on Storage {
+  static const String _nullContentTypeJson = 'null';
 
+  // ignore: unused_element
+  Map2ContentType? get _storedMap2ContentType => _Map2ContentType.fromJson(Storage().selectedMap2ContentType);
+  set _storedMap2ContentType(Map2ContentType? value) => Storage().selectedMap2ContentType = value?.toJson() ?? _nullContentTypeJson;
+
+  dynamic _storedAvailableMap2ContentType({ Iterable<Map2ContentType>? availableTypes }) {
+    String? storedTypeJson = Storage().selectedMap2ContentType;
+    if (storedTypeJson != null) {
+      Map2ContentType? storedType = _Map2ContentType.fromJson(storedTypeJson);
+      if (storedType == null) {
+        return null; // selected: null
+      }
+      else {
+        Map2ContentType? ensuredStoredType = storedType._ensure(availableTypes: availableTypes);
+        if (ensuredStoredType != null) {
+          return ensuredStoredType; // selected: ensuredStoredType
+        }
+        else {
+          return false; // selected: n.a.
+        }
+      }
+    }
+    else {
+      return false; // selected: n.a.
+    }
+  }
 }
-
