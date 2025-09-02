@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Explore.dart';
@@ -89,6 +90,7 @@ class _Map2PanelState extends State<Map2Panel>
 
   DateTime? _pausedDateTime;
   Position? _currentLocation;
+  Map<String, dynamic>? _mapStyles;
   LocationServicesStatus? _locationServicesStatus;
 
   static const CameraPosition _defaultCameraPosition = CameraPosition(target: _defaultCameraTarget, zoom: _defaultCameraZoom);
@@ -113,6 +115,10 @@ class _Map2PanelState extends State<Map2Panel>
   final double _trayMinSize = _traySnapSizes.first;
   final double _trayMaxSize = _traySnapSizes.last;
 
+  static const String _mapStylesAssetName = 'assets/map.styles.json';
+  static const String _mapStylesBuildingsKey = 'explore-poi';
+  static const String _mapStylesBusStopsKey = 'mtd-stop';
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -124,6 +130,7 @@ class _Map2PanelState extends State<Map2Panel>
 
     _availableContentTypes = _Map2ContentType.availableTypes;
 
+    _initMapStyles();
     _updateLocationServicesStatus(init: true);
     super.initState();
   }
@@ -136,6 +143,7 @@ class _Map2PanelState extends State<Map2Panel>
   }
 
   // NotificationsListener
+
   @override
   void onNotification(String name, dynamic param) {
     if (name == AppLivecycle.notifyStateChanged) {
@@ -181,6 +189,7 @@ class _Map2PanelState extends State<Map2Panel>
   }
 
   // AutomaticKeepAliveClientMixin
+
   @override
   bool get wantKeepAlive => true;
 
@@ -282,7 +291,7 @@ class _Map2PanelState extends State<Map2Panel>
       myLocationButtonEnabled: _userLocationEnabled,
       mapToolbarEnabled: Storage().debugMapShowLevels == true,
       markers: _mapMarkers ?? const <Marker>{},
-      style: null,
+      style: _currentMapStyle,
       indoorViewEnabled: true,
       //trafficEnabled: true,
       // This fixes #4306. The gestureRecognizers parameter is needed because of PopScopeFix wrapper in RootPanel,
@@ -562,6 +571,21 @@ class _Map2PanelState extends State<Map2Panel>
       items.add(SizedBox(height: _traySheetPadding.height / 2,));
     }
     return items;
+  }
+
+  // Map Styles
+
+  Future<void> _initMapStyles() async {
+    _mapStyles = JsonUtils.decodeMap(await rootBundle.loadString(_mapStylesAssetName));
+  }
+
+  String? get _currentMapStyle {
+    switch (_selectedContentType) {
+      case Map2ContentType.Therapists:
+      case Map2ContentType.CampusBuildings: return JsonUtils.encode(_mapStyles?[_mapStylesBuildingsKey]);
+      case Map2ContentType.BusStops: return JsonUtils.encode(_mapStyles![_mapStylesBusStopsKey]);
+      default: return null;
+    }
   }
 
   // Explores
