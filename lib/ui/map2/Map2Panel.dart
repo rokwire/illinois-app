@@ -693,8 +693,7 @@ class _Map2PanelState extends State<Map2Panel>
     List<Explore>? visibleExplores;
     if ((_mapController != null) && (explores != null) && explores.isNotEmpty) {
       visibleExplores = <Explore>[];
-      LatLngBounds mapBounds = await _mapController!.getVisibleRegion();
-      LatLngBounds clipBounds = _updateBoundsForSiblings(mapBounds, padding: _mapPadding, shrink: true);
+      LatLngBounds clipBounds = await _visibleMapBounds() ?? _shrinkBoundsForSiblings(await _mapController!.getVisibleRegion(), padding: _mapPadding / 2,);
       for (Explore explore in explores) {
         LatLng? exploreLocation = explore.exploreLocation?.exploreLocationMapCoordinate;
         if ((exploreLocation != null) && clipBounds.contains(exploreLocation)) {
@@ -869,47 +868,114 @@ class _Map2PanelState extends State<Map2Panel>
 
   CameraUpdate _cameraUpdateForBounds(LatLngBounds bounds) => (bounds.northeast == bounds.southwest) ?
     CameraUpdate.newCameraPosition(CameraPosition(target: bounds.northeast, zoom: _defaultCameraPosition.zoom)) :
-    CameraUpdate.newLatLngBounds(_updateBoundsForSiblings(bounds, padding: _mapPadding), _mapPadding);
+    CameraUpdate.newLatLngBounds(_enlargeBoundsForSiblings(bounds), _mapPadding);
 
-  LatLngBounds _updateBoundsForSiblings(LatLngBounds bounds, { double? padding, bool shrink = false, }) {
+  LatLngBounds _enlargeBoundsForSiblings(LatLngBounds bounds, { double? padding, }) {
     double northLat = bounds.northeast.latitude;
     double southLat = bounds.southwest.latitude;
     double boundHeight = northLat - southLat;
     double? mapHeight = _scaffoldKey.renderBoxSize?.height;
-    if ((northLat != southLat) && (mapHeight != null) && (mapHeight > 0))
-    {
-      double northDelta = 0;
-      double southDelta = 0;
+    if ((southLat < northLat) && (mapHeight != null) && (mapHeight > 0)) {
 
       double headingBarHeight = _contentHeadingBarKey.renderBoxSize?.height ?? 0.0;
       if (0 < headingBarHeight) {
-        northDelta += (headingBarHeight / mapHeight) * boundHeight;
+        northLat += (headingBarHeight / mapHeight) * boundHeight;
       }
 
-      double trayHeight = _traySheetKey.renderBoxSize?.height ?? 0;
-      if (trayHeight == 0) {
-        trayHeight = _trayInitialSize * math.max(mapHeight - headingBarHeight, 0);
+      double trayHeight = _traySheetKey.renderBoxSize?.height ?? 0.0;
+      if (trayHeight <= 0.0) {
+        trayHeight = _trayInitialSize * math.max(mapHeight - headingBarHeight, 0.0);
       }
-      if (0 < trayHeight) {
-        southDelta += (trayHeight / mapHeight) * boundHeight;
+      if (0.0 < trayHeight) {
+        southLat -= (trayHeight / mapHeight) * boundHeight;
       }
 
       if ((padding != null) && (0 < padding)) {
-        northDelta += (padding / mapHeight) * boundHeight;
-        southDelta += (padding / mapHeight) * boundHeight;
+        northLat += (padding / mapHeight) * boundHeight;
+        southLat -= (padding / mapHeight) * boundHeight;
       }
 
-      double north2Lat = shrink ? (northLat - northDelta) : (northLat + northDelta);
-      double south2Lat = shrink ? (southLat + southDelta) : (southLat - southDelta);
-      if (south2Lat <= north2Lat) {
-        debugPrint("[${northLat.toStringAsFixed(6)}, ${southLat.toStringAsFixed(6)}] => [${north2Lat.toStringAsFixed(6)}, ${south2Lat.toStringAsFixed(6)}]");
+      if (southLat < northLat) {
+        // debugPrint("[${northLat.toStringAsFixed(6)}, ${southLat.toStringAsFixed(6)}] => [${north2Lat.toStringAsFixed(6)}, ${south2Lat.toStringAsFixed(6)}]");
         return LatLngBounds(
-          northeast: LatLng(north2Lat, bounds.northeast.longitude),
-          southwest: LatLng(south2Lat, bounds.southwest.longitude)
+          northeast: LatLng(northLat, bounds.northeast.longitude),
+          southwest: LatLng(southLat, bounds.southwest.longitude)
         );
       }
     }
     return bounds;
+  }
+
+  LatLngBounds _shrinkBoundsForSiblings(LatLngBounds bounds, { double? padding, }) {
+    double northLat = bounds.northeast.latitude;
+    double southLat = bounds.southwest.latitude;
+    double boundHeight = northLat - southLat;
+    double? mapHeight = _scaffoldKey.renderBoxSize?.height;
+    if ((southLat < northLat) && (mapHeight != null) && (mapHeight > 0))
+    {
+      double headingBarHeight = _contentHeadingBarKey.renderBoxSize?.height ?? 0.0;
+      if (0 < headingBarHeight) {
+        northLat -= (headingBarHeight / mapHeight) * boundHeight;
+      }
+
+      double trayHeight = _traySheetKey.renderBoxSize?.height ?? 0.0;
+      if (trayHeight <= 0.0) {
+        trayHeight = _trayInitialSize * math.max(mapHeight - headingBarHeight, 0.0);
+      }
+      if (0.0 < trayHeight) {
+        southLat += (trayHeight / mapHeight) * boundHeight;
+      }
+
+      if ((padding != null) && (0 < padding)) {
+        northLat -= (padding / mapHeight) * boundHeight;
+        southLat += (padding / mapHeight) * boundHeight;
+      }
+
+      if (southLat <= northLat) {
+        // debugPrint("[${northLat.toStringAsFixed(6)}, ${southLat.toStringAsFixed(6)}] => [${north2Lat.toStringAsFixed(6)}, ${south2Lat.toStringAsFixed(6)}]");
+        return LatLngBounds(
+          northeast: LatLng(northLat, bounds.northeast.longitude),
+          southwest: LatLng(southLat, bounds.southwest.longitude)
+        );
+      }
+    }
+    return bounds;
+  }
+
+  Future<LatLngBounds?> _visibleMapBounds({ double? padding, }) async {
+    Size? mapSize = _scaffoldKey.renderBoxSize;
+    if ((mapSize != null) && (mapSize.width > 0) && (mapSize.height > 0) && (_mapController != null)) {
+      double top = 0, bottom = mapSize.height;
+
+      double headingBarHeight = _contentHeadingBarKey.renderBoxSize?.height ?? 0.0;
+      if (0 < headingBarHeight) {
+        top += headingBarHeight;
+      }
+
+      double trayHeight = _traySheetKey.renderBoxSize?.height ?? 0.0;
+      if (trayHeight <= 0.0) {
+        trayHeight = _trayInitialSize * math.max(mapSize.height - headingBarHeight, 0);
+      }
+      if (0.0 < trayHeight) {
+        bottom -= trayHeight;
+      }
+
+      if ((padding != null) && (0 < padding)) {
+        top += padding;
+        bottom -= padding;
+      }
+
+      if (top < bottom) {
+        // southwest, northeast
+        List<LatLng> result = await Future.wait<LatLng>(<Future<LatLng>>[
+          _mapController!.getLatLng(ScreenCoordinate(x:                     0, y: bottom.round())), // southwest
+          _mapController!.getLatLng(ScreenCoordinate(x: mapSize.width.round(), y: top.round())), // northeast
+        ]);
+        return LatLngBounds(southwest: result[0], northeast: result[1]);
+      }
+    }
+
+    return null;
   }
 
   // Map Markers
