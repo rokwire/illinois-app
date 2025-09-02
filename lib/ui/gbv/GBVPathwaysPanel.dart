@@ -14,6 +14,10 @@ import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
+import 'package:illinois/model/SurveyTracker.dart';
+import 'package:illinois/ui/gbv/SituationStepPanel.dart';
+import 'package:rokwire_plugin/service/surveys.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 
 import '../../model/GBV.dart';
 import 'GBVResourceDirectoryPanel.dart';
@@ -127,7 +131,8 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
         if (gbvContent.resourceListScreens?.confidentialResources != null) _buildPathwayButton(context, 'Talk to someone confidentially', () => _onTalkToSomeone(context, gbvContent)),
         if (gbvContent.resources.any((resource) => resource.id == 'filing_a_report')) _buildPathwayButton(context, 'File a report', () => _onFileReport(context, gbvContent)),
         if (gbvContent.resourceListScreens?.supportingAFriend != null) _buildPathwayButton(context, 'Support a friend', () => _onSupportFriend(context, gbvContent)),
-        _buildPathwayButton(context, "I'm not sure yet", () => _onNotSure(context)),
+        //Do a conditional variable check to make sure the survey came back or failed and add a flag check to _buildPathwayButton
+        if (gbvContent.resources.isNotEmpty) _buildPathwayButton(context, "I'm not sure yet", () => _onNotSure(context, gbvContent)),
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
         _buildQuickExit(context),
         // ),
@@ -222,7 +227,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: gbvContent.resourceListScreens!.supportingAFriend!, gbvData: gbvContent)));
     // Navigate to Supporting a Friend Resources
   }
-  void _onNotSure(BuildContext context) async {
+  void _onNotSure(BuildContext context, GBVData gbvContent) async {
     Survey? survey = await Surveys().loadSurvey("cabb1338-48df-4299-8c2a-563e021f82ca");
 
     if (survey != null) {
@@ -231,7 +236,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
         context,
         MaterialPageRoute(
           builder: (context) => SituationStepPanel(
-            resources: _resources,
+            resources: gbvContent.resources,
             stepKey: 'situation',     
             responseTracker: responseTracker,
             surveyData: survey.data,

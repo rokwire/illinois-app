@@ -3,11 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:illinois/service/GBVRules.dart';
 import 'package:illinois/model/SurveyTracker.dart';
-import 'package:illinois/ui/gbv/QuickExitWidget.dart';
+import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/ui/gbv/ResourceDetailPanel.dart';
+import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
 import '../../model/GBV.dart';
 //TODO: Use Styles, localize texts, check all state mounting, fix back button
 
@@ -190,7 +190,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
   }
 
   void _onTapResource(GBVResource resource) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: resource)));
   }
 
   void _onBackPressed() {
@@ -323,7 +323,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            QuickExitWidget(),
+            GBVQuickExitWidget(),
             // Helper/More Info Textbox
             if (stepData.moreInfo != null && stepData.moreInfo!.isNotEmpty) ...[
               // Determine which icon/color to use based on current step
@@ -473,7 +473,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          QuickExitWidget(),
+          GBVQuickExitWidget(),
           Padding(
             padding: EdgeInsets.only(top: 16, left: 16),
             child: Text(
@@ -550,7 +550,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
         appBar: AppBar(title: Text('Error')),
         body: Column(
           children: [
-            QuickExitWidget(),
+            GBVQuickExitWidget(),
             Center(
               child: Text('Survey step data not found for key: $_currentStepKey'),
             )
