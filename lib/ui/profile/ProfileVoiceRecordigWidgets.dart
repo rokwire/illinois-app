@@ -1,6 +1,7 @@
 
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -259,9 +260,10 @@ enum _RecorderMode {record, play}
 
 class ProfileSoundRecorderDialog extends StatefulWidget {
   final Uint8List? initialRecordBytes;
+  final Future<AudioResult> Function(Uint8List? audioFile, String? extension)? onSave;
 
   // ignore: unused_element
-  const ProfileSoundRecorderDialog({super.key, this.initialRecordBytes});
+  const ProfileSoundRecorderDialog({super.key, this.initialRecordBytes, this.onSave});
 
   @override
   _ProfileSoundRecorderDialogState createState() => _ProfileSoundRecorderDialogState();
@@ -423,16 +425,16 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
       Uint8List? audioBytes = _controller.record;
       if (audioBytes != null) {
         setStateIfMounted(() => _loading = true);
-        AudioResult result = await Content().uploadUserNamePronunciation(audioBytes);
-        if(result.resultType == AudioResultType.succeeded){
+        AudioResult result = await (widget.onSave?.call(audioBytes, _controller.extension) ?? Content().uploadUserNamePronunciation.call(audioBytes));
+        if (result.resultType == AudioResultType.succeeded) {
           setStateIfMounted(() => _loading = false);
           _closeModal(result: result);
         } else {
           Log.d(result.errorMessage ?? "");
-          AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
+          AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload audio. Please try again later."));
         }
       } else {
-        AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
+        AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload audio. Please try again later."));
       }
     }catch(e){
       Log.e(e.toString());
@@ -542,8 +544,11 @@ class _ProfileSoundRecorderController {
       Log.d("START RECODING");
       if (await _audioRecorder.hasPermission()) {
         notifyChanged(() => _recording = true);
-        await _audioRecorder.start(const RecordConfig(), path: await _constructFilePath);
-        _recording = await _audioRecorder.isRecording();
+        String? path = await _constructFilePath;
+        if (kIsWeb || path != null) {
+          await _audioRecorder.start(RecordConfig(encoder: Platform.isIOS ? AudioEncoder.aacLc : AudioEncoder.wav), path: path ?? '');
+          // _recording = await _audioRecorder.isRecording();
+        }
       }
     } catch (e, stackTrace) {
       Log.d("START RECODING: ${e} - ${stackTrace}");
@@ -654,9 +659,11 @@ class _ProfileSoundRecorderController {
 
   bool get _haveAudio => CollectionUtils.isNotEmpty(_audio);
 
-  Future<String> get _constructFilePath async {
-    Directory dir = await getApplicationDocumentsDirectory();
-    return Path.join(dir.path, "tmp_audio.m4a");
+  String get extension => Platform.isIOS ? '.m4a' : '.wav';
+
+  Future<String?> get _constructFilePath async {
+    Directory? dir = kIsWeb ? null : await getApplicationDocumentsDirectory();
+    return (dir?.existsSync() == true) ? Path.join(dir!.path, "tmp_audio" + extension) : null;
   }
 
   Future<Uint8List?> getFileAsBytes(String? filePath) async{
