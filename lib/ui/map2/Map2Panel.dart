@@ -26,6 +26,7 @@ import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/map2/Map2TraySheet.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -106,10 +107,6 @@ class _Map2PanelState extends State<Map2Panel>
 		    100,     50,      0                  // zoom 15 - 16
   ];
 
-  static const double _traySheetTopRadius = 24.0;
-  static const Size _traySheetPadding = const Size(16, 20);
-  static const double _traySheetDragHandleHeight = 3.0;
-  static const double _traySheetDragHandleWidthFactor = 0.25;
   static const List<double> _traySnapSizes = [0.03, 0.35, 0.65, 0.97];
   final double _trayInitialSize = _traySnapSizes[1];
   final double _trayMinSize = _traySnapSizes.first;
@@ -517,87 +514,14 @@ class _Map2PanelState extends State<Map2Panel>
       minChildSize: _trayMinSize,
       maxChildSize: _trayMaxSize,
 
-      builder: (BuildContext context, ScrollController scrollController) =>
-        Container(key: _traySheetKey, decoration: _traySheetDecoration, child:
-          ClipRRect(borderRadius: _traySheetBorderRadius, child:
-            CustomScrollView(controller: scrollController, /* physics: AlwaysScrollableScrollPhysics(), */ slivers: [
-              SliverAppBar(
-                pinned: true,
-                toolbarHeight: _traySheetDragHandleHeight + _traySheetPadding.height,
-                backgroundColor: Colors.transparent,
-                title: _traySheetDebugDragHandle,
-              ),
-              //SliverPadding(padding: EdgeInsets.only(top: 42), sliver:
-              SliverList(
-                delegate: SliverChildListDelegate(_traySheetListContent),
-              ),
-            ],),
-          ),
-        ),
+      builder: (BuildContext context, ScrollController scrollController) => Map2TraySheet(
+        key: _traySheetKey,
+        visibleExplores: _visibleExplores,
+        scrollController: scrollController,
+        totalExploresCount: _explores?.length,
+        analyticsFeature: widget.analyticsFeature,
+      ),
     );
-
-  BoxDecoration get _traySheetDecoration => BoxDecoration(
-    color: Styles().colors.white,
-    borderRadius: _traySheetBorderRadius,
-    boxShadow: [_traySheetBoxShadow],
-  );
-  BorderRadius get _traySheetBorderRadius => BorderRadius.vertical(top: Radius.circular(_traySheetTopRadius));
-  BoxShadow get _traySheetBoxShadow => BoxShadow(color: Styles().colors.blackTransparent018 /* Colors.black26 */, blurRadius: 12.0,);
-  
-  Widget get _traySheetDebugDragHandle => Row(children: [
-    Expanded(child: Container()),
-    _traySheetDragHandle,
-    Expanded(child: Align(alignment: Alignment.centerRight, child: _traySheetDebugDragInfo))
-  ],);
-
-  Widget get _traySheetDebugDragInfo =>
-    Text('${_visibleExplores?.length} / ${_explores?.length}', style: Styles().textStyles.getTextStyle('widget.message.tiny'),);
-
-  Widget get _traySheetDragHandle => Container(
-    width: _traySheetWidth * _traySheetDragHandleWidthFactor, height: _traySheetDragHandleHeight,
-    decoration: BoxDecoration(color: Styles().colors.lightGray, borderRadius: BorderRadius.circular(2.0),),
-  );
-
-  double get _traySheetWidth => _scaffoldKey.renderBoxSize?.width ?? _screenWidth;
-  double get _screenWidth => context.mounted ? MediaQuery.of(context).size.width : 0;
-
-  List<Widget> get _traySheetListContent {
-    List<Widget> items = <Widget>[];
-    if (_visibleExplores != null) {
-      for (Explore explore in _visibleExplores!) {
-        if (items.isNotEmpty) {
-          items.add(SizedBox(height: 8,));
-        }
-        items.add(_traySheetDebugListCard(explore));
-      }
-      items.add(SizedBox(height: _traySheetPadding.height / 2,));
-    }
-    return items;
-  }
-
-  Widget _traySheetDebugListCard(Explore explore) =>
-    InkWell(onTap: () => _onTapListCard(explore), child:
-      Container(
-        decoration: BoxDecoration(
-          color: explore.uiColor ?? Styles().colors.disabledTextColor,
-          borderRadius: BorderRadius.all(Radius.circular(6.0)),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        margin: EdgeInsets.symmetric(horizontal: _traySheetPadding.width),
-        child: Row(children: [
-          Expanded(child:
-            Text("${explore.exploreTitle ?? ''} / ${_visibleExplores?.length}", style: Styles().textStyles.getTextStyle('widget.dialog.message.medium'),),
-          ),
-          Padding(padding: EdgeInsets.only(left: 8), child:
-            Styles().images.getImage('chevron-right', color: Styles().colors.white)
-          )
-        ],)
-      )
-    );
-
-  void _onTapListCard(Explore explore) {
-    explore.exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
-  }
 
   // Map Styles
 
