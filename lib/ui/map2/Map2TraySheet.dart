@@ -1,18 +1,34 @@
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/Appointment.dart';
+import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/MTD.dart';
+import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/academics/StudentCourses.dart';
+import 'package:illinois/ui/appointments/AppointmentCard.dart';
+import 'package:illinois/ui/dining/DiningCard.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/explore/ExploreCard.dart';
+import 'package:illinois/ui/home/HomeLaundryWidget.dart';
+import 'package:illinois/ui/mtd/MTDWidgets.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Map2TraySheet extends StatefulWidget {
   final int? totalExploresCount;
+  final Position? currentLocation;
   final List<Explore>? visibleExplores;
   final ScrollController? scrollController;
   final AnalyticsFeature? analyticsFeature;
 
-  Map2TraySheet({super.key, this.visibleExplores, this.scrollController, this.totalExploresCount, this.analyticsFeature});
+  Map2TraySheet({super.key, this.visibleExplores, this.scrollController, this.currentLocation, this.totalExploresCount, this.analyticsFeature});
 
   @override
   State<StatefulWidget> createState() => _Map2TraySheetState();
@@ -26,6 +42,8 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
   static const Size _traySheetPadding = const Size(16, 20);
   static const double _traySheetDragHandleHeight = 3.0;
   static const double _traySheetDragHandleWidthFactor = 0.25;
+
+  Set<String> _expandedBusStops = <String>{};
 
   @override
   Widget build(BuildContext context) =>
@@ -76,16 +94,88 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
     if (widget.visibleExplores != null) {
       for (Explore explore in widget.visibleExplores!) {
         if (items.isNotEmpty) {
-          items.add(SizedBox(height: 8,));
+          items.add(SizedBox(height: _traySheetListCardSpacing(explore),));
         }
-        items.add(_traySheetDebugListCard(explore));
+        items.add(Padding(padding: EdgeInsets.symmetric(horizontal: _traySheetPadding.width), child:
+          _traySheetListCard(explore),
+        ));
       }
       items.add(SizedBox(height: _traySheetPadding.height / 2,));
     }
     return items;
   }
 
-  Widget _traySheetDebugListCard(Explore explore) =>
+  Widget _traySheetListCard(Explore explore) {
+    if (explore is Event2) {
+      return Event2Card(explore,
+        userLocation: widget.currentLocation,
+        onTap: () => _onTapListCard(explore),
+      );
+    }
+    else if (explore is Dining) {
+      return DiningCard(explore,
+        onTap: (_) => _onTapListCard(explore),
+      );
+    }
+    else if (explore is LaundryRoom) {
+      return LaundryRoomCard(room: explore,
+        onTap: () => _onTapListCard(explore),
+      );
+    }
+    else if (explore is StudentCourse) {
+      return StudentCourseCard(course: explore,
+        analyticsFeature: widget.analyticsFeature,
+      );
+    }
+    else if (explore is Appointment) {
+      return AppointmentCard(appointment: explore,
+        analyticsFeature: widget.analyticsFeature,
+        onTap: () => _onTapListCard(explore),
+      );
+    }
+    else if (explore is MTDStop) {
+      return MTDStopCard(
+        stop: explore,
+        expanded: _expandedBusStops,
+        onDetail: (_) => _onTapListCard(explore),
+        onExpand: _onExpandMTDStop,
+        currentPosition: widget.currentLocation,
+        padding: EdgeInsets.zero,
+      );
+    }
+    else /* if ((explore is Building) || (explore is WellnessBuilding) || (explore is ExplorePOI)) */ {
+      return ExploreCard(explore: explore,
+        locationData: widget.currentLocation,
+        onTap: () => _onTapListCard(explore)
+      ); /* TBD */
+    }
+  }
+
+  double _traySheetListCardSpacing(Explore explore) {
+    if (explore is Event2) {
+      return 8;
+    }
+    else if (explore is Dining) {
+      return 8;
+    }
+    else if (explore is LaundryRoom) {
+      return 4;
+    }
+    else if (explore is StudentCourse) {
+      return 4;
+    }
+    else if (explore is Appointment) {
+      return 4;
+    }
+    else if (explore is MTDStop) {
+      return 4;
+    }
+    else /* if ((explore is Building) || (explore is WellnessBuilding) || (explore is ExplorePOI)) */ {
+      return 8; /* TBD */
+    }
+  }
+
+  /*Widget _traySheetListCard(Explore explore) =>
     InkWell(onTap: () => _onTapListCard(explore), child:
       Container(
         decoration: BoxDecoration(
@@ -103,10 +193,22 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
           )
         ],)
       )
-    );
+    );*/
 
   void _onTapListCard(Explore explore) {
-    explore.exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
+    explore.exploreLaunchDetail(context,
+      initialLocationData: widget.currentLocation,
+      analyticsFeature: widget.analyticsFeature
+    );
+  }
+
+  void _onExpandMTDStop(MTDStop? stop) {
+    Analytics().logSelect(target: "Bus Stop: ${stop?.name}" );
+    if (mounted && (stop?.id != null)) {
+      setState(() {
+        SetUtils.toggle(_expandedBusStops, stop?.id);
+      });
+    }
   }
 
 }

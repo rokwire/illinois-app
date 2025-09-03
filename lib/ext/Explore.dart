@@ -281,51 +281,53 @@ extension ExploreExt on Explore {
   }
 
   void exploreLaunchDetail(BuildContext context, { Core.Position? initialLocationData, AnalyticsFeature? analyticsFeature, ExploreSelectLocationBuilder? selectLocationBuilder }) {
+    Widget? panel = exploreDetailPanel(initialLocationData: initialLocationData, analyticsFeature: analyticsFeature, selectLocationBuilder: selectLocationBuilder);
+    if (panel != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => panel));
+    }
+  }
+
+  Widget? exploreDetailPanel({ Core.Position? initialLocationData, AnalyticsFeature? analyticsFeature, ExploreSelectLocationBuilder? selectLocationBuilder }) {
     // NB: selectLocationBuilder parameter is acknowledged only in ExploreBuildingDetailPanel for now.
     // Acknowledge it in other detail panels when other types of explores need to get selectable.
 
-    Route? route;
     if (this is Event2) {
         Event2 event2 = (this as Event2);
         if (event2.hasGame) {
-          route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event2.game, analyticsFeature: analyticsFeature,));
+          return AthleticsGameDetailPanel(game: event2.game, analyticsFeature: analyticsFeature,);
         } else {
-          route = CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event2, userLocation: initialLocationData, analyticsFeature: analyticsFeature));
+          return  Event2DetailPanel(event: event2, userLocation: initialLocationData, analyticsFeature: analyticsFeature);
         }
     }
     else if (this is Dining) {
-      route = CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature,),);
+      return ExploreDiningDetailPanel(dining: this as Dining, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature,);
     }
     else if (this is LaundryRoom) {
-      route = CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: this as LaundryRoom, analyticsFeature: analyticsFeature,),);
+      return LaundryRoomDetailPanel(room: this as LaundryRoom, analyticsFeature: analyticsFeature,);
     }
     else if (this is Game) {
-      route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: this as Game, analyticsFeature: analyticsFeature,),);
+      return AthleticsGameDetailPanel(game: this as Game, analyticsFeature: analyticsFeature,);
     }
     else if (this is Building) {
-      route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: this as Building, analyticsFeature: analyticsFeature, selectLocationBuilder: selectLocationBuilder,),);
+      return ExploreBuildingDetailPanel(building: this as Building, analyticsFeature: analyticsFeature, selectLocationBuilder: selectLocationBuilder,);
     }
     else if (this is WellnessBuilding) {
-      route = CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as WellnessBuilding).guideId, analyticsFeature: analyticsFeature ?? AnalyticsFeature.Wellness,),);
+      return GuideDetailPanel(guideEntryId: (this as WellnessBuilding).guideId, analyticsFeature: analyticsFeature ?? AnalyticsFeature.Wellness,);
     }
     else if (this is MTDStop) {
-      route = CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: this as MTDStop, analyticsFeature: analyticsFeature,),);
+      return MTDStopDeparturesPanel(stop: this as MTDStop, analyticsFeature: analyticsFeature,);
     }
     else if (this is StudentCourse) {
-      route = CupertinoPageRoute(builder: (context) => StudentCourseDetailPanel(course: this as StudentCourse, analyticsFeature: analyticsFeature,),);
+      return StudentCourseDetailPanel(course: this as StudentCourse, analyticsFeature: analyticsFeature,);
     }
     else if (this is Appointment) {
-      route = CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: this as Appointment, analyticsFeature: analyticsFeature,),);
+      return AppointmentDetailPanel(appointment: this as Appointment, analyticsFeature: analyticsFeature,);
     }
     else if (this is ExplorePOI) {
-      // Not supported
+      return null;
     }
     else {
-      route = CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: this, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature,),);
-    }
-
-    if (route != null) {
-      Navigator.push(context, route);
+      return ExploreDetailPanel(explore: this, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature,);
     }
   }
 }
