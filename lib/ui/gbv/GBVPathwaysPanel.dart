@@ -229,17 +229,13 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
   }
   void _onNotSure(BuildContext context, GBVData gbvContent) async {
     Survey? survey = await Surveys().loadSurvey("cabb1338-48df-4299-8c2a-563e021f82ca");
-
     if (survey != null) {
-      final SurveyTracker responseTracker = SurveyTracker();
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => SituationStepPanel(
+            survey: survey,
             resources: gbvContent.resources,
-            stepKey: 'situation',     
-            responseTracker: responseTracker,
-            surveyData: survey.data,
           ),
         ),
       );
@@ -248,7 +244,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
         SnackBar(content: Text("Unable to load the survey.")),
       );
     }
-}
+  }
 
 
 
