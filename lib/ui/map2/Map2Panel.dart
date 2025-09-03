@@ -73,10 +73,12 @@ class _Map2PanelState extends State<Map2Panel>
   CameraUpdate? _targetCameraUpdate;
   double? _lastMapZoom;
 
+  final ScrollController _contentTypesScrollController = ScrollController();
   final DraggableScrollableController _traySheetController = DraggableScrollableController();
 
   late Set<Map2ContentType> _availableContentTypes;
   Map2ContentType? _selectedContentType;
+  double _contentTypesScrollOffset = 0;
 
   List<Explore>? _explores;
   List<Explore>? _visibleExplores;
@@ -128,6 +130,8 @@ class _Map2PanelState extends State<Map2Panel>
     _availableContentTypes = _Map2ContentType.availableTypes;
     _selectedContentType = _Map2ContentType.initialType(availableTypes: _availableContentTypes);
 
+    _contentTypesScrollController.addListener(_onContentTypesScroll);
+
     _updateLocationServicesStatus(init: true);
     _initMapStyles();
     _initExplores();
@@ -139,6 +143,7 @@ class _Map2PanelState extends State<Map2Panel>
   void dispose() {
     NotificationService().unsubscribe(this);
     _traySheetController.dispose();
+    _contentTypesScrollController.dispose();
     super.dispose();
   }
 
@@ -212,17 +217,24 @@ class _Map2PanelState extends State<Map2Panel>
         ),
       ),
 
-      Positioned.fill(child: (_selectedContentType != null) ?
-        Column(children: [
-          _contentHeadingBar,
-          Expanded(child:
-            Visibility(visible: ((_exploresProgress == false) && (_visibleExplores?.isNotEmpty == true)), child:
-              _traySheet,
-            ),
-          )
-        ],) :
-        Align(alignment: Alignment.topCenter, child:
-          _contentTypesBar
+      Positioned.fill(child:
+        Visibility(visible: (_selectedContentType == null), child:
+          Align(alignment: Alignment.topCenter, child:
+            _contentTypesBar
+          ),
+        ),
+      ),
+
+      Positioned.fill(child:
+        Visibility(visible: (_selectedContentType != null), child:
+          Column(children: [
+            _contentHeadingBar,
+            Expanded(child:
+              Visibility(visible: ((_exploresProgress == false) && (_visibleExplores?.isNotEmpty == true)), child:
+                _traySheet,
+              ),
+            )
+          ],),
         ),
       ),
 
@@ -240,43 +252,6 @@ class _Map2PanelState extends State<Map2Panel>
           ),
         ),
     ],);
-
-  /* Widget get _scaffoldBody => Column(children: [
-    if (_selectedContentType != null)
-      _contentHeadingBar,
-
-    Expanded(child:
-      Stack(key: _mapWrapperKey, children: [
-        Positioned.fill(child:
-          Visibility(visible: _exploresProgress == false, child:
-            _mapView
-          ),
-        ),
-
-        if (_selectedContentType == null)
-          Positioned.fill(child:
-            Align(alignment: Alignment.topCenter, child:
-              _contentTypesBar,
-            ),
-          ),
-
-        if (_exploresProgress == true)
-          Positioned.fill(child:
-            Center(child:
-              _exploresProgressIndicator,
-            ),
-          ),
-
-        if (_markersProgress == true)
-          Positioned.fill(child:
-            Center(child:
-              _mapProgressIndicator,
-            ),
-          ),
-
-      ],)
-    )
-  ],); */
 
   Widget get _mapView => Container(decoration: _mapViewDecoration, child:
     GoogleMap(
@@ -416,6 +391,7 @@ class _Map2PanelState extends State<Map2Panel>
     SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: EdgeInsets.only(top: 16),
+      controller: _contentTypesScrollController,
       child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Row(mainAxisSize: MainAxisSize.min, children: _contentTypesEntries,)
       )
@@ -457,6 +433,16 @@ class _Map2PanelState extends State<Map2Panel>
       Storage()._storedMap2ContentType = _selectedContentType = contentType;
     });
     _initExplores();
+  }
+
+  void _onContentTypesScroll() {
+    _contentTypesScrollOffset = _contentTypesScrollController.offset;
+  }
+
+  void _updateContentTypesScrollPosition() {
+    if (_contentTypesScrollController.hasClients) {
+      _contentTypesScrollController.jumpTo(_contentTypesScrollOffset);
+    }
   }
 
   // Content Type
@@ -501,6 +487,9 @@ class _Map2PanelState extends State<Map2Panel>
       _buildMarkersTask = null;
       _lastMapZoom = null;
       _markersProgress = false;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      _updateContentTypesScrollPosition();
     });
   }
 
