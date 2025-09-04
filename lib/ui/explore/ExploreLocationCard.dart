@@ -2,9 +2,14 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/ext/Position.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -32,12 +37,10 @@ class ExploreLocationCard extends StatelessWidget {
       ClipRRect(borderRadius: _cardBorderRadius, child:
         Column(mainAxisSize: MainAxisSize.min, children: [
           _imageHeadingWidget ?? _colorHeadingWidget ?? Container(),
-          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
-            Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _titleWidget,
-              _detailsWidget,
-            ]),
-          ),
+          Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _titleWidget,
+            _detailsWidget,
+          ]),
         ],),
       ),
     );
@@ -56,21 +59,39 @@ class ExploreLocationCard extends StatelessWidget {
     (_headingColor != null) ? Container(decoration: _colorHeadingDecoration, height: _colorHeadingHeight,) : null;
 
   Widget get _titleWidget =>
-    Row(children: [
-      Expanded(child:
-        _titleContentWidget
-      ),
-    ],);
+    Padding(padding: _canFavorite ? EdgeInsets.only(left: 16) : EdgeInsets.only(left: 16, right: 16, top: 16), child:
+      Row(children: [
+        Expanded(child:
+          Text(explore?.exploreTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), overflow: TextOverflow.ellipsis)
+        ),
+        if (_canFavorite)
+          _favoriteButton,
+      ],),
+    );
 
-  Widget get _titleContentWidget =>
-    Text(explore?.exploreTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
+  bool get _canFavorite => (explore is Favorite) && Auth2().canFavorite;
+
+  Widget get _favoriteButton {
+    Favorite? favorite = (explore is Favorite) ? (explore as Favorite) : null;
+    bool isFavorite = Auth2().isFavorite(favorite);
+    Widget? favoriteStarIcon = favorite?.favoriteStarIcon(selected: isFavorite);
+    String semanticLabel = isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites');
+    String semanticHint = isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', '');
+    return InkWell(onTap: () => _onTapFavorite(), child:
+      Semantics(container: true, label: semanticLabel, hint: semanticHint, button: true, excludeSemantics: true, child:
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
+          favoriteStarIcon
+        )
+      )
+    );
+  }
 
   Widget get _detailsWidget {
     List<Widget> detailWidgets = ListUtils.stripNull(<Widget?>[
       _locationDetailsWidget,
     ]);
 
-    return detailWidgets.isNotEmpty ? Padding(padding: EdgeInsets.only(top: 4), child:
+    return detailWidgets.isNotEmpty ? Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
       Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: detailWidgets,)
     ) : Container();
   }
@@ -83,17 +104,30 @@ class ExploreLocationCard extends StatelessWidget {
     String? building = explore?.exploreLocation?.building;
     String? fullAddress = explore?.exploreLocation?.fullAddress;
     String? dispayDistance = StringUtils.ensureEmpty(currentLocation?.displayDistance(explore?.exploreLocation));
-    return <String>[
-      if ((building != null) && building.isNotEmpty &&
-          ((title == null) || title.isEmpty || (!building.contains(title) && title.contains(building))) &&
-          ((fullAddress == null) || fullAddress.isEmpty || (!fullAddress.contains(building) && !building.contains(fullAddress)))
-         )
-        building,
-      if ((fullAddress != null) && fullAddress.isNotEmpty)
-        fullAddress,
-      if ((dispayDistance != null) && dispayDistance.isNotEmpty)
-        dispayDistance,
-    ];
+    List<String> detailTexts = <String>[];
+
+    if ((building != null) && building.isNotEmpty &&
+        ((title == null) || title.isEmpty || (!building.contains(title) && title.contains(building))) &&
+        ((fullAddress == null) || fullAddress.isEmpty || (!fullAddress.contains(building) && !building.contains(fullAddress)))
+       )
+    {
+      detailTexts.add(building);
+    }
+
+    if ((fullAddress != null) && fullAddress.isNotEmpty) {
+      detailTexts.add(fullAddress);
+    }
+
+    String? dispayCoordinates = detailTexts.isEmpty ? explore?.exploreLocation?.displayCoordinates : null;
+    if ((dispayCoordinates != null) && dispayCoordinates.isNotEmpty) {
+      detailTexts.add(dispayCoordinates);
+    }
+
+    if ((dispayDistance != null) && dispayDistance.isNotEmpty) {
+      detailTexts.add(dispayDistance);
+    }
+
+    return detailTexts;
   }
 
   Widget _locationDetailTextWidget(String? text) =>
@@ -123,6 +157,12 @@ class ExploreLocationCard extends StatelessWidget {
         contentRows
       )
     ) : null;
+  }
+
+  void _onTapFavorite() {
+    Favorite? favorite = (explore is Favorite) ? (explore as Favorite) : null;
+    Analytics().logSelect(target: "Favorite: ${explore?.exploreTitle}", source: '${runtimeType.toString()}(${favorite?.favoriteKey})');
+    Auth2().prefs?.toggleFavorite(favorite);
   }
 
   static Decoration get _cardDecoration => BoxDecoration(

@@ -5,6 +5,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
@@ -145,7 +146,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
         padding: EdgeInsets.zero,
       );
     }
-    else if (explore is Building) {
+    else if ((explore is Building) || (explore is WellnessBuilding) || (explore is ExplorePOI))  {
       return ExploreLocationCard(explore,
         currentLocation: widget.currentLocation,
         onTap: () => _onTapListCard(explore),
@@ -157,7 +158,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
         onTap: () => _onTapListCard(explore),
       );
     }
-    else /* if (explore is ExplorePOI) */ {
+    else {
       return ExploreCard(explore: explore,
         locationData: widget.currentLocation,
         onTap: () => _onTapListCard(explore)

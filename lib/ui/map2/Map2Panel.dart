@@ -30,6 +30,7 @@ import 'package:illinois/ui/map2/Map2TraySheet.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -82,6 +83,7 @@ class _Map2PanelState extends State<Map2Panel>
 
   List<Explore>? _explores;
   List<Explore>? _visibleExplores;
+  Explore? _pinnedExplore;
   LoadExploresTask? _exploresTask;
   bool _exploresProgress = false;
 
@@ -124,6 +126,7 @@ class _Map2PanelState extends State<Map2Panel>
       AppLivecycle.notifyStateChanged,
       Connectivity.notifyStatusChanged,
       LocationServices.notifyStatusChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
     ]);
 
@@ -161,6 +164,11 @@ class _Map2PanelState extends State<Map2Panel>
     }
     else if (name == LocationServices.notifyStatusChanged) {
       _updateLocationServicesStatus(status: param);
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (_selectedContentType == Map2ContentType.MyLocations) {
+        _updateExplores();
+      }
     }
     else if (name == FlexUI.notifyChanged) {
       _updateAvailableContentTypes();
@@ -230,7 +238,7 @@ class _Map2PanelState extends State<Map2Panel>
           Column(children: [
             _contentHeadingBar,
             Expanded(child:
-              Visibility(visible: ((_exploresProgress == false) && (_visibleExplores?.isNotEmpty == true)), child:
+              Visibility(visible: ((_exploresProgress == false) && ((_visibleExplores?.isNotEmpty == true) || (_pinnedExplore != null))), child:
                 _traySheet,
               ),
             )
@@ -265,7 +273,7 @@ class _Map2PanelState extends State<Map2Panel>
       myLocationEnabled: _userLocationEnabled,
       myLocationButtonEnabled: _userLocationEnabled,
       mapToolbarEnabled: Storage().debugMapShowLevels == true,
-      markers: _mapMarkers ?? const <Marker>{},
+      markers: ((_pinnedExplore == null) ? _mapMarkers : null) ?? const <Marker>{},
       style: _currentMapStyle,
       indoorViewEnabled: true,
       //trafficEnabled: true,
@@ -331,10 +339,27 @@ class _Map2PanelState extends State<Map2Panel>
 
   void _onMapTap(LatLng coordinate) {
     // debugPrint('Map2 tap' );
+    if (_selectedContentType == Map2ContentType.MyLocations) {
+      if (_pinnedExplore != null) {
+        _pinExplore(null);
+      }
+      else {
+        ExplorePOI explorePOI = ExplorePOIImpl.fromMapCoordinate(coordinate);
+        if (_explores?.contains(explorePOI) != true) {
+          _pinExplore(explorePOI);
+        }
+      }
+    }
   }
 
   void _onMapPoiTap(PointOfInterest poi) {
     // debugPrint('Map2 POI tap' );
+    if (_selectedContentType == Map2ContentType.MyLocations) {
+      ExplorePOI explorePOI = ExplorePOIImpl.fromMapPOI(poi);
+      if (_explores?.contains(explorePOI) != true) {
+        _pinExplore(explorePOI);
+      }
+    }
   }
 
   void _onTapMarker(dynamic origin) {
@@ -478,6 +503,7 @@ class _Map2PanelState extends State<Map2Panel>
     setState(() {
       Storage()._storedMap2ContentType = _selectedContentType = null;
       _explores = _visibleExplores = null;
+      _pinnedExplore = null;
       _exploresTask = null;
       _exploresProgress = false;
 
@@ -493,6 +519,25 @@ class _Map2PanelState extends State<Map2Panel>
     });
   }
 
+  // My Locactions Content && Selection
+
+  void _pinExplore(Explore? exploreToPin) {
+    Explore? pinnedExplore = (_pinnedExplore != exploreToPin) ? exploreToPin : null;
+    if ((_pinnedExplore != pinnedExplore) && mounted) {
+      setState(() {
+        _pinnedExplore = pinnedExplore;
+        _updateVisibleExplores();
+      });
+    }
+  }
+
+  List<Explore>? get _pinnedVisibleExplores => (_pinnedExplore != null) ?
+    <Explore>[_pinnedExplore!] : null;
+
+  int? get _pinnedExploresCount => (_pinnedExplore != null) ?
+    1 : null;
+
+
   // Tray Sheet
 
   Widget get _traySheet =>
@@ -505,10 +550,10 @@ class _Map2PanelState extends State<Map2Panel>
 
       builder: (BuildContext context, ScrollController scrollController) => Map2TraySheet(
         key: _traySheetKey,
-        visibleExplores: _visibleExplores,
+        visibleExplores: _pinnedVisibleExplores ?? _visibleExplores,
         scrollController: scrollController,
         currentLocation: _currentLocation,
-        totalExploresCount: _explores?.length,
+        totalExploresCount: _pinnedExploresCount ?? _explores?.length,
         analyticsFeature: widget.analyticsFeature,
       ),
     );
@@ -539,6 +584,7 @@ class _Map2PanelState extends State<Map2Panel>
           _exploresTask = exploresTask;
           _exploresProgress = true;
           _explores = _visibleExplores = null;
+          _pinnedExplore = null;
         });
 
         // wait for explores load
@@ -559,6 +605,7 @@ class _Map2PanelState extends State<Map2Panel>
       else {
         setState(() {
           _explores = _visibleExplores = null;
+          _pinnedExplore = null;
           _exploresTask = null;
           _exploresProgress = false;
 
@@ -569,6 +616,37 @@ class _Map2PanelState extends State<Map2Panel>
           _lastMapZoom = null;
           _markersProgress = false;
         });
+      }
+    }
+  }
+
+  Future<void> _updateExplores() async {
+    if (mounted) {
+      LoadExploresTask? exploresTask = _loadExplores();
+      if (exploresTask != null) {
+        // start loading
+        setState(() {
+          _exploresTask = exploresTask;
+          _markersProgress = true;
+        });
+
+        // wait for explores load
+        List<Explore>? explores = await exploresTask;
+
+        if (mounted && (exploresTask == _exploresTask) && !DeepCollectionEquality().equals(_explores, explores)) {
+          await _buildMapContentData(explores, updateCamera: false, showProgress: true);
+          if (mounted && (exploresTask == _exploresTask)) {
+
+            setState(() {
+              _explores = explores;
+              _exploresTask = null;
+              if ((_pinnedExplore != null) && (explores?.contains(_pinnedExplore) == true)) {
+                _pinnedExplore = null;
+              }
+            });
+            _updateVisibleExplores();
+          }
+        }
       }
     }
   }
@@ -653,23 +731,27 @@ class _Map2PanelState extends State<Map2Panel>
 
   // Visible Explores
 
-  Future<List<Explore>?> _buildVisibleExplores(List<Explore>? explores) async {
+  Future<List<Explore>?> _buildVisibleExplores() async {
     List<Explore>? visibleExplores;
-    if ((_mapController != null) && (explores != null) && explores.isNotEmpty) {
+    if (_mapController != null) {
       visibleExplores = <Explore>[];
       LatLngBounds clipBounds = await _visibleMapBounds() ?? _shrinkBoundsForSiblings(await _mapController!.getVisibleRegion(), padding: _mapPadding / 2,);
-      for (Explore explore in explores) {
-        LatLng? exploreLocation = explore.exploreLocation?.exploreLocationMapCoordinate;
-        if ((exploreLocation != null) && clipBounds.contains(exploreLocation)) {
-          visibleExplores.add(explore);
+
+      if (_explores?.isNotEmpty == true) {
+        for (Explore explore in _explores!) {
+          LatLng? exploreLocation = explore.exploreLocation?.exploreLocationMapCoordinate;
+          if ((exploreLocation != null) && clipBounds.contains(exploreLocation)) {
+            visibleExplores.add(explore);
+          }
         }
       }
     }
+
     return visibleExplores;
   }
 
   Future<void> _updateVisibleExplores() async {
-    List<Explore>? visibleExplores = await _buildVisibleExplores(_explores);
+    List<Explore>? visibleExplores = await _buildVisibleExplores();
     if (mounted && !DeepCollectionEquality().equals(_visibleExplores, visibleExplores)) {
       setState(() {
         _visibleExplores = visibleExplores;
@@ -1157,4 +1239,27 @@ extension _StorageMapExt on Storage {
       return false; // selected: n.a.
     }
   }
+}
+
+extension ExplorePOIImpl on ExplorePOI {
+
+  static ExplorePOI fromMapPOI(PointOfInterest poi) =>
+    ExplorePOI(
+      placeId: poi.placeId,
+      name: poi.name.replaceAll('\n', ' '),
+      location: ExploreLocation(
+        latitude: poi.position.latitude,
+        longitude: poi.position.longitude
+      )
+    );
+
+  static ExplorePOI fromMapCoordinate(LatLng coordinate) =>
+    ExplorePOI(
+      placeId: null,
+      name: Localization().getStringEx('panel.explore.item.location.name','Location'),
+      location: ExploreLocation(
+        latitude: coordinate.latitude,
+        longitude: coordinate.longitude
+      )
+    );
 }
