@@ -124,7 +124,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> with NotificationsL
             Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
               Styles().images.getImage('drag-white', excludeFromSemantics: true),
             ),
-
+  
             Expanded(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
                 Semantics(label: widget.title, header: true, excludeSemantics: true, child:
