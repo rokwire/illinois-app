@@ -39,26 +39,19 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
           GBVQuickExitWidget(),
             Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                // Padding(padding: EdgeInsets.only(top: 16, left: 16), child: (
-                    Text(widget.resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")),
-                // ),
-                Padding(padding: EdgeInsets.symmetric(vertical: 4, horizontal: 0), child:
+                  Text(widget.resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")),
+                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
                 Container(height: 1, color: Styles().colors.surfaceAccent)
                 ),
-                Padding(padding: EdgeInsets.only(right: 0, left: 0, bottom: 32), child: (
+                Padding(padding: EdgeInsets.only(bottom: 32), child: (
                     Text(widget.resource.description ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"))
                 )),
-                Padding(padding: EdgeInsets.symmetric(horizontal: 0), child:
-                  Container(decoration:
-                    BoxDecoration(
-                    color: Styles().colors.white,
-                    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ), child: Column(children: [
-                  ...sections
-                    ])
-                  )
-                )
+                Container(decoration:
+                  BoxDecoration(
+                  color: Styles().colors.white,
+                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                ), child: Column(children: [...sections]))
               ])
             )
         ])

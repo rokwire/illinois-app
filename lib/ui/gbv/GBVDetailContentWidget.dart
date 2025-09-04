@@ -28,7 +28,7 @@ class GBVDetailContentWidget extends StatelessWidget {
               onTap: () => GeoMapUtils.launchLocation(detail.content),
               behavior: HitTestBehavior.translucent,
               child:
-                Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12), child:
+                Container(padding: EdgeInsets.only(left: 8, top: 12, bottom: 12), child:
                   Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
             )
           )
@@ -42,7 +42,7 @@ class GBVDetailContentWidget extends StatelessWidget {
               onTap: () => launchUrl(uri),
               behavior: HitTestBehavior.translucent,
               child:
-                Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12), child:
+                Container(padding: EdgeInsets.only(left: 8, top: 12, bottom: 12), child:
                   Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
             )
           )
@@ -55,7 +55,7 @@ class GBVDetailContentWidget extends StatelessWidget {
               onTap: () => AppLaunchUrl.launch(context: context, url: detail.content),
               behavior: HitTestBehavior.translucent,
               child:
-              Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12), child:
+              Container(padding: EdgeInsets.only(left: 8, top: 12, bottom: 12), child:
                 Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
             )
           )
@@ -82,14 +82,14 @@ class GBVDetailContentWidget extends StatelessWidget {
               onTap: () => launchUrl(uri),
               behavior: HitTestBehavior.translucent,
               child:
-              Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12), child:
+              Container(padding: EdgeInsets.only(left: 8, top: 12, bottom: 12), child:
                 Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
           )
         ];
       case GBVResourceDetailType.text:
         return [
           Expanded(child:
-            Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12), child:
+            Container(padding: EdgeInsets.symmetric(vertical: 12), child:
               Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small"))
             )
           )
