@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Split iOS build script into copying GoogleService-Info.plist and uploading DSYMs for Crashlytics, fixed run script's input & output files.
+### Fixed
+- Accessibility enhancements in HomeCustomizeFavoritesPanel [#1971](https://github.com/rokwire/illinois-app/issues/1971).
 
 ## [7.3.3] - 2025-08-21
 ### Changed

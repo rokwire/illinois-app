@@ -188,6 +188,7 @@
 	"panel.home.connect.not_logged_in.phone_or_email.title": "继续",
 	"panel.home.edit.favorites.header.title": "當前收藏夾",
 	"panel.home.edit.favorites.header.description": "點按、<b>按住</b>並拖動項目以重新排列您的收藏夾。 要從收藏夾中刪除項目，請點按星標。",
+	"panel.home.edit.favorites.header.description.accessibility.label": "Tap, hear position of item and swipe one finger up or down to move positions on the Favorites list. When you are moving out of Favorites, you'll be prompted to confirm.",
 	"panel.home.edit.favorites.unstar.link.button": "全部取消星標",
 	"panel.home.edit.favorites.confirmation.dialog.msg": "您確定要從收藏夾中刪除所有項目嗎？ 項目總是可以在以後添加回來。",
 	"panel.home.edit.unused.header.title": "其他要收藏的項目",

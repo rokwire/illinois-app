@@ -188,6 +188,7 @@
     "panel.home.connect.not_logged_in.phone_or_email.title": "Continuar",
     "panel.home.edit.favorites.header.title": "Favoritos actuales",
     "panel.home.edit.favorites.header.description": "Toque, <b>mantenga presionado</b> y arrastre un elemento para reordenar sus favoritos. Para eliminar un elemento de Favoritos, toque la estrella.",
+    "panel.home.edit.favorites.header.description.accessibility.label": "Tap, hear position of item and swipe one finger up or down to move positions on the Favorites list. When you are moving out of Favorites, you'll be prompted to confirm.",
     "panel.home.edit.favorites.unstar.link.button": "Desmarcar todo",
     "panel.home.edit.favorites.confirmation.dialog.msg": "¿Está seguro de que desea ELIMINAR todos los elementos de sus favoritos? Los artículos siempre se pueden volver a agregar más tarde.",
     "panel.home.edit.unused.header.title": "Otros artículos a favoritos",
