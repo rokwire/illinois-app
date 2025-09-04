@@ -19,7 +19,7 @@ class GBVResourceDetailPanel extends StatefulWidget {
 
 class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
 
-  String _expandedSection = '';
+  List<String> _expandedSections = [];
 
   @override
   Widget build(BuildContext context) =>
@@ -37,7 +37,7 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
       SingleChildScrollView(child:
         Column(children: [
           GBVQuickExitWidget(),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Text(widget.resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")),
                 Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
@@ -80,14 +80,14 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
                     Styles().images.getImage((isExternalLink)
                         ? 'external-link'
-                        : (_expandedSection == section.title) ? 'chevron-up' : 'chevron-down',
+                        : (_expandedSections.contains(section.title)) ? 'chevron-up' : 'chevron-down',
                         width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                   )
               ])
             )
           )
         ),
-        Visibility(visible: _expandedSection == section.title, child:
+        Visibility(visible: _expandedSections.contains(section.title), child:
           Container(decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
             Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
               Column(children: List.from(section.content.map((detail) =>
@@ -101,7 +101,9 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
 
   void _expandSection(GBVDetailListSection section) {
     setState(() {
-      this._expandedSection = (_expandedSection == section.title) ? '' : section.title;
+      if (_expandedSections.contains(section.title)) this._expandedSections.remove(section.title);
+      else this._expandedSections.add(section.title);
+      // this._expandedSections = (_expandedSections == section.title) ? '' : section.title;
     });
   }
 
