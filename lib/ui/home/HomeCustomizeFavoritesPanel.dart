@@ -103,7 +103,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
                 Text(Localization().getStringEx('panel.home.header.editing.title', 'Customize'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))
               )
           ),
-          Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+          Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), container: true, button: true, child:
             InkWell(onTap : _onTapClose, child:
               Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
                 Styles().images.getImage('close-circle', excludeFromSemantics: true),
@@ -142,6 +142,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
         linkButtonTitle: Localization().getStringEx('panel.home.edit.favorites.unstar.link.button', 'Unstar All'),
         onTapLinkButton: CollectionUtils.isNotEmpty(homeFavorites) ? () => _onTapUnstarAll(homeFavorites.toList()) : null,
         description: Localization().getStringEx('panel.home.edit.favorites.header.description', 'Tap, <b>hold</b>, and drag an item to reorder your favorites. To remove an item from Favorites, tap the star.'),
+        descriptionAccessibility:  Localization().getStringEx('panel.home.edit.favorites.header.description.accessibility.label', "Tap, hear position of item and swipe one finger up or down to move positions on the Favorites list. When you are moving out of Favorites, you'll be prompted to confirm."),
       ));
        
       int position = 0;
@@ -201,7 +202,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
     return widgets;
   }
 
-  Widget _buildEditingHeader({String? title, String? description, String? linkButtonTitle, void Function()? onTapLinkButton, String? favoriteId, CrossAxisAlignment? dropAnchorAlignment}) {
+  Widget _buildEditingHeader({String? title, String? description, String? descriptionAccessibility, String? linkButtonTitle, void Function()? onTapLinkButton, String? favoriteId, CrossAxisAlignment? dropAnchorAlignment}) {
     return HomeDropTargetWidget(favoriteId: favoriteId, dragAndDropHost: this, dropAnchorAlignment: dropAnchorAlignment, childBuilder: (BuildContext context, { bool? dropTarget, CrossAxisAlignment? dropAnchorAlignment }) {
       return Column(children: [
           Container(height: 2, color: ((dropTarget == true) && (dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors.fillColorSecondary : Colors.transparent,),
@@ -218,12 +219,14 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-              HtmlWidget(
+              Semantics(label: descriptionAccessibility ?? description,
+                excludeSemantics: true,
+                child: HtmlWidget(
                   StringUtils.ensureNotEmpty(description),
                   onTapUrl : (url) {_onTapHtmlLink(url); return true;},
                   textStyle: Styles().textStyles.getTextStyle("widget.description.regular"),
-                  customStylesBuilder: (element) => (element.localName == "b") ? {"font-weight": "bold"} : null
-              )
+                  customStylesBuilder: (element) => (element.localName == "b") ? {"font-weight": "bold"} : null,
+              ))
                 // Html(data: StringUtils.ensureNotEmpty(description),
                 //   onLinkTap: (url, context, attributes, element) => _onTapHtmlLink(url),
                 //   style: {
