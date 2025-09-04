@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - UI Clean Up: fixed spacings within favorites widget headings and bodies [#5331](https://github.com/rokwire/illinois-app/issues/5331).
 - Hide link to floorplans if the building has no floors in the campus data [#5340](https://github.com/rokwire/illinois-app/issues/5340).
 - Ensure that the content in Customize panel is visible [#5354](https://github.com/rokwire/illinois-app/issues/5354).
+- Fixed HomeFavoritesWidget update exception.
 
 ## [7.2.22] - 2025-08-05
 ### Changed
