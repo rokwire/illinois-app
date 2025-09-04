@@ -530,6 +530,20 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
     ] : null;
   }
 
+  List<Widget>? get _groupingDetailWidget {
+    if (_event.hasLinkedEvents) {
+      List<Widget> details = <Widget>[];
+      if (_event.isSuperEvent) {
+        details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.super_event.label', 'Multi-Event'), 'event',));
+      }
+      if (_event.isRecurring) {
+        details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.recurring.label', 'Repeats'), 'recurrence',));
+      }
+      return details.isNotEmpty ? details : null;
+    }
+    return null;
+  }
+
   List<Widget>? get _locationDetailWidget {
     if (_event.isInPerson) {
 
@@ -558,20 +572,6 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
       }
 
       return details;
-    }
-    return null;
-  }
-
-  List<Widget>? get _groupingDetailWidget {
-    if (_event.hasLinkedEvents) {
-      List<Widget> details = <Widget>[];
-      if (_event.isSuperEvent) {
-        details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.super_event.label', 'Multi-Event'), 'event',));
-      }
-      if (_event.isRecurring) {
-        details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.recurring.label', 'Repeats'), 'recurrence',));
-      }
-      return details.isNotEmpty ? details : null;
     }
     return null;
   }
