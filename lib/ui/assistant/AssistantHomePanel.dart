@@ -160,6 +160,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
                     padding: EdgeInsets.only(left: 16),
                     child: Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'),
                         style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))))),
+            Visibility(visible: clearAllVisible, child: LinkButton(onTap: _onTapClearSession, title: Localization().getStringEx('panel.assistant.reset_session.label', 'Reset Memory'), fontSize: 14)),
             Visibility(visible: clearAllVisible, child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
             Semantics(
                 label: Localization().getStringEx('dialog.close.title', 'Close'),
@@ -256,6 +257,11 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         _clearMessagesNotifier.sink.add(1);
       }
     });
+  }
+
+  void _onTapClearSession() {
+    Analytics().logSelect(target: 'Assistant: Reset Session', source: widget.runtimeType.toString());
+    Assistant().resetSession();
   }
 
   void _onTapClose() {
