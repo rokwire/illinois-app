@@ -146,13 +146,13 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
       );
     }
     else if (explore is Building) {
-      return ExploreBuildingCard(explore,
+      return ExploreLocationCard(explore,
         currentLocation: widget.currentLocation,
         onTap: () => _onTapListCard(explore),
       );
     }
     else if (explore is WellnessBuilding) {
-      return ExploreWellnessBuildingCard(explore,
+      return ExploreLocationCard(explore,
         currentLocation: widget.currentLocation,
         onTap: () => _onTapListCard(explore),
       );

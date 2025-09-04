@@ -507,6 +507,7 @@ class _Map2PanelState extends State<Map2Panel>
         key: _traySheetKey,
         visibleExplores: _visibleExplores,
         scrollController: scrollController,
+        currentLocation: _currentLocation,
         totalExploresCount: _explores?.length,
         analyticsFeature: widget.analyticsFeature,
       ),

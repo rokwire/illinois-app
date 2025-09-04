@@ -311,10 +311,10 @@ class Building with Explore {
     
     (latitude == other.latitude) &&
     (longitude == other.longitude) &&
-        (floors == other.floors) &&
 
     DeepCollectionEquality().equals(features, other.features) &&
-    DeepCollectionEquality().equals(entrances, other.entrances);
+    DeepCollectionEquality().equals(entrances, other.entrances) &&
+    DeepCollectionEquality().equals(floors, other.floors);
 
   @override
   int get hashCode =>
@@ -335,10 +335,10 @@ class Building with Explore {
 
     (latitude?.hashCode ?? 0) ^
     (longitude?.hashCode ?? 0) ^
-    (floors?.hashCode ?? 0) ^
-    
-    DeepCollectionEquality().hash(features)  ^
-    DeepCollectionEquality().hash(entrances);
+
+    DeepCollectionEquality().hash(features) ^
+    DeepCollectionEquality().hash(entrances) ^
+    DeepCollectionEquality().hash(floors);
 
   // Accessories
   BuildingEntrance? nearstEntrance(Position? position, {bool requireAda = false}) => 
@@ -350,10 +350,10 @@ class Building with Explore {
   @override String? get exploreTitle => name;
   @override String? get exploreDescription => null;
   @override DateTime? get exploreDateTimeUtc => null;
-  @override String? get exploreImageURL => null; //TMP: imageURL;
+  @override String? get exploreImageURL => imageURL;
   @override ExploreLocation? get exploreLocation => ExploreLocation(
     building : name,
-    description: fullAddress,
+    fullAddress: fullAddress,
     address : address1,
     city : city,
     state : state,
