@@ -8,12 +8,14 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
+import 'package:illinois/ui/explore/ExploreLocationCard.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -143,7 +145,19 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
         padding: EdgeInsets.zero,
       );
     }
-    else /* if ((explore is Building) || (explore is WellnessBuilding) || (explore is ExplorePOI)) */ {
+    else if (explore is Building) {
+      return ExploreBuildingCard(explore,
+        currentLocation: widget.currentLocation,
+        onTap: () => _onTapListCard(explore),
+      );
+    }
+    else if (explore is WellnessBuilding) {
+      return ExploreWellnessBuildingCard(explore,
+        currentLocation: widget.currentLocation,
+        onTap: () => _onTapListCard(explore),
+      );
+    }
+    else /* if (explore is ExplorePOI) */ {
       return ExploreCard(explore: explore,
         locationData: widget.currentLocation,
         onTap: () => _onTapListCard(explore)
