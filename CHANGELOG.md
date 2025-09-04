@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Acknowledge Reaction innerContext field [#5238](https://github.com/rokwire/illinois-app/issues/5238).
+- Sort "My Courses" chronologically [#4897](https://github.com/rokwire/illinois-app/issues/4897).
 ### Changed
 - Updates to Event Feed Intro Screen [#5332](https://github.com/rokwire/illinois-app/issues/5332)
 - Group Event Notifications redirect to Group Detail Panel and after that to EventDetailPanel [#5348](https://github.com/rokwire/illinois-app/issues/5348).
