@@ -235,7 +235,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
         MaterialPageRoute(
           builder: (context) => SituationStepPanel(
             survey: survey,
-            resources: gbvContent.resources,
+            gbvData: gbvContent,
           ),
         ),
       );
