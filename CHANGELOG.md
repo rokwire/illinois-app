@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed HomeFavoritesWidget update exception.
 ### Added
 - Sort "My Courses" chronologically [#4897](https://github.com/rokwire/illinois-app/issues/4897).
+- Add assistant memory [#5365](https://github.com/rokwire/illinois-app/issues/5365)
 
 ## [7.3.3] - 2025-08-21
 ### Changed
