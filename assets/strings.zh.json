@@ -361,6 +361,7 @@
 	"panel.assistant.clear_all.label": "全部清除",
 	"panel.assistant.clear_all.confirm_prompt.text": "Are you sure you want to clear your Illinois Assistant history? This action cannot be undone.",
 	"panel.assistant.reset_session.label": "Reset Memory",
+	"panel.assistant.reset_session.confirm_prompt.text": "Are you sure you want to reset your current Illinois Assistant session?",
 	"panel.assistant.logged_out.label": "To access the Illinois Assistant, <a href='{{profile_sign_in_url}}'><b>sign in</b></a> with your NetID and <a href='{{settings_privacy_url}}'><b>set your privacy level to 4 or 5</b></a> under Settings.",
 	"panel.assistant.terms.default.msg": "伊利諾伊州助理是一款搜尋工具，可以幫助您了解更多有關官方大學資源的資訊。雖然該功能旨在提供有用的信息，但響應有時可能不完整或不準確。 **您有責任在根據資訊採取行動之前確認資訊。 **\n\n繼續操作即表示您承認伊利諾伊助理是一種補充工具，不能取代官方大學資源。",
 	"panel.assistant.terms.accept.button": "我接受",

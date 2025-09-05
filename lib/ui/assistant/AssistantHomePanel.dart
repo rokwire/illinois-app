@@ -264,7 +264,15 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   void _onTapClearSession() {
     Analytics().logSelect(target: 'Assistant: Reset Session', source: widget.runtimeType.toString());
-    Assistant().resetSession();
+    AppAlert.showConfirmationDialog(context,
+      message: Localization().getStringEx('panel.assistant.reset_session.confirm_prompt.text', 'Are you sure you want to reset your current Illinois Assistant session?'),
+      positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
+      negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
+    ).then((value) {
+      if (mounted && (value == true)) {
+        Assistant().resetSession();
+      }
+    });
   }
 
   void _onTapClose() {
