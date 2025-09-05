@@ -365,6 +365,8 @@
     "panel.assistant.offline.label": "The Illinois Assistant is not available while offline.",
     "panel.assistant.clear_all.label": "Clear All",
     "panel.assistant.clear_all.confirm_prompt.text": "Are you sure you want to clear your Illinois Assistant history? This action cannot be undone.",
+    "panel.assistant.reset_session.label": "Reset Memory",
+    "panel.assistant.reset_session.confirm_prompt.text": "Are you sure you want to reset your current Illinois Assistant session?",
     "panel.assistant.logged_out.label": "To access the Illinois Assistant, <a href='{{profile_sign_in_url}}'><b>sign in</b></a> with your NetID and <a href='{{settings_privacy_url}}'><b>set your privacy level to 4 or 5</b></a> under Settings.",
     "panel.assistant.terms.default.msg": "The Illinois Assistant is a search tool that helps you learn more about official university resources. While the feature aims to provide useful information, responses may occasionally be incomplete or inaccurate. **You are responsible for confirming information before taking action based on it.**\n\nBy continuing, you acknowledge that the Illinois Assistant is a supplemental tool and not a substitute for official university sources.",
     "panel.assistant.terms.accept.button": "I Accept",

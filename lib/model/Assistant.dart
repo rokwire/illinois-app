@@ -77,6 +77,7 @@ class Message {
   final AssistantStructOutput? structOutput;
   final bool acceptsFeedback;
   final int? queryLimit;
+  final String? modelResponseId;
   MessageFeedback? feedback;
   String? feedbackExplanation;
 
@@ -87,7 +88,7 @@ class Message {
   bool? isNegativeFeedbackMessage;
 
   Message({this.id = '', required this.content, required this.user, this.example = false, this.acceptsFeedback = false,
-    this.links, this.sourceDatEntries, this.structOutput, this.queryLimit, this.feedback,  this.feedbackExplanation, this.provider,
+    this.modelResponseId, this.links, this.sourceDatEntries, this.structOutput, this.queryLimit, this.feedback,  this.feedbackExplanation, this.provider,
     this.sourcesExpanded, this.feedbackResponseType, this.isNegativeFeedbackMessage});
 
   factory Message.fromAnswerJson(Map<String, dynamic> json) {
@@ -96,6 +97,7 @@ class Message {
 
     List<Link>? deeplinks = Link.listFromJson(answerJson?['deeplinks']);
     String? deeplink = JsonUtils.stringValue(answerJson?['deeplink'])?.trim();
+
     if (deeplink != null) {
       if (deeplinks == null) {
         deeplinks = [];
@@ -108,6 +110,7 @@ class Message {
       content: JsonUtils.stringValue(answerJson?['answer'])?.trim() ?? '',
       user: JsonUtils.boolValue(answerJson?['user']) ?? false,
       example: JsonUtils.boolValue(answerJson?['example']) ?? false,
+      modelResponseId: JsonUtils.stringValue(answerJson?['model_response_id'])?.trim() ?? '',
       queryLimit: JsonUtils.intValue(answerJson?['query_limit']),
       acceptsFeedback: JsonUtils.boolValue(answerJson?['accepts_feedback']) ?? true,
       links: deeplinks,

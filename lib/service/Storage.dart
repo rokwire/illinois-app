@@ -595,6 +595,10 @@ class Storage extends rokwire.Storage with NotificationsListener {
   String? get assistantContentType => getStringWithName(assistantContentTypeKey);
   set assistantContentType(String? value) => setStringWithName(assistantContentTypeKey, value);
 
+  static const String assistantSessionIDKey = 'edu.illinois.rokwire.assistant.sessions';
+  String? get assistantSessionID => getStringWithName(assistantSessionIDKey);
+  set assistantSessionID(String? value) => setStringWithName(assistantSessionIDKey, value);
+
   static const String _assistantEventsPromptHiddenKey = 'edu.illinois.rokwire.assistant.events.prompt.hidden';
   bool? get assistantEventsPromptHidden => getBoolWithName(_assistantEventsPromptHiddenKey);
   set assistantEventsPromptHidden(bool? value) => setBoolWithName(_assistantEventsPromptHiddenKey, value);
