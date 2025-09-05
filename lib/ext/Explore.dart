@@ -285,6 +285,9 @@ extension ExploreExt on Explore {
     if (panel != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => panel));
     }
+    else {
+      launchDirections();
+    }
   }
 
   Widget? exploreDetailPanel({ Core.Position? initialLocationData, AnalyticsFeature? analyticsFeature, ExploreSelectLocationBuilder? selectLocationBuilder }) {
