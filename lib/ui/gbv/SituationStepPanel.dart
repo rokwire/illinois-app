@@ -9,6 +9,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
 import '../../model/GBV.dart';
+import 'dart:convert';
 
 const Map<String, Map<String, dynamic>> stepIcons = {
   'situation':      {'image':'compass',     'color':Color(0xFF9318BB)},
@@ -44,6 +45,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
     super.initState();
     _survey = Survey.fromOther(widget.survey);
     _currentStep = Surveys().getFirstQuestion(_survey);
+    print('First question from survey: ${jsonEncode(_currentStep?.text)}');
     if (_currentStep != null) _stepHistory.add(_currentStep!.key);
   }
 
@@ -61,8 +63,10 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
         _stepHistory.add(next.key);
         _loading = false;
       });
+      print('Current survey step: ${next.key}');
     }
     else if (!_navigated) {
+      print('onto results: ');
       await _showResults();
     }
   }
@@ -75,12 +79,16 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
       summarizeResultRules: false,
     );
 
-    // Debug: Print what the survey evaluate actually returned
-    print('Survey evaluation result: $resultActions');
+    // Debug: print the return (resultActions or result)
+    print('Surveys().evaluate result data: ${jsonEncode(resultActions)}');
+    //Debug: print the survey stats https://github.com/rokwire/app-flutter-plugin/blob/9c182f10d0981959972a040096498d4042235057/lib/service/surveys.dart#L284
+    SurveyStats? stats = _survey.stats;
+    print('Survey stats: ${jsonEncode(stats)}');
 
     List<String> resourceIds = [];
 
     if (resultActions is List) {
+      // If it's a list of actions, extract resource IDs
       resourceIds = resultActions
           .where((action) => action is String)
           .cast<String>()
@@ -103,7 +111,16 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
     // Verify these IDs exist in gbvData
     final availableIds = widget.gbvData.resources.map((r) => r.id).toSet();
     print('There are all these resource IDs available: ${availableIds}');
-
+    //{emergencies_911, confidential_advisors, womens_resources_center,
+    // mckinley_health_center_mental, mckinley_health_center_medical, counseling_center,
+    // rape_advocacy_and_counseling, courage_connection, ui_police_department,
+    // office_for_access_and_equity, connie_frank_care, university_emergency_dean,
+    // office_for_student_conflict_resolution, title_ix_office, we_care_at_illinois_website,
+    // we_care_brochure, carle_foundation_hospital, osf_medical_center, rape_crisis_hotline,
+    // non_emergency_university_police_services, courage_connection_hotline,
+    // national_domestic_violence_hotline, national_sexual_assault_hotline,
+    // national_suicide_prevention_hotline, rosecrance_hotline, rights_and_options,
+    // filing_a_report, strive_to_support_a_friend, learn_about_resources, become_an_ally}
     final validIds = resourceIds.where((id) => availableIds.contains(id)).toList();
 
     print('Valid resource IDs found: $validIds');
