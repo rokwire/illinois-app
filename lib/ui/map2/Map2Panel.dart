@@ -29,6 +29,7 @@ import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/map2/Map2TraySheet.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -83,7 +84,6 @@ class _Map2PanelState extends State<Map2Panel>
 
   List<Explore>? _explores;
   List<Explore>? _visibleExplores;
-  Explore? _pinnedExplore;
   LoadExploresTask? _exploresTask;
   bool _exploresProgress = false;
 
@@ -92,6 +92,10 @@ class _Map2PanelState extends State<Map2Panel>
   BuildMarkersTask? _buildMarkersTask;
   MarkerIconsCache _markerIconsCache = <String, BitmapDescriptor>{};
   bool _markersProgress = false;
+
+  Explore? _pinnedExplore;
+  Marker? _pinnedMarker;
+  BitmapDescriptor? _pinMarkerIcon;
 
   DateTime? _pausedDateTime;
   Position? _currentLocation;
@@ -102,7 +106,10 @@ class _Map2PanelState extends State<Map2Panel>
   static const LatLng _defaultCameraTarget = LatLng(40.102116, -88.227129);
   static const double _defaultCameraZoom = 17;
   static const double _mapPadding = 30;
+  static const double _mapPinMarkerSize = 24;
   static const double _mapGroupMarkerSize = 24;
+  static const Offset _mapPinMarkerAnchor = Offset(0.5, 1);
+  static const Offset _mapCircleMarkerAnchor = Offset(0.5, 0.5);
   static const double _groupMarkersUpdateThresoldDelta = 0.3;
   static const List<double> _thresoldDistanceByZoom = [
 		1000000, 800000, 600000, 200000, 100000, // zoom 0 - 4
@@ -273,7 +280,7 @@ class _Map2PanelState extends State<Map2Panel>
       myLocationEnabled: _userLocationEnabled,
       myLocationButtonEnabled: _userLocationEnabled,
       mapToolbarEnabled: Storage().debugMapShowLevels == true,
-      markers: ((_pinnedExplore == null) ? _mapMarkers : null) ?? const <Marker>{},
+      markers: ((_pinnedExplore != null) ? _pinnedMarkers : _mapMarkers) ?? <Marker>{},
       style: _currentMapStyle,
       indoorViewEnabled: true,
       //trafficEnabled: true,
@@ -503,7 +510,6 @@ class _Map2PanelState extends State<Map2Panel>
     setState(() {
       Storage()._storedMap2ContentType = _selectedContentType = null;
       _explores = _visibleExplores = null;
-      _pinnedExplore = null;
       _exploresTask = null;
       _exploresProgress = false;
 
@@ -513,6 +519,9 @@ class _Map2PanelState extends State<Map2Panel>
       _buildMarkersTask = null;
       _lastMapZoom = null;
       _markersProgress = false;
+
+      _pinnedExplore = null;
+      _pinnedMarker = null;
     });
     WidgetsBinding.instance.addPostFrameCallback((_){
       _updateContentTypesScrollPosition();
@@ -526,17 +535,22 @@ class _Map2PanelState extends State<Map2Panel>
     if ((_pinnedExplore != pinnedExplore) && mounted) {
       setState(() {
         _pinnedExplore = pinnedExplore;
-        _updateVisibleExplores();
       });
+      _updateVisibleExplores();
+      _updatePinMarker();
     }
   }
 
-  List<Explore>? get _pinnedVisibleExplores => (_pinnedExplore != null) ?
-    <Explore>[_pinnedExplore!] : null;
+  Future<void> _updatePinMarker() async {
+    Marker? pinednMarker = (_pinnedExplore != null) ? await _createPinMarker(_pinnedExplore, imageConfiguration: createLocalImageConfiguration(context)) : null;
+    setStateIfMounted((){
+      _pinnedMarker = pinednMarker;
+    });
+  }
 
-  int? get _pinnedExploresCount => (_pinnedExplore != null) ?
-    1 : null;
-
+  Set<Marker>? get _pinnedMarkers => (_pinnedMarker != null) ? <Marker> { _pinnedMarker! } : null;
+  List<Explore>? get _pinnedVisibleExplores => (_pinnedExplore != null) ? <Explore>[_pinnedExplore!] : null;
+  int? get _pinnedExploresCount => (_pinnedExplore != null) ? 1 : null;
 
   // Tray Sheet
 
@@ -585,6 +599,7 @@ class _Map2PanelState extends State<Map2Panel>
           _exploresProgress = true;
           _explores = _visibleExplores = null;
           _pinnedExplore = null;
+          _pinnedMarker = null;
         });
 
         // wait for explores load
@@ -605,7 +620,6 @@ class _Map2PanelState extends State<Map2Panel>
       else {
         setState(() {
           _explores = _visibleExplores = null;
-          _pinnedExplore = null;
           _exploresTask = null;
           _exploresProgress = false;
 
@@ -615,6 +629,9 @@ class _Map2PanelState extends State<Map2Panel>
           _buildMarkersTask = null;
           _lastMapZoom = null;
           _markersProgress = false;
+
+          _pinnedExplore = null;
+          _pinnedMarker = null;
         });
       }
     }
@@ -642,6 +659,7 @@ class _Map2PanelState extends State<Map2Panel>
               _exploresTask = null;
               if ((_pinnedExplore != null) && (explores?.contains(_pinnedExplore) == true)) {
                 _pinnedExplore = null;
+                _pinnedMarker = null;
               }
             });
             _updateVisibleExplores();
@@ -726,8 +744,10 @@ class _Map2PanelState extends State<Map2Panel>
   Future<List<Explore>?> _loadTherapists() =>
     Wellness().loadMentalHealthBuildings();
 
-  List<Explore>? _loadMyLocations() =>
-    ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
+  List<Explore>? _loadMyLocations() {
+    List<ExplorePOI>? locations = ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
+    return (locations != null) ? List.from(locations.reversed) : null;
+  }
 
   // Visible Explores
 
@@ -1062,36 +1082,41 @@ class _Map2PanelState extends State<Map2Panel>
           backColor: markerColor,
           borderColor: markerBorderColor,
           textColor: markerTextColor,
-          count: exploreGroup.length,
+          text: exploreGroup.length.toString(),
         ));
-      Offset markerAnchor = Offset(0.5, 0.5);
       return Marker(
         markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
         position: markerPosition,
         icon: markerIcon,
-        anchor: markerAnchor,
+        anchor: _mapCircleMarkerAnchor,
         consumeTapEvents: true,
         onTap: () => _onTapMarker(exploreGroup),
         infoWindow: InfoWindow(
           title:  sameExplore?.getMapGroupMarkerTitle(exploreGroup.length),
-          anchor: markerAnchor
+          anchor: _mapCircleMarkerAnchor
         )
       );
     }
     return null;
   }
 
-  static Future<BitmapDescriptor> _groupMarkerIcon({required BuildContext context, required double imageSize, Color? backColor, Color? borderColor, Color? textColor, int? count}) async {
+  static Future<BitmapDescriptor> _groupMarkerIcon({required BuildContext context, required double imageSize,
+      Color? backColor, Color? backColor2,
+      Color? borderColor, double borderWidth = 1, double borderOffset = 0,
+      Color? textColor, String? text
+  }) async {
     Uint8List? markerImageBytes = await ImageUtils.mapGroupMarkerImage(
       imageSize: imageSize * MediaQuery.of(context).devicePixelRatio,
-      backColor: backColor,
+      backColor: backColor, backColor2: backColor2,
       strokeColor: borderColor,
-      text: count?.toString(),
-      textStyle: Styles().textStyles.getTextStyle("widget.text.fat")?.copyWith(
+      strokeWidth: borderWidth * MediaQuery.of(context).devicePixelRatio,
+      strokeOffset: borderOffset  * MediaQuery.of(context).devicePixelRatio,
+      text: text,
+      textStyle: (text != null) ? Styles().textStyles.getTextStyle("widget.text.fat")?.copyWith(
         fontSize: 12 * MediaQuery.of(context).devicePixelRatio,
         color: textColor,
         overflow: TextOverflow.visible //defined in code to be sure it is set
-      ),
+      ) : null,
     );
     if (markerImageBytes != null) {
       return BitmapDescriptor.bytes(markerImageBytes,
@@ -1116,12 +1141,12 @@ class _Map2PanelState extends State<Map2Panel>
         String markerAsset = 'images/map-marker-mtd-stop.png';
         markerIcon = _markerIconsCache[markerAsset] ??
           (_markerIconsCache[markerAsset] = await BitmapDescriptor.asset(imageConfiguration, markerAsset));
-        markerAnchor = Offset(0.5, 0.5);
+        markerAnchor = _mapCircleMarkerAnchor;
       }
       else {
         Color? exploreColor = markerColor ?? explore?.mapMarkerColor;
         markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : BitmapDescriptor.defaultMarker;
-        markerAnchor = Offset(0.5, 1);
+        markerAnchor = _mapPinMarkerAnchor;
       }
       return Marker(
         markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.longitude.toStringAsFixed(6)}"),
@@ -1138,6 +1163,34 @@ class _Map2PanelState extends State<Map2Panel>
     }
     return null;
   }
+
+  Future<Marker?> _createPinMarker(Explore? explore, { required ImageConfiguration imageConfiguration }) async {
+    LatLng? markerPosition = explore?.exploreLocation?.exploreLocationMapCoordinate;
+    Offset markerAnchor = ((explore is ExplorePOI) && (explore.placeId?.isNotEmpty == true)) ? _mapPinMarkerAnchor : _mapCircleMarkerAnchor;
+    return (markerPosition != null) ? Marker(
+      markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.longitude.toStringAsFixed(6)}"),
+      position: markerPosition,
+      icon: _pinMarkerIcon ??= await _createPinMarkerIcon(),
+      anchor: markerAnchor,
+      consumeTapEvents: true,
+      onTap: () => _onTapMarker(explore),
+      infoWindow: InfoWindow(
+        title: explore?.mapMarkerTitle,
+        snippet: explore?.mapMarkerSnippet,
+        anchor: markerAnchor)
+    ) : null;
+  }
+
+  Future<BitmapDescriptor> _createPinMarkerIcon() => _groupMarkerIcon(
+    context: context,
+    imageSize: _mapPinMarkerSize,
+    backColor: Styles().colors.accentColor3,
+    backColor2: Styles().colors.mtdColor,
+    borderColor: Styles().colors.white,
+    borderWidth: 2,
+    borderOffset: 3,
+  );
+
 }
 
 extension _Map2ContentType on Map2ContentType {
