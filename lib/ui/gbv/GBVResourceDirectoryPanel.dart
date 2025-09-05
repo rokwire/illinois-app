@@ -27,7 +27,7 @@ class GBVResourceDirectoryPanel extends StatefulWidget {
 
 class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
 
-  String _expandedSection = '';
+  List<String> _expandedSections = [];
   GestureRecognizer? _weCareRecognizer;
 
   @override
@@ -80,14 +80,14 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
             Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
             Row(mainAxisAlignment: MainAxisAlignment.start, children: [
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                Styles().images.getImage((_expandedSection == category) ? 'chevron-up' : 'chevron-down', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                Styles().images.getImage((_expandedSections.contains(category)) ? 'chevron-up' : 'chevron-down', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
               ),
               Text(category, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
             ])
             )
             )
             ),
-            Visibility(visible: _expandedSection == category, child:
+            Visibility(visible: _expandedSections.contains(category), child:
               Padding(padding: EdgeInsets.only(bottom: 8), child:
                 Column(children:
                  List.from(resources.map((resource) => _resourceWidget(resource)))
@@ -146,9 +146,16 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
       );
   }
 
-  void _expandSection(String category) {
+  // void _expandSection(String category) {
+  //   setState(() {
+  //     this._expandedSection = (_expandedSection == category) ? '' : category;
+  //   });
+  // }
+
+  void _expandSection(String section) {
     setState(() {
-      this._expandedSection = (_expandedSection == category) ? '' : category;
+      if (_expandedSections.contains(section)) this._expandedSections.remove(section);
+      else this._expandedSections.add(section);
     });
   }
 
