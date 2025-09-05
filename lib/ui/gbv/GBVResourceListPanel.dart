@@ -37,7 +37,7 @@ class GBVResourceListPanel extends StatelessWidget {
           Padding(padding: EdgeInsets.only(top: 16, left: 16), child: (
               Text(resourceListScreen.title ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")))
           ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
           Container(height: 1, color: Styles().colors.surfaceAccent)
           ),
           Padding(padding: EdgeInsets.only(right: 16, left: 16, bottom: 0), child: (

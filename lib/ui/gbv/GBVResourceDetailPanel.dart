@@ -40,7 +40,7 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
             Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Text(widget.resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")),
-                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                 Container(height: 1, color: Styles().colors.surfaceAccent)
                 ),
                 Padding(padding: EdgeInsets.only(bottom: 32), child: (
@@ -103,7 +103,6 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
     setState(() {
       if (_expandedSections.contains(section.title)) this._expandedSections.remove(section.title);
       else this._expandedSections.add(section.title);
-      // this._expandedSections = (_expandedSections == section.title) ? '' : section.title;
     });
   }
 
