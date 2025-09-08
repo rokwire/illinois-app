@@ -330,7 +330,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
     return Scaffold(
       appBar: AppBar(
         leading: HeaderBar(
-          onLeading: _handleBack
+            onLeading: _handleBack
         ),
       ),
       body: SingleChildScrollView(
