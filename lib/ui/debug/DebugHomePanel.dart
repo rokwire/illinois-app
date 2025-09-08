@@ -23,6 +23,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
+import 'package:illinois/ui/alumni/AlumniOnboardingWelcomePanel.dart';
 import 'package:illinois/ui/debug/DebugGuideBrowsePanel.dart';
 import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
@@ -521,6 +522,17 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
                   )
                 ),
 
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                RoundedButton(
+                    label: "Start alumni onboarding",
+                    backgroundColor: Styles().colors.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorPrimary,
+                    onTap: _onTapStartAlumniOnboarding,
+                )
+                ),
+
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
@@ -1003,6 +1015,13 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
     if (StringUtils.isNotEmpty(Config().essentialSkillsCoachKey)) {
       CustomCourses().deleteUserCourse(Config().essentialSkillsCoachKey!);
     }
+  }
+
+  void _onTapStartAlumniOnboarding() {
+    Navigator.push(
+        context,
+        CupertinoPageRoute(builder: (context) => AlumniOnboardingWelcomePanel())
+    );
   }
 
   void _onTapSetAssistantLocation() {

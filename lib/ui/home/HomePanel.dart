@@ -549,7 +549,7 @@ class _HomePanelState extends State<HomePanel> with NotificationsListener, Autom
     super.build(context);
 
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx('panel.home.header.title', 'Home')),
+      appBar: RootHeaderBar(title: Localization().getStringEx('', 'Alumni')),
       body: Column(key: _contentWrapperKey, children: <Widget>[
         Row(children: [
           Expanded(child: _HomeContentTab(HomeContentType.favorites, selected: _contentType == HomeContentType.favorites,)),
