@@ -63,6 +63,8 @@
 	"headerbar.menu.hint":"",
 	"headerbar.search.title":"搜索",
 	"headerbar.search.hint":"输入搜索词",
+	"headerbar.sort.title":"Sort",
+	"headerbar.sort.hint":"Tap to sort items",
 	"headerbar.settings.title":"设定",
 	"headerbar.settings.hint":"",
 	"headerbar.notifications.title":"通知",

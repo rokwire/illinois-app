@@ -63,6 +63,8 @@
     "headerbar.menu.hint":"",
     "headerbar.search.title":"Buscar",
     "headerbar.search.hint":"Escriba un término de búsqueda",
+    "headerbar.sort.title":"Sort",
+    "headerbar.sort.hint":"Tap to sort items",
     "headerbar.settings.title":"Configuración",
     "headerbar.settings.hint":"",
     "headerbar.notifications.title":"Notificaciones",

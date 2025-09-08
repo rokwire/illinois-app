@@ -76,6 +76,7 @@ class _Map2PanelState extends State<Map2Panel>
   double? _lastMapZoom;
 
   final ScrollController _contentTypesScrollController = ScrollController();
+  final ScrollController _filterButtonsScrollController = ScrollController();
   final DraggableScrollableController _traySheetController = DraggableScrollableController();
 
   late Set<Map2ContentType> _availableContentTypes;
@@ -141,6 +142,7 @@ class _Map2PanelState extends State<Map2Panel>
     _selectedContentType = _Map2ContentType.initialType(availableTypes: _availableContentTypes);
 
     _contentTypesScrollController.addListener(_onContentTypesScroll);
+    //_filterButtonsScrollController.addListener(_onFilterButtonsScroll);
 
     _updateLocationServicesStatus(init: true);
     _initMapStyles();
@@ -154,6 +156,7 @@ class _Map2PanelState extends State<Map2Panel>
     NotificationService().unsubscribe(this);
     _traySheetController.dispose();
     _contentTypesScrollController.dispose();
+    _filterButtonsScrollController.dispose();
     super.dispose();
   }
 
@@ -435,8 +438,7 @@ class _Map2PanelState extends State<Map2Panel>
       if (_availableContentTypes.contains(contentType)) {
         entries.add(Padding(
           padding: EdgeInsets.only(left: entries.isNotEmpty ? 8 : 0),
-          child: Map2ContentTypeButton(
-            title: contentType.displayTitle,
+          child: Map2ContentTypeButton(contentType.displayTitle,
             onTap: () => _onContentTypeEntry(contentType),
           )
         ));
@@ -481,30 +483,120 @@ class _Map2PanelState extends State<Map2Panel>
 
   Widget get _contentHeadingBar =>
     Container(key: _contentHeadingBarKey, decoration: _contentHeadingDecoration, child:
-      Column(mainAxisSize: MainAxisSize.min, children: [
-        Row(children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 16, top: 8, bottom: 8), child:
-              Text(_selectedContentType?.displayTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
-            ),
-          ),
-          Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
-            InkWell(onTap : _onUnselectContentType, child:
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-                Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
-              ),
-            ),
-          ),
-        ],)
-      ],)
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        _contentTitleBar,
+        ... _contentFilterButtonsBar,
+      ],),
     );
-    
+
   BoxDecoration get _contentHeadingDecoration =>
     BoxDecoration(
       color: Styles().colors.background,
       border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1),),
       boxShadow: [BoxShadow(color: Styles().colors.dropShadow, spreadRadius: 1, blurRadius: 3, offset: Offset(1, 1) )],
     );
+
+  Widget get _contentTitleBar =>
+    Row(children: [
+      Expanded(child:
+        Padding(padding: EdgeInsets.only(left: 16, top: 8, bottom: 8), child:
+          Text(_selectedContentType?.displayTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
+        ),
+      ),
+      Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
+        InkWell(onTap : _onUnselectContentType, child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+            Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
+          ),
+        ),
+      ),
+    ],);
+
+  List<Widget> get _contentFilterButtonsBar {
+    List<Widget>? filterButtonsList = _filterButtons;
+    return ((filterButtonsList != null) && filterButtonsList.isNotEmpty) ? <Widget>[
+      Container(decoration: _contentFiltersBarDecoration, padding: _contentFiltersBarPadding, constraints: _contentFiltersBarConstraints, child:
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          controller: _filterButtonsScrollController,
+          child: Row(mainAxisSize: MainAxisSize.min, children: filterButtonsList,)
+        )
+      ),
+    ] : <Widget>[];
+  }
+
+  BoxConstraints get _contentFiltersBarConstraints => BoxConstraints(
+      minWidth: double.infinity
+  );
+
+  BoxDecoration get _contentFiltersBarDecoration =>
+    BoxDecoration(
+      border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1),),
+    );
+
+  EdgeInsetsGeometry get _contentFiltersBarPadding =>
+    EdgeInsets.only(left: 16, top: 8, bottom: 8);
+
+  List<Widget>? get _filterButtons {
+    switch (_selectedContentType) {
+      case Map2ContentType.CampusBuildings:      return _campusBuildingsFilterButtons;
+      case Map2ContentType.StudentCourses:
+      case Map2ContentType.DiningLocations:
+      case Map2ContentType.Events2:
+      case Map2ContentType.Laundries:
+      case Map2ContentType.BusStops:
+      case Map2ContentType.Therapists:
+      case Map2ContentType.MyLocations:
+      default: return <Widget>[];
+    }
+  }
+
+
+  List<Widget> get _campusBuildingsFilterButtons => <Widget>[
+    _searchFilterButton,
+    _filterButtonsSpacing,
+    _sortFilterButton,
+  ];
+
+  Widget get _searchFilterButton =>
+    Map2FilterImageButton(
+      image: Styles().images.getImage('search'),
+      label: Localization().getStringEx('headerbar.search.title', 'Search'),
+      hint: Localization().getStringEx('headerbar.search.hint', 'Type a search term'),
+      onTap: _onSearch,
+    );
+
+  Widget get _sortFilterButton =>
+    Map2FilterTextButton(
+      title: Localization().getStringEx('headerbar.sort.title', 'Sort'),
+      hint: Localization().getStringEx('headerbar.sort.hint', 'Tap to sort items'),
+      leftIcon: Styles().images.getImage('sort', size: 16),
+      rightIcon: Styles().images.getImage('chevron-down'),
+      onTap: _onSort,
+    );
+
+  Widget get _starredBuildingsFilterButton =>
+    Map2FilterTextButton(
+      title: Localization().getStringEx('headerbar.sort.title', 'Sort'),
+      hint: Localization().getStringEx('headerbar.sort.hint', 'Tap to sort items'),
+      leftIcon: Styles().images.getImage('sort', size: 16),
+      rightIcon: Styles().images.getImage('chevron-down'),
+      onTap: _onSort,
+    );
+
+  Widget get _filterButtonsSpacing =>
+    SizedBox(width: 6,);
+
+  void _onSearch() {
+
+  }
+
+  void _onSort() {
+
+  }
+
+  //void _onFilterButtonsScroll() {}
+
 
   void _onUnselectContentType() {
     setState(() {

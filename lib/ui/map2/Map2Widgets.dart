@@ -4,22 +4,92 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class Map2ContentTypeButton extends StatelessWidget {
   final String? title;
+  final String? label;
+  final String? hint;
   final void Function()? onTap;
+  final EdgeInsetsGeometry padding;
 
-  Map2ContentTypeButton({super.key, this.title, this.onTap});
+  Map2ContentTypeButton(this.title, {super.key, this.label, this.hint, this.onTap, this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 6) });
 
   @override
-  Widget build(BuildContext context) => InkWell(onTap: onTap, child:
-    Container(decoration: _decoration, padding: _padding, child:
-      Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.small.medium'),),
-    )
-  );
+  Widget build(BuildContext context) =>
+    Semantics(label: label ?? title, hint: hint, button: true, child:
+      InkWell(onTap: onTap, child:
+        Container(decoration: _decoration, padding: padding, child:
+          Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.small.medium'),),
+        )
+      )
+    );
 
   BoxDecoration get _decoration => BoxDecoration(
     color: Styles().colors.surface,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.circular(16),
   );
+}
 
-  EdgeInsetsGeometry get _padding => EdgeInsets.symmetric(horizontal: 12, vertical: 6);
+class Map2FilterImageButton extends StatelessWidget {
+  final Widget? image;
+  final String? label;
+  final String? hint;
+  final void Function()? onTap;
+  final EdgeInsetsGeometry padding;
+
+  Map2FilterImageButton({super.key, this.image, this.hint, this.label, this.onTap, this.padding = const EdgeInsets.all(9)});
+
+  @override
+  Widget build(BuildContext context) =>
+    Semantics(label: label, hint: hint, button: true, child:
+      InkWell(onTap: onTap, child:
+        Container(decoration: _decoration, padding: padding, child:
+          image
+        )
+      ),
+    );
+
+  BoxDecoration get _decoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    borderRadius: BorderRadius.circular(12),
+  );
+}
+
+class Map2FilterTextButton extends StatelessWidget {
+  final String? title;
+  final String? label;
+  final String? hint;
+  final Widget? leftIcon;
+  final Widget? rightIcon;
+  final void Function()? onTap;
+  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry leftIconPadding;
+  final EdgeInsetsGeometry rightIconPadding;
+
+  Map2FilterTextButton({super.key, this.title, this.label, this.hint, this.leftIcon, this.rightIcon, this.onTap,
+    this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+    this.leftIconPadding = const EdgeInsets.only(right: 6),
+    this.rightIconPadding = const EdgeInsets.only(left: 6),
+  });
+
+  @override
+  Widget build(BuildContext context) =>
+    Semantics(label: label ?? title, hint: hint, button: true, child:
+      InkWell(onTap: onTap, child:
+        Container(decoration: _decoration, padding: padding, child:
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            if (leftIcon != null)
+              Padding(padding: leftIconPadding, child: leftIcon,),
+            Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.small.medium'),),
+            if (rightIcon != null)
+              Padding(padding: rightIconPadding, child: rightIcon,),
+          ],)
+        )
+      )
+    );
+
+  BoxDecoration get _decoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    borderRadius: BorderRadius.circular(18),
+  );
 }
