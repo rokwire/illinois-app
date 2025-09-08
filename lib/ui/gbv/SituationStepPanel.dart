@@ -77,50 +77,43 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
       _survey,
       evalResultRules: true,
       summarizeResultRules: false,
+      returnMultiple : true,
     );
 
     // Debug: print the return (resultActions or result)
     print('Surveys().evaluate result data: ${jsonEncode(resultActions)}');
     //Debug: print the survey stats https://github.com/rokwire/app-flutter-plugin/blob/9c182f10d0981959972a040096498d4042235057/lib/service/surveys.dart#L284
     SurveyStats? stats = _survey.stats;
-    print('Survey stats: ${jsonEncode(stats)}');
+    String nextValue = stats?.responseData['next'] ?? '';  // Keep native string
+    // Convert the original object to JSON string, then decode back to Map
+    String gbvResourceMapJson = jsonEncode(_survey.data['gbv_resource_map']);
+    Map<String, dynamic> gbvResourceMap = jsonDecode(gbvResourceMapJson);
+    Map<String, dynamic>? extrasMap = gbvResourceMap['extras'] as Map<String, dynamic>?;
+    var resourceEntryForNext = extrasMap?[nextValue];
 
+    print('Next value: $nextValue');
+    print('Resource entry for next: ${jsonEncode(resourceEntryForNext)}');
     List<String> resourceIds = [];
 
-    if (resultActions is List) {
-      // If it's a list of actions, extract resource IDs
-      resourceIds = resultActions
-          .where((action) => action is String)
-          .cast<String>()
-          .toList();
-    } else if (resultActions is String) {
-      resourceIds = [resultActions];
+    // Populate resourceIds if available
+    if (resourceEntryForNext != null && resourceEntryForNext['resource_ids'] is List) {
+      resourceIds = List<String>.from(resourceEntryForNext['resource_ids']);
     }
 
-    // Fallback: if no results, use available resource IDs from gbvData
+    print('Resource IDs: $resourceIds');
+
+  // Fallback: only if resourceIds is empty
     if (resourceIds.isEmpty) {
       print('No resource IDs from survey, using available resources');
       resourceIds = widget.gbvData.resources
           .take(3) // Take first 3 resources as fallback
           .map((r) => r.id)
           .toList();
+      print('Using resource IDs: $resourceIds');
     }
-
-    print('Using resource IDs: $resourceIds');
 
     // Verify these IDs exist in gbvData
     final availableIds = widget.gbvData.resources.map((r) => r.id).toSet();
-    print('There are all these resource IDs available: ${availableIds}');
-    //{emergencies_911, confidential_advisors, womens_resources_center,
-    // mckinley_health_center_mental, mckinley_health_center_medical, counseling_center,
-    // rape_advocacy_and_counseling, courage_connection, ui_police_department,
-    // office_for_access_and_equity, connie_frank_care, university_emergency_dean,
-    // office_for_student_conflict_resolution, title_ix_office, we_care_at_illinois_website,
-    // we_care_brochure, carle_foundation_hospital, osf_medical_center, rape_crisis_hotline,
-    // non_emergency_university_police_services, courage_connection_hotline,
-    // national_domestic_violence_hotline, national_sexual_assault_hotline,
-    // national_suicide_prevention_hotline, rosecrance_hotline, rights_and_options,
-    // filing_a_report, strive_to_support_a_friend, learn_about_resources, become_an_ally}
     final validIds = resourceIds.where((id) => availableIds.contains(id)).toList();
 
     print('Valid resource IDs found: $validIds');
