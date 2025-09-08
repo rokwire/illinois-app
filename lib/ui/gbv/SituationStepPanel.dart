@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
-import 'package:rokwire_plugin/model/options.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -128,27 +127,6 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
 
     if (!mounted) return;
     setState(() => _loading = false);
-  }
-  void _onTapResource(GBVResource res) {
-    Navigator.push(
-      context,
-      CupertinoPageRoute(
-        builder: (_) => GBVResourceDetailPanel(resource: res),
-      ),
-    );
-  }
-  void _goBack() {
-    if (_stepHistory.length > 1) {
-      _stepHistory.removeLast();
-      final key = _stepHistory.last;
-      setState(() {
-        _currentStep = _survey.data[key];
-        _currentStep?.response = null;
-      });
-    }
-    else {
-      Navigator.pop(context);
-    }
   }
 
   Widget _buildOption(String title) {
