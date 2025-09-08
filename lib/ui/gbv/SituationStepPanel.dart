@@ -76,6 +76,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
       });
     }
     else {
+      // No follow-up => show results
       await _showResults();
     }
   }
@@ -89,22 +90,26 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
       returnMultiple: true,
     );
     if (!mounted) return;
-
     // Build and push the results screen
     SurveyStats? stats = _survey.stats;
-    String nextValue = stats?.responseData['next'] ?? '';
+    final lastStepKey = _stepHistory.last;
 
-    // Build resourceIds, for screen push
+    // Lookup by the actual answer text, falling back to "next"
+    final String? resp = stats?.responseData[lastStepKey] as String?;
+    final String lookupKey = resp ?? (stats?.responseData['next'] as String? ?? '');
+
+    // Build resourceIds
     String gbvResourceMapJson = jsonEncode(_survey.data['gbv_resource_map']);
     Map<String, dynamic> gbvResourceMap = jsonDecode(gbvResourceMapJson);
-    Map<String, dynamic>? extrasMap = gbvResourceMap['extras'] as Map<String, dynamic>?;
-    var resourceEntryForNext = extrasMap?[nextValue];
+    final Map<String, dynamic>? extrasMap = gbvResourceMap['extras'] as Map<String, dynamic>?;
+    var resourceEntry = extrasMap?[lookupKey];
     List<String> resourceIds = [];
-    if (resourceEntryForNext != null && resourceEntryForNext['resource_ids'] is List) {
-      resourceIds = List<String>.from(resourceEntryForNext['resource_ids']);
+    if (resourceEntry != null && resourceEntry['resource_ids'] is List) {
+      resourceIds = List<String>.from(resourceEntry['resource_ids']);
     }
+
     if (!mounted) return;
-    // Prepare content & screen
+    // Prepare content & screen, default fallbacks
     final availableIds = widget.gbvData.resources.map((r) => r.id).toSet();
     final validIds = resourceIds.where((id) => availableIds.contains(id)).toList();
     final content = [
