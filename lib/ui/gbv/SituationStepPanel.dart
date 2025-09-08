@@ -45,7 +45,6 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
     super.initState();
     _survey = Survey.fromOther(widget.survey);
     _currentStep = Surveys().getFirstQuestion(_survey);
-    print('First question from survey: ${jsonEncode(_currentStep?.text)}');
     if (_currentStep != null) _stepHistory.add(_currentStep!.key);
   }
 
@@ -63,10 +62,8 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
         _stepHistory.add(next.key);
         _loading = false;
       });
-      print('Current survey step: ${next.key}');
     }
     else if (!_navigated) {
-      print('onto results: ');
       await _showResults();
     }
   }
@@ -80,19 +77,14 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
       returnMultiple : true,
     );
 
-    // Debug: print the return (resultActions or result)
-    print('Surveys().evaluate result data: ${jsonEncode(resultActions)}');
-    //Debug: print the survey stats https://github.com/rokwire/app-flutter-plugin/blob/9c182f10d0981959972a040096498d4042235057/lib/service/surveys.dart#L284
+
     SurveyStats? stats = _survey.stats;
-    String nextValue = stats?.responseData['next'] ?? '';  // Keep native string
-    // Convert the original object to JSON string, then decode back to Map
+    String nextValue = stats?.responseData['next'] ?? '';
     String gbvResourceMapJson = jsonEncode(_survey.data['gbv_resource_map']);
     Map<String, dynamic> gbvResourceMap = jsonDecode(gbvResourceMapJson);
     Map<String, dynamic>? extrasMap = gbvResourceMap['extras'] as Map<String, dynamic>?;
     var resourceEntryForNext = extrasMap?[nextValue];
 
-    print('Next value: $nextValue');
-    print('Resource entry for next: ${jsonEncode(resourceEntryForNext)}');
     List<String> resourceIds = [];
 
     // Populate resourceIds if available
@@ -100,23 +92,17 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
       resourceIds = List<String>.from(resourceEntryForNext['resource_ids']);
     }
 
-    print('Resource IDs: $resourceIds');
-
-  // Fallback: only if resourceIds is empty
+  // Fallback: Only if resourceIds is empty. Should never happen
     if (resourceIds.isEmpty) {
-      print('No resource IDs from survey, using available resources');
       resourceIds = widget.gbvData.resources
           .take(3) // Take first 3 resources as fallback
           .map((r) => r.id)
           .toList();
-      print('Using resource IDs: $resourceIds');
     }
 
     // Verify these IDs exist in gbvData
     final availableIds = widget.gbvData.resources.map((r) => r.id).toSet();
     final validIds = resourceIds.where((id) => availableIds.contains(id)).toList();
-
-    print('Valid resource IDs found: $validIds');
 
     final content = <GBVResourceList>[
       GBVResourceList(
@@ -148,8 +134,6 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
     }
     setState(() => _loading = false);
   }
-
-
   void _onTapResource(GBVResource res) {
     Navigator.push(
       context,
@@ -158,7 +142,6 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
       ),
     );
   }
-
   void _goBack() {
     if (_stepHistory.length > 1) {
       _stepHistory.removeLast();
@@ -197,66 +180,183 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
     );
   }
 
-
-
   Widget _buildContent(BuildContext context) {
     if (_currentStep == null) {
       return Scaffold(
         appBar: AppBar(
-          leading: BackButton(color:Colors.white),
+          leading: BackButton(color: Colors.white),
         ),
-        body: Center(child:Text('No survey data')),
+        body: Center(child: Text('No survey data')),
       );
     }
 
     final question = _currentStep!;
-    final opts = (question is SurveyQuestionMultipleChoice) ? question.options : <OptionData>[];
+    final opts = (question is SurveyQuestionMultipleChoice) ? question.options : [];
+
+    // Extract icon data from gbv_resource_map based on current step
+    Widget? stepIconWidget;
+    try {
+      String gbvResourceMapJson = jsonEncode(_survey.data['gbv_resource_map']);
+      Map<String, dynamic> gbvResourceMap = jsonDecode(gbvResourceMapJson);
+
+      final extrasMap = gbvResourceMap['extras'] as Map<String, dynamic>?;
+      final currentStepKey = _currentStep!.key;
+
+      Map<String, dynamic>? stepData;
+      if (extrasMap != null) {
+        stepData = extrasMap[currentStepKey];
+        // If not found by key, try to match by looking at current response or step context
+        if (stepData == null) {
+          print("defaulting to constant");
+          // Fallback to stepIcons const map
+          final fallbackIconData = stepIcons[currentStepKey];
+          if (fallbackIconData != null) {
+            stepIconWidget = Container(
+              width: 67,
+              height: 67,
+              decoration: BoxDecoration(
+                color: fallbackIconData['color'] as Color,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Styles().images.getImage(
+                  fallbackIconData['image'] as String,
+                  excludeFromSemantics: true,
+                  size: 36,
+                  fit: BoxFit.contain,
+                  color: Colors.white,
+                ) ?? Container(),
+              ),
+            );
+          }
+        }
+      }
+      // If we found step data with icon info
+      if (stepData != null && stepData['icon_in_more_info'] != null) {
+        final iconData = stepData['icon_in_more_info'] as Map<String, dynamic>;
+        final colorString = iconData['color'] as String?;
+        final iconName = iconData['image'] as String?;
+
+        Color iconColor = Color(0xFF9318BB); // default fallback color
+        if (colorString != null && colorString.startsWith('Color(')) {
+          // Parse Color string like "Color(0xFF5FA7A3)"
+          final hexStr = colorString.substring(6, colorString.length - 1);
+          iconColor = Color(int.parse(hexStr));
+        }
+
+        stepIconWidget = Container(
+          width: 67,
+          height: 67,
+          decoration: BoxDecoration(
+            color: iconColor,
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Styles().images.getImage(
+              iconName ?? 'compass',
+              excludeFromSemantics: true,
+              size: 36,
+              fit: BoxFit.contain,
+              color: Colors.white,
+            ) ?? Container(),
+          ),
+        );
+      }
+    } catch (e) {
+      // If any error occurs, fall back to stepIcons const map
+      final fallbackIconData = stepIcons[_currentStep!.key];
+      if (fallbackIconData != null) {
+        stepIconWidget = Container(
+          width: 67,
+          height: 67,
+          decoration: BoxDecoration(
+            color: fallbackIconData['color'] as Color,
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Styles().images.getImage(
+              fallbackIconData['image'] as String,
+              excludeFromSemantics: true,
+              size: 36,
+              fit: BoxFit.contain,
+              color: Colors.white,
+            ) ?? Container(),
+          ),
+        );
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon:Icon(Icons.arrow_back,color:Colors.white), onPressed:_goBack),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: _goBack,
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children:[
+          children: [
             GBVQuickExitWidget(),
-            if (question.moreInfo?.isNotEmpty==true)
+
+            if (question.moreInfo?.isNotEmpty == true)
               Container(
-                margin: const EdgeInsets.only(top:12,bottom:24),
+                width: double.infinity,
+                margin: const EdgeInsets.only(top: 12, bottom: 24),
                 padding: const EdgeInsets.all(18),
-                decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(14)),
-                child:Text(question.moreInfo!,style:TextStyle(fontSize:14)),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (stepIconWidget != null) ...[
+                      stepIconWidget,
+                      SizedBox(width: 18),
+                    ],
+                    Expanded(
+                      child: Text(
+                        question.moreInfo!,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            Text(question.text,style:TextStyle(fontSize:14)),
-            SizedBox(height:12),
+
+            Text(question.text, style: TextStyle(fontSize: 14)),
+            SizedBox(height: 12),
             LinearProgressIndicator(
-              value: (_stepHistory.length)/5,
-              backgroundColor:Colors.grey[300],
-              valueColor:AlwaysStoppedAnimation(Color(0xFFED6647)),
+              value: (_stepHistory.length) / 5,
+              backgroundColor: Colors.grey[300],
+              valueColor: AlwaysStoppedAnimation(Color(0xFFED6647)),
             ),
-            SizedBox(height:24),
-            ...opts.map((o)=>_buildOption(o.title)),
+            SizedBox(height: 24),
+            ...opts.map((o) => _buildOption(o.title)),
             if (question.allowSkip)
               Align(
-                alignment:Alignment.centerRight,
-                child:TextButton(
-                    onPressed:()=>_selectOption('__skipped__'),
-                    child:Text('Skip this question')
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () => _selectOption('__skipped__'),
+                  child: Text('Skip this question'),
                 ),
               ),
             if (_loading)
-              Center(child:Padding(
-                padding: const EdgeInsets.only(top:24.0),
-                child:CircularProgressIndicator(),
-              )),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 24.0),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
           ],
         ),
       ),
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
