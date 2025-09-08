@@ -10,22 +10,66 @@ import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class ExploreLocationCard extends StatelessWidget {
+class ExploreLocationCard extends StatefulWidget {
   final Explore? explore;
   final Position? currentLocation;
   final void Function()? onTap;
+
   ExploreLocationCard(this.explore, { super.key,
     this.currentLocation,
     this.onTap,
   });
 
+  Favorite? get exploreFavorite => (explore is Favorite) ? (explore as Favorite) : null;
+
+  bool? get isExploreFavorite {
+    Favorite? favorite = exploreFavorite;
+    return ((favorite != null) && Auth2().canFavorite) ? Auth2().isFavorite(favorite) : null;
+  }
+
+  @override
+  State<StatefulWidget> createState() => _ExploreLocationCardState();
+}
+
+class _ExploreLocationCardState extends State<ExploreLocationCard> with NotificationsListener {
+
+  bool? _isFavorite;
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+    ]);
+    _isFavorite = widget.isExploreFavorite;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      bool? isFavorite = widget.isExploreFavorite;
+      if ((_isFavorite != isFavorite) && mounted) {
+        setState((){
+          _isFavorite = isFavorite;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) =>
     Semantics(label: _semanticsLabel, button: true, child:
-      InkWell(onTap: onTap, child:
+      InkWell(onTap: widget.onTap, child:
         Semantics(excludeSemantics: true, child:
           _cardWidget
         )
@@ -46,7 +90,7 @@ class ExploreLocationCard extends StatelessWidget {
     );
 
   Widget? get _imageHeadingWidget {
-    String? imageUrl = explore?.exploreImageURL;
+    String? imageUrl = widget.explore?.exploreImageURL;
     return ((imageUrl != null) && imageUrl.isNotEmpty) ?
       Container(decoration: _imageHeadingDecoration, child:
         AspectRatio(aspectRatio: 2.5, child:
@@ -62,18 +106,18 @@ class ExploreLocationCard extends StatelessWidget {
     Padding(padding: _canFavorite ? EdgeInsets.only(left: 16) : EdgeInsets.only(left: 16, right: 16, top: 16), child:
       Row(children: [
         Expanded(child:
-          Text(explore?.exploreTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), overflow: TextOverflow.ellipsis)
+          Text(widget.explore?.exploreTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), overflow: TextOverflow.ellipsis)
         ),
         if (_canFavorite)
           _favoriteButton,
       ],),
     );
 
-  bool get _canFavorite => (explore is Favorite) && Auth2().canFavorite;
+  bool get _canFavorite => (_isFavorite != null);
 
   Widget get _favoriteButton {
-    Favorite? favorite = (explore is Favorite) ? (explore as Favorite) : null;
-    bool isFavorite = Auth2().isFavorite(favorite);
+    Favorite? favorite = widget.exploreFavorite;
+    bool isFavorite = (_isFavorite == true);
     Widget? favoriteStarIcon = favorite?.favoriteStarIcon(selected: isFavorite);
     String semanticLabel = isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites');
     String semanticHint = isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', '');
@@ -100,10 +144,10 @@ class ExploreLocationCard extends StatelessWidget {
     _buildDetailWidget('location', _locationDetailTexts.map<Widget>((String text) => _locationDetailTextWidget(text)), contentPadding: EdgeInsets.zero);
 
   List<String> get _locationDetailTexts {
-    String? title = explore?.exploreTitle;
-    String? building = explore?.exploreLocation?.building;
-    String? fullAddress = explore?.exploreLocation?.fullAddress;
-    String? dispayDistance = StringUtils.ensureEmpty(currentLocation?.displayDistance(explore?.exploreLocation));
+    String? title = widget.explore?.exploreTitle;
+    String? building = widget.explore?.exploreLocation?.building;
+    String? fullAddress = widget.explore?.exploreLocation?.fullAddress;
+    String? dispayDistance = StringUtils.ensureEmpty(widget.currentLocation?.displayDistance(widget.explore?.exploreLocation));
     List<String> detailTexts = <String>[];
 
     if ((building != null) && building.isNotEmpty &&
@@ -118,7 +162,7 @@ class ExploreLocationCard extends StatelessWidget {
       detailTexts.add(fullAddress);
     }
 
-    String? dispayCoordinates = detailTexts.isEmpty ? explore?.exploreLocation?.displayCoordinates : null;
+    String? dispayCoordinates = detailTexts.isEmpty ? widget.explore?.exploreLocation?.displayCoordinates : null;
     if ((dispayCoordinates != null) && dispayCoordinates.isNotEmpty) {
       detailTexts.add(dispayCoordinates);
     }
@@ -160,8 +204,8 @@ class ExploreLocationCard extends StatelessWidget {
   }
 
   void _onTapFavorite() {
-    Favorite? favorite = (explore is Favorite) ? (explore as Favorite) : null;
-    Analytics().logSelect(target: "Favorite: ${explore?.exploreTitle}", source: '${runtimeType.toString()}(${favorite?.favoriteKey})');
+    Favorite? favorite = widget.exploreFavorite;
+    Analytics().logSelect(target: "Favorite: ${widget.explore?.exploreTitle}", source: '${runtimeType.toString()}(${favorite?.favoriteKey})');
     Auth2().prefs?.toggleFavorite(favorite);
   }
 
@@ -179,7 +223,7 @@ class ExploreLocationCard extends StatelessWidget {
     border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
   );
 
-  Color? get _headingColor => explore?.uiColor;
+  Color? get _headingColor => widget.explore?.uiColor;
 
   Decoration get _colorHeadingDecoration => BoxDecoration(
     color: _headingColor,
@@ -190,6 +234,6 @@ class ExploreLocationCard extends StatelessWidget {
   static const double _colorHeadingHeight = 8;
 
   String get _semanticsLabel => '$_semanticsTitle, $_semanticsLocation';
-  String get _semanticsTitle => explore?.exploreTitle ?? '';
+  String get _semanticsTitle => widget.explore?.exploreTitle ?? '';
   String get _semanticsLocation => ListUtils.last(_locationDetailTexts) ?? '';
 }

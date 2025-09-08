@@ -152,12 +152,6 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
         onTap: () => _onTapListCard(explore),
       );
     }
-    else if (explore is WellnessBuilding) {
-      return ExploreLocationCard(explore,
-        currentLocation: widget.currentLocation,
-        onTap: () => _onTapListCard(explore),
-      );
-    }
     else {
       return ExploreCard(explore: explore,
         locationData: widget.currentLocation,
