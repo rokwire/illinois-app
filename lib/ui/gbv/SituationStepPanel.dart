@@ -129,6 +129,25 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
     setState(() => _loading = false);
   }
 
+  void _handleBack() {
+    if (_stepHistory.length > 1) {
+      // Remove the current step key
+      _stepHistory.removeLast();
+      // Get the previous step key
+      final previousKey = _stepHistory.last;
+      // Restore that step as the current step
+      setState(() {
+        _currentStep = _survey.data[previousKey];
+        // Clear any previous response so the question can be answered again
+        _currentStep?.response = null;
+      });
+    }
+    else {
+      // If there's no earlier step, exit the survey panel
+      Navigator.pop(context);
+    }
+  }
+
   Widget _buildOption(String title) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical:6),
@@ -153,13 +172,52 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
     );
   }
 
+  Widget _buildLoadingContent() {
+    return Column(
+      children: [
+        Expanded(flex: 1, child: Container()),
+        SizedBox(
+          width: 32,
+          height: 32,
+          child: CircularProgressIndicator(
+            color: Styles().colors.fillColorSecondary,
+            strokeWidth: 3,
+          ),
+        ),
+        Expanded(flex: 2, child: Container()),
+      ],
+    );
+  }
+
+  Widget _buildErrorContent() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 28),
+        child: Text(
+          'Failed to load survey.',
+          textAlign: TextAlign.center,
+          style: Styles().textStyles.getTextStyle("widget.message.medium.thin"),
+        ),
+      ),
+    );
+  }
+
   Widget _buildContent(BuildContext context) {
+    if (_loading) {
+      return Scaffold(
+        appBar: AppBar(
+          leading: HeaderBar(onLeading: _handleBack),
+        ),
+        body: _buildLoadingContent(),
+      );
+    }
+
     if (_currentStep == null) {
       return Scaffold(
         appBar: AppBar(
-          leading: HeaderBar(),
+          leading: HeaderBar(onLeading: _handleBack),
         ),
-        body: Center(child: Text('No survey data')),
+        body: _buildErrorContent(),
       );
     }
 
@@ -252,7 +310,9 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: HeaderBar(),
+        leading: HeaderBar(
+          onLeading: _handleBack
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
