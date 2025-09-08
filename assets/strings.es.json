@@ -433,7 +433,15 @@
     "panel.search.field.search.hint": "Escriba un término de búsqueda",
 
     "panel.maps.header.title": "Mapa",
-    "panel.maps2.header.title": "Map2",
+    "panel.map2.header.title": "Map2",
+    "panel.map2.button.search.title":"Search",
+   	"panel.map2.button.search.hint":"Tap to search locations",
+    "panel.map2.button.sort.title":"Sort",
+   	"panel.map2.button.sort.hint":"Tap to sort locations",
+    "panel.map2.button.starred.title":"Starred",
+    "panel.map2.button.starred.hint":"Tap to show only starred locations",
+    "panel.map2.button.amenities.title":"Amenities",
+    "panel.map2.button.amenities.hint":"Tap to edit amenities for visible location",
 
     "panel.map.select.header.title": "Elegir el Sitio",
     "panel.map.select.button.select.title": "Elegir",

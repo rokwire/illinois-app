@@ -103,21 +103,6 @@ class _Map2PanelState extends State<Map2Panel>
   Map<String, dynamic>? _mapStyles;
   LocationServicesStatus? _locationServicesStatus;
 
-  static const CameraPosition _defaultCameraPosition = CameraPosition(target: _defaultCameraTarget, zoom: _defaultCameraZoom);
-  static const LatLng _defaultCameraTarget = LatLng(40.102116, -88.227129);
-  static const double _defaultCameraZoom = 17;
-  static const double _mapPadding = 30;
-  static const double _mapPinMarkerSize = 24;
-  static const double _mapGroupMarkerSize = 24;
-  static const Offset _mapPinMarkerAnchor = Offset(0.5, 1);
-  static const Offset _mapCircleMarkerAnchor = Offset(0.5, 0.5);
-  static const double _groupMarkersUpdateThresoldDelta = 0.3;
-  static const List<double> _thresoldDistanceByZoom = [
-		1000000, 800000, 600000, 200000, 100000, // zoom 0 - 4
-		 100000,  80000,  60000,  20000,  10000, // zoom 5 - 9
-		   5000,   2000,   1000,    500,    250, // zoom 10 - 14
-		    100,     50,      0                  // zoom 15 - 16
-  ];
 
   static const List<double> _traySnapSizes = [0.03, 0.35, 0.65, 0.97];
   final double _trayInitialSize = _traySnapSizes[1];
@@ -220,7 +205,7 @@ class _Map2PanelState extends State<Map2Panel>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx("panel.maps2.header.title", "Map2")),
+      appBar: RootHeaderBar(title: Localization().getStringEx("panel.map2.header.title", "Map2")),
       body: _scaffoldBody,
       backgroundColor: Styles().colors.background,
     );
@@ -274,7 +259,7 @@ class _Map2PanelState extends State<Map2Panel>
   Widget get _mapView => Container(decoration: _mapViewDecoration, child:
     GoogleMap(
       key: _mapKey,
-      initialCameraPosition: _lastCameraPosition ?? _defaultCameraPosition,
+      initialCameraPosition: _lastCameraPosition ?? _Map2PanelContent.defaultCameraPosition,
       onMapCreated: _onMapCreated,
       onCameraIdle: _onMapCameraIdle,
       onCameraMove: _onMapCameraMove,
@@ -408,7 +393,7 @@ class _Map2PanelState extends State<Map2Panel>
         });
 
         if (init) {
-          CameraPosition cameraPosition = CameraPosition(target: currentLocation.gmsLatLng, zoom: _defaultCameraZoom);
+          CameraPosition cameraPosition = CameraPosition(target: currentLocation.gmsLatLng, zoom: _Map2PanelContent.defaultCameraZoom);
           if (_mapController != null) {
             _mapController?.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
           }
@@ -479,7 +464,7 @@ class _Map2PanelState extends State<Map2Panel>
     }
   }
 
-  // Content Type
+  // Content Filters
 
   Widget get _contentHeadingBar =>
     Container(key: _contentHeadingBarKey, decoration: _contentHeadingDecoration, child:
@@ -511,92 +496,6 @@ class _Map2PanelState extends State<Map2Panel>
         ),
       ),
     ],);
-
-  List<Widget> get _contentFilterButtonsBar {
-    List<Widget>? filterButtonsList = _filterButtons;
-    return ((filterButtonsList != null) && filterButtonsList.isNotEmpty) ? <Widget>[
-      Container(decoration: _contentFiltersBarDecoration, padding: _contentFiltersBarPadding, constraints: _contentFiltersBarConstraints, child:
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          controller: _filterButtonsScrollController,
-          child: Row(mainAxisSize: MainAxisSize.min, children: filterButtonsList,)
-        )
-      ),
-    ] : <Widget>[];
-  }
-
-  BoxConstraints get _contentFiltersBarConstraints => BoxConstraints(
-      minWidth: double.infinity
-  );
-
-  BoxDecoration get _contentFiltersBarDecoration =>
-    BoxDecoration(
-      border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1),),
-    );
-
-  EdgeInsetsGeometry get _contentFiltersBarPadding =>
-    EdgeInsets.only(left: 16, top: 8, bottom: 8);
-
-  List<Widget>? get _filterButtons {
-    switch (_selectedContentType) {
-      case Map2ContentType.CampusBuildings:      return _campusBuildingsFilterButtons;
-      case Map2ContentType.StudentCourses:
-      case Map2ContentType.DiningLocations:
-      case Map2ContentType.Events2:
-      case Map2ContentType.Laundries:
-      case Map2ContentType.BusStops:
-      case Map2ContentType.Therapists:
-      case Map2ContentType.MyLocations:
-      default: return <Widget>[];
-    }
-  }
-
-
-  List<Widget> get _campusBuildingsFilterButtons => <Widget>[
-    _searchFilterButton,
-    _filterButtonsSpacing,
-    _sortFilterButton,
-  ];
-
-  Widget get _searchFilterButton =>
-    Map2FilterImageButton(
-      image: Styles().images.getImage('search'),
-      label: Localization().getStringEx('headerbar.search.title', 'Search'),
-      hint: Localization().getStringEx('headerbar.search.hint', 'Type a search term'),
-      onTap: _onSearch,
-    );
-
-  Widget get _sortFilterButton =>
-    Map2FilterTextButton(
-      title: Localization().getStringEx('headerbar.sort.title', 'Sort'),
-      hint: Localization().getStringEx('headerbar.sort.hint', 'Tap to sort items'),
-      leftIcon: Styles().images.getImage('sort', size: 16),
-      rightIcon: Styles().images.getImage('chevron-down'),
-      onTap: _onSort,
-    );
-
-  Widget get _starredBuildingsFilterButton =>
-    Map2FilterTextButton(
-      title: Localization().getStringEx('headerbar.sort.title', 'Sort'),
-      hint: Localization().getStringEx('headerbar.sort.hint', 'Tap to sort items'),
-      leftIcon: Styles().images.getImage('sort', size: 16),
-      rightIcon: Styles().images.getImage('chevron-down'),
-      onTap: _onSort,
-    );
-
-  Widget get _filterButtonsSpacing =>
-    SizedBox(width: 6,);
-
-  void _onSearch() {
-
-  }
-
-  void _onSort() {
-
-  }
-
-  //void _onFilterButtonsScroll() {}
-
 
   void _onUnselectContentType() {
     setState(() {
@@ -847,7 +746,7 @@ class _Map2PanelState extends State<Map2Panel>
     List<Explore>? visibleExplores;
     if (_mapController != null) {
       visibleExplores = <Explore>[];
-      LatLngBounds clipBounds = await _visibleMapBounds() ?? _shrinkBoundsForSiblings(await _mapController!.getVisibleRegion(), padding: _mapPadding / 2,);
+      LatLngBounds clipBounds = await _visibleMapBounds() ?? _shrinkBoundsForSiblings(await _mapController!.getVisibleRegion(), padding: _Map2PanelContent.mapPadding / 2,);
 
       if (_explores?.isNotEmpty == true) {
         for (Explore explore in _explores!) {
@@ -871,7 +770,133 @@ class _Map2PanelState extends State<Map2Panel>
     }
   }
 
-  // Map Content
+  // API
+
+
+}
+
+// Map2 Filters
+
+extension _Map2PanelFilters on _Map2PanelState {
+  List<Widget> get _contentFilterButtonsBar {
+    List<Widget>? filterButtonsList = _filterButtons;
+    return ((filterButtonsList != null) && filterButtonsList.isNotEmpty) ? <Widget>[
+      Container(decoration: _contentFiltersBarDecoration, padding: _contentFiltersBarPadding, constraints: _contentFiltersBarConstraints, child:
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          controller: _filterButtonsScrollController,
+          child: Row(mainAxisSize: MainAxisSize.min, children: filterButtonsList,)
+        )
+      ),
+    ] : <Widget>[];
+  }
+
+  BoxConstraints get _contentFiltersBarConstraints => BoxConstraints(
+      minWidth: double.infinity
+  );
+
+  BoxDecoration get _contentFiltersBarDecoration =>
+    BoxDecoration(
+      border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1),),
+    );
+
+  EdgeInsetsGeometry get _contentFiltersBarPadding =>
+    EdgeInsets.only(left: 16, top: 8, bottom: 8);
+
+  List<Widget>? get _filterButtons {
+    switch (_selectedContentType) {
+      case Map2ContentType.CampusBuildings:      return _campusBuildingsFilterButtons;
+      case Map2ContentType.StudentCourses:
+      case Map2ContentType.DiningLocations:
+      case Map2ContentType.Events2:
+      case Map2ContentType.Laundries:
+      case Map2ContentType.BusStops:
+      case Map2ContentType.Therapists:
+      case Map2ContentType.MyLocations:
+      default: return <Widget>[];
+    }
+  }
+
+  List<Widget> get _campusBuildingsFilterButtons => <Widget>[
+    _searchFilterButton, _filterButtonsSpacing,
+    _sortFilterButton, _filterButtonsSpacing,
+    _starredBuildingsFilterButton, _filterButtonsSpacing,
+    _amenitiesBuildingsFilterButton, _filterButtonsEdgeSpacing,
+  ];
+
+  Widget get _searchFilterButton =>
+    Map2FilterImageButton(
+      image: Styles().images.getImage('search'),
+      label: Localization().getStringEx('panel.map2.button.search.title', 'Search'),
+      hint: Localization().getStringEx('panel.map2.button.search.hint', 'Type a search locations'),
+      onTap: _onSearch,
+    );
+
+  Widget get _sortFilterButton =>
+    Map2FilterTextButton(
+      title: Localization().getStringEx('panel.map2.button.sort.title', 'Sort'),
+      hint: Localization().getStringEx('panel.map2.button.sort.hint', 'Tap to sort locations'),
+      leftIcon: Styles().images.getImage('sort', size: 16),
+      rightIcon: Styles().images.getImage('chevron-down'),
+      onTap: _onSort,
+    );
+
+  Widget get _starredBuildingsFilterButton =>
+    Map2FilterTextButton(
+      title: Localization().getStringEx('panel.map2.button.starred.title', 'Starred'),
+      hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations'),
+      leftIcon: Styles().images.getImage('star-filled', size: 16),
+      onTap: _onStarred,
+    );
+
+  Widget get _amenitiesBuildingsFilterButton =>
+    Map2FilterTextButton(
+      title: Localization().getStringEx('panel.map2.button.amenities.title', 'Amenities'),
+      hint: Localization().getStringEx('panel.map2.button.amenities.hint', 'Tap to edit amenities for visible location'),
+      leftIcon: Styles().images.getImage('toilet', size: 16),
+      onTap: _onAmenities,
+    );
+
+  Widget get _filterButtonsSpacing =>
+    SizedBox(width: 6,);
+
+  Widget get _filterButtonsEdgeSpacing =>
+    SizedBox(width: 24,);
+
+
+  //void _onFilterButtonsScroll() {}
+
+  void _onSearch() {
+
+  }
+
+  void _onSort() {
+
+  }
+
+  void _onStarred() {
+
+  }
+
+  void _onAmenities() {
+
+  }
+}
+
+// Map2 Content
+
+extension _Map2PanelContent on _Map2PanelState {
+  static const CameraPosition defaultCameraPosition = CameraPosition(target: defaultCameraTarget, zoom: defaultCameraZoom);
+  static const LatLng defaultCameraTarget = LatLng(40.102116, -88.227129);
+  static const double defaultCameraZoom = 17;
+  static const double mapPadding = 30;
+  static const double groupMarkersUpdateThresoldDelta = 0.3;
+  static const List<double> thresoldDistanceByZoom = [
+		1000000, 800000, 600000, 200000, 100000, // zoom 0 - 4
+		 100000,  80000,  60000,  20000,  10000, // zoom 5 - 9
+		   5000,   2000,   1000,    500,    250, // zoom 10 - 14
+		    100,     50,      0                  // zoom 15 - 16
+  ];
 
   Future<void> _updateMapContentForZoom() async {
     double? mapZoom = await _mapController?.getZoomLevel();
@@ -879,7 +904,7 @@ class _Map2PanelState extends State<Map2Panel>
       if (_lastMapZoom == null) {
         _lastMapZoom = mapZoom;
       }
-      else if ((_lastMapZoom! - mapZoom).abs() > _groupMarkersUpdateThresoldDelta) {
+      else if ((_lastMapZoom! - mapZoom).abs() > groupMarkersUpdateThresoldDelta) {
         _buildMapContentData(_explores, updateCamera: false, showProgress: true, zoom: mapZoom,);
       }
     }
@@ -901,7 +926,7 @@ class _Map2PanelState extends State<Map2Panel>
   Future<void> _buildMapContentData(List<Explore>? explores, { bool updateCamera = false, bool showProgress = false, double? zoom}) async {
     Size? mapSize = _scaffoldKey.renderBoxSize;
     LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
-    CameraUpdate? targetCameraUpdate = updateCamera ? ((exploresBounds != null) ? _cameraUpdateForBounds(exploresBounds) : CameraUpdate.newCameraPosition(_defaultCameraPosition)) : null;
+    CameraUpdate? targetCameraUpdate = updateCamera ? ((exploresBounds != null) ? _cameraUpdateForBounds(exploresBounds) : CameraUpdate.newCameraPosition(defaultCameraPosition)) : null;
     if ((exploresBounds != null) && (mapSize != null)) {
 
       double thresoldDistance;
@@ -912,7 +937,7 @@ class _Map2PanelState extends State<Map2Panel>
           thresoldDistance = debugThresoldDistance;
         }
         else {
-          zoom ??= GeoMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * _mapPadding, 0), math.max(mapSize.height - 2 * _mapPadding, 0));
+          zoom ??= GeoMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * mapPadding, 0), math.max(mapSize.height - 2 * mapPadding, 0));
           thresoldDistance = _thresoldDistanceForZoom(zoom);
         }
         exploreMapGroups = _buildExplorMapGroups(explores, thresoldDistance: thresoldDistance);
@@ -925,7 +950,7 @@ class _Map2PanelState extends State<Map2Panel>
         BuildMarkersTask buildMarkersTask = _buildMarkers(context, exploreGroups: exploreMapGroups, );
         _buildMarkersTask = buildMarkersTask;
         if (showProgress && mounted) {
-          setState(() {
+          setStateIfMounted(() {
             _markersProgress = true;
           });
         }
@@ -941,7 +966,7 @@ class _Map2PanelState extends State<Map2Panel>
           _targetCameraUpdate = targetCameraUpdate;
           _buildMarkersTask = null;
           _lastMapZoom = null;
-          setState(() {
+          setStateIfMounted(() {
             _markersProgress = false;
           });
         }
@@ -953,7 +978,7 @@ class _Map2PanelState extends State<Map2Panel>
       _targetCameraUpdate = targetCameraUpdate;
       _buildMarkersTask = null;
       _lastMapZoom = null;
-      setState(() {
+      setStateIfMounted(() {
         _markersProgress = false;
       });
     }
@@ -1014,9 +1039,9 @@ class _Map2PanelState extends State<Map2Panel>
 
   static double _thresoldDistanceForZoom(double zoom) {
     int zoomIndex = zoom.round();
-    if ((0 <= zoomIndex) && (zoomIndex < _thresoldDistanceByZoom.length)) {
-      double zoomDistance = _thresoldDistanceByZoom[zoomIndex];
-      double nextZoomDistance = ((zoomIndex + 1) < _thresoldDistanceByZoom.length) ? _thresoldDistanceByZoom[zoomIndex + 1] : 0;
+    if ((0 <= zoomIndex) && (zoomIndex < thresoldDistanceByZoom.length)) {
+      double zoomDistance = thresoldDistanceByZoom[zoomIndex];
+      double nextZoomDistance = ((zoomIndex + 1) < thresoldDistanceByZoom.length) ? thresoldDistanceByZoom[zoomIndex + 1] : 0;
       double thresoldDistance = zoomDistance - (zoom - zoomIndex.toDouble()) * (zoomDistance - nextZoomDistance);
       return thresoldDistance;
     }
@@ -1025,8 +1050,8 @@ class _Map2PanelState extends State<Map2Panel>
 
 
   CameraUpdate _cameraUpdateForBounds(LatLngBounds bounds) => (bounds.northeast == bounds.southwest) ?
-    CameraUpdate.newCameraPosition(CameraPosition(target: bounds.northeast, zoom: _defaultCameraPosition.zoom)) :
-    CameraUpdate.newLatLngBounds(_enlargeBoundsForSiblings(bounds), _mapPadding);
+    CameraUpdate.newCameraPosition(CameraPosition(target: bounds.northeast, zoom: defaultCameraPosition.zoom)) :
+    CameraUpdate.newLatLngBounds(_enlargeBoundsForSiblings(bounds), mapPadding);
 
   LatLngBounds _enlargeBoundsForSiblings(LatLngBounds bounds, { double? padding, }) {
     double northLat = bounds.northeast.latitude;
@@ -1135,8 +1160,16 @@ class _Map2PanelState extends State<Map2Panel>
 
     return null;
   }
+}
 
-  // Map Markers
+// Map2 Markers
+
+extension _Map2PanelMarkers on _Map2PanelState {
+
+  static const double _mapPinMarkerSize = 24;
+  static const double _mapGroupMarkerSize = 24;
+  static const Offset _mapPinMarkerAnchor = Offset(0.5, 1);
+  static const Offset _mapCircleMarkerAnchor = Offset(0.5, 0.5);
 
   Future<Set<Marker>> _buildMarkers(BuildContext context, { Set<dynamic>? exploreGroups }) async {
     Set<Marker> markers = <Marker>{};
@@ -1282,7 +1315,6 @@ class _Map2PanelState extends State<Map2Panel>
     borderWidth: 2,
     borderOffset: 3,
   );
-
 }
 
 extension _Map2ContentType on Map2ContentType {
