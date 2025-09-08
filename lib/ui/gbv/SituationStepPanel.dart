@@ -12,11 +12,11 @@ import '../../model/GBV.dart';
 import 'dart:convert';
 
 const Map<String, Map<String, dynamic>> stepIcons = {
-  'situation':      {'image':'compass',     'color':Color(0xFF9318BB)},
-  'whats_happening':{'image':'ban',         'color':Color(0xFFF09842)},
-  'involved':       {'image':'user',        'color':Color(0xFF5182CF)},
-  'next':           {'image':'signs-post',  'color':Color(0xFF5FA7A3)},
-  'prioritize':     {'image':'timeline',    'color':Color(0xFF9318BB)},
+  'situation':      {"image":"compass",     "color":"0xFF9318BB"},
+  'whats_happening':{"image":"ban",         "color":"0xFFF09842"},
+  'involved':       {"image":"user",        "color":"0xFF5182CF"},
+  'next':           {"image":"signs-post",  "color":"0xFF5FA7A3"},
+  'services':     {"image":"timeline",    "color":"0xFF9318BB"},
 };
 
 class SituationStepPanel extends StatefulWidget {
@@ -193,74 +193,65 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
     final question = _currentStep!;
     final opts = (question is SurveyQuestionMultipleChoice) ? question.options : [];
 
-    // Extract icon data from gbv_resource_map based on current step
+    // Extract icon data from current step's extras field
     Widget? stepIconWidget;
     try {
-      String gbvResourceMapJson = jsonEncode(_survey.data['gbv_resource_map']);
-      Map<String, dynamic> gbvResourceMap = jsonDecode(gbvResourceMapJson);
-
-      final extrasMap = gbvResourceMap['extras'] as Map<String, dynamic>?;
       final currentStepKey = _currentStep!.key;
+      final stepData = _survey.data[currentStepKey];
 
-      Map<String, dynamic>? stepData;
-      if (extrasMap != null) {
-        stepData = extrasMap[currentStepKey];
-        // If not found by key, try to match by looking at current response or step context
-        if (stepData == null) {
-          print("defaulting to constant");
-          // Fallback to stepIcons const map
-          final fallbackIconData = stepIcons[currentStepKey];
-          if (fallbackIconData != null) {
-            stepIconWidget = Container(
-              width: 67,
-              height: 67,
-              decoration: BoxDecoration(
-                color: fallbackIconData['color'] as Color,
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Styles().images.getImage(
-                  fallbackIconData['image'] as String,
-                  excludeFromSemantics: true,
-                  size: 36,
-                  fit: BoxFit.contain,
-                  color: Colors.white,
-                ) ?? Container(),
-              ),
-            );
-          }
-        }
-      }
-      // If we found step data with icon info
-      if (stepData != null && stepData['icon_in_more_info'] != null) {
-        final iconData = stepData['icon_in_more_info'] as Map<String, dynamic>;
-        final colorString = iconData['color'] as String?;
-        final iconName = iconData['image'] as String?;
+      if (stepData != null && stepData.extras != null && stepData.extras is Map) {
+        final extrasMap = stepData.extras as Map<String, dynamic>;
+        final iconName = extrasMap['image'] as String?;
+        final colorString = extrasMap['color'] as String?;
 
         Color iconColor = Color(0xFF9318BB); // default fallback color
-        if (colorString != null && colorString.startsWith('Color(')) {
-          // Parse Color string like "Color(0xFF5FA7A3)"
-          final hexStr = colorString.substring(6, colorString.length - 1);
-          iconColor = Color(int.parse(hexStr));
+        if (colorString != null && colorString.startsWith('0x')) {
+          // Parse color string to match design exactly like "0xFF5182CF"
+          iconColor = Color(int.parse(colorString));
         }
 
-        stepIconWidget = Container(
-          width: 67,
-          height: 67,
-          decoration: BoxDecoration(
-            color: iconColor,
-            shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: Styles().images.getImage(
-              iconName ?? 'compass',
-              excludeFromSemantics: true,
-              size: 36,
-              fit: BoxFit.contain,
-              color: Colors.white,
-            ) ?? Container(),
-          ),
-        );
+        if (iconName != null) {
+          stepIconWidget = Container(
+            width: 67,
+            height: 67,
+            decoration: BoxDecoration(
+              color: iconColor,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Styles().images.getImage(
+                iconName,
+                excludeFromSemantics: true,
+                size: 36,
+                fit: BoxFit.contain,
+                color: Colors.white,
+              ) ?? Container(),
+            ),
+          );
+        }
+      }
+      // Fallback to stepIcons const map if no icon found in database
+      if (stepIconWidget == null) {
+        final fallbackIconData = stepIcons[currentStepKey];
+        if (fallbackIconData != null) {
+          stepIconWidget = Container(
+            width: 67,
+            height: 67,
+            decoration: BoxDecoration(
+              color: fallbackIconData['color'] as Color,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Styles().images.getImage(
+                fallbackIconData['image'] as String,
+                excludeFromSemantics: true,
+                size: 36,
+                fit: BoxFit.contain,
+                color: Colors.white,
+              ) ?? Container(),
+            ),
+          );
+        }
       }
     } catch (e) {
       // If any error occurs, fall back to stepIcons const map
@@ -300,6 +291,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
           children: [
             GBVQuickExitWidget(),
 
+            // Enhanced moreInfo container with icon
             if (question.moreInfo?.isNotEmpty == true)
               Container(
                 width: double.infinity,
@@ -356,7 +348,6 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
