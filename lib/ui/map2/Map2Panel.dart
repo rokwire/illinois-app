@@ -558,7 +558,7 @@ class _Map2PanelState extends State<Map2Panel>
         visibleExplores: _pinnedVisibleExplores ?? _visibleExplores,
         scrollController: scrollController,
         currentLocation: _currentLocation,
-        totalExploresCount: _pinnedExploresCount ?? _filteredExplores?.length ?? _explores?.length,
+        totalExploresCount: _pinnedExploresCount ?? ExploreMap.validCountFromList(_filteredExplores ?? _explores),
         analyticsFeature: widget.analyticsFeature,
       ),
     );
@@ -776,8 +776,8 @@ class _Map2PanelState extends State<Map2Panel>
     List<Explore>? visibleExplores;
     if (_mapController != null) {
       visibleExplores = <Explore>[];
-      LatLngBounds clipBounds = await _visibleMapBounds(topPadding: _Map2PanelContent.mapPadding, bottomPadding: 2 * _Map2PanelContent.mapPadding) ??
-        _shrinkBoundsForSiblings(await _mapController!.getVisibleRegion(), topPadding: _Map2PanelContent.mapPadding, bottomPadding: 2 * _Map2PanelContent.mapPadding,);
+      LatLngBounds clipBounds = await _visibleMapBounds() ??
+        _shrinkBoundsForSiblings(await _mapController!.getVisibleRegion());
 
       if (_filteredExplores?.isNotEmpty == true) {
         for (Explore explore in _filteredExplores!) {

@@ -488,6 +488,22 @@ extension ExploreMap on Explore {
     return validExplores;
   }
 
+  static int? validCountFromList(List<Explore>? explores) {
+    if (explores != null) {
+      int validCount = 0;
+      for (Explore explore in explores) {
+        ExploreLocation? exploreLocation = explore.exploreLocation;
+        if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
+          validCount++;
+        }
+      }
+      return validCount;
+    }
+    else {
+      return null;
+    }
+  }
+
   static LatLngBounds? boundsOfList(List<Explore>? explores) {
     double? minLat, minLng, maxLat, maxLng;
     if (explores != null) {
