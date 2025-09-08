@@ -50,13 +50,17 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
 
   Future<void> _selectOption(String title) async {
     if (_currentStep == null) return;
+
+    if (!mounted) return;
     setState(() => _loading = true);
 
     _currentStep!.response = title;
     await Surveys().evaluate(_survey);
+    if (!mounted) return;
 
     final next = Surveys().getFollowUp(_survey, _currentStep!);
     if (next != null && !_navigated) {
+      if (!mounted) return;
       setState(() {
         _currentStep = next;
         _stepHistory.add(next.key);
@@ -74,64 +78,54 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
       _survey,
       evalResultRules: true,
       summarizeResultRules: false,
-      returnMultiple : true,
+      returnMultiple: true,
     );
-
+    if (!mounted) return;
 
     SurveyStats? stats = _survey.stats;
     String nextValue = stats?.responseData['next'] ?? '';
+
+    // Build resourceIds, for screen push
     String gbvResourceMapJson = jsonEncode(_survey.data['gbv_resource_map']);
     Map<String, dynamic> gbvResourceMap = jsonDecode(gbvResourceMapJson);
     Map<String, dynamic>? extrasMap = gbvResourceMap['extras'] as Map<String, dynamic>?;
     var resourceEntryForNext = extrasMap?[nextValue];
-
     List<String> resourceIds = [];
-
-    // Populate resourceIds if available
     if (resourceEntryForNext != null && resourceEntryForNext['resource_ids'] is List) {
       resourceIds = List<String>.from(resourceEntryForNext['resource_ids']);
     }
-
-  // Fallback: Only if resourceIds is empty. Should never happen
-    if (resourceIds.isEmpty) {
-      resourceIds = widget.gbvData.resources
-          .take(3) // Take first 3 resources as fallback
-          .map((r) => r.id)
-          .toList();
-    }
-
-    // Verify these IDs exist in gbvData
+    if (!mounted) return;
+    // Prepare content & screen
     final availableIds = widget.gbvData.resources.map((r) => r.id).toSet();
     final validIds = resourceIds.where((id) => availableIds.contains(id)).toList();
-
-    final content = <GBVResourceList>[
+    final content = [
       GBVResourceList(
-        title: 'On Campus', //make dynamic with Filing a Report flow
+        title: 'On Campus',
         resourceIds: validIds.isNotEmpty ? validIds : availableIds.take(3).toList(),
-      )
+      ),
     ];
-
     final screen = GBVResourceListScreen(
       type: 'panel',
       title: 'Your Top Resources',
       description: 'Based on what you shared, here are some options that may help. '
-          'You\'re in control of what happens next—take your time and explore what feels right. '
-          'You\'re not alone, and support is available if you need it.',
+          'You’re in control of what happens next—take your time and explore what feels right. '
+          'You’re not alone, and support is available if you need it.',
       content: content,
     );
 
-    if (!_navigated) {
-      _navigated = true;
-      Navigator.push(
-        context,
-        CupertinoPageRoute(
-          builder: (ctx) => GBVResourceListPanel(
-            gbvData: widget.gbvData,
-            resourceListScreen: screen,
-          ),
+    if (!mounted) return;
+    _navigated = true;
+    Navigator.push(
+      context,
+      CupertinoPageRoute(
+        builder: (ctx) => GBVResourceListPanel(
+          gbvData: widget.gbvData,
+          resourceListScreen: screen,
         ),
-      );
-    }
+      ),
+    );
+
+    if (!mounted) return;
     setState(() => _loading = false);
   }
   void _onTapResource(GBVResource res) {
@@ -290,8 +284,6 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GBVQuickExitWidget(),
-
-            // Enhanced moreInfo container with icon
             if (question.moreInfo?.isNotEmpty == true)
               Container(
                 width: double.infinity,
