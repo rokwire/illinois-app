@@ -19,8 +19,9 @@ import 'package:illinois/service/Config.dart';
 class GBVResourceListPanel extends StatelessWidget {
   final GBVResourceListScreen resourceListScreen;
   final GBVData gbvData;
+  final bool showDirectoryLink;
 
-  GBVResourceListPanel({ super.key, required this.resourceListScreen, required this.gbvData });
+  GBVResourceListPanel({ super.key, required this.resourceListScreen, required this.gbvData, this.showDirectoryLink = false}); // Default to false to not impact current references
 
   @override
   Widget build(BuildContext context) =>
@@ -114,6 +115,16 @@ class GBVResourceListPanel extends StatelessWidget {
   //   Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource)));
   // }
 
+  void _navigateToDirectory(BuildContext context) {
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => GBVResourceDirectoryPanel(gbvData: this.gbvData)
+        )
+    );
+  }
+
+
   void _onTapResource(BuildContext context, GBVResource resource) {
     switch (resource.type) {
       case GBVResourceType.external_link: {
@@ -128,28 +139,63 @@ class GBVResourceListPanel extends StatelessWidget {
   }
 
   Widget? _buildUrlDetail(BuildContext context) {
-    String? url = Config().gbvWeCareUrl;
-    return (url != null) ?
-    Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
-    RichText(text: TextSpan(children: [
-      TextSpan(
-          text: Localization().getStringEx('', 'View additional confidential resources on the '),
-          style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
-      ),
-      TextSpan(
-          text: Localization().getStringEx('', 'Illinois We Care website'),
-          style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
-          recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(context, url)
-      ),
-      WidgetSpan(child:
-      Padding(padding: EdgeInsets.only(left: 4), child:
-      Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-      )
-      )
-    ]))
-    )
-        : null;
+    if (showDirectoryLink) {
+      // Show directory link instead of external URL
+      return Padding(
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          child: RichText(
+              text: TextSpan(
+                  children: [
+                    TextSpan(
+                        text: Localization().getStringEx('', 'View additional resources in the '),
+                        style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
+                    ),
+                    TextSpan(
+                        text: Localization().getStringEx('', 'Resource Directory'),
+                        style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
+                        recognizer: TapGestureRecognizer()..onTap = () => _navigateToDirectory(context)
+                    ),
+                    WidgetSpan(
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 4),
+                            child: Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                        )
+                    )
+                  ]
+              )
+          )
+      );
+    } else {
+      // Original Illinois We Care URL logic
+      String? url = Config().gbvWeCareUrl;
+      return (url != null) ?
+      Padding(
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          child: RichText(
+              text: TextSpan(
+                  children: [
+                    TextSpan(
+                        text: Localization().getStringEx('', 'View additional confidential resources on the '),
+                        style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
+                    ),
+                    TextSpan(
+                        text: Localization().getStringEx('', 'Illinois We Care website'),
+                        style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
+                        recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(context, url)
+                    ),
+                    WidgetSpan(
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 4),
+                            child: Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                        )
+                    )
+                  ]
+              )
+          )
+      ) : null;
+    }
   }
+
 
   void _launchUrl(BuildContext context, String? url) async {
     if (StringUtils.isNotEmpty(url)) {

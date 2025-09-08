@@ -6,7 +6,7 @@ import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
+import 'package:illinois/ui/gbv/GBVResourceDirectoryPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
 import '../../model/GBV.dart';
 import 'dart:convert';
@@ -59,7 +59,6 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
 
     // Run evaluation rules
     await Surveys().evaluate(_survey);
-
     if (!mounted) return;
 
     // Determine next step
@@ -107,7 +106,6 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
     if (resourceEntry != null && resourceEntry['resource_ids'] is List) {
       resourceIds = List<String>.from(resourceEntry['resource_ids']);
     }
-
     if (!mounted) return;
     // Prepare content & screen, default fallbacks
     final availableIds = widget.gbvData.resources.map((r) => r.id).toSet();
@@ -127,12 +125,15 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
       content: content,
     );
     if (!mounted) return;
+    // conditionally
+    //Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDirectoryPanel(gbvData: widget.gbvData)));
     Navigator.push(
       context,
       CupertinoPageRoute(
         builder: (ctx) => GBVResourceListPanel(
           gbvData: widget.gbvData,
           resourceListScreen: screen,
+          showDirectoryLink: true,
         ),
       ),
     );
@@ -142,6 +143,10 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
     setState(() {
       _loading = false;
     });
+  }
+
+  void _onResourceDirectory(BuildContext context, GBVData gbvContent) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDirectoryPanel(gbvData: gbvContent)));
   }
 
   void _handleBack() {
