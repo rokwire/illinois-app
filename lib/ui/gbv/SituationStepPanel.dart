@@ -5,6 +5,7 @@ import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/model/options.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
@@ -178,7 +179,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
     if (_currentStep == null) {
       return Scaffold(
         appBar: AppBar(
-          leading: BackButton(color: Colors.white),
+          leading: HeaderBar(),
         ),
         body: Center(child: Text('No survey data')),
       );
@@ -273,10 +274,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: _goBack,
-        ),
+        leading: HeaderBar(),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
