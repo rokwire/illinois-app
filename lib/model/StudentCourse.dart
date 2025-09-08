@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -206,7 +207,7 @@ class StudentCourseSection {
 
 // Building
 
-class Building with Explore {
+class Building with Explore implements Favorite {
   final String? id;
   final String? name;
   final String? number;
@@ -361,6 +362,11 @@ class Building with Explore {
     latitude : latitude,
     longitude : longitude,
   );
+
+  // Favorite implementation
+  static const String favoriteKeyName = "campusBuildings";
+  @override String get favoriteKey => favoriteKeyName;
+  @override String? get favoriteId => id;
 
   // List<Building>
 

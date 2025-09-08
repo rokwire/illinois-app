@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:illinois/ext/Building.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Map2.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -16,6 +17,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
+import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Dinings.dart';
@@ -83,7 +85,10 @@ class _Map2PanelState extends State<Map2Panel>
   Map2ContentType? _selectedContentType;
   double _contentTypesScrollOffset = 0;
 
+  Map<Map2ContentType, _Map2Filter> _filters = <Map2ContentType, _Map2Filter>{};
+
   List<Explore>? _explores;
+  List<Explore>? _filteredExplores;
   List<Explore>? _visibleExplores;
   LoadExploresTask? _exploresTask;
   bool _exploresProgress = false;
@@ -102,16 +107,6 @@ class _Map2PanelState extends State<Map2Panel>
   Position? _currentLocation;
   Map<String, dynamic>? _mapStyles;
   LocationServicesStatus? _locationServicesStatus;
-
-
-  static const List<double> _traySnapSizes = [0.03, 0.35, 0.65, 0.97];
-  final double _trayInitialSize = _traySnapSizes[1];
-  final double _trayMinSize = _traySnapSizes.first;
-  final double _trayMaxSize = _traySnapSizes.last;
-
-  static const String _mapStylesAssetName = 'assets/map.styles.json';
-  static const String _mapStylesBuildingsKey = 'explore-poi';
-  static const String _mapStylesBusStopsKey = 'mtd-stop';
 
   @override
   void initState() {
@@ -500,7 +495,7 @@ class _Map2PanelState extends State<Map2Panel>
   void _onUnselectContentType() {
     setState(() {
       Storage()._storedMap2ContentType = _selectedContentType = null;
-      _explores = _visibleExplores = null;
+      _explores = _filteredExplores = _visibleExplores = null;
       _exploresTask = null;
       _exploresProgress = false;
 
@@ -545,6 +540,11 @@ class _Map2PanelState extends State<Map2Panel>
 
   // Tray Sheet
 
+  static const List<double> _traySnapSizes = [0.03, 0.35, 0.65, 0.97];
+  final double _trayInitialSize = _traySnapSizes[1];
+  final double _trayMinSize = _traySnapSizes.first;
+  final double _trayMaxSize = _traySnapSizes.last;
+
   Widget get _traySheet =>
     DraggableScrollableSheet(
       controller: _traySheetController,
@@ -558,12 +558,16 @@ class _Map2PanelState extends State<Map2Panel>
         visibleExplores: _pinnedVisibleExplores ?? _visibleExplores,
         scrollController: scrollController,
         currentLocation: _currentLocation,
-        totalExploresCount: _pinnedExploresCount ?? _explores?.length,
+        totalExploresCount: _pinnedExploresCount ?? _filteredExplores?.length,
         analyticsFeature: widget.analyticsFeature,
       ),
     );
 
   // Map Styles
+
+  static const String _mapStylesAssetName = 'assets/map.styles.json';
+  static const String _mapStylesBuildingsKey = 'explore-poi';
+  static const String _mapStylesBusStopsKey = 'mtd-stop';
 
   Future<void> _initMapStyles() async {
     _mapStyles = JsonUtils.decodeMap(await rootBundle.loadString(_mapStylesAssetName));
@@ -588,19 +592,21 @@ class _Map2PanelState extends State<Map2Panel>
         setState(() {
           _exploresTask = exploresTask;
           _exploresProgress = true;
-          _explores = _visibleExplores = null;
+          _explores = _filteredExplores = _visibleExplores = null;
           _pinnedExplore = null;
           _pinnedMarker = null;
         });
 
         // wait for explores load
         List<Explore>? explores = await exploresTask;
+        List<Explore>? filteredExplores = _filterExplores(explores);
 
         if (mounted && (exploresTask == _exploresTask)) {
-          await _buildMapContentData(explores, updateCamera: true);
+          await _buildMapContentData(filteredExplores, updateCamera: true);
           if (mounted && (exploresTask == _exploresTask)) {
             setState(() {
               _explores = explores;
+              _filteredExplores = filteredExplores;
               _exploresTask = null;
               _exploresProgress = false;
               _mapKey = UniqueKey(); // force map rebuild
@@ -610,7 +616,7 @@ class _Map2PanelState extends State<Map2Panel>
       }
       else {
         setState(() {
-          _explores = _visibleExplores = null;
+          _explores = _filteredExplores = _visibleExplores = null;
           _exploresTask = null;
           _exploresProgress = false;
 
@@ -640,13 +646,15 @@ class _Map2PanelState extends State<Map2Panel>
 
         // wait for explores load
         List<Explore>? explores = await exploresTask;
+        List<Explore>? filteredExplores = _filterExplores(explores);
 
-        if (mounted && (exploresTask == _exploresTask) && !DeepCollectionEquality().equals(_explores, explores)) {
-          await _buildMapContentData(explores, updateCamera: false, showProgress: true);
+        if (mounted && (exploresTask == _exploresTask) && !DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
+          await _buildMapContentData(filteredExplores, updateCamera: false, showProgress: true);
           if (mounted && (exploresTask == _exploresTask)) {
 
             setState(() {
               _explores = explores;
+              _filteredExplores = filteredExplores;
               _exploresTask = null;
               if ((_pinnedExplore != null) && (explores?.contains(_pinnedExplore) == true)) {
                 _pinnedExplore = null;
@@ -655,6 +663,22 @@ class _Map2PanelState extends State<Map2Panel>
             });
             _updateVisibleExplores();
           }
+        }
+      }
+    }
+  }
+
+  Future<void> _updateFilteredExplores() async {
+    if (mounted) {
+      List<Explore>? filteredExplores = _filterExplores(_explores);
+      if (mounted && !DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
+        await _buildMapContentData(filteredExplores, updateCamera: true, showProgress: true);
+        if (mounted) {
+          setState(() {
+            _filteredExplores = filteredExplores;
+            _mapKey = UniqueKey(); // force map rebuild
+          });
+          _updateVisibleExplores();
         }
       }
     }
@@ -740,6 +764,12 @@ class _Map2PanelState extends State<Map2Panel>
     return (locations != null) ? List.from(locations.reversed) : null;
   }
 
+  List<Explore>? _filterExplores(List<Explore>? explores) {
+    _Map2Filter? filter = _filters[_selectedContentType];
+    return ((explores != null) && (filter != null)) ?
+      filter.process(explores) : explores;
+  }
+
   // Visible Explores
 
   Future<List<Explore>?> _buildVisibleExplores() async {
@@ -748,8 +778,8 @@ class _Map2PanelState extends State<Map2Panel>
       visibleExplores = <Explore>[];
       LatLngBounds clipBounds = await _visibleMapBounds() ?? _shrinkBoundsForSiblings(await _mapController!.getVisibleRegion(), padding: _Map2PanelContent.mapPadding / 2,);
 
-      if (_explores?.isNotEmpty == true) {
-        for (Explore explore in _explores!) {
+      if (_filteredExplores?.isNotEmpty == true) {
+        for (Explore explore in _filteredExplores!) {
           LatLng? exploreLocation = explore.exploreLocation?.exploreLocationMapCoordinate;
           if ((exploreLocation != null) && clipBounds.contains(exploreLocation)) {
             visibleExplores.add(explore);
@@ -778,6 +808,7 @@ class _Map2PanelState extends State<Map2Panel>
 // Map2 Filters
 
 extension _Map2PanelFilters on _Map2PanelState {
+
   List<Widget> get _contentFilterButtonsBar {
     List<Widget>? filterButtonsList = _filterButtons;
     return ((filterButtonsList != null) && filterButtonsList.isNotEmpty) ? <Widget>[
@@ -846,6 +877,7 @@ extension _Map2PanelFilters on _Map2PanelState {
       title: Localization().getStringEx('panel.map2.button.starred.title', 'Starred'),
       hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations'),
       leftIcon: Styles().images.getImage('star-filled', size: 16),
+      toggled: _campusBuildingsFilter?.starred == true,
       onTap: _onStarred,
     );
 
@@ -863,6 +895,7 @@ extension _Map2PanelFilters on _Map2PanelState {
   Widget get _filterButtonsEdgeSpacing =>
     SizedBox(width: 24,);
 
+  _Map2CampusBuildingsFilters? get _campusBuildingsFilter => JsonUtils.cast(_filters[Map2ContentType.CampusBuildings]);
 
   //void _onFilterButtonsScroll() {}
 
@@ -874,8 +907,15 @@ extension _Map2PanelFilters on _Map2PanelState {
 
   }
 
-  void _onStarred() {
 
+  void _onStarred() {
+    _Map2CampusBuildingsFilters? filter = JsonUtils.cast(_filters[Map2ContentType.CampusBuildings] ??= _Map2CampusBuildingsFilters());
+    if (filter != null) {
+      setStateIfMounted((){
+        filter.starred = (filter.starred != true);
+      });
+      _updateFilteredExplores();
+    }
   }
 
   void _onAmenities() {
@@ -905,7 +945,7 @@ extension _Map2PanelContent on _Map2PanelState {
         _lastMapZoom = mapZoom;
       }
       else if ((_lastMapZoom! - mapZoom).abs() > groupMarkersUpdateThresoldDelta) {
-        _buildMapContentData(_explores, updateCamera: false, showProgress: true, zoom: mapZoom,);
+        _buildMapContentData(_filteredExplores, updateCamera: false, showProgress: true, zoom: mapZoom,);
       }
     }
   }
@@ -1439,4 +1479,41 @@ extension ExplorePOIImpl on ExplorePOI {
         longitude: coordinate.longitude
       )
     );
+}
+
+abstract class _Map2Filter {
+  List<Explore> process(List<Explore> explores);
+}
+
+class _Map2CampusBuildingsFilters implements _Map2Filter {
+  String search;
+  bool starred;
+  Set<String> amenities;
+
+  // ignore: unused_element_parameter
+  _Map2CampusBuildingsFilters({this.search = "", this.starred = false, this.amenities = const <String>{}});
+
+  @override
+  List<Explore> process(List<Explore> explores) {
+    if (explores.isNotEmpty && ((search.isNotEmpty == true) || (starred == true) || (amenities.isNotEmpty == true))) {
+      String? searchLowerCase = search.toLowerCase();
+      Iterable<String> amenitiesLowerCase = amenities.map((String amenity) => amenity.toLowerCase());
+
+      List<Explore> filtered = <Explore>[];
+      for (Explore explore in explores) {
+        if ((explore is Building) &&
+            ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchLowerCase(searchLowerCase))) &&
+            ((starred != true) || (Auth2().prefs?.isFavorite(explore as Favorite) == true)) &&
+            ((amenitiesLowerCase.isNotEmpty != true) || (explore.matchAmenitiesLowerCase(amenitiesLowerCase)))
+          ) {
+          filtered.add(explore);
+        }
+      }
+      return filtered;
+    }
+    else {
+      return explores;
+    }
+  }
+
 }

@@ -60,12 +60,14 @@ class Map2FilterTextButton extends StatelessWidget {
   final String? hint;
   final Widget? leftIcon;
   final Widget? rightIcon;
+  final bool toggled;
   final void Function()? onTap;
   final EdgeInsetsGeometry padding;
   final EdgeInsetsGeometry leftIconPadding;
   final EdgeInsetsGeometry rightIconPadding;
 
   Map2FilterTextButton({super.key, this.title, this.label, this.hint, this.leftIcon, this.rightIcon, this.onTap,
+    this.toggled = false,
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
     this.leftIconPadding = const EdgeInsets.only(right: 6),
     this.rightIconPadding = const EdgeInsets.only(left: 6),
@@ -79,7 +81,7 @@ class Map2FilterTextButton extends StatelessWidget {
           Row(mainAxisSize: MainAxisSize.min, children: [
             if (leftIcon != null)
               Padding(padding: leftIconPadding, child: leftIcon,),
-            Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.small.medium'),),
+            Text(title ?? '', style: _titleTextStyle,),
             if (rightIcon != null)
               Padding(padding: rightIconPadding, child: rightIcon,),
           ],)
@@ -88,8 +90,11 @@ class Map2FilterTextButton extends StatelessWidget {
     );
 
   BoxDecoration get _decoration => BoxDecoration(
-    color: Styles().colors.surface,
+    color: _backColor,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
     borderRadius: BorderRadius.circular(18),
   );
+
+  Color? get _backColor => toggled ? Styles().colors.fillColorPrimary : Styles().colors.surface;
+  TextStyle? get _titleTextStyle => toggled ? Styles().textStyles.getTextStyle('widget.title.light.small') : Styles().textStyles.getTextStyle('widget.button.title.small.medium');
 }
