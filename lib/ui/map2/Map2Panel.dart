@@ -558,7 +558,7 @@ class _Map2PanelState extends State<Map2Panel>
         visibleExplores: _pinnedVisibleExplores ?? _visibleExplores,
         scrollController: scrollController,
         currentLocation: _currentLocation,
-        totalExploresCount: _pinnedExploresCount ?? _filteredExplores?.length,
+        totalExploresCount: _pinnedExploresCount ?? _filteredExplores?.length ?? _explores?.length,
         analyticsFeature: widget.analyticsFeature,
       ),
     );
@@ -776,7 +776,8 @@ class _Map2PanelState extends State<Map2Panel>
     List<Explore>? visibleExplores;
     if (_mapController != null) {
       visibleExplores = <Explore>[];
-      LatLngBounds clipBounds = await _visibleMapBounds() ?? _shrinkBoundsForSiblings(await _mapController!.getVisibleRegion(), padding: _Map2PanelContent.mapPadding / 2,);
+      LatLngBounds clipBounds = await _visibleMapBounds(topPadding: _Map2PanelContent.mapPadding, bottomPadding: 2 * _Map2PanelContent.mapPadding) ??
+        _shrinkBoundsForSiblings(await _mapController!.getVisibleRegion(), topPadding: _Map2PanelContent.mapPadding, bottomPadding: 2 * _Map2PanelContent.mapPadding,);
 
       if (_filteredExplores?.isNotEmpty == true) {
         for (Explore explore in _filteredExplores!) {
@@ -810,7 +811,7 @@ class _Map2PanelState extends State<Map2Panel>
 extension _Map2PanelFilters on _Map2PanelState {
 
   List<Widget> get _contentFilterButtonsBar {
-    List<Widget>? filterButtonsList = _filterButtons;
+    List<Widget>? filterButtonsList = (_exploresProgress == false) ? _filterButtons : null;
     return ((filterButtonsList != null) && filterButtonsList.isNotEmpty) ? <Widget>[
       Container(decoration: _contentFiltersBarDecoration, padding: _contentFiltersBarPadding, constraints: _contentFiltersBarConstraints, child:
         SingleChildScrollView(
@@ -1144,7 +1145,7 @@ extension _Map2PanelContent on _Map2PanelState {
     return bounds;
   }
 
-  LatLngBounds _shrinkBoundsForSiblings(LatLngBounds bounds, { double? padding, }) {
+  LatLngBounds _shrinkBoundsForSiblings(LatLngBounds bounds, { double? topPadding, double? bottomPadding, }) {
     double northLat = bounds.northeast.latitude;
     double southLat = bounds.southwest.latitude;
     double boundHeight = northLat - southLat;
@@ -1164,9 +1165,12 @@ extension _Map2PanelContent on _Map2PanelState {
         southLat += (trayHeight / mapHeight) * boundHeight;
       }
 
-      if ((padding != null) && (0 < padding)) {
-        northLat -= (padding / mapHeight) * boundHeight;
-        southLat += (padding / mapHeight) * boundHeight;
+      if ((topPadding != null) && (0 < topPadding)) {
+        northLat -= (topPadding / mapHeight) * boundHeight;
+      }
+
+      if ((bottomPadding != null) && (0 < bottomPadding)) {
+        southLat += (bottomPadding / mapHeight) * boundHeight;
       }
 
       if (southLat <= northLat) {
@@ -1180,7 +1184,7 @@ extension _Map2PanelContent on _Map2PanelState {
     return bounds;
   }
 
-  Future<LatLngBounds?> _visibleMapBounds({ double? padding, }) async {
+  Future<LatLngBounds?> _visibleMapBounds({ double? topPadding, double? bottomPadding, }) async {
     Size? mapSize = _scaffoldKey.renderBoxSize;
     if ((mapSize != null) && (mapSize.width > 0) && (mapSize.height > 0) && (_mapController != null)) {
       double top = 0, bottom = mapSize.height;
@@ -1198,9 +1202,12 @@ extension _Map2PanelContent on _Map2PanelState {
         bottom -= trayHeight;
       }
 
-      if ((padding != null) && (0 < padding)) {
-        top += padding;
-        bottom -= padding;
+      if ((topPadding != null) && (0 < topPadding)) {
+        top += topPadding;
+      }
+
+      if ((bottomPadding != null) && (0 < bottomPadding)) {
+        bottom -= bottomPadding;
       }
 
       if (top < bottom) {
