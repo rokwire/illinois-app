@@ -50,31 +50,39 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
 
   Future<void> _selectOption(String title) async {
     if (_currentStep == null) return;
-
     if (!mounted) return;
-    setState(() => _loading = true);
+    setState(() {
+      _loading = true;
+    });
 
     _currentStep!.response = title;
+
+    // Run evaluation rules
     await Surveys().evaluate(_survey);
+
     if (!mounted) return;
 
+    // Determine next step
     final next = Surveys().getFollowUp(_survey, _currentStep!);
-    if (next != null && !_navigated) {
+
+    if (next != null) {
+      // Navigate to next question
       if (!mounted) return;
       setState(() {
         _currentStep = next;
         _stepHistory.add(next.key);
         _loading = false;
+        _navigated = false;
       });
     }
-    else if (!_navigated) {
+    else {
       await _showResults();
     }
   }
 
   Future<void> _showResults() async {
     // Evaluate with result rules
-    final resultActions = await Surveys().evaluate(
+    await Surveys().evaluate(
       _survey,
       evalResultRules: true,
       summarizeResultRules: false,
@@ -82,6 +90,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
     );
     if (!mounted) return;
 
+    // Build and push the results screen
     SurveyStats? stats = _survey.stats;
     String nextValue = stats?.responseData['next'] ?? '';
 
@@ -112,9 +121,7 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
           'You’re not alone, and support is available if you need it.',
       content: content,
     );
-
     if (!mounted) return;
-    _navigated = true;
     Navigator.push(
       context,
       CupertinoPageRoute(
@@ -124,26 +131,33 @@ class _SituationStepPanelState extends State<SituationStepPanel> {
         ),
       ),
     );
+    _navigated = true;
 
     if (!mounted) return;
-    setState(() => _loading = false);
+    setState(() {
+      _loading = false;
+    });
   }
 
   void _handleBack() {
     if (_stepHistory.length > 1) {
-      // Remove the current step key
       _stepHistory.removeLast();
-      // Get the previous step key
       final previousKey = _stepHistory.last;
-      // Restore that step as the current step
       setState(() {
         _currentStep = _survey.data[previousKey];
-        // Clear any previous response so the question can be answered again
         _currentStep?.response = null;
+        _loading = false;
+        _navigated = false;
+      });
+      // Recompute follow-up state from here
+      Surveys().evaluate(_survey).then((_) {
+        if (!mounted) return;
+        setState(() {
+          // no changes to UI fields, just ensure internal state rebuilt
+        });
       });
     }
     else {
-      // If there's no earlier step, exit the survey panel
       Navigator.pop(context);
     }
   }
