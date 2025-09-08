@@ -517,6 +517,30 @@ extension ExploreMap on Explore {
     return ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) ? LatLngBounds(southwest: LatLng(minLat, minLng), northeast: LatLng(maxLat, maxLng)) : null;
   }
 
+  static LatLngBounds? boundsOfSet(Iterable<LatLng> coordinates) {
+    double? minLat, minLng, maxLat, maxLng;
+    for (LatLng coordinate in coordinates) {
+      double coordinateLat = coordinate.latitude.toDouble();
+      double coordinateLng = coordinate.longitude.toDouble();
+      if ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) {
+        if (coordinateLat < minLat)
+          minLat = coordinateLat;
+        else if (maxLat < coordinateLat)
+          maxLat = coordinateLat;
+
+        if (coordinateLng < minLng)
+          minLng = coordinateLng;
+        else if (maxLng < coordinateLng)
+          maxLng = coordinateLng;
+      }
+      else {
+        minLat = maxLat = coordinateLat;
+        minLng = maxLng = coordinateLng;
+      }
+    }
+    return ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) ? LatLngBounds(southwest: LatLng(minLat, minLng), northeast: LatLng(maxLat, maxLng)) : null;
+  }
+
   static LatLng? centerOfList(List<Explore>? explores) {
     if (explores != null) {
       int count = 0;

@@ -929,7 +929,7 @@ extension _Map2PanelContent on _Map2PanelState {
   static const CameraPosition defaultCameraPosition = CameraPosition(target: defaultCameraTarget, zoom: defaultCameraZoom);
   static const LatLng defaultCameraTarget = LatLng(40.102116, -88.227129);
   static const double defaultCameraZoom = 17;
-  static const double mapPadding = 30;
+  static const double mapPadding = 60;
   static const double groupMarkersUpdateThresoldDelta = 0.3;
   static const List<double> thresoldDistanceByZoom = [
 		1000000, 800000, 600000, 200000, 100000, // zoom 0 - 4
@@ -965,8 +965,9 @@ extension _Map2PanelContent on _Map2PanelState {
 
   Future<void> _buildMapContentData(List<Explore>? explores, { bool updateCamera = false, bool showProgress = false, double? zoom}) async {
     Size? mapSize = _scaffoldKey.renderBoxSize;
-    LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
-    CameraUpdate? targetCameraUpdate = updateCamera ? ((exploresBounds != null) ? _cameraUpdateForBounds(exploresBounds) : CameraUpdate.newCameraPosition(defaultCameraPosition)) : null;
+    LatLngBounds? exploresRawBounds = ExploreMap.boundsOfList(explores);
+    LatLngBounds? exploresBounds = (exploresRawBounds != null) ? _updateBoundsForSiblings(exploresRawBounds) : null;
+    CameraUpdate? targetCameraUpdate = updateCamera ? _cameraUpdateForBounds(exploresBounds) : null;
     if ((exploresBounds != null) && (mapSize != null)) {
 
       double thresoldDistance;
@@ -1089,11 +1090,22 @@ extension _Map2PanelContent on _Map2PanelState {
   }
 
 
-  CameraUpdate _cameraUpdateForBounds(LatLngBounds bounds) => (bounds.northeast == bounds.southwest) ?
-    CameraUpdate.newCameraPosition(CameraPosition(target: bounds.northeast, zoom: defaultCameraPosition.zoom)) :
-    CameraUpdate.newLatLngBounds(_enlargeBoundsForSiblings(bounds), mapPadding);
+  CameraUpdate _cameraUpdateForBounds(LatLngBounds? bounds) {
+    if (bounds == null) {
+      return CameraUpdate.newCameraPosition(defaultCameraPosition);
+    }
+    else if (bounds.northeast == bounds.southwest) {
+      return CameraUpdate.newCameraPosition(CameraPosition(target: bounds.northeast, zoom: defaultCameraZoom));
+    }
+    else {
+      return CameraUpdate.newLatLngBounds(bounds, mapPadding);
+    }
+  }
 
-  LatLngBounds _enlargeBoundsForSiblings(LatLngBounds bounds, { double? padding, }) {
+  LatLngBounds _updateBoundsForSiblings(LatLngBounds bounds) => (bounds.northeast != bounds.southwest) ?
+    _enlargeBoundsForSiblings(bounds, topPadding: mapPadding, bottomPadding: 2 * mapPadding) : bounds;
+
+  LatLngBounds _enlargeBoundsForSiblings(LatLngBounds bounds, { double? topPadding, double? bottomPadding, }) {
     double northLat = bounds.northeast.latitude;
     double southLat = bounds.southwest.latitude;
     double boundHeight = northLat - southLat;
@@ -1113,9 +1125,12 @@ extension _Map2PanelContent on _Map2PanelState {
         southLat -= (trayHeight / mapHeight) * boundHeight;
       }
 
-      if ((padding != null) && (0 < padding)) {
-        northLat += (padding / mapHeight) * boundHeight;
-        southLat -= (padding / mapHeight) * boundHeight;
+      if ((topPadding != null) && (0 < topPadding)) {
+        northLat += (topPadding / mapHeight) * boundHeight;
+      }
+
+      if ((bottomPadding != null) && (0 < bottomPadding)) {
+        southLat -= (bottomPadding / mapHeight) * boundHeight;
       }
 
       if (southLat < northLat) {
