@@ -30,19 +30,22 @@ class Map2ContentTypeButton extends StatelessWidget {
 
 class Map2FilterImageButton extends StatelessWidget {
   final Widget? image;
+  final String? imageKey;
   final String? label;
   final String? hint;
   final void Function()? onTap;
   final EdgeInsetsGeometry padding;
 
-  Map2FilterImageButton({super.key, this.image, this.hint, this.label, this.onTap, this.padding = const EdgeInsets.all(9)});
+  Map2FilterImageButton({super.key, this.image, this.imageKey, this.hint, this.label, this.onTap,
+    this.padding = const EdgeInsets.all(9)
+  });
 
   @override
   Widget build(BuildContext context) =>
     Semantics(label: label, hint: hint, button: true, child:
       InkWell(onTap: onTap, child:
         Container(decoration: _decoration, padding: padding, child:
-          image
+          image ?? Styles().images.getImage(imageKey, excludeFromSemantics: true),
         )
       ),
     );
@@ -97,4 +100,25 @@ class Map2FilterTextButton extends StatelessWidget {
 
   Color? get _backColor => toggled ? Styles().colors.fillColorPrimary : Styles().colors.surface;
   TextStyle? get _titleTextStyle => toggled ? Styles().textStyles.getTextStyle('widget.title.light.small') : Styles().textStyles.getTextStyle('widget.button.title.small.medium');
+}
+
+class Map2SearchTextImageButton extends StatelessWidget {
+  final Widget? image;
+  final String? imageKey;
+  final String? label;
+  final String? hint;
+  final void Function()? onTap;
+  final EdgeInsetsGeometry padding;
+
+  Map2SearchTextImageButton({super.key, this.image, this.imageKey, this.hint, this.label, this.onTap, this.padding = const EdgeInsets.all(12)});
+
+  @override
+  Widget build(BuildContext context) =>
+    Semantics(label: label, hint: hint, button: true, excludeSemantics: true, child:
+      InkWell(onTap: onTap, child:
+        Padding(padding: padding, child:
+          image ?? Styles().images.getImage(imageKey, excludeFromSemantics: true),
+        ),
+      ),
+    );
 }

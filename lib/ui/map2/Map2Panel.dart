@@ -80,12 +80,15 @@ class _Map2PanelState extends State<Map2Panel>
   final ScrollController _contentTypesScrollController = ScrollController();
   final ScrollController _filterButtonsScrollController = ScrollController();
   final DraggableScrollableController _traySheetController = DraggableScrollableController();
+  final TextEditingController _searchTextController = TextEditingController();
+  final FocusNode _searchTextNode = FocusNode();
 
   late Set<Map2ContentType> _availableContentTypes;
   Map2ContentType? _selectedContentType;
   double _contentTypesScrollOffset = 0;
 
-  Map<Map2ContentType, _Map2Filter> _filters = <Map2ContentType, _Map2Filter>{};
+  final Map<Map2ContentType, _Map2Filter> _filters = <Map2ContentType, _Map2Filter>{};
+  bool _searchOn = false;
 
   List<Explore>? _explores;
   List<Explore>? _filteredExplores;
@@ -137,6 +140,8 @@ class _Map2PanelState extends State<Map2Panel>
     _traySheetController.dispose();
     _contentTypesScrollController.dispose();
     _filterButtonsScrollController.dispose();
+    _searchTextController.dispose();
+    _searchTextNode.dispose();
     super.dispose();
   }
 
@@ -463,9 +468,11 @@ class _Map2PanelState extends State<Map2Panel>
 
   Widget get _contentHeadingBar =>
     Container(key: _contentHeadingBarKey, decoration: _contentHeadingDecoration, child:
-      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: _searchOn ? <Widget>[
+        _contentFilterSearchBar,
+      ] : <Widget>[
         _contentTitleBar,
-        ... _contentFilterButtonsBar,
+        _contentFilterButtonsBar ?? Container(),
       ],),
     );
 
@@ -764,11 +771,8 @@ class _Map2PanelState extends State<Map2Panel>
     return (locations != null) ? List.from(locations.reversed) : null;
   }
 
-  List<Explore>? _filterExplores(List<Explore>? explores) {
-    _Map2Filter? filter = _filters[_selectedContentType];
-    return ((explores != null) && (filter != null)) ?
-      filter.process(explores) : explores;
-  }
+  List<Explore>? _filterExplores(List<Explore>? explores) =>
+    ((explores != null) ? _selectedFilterIfExists?.process(explores) : explores) ?? explores;
 
   // Visible Explores
 
@@ -809,18 +813,17 @@ class _Map2PanelState extends State<Map2Panel>
 // Map2 Filters
 
 extension _Map2PanelFilters on _Map2PanelState {
-
-  List<Widget> get _contentFilterButtonsBar {
+  
+  Widget? get _contentFilterButtonsBar {
     List<Widget>? filterButtonsList = (_exploresProgress == false) ? _filterButtons : null;
-    return ((filterButtonsList != null) && filterButtonsList.isNotEmpty) ? <Widget>[
+    return ((filterButtonsList != null) && filterButtonsList.isNotEmpty) ?
       Container(decoration: _contentFiltersBarDecoration, padding: _contentFiltersBarPadding, constraints: _contentFiltersBarConstraints, child:
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           controller: _filterButtonsScrollController,
           child: Row(mainAxisSize: MainAxisSize.min, children: filterButtonsList,)
         )
-      ),
-    ] : <Widget>[];
+      ) : null;
   }
 
   BoxConstraints get _contentFiltersBarConstraints => BoxConstraints(
@@ -896,12 +899,97 @@ extension _Map2PanelFilters on _Map2PanelState {
   Widget get _filterButtonsEdgeSpacing =>
     SizedBox(width: 24,);
 
-  _Map2CampusBuildingsFilters? get _campusBuildingsFilter => JsonUtils.cast(_filters[Map2ContentType.CampusBuildings]);
+  _Map2Filter? get _selectedFilter => _getFilter(_selectedContentType, ensure: true);
+  _Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
+
+  _Map2CampusBuildingsFilters? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings));
+
+  _Map2Filter? _getFilter(Map2ContentType? contentType, { bool ensure = false }) {
+    if (contentType != null) {
+      _Map2Filter? filter = _filters[contentType];
+      if ((filter == null) && ensure) {
+        filter = _Map2Filter.fromContentType(contentType);
+        if (filter != null) {
+          _filters[contentType] = filter;
+        }
+      }
+      return filter;
+    }
+    else {
+      return null;
+    }
+  }
+
+
+  Widget get _contentFilterSearchBar =>
+    Container(padding: EdgeInsets.only(left: 16), child:
+      Row(children: <Widget>[
+        Expanded(child:
+          _searchTextField,
+        ),
+        Map2SearchTextImageButton(
+          imageKey: 'search',
+          label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
+          hint: Localization().getStringEx('panel.search.button.search.hint', ''),
+          onTap: _onTapSearchText,
+        ),
+        Map2SearchTextImageButton(
+          imageKey: 'close',
+          label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
+          hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
+          onTap: _onTapCancelSearchText,
+        ),
+      ],),
+    );
+      
+  Widget get _searchTextField => Semantics(
+    label: Localization().getStringEx('panel.search.field.search.title', 'Search'),
+    hint: Localization().getStringEx('panel.search.field.search.hint', ''),
+    textField: true,
+    excludeSemantics: true,
+    child: TextField(
+      controller: _searchTextController,
+      focusNode: _searchTextNode,
+      onChanged: (text) => _onSearchTextChanged(text),
+      onSubmitted: (_) => _onTapSearchText(),
+      autofocus: true,
+      cursorColor: Styles().colors.fillColorSecondary,
+      keyboardType: TextInputType.text,
+      style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+      decoration: InputDecoration(
+        border: InputBorder.none,
+      ),
+    ),
+  );
 
   //void _onFilterButtonsScroll() {}
 
   void _onSearch() {
+    setStateIfMounted((){
+      _searchOn = true;
+      _searchTextController.text = _selectedFilterIfExists?.searchText ?? '';
+    });
+  }
+  
+  void _onSearchTextChanged(String text) {
+  }
 
+  void _onTapCancelSearchText() {
+    setStateIfMounted((){
+      _searchTextController.text = '';
+      if (_searchTextController.text.isEmpty) {
+        _searchOn = false;
+      }
+    });
+  }
+  
+  void _onTapSearchText() {
+    setStateIfMounted((){
+      _selectedFilter?.searchText = _searchTextController.text;
+      _searchTextController.text = '';
+      _searchOn = false;
+    });
+    _updateFilteredExplores();
   }
 
   void _onSort() {
@@ -910,7 +998,7 @@ extension _Map2PanelFilters on _Map2PanelState {
 
 
   void _onStarred() {
-    _Map2CampusBuildingsFilters? filter = JsonUtils.cast(_filters[Map2ContentType.CampusBuildings] ??= _Map2CampusBuildingsFilters());
+    _Map2CampusBuildingsFilters? filter = _campusBuildingsFilter;
     if (filter != null) {
       setStateIfMounted((){
         filter.starred = (filter.starred != true);
@@ -1503,28 +1591,45 @@ extension ExplorePOIImpl on ExplorePOI {
     );
 }
 
-abstract class _Map2Filter {
-  List<Explore> process(List<Explore> explores);
+mixin class _Map2Filter {
+  String get searchText => '';
+  set searchText(String value) {}
+  
+  List<Explore> process(List<Explore> explores) => explores;
+
+  static _Map2Filter? fromContentType(Map2ContentType? contentType) {
+    switch (contentType) {
+      case Map2ContentType.CampusBuildings:      return _Map2CampusBuildingsFilters();
+      case Map2ContentType.StudentCourses:
+      case Map2ContentType.DiningLocations:
+      case Map2ContentType.Events2:
+      case Map2ContentType.Laundries:
+      case Map2ContentType.BusStops:
+      case Map2ContentType.Therapists:
+      case Map2ContentType.MyLocations:
+      default: return null;
+    }
+  }
 }
 
-class _Map2CampusBuildingsFilters implements _Map2Filter {
-  String search;
+class _Map2CampusBuildingsFilters with _Map2Filter {
+  String searchText;
   bool starred;
   Set<String> amenities;
 
   // ignore: unused_element_parameter
-  _Map2CampusBuildingsFilters({this.search = "", this.starred = false, this.amenities = const <String>{}});
+  _Map2CampusBuildingsFilters({this.searchText = "", this.starred = false, this.amenities = const <String>{}});
 
   @override
   List<Explore> process(List<Explore> explores) {
-    if (explores.isNotEmpty && ((search.isNotEmpty == true) || (starred == true) || (amenities.isNotEmpty == true))) {
-      String? searchLowerCase = search.toLowerCase();
+    if (explores.isNotEmpty && ((searchText.isNotEmpty == true) || (starred == true) || (amenities.isNotEmpty == true))) {
+      String? searchLowerCase = searchText.toLowerCase();
       Iterable<String> amenitiesLowerCase = amenities.map((String amenity) => amenity.toLowerCase());
 
       List<Explore> filtered = <Explore>[];
       for (Explore explore in explores) {
         if ((explore is Building) &&
-            ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchLowerCase(searchLowerCase))) &&
+            ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchTextLowerCase(searchLowerCase))) &&
             ((starred != true) || (Auth2().prefs?.isFavorite(explore as Favorite) == true)) &&
             ((amenitiesLowerCase.isNotEmpty != true) || (explore.matchAmenitiesLowerCase(amenitiesLowerCase)))
           ) {

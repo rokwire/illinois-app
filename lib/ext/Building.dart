@@ -4,7 +4,7 @@ import 'package:illinois/model/StudentCourse.dart';
 
 extension BuildingSearch on Building {
 
-  bool matchSearchLowerCase(String searchLowerCase) =>
+  bool matchSearchTextLowerCase(String searchLowerCase) =>
     (searchLowerCase.isNotEmpty && (
       (name?.toLowerCase().contains(searchLowerCase) == true) ||
       (fullAddress?.toLowerCase().contains(searchLowerCase) == true) ||
@@ -14,8 +14,8 @@ extension BuildingSearch on Building {
       (state?.toLowerCase().contains(searchLowerCase) == true) ||
       (zipCode?.toLowerCase().contains(searchLowerCase) == true) ||
       (mailCode?.toLowerCase().contains(searchLowerCase) == true) ||
-      (features?.firstWhereOrNull((BuildingFeature feature) => feature.matchSearchLowerCase(searchLowerCase)) != null) ||
-      (entrances?.firstWhereOrNull((BuildingEntrance entrance) => entrance.matchSearchLowerCase(searchLowerCase)) != null) ||
+      (features?.firstWhereOrNull((BuildingFeature feature) => feature.matchSearchTextLowerCase(searchLowerCase)) != null) ||
+      (entrances?.firstWhereOrNull((BuildingEntrance entrance) => entrance.matchSearchTextLowerCase(searchLowerCase)) != null) ||
       (floors?.firstWhereOrNull((String floor) => floor.toLowerCase().contains(searchLowerCase)) != null)
     ));
 
@@ -26,17 +26,17 @@ extension BuildingSearch on Building {
 }
 
 extension BuildingEntranceSearch on BuildingEntrance {
-  bool matchSearchLowerCase(String searchLowerCase) => searchLowerCase.isNotEmpty &&
+  bool matchSearchTextLowerCase(String searchLowerCase) => searchLowerCase.isNotEmpty &&
     (name?.toLowerCase().contains(searchLowerCase.toLowerCase()) == true);
 }
 
 extension BuildingFeatureSearch on BuildingFeature {
-  bool matchSearchLowerCase(String searchLowerCase) => value?.matchSearchLowerCase(searchLowerCase) == true;
+  bool matchSearchTextLowerCase(String searchLowerCase) => value?.matchSearchTextLowerCase(searchLowerCase) == true;
   bool matchAmenitiesLowerCase(Iterable<String> amenitiesLowerCase) => value?.matchAmenitiesLowerCase(amenitiesLowerCase) == true;
 }
 
 extension BuildingFeatureValueSearch on BuildingFeatureValue {
-  bool matchSearchLowerCase(String searchLowerCase) =>
+  bool matchSearchTextLowerCase(String searchLowerCase) =>
     searchLowerCase.isNotEmpty && (
       (name?.toLowerCase().contains(searchLowerCase) == true) ||
       (floors?.firstWhereOrNull((String floor) => floor.toLowerCase().contains(searchLowerCase)) != null)
