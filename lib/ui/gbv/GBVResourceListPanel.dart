@@ -147,12 +147,12 @@ class GBVResourceListPanel extends StatelessWidget {
               text: TextSpan(
                   children: [
                     TextSpan(
-                        text: Localization().getStringEx('', 'View additional resources in the '),
-                        style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
+                        text: Localization().getStringEx('', 'For more options, view the '),
+                        style: Styles().textStyles.getTextStyle('widget.detail.regular')
                     ),
                     TextSpan(
                         text: Localization().getStringEx('', 'Resource Directory'),
-                        style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
+                        style: Styles().textStyles.getTextStyle('widget.detail.regular'),
                         recognizer: TapGestureRecognizer()..onTap = () => _navigateToDirectory(context)
                     ),
                     WidgetSpan(

@@ -14,7 +14,7 @@ import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
-import 'package:illinois/ui/gbv/SituationStepPanel.dart';
+import 'package:illinois/ui/gbv/GBVSituationStepPanel.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 
@@ -232,7 +232,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
       Navigator.push(
         context,
         CupertinoPageRoute(
-          builder: (context) => SituationStepPanel(
+          builder: (context) => GBVSituationStepPanel(
             survey: survey,
             gbvData: gbvContent,
           ),
