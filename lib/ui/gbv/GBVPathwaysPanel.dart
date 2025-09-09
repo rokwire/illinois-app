@@ -36,6 +36,7 @@ class GBVPathwaysPanel extends StatefulWidget {
 
 class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
   GBVData? _gbv;
+  Survey? _survey;
   bool _loading = true;
   GestureRecognizer? _resourceDirectoryRecognizer;
 
@@ -244,13 +245,13 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
     // Navigate to Supporting a Friend Resources
   }
   void _onNotSure(BuildContext context, GBVData gbvContent) async {
-    Survey? survey = await Surveys().loadSurvey("cabb1338-48df-4299-8c2a-563e021f82ca");
-    if (survey != null) {
+    Analytics().logSelect(target: 'I\'m not sure yet');
+    if (_survey != null) {
       Navigator.push(
         context,
         CupertinoPageRoute(
           builder: (context) => GBVSituationStepPanel(
-            survey: survey,
+            survey: _survey!,
             gbvData: gbvContent,
           ),
         ),
@@ -268,6 +269,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
     GBVData? gbv = (GBVjson != null)
         ? GBVData.fromJson(JsonUtils.decodeMap(GBVjson))
         : null;
+    _survey = await Surveys().loadSurvey("cabb1338-48df-4299-8c2a-563e021f82ca");
     await Future.delayed(Duration(seconds: 1));
     return gbv;
   }
