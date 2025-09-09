@@ -14,6 +14,9 @@ import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../model/GBV.dart';
 import 'GBVResourceDirectoryPanel.dart';
@@ -28,6 +31,8 @@ class GBVPathwaysPanel extends StatefulWidget {
 }
 
 class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
+  final GlobalKey<_GBVPathwaysPanelState> _gbvPathwaysPanelKey = GlobalKey();
+
   GBVData? _gbv;
   bool _loading = true;
   GestureRecognizer? _resourceDirectoryRecognizer;
@@ -103,9 +108,18 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
     Widget content;
     content = Padding(padding: EdgeInsets.symmetric(horizontal: 12), child:
       Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text(Localization().getStringEx('', 'A Path Forward'),
-          style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,
-        ),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Expanded(child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+              Text(Localization().getStringEx('', 'A Path Forward'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'),)
+            ),
+          ),
+          InkWell(onTap: () => _onTapOptions(context), child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8), child:
+              Styles().images.getImage('more-white', excludeFromSemantics: true)
+            )
+          )
+        ],),
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
         Text(Localization().getStringEx('', 'If you think you or a friend has experienced inappropriate sexual behavior or an unhealthy relationship, help is available.'),
           style: Styles().textStyles.getTextStyle('widget.description.regular.highlight'), textAlign: TextAlign.left,
@@ -252,6 +266,31 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
 
   void _onTapDisplaySettings() {
     SettingsHomePanel.present(context, content: SettingsContentType.recent_items);
+  }
+
+  void _onTapOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      isScrollControlled: true,
+      isDismissible: true,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (context) => Container(padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16), child:
+        Column(mainAxisSize: MainAxisSize.min, children: [
+          RibbonButton(label: Localization().getStringEx('', 'We Care at Illinois website'), rightIconKey: 'external-link', onTap: () => _onTapWeCare(context)),
+          RibbonButton(label: Localization().getStringEx('', 'Resource Directory'), onTap: () => _onResourceDirectory(context, _gbv!))
+        ])
+      ),
+    );
+  }
+  void _onTapWeCare(BuildContext context) {
+    Navigator.pop(context);
+
+    String? weCareUrl = Config().gbvWeCareUrl;
+    Uri? weCareUri = (weCareUrl != null) ? Uri.tryParse(weCareUrl) : null;
+    if (weCareUri != null) {
+      launchUrl(weCareUri);
+    }
   }
 
 }
