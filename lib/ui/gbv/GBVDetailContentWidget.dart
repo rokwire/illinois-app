@@ -6,6 +6,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/service/Analytics.dart';
 
 class GBVDetailContentWidget extends StatelessWidget {
   final GBVResourceDetail resourceDetail;
@@ -25,10 +26,10 @@ class GBVDetailContentWidget extends StatelessWidget {
           Styles().images.getImage('location', excludeFromSemantics: true) ?? Container(),
           Expanded(child:
             GestureDetector(
-              onTap: () => GeoMapUtils.launchLocation(detail.content),
+              onTap: () => _onTapAddress(detail.content),
               behavior: HitTestBehavior.translucent,
               child:
-                Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12), child:
+                Container(padding: EdgeInsets.only(left: 8, top: 12, bottom: 12), child:
                   Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
             )
           )
@@ -39,10 +40,10 @@ class GBVDetailContentWidget extends StatelessWidget {
           Styles().images.getImage('envelope', excludeFromSemantics: true) ?? Container(),
           Expanded(child:
             GestureDetector(
-              onTap: () => launchUrl(uri),
+              onTap: () => _onTapEmail(uri),
               behavior: HitTestBehavior.translucent,
               child:
-                Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12), child:
+                Container(padding: EdgeInsets.only(left: 8, top: 12, bottom: 12), child:
                   Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
             )
           )
@@ -52,10 +53,10 @@ class GBVDetailContentWidget extends StatelessWidget {
           Styles().images.getImage('external-link', excludeFromSemantics: true) ?? Container(),
           Expanded(child:
             GestureDetector(
-              onTap: () => AppLaunchUrl.launch(context: context, url: detail.content),
+              onTap: () => _onTapExternalLink(context, detail.content),
               behavior: HitTestBehavior.translucent,
               child:
-              Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12), child:
+              Container(padding: EdgeInsets.only(left: 8, top: 12, bottom: 12), child:
                 Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
             )
           )
@@ -69,7 +70,7 @@ class GBVDetailContentWidget extends StatelessWidget {
                   textStyle: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
                   rightIcon: Styles().images.getImage('external-link', excludeFromSemantics: true) ?? Container(),
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                  onTap: () => AppLaunchUrl.launch(context: context, url: detail.content)
+                  onTap: () => _onTapButton(context, detail)
               )
             )
           )
@@ -79,21 +80,46 @@ class GBVDetailContentWidget extends StatelessWidget {
         return [
           Styles().images.getImage('phone', excludeFromSemantics: true) ?? Container(),
             GestureDetector(
-              onTap: () => launchUrl(uri),
+              onTap: () => _onTapPhone(uri),
               behavior: HitTestBehavior.translucent,
               child:
-              Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12), child:
+              Container(padding: EdgeInsets.only(left: 8, top: 12, bottom: 12), child:
                 Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
           )
         ];
       case GBVResourceDetailType.text:
         return [
           Expanded(child:
-            Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12), child:
+            Container(padding: EdgeInsets.symmetric(vertical: 12), child:
               Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small"))
             )
           )
         ];
     }
+  }
+
+  void _onTapAddress (String? address) {
+    Analytics().logSelect(target: 'Resource Detail - Email');
+    GeoMapUtils.launchLocation(address);
+  }
+
+  void _onTapEmail (Uri uri) {
+    Analytics().logSelect(target: 'Resource Detail - Email');
+    launchUrl(uri);
+  }
+
+  void _onTapExternalLink (BuildContext context, String? url) {
+    Analytics().logSelect(target: 'Resource Detail - External link');
+    AppLaunchUrl.launch(context: context, url: url);
+  }
+
+  void _onTapPhone (Uri uri) {
+    Analytics().logSelect(target: 'Resource Detail - Phone');
+    launchUrl(uri);
+  }
+
+  void _onTapButton (BuildContext context, GBVResourceDetail detail) {
+    Analytics().logSelect(target: 'Resource Button - ${detail.title ?? detail.content}');
+    AppLaunchUrl.launch(context: context, url: detail.content);
   }
 }

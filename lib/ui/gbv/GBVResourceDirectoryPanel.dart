@@ -14,6 +14,7 @@ import 'package:illinois/model/GBV.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/service/Analytics.dart';
 
 class GBVResourceDirectoryPanel extends StatefulWidget {
   final GBVData gbvData;
@@ -27,7 +28,7 @@ class GBVResourceDirectoryPanel extends StatefulWidget {
 
 class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
 
-  String _expandedSection = '';
+  List<String> _expandedSections = [];
   GestureRecognizer? _weCareRecognizer;
 
   @override
@@ -80,14 +81,14 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
             Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
             Row(mainAxisAlignment: MainAxisAlignment.start, children: [
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                Styles().images.getImage((_expandedSection == category) ? 'chevron-up' : 'chevron-down', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                Styles().images.getImage((_expandedSections.contains(category)) ? 'chevron-up' : 'chevron-down', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
               ),
               Text(category, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
             ])
             )
             )
             ),
-            Visibility(visible: _expandedSection == category, child:
+            Visibility(visible: _expandedSections.contains(category), child:
               Padding(padding: EdgeInsets.only(bottom: 8), child:
                 Column(children:
                  List.from(resources.map((resource) => _resourceWidget(resource)))
@@ -146,13 +147,21 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
       );
   }
 
-  void _expandSection(String category) {
+  // void _expandSection(String category) {
+  //   setState(() {
+  //     this._expandedSection = (_expandedSection == category) ? '' : category;
+  //   });
+  // }
+
+  void _expandSection(String section) {
     setState(() {
-      this._expandedSection = (_expandedSection == category) ? '' : category;
+      if (_expandedSections.contains(section)) this._expandedSections.remove(section);
+      else this._expandedSections.add(section);
     });
   }
 
   void _onTapResource(GBVResource resource) {
+    Analytics().logSelect(target: 'Resource - ${resource.title}');
     switch (resource.type) {
       case GBVResourceType.external_link: {
         GBVResourceDetail? externalLinkDetail = resource.directoryContent.firstWhereOrNull((detail) => detail.type == GBVResourceDetailType.external_link);
@@ -171,11 +180,11 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
       Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
             RichText(text: TextSpan(children: [
               TextSpan(
-                text: Localization().getStringEx('', 'View additional resources on the '),
+                text: Localization().getStringEx('panel.sexual_misconduct.resource_directory.view_additional', 'View additional resources on the '),
                 style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
                 ),
               TextSpan(
-              text: Localization().getStringEx('', 'Illinois We Care website'),
+              text: Localization().getStringEx('panel.sexual_misconduct.resource_directory.we_care', 'Illinois We Care website'),
               style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
               recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(url)
               ),

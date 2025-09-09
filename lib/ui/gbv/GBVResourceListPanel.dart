@@ -15,6 +15,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Analytics.dart';
 
 class GBVResourceListPanel extends StatelessWidget {
   final GBVResourceListScreen resourceListScreen;
@@ -37,7 +38,7 @@ class GBVResourceListPanel extends StatelessWidget {
           Padding(padding: EdgeInsets.only(top: 16, left: 16), child: (
               Text(resourceListScreen.title ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")))
           ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
           Container(height: 1, color: Styles().colors.surfaceAccent)
           ),
           Padding(padding: EdgeInsets.only(right: 16, left: 16, bottom: 0), child: (
@@ -110,11 +111,8 @@ class GBVResourceListPanel extends StatelessWidget {
       );
   }
 
-  // void _onTapResource(BuildContext context, GBVResource resource) {
-  //   Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource)));
-  // }
-
   void _onTapResource(BuildContext context, GBVResource resource) {
+    Analytics().logSelect(target: 'Resource - ${resource.title}');
     switch (resource.type) {
       case GBVResourceType.external_link: {
         GBVResourceDetail? externalLinkDetail = resource.directoryContent.firstWhereOrNull((detail) => detail.type == GBVResourceDetailType.external_link);
@@ -133,11 +131,11 @@ class GBVResourceListPanel extends StatelessWidget {
     Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
     RichText(text: TextSpan(children: [
       TextSpan(
-          text: Localization().getStringEx('', 'View additional confidential resources on the '),
+          text: Localization().getStringEx('panel.sexual_misconduct.resource_list.view_confidential', 'View additional confidential resources on the '),
           style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
       ),
       TextSpan(
-          text: Localization().getStringEx('', 'Illinois We Care website'),
+          text: Localization().getStringEx('panel.sexual_misconduct.resource_list.confidential_we_care', 'Illinois We Care website'),
           style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
           recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(context, url)
       ),

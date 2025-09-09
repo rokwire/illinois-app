@@ -782,9 +782,54 @@
             "detailsList": [
                 {
                     "title": "Start by believing.",
+                    "label": "S",
                     "content": [
                         {"type": "text", "content": "Believe the person's experience. Don’t question or minimize what the survivor tells you. It's important to recognize the impact on the survivor. Something that seems minor to you might be harmful to the survivor."},
                         {"type": "text", "content": "It is very common for survivors to blame themselves, but the blame rests squarely and only with the person who chose to harm them."}
+                    ]
+                },
+                {
+                    "title": "Talk less, listen more.",
+                    "label": "T",
+                    "content": [
+                        {"type": "text", "content": "Let them know you want to listen. Listening looks like:"},
+                        {"type": "text", "content": "· Let them share at their own pace. Try to avoid giving advice, unless they ask. They may just need to feel heard."},
+                        {"type": "text", "content": "· When you ask them what they need from you, hear and support them. Even if it's not what you think you would do in this situation."},
+                        {"type": "text", "content": "· You may feel nervous or awkward, but it’s okay to sit in pauses and silence for a bit."}
+                    ]
+                },
+                {
+                    "title": "Respect Survivors' Decisions",
+                    "label": "R",
+                    "content": [
+                        {"type": "text", "content": "Every survivor’s experience and healing journey is unique. Respect their concerns and their choices. Give the survivor control and autonomy."},
+                        {"type": "text", "content": "Any steps taken to increase a survivor's safety should be done with the survivor's consent. Part of reasserting that a survivor has power means respecting their choices to use/not use help that is offered and allowing them to pursue options according to their own timeline."}
+                    ]
+                },
+                {
+                    "title": "Inform survivors of resources",
+                    "label": "I",
+                    "content": [
+                        {"type": "text", "content": "Survivors do not have to navigate healing on their own. Help the survivor process by exploring resources and options, offering to accompany them to meetings, and finding other ways to increase their safety."},
+                        {"type": "text", "content": "You, as their supporter, are not alone. Resources exist for you, too. Resources can be found at:"},
+                        {"type": "external_link", "content": "https://wecare.illinois.edu/resources/"}
+                    ]
+                },
+                {
+                    "title": "Validate survivors' responses",
+                    "label": "V",
+                    "content": [
+                        {"type": "text", "content": "There is no “right” way for a survivor to respond. A survivor may feel many emotions: numb, sad, angry, in denial, terrified, depressed, agitated, withdrawn, etc. A survivor’s reactions, wants, needs, and feelings might change over time. Be patient with them."},
+                        {"type": "text", "content": "It is very common for survivors to blame themselves, but the blame rests squarely and only with the person who chose to harm them."}
+                    ]
+                },
+                {
+                    "title": "Empower with Empathy",
+                    "label": "E",
+                    "content": [
+                        {"type": "text", "content": "Empathetic support is an attitude of acceptance of all feelings, an atmosphere of warmth and safety. Be there for them. Try to understand what they are going through. Check in and be a source of support."},
+                        {"type": "text", "content": "Remind the survivor this is not their fault. They did the very best they knew how in a threatening situation. Let them decide who knows about what happened, and do not share their story with anyone else unless it is with their permission."},
+                        {"type": "text", "content": "However, please note that Responsible Employees who are made aware of sexual misconduct must immediately report the incident to the Title IX Office."}
                     ]
                 }
             ]

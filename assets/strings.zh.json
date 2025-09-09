@@ -3516,6 +3516,21 @@
 	"widget.safewalks_request.unknown.location.text": "Unknwon",
 
 	"panel.sexual_misconduct.header.title": "Inappropriate Sexual Behavior",
+	"panel.sexual_misconduct.error": "Failed to load resources.",
+	"panel.sexual_misconduct.title": "A Path Forward",
+	"panel.sexual_misconduct.description": "If you think you or a friend has experienced inappropriate sexual behavior or an unhealthy relationship, help is available.",
+	"panel.sexual_misconduct.choose_pathways": "Choose one of the below pathways or ",
+	"panel.sexual_misconduct.view_resources": "view a list of resources.",
+	"panel.sexual_misconduct.options.we_care": "We Care at Illinois website",
+	"panel.sexual_misconduct.options.resource_directory": "Resource Directory",
+	"panel.sexual_misconduct.resource_directory.view_additional": "View additional resources on the ",
+	"panel.sexual_misconduct.resource_directory.we_care": "Illinois We Care website.",
+	"panel.sexual_misconduct.resource_list.view_confidential": "View additional confidential resources on the ",
+	"panel.sexual_misconduct.resource_list.confidential_we_care": "Illinois We Care website.",
+
+	"widget.sexual_misconduct.quick_exit.privacy": "Privacy: ",
+	"widget.sexual_misconduct.quick_exit.app_activity": "your app activity is not shared with others. Use the quick exit icon to return Home.",
+	"widget.sexual_misconduct.quick_exit.dialog.description": "Use the quick exit icon at any time to be routed to the Illinois app home screen.",
 
 	"panel.home_canvas_course.header.title": "課程",
 	"panel.home_canvas_course.load.failed.error.msg": "無法加載課程. 請稍後再試.",
