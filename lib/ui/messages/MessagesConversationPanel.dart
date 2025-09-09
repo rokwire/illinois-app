@@ -750,6 +750,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       Analytics().logSelect(target: 'Attach File');
       showModalBottomSheet(
         context: context,
+        backgroundColor: Colors.white,
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
@@ -766,34 +767,31 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       constraints: BoxConstraints(maxHeight: 400),
       child: Column(
         children: [
-          Container(
-            color: Styles().colors.backgroundVariant,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16),
-                    child: Text(
-                      Localization().getStringEx('', 'Attach Files'),
-                      style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),
-                    ),
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 16),
+                  child: Text(
+                    Localization().getStringEx('', 'Attach Files'),
+                    style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),
                   ),
                 ),
-                Semantics(
-                  label: Localization().getStringEx('dialog.close.title', 'Close'),
-                  hint: Localization().getStringEx('dialog.close.hint', ''),
-                  inMutuallyExclusiveGroup: true,
-                  button: true,
-                  child: InkWell(
-                    onTap: () => _onTapMembersPopupClose(context),
-                    child: Container(
-                      padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
-                      child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
-                    ),
+              ),
+              Semantics(
+                label: Localization().getStringEx('dialog.close.title', 'Close'),
+                hint: Localization().getStringEx('dialog.close.hint', ''),
+                inMutuallyExclusiveGroup: true,
+                button: true,
+                child: InkWell(
+                  onTap: () => _onTapMembersPopupClose(context),
+                  child: Container(
+                    padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
+                    child: Styles().images.getImage('close-circle', excludeFromSemantics: true),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           Expanded(
             child: Padding(
@@ -802,36 +800,26 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   RibbonButton(
                       label: Localization().getStringEx('', 'Upload an image or video'),
                       leftIconKey: 'image',
-                      backgroundColor: Styles().colors.backgroundVariant,
-                      textColor: Styles().colors.textColorPrimary,
                       onTap: _onTapUploadImageOrVideo),
                   SizedBox(height: 4),
                   RibbonButton(
                       label: Localization().getStringEx('', 'Take a photo'),
                       leftIconKey: 'camera',
-                      backgroundColor: Styles().colors.backgroundVariant,
-                      textColor: Styles().colors.textColorPrimary,
                       onTap: _onTapCamera),
                   SizedBox(height: 4),
                   RibbonButton(
                       label: Localization().getStringEx('', 'Record a video'),
                       leftIconKey: 'video-camera',
-                      backgroundColor: Styles().colors.backgroundVariant,
-                      textColor: Styles().colors.textColorPrimary,
                       onTap: () => _onTapCamera(isVideo: true)),
                   SizedBox(height: 4),
                   RibbonButton(
                       label: Localization().getStringEx('', 'Record an audio clip'),
                       leftIconKey: 'microphone',
-                      backgroundColor: Styles().colors.backgroundVariant,
-                      textColor: Styles().colors.textColorPrimary,
                       onTap: _onTapRecordAudio),
                   SizedBox(height: 4),
                   RibbonButton(
                       label: Localization().getStringEx('', 'Upload a file'),
                       leftIconKey: 'file',
-                      backgroundColor: Styles().colors.backgroundVariant,
-                      textColor: Styles().colors.textColorPrimary,
                       onTap: _onTapAttachFile)
                 ])
             ),
