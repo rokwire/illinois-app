@@ -6,8 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+
+## [7.3.4] - 2025-09-05
 ### Changed
 - Split iOS build script into copying GoogleService-Info.plist and uploading DSYMs for Crashlytics, fixed run script's input & output files.
+### Fixed
+- Accessibility enhancements in HomeCustomizeFavoritesPanel [#1971](https://github.com/rokwire/illinois-app/issues/1971).
+- Fixed HomeFavoritesWidget update exception.
+### Added
+- Sort "My Courses" chronologically [#4897](https://github.com/rokwire/illinois-app/issues/4897).
+- Add assistant memory [#5365](https://github.com/rokwire/illinois-app/issues/5365)
 
 ## [7.3.3] - 2025-08-21
 ### Changed
