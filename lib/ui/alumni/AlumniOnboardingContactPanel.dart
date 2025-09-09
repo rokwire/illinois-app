@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/alumni/AlumniOnboardingReviewPanel.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart'; // RootHeaderBar
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -15,14 +15,6 @@ class _AlumniOnboardingContactPanelState extends State<AlumniOnboardingContactPa
   final TextEditingController _phoneController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    // Pre-populate with existing user data if available
-    // _emailController.text = Auth2().profile?.email ?? '';
-    // _phoneController.text = Auth2().profile?.phone ?? '';
-  }
-
-  @override
   void dispose() {
     _emailController.dispose();
     _phoneController.dispose();
@@ -31,85 +23,87 @@ class _AlumniOnboardingContactPanelState extends State<AlumniOnboardingContactPa
 
   @override
   Widget build(BuildContext context) {
+    final colors = Styles().colors;
+
     return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx("panel.alumni.onboarding.header.title", "Alumni"),
-        textStyle: Styles().textStyles.getTextStyle('header_bar'),
-      ),
-      backgroundColor: Styles().colors.background,
+      // Match Home top bar
+      appBar: RootHeaderBar(title: Localization().getStringEx('', 'Alumni')),
+      backgroundColor: colors.background,
       body: Column(
         children: [
-          // Progress indicator
+          // Thicker progress bar tight to top
           _buildProgressIndicator(step: 1, totalSteps: 4),
 
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(24),
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24), // tight to progress
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Step indicator
+                  // Step label close to bar
                   Text(
                     Localization().getStringEx(
-                        "panel.alumni.onboarding.contact.step",
-                        "Verify Contact Information (1/4)"
+                      "panel.alumni.onboarding.contact.step",
+                      "Verify Contact Information (1/4)",
                     ),
                     style: TextStyle(
-                      color: Styles().colors.textSurface,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                      color: colors.textSurface,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 12),
 
-                  // Title
+                  // Title – orange
                   Text(
                     Localization().getStringEx(
-                        "panel.alumni.onboarding.contact.title",
-                        "Keep in touch"
+                      "panel.alumni.onboarding.contact.title",
+                      "Keep in touch",
                     ),
                     style: TextStyle(
-                      color: Styles().colors.fillColorPrimary,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                      color: colors.fillColorSecondary,
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 12),
 
                   // Description
                   Text(
                     Localization().getStringEx(
-                        "panel.alumni.onboarding.contact.description",
-                        "Use a personal email so you don't miss important UIUC, and only fill out fields that you'd like to share with fellow illini."
+                      "panel.alumni.onboarding.contact.description",
+                      "Use a personal email so you don’t miss receipts, RSVPs, or alumni news.",
                     ),
                     style: TextStyle(
-                      color: Styles().colors.textSurface,
+                      color: colors.textSurface,
                       fontSize: 16,
                       height: 1.4,
                     ),
                   ),
-                  SizedBox(height: 32),
+                  const SizedBox(height: 28),
 
-                  // Personal Email field
+                  // Personal Email
                   _buildInputField(
                     label: Localization().getStringEx(
-                        "panel.alumni.onboarding.contact.email.label",
-                        "Personal Email"
+                      "panel.alumni.onboarding.contact.email.label",
+                      "Personal Email",
                     ),
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
+                    hint: "you@personalemail.com",
                     isRequired: true,
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
-                  // Mobile Number field
+                  // Mobile
                   _buildInputField(
                     label: Localization().getStringEx(
-                        "panel.alumni.onboarding.contact.phone.label",
-                        "Mobile (optional)"
+                      "panel.alumni.onboarding.contact.phone.label",
+                      "Mobile (optional)",
                     ),
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
+                    hint: "+1 217-555-5555",
                     isRequired: false,
                   ),
                 ],
@@ -117,23 +111,30 @@ class _AlumniOnboardingContactPanelState extends State<AlumniOnboardingContactPa
             ),
           ),
 
-          // Next button
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(24),
-            child: RoundedButton(
-              label: Localization().getStringEx(
+          // Bottom CTA – white pill, orange border, navy text (disabled = dim)
+          SafeArea(
+            top: false,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+              child: RoundedButton(
+                label: Localization().getStringEx(
                   "panel.alumni.onboarding.contact.button.next",
-                  "Next"
+                  "Next",
+                ),
+                onTap: _isFormValid() ? _onNext : null,
+                backgroundColor: Colors.white,
+                borderColor: _isFormValid()
+                    ? colors.fillColorSecondary
+                    : (colors.surfaceAccent ?? Colors.grey.shade300),
+                textColor: _isFormValid()
+                    ? colors.fillColorPrimary
+                    : (colors.textSurface?.withOpacity(0.6) ?? Colors.black54),
+                textStyle: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-              backgroundColor: _isFormValid() ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-              textColor: _isFormValid() ? Colors.white : Styles().colors.textSurface,
-              borderColor: _isFormValid() ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-              textStyle: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-              onTap: _isFormValid() ? _onNext : null,
             ),
           ),
         ],
@@ -142,18 +143,21 @@ class _AlumniOnboardingContactPanelState extends State<AlumniOnboardingContactPa
   }
 
   Widget _buildProgressIndicator({required int step, required int totalSteps}) {
+    final colors = Styles().colors;
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.fromLTRB(24, 12, 24, 8),
       child: Row(
         children: List.generate(totalSteps, (index) {
-          bool isActive = index < step;
+          final bool isActive = index < step;
           return Expanded(
             child: Container(
-              height: 4,
-              margin: EdgeInsets.only(right: index < totalSteps - 1 ? 8 : 0),
+              height: 8, // thicker
+              margin: EdgeInsets.only(right: index < totalSteps - 1 ? 10 : 0),
               decoration: BoxDecoration(
-                color: isActive ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-                borderRadius: BorderRadius.circular(2),
+                color: isActive
+                    ? colors.fillColorSecondary
+                    : (colors.surfaceAccent ?? Colors.black12),
+                borderRadius: BorderRadius.circular(4),
               ),
             ),
           );
@@ -167,74 +171,98 @@ class _AlumniOnboardingContactPanelState extends State<AlumniOnboardingContactPa
     required TextEditingController controller,
     required TextInputType keyboardType,
     required bool isRequired,
+    String? hint,
   }) {
+    final colors = Styles().colors;
+
+    final bool isEmailField = keyboardType == TextInputType.emailAddress;
+    final String text = controller.text.trim();
+    final bool showError = isEmailField && text.isNotEmpty && !_isEmail(text);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: TextStyle(
-            color: Styles().colors.fillColorPrimary,
+            color: colors.fillColorPrimary,
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
           style: TextStyle(
-            color: Styles().colors.textSurface,
+            color: colors.textSurface,
             fontSize: 16,
           ),
           decoration: InputDecoration(
-            hintText: isRequired ? null : Localization().getStringEx(
-                "panel.alumni.onboarding.contact.field.optional",
-                "Optional"
-            ),
+            hintText: isRequired ? hint : (hint ?? Localization().getStringEx(
+              "panel.alumni.onboarding.contact.field.optional",
+              "Optional",
+            )),
             hintStyle: TextStyle(
-              color: Styles().colors.textSurface?.withOpacity(0.6),
+              color: colors.textSurface?.withOpacity(0.6),
               fontSize: 16,
             ),
             filled: true,
             fillColor: Colors.white,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Styles().colors.surfaceAccent ?? Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.surfaceAccent ?? Colors.grey),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Styles().colors.surfaceAccent ?? Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.surfaceAccent ?? Colors.grey),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Styles().colors.fillColorSecondary ?? Colors.orange, width: 2),
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.fillColorSecondary, width: 2),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Colors.red.shade600, width: 2),
+            ),
           ),
           onChanged: (_) => setState(() {}),
         ),
+        if (showError) ...[
+          const SizedBox(height: 6),
+          Text(
+            Localization().getStringEx(
+              "panel.alumni.onboarding.contact.email.error",
+              "Enter a valid email address.",
+            ),
+            style: TextStyle(color: Colors.red.shade700, fontSize: 13),
+          ),
+        ],
       ],
     );
   }
 
   bool _isFormValid() {
-    return _emailController.text.trim().isNotEmpty &&
-        _emailController.text.contains('@');
+    final text = _emailController.text.trim();
+    return _isEmail(text);
+  }
+
+  bool _isEmail(String value) {
+    // simple, permissive email check
+    final emailRx = RegExp(r"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+    return emailRx.hasMatch(value);
   }
 
   void _onNext() {
-    // Save the contact information
-    // Auth2().updateProfile(email: _emailController.text.trim(), phone: _phoneController.text.trim());
-
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => AlumniOnboardingReviewPanel(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        pageBuilder: (_, animation, __) => AlumniOnboardingReviewPanel(),
+        transitionsBuilder: (_, animation, __, child) {
           return SlideTransition(
             position: animation.drive(
-              Tween(begin: Offset(1.0, 0.0), end: Offset.zero)
+              Tween(begin: const Offset(1, 0), end: Offset.zero)
                   .chain(CurveTween(curve: Curves.ease)),
             ),
             child: child,

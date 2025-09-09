@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/alumni/AlumniOnboardingLinkedInPanel.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart'; // RootHeaderBar lives here
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -21,13 +21,6 @@ class _AlumniOnboardingReviewPanelState extends State<AlumniOnboardingReviewPane
   final TextEditingController _collegeController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    // Pre-populate with existing user data if available
-    // _loadUserData();
-  }
-
-  @override
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
@@ -42,207 +35,143 @@ class _AlumniOnboardingReviewPanelState extends State<AlumniOnboardingReviewPane
 
   @override
   Widget build(BuildContext context) {
+    final styles = Styles();
+    final colors = styles.colors;
+
     return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx("panel.alumni.onboarding.header.title", "Alumni"),
-        textStyle: Styles().textStyles.getTextStyle('header_bar'),
-      ),
-      backgroundColor: Styles().colors.background,
+      // Match the HomePanel top bar
+      appBar: RootHeaderBar(title: Localization().getStringEx('', 'Alumni')),
+      backgroundColor: colors.background,
       body: Column(
         children: [
-          // Progress indicator
-          _buildProgressIndicator(step: 2, totalSteps: 4),
+          // Progress
+          _OnboardingProgress(step: 2, totalSteps: 4),
 
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(24),
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Step indicator
-                  Text(
-                    Localization().getStringEx(
+                  // Step label — tight to progress bar
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Text(
+                      Localization().getStringEx(
                         "panel.alumni.onboarding.review.step",
-                        "Review Your Information (2/4)"
-                    ),
-                    style: TextStyle(
-                      color: Styles().colors.textSurface,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                        "Review Your Information (2/4)",
+                      ),
+                      style: TextStyle(
+                        color: colors.textSurface,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 8),
 
-                  // Title
+                  const SizedBox(height: 16),
+
+                  // Title — orange
                   Text(
                     Localization().getStringEx(
-                        "panel.alumni.onboarding.review.title",
-                        "Is this correct?"
+                      "panel.alumni.onboarding.review.title",
+                      "Is this correct?",
                     ),
                     style: TextStyle(
-                      color: Styles().colors.fillColorPrimary,
+                      color: colors.fillColorSecondary, // Illini Orange
                       fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                  SizedBox(height: 16),
+
+                  const SizedBox(height: 12),
 
                   // Description
                   Text(
                     Localization().getStringEx(
-                        "panel.alumni.onboarding.review.description",
-                        "We pulled this from your student profile. Edit anything that has changed."
+                      "panel.alumni.onboarding.review.description",
+                      "We pulled this from your student profile. Edit anything that has changed.",
                     ),
                     style: TextStyle(
-                      color: Styles().colors.textSurface,
+                      color: colors.textSurface,
                       fontSize: 16,
                       height: 1.4,
                     ),
                   ),
-                  SizedBox(height: 32),
 
-                  // Name fields
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildInputField(
-                          label: Localization().getStringEx(
-                              "panel.alumni.onboarding.review.first_name.label",
-                              "First Name"
-                          ),
-                          controller: _firstNameController,
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: _buildInputField(
-                          label: Localization().getStringEx(
-                              "panel.alumni.onboarding.review.last_name.label",
-                              "Last Name"
-                          ),
-                          controller: _lastNameController,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                  // Location fields
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildInputField(
-                          label: Localization().getStringEx(
-                              "panel.alumni.onboarding.review.city.label",
-                              "Current City"
-                          ),
-                          controller: _cityController,
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: _buildInputField(
-                          label: Localization().getStringEx(
-                              "panel.alumni.onboarding.review.country.label",
-                              "Country"
-                          ),
-                          controller: _countryController,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24),
-
-                  // Employment fields
+                  // Single-column fields (match design)
                   _buildInputField(
-                    label: Localization().getStringEx(
-                        "panel.alumni.onboarding.review.employer.label",
-                        "Employer"
-                    ),
+                    label: Localization().getStringEx("panel.alumni.onboarding.review.first_name.label", "First Name"),
+                    controller: _firstNameController,
+                  ),
+                  const SizedBox(height: 24),
+
+                  _buildInputField(
+                    label: Localization().getStringEx("panel.alumni.onboarding.review.last_name.label", "Last Name"),
+                    controller: _lastNameController,
+                  ),
+                  const SizedBox(height: 24),
+
+                  _buildInputField(
+                    label: Localization().getStringEx("panel.alumni.onboarding.review.city.label", "Current City"),
+                    controller: _cityController,
+                  ),
+                  const SizedBox(height: 24),
+
+                  _buildInputField(
+                    label: Localization().getStringEx("panel.alumni.onboarding.review.country.label", "Country"),
+                    controller: _countryController,
+                  ),
+                  const SizedBox(height: 24),
+
+                  _buildInputField(
+                    label: Localization().getStringEx("panel.alumni.onboarding.review.employer.label", "Employer"),
                     controller: _employerController,
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
                   _buildInputField(
-                    label: Localization().getStringEx(
-                        "panel.alumni.onboarding.review.title.label",
-                        "Title"
-                    ),
+                    label: Localization().getStringEx("panel.alumni.onboarding.review.title.label", "Title"),
                     controller: _titleController,
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                  // Education fields
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildInputField(
-                          label: Localization().getStringEx(
-                              "panel.alumni.onboarding.review.graduation_year.label",
-                              "Graduation Year"
-                          ),
-                          controller: _graduationYearController,
-                          keyboardType: TextInputType.number,
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: _buildInputField(
-                          label: Localization().getStringEx(
-                              "panel.alumni.onboarding.review.college.label",
-                              "College"
-                          ),
-                          controller: _collegeController,
-                        ),
-                      ),
-                    ],
+                  _buildInputField(
+                    label: Localization().getStringEx("panel.alumni.onboarding.review.graduation_year.label", "Graduation Year"),
+                    controller: _graduationYearController,
+                    keyboardType: TextInputType.number,
                   ),
+                  const SizedBox(height: 24),
+
+                  _buildInputField(
+                    label: Localization().getStringEx("panel.alumni.onboarding.review.college.label", "College"),
+                    controller: _collegeController,
+                  ),
+
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
           ),
 
-          // Looks good button
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(24),
+          // White pill CTA with orange outline + navy text
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
             child: RoundedButton(
               label: Localization().getStringEx(
-                  "panel.alumni.onboarding.review.button.looks_good",
-                  "Looks good!"
+                "panel.alumni.onboarding.review.button.looks_good",
+                "Looks good! →",
               ),
-              backgroundColor: Styles().colors.fillColorSecondary,
-              textColor: Colors.white,
-              borderColor: Styles().colors.fillColorSecondary,
-              textStyle: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              backgroundColor: colors.white,
+              textColor: colors.fillColorPrimary, // navy
+              borderColor: colors.fillColorSecondary, // orange outline
+              textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               onTap: _onLooksGood,
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildProgressIndicator({required int step, required int totalSteps}) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      child: Row(
-        children: List.generate(totalSteps, (index) {
-          bool isActive = index < step;
-          return Expanded(
-            child: Container(
-              height: 4,
-              margin: EdgeInsets.only(right: index < totalSteps - 1 ? 8 : 0),
-              decoration: BoxDecoration(
-                color: isActive ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          );
-        }),
       ),
     );
   }
@@ -252,41 +181,40 @@ class _AlumniOnboardingReviewPanelState extends State<AlumniOnboardingReviewPane
     required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
   }) {
+    final colors = Styles().colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: TextStyle(
-            color: Styles().colors.fillColorPrimary,
+            color: colors.fillColorPrimary,
             fontSize: 14,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
-          style: TextStyle(
-            color: Styles().colors.textSurface,
-            fontSize: 16,
-          ),
+          style: TextStyle(color: colors.textSurface, fontSize: 16),
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Styles().colors.surfaceAccent ?? Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.surfaceAccent ?? Colors.grey),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Styles().colors.surfaceAccent ?? Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.surfaceAccent ?? Colors.grey),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Styles().colors.fillColorSecondary ?? Colors.orange, width: 2),
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.fillColorSecondary ?? Colors.orange, width: 2),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
         ),
       ],
@@ -294,9 +222,6 @@ class _AlumniOnboardingReviewPanelState extends State<AlumniOnboardingReviewPane
   }
 
   void _onLooksGood() {
-    // Save the updated information
-    // _saveUserData();
-
     Navigator.push(
       context,
       PageRouteBuilder(
@@ -304,7 +229,7 @@ class _AlumniOnboardingReviewPanelState extends State<AlumniOnboardingReviewPane
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
             position: animation.drive(
-              Tween(begin: Offset(1.0, 0.0), end: Offset.zero)
+              Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
                   .chain(CurveTween(curve: Curves.ease)),
             ),
             child: child,
@@ -313,19 +238,34 @@ class _AlumniOnboardingReviewPanelState extends State<AlumniOnboardingReviewPane
       ),
     );
   }
+}
 
-// void _loadUserData() {
-//   // Load user data from Auth2 profile
-//   final profile = Auth2().profile;
-//   if (profile != null) {
-//     _firstNameController.text = profile.firstName ?? '';
-//     _lastNameController.text = profile.lastName ?? '';
-//     // Add other fields as needed
-//   }
-// }
+/// Thicker progress bar, Home spacing
+class _OnboardingProgress extends StatelessWidget {
+  final int step;
+  final int totalSteps;
+  const _OnboardingProgress({required this.step, required this.totalSteps});
 
-// void _saveUserData() {
-//   // Save updated profile data
-//   // Auth2().updateProfile(...);
-// }
+  @override
+  Widget build(BuildContext context) {
+    final colors = Styles().colors;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
+      child: Row(
+        children: List.generate(totalSteps, (index) {
+          final bool isActive = index < step;
+          return Expanded(
+            child: Container(
+              height: 8, // thicker
+              margin: EdgeInsets.only(right: index < totalSteps - 1 ? 12 : 0),
+              decoration: BoxDecoration(
+                color: isActive ? colors.fillColorSecondary : (colors.surfaceAccent ?? const Color(0xFFE6E6E6)),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
 }
