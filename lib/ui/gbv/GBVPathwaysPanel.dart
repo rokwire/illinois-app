@@ -83,7 +83,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
 
   Widget _buildErrorContent() {
     return Center(
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('', 'Failed to load resources.'),
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.sexual_misconduct.error', 'Failed to load resources.'),
             textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.medium.thin"))));
   }
 
@@ -110,7 +110,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-              Text(Localization().getStringEx('', 'A Path Forward'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'),)
+              Text(Localization().getStringEx('panel.sexual_misconduct.title', 'A Path Forward'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'),)
             ),
           ),
           InkWell(onTap: () => _onTapOptions(context), child:
@@ -120,18 +120,18 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
           )
         ],),
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-        Text(Localization().getStringEx('', 'If you think you or a friend has experienced inappropriate sexual behavior or an unhealthy relationship, help is available.'),
+        Text(Localization().getStringEx('panel.sexual_misconduct.description', 'If you think you or a friend has experienced inappropriate sexual behavior or an unhealthy relationship, help is available.'),
           style: Styles().textStyles.getTextStyle('widget.description.regular.highlight'), textAlign: TextAlign.left,
         )
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           RichText(text: TextSpan(children: [
             TextSpan(
-              text: Localization().getStringEx('', 'Choose one of the below pathways or '),
+              text: Localization().getStringEx('panel.sexual_misconduct.choose_pathways', 'Choose one of the below pathways or '),
               style: Styles().textStyles.getTextStyle('widget.description.regular.highlight')
             ),
             TextSpan(
-                text: Localization().getStringEx('', 'view a list of resources.'),
+                text: Localization().getStringEx('panel.sexual_misconduct.view_resources', 'view a list of resources.'),
                 style: Styles().textStyles.getTextStyle('widget.description.regular.highlight.underline'),
                 recognizer: _resourceDirectoryRecognizer,
             )
@@ -176,9 +176,9 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
           Expanded(child:
             RichText(text:
               TextSpan(children: [
-                TextSpan(text: Localization().getStringEx('', 'Privacy: '),
+                TextSpan(text: Localization().getStringEx('widget.sexual_misconduct.quick_exit.privacy', 'Privacy: '),
                   style: Styles().textStyles.getTextStyle('widget.item.small.fat.highlight')),
-                TextSpan(text: Localization().getStringEx('', 'your app activity is not shared with others. Use the quick exit icon to return Home.'),
+                TextSpan(text: Localization().getStringEx('widget.sexual_misconduct.quick_exit.app_activity', 'your app activity is not shared with others. Use the quick exit icon to return Home.'),
                 style: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight')),
               ])
             )
@@ -210,7 +210,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
       infoTextWidget: Column(children: [
         GBVQuickExitIcon(),
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-        Text(Localization().getStringEx('', 'Use the quick exit icon at any time to be routed to the Illinois app home screen.'),
+        Text(Localization().getStringEx('widget.sexual_misconduct.quick_exit.dialog.description', 'Use the quick exit icon at any time to be routed to the Illinois app home screen.'),
           style: Styles().textStyles.getTextStyle('widget.description.regular'), textAlign: TextAlign.left,
         )
       ]
@@ -281,8 +281,8 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (context) => Container(padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16), child:
         Column(mainAxisSize: MainAxisSize.min, children: [
-          RibbonButton(label: Localization().getStringEx('', 'We Care at Illinois website'), rightIconKey: 'external-link', onTap: () => _onTapWeCare(context)),
-          RibbonButton(label: Localization().getStringEx('', 'Resource Directory'), onTap: () => _onResourceDirectory(context, _gbv!))
+          RibbonButton(label: Localization().getStringEx('panel.sexual_misconduct.options.we_care', 'We Care at Illinois website'), rightIconKey: 'external-link', onTap: () => _onTapWeCare(context)),
+          RibbonButton(label: Localization().getStringEx('panel.sexual_misconduct.options.resource_directory', 'Resource Directory'), onTap: () => _onResourceDirectory(context, _gbv!))
         ])
       ),
     );

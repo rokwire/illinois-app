@@ -131,11 +131,11 @@ class GBVResourceListPanel extends StatelessWidget {
     Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
     RichText(text: TextSpan(children: [
       TextSpan(
-          text: Localization().getStringEx('', 'View additional confidential resources on the '),
+          text: Localization().getStringEx('panel.sexual_misconduct.resource_list.view_confidential', 'View additional confidential resources on the '),
           style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
       ),
       TextSpan(
-          text: Localization().getStringEx('', 'Illinois We Care website'),
+          text: Localization().getStringEx('panel.sexual_misconduct.resource_list.confidential_we_care', 'Illinois We Care website'),
           style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
           recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(context, url)
       ),

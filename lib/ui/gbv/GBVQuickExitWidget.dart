@@ -26,9 +26,9 @@ class GBVQuickExitWidget extends StatelessWidget {
         Expanded(child:
         RichText(text:
         TextSpan(children: [
-          TextSpan(text: Localization().getStringEx('', 'Privacy: '),
+          TextSpan(text: Localization().getStringEx('widget.sexual_misconduct.quick_exit.privacy', 'Privacy: '),
               style: Styles().textStyles.getTextStyle('widget.item.small.fat')),
-          TextSpan(text: Localization().getStringEx('', 'your app activity is not shared with others.'),
+          TextSpan(text: Localization().getStringEx('widget.sexual_misconduct.quick_exit.app_activity', 'your app activity is not shared with others.'),
               style: Styles().textStyles.getTextStyle('widget.item.small.thin')),
         ])
         )
@@ -55,7 +55,7 @@ class GBVQuickExitWidget extends StatelessWidget {
       infoTextWidget: Column(children: [
         GBVQuickExitIcon(),
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-        Text(Localization().getStringEx('', 'Use the quick exit icon at any time to be routed to the Illinois app home screen.'),
+        Text(Localization().getStringEx('widget.sexual_misconduct.quick_exit.dialog.description', 'Use the quick exit icon at any time to be routed to the Illinois app home screen.'),
           style: Styles().textStyles.getTextStyle('widget.description.regular'), textAlign: TextAlign.left,
         )
       ]

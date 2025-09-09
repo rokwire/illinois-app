@@ -180,11 +180,11 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
       Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
             RichText(text: TextSpan(children: [
               TextSpan(
-                text: Localization().getStringEx('', 'View additional resources on the '),
+                text: Localization().getStringEx('panel.sexual_misconduct.resource_directory.view_additional', 'View additional resources on the '),
                 style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
                 ),
               TextSpan(
-              text: Localization().getStringEx('', 'Illinois We Care website'),
+              text: Localization().getStringEx('panel.sexual_misconduct.resource_directory.we_care', 'Illinois We Care website'),
               style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
               recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(url)
               ),
