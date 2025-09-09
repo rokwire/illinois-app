@@ -6,9 +6,6 @@ import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/home/HomeFavoritesPanel.dart';
 import 'package:illinois/service/Analytics.dart';
 
-import '../RootPanel.dart';
-import '../home/HomePanel.dart';
-
 class GBVQuickExitWidget extends StatelessWidget {
 
   GBVQuickExitWidget({super.key});
