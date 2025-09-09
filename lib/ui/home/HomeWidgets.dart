@@ -121,16 +121,10 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> with NotificationsL
         // As a workaround we use the Container below with a background color until the Flutter fix gets available.
         child: widget.childBuilder?.call(context) ?? Container(color: Styles().colors.background, child:
           Row(crossAxisAlignment: widget.crossAxisAlignment, children: <Widget>[
-
-            Semantics(label: 'Drag Handle', button: true, /* TBD: Localization */
-              hint: AppSemantics.getIosHintLongPress("start drag"),
-              onLongPressHint: "start drag",
-              onLongPress: () => Future.delayed(Duration(seconds: 1), ()=>AppSemantics.announceMessage(context, "Started dragging")), child:
-              Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-                Styles().images.getImage('drag-white', excludeFromSemantics: true),
-              ),
+            Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+              Styles().images.getImage('drag-white', excludeFromSemantics: true),
             ),
-
+  
             Expanded(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
                 Semantics(label: widget.title, header: true, excludeSemantics: true, child:
@@ -139,8 +133,9 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> with NotificationsL
               )
             ),
 
-
-            HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.Handle, prompt: true),
+            Semantics(container: true,
+              child: HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.Handle, prompt: true),
+            )
           ],),
         ),
       )),

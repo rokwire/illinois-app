@@ -151,27 +151,31 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
   Widget _buildSheet(BuildContext context) {
     bool clearAllVisible = (_selectedContentType != null) && (_selectedContentType != AssistantContentType.all) && (_selectedContentType != AssistantContentType.faqs);
     return Column(children: [
-      Container(
-          color: Styles().colors.white,
-          child: Row(children: [
-            Expanded(
-                child: Semantics(container: true,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16),
-                    child: Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'),
-                        style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))))),
-            Visibility(visible: clearAllVisible, child: LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14)),
-            Semantics(
-                label: Localization().getStringEx('dialog.close.title', 'Close'),
-                hint: Localization().getStringEx('dialog.close.hint', ''),
-                inMutuallyExclusiveGroup: true,
-                button: true,
-                child: InkWell(
-                    onTap: _onTapClose,
-                    child: Container(
-                        padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
-                        child: Styles().images.getImage('close-circle', excludeFromSemantics: true))))
-          ])),
+      Container(color: Styles().colors.white, child:
+        Row(children: [
+          Expanded(child:
+            Semantics(container: true, child:
+              Padding(padding: EdgeInsets.only(left: 16), child:
+                Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))
+              )
+            )
+          ),
+          Visibility(visible: clearAllVisible, child:
+            LinkButton(onTap: _onTapClearSession, title: Localization().getStringEx('panel.assistant.reset_session.label', 'Reset Memory'), fontSize: 14, padding: EdgeInsets.symmetric(vertical: 16),)
+          ),
+          SizedBox(width: 8,),
+          Visibility(visible: clearAllVisible, child:
+            LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14, padding: EdgeInsets.symmetric(vertical: 16))
+          ),
+          Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+            InkWell(onTap: _onTapClose, child:
+              Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+                Styles().images.getImage('close-circle', excludeFromSemantics: true)
+              )
+            )
+          )
+        ])
+      ),
       Container(color: Styles().colors.surfaceAccent, height: 1),
       Expanded(child: _buildPage(context))
     ]);
@@ -254,6 +258,19 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
     ).then((value) {
       if (mounted && (value == true)) {
         _clearMessagesNotifier.sink.add(1);
+      }
+    });
+  }
+
+  void _onTapClearSession() {
+    Analytics().logSelect(target: 'Assistant: Reset Session', source: widget.runtimeType.toString());
+    AppAlert.showConfirmationDialog(context,
+      message: Localization().getStringEx('panel.assistant.reset_session.confirm_prompt.text', 'Are you sure you want to reset your current Illinois Assistant session?'),
+      positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
+      negativeButtonLabel: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
+    ).then((value) {
+      if (mounted && (value == true)) {
+        Assistant().resetSession();
       }
     });
   }
