@@ -50,6 +50,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
       StudentCourses().loadCourses(termId: StudentCourses().displayTermId!, forceLoad: true).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
           _courses = courses;
+          _sortCourses();
           _loading = false;
         });
       });
@@ -214,6 +215,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
       StudentCourses().loadCourses(termId: StudentCourses().displayTermId!, forceLoad: forceLoad).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
           _courses = courses;
+          _sortCourses();
           _loading = false;
         });
       });
@@ -221,6 +223,14 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
     else {
         setStateIfMounted(() {});
     }
+  }
+
+  void _sortCourses() {
+    _courses?.sort((StudentCourse c1, StudentCourse c2) {
+      String n1 = c1.section?.comparableValue ?? '';
+      String n2 = c2.section?.comparableValue ?? '';
+      return n1.compareTo(n2);
+    });
   }
 }
 

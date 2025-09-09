@@ -109,6 +109,23 @@ extension StudentCourseSectionExt on StudentCourseSection {
     }
   }
 
+  String get comparableValue {
+    List<String>? dayStringNumbers = <String>[];
+    if (days != null) {
+      List<String> dayAbbreviations = days!.split(',');
+      for (String dayAbbreviation in dayAbbreviations) {
+        int? dayNum = _dayAbbreviations[dayAbbreviation];
+        if (dayNum != null) {
+          dayStringNumbers.add(dayNum.toString());
+        }
+      }
+    }
+    String daysString = dayStringNumbers.join('');
+    String timeString = startTime ?? (endTime ?? '');
+    String resultString = daysString + timeString;
+    return resultString;
+  }
+
   static String? _convertTime(String? time, { bool addIndicator = true}) {
     if ((time != null) && (2 <= time.length)) {
       int? hours = int.tryParse(time.substring(0, 2))?.abs();
