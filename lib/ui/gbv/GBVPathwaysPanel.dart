@@ -17,6 +17,7 @@ import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/service/Analytics.dart';
 
 import '../../model/GBV.dart';
 import 'GBVResourceDirectoryPanel.dart';
@@ -31,8 +32,6 @@ class GBVPathwaysPanel extends StatefulWidget {
 }
 
 class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
-  final GlobalKey<_GBVPathwaysPanelState> _gbvPathwaysPanelKey = GlobalKey();
-
   GBVData? _gbv;
   bool _loading = true;
   GestureRecognizer? _resourceDirectoryRecognizer;
@@ -223,20 +222,25 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
   }
 
   void _onResourceDirectory(BuildContext context, GBVData gbvContent) {
+    Analytics().logSelect(target: 'Resource Directory');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDirectoryPanel(gbvData: gbvContent)));
   }
 
   void _onTalkToSomeone(BuildContext context, GBVData gbvContent) {
+    Analytics().logSelect(target: 'Talk to someone confidentially');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: _gbv!.resourceListScreens!.confidentialResources!, gbvData: gbvContent)));
   }
   void _onFileReport(BuildContext context, GBVData gbvContent) {
+    Analytics().logSelect(target: 'File a report');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: gbvContent.resources.firstWhere((r) => r.id == 'filing_a_report'))));
   }
   void _onSupportFriend(BuildContext context, GBVData gbvContent) {
+    Analytics().logSelect(target: 'Support a friend');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: gbvContent.resourceListScreens!.supportingAFriend!, gbvData: gbvContent)));
     // Navigate to Supporting a Friend Resources
   }
   void _onNotSure(BuildContext context) async {
+    Analytics().logSelect(target: 'I\'m not sure yet');
   }
 
   Future<GBVData?> _loadResources() async {

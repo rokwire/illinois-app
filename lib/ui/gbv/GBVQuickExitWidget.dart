@@ -4,6 +4,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/home/HomeFavoritesPanel.dart';
+import 'package:illinois/service/Analytics.dart';
 
 import '../RootPanel.dart';
 import '../home/HomePanel.dart';
@@ -64,6 +65,7 @@ class GBVQuickExitWidget extends StatelessWidget {
   }
 
   void _onQuickExit(BuildContext context) {
+    Analytics().logSelect(target: 'Quick Exit button');
     Navigator.of(context).popUntil((route) => route.isFirst);
     NotificationService().notify(HomeFavoritesPanel.notifySelect);
   }

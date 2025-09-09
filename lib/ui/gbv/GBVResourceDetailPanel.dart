@@ -6,6 +6,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/model/GBV.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/service/Analytics.dart';
 
 class GBVResourceDetailPanel extends StatefulWidget {
   final GBVResource resource;
@@ -102,7 +103,10 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
   void _expandSection(GBVDetailListSection section) {
     setState(() {
       if (_expandedSections.contains(section.title)) this._expandedSections.remove(section.title);
-      else this._expandedSections.add(section.title);
+      else {
+        Analytics().logSelect(target: 'Expand detail section - ${section.title}');
+        this._expandedSections.add(section.title);
+      }
     });
   }
 

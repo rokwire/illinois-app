@@ -15,6 +15,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Analytics.dart';
 
 class GBVResourceListPanel extends StatelessWidget {
   final GBVResourceListScreen resourceListScreen;
@@ -110,11 +111,8 @@ class GBVResourceListPanel extends StatelessWidget {
       );
   }
 
-  // void _onTapResource(BuildContext context, GBVResource resource) {
-  //   Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource)));
-  // }
-
   void _onTapResource(BuildContext context, GBVResource resource) {
+    Analytics().logSelect(target: 'Resource - ${resource.title}');
     switch (resource.type) {
       case GBVResourceType.external_link: {
         GBVResourceDetail? externalLinkDetail = resource.directoryContent.firstWhereOrNull((detail) => detail.type == GBVResourceDetailType.external_link);

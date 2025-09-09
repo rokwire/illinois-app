@@ -14,6 +14,7 @@ import 'package:illinois/model/GBV.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/service/Analytics.dart';
 
 class GBVResourceDirectoryPanel extends StatefulWidget {
   final GBVData gbvData;
@@ -160,6 +161,7 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
   }
 
   void _onTapResource(GBVResource resource) {
+    Analytics().logSelect(target: 'Resource - ${resource.title}');
     switch (resource.type) {
       case GBVResourceType.external_link: {
         GBVResourceDetail? externalLinkDetail = resource.directoryContent.firstWhereOrNull((detail) => detail.type == GBVResourceDetailType.external_link);
