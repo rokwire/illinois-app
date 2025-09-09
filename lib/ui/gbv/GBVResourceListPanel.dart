@@ -111,10 +111,6 @@ class GBVResourceListPanel extends StatelessWidget {
       );
   }
 
-  // void _onTapResource(BuildContext context, GBVResource resource) {
-  //   Navigator.push(context, CupertinoPageRoute(builder: (context) => ResourceDetailPanel(resource: resource)));
-  // }
-
   void _navigateToDirectory(BuildContext context) {
     Navigator.push(
         context,

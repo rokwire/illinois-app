@@ -6,6 +6,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/model/GBV.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/service/Analytics.dart';
 
 class GBVResourceDetailPanel extends StatefulWidget {
   final GBVResource resource;
@@ -19,7 +20,7 @@ class GBVResourceDetailPanel extends StatefulWidget {
 
 class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
 
-  String _expandedSection = '';
+  List<String> _expandedSections = [];
 
   @override
   Widget build(BuildContext context) =>
@@ -37,28 +38,21 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
       SingleChildScrollView(child:
         Column(children: [
           GBVQuickExitWidget(),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                // Padding(padding: EdgeInsets.only(top: 16, left: 16), child: (
-                    Text(widget.resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")),
-                // ),
-                Padding(padding: EdgeInsets.symmetric(vertical: 4, horizontal: 0), child:
+                  Text(widget.resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")),
+                Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                 Container(height: 1, color: Styles().colors.surfaceAccent)
                 ),
-                Padding(padding: EdgeInsets.only(right: 0, left: 0, bottom: 32), child: (
+                Padding(padding: EdgeInsets.only(bottom: 32), child: (
                     Text(widget.resource.description ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"))
                 )),
-                Padding(padding: EdgeInsets.symmetric(horizontal: 0), child:
-                  Container(decoration:
-                    BoxDecoration(
-                    color: Styles().colors.white,
-                    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ), child: Column(children: [
-                  ...sections
-                    ])
-                  )
-                )
+                Container(decoration:
+                  BoxDecoration(
+                  color: Styles().colors.white,
+                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                ), child: Column(children: [...sections]))
               ])
             )
         ])
@@ -74,7 +68,11 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
             Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
               Row(children: [
                 Expanded(child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                    if (section.label != null)
+                      Padding(padding: EdgeInsets.only(left: 16), child:
+                        Text(section.label ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"))
+                      ),
                     Padding(padding: EdgeInsets.only(left: 16), child:
                       Text(section.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
                     ),
@@ -83,14 +81,14 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
                     Styles().images.getImage((isExternalLink)
                         ? 'external-link'
-                        : (_expandedSection == section.title) ? 'chevron-up' : 'chevron-down',
+                        : (_expandedSections.contains(section.title)) ? 'chevron-up' : 'chevron-down',
                         width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                   )
               ])
             )
           )
         ),
-        Visibility(visible: _expandedSection == section.title, child:
+        Visibility(visible: _expandedSections.contains(section.title), child:
           Container(decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
             Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
               Column(children: List.from(section.content.map((detail) =>
@@ -104,7 +102,11 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
 
   void _expandSection(GBVDetailListSection section) {
     setState(() {
-      this._expandedSection = (_expandedSection == section.title) ? '' : section.title;
+      if (_expandedSections.contains(section.title)) this._expandedSections.remove(section.title);
+      else {
+        Analytics().logSelect(target: 'Expand detail section - ${section.title}');
+        this._expandedSections.add(section.title);
+      }
     });
   }
 
