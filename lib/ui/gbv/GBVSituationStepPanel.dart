@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
+import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
 import '../../model/GBV.dart';
 
 const Map<String, Map<String, Object>> stepIcons = <String, Map<String, Object>>{
@@ -85,35 +87,40 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
 
     final String? resp = stats?.responseData[lastStepKey] as String?;
     final String lookupKey = resp ?? (stats?.responseData['next'] as String? ?? '');
-    final Map<String, dynamic>? extrasMap = _survey.data['gbv_resource_map']?.extras;
-    var resourceEntry = extrasMap?[lookupKey];
 
-    List<String> resourceIds = <String>[];
-    if (resourceEntry != null && resourceEntry['resource_ids'] is List) {
-      resourceIds = List<String>.from(resourceEntry['resource_ids']);
+    final Map<String, dynamic>? entryMap =
+    (_survey.data['gbv_resource_map'] as SurveyData).extras?[lookupKey] as Map<String, dynamic>?;
+
+    if (entryMap == null) {
+      setState(() { _loading = false; });
+      _onFileReport(context, widget.gbvData);
     }
 
+    // If skip_to_report flag in survey is true, go straight to the report page
+    if (entryMap?['skip_to_report'] == true) {
+      setState(() { _loading = false; });
+      _onFileReport(context, widget.gbvData);
+    }
+
+    // Otherwise group resources by category as before
+    final List<String> resourceIds =
+    (entryMap?['resource_ids'] as List<dynamic>).cast<String>();
     final availableIds = widget.gbvData.resources.map((r) => r.id).toSet();
-    final validIds = resourceIds.where((id) => availableIds.contains(id)).toList();
+    final validIds = resourceIds.where(availableIds.contains).toList();
 
     final Map<String, List<String>> categoryToIds = {};
-    final List<String> idsToProcess =
+    final idsToProcess =
     validIds.isNotEmpty ? validIds : availableIds.take(3).toList();
-
-    for (final resourceId in idsToProcess) {
-      // Lookup the resource in gbvData
-      final resource = widget.gbvData.resources.firstWhere((r) => r.id == resourceId);
-      // Take first category in categories list associated
+    for (final id in idsToProcess) {
+      final resource =
+      widget.gbvData.resources.firstWhere((r) => r.id == id);
       final String category = resource.categories.first;
-      categoryToIds.putIfAbsent(category, () => <String>[]).add(resourceId);
+      categoryToIds.putIfAbsent(category, () => []).add(id);
     }
-    //Return a list of GBVResourceList objects, 1 per unique category
-    final List<GBVResourceList> content = categoryToIds.entries.map((entry) {
-      return GBVResourceList(
-        title: entry.key,
-        resourceIds: entry.value,
-      );
-    }).toList();
+
+    final content = categoryToIds.entries
+        .map((e) => GBVResourceList(title: e.key, resourceIds: e.value))
+        .toList();
 
     final screen = GBVResourceListScreen(
       type: 'panel',
@@ -158,6 +165,11 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     } else {
       Navigator.pop(context);
     }
+  }
+
+  void _onFileReport(BuildContext context, GBVData gbvContent) {
+    Analytics().logSelect(target: 'File a report');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: gbvContent.resources.firstWhere((r) => r.id == 'filing_a_report'))));
   }
 
   Widget _buildScaffold(Widget body) {
