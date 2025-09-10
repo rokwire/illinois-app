@@ -15,13 +15,13 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Analytics.dart';
 
 class GBVResourceListPanel extends StatelessWidget {
   final GBVResourceListScreen resourceListScreen;
   final GBVData gbvData;
+  final bool showDirectoryLink;
 
-  GBVResourceListPanel({ super.key, required this.resourceListScreen, required this.gbvData });
+  GBVResourceListPanel({ super.key, required this.resourceListScreen, required this.gbvData, this.showDirectoryLink = false}); // Default to false to not impact current references
 
   @override
   Widget build(BuildContext context) =>
@@ -38,7 +38,7 @@ class GBVResourceListPanel extends StatelessWidget {
           Padding(padding: EdgeInsets.only(top: 16, left: 16), child: (
               Text(resourceListScreen.title ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.large.fat")))
           ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16), child:
           Container(height: 1, color: Styles().colors.surfaceAccent)
           ),
           Padding(padding: EdgeInsets.only(right: 16, left: 16, bottom: 0), child: (
@@ -111,8 +111,17 @@ class GBVResourceListPanel extends StatelessWidget {
       );
   }
 
+  void _navigateToDirectory(BuildContext context) {
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => GBVResourceDirectoryPanel(gbvData: this.gbvData)
+        )
+    );
+  }
+
+
   void _onTapResource(BuildContext context, GBVResource resource) {
-    Analytics().logSelect(target: 'Resource - ${resource.title}');
     switch (resource.type) {
       case GBVResourceType.external_link: {
         GBVResourceDetail? externalLinkDetail = resource.directoryContent.firstWhereOrNull((detail) => detail.type == GBVResourceDetailType.external_link);
@@ -126,28 +135,63 @@ class GBVResourceListPanel extends StatelessWidget {
   }
 
   Widget? _buildUrlDetail(BuildContext context) {
-    String? url = Config().gbvWeCareUrl;
-    return (url != null) ?
-    Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
-    RichText(text: TextSpan(children: [
-      TextSpan(
-          text: Localization().getStringEx('panel.sexual_misconduct.resource_list.view_confidential', 'View additional confidential resources on the '),
-          style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
-      ),
-      TextSpan(
-          text: Localization().getStringEx('panel.sexual_misconduct.resource_list.confidential_we_care', 'Illinois We Care website'),
-          style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
-          recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(context, url)
-      ),
-      WidgetSpan(child:
-      Padding(padding: EdgeInsets.only(left: 4), child:
-      Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-      )
-      )
-    ]))
-    )
-        : null;
+    if (showDirectoryLink) {
+      // Show directory link instead of external URL
+      return Padding(
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          child: RichText(
+              text: TextSpan(
+                  children: [
+                    TextSpan(
+                        text: Localization().getStringEx('', 'For more options, view the '),
+                        style: Styles().textStyles.getTextStyle('widget.detail.regular')
+                    ),
+                    TextSpan(
+                        text: Localization().getStringEx('', 'Resource Directory'),
+                        style: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                        recognizer: TapGestureRecognizer()..onTap = () => _navigateToDirectory(context)
+                    ),
+                    WidgetSpan(
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 4),
+                            child: Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                        )
+                    )
+                  ]
+              )
+          )
+      );
+    } else {
+      // Original Illinois We Care URL logic
+      String? url = Config().gbvWeCareUrl;
+      return (url != null) ?
+      Padding(
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          child: RichText(
+              text: TextSpan(
+                  children: [
+                    TextSpan(
+                        text: Localization().getStringEx('', 'View additional confidential resources on the '),
+                        style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
+                    ),
+                    TextSpan(
+                        text: Localization().getStringEx('', 'Illinois We Care website'),
+                        style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
+                        recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(context, url)
+                    ),
+                    WidgetSpan(
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 4),
+                            child: Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                        )
+                    )
+                  ]
+              )
+          )
+      ) : null;
+    }
   }
+
 
   void _launchUrl(BuildContext context, String? url) async {
     if (StringUtils.isNotEmpty(url)) {
