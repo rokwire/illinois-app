@@ -3,21 +3,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
 import '../../model/GBV.dart';
 
 const Map<String, Map<String, Object>> stepIcons = <String, Map<String, Object>>{
-  'situation': <String, Object>{'image': 'compass', 'color': 0xFF9318BB},
-  'whats_happening': <String, Object>{'image': 'ban', 'color': 0xFFF09842},
-  'involved': <String, Object>{'image': 'user', 'color': 0xFF5182CF},
-  'next': <String, Object>{'image': 'signs-post', 'color': 0xFF5FA7A3},
-  'services': <String, Object>{'image': 'timeline', 'color': 0xFF9318BB},
+  'situation': <String, Object>{'image': 'compass', 'color': 'accentColor4'},
+  'whats_happening': <String, Object>{'image': 'ban', 'color': 'diningColor'},
+  'involved': <String, Object>{'image': 'user', 'color': 'accentColor3'},
+  'next': <String, Object>{'image': 'signs-post', 'color': 'accentColor2'},
+  'services': <String, Object>{'image': 'timeline', 'color': 'accentColor4'},
 };
 
 class GBVSituationStepPanel extends StatefulWidget {
@@ -192,35 +192,16 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     );
   }
 
-
   Widget _buildOption(String title) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 2)],
-      ),
-      child: InkWell(
-        onTap: () => _selectOption(title),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 2)],),
+      child: InkWell(onTap: () => _selectOption(title), borderRadius: BorderRadius.circular(12),
+        child: Padding(padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
+          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: Styles().textStyles.getTextStyle('widget.title.regular'),
-                ),
-              ),
-              Styles().images.getImage(
-                'chevron-right',
-                excludeFromSemantics: true,
-                size: 18,
-                color: Styles().colors.fillColorPrimary,
+              Expanded(child: Text(title, style: Styles().textStyles.getTextStyle('widget.title.regular'),),),
+              Styles().images.getImage('chevron-right', excludeFromSemantics: true, size: 18, color: Styles().colors.fillColorPrimary,
               ) ?? Container(),
             ],
           ),
@@ -233,16 +214,9 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     return Column(
       children: [
         const Expanded(flex: 1, child: SizedBox()),
-        SizedBox(
-          width: 32,
-          height: 32,
-          child: CircularProgressIndicator(
-            color: Styles().colors.fillColorSecondary,
-            strokeWidth: 3,
-          ),
+        SizedBox(width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
         ),
-        const Expanded(flex: 2, child: SizedBox()),
-      ],
+        const Expanded(flex: 2, child: SizedBox())],
     );
   }
 
@@ -252,8 +226,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
         padding: const EdgeInsets.symmetric(horizontal: 28),
         child: Text(
           Localization().getStringEx('panel.sexual_misconduct.survey_result.error', 'Failed to load survey.'),
-          textAlign: TextAlign.center,
-          style: Styles().textStyles.getTextStyle("widget.message.medium.thin"),
+          textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.medium.thin"),
         ),
       ),
     );
@@ -329,21 +302,10 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     } catch (e) {
       final fallbackIconData = stepIcons[_currentStep!.key];
       if (fallbackIconData != null) {
-        stepIconWidget = Container(
-          width: 67,
-          height: 67,
-          decoration: BoxDecoration(
-            color: Color(fallbackIconData['color'] as int),
-            shape: BoxShape.circle,
-          ),
+        stepIconWidget = Container(width: 67, height: 67,
+          decoration: BoxDecoration(color: Color(fallbackIconData['color'] as int), shape: BoxShape.circle,),
           child: Center(
-            child: Styles().images.getImage(
-              fallbackIconData['image'] as String,
-              excludeFromSemantics: true,
-              size: 36,
-              fit: BoxFit.contain,
-              color: Colors.white,
-            ) ?? Container(),
+            child: Styles().images.getImage(fallbackIconData['image'] as String, excludeFromSemantics: true, size: 36, fit: BoxFit.contain, color: Colors.white,) ?? Container(),
           ),
         );
       }
@@ -351,11 +313,8 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
 
     return Scaffold(
       backgroundColor: Styles().colors.background,
-      appBar: HeaderBar(
-        onLeading: _handleBack,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+      appBar: HeaderBar(onLeading: _handleBack),
+      body: SingleChildScrollView(padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -365,30 +324,16 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
                 width: double.infinity,
                 margin: const EdgeInsets.only(top: 12, bottom: 24),
                 padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                ),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14),),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    if (stepIconWidget != null) ...[
-                      stepIconWidget,
-                      const SizedBox(width: 18),
-                    ],
-                    Expanded(
-                      child: Text(
-                        question.moreInfo!,
-                        style: Styles().textStyles.getTextStyle('widget.description.regular'),
-                      ),
-                    ),
+                    if (stepIconWidget != null) ...[stepIconWidget, const SizedBox(width: 18),],
+                    Expanded(child: Text(question.moreInfo!, style: Styles().textStyles.getTextStyle('widget.description.regular'))),
                   ],
                 ),
               ),
-            Text(
-              question.text,
-              style: Styles().textStyles.getTextStyle('widget.description.regular'),
-            ),
+            Text(question.text, style: Styles().textStyles.getTextStyle('widget.description.regular'),),
             const SizedBox(height: 12),
             LinearProgressIndicator(
               value: (_stepHistory.length) / 5,
@@ -398,10 +343,8 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
             const SizedBox(height: 24),
             ...opts.map((o) => _buildOption(o.title)),
             if (question.allowSkip)
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () => _selectOption('__skipped__'),
+              Align(alignment: Alignment.centerRight,
+                child: TextButton(onPressed: () => _selectOption('__skipped__'),
                   child: Text(
                     Localization().getStringEx('panel.sexual_misconduct.survey.skip', 'Skip this question'),
                     style: Styles().textStyles.getTextStyle('widget.detail.regular'),
@@ -409,14 +352,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
                 ),
               ),
             if (_loading)
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 24.0),
-                  child: CircularProgressIndicator(
-                    color: Styles().colors.fillColorSecondary,
-                  ),
-                ),
-              ),
+              Center(child: Padding(padding: const EdgeInsets.only(top: 24.0), child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))),
           ],
         ),
       ),
