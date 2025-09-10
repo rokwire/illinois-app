@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Acknowledge Reaction innerContext field [#5238](https://github.com/rokwire/illinois-app/issues/5238).
 - Sort "My Courses" chronologically [#4897](https://github.com/rokwire/illinois-app/issues/4897).
+- Added New Sexual Misconduct Section (GBV project) [#4954](https://github.com/rokwire/illinois-app/issues/4954).
 ### Changed
 - Updates to Event Feed Intro Screen [#5332](https://github.com/rokwire/illinois-app/issues/5332)
 - Group Event Notifications redirect to Group Detail Panel and after that to EventDetailPanel [#5348](https://github.com/rokwire/illinois-app/issues/5348).
