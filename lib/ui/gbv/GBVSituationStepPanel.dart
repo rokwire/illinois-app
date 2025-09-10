@@ -107,18 +107,14 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     final validIds = resourceIds.where(availableIds.contains).toList();
 
     final Map<String, List<String>> categoryToIds = {};
-    final idsToProcess =
-    validIds.isNotEmpty ? validIds : availableIds.take(3).toList();
+    final idsToProcess = validIds.isNotEmpty ? validIds : availableIds.take(3).toList();
     for (final id in idsToProcess) {
-      final resource =
-      widget.gbvData.resources.firstWhere((r) => r.id == id);
+      final resource = widget.gbvData.resources.firstWhere((r) => r.id == id);
       final String category = resource.categories.first;
       categoryToIds.putIfAbsent(category, () => []).add(id);
     }
 
-    final content = categoryToIds.entries
-        .map((e) => GBVResourceList(title: e.key, resourceIds: e.value))
-        .toList();
+    final content = categoryToIds.entries.map((e) => GBVResourceList(title: e.key, resourceIds: e.value)).toList();
 
     final screen = GBVResourceListScreen(
       type: 'panel',
