@@ -71,52 +71,72 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
   }
 
   Widget get _surveyContent  {
-    final question = _currentStep!;
+    SurveyData? question = _currentStep;
     final opts = (question is SurveyQuestionMultipleChoice) ? question.options : [];
-    Widget? stepIconWidget = _getStepIconWidget(_currentStep!.key);
 
-    return SingleChildScrollView(padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GBVQuickExitWidget(),
-          if (question.moreInfo?.isNotEmpty == true)
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.only(top: 12, bottom: 24),
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14),),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  if (stepIconWidget != null) ...[stepIconWidget, const SizedBox(width: 18),],
-                  Expanded(child: Text(question.moreInfo!, style: Styles().textStyles.getTextStyle('widget.description.regular'))),
-                ],
-              ),
-            ),
-          Text(question.text, style: Styles().textStyles.getTextStyle('widget.description.regular'),),
-          const SizedBox(height: 12),
-          LinearProgressIndicator(
-            value: (_stepHistory.length) / 5,
-            backgroundColor: Styles().colors.surface,
-            valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary)),
-          const SizedBox(height: 24),
-          ...opts.map((o) => _buildOption(o.title)),
-          if (question.allowSkip)
-            Align(alignment: Alignment.centerRight,
-              child: TextButton(onPressed: () => _selectOption('__skipped__'),
-                child: Text(
-                  Localization().getStringEx('panel.sexual_misconduct.survey.skip', 'Skip this question'),
-                  style: Styles().textStyles.getTextStyle('widget.detail.regular'),
-                ),
-              ),
-            ),
-          if (_loading)
-            Center(child: Padding(padding: const EdgeInsets.only(top: 24.0), child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))),
-        ],
-      ),
+    return SingleChildScrollView(padding: const EdgeInsets.all(20), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        GBVQuickExitWidget(),
+
+        if ((question != null) && (question.moreInfo?.isNotEmpty == true))
+          _buildMoreInfo(question),
+
+        Text(question?.text ?? '', style: Styles().textStyles.getTextStyle('widget.description.regular'),),
+
+        const SizedBox(height: 12),
+        _stepProgressIndicator,
+        const SizedBox(height: 24),
+
+        ...opts.map((o) => _buildOption(o.title)),
+
+        if (question?.allowSkip == true)
+          _allowSkipButton,
+
+        if (_loading)
+          _loadingProgressIndicator,
+      ],),
     );
   }
+
+  Widget _buildMoreInfo(SurveyData question) {
+    Widget? stepIconWidget = _getStepIconWidget(question.key);
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 12, bottom: 24),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14),),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        if (stepIconWidget != null)
+          Padding(padding: EdgeInsets.only(right: 18), child:
+            stepIconWidget
+          ),
+        Expanded(child:
+          Text(question.moreInfo ?? '', style: Styles().textStyles.getTextStyle('widget.description.regular'))),
+      ],),
+    );
+  }
+
+  Widget get _allowSkipButton =>
+    Align(alignment: Alignment.centerRight, child:
+      TextButton(onPressed: () => _selectOption('__skipped__'), child:
+        Text(Localization().getStringEx('panel.sexual_misconduct.survey.skip', 'Skip this question'),
+          style: Styles().textStyles.getTextStyle('widget.detail.regular'),
+        ),
+      ),
+    );
+
+  Widget get _loadingProgressIndicator =>
+    Center(child:
+      Padding(padding: const EdgeInsets.only(top: 24.0), child:
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary)
+      )
+    );
+
+  Widget get _stepProgressIndicator => LinearProgressIndicator(
+    value: (_stepHistory.length) / 5,
+    color: Styles().colors.fillColorSecondary,
+    backgroundColor: Styles().colors.surface,
+  );
 
   Widget? _getStepIconWidget(String stepKey) {
     // Try extras-defined icon from database
@@ -164,7 +184,8 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
         setState(() {
           _currentStep = next;
           _stepHistory.add(next.key);
-          _loading = false;});
+          _loading = false;
+        });
       }
     } else await _showResults();
   }
