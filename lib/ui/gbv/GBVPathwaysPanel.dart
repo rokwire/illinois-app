@@ -146,7 +146,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
         if (gbvContent.resourceListScreens?.confidentialResources != null) _buildPathwayButton(context, label: 'Talk to someone confidentially', onTap: () => _onTalkToSomeone(context, gbvContent)),
         if (gbvContent.resources.any((resource) => resource.id == 'filing_a_report')) _buildPathwayButton(context, label: 'File a report', onTap: () => _onFileReport(context, gbvContent)),
         if (gbvContent.resourceListScreens?.supportingAFriend != null) _buildPathwayButton(context, label: 'Support a friend', onTap: () => _onSupportFriend(context, gbvContent)),
-        if (gbvContent.resources.isNotEmpty /* && _survey != null */) _buildPathwayButton(context, label: "I'm not sure yet", progress: _loadingSurvey, onTap: () => _onNotSure(context, gbvContent)),
+        if (gbvContent.resources.isNotEmpty && (Config().gbvSurveyId?.isNotEmpty == true)) _buildPathwayButton(context, label: "I'm not sure yet", progress: _loadingSurvey, onTap: () => _onNotSure(context, gbvContent)),
 
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
         _buildQuickExit(context),
@@ -249,14 +249,15 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
   }
   void _onNotSure(BuildContext context, GBVData gbvContent) {
     Analytics().logSelect(target: 'I\'m not sure yet');
+    String? gbvSurveyId = Config().gbvSurveyId;
     if (_survey != null) {
       _navigateToSituationStep(_survey!, gbvContent);
     }
-    else if (_loadingSurvey == false) {
+    else if ((gbvSurveyId != null) && (_loadingSurvey == false)) {
       setState(() {
         _loadingSurvey = true;
       });
-      Surveys().loadSurvey("cabb1338-48df-4299-8c2a-563e021f82ca").then((Survey? survey){
+      Surveys().loadSurvey(gbvSurveyId).then((Survey? survey){
         if (mounted) {
           setState(() {
             _loadingSurvey = false;
@@ -280,7 +281,8 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
 
 
   Future<GBVData?> _loadResources() async {
-    dynamic contentItem = await Content().loadContentItem('gbv');
+    String? contentCategory = Config().gbvContentCategory;
+    dynamic contentItem = (contentCategory != null) ? await Content().loadContentItem(contentCategory) : null;
     return GBVData.fromJson(JsonUtils.mapValue(contentItem));
   }
 

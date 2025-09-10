@@ -60,10 +60,12 @@ class Config extends rokwire.Config {
   String? get saferMcKinleyPhone         => JsonUtils.stringValue(saferMcKinley['phone']);
 
   Map<String, dynamic> get safety        => JsonUtils.mapValue(content['safety']) ?? {};
+
   Map<String, dynamic> get safeRides     => JsonUtils.mapValue(safety['safeRides']) ?? {};
-  Map<String, dynamic> get safeWalk      => JsonUtils.mapValue(safety['safeWalk']) ?? {};
   String? get safeRidesGuideId           => JsonUtils.stringValue(safeRides['guide_id']);
   String? get safeRidesAboutUrl          => JsonUtils.stringValue(safeRides['about_url']);
+
+  Map<String, dynamic> get safeWalk      => JsonUtils.mapValue(safety['safeWalk']) ?? {};
   String? get safeWalkPhoneNumber        => JsonUtils.stringValue(safeWalk['phone_number']);
   String? get safeWalkTextNumber         => JsonUtils.stringValue(safeWalk['text_number']);
   String? get safeWalkStartTime          => JsonUtils.stringValue(safeWalk['start_time']);
@@ -72,6 +74,10 @@ class Config extends rokwire.Config {
   int?    get safeWalkEndTimeInterval    => JsonUtils.intValue(safeWalk['end_time_interval']);
   String? get safeWalkOrderInterval      => JsonUtils.stringValue(safeWalk['order_interval']);
   String? get safeWalkAboutUrl           => JsonUtils.stringValue(safeWalk['about_url']);
+
+  Map<String, dynamic> get gbv           => JsonUtils.mapValue(safety['gbv']) ?? {};
+  String? get gbvContentCategory         => JsonUtils.stringValue(gbv['content_category']);
+  String? get gbvSurveyId                => JsonUtils.stringValue(gbv['survey_id']);
 
   Map<String, dynamic> get canvas => JsonUtils.mapValue(content['canvas']) ?? {};
   Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
