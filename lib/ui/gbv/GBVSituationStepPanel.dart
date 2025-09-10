@@ -170,24 +170,24 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
   }
 
   Future<void> _selectOption(String title) async {
-    if (_currentStep == null) return;
-    if (mounted) {
+    if (_currentStep != null) {
       setState(() {_loading = true;});
-    }
 
-    _currentStep!.response = title;
-    await Surveys().evaluate(_survey);
-
-    final next = Surveys().getFollowUp(_survey, _currentStep!);
-    if (next != null) {
+      _currentStep!.response = title;
+      await Surveys().evaluate(_survey);
       if (mounted) {
-        setState(() {
-          _currentStep = next;
-          _stepHistory.add(next.key);
-          _loading = false;
-        });
+        final next = Surveys().getFollowUp(_survey, _currentStep!);
+        if (next != null) {
+          setState(() {
+            _currentStep = next;
+            _stepHistory.add(next.key);
+            _loading = false;
+          });
+        } else {
+          await _showResults();
+        }
       }
-    } else await _showResults();
+    }
   }
 
   Future<void> _showResults() async {
@@ -197,71 +197,27 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       summarizeResultRules: false,
       returnMultiple: true,
     );
-    SurveyStats? stats = _survey.stats;
-    final lastStepKey = _stepHistory.last;
-    final String? resp = stats?.responseData[lastStepKey] as String?;
-    final String lookupKey = resp ?? (stats?.responseData['next'] as String? ?? '');
-    final Map<String, dynamic>? entryMap = (_survey.data['gbv_resource_map'] as SurveyData).extras?[lookupKey] as Map<String, dynamic>?;
-
-    if (entryMap == null) {
-      if (mounted) {
-        setState(() {
-          _loading = false;
-        });
-      }
-      _onFileReport(context, widget.gbvData);
-      return;
-    }
-
-    if (entryMap['skip_to_report'] == true) {
-      if (mounted) {
-        setState(() {
-          _loading = false;
-        });
-      }
-      _onFileReport(context, widget.gbvData);
-      return;
-    }
-
-    // Otherwise group resources by category as before
-    final List resourceIds = (entryMap['resource_ids'] as List).cast();
-    final availableIds = widget.gbvData.resources.map((r) => r.id).toSet();
-    final validIds = resourceIds.where(availableIds.contains).toList();
-
-    final Map<String, List<String>> categoryToIds = {};
-    final idsToProcess = validIds.isNotEmpty ? validIds : availableIds.take(3).toList();
-    for (final id in idsToProcess) {
-      final resource = widget.gbvData.resources.firstWhere((r) => r.id == id);
-      final String category = resource.categories.first;
-      categoryToIds.putIfAbsent(category, () => []).add(id);
-    }
-
-    final content = categoryToIds.entries.map((e) => GBVResourceList(title: e.key, resourceIds: e.value)).toList();
-
-    final screen = GBVResourceListScreen(
-      type: 'panel',
-      title: Localization().getStringEx('panel.sexual_misconduct.survey_result.title', 'Your Top Resources'),
-      description: Localization().getStringEx(
-          'panel.sexual_misconduct.survey_result.description',
-          'Based on what you shared, here are some options that may help. '
-              'You’re in control of what happens next—take your time and explore what feels right. '
-              'You’re not alone, and support is available if you need it.'),
-      content: content,
-    );
-
-    Navigator.push(
-      context,
-      CupertinoPageRoute(
-        builder: (ctx) => GBVResourceListPanel(
-          gbvData: widget.gbvData,
-          resourceListScreen: screen,
-          showDirectoryLink: true,
-        ),
-      ),
-    );
-
     if (mounted) {
-      setState(() {_loading = false;});}
+      setState(() {
+        _loading = false;
+      });
+
+      SurveyStats? stats = _survey.stats;
+      final lastStepKey = _stepHistory.last;
+      final String? resp = stats?.responseData[lastStepKey] as String?;
+      final String lookupKey = resp ?? (stats?.responseData['next'] as String? ?? '');
+      final Map<String, dynamic>? entryMap = (_survey.data['gbv_resource_map'] as SurveyData).extras?[lookupKey] as Map<String, dynamic>?;
+
+      if (entryMap == null) {
+        _onFileReport(widget.gbvData);
+      }
+      else if (entryMap['skip_to_report'] == true) {
+        _onFileReport(widget.gbvData);
+      }
+      else {
+        _presentResourceList(entryMap);
+      }
+    }
   }
 
   void _handleBack() {
@@ -283,11 +239,6 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       Navigator.pop(context);}
   }
 
-  void _onFileReport(BuildContext context, GBVData gbvContent) {
-    Analytics().logSelect(target: 'File a report');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: gbvContent.resources.firstWhere((r) => r.id == 'filing_a_report'))));
-  }
-
   Widget _buildOption(String title) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -304,6 +255,50 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       ),
     );
   }
+
+  void _onFileReport(GBVData gbvContent) {
+    Analytics().logSelect(target: 'File a report');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: gbvContent.resources.firstWhere((r) => r.id == 'filing_a_report'))));
+  }
+
+  void _presentResourceList(Map<String, dynamic> entryMap) {
+    // Otherwise group resources by category as before
+    final List resourceIds = (entryMap['resource_ids'] as List).cast();
+    final availableIds = widget.gbvData.resources.map((r) => r.id).toSet();
+    final validIds = resourceIds.where(availableIds.contains).toList();
+
+    final Map<String, List<String>> categoryToIds = {};
+    final idsToProcess = validIds.isNotEmpty ? validIds : availableIds.take(3).toList();
+    for (final id in idsToProcess) {
+      final resource = widget.gbvData.resources.firstWhere((r) => r.id == id);
+      final String category = resource.categories.first;
+      categoryToIds.putIfAbsent(category, () => []).add(id);
+    }
+
+    final content = categoryToIds.entries.map((e) => GBVResourceList(title: e.key, resourceIds: e.value)).toList();
+
+    final screen = GBVResourceListScreen(type: 'panel',
+      title: _resourceListTitle,
+      description: _resourceListDescription,
+      content: content,
+    );
+
+    Navigator.push(context, CupertinoPageRoute( builder: (ctx) => GBVResourceListPanel(
+      gbvData: widget.gbvData,
+      resourceListScreen: screen,
+      showDirectoryLink: true,
+    ),),);
+  }
+
+  String get _resourceListTitle =>
+    Localization().getStringEx('panel.sexual_misconduct.survey_result.title', 'Your Top Resources');
+
+  String get _resourceListDescription => Localization().getStringEx(
+    'panel.sexual_misconduct.survey_result.description',
+    'Based on what you shared, here are some options that may help. '
+        'You’re in control of what happens next—take your time and explore what feels right. '
+        'You’re not alone, and support is available if you need it.'
+  );
 
   Widget get _errorContent =>
     Center(
