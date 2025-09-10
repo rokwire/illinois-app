@@ -51,11 +51,11 @@ typedef LoadExploresTask = Future<List<Explore>?>;
 typedef BuildMarkersTask = Future<Set<Marker>>;
 typedef MarkerIconsCache = Map<String, BitmapDescriptor>;
 
-class Map2Panel extends StatefulWidget with AnalyticsInfo {
-  Map2Panel({super.key});
+class Map2HomePanel extends StatefulWidget with AnalyticsInfo {
+  Map2HomePanel({super.key});
 
   @override
-  State<StatefulWidget> createState() => _Map2PanelState();
+  State<StatefulWidget> createState() => _Map2HomePanelState();
 
   AnalyticsFeature? get analyticsFeature =>
     /*_state?._selectedMapType?.analyticsFeature ??
@@ -63,8 +63,8 @@ class Map2Panel extends StatefulWidget with AnalyticsInfo {
     AnalyticsFeature.Map;
 }
 
-class _Map2PanelState extends State<Map2Panel>
-  with NotificationsListener, SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Map2Panel>
+class _Map2HomePanelState extends State<Map2HomePanel>
+  with NotificationsListener, SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Map2HomePanel>
 {
 
   final GlobalKey _scaffoldKey = GlobalKey();
@@ -812,7 +812,7 @@ class _Map2PanelState extends State<Map2Panel>
 
 // Map2 Filters
 
-extension _Map2PanelFilters on _Map2PanelState {
+extension _Map2PanelFilters on _Map2HomePanelState {
   
   Widget? get _contentFilterButtonsBar {
     List<Widget>? filterButtonsList = (_exploresProgress == false) ? _filterButtons : null;
@@ -1014,7 +1014,7 @@ extension _Map2PanelFilters on _Map2PanelState {
 
 // Map2 Content
 
-extension _Map2PanelContent on _Map2PanelState {
+extension _Map2PanelContent on _Map2HomePanelState {
   static const CameraPosition defaultCameraPosition = CameraPosition(target: defaultCameraTarget, zoom: defaultCameraZoom);
   static const LatLng defaultCameraTarget = LatLng(40.102116, -88.227129);
   static const double defaultCameraZoom = 17;
@@ -1314,7 +1314,7 @@ extension _Map2PanelContent on _Map2PanelState {
 
 // Map2 Markers
 
-extension _Map2PanelMarkers on _Map2PanelState {
+extension _Map2PanelMarkers on _Map2HomePanelState {
 
   static const double _mapPinMarkerSize = 24;
   static const double _mapGroupMarkerSize = 24;

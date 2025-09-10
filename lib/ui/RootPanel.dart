@@ -44,7 +44,7 @@ import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
-import 'package:illinois/ui/map2/Map2Panel.dart';
+import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
@@ -707,7 +707,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       return ExploreMapPanel();
     }
     else if (rootTab == RootTab.Maps2) {
-      return Map2Panel();
+      return Map2HomePanel();
     }
     else if (rootTab == RootTab.Academics) {
       return AcademicsHomePanel(rootTabDisplay: true,);
