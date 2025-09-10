@@ -48,6 +48,107 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     if (_currentStep != null) _stepHistory.add(_currentStep!.key);
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Styles().colors.background,
+      appBar: HeaderBar(onLeading: _handleBack),
+      body: _scaffoldContent,
+      bottomNavigationBar: uiuc.TabBar(),
+    );
+  }
+
+  Widget get _scaffoldContent {
+    if (_loading) {
+      return _loadingContent;
+    }
+    else if (_currentStep == null) {
+      return _errorContent;
+    }
+    else {
+      return _surveyContent;
+    }
+  }
+
+  Widget get _surveyContent  {
+    final question = _currentStep!;
+    final opts = (question is SurveyQuestionMultipleChoice) ? question.options : [];
+    Widget? stepIconWidget = _getStepIconWidget(_currentStep!.key);
+
+    return SingleChildScrollView(padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GBVQuickExitWidget(),
+          if (question.moreInfo?.isNotEmpty == true)
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(top: 12, bottom: 24),
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14),),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (stepIconWidget != null) ...[stepIconWidget, const SizedBox(width: 18),],
+                  Expanded(child: Text(question.moreInfo!, style: Styles().textStyles.getTextStyle('widget.description.regular'))),
+                ],
+              ),
+            ),
+          Text(question.text, style: Styles().textStyles.getTextStyle('widget.description.regular'),),
+          const SizedBox(height: 12),
+          LinearProgressIndicator(
+            value: (_stepHistory.length) / 5,
+            backgroundColor: Styles().colors.surface,
+            valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary)),
+          const SizedBox(height: 24),
+          ...opts.map((o) => _buildOption(o.title)),
+          if (question.allowSkip)
+            Align(alignment: Alignment.centerRight,
+              child: TextButton(onPressed: () => _selectOption('__skipped__'),
+                child: Text(
+                  Localization().getStringEx('panel.sexual_misconduct.survey.skip', 'Skip this question'),
+                  style: Styles().textStyles.getTextStyle('widget.detail.regular'),
+                ),
+              ),
+            ),
+          if (_loading)
+            Center(child: Padding(padding: const EdgeInsets.only(top: 24.0), child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))),
+        ],
+      ),
+    );
+  }
+
+  Widget? _getStepIconWidget(String stepKey) {
+    // Try extras-defined icon from database
+    final stepData = _survey.data[stepKey];
+    if (stepData?.extras is Map) {
+      final extrasMap = stepData!.extras as Map;
+      final iconName = extrasMap['image'] as String?;
+      final colorString = extrasMap['color'] as String?;
+      if (iconName != null && colorString != null) {
+        final iconColor = Styles().colors.getColor(colorString);
+        return _buildIconContainer(iconName, iconColor!);
+      }
+    }
+    // Fallback to default icons map
+    final fallback = stepIcons[stepKey];
+    if (fallback != null) {
+      final iconName = fallback['image'] as String;
+      final colorString = fallback['color'] as String;
+      final iconColor = Styles().colors.getColor(colorString);
+      return _buildIconContainer(iconName, iconColor!);
+    }
+    return null;
+  }
+
+  Widget _buildIconContainer(String imageName, Color bgColor) {
+    return Container(width: 67, height: 67,
+      decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle,),
+      child: Center(
+        child: Styles().images.getImage(imageName, excludeFromSemantics: true, size: 36, fit: BoxFit.contain, color: Colors.white) ?? Container()),
+    );
+  }
+
   Future<void> _selectOption(String title) async {
     if (_currentStep == null) return;
     if (mounted) {
@@ -166,15 +267,6 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: gbvContent.resources.firstWhere((r) => r.id == 'filing_a_report'))));
   }
 
-  Widget _buildScaffold(Widget body) {
-    return Scaffold(
-      backgroundColor: Styles().colors.background,
-      appBar: HeaderBar(onLeading: _handleBack),
-      body: body,
-      bottomNavigationBar: uiuc.TabBar(),
-    );
-  }
-
   Widget _buildOption(String title) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -192,17 +284,8 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     );
   }
 
-  Widget _buildLoadingContent() {
-    return Column(
-      children: [
-        const Expanded(flex: 1, child: SizedBox()),
-        SizedBox(width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),),
-        const Expanded(flex: 2, child: SizedBox())],
-    );
-  }
-
-  Widget _buildErrorContent() {
-    return Center(
+  Widget get _errorContent =>
+    Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
         child: Text(
@@ -211,96 +294,13 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
         ),
       ),
     );
-  }
 
-  Widget _buildIconContainer(String imageName, Color bgColor) {
-    return Container(width: 67, height: 67,
-      decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle,),
-      child: Center(
-        child: Styles().images.getImage(imageName, excludeFromSemantics: true, size: 36, fit: BoxFit.contain, color: Colors.white) ?? Container()),
+  Widget get _loadingContent =>
+    Column(
+      children: [
+        const Expanded(flex: 1, child: SizedBox()),
+        SizedBox(width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),),
+        const Expanded(flex: 2, child: SizedBox())],
     );
-  }
 
-  Widget? _getStepIconWidget(String stepKey) {
-    // Try extras-defined icon from database
-    final stepData = _survey.data[stepKey];
-    if (stepData?.extras is Map) {
-      final extrasMap = stepData!.extras as Map;
-      final iconName = extrasMap['image'] as String?;
-      final colorString = extrasMap['color'] as String?;
-      if (iconName != null && colorString != null) {
-        final iconColor = Styles().colors.getColor(colorString);
-        return _buildIconContainer(iconName, iconColor!);
-      }
-    }
-    // Fallback to default icons map
-    final fallback = stepIcons[stepKey];
-    if (fallback != null) {
-      final iconName = fallback['image'] as String;
-      final colorString = fallback['color'] as String;
-      final iconColor = Styles().colors.getColor(colorString);
-      return _buildIconContainer(iconName, iconColor!);
-    }
-    return null;
-  }
-
-  Widget _buildContent(BuildContext context) {
-    if (_loading) return _buildScaffold(_buildLoadingContent());
-    if (_currentStep == null) return _buildScaffold(_buildErrorContent());
-    final question = _currentStep!;
-    final opts = (question is SurveyQuestionMultipleChoice) ? question.options : [];
-    Widget? stepIconWidget = _getStepIconWidget(_currentStep!.key);
-
-    return Scaffold(
-      backgroundColor: Styles().colors.background,
-      appBar: HeaderBar(onLeading: _handleBack),
-      body: SingleChildScrollView(padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GBVQuickExitWidget(),
-            if (question.moreInfo?.isNotEmpty == true)
-              Container(
-                width: double.infinity,
-                margin: const EdgeInsets.only(top: 12, bottom: 24),
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14),),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    if (stepIconWidget != null) ...[stepIconWidget, const SizedBox(width: 18),],
-                    Expanded(child: Text(question.moreInfo!, style: Styles().textStyles.getTextStyle('widget.description.regular'))),
-                  ],
-                ),
-              ),
-            Text(question.text, style: Styles().textStyles.getTextStyle('widget.description.regular'),),
-            const SizedBox(height: 12),
-            LinearProgressIndicator(
-              value: (_stepHistory.length) / 5,
-              backgroundColor: Styles().colors.surface,
-              valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary)),
-            const SizedBox(height: 24),
-            ...opts.map((o) => _buildOption(o.title)),
-            if (question.allowSkip)
-              Align(alignment: Alignment.centerRight,
-                child: TextButton(onPressed: () => _selectOption('__skipped__'),
-                  child: Text(
-                    Localization().getStringEx('panel.sexual_misconduct.survey.skip', 'Skip this question'),
-                    style: Styles().textStyles.getTextStyle('widget.detail.regular'),
-                  ),
-                ),
-              ),
-            if (_loading)
-              Center(child: Padding(padding: const EdgeInsets.only(top: 24.0), child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))),
-          ],
-        ),
-      ),
-      bottomNavigationBar: uiuc.TabBar(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _buildContent(context);
-  }
 }
