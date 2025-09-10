@@ -1,4 +1,6 @@
 
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -8,7 +10,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class Map2FilterBuildingAmenitiesPanel extends StatefulWidget {
   final Map<String, String?> amenities; // Map<Key, Name> of Building Amenities
-  final Set<String> selectedAmenityIds;
+  final LinkedHashSet<String> selectedAmenityIds;
 
   Map2FilterBuildingAmenitiesPanel({super.key, required this.amenities, required this.selectedAmenityIds });
 
@@ -19,12 +21,11 @@ class Map2FilterBuildingAmenitiesPanel extends StatefulWidget {
 
 class _Map2FilterBuildingAmenitiesPanelState extends State<Map2FilterBuildingAmenitiesPanel> {
 
-  late Set<String> _selectedAmenityIds;
   late List<String> _amenityIdsList;
+  late LinkedHashSet<String> _selectedAmenityIds;
 
   @override
   void initState() {
-    _selectedAmenityIds = Set<String>.from(widget.selectedAmenityIds);
 
     _amenityIdsList = List.from(widget.amenities.keys);
     _amenityIdsList.sort((String amenityId1, String amenityId2) {
@@ -32,6 +33,8 @@ class _Map2FilterBuildingAmenitiesPanelState extends State<Map2FilterBuildingAme
       String amenityName2 = widget.amenities[amenityId2] ?? '';
       return amenityName1.compareTo(amenityName2);
     });
+
+    _selectedAmenityIds = LinkedHashSet<String>.from(widget.selectedAmenityIds);
 
     super.initState();
   }

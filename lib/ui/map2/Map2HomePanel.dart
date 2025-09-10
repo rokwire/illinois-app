@@ -1,4 +1,5 @@
 
+import 'dart:collection';
 import 'dart:io';
 import 'dart:math' as math;
 
@@ -474,7 +475,10 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         _contentFilterSearchBar,
       ] : <Widget>[
         _contentTitleBar,
-        _contentFilterButtonsBar ?? Container(),
+        if (_exploresProgress == false)
+          _contentFilterButtonsBar ?? Container(),
+        if (_exploresProgress == false)
+          _contentFilterDescriptionBar ?? Container(),
       ],),
     );
 
@@ -819,13 +823,57 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   Widget? get _contentFilterButtonsBar {
     List<Widget>? filterButtonsList = (_exploresProgress == false) ? _filterButtons : null;
     return ((filterButtonsList != null) && filterButtonsList.isNotEmpty) ?
-      Container(decoration: _contentFiltersBarDecoration, padding: _contentFiltersBarPadding, constraints: _contentFiltersBarConstraints, child:
+      Container(decoration: _contentFiltersBarDecoration, padding: _contentFilterButtonsBarPadding, constraints: _contentFiltersBarConstraints, child:
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           controller: _filterButtonsScrollController,
           child: Row(mainAxisSize: MainAxisSize.min, children: filterButtonsList,)
         )
       ) : null;
+  }
+
+  Widget? get _contentFilterDescriptionBar {
+    LinkedHashMap<String, List<String>>? descriptionMap = _selectedFilter?.description(_filteredExplores, explores: _explores);
+    if ((descriptionMap != null) && descriptionMap.isNotEmpty)  {
+      TextStyle? boldStyle = Styles().textStyles.getTextStyle('widget.card.title.tiny.fat');
+      TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.card.detail.small.regular');
+      List<InlineSpan> descriptionList = <InlineSpan>[];
+      descriptionMap.forEach((String descriptionCategory, List<String> descriptionItems){
+        if (descriptionList.isNotEmpty) {
+          descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
+        }
+        if (descriptionItems.isEmpty) {
+          descriptionList.add(TextSpan(text: descriptionCategory, style: boldStyle,));
+        } else {
+          descriptionList.add(TextSpan(text: "$descriptionCategory: " , style: boldStyle,));
+          descriptionList.add(TextSpan(text: descriptionItems.join(', '), style: regularStyle,),);
+        }
+      });
+      // descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
+
+      return Container(decoration: _contentFiltersBarDecoration, padding: _contentFilterDescriptionBarPadding, constraints: _contentFiltersBarConstraints, child:
+        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(top: 6, bottom: 6), child:
+              RichText(text: TextSpan(style: regularStyle, children: descriptionList)),
+            ),
+          ),
+          Map2PlainImageButton(imageKey: 'share-nodes',
+            label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
+            hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
+            padding: EdgeInsets.only(left: 16, right: (8 + 2), top: 12, bottom: 12),
+            onTap: _onShareFilter
+          ),
+          Map2PlainImageButton(imageKey: 'close',
+              label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
+              hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
+            padding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
+            onTap: _onClearFilter
+          ),
+        ]),
+      );
+    }
+    return null;
   }
 
   BoxConstraints get _contentFiltersBarConstraints => BoxConstraints(
@@ -837,8 +885,11 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1),),
     );
 
-  EdgeInsetsGeometry get _contentFiltersBarPadding =>
+  EdgeInsetsGeometry get _contentFilterButtonsBarPadding =>
     EdgeInsets.only(left: 16, top: 8, bottom: 8);
+
+  EdgeInsetsGeometry get _contentFilterDescriptionBarPadding =>
+    EdgeInsets.only(left: 16);
 
   List<Widget>? get _filterButtons {
     switch (_selectedContentType) {
@@ -931,13 +982,13 @@ extension _Map2PanelFilters on _Map2HomePanelState {
         Expanded(child:
           _searchTextField,
         ),
-        Map2SearchTextImageButton(
+        Map2PlainImageButton(
           imageKey: 'search',
           label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
           hint: Localization().getStringEx('panel.search.button.search.hint', ''),
           onTap: _onTapSearchText,
         ),
-        Map2SearchTextImageButton(
+        Map2PlainImageButton(
           imageKey: 'close',
           label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
           hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
@@ -1014,10 +1065,10 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   void _onAmenities() {
     _Map2CampusBuildingsFilters? filter = _campusBuildingsFilter;
     if (filter != null) {
-      Navigator.push<Set<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
+      Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
         amenities: JsonUtils.cast<List<Building>>(_explores)?.featureNames ?? <String, String>{},
         selectedAmenityIds: filter.amenityIds,
-      ),)).then(((Set<String>? amenityIds) {
+      ),)).then(((LinkedHashSet<String>? amenityIds) {
         if (amenityIds != null) {
           setStateIfMounted(() {
             filter.amenityIds = amenityIds;
@@ -1026,6 +1077,17 @@ extension _Map2PanelFilters on _Map2HomePanelState {
         }
       }));
     }
+  }
+
+  void _onShareFilter() {
+
+  }
+
+  void _onClearFilter() {
+    setStateIfMounted(() {
+      _filters.remove(_selectedContentType);
+    });
+    _updateFilteredExplores();
   }
 }
 
@@ -1608,11 +1670,13 @@ extension ExplorePOIImpl on ExplorePOI {
     );
 }
 
-mixin class _Map2Filter {
+class _Map2Filter {
+
   String get searchText => '';
   set searchText(String value) {}
-  
-  List<Explore> process(List<Explore> explores) => explores;
+
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) =>
+    LinkedHashMap<String, List<String>>();
 
   static _Map2Filter? fromContentType(Map2ContentType? contentType) {
     switch (contentType) {
@@ -1627,15 +1691,14 @@ mixin class _Map2Filter {
       default: return null;
     }
   }
+
+  List<Explore> process(List<Explore> explores) => explores;
 }
 
-class _Map2CampusBuildingsFilters with _Map2Filter {
-  String searchText;
-  bool starred;
-  Set<String> amenityIds;
-
-  // ignore: unused_element_parameter
-  _Map2CampusBuildingsFilters({this.searchText = "", this.starred = false, this.amenityIds = const <String>{}});
+class _Map2CampusBuildingsFilters extends _Map2Filter {
+  String searchText = '';
+  bool starred = false;
+  LinkedHashSet<String> amenityIds = LinkedHashSet<String>();
 
   @override
   List<Explore> process(List<Explore> explores) {
@@ -1659,4 +1722,29 @@ class _Map2CampusBuildingsFilters with _Map2Filter {
     }
   }
 
+  @override
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
+    LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
+    if (searchText.isNotEmpty) {
+      String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
+      descriptionMap[searchKey] = <String>[searchText];
+    }
+    if (amenityIds.isNotEmpty) {
+      String amenitiesKey = Localization().getStringEx('panel.map2.filter.amenities.text', 'Amenities');
+      Map<String, String?> amenities = JsonUtils.cast<List<Building>>(explores ?? filteredExplores)?.featureNames ?? <String, String>{};
+      List<String> amenityValues = List<String>.from(amenityIds.map<String>((String amenityId) => amenities[amenityId] ?? amenityId));
+      descriptionMap[amenitiesKey] = amenityValues;
+    }
+    if (starred) {
+      String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
+      String starredValue = Localization().getStringEx('panel.map2.filter.on.text', 'On');
+      descriptionMap[starredKey] = <String>[starredValue];
+    }
+    if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.buildings.text', 'Buildings');
+      String buildingsValue = filteredExplores.length.toString();
+      descriptionMap[buildingsKey] = <String>[buildingsValue];
+    }
+    return descriptionMap;
+  }
 }

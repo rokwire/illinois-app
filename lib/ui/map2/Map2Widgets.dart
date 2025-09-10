@@ -102,7 +102,7 @@ class Map2FilterTextButton extends StatelessWidget {
   TextStyle? get _titleTextStyle => toggled ? Styles().textStyles.getTextStyle('widget.title.light.small') : Styles().textStyles.getTextStyle('widget.button.title.small.medium');
 }
 
-class Map2SearchTextImageButton extends StatelessWidget {
+class Map2PlainImageButton extends StatelessWidget {
   final Widget? image;
   final String? imageKey;
   final String? label;
@@ -110,7 +110,7 @@ class Map2SearchTextImageButton extends StatelessWidget {
   final void Function()? onTap;
   final EdgeInsetsGeometry padding;
 
-  Map2SearchTextImageButton({super.key, this.image, this.imageKey, this.hint, this.label, this.onTap, this.padding = const EdgeInsets.all(12)});
+  Map2PlainImageButton({super.key, this.image, this.imageKey, this.hint, this.label, this.onTap, this.padding = const EdgeInsets.all(12)});
 
   @override
   Widget build(BuildContext context) =>
