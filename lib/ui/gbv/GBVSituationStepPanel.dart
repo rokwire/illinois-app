@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/model/survey.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
@@ -122,12 +123,22 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
         .map((e) => GBVResourceList(title: e.key, resourceIds: e.value))
         .toList();
 
+    // final screen = GBVResourceListScreen(
+    //   type: 'panel',
+    //   title: 'Your Top Resources',
+    //   description: 'Based on what you shared, here are some options that may help. '
+    //       'You’re in control of what happens next—take your time and explore what feels right. '
+    //       'You’re not alone, and support is available if you need it.',
+    //   content: content,
+    // );
     final screen = GBVResourceListScreen(
       type: 'panel',
-      title: 'Your Top Resources',
-      description: 'Based on what you shared, here are some options that may help. '
-          'You’re in control of what happens next—take your time and explore what feels right. '
-          'You’re not alone, and support is available if you need it.',
+      title: Localization().getStringEx('panel.sexual_misconduct.survey_result.title', 'Your Top Resources'),
+      description: Localization().getStringEx(
+          'panel.sexual_misconduct.survey_result.description',
+          'Based on what you shared, here are some options that may help. '
+              'You’re in control of what happens next—take your time and explore what feels right. '
+              'You’re not alone, and support is available if you need it.'),
       content: content,
     );
 
@@ -240,7 +251,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
         child: Text(
-          'Failed to load survey.',
+          Localization().getStringEx('panel.sexual_misconduct.survey_result.error', 'Failed to load survey.'),
           textAlign: TextAlign.center,
           style: Styles().textStyles.getTextStyle("widget.message.medium.thin"),
         ),
@@ -392,7 +403,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
                 child: TextButton(
                   onPressed: () => _selectOption('__skipped__'),
                   child: Text(
-                    'Skip this question',
+                    Localization().getStringEx('panel.sexual_misconduct.survey.skip', 'Skip this question'),
                     style: Styles().textStyles.getTextStyle('widget.detail.regular'),
                   ),
                 ),
