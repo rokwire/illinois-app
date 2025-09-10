@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/map2/Map2FilterBuildingAmenitiesPanel.dart';
 import 'package:illinois/ui/map2/Map2TraySheet.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -881,7 +883,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       title: Localization().getStringEx('panel.map2.button.starred.title', 'Starred'),
       hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations'),
       leftIcon: Styles().images.getImage('star-filled', size: 16),
-      toggled: _campusBuildingsFilter?.starred == true,
+      toggled: _campusBuildingsFilterIfExists?.starred == true,
       onTap: _onStarred,
     );
 
@@ -890,6 +892,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       title: Localization().getStringEx('panel.map2.button.amenities.title', 'Amenities'),
       hint: Localization().getStringEx('panel.map2.button.amenities.hint', 'Tap to edit amenities for visible location'),
       leftIcon: Styles().images.getImage('toilet', size: 16),
+      rightIcon: Styles().images.getImage('chevron-right'),
       onTap: _onAmenities,
     );
 
@@ -902,7 +905,8 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   _Map2Filter? get _selectedFilter => _getFilter(_selectedContentType, ensure: true);
   _Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
 
-  _Map2CampusBuildingsFilters? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings));
+  _Map2CampusBuildingsFilters? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
+  _Map2CampusBuildingsFilters? get _campusBuildingsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: false));
 
   _Map2Filter? _getFilter(Map2ContentType? contentType, { bool ensure = false }) {
     if (contentType != null) {
@@ -1008,7 +1012,20 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   }
 
   void _onAmenities() {
-
+    _Map2CampusBuildingsFilters? filter = _campusBuildingsFilter;
+    if (filter != null) {
+      Navigator.push<Set<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
+        amenities: JsonUtils.cast<List<Building>>(_explores)?.featureNames ?? <String, String>{},
+        selectedAmenityIds: filter.amenityIds,
+      ),)).then(((Set<String>? amenityIds) {
+        if (amenityIds != null) {
+          setStateIfMounted(() {
+            filter.amenityIds = amenityIds;
+          });
+          _updateFilteredExplores();
+        }
+      }));
+    }
   }
 }
 
@@ -1615,23 +1632,22 @@ mixin class _Map2Filter {
 class _Map2CampusBuildingsFilters with _Map2Filter {
   String searchText;
   bool starred;
-  Set<String> amenities;
+  Set<String> amenityIds;
 
   // ignore: unused_element_parameter
-  _Map2CampusBuildingsFilters({this.searchText = "", this.starred = false, this.amenities = const <String>{}});
+  _Map2CampusBuildingsFilters({this.searchText = "", this.starred = false, this.amenityIds = const <String>{}});
 
   @override
   List<Explore> process(List<Explore> explores) {
-    if (explores.isNotEmpty && ((searchText.isNotEmpty == true) || (starred == true) || (amenities.isNotEmpty == true))) {
+    if (explores.isNotEmpty && ((searchText.isNotEmpty == true) || (starred == true) || (amenityIds.isNotEmpty == true))) {
       String? searchLowerCase = searchText.toLowerCase();
-      Iterable<String> amenitiesLowerCase = amenities.map((String amenity) => amenity.toLowerCase());
 
       List<Explore> filtered = <Explore>[];
       for (Explore explore in explores) {
         if ((explore is Building) &&
             ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchTextLowerCase(searchLowerCase))) &&
             ((starred != true) || (Auth2().prefs?.isFavorite(explore as Favorite) == true)) &&
-            ((amenitiesLowerCase.isNotEmpty != true) || (explore.matchAmenitiesLowerCase(amenitiesLowerCase)))
+            ((amenityIds.isNotEmpty != true) || (explore.matchAmenityIds(amenityIds)))
           ) {
           filtered.add(explore);
         }

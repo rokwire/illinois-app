@@ -443,6 +443,10 @@
     "panel.map2.button.amenities.title":"Amenities",
     "panel.map2.button.amenities.hint":"Tap to edit amenities for visible location",
 
+    "panel.map2.filter.amenities.title":"Amenities",
+    "panel.map2.filter.amenities.info":"Choose from the below amenities to view buildings with one or more of these amenities.",
+    "panel.map2.filter.amenities.clear.title":"Clear",
+
     "panel.map.select.header.title": "Elegir el Sitio",
     "panel.map.select.button.select.title": "Elegir",
     "panel.map.select.button.select.hint": "",

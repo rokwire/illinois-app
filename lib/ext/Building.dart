@@ -19,10 +19,33 @@ extension BuildingSearch on Building {
       (floors?.firstWhereOrNull((String floor) => floor.toLowerCase().contains(searchLowerCase)) != null)
     ));
 
-  bool matchAmenitiesLowerCase(Iterable<String> amenitiesLowerCase) =>
-    (amenitiesLowerCase.isNotEmpty && (
-      (features?.firstWhereOrNull((BuildingFeature feature) => feature.matchAmenitiesLowerCase(amenitiesLowerCase)) != null)
+  bool matchAmenityIds(Set<String> amenityIds) =>
+    (amenityIds.isNotEmpty && (
+      (features?.firstWhereOrNull((BuildingFeature feature) => feature.matchAmenityIds(amenityIds)) != null)
     ));
+
+  Map<String, String?> get featureNames {
+    Map<String, String?> featuresMap = <String, String?>{};
+    if (features != null) {
+      for (BuildingFeature feature in features!) {
+        if (feature.key != null) {
+          featuresMap[feature.key!] = feature.value?.name;
+        }
+      }
+    }
+    return featuresMap;
+  }
+}
+
+extension BuildingsSearch on Iterable<Building>  {
+
+  Map<String, String?> get featureNames {
+    Map<String, String?> featuresMap = <String, String?>{};
+    for (Building building in this) {
+      featuresMap.addAll(building.featureNames);
+    }
+    return featuresMap;
+  }
 }
 
 extension BuildingEntranceSearch on BuildingEntrance {
@@ -32,7 +55,7 @@ extension BuildingEntranceSearch on BuildingEntrance {
 
 extension BuildingFeatureSearch on BuildingFeature {
   bool matchSearchTextLowerCase(String searchLowerCase) => value?.matchSearchTextLowerCase(searchLowerCase) == true;
-  bool matchAmenitiesLowerCase(Iterable<String> amenitiesLowerCase) => value?.matchAmenitiesLowerCase(amenitiesLowerCase) == true;
+  bool matchAmenityIds(Set<String> amenityIds) => amenityIds.contains(key);
 }
 
 extension BuildingFeatureValueSearch on BuildingFeatureValue {
@@ -41,9 +64,6 @@ extension BuildingFeatureValueSearch on BuildingFeatureValue {
       (name?.toLowerCase().contains(searchLowerCase) == true) ||
       (floors?.firstWhereOrNull((String floor) => floor.toLowerCase().contains(searchLowerCase)) != null)
     );
-
-  bool matchAmenitiesLowerCase(Iterable<String> amenitiesLowerCase) =>
-    (name != null) && amenitiesLowerCase.contains(name?.toLowerCase());
 }
 
 
