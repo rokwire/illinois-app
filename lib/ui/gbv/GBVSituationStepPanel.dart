@@ -69,9 +69,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
         _stepHistory.add(next.key);
         _loading = false;
       });
-    } else {
-      await _showResults();
-    }
+    } else await _showResults();
   }
 
   Future<void> _showResults() async {
@@ -201,8 +199,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(child: Text(title, style: Styles().textStyles.getTextStyle('widget.title.regular'),),),
-              Styles().images.getImage('chevron-right', excludeFromSemantics: true, size: 18, color: Styles().colors.fillColorPrimary,
-              ) ?? Container(),
+              Styles().images.getImage('chevron-right', excludeFromSemantics: true, size: 18, color: Styles().colors.fillColorPrimary) ?? Container(),
             ],
           ),
         ),
@@ -214,8 +211,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     return Column(
       children: [
         const Expanded(flex: 1, child: SizedBox()),
-        SizedBox(width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
-        ),
+        SizedBox(width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),),
         const Expanded(flex: 2, child: SizedBox())],
     );
   }
@@ -232,83 +228,43 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     );
   }
 
+  Widget _buildIconContainer(String imageName, Color bgColor) {
+    return Container(width: 67, height: 67,
+      decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle,),
+      child: Center(
+        child: Styles().images.getImage(imageName, excludeFromSemantics: true, size: 36, fit: BoxFit.contain, color: Colors.white) ?? Container()),
+    );
+  }
+
+  Widget? _getStepIconWidget(String stepKey) {
+    // Try extras-defined icon from database
+    final stepData = _survey.data[stepKey];
+    if (stepData?.extras is Map) {
+      final extrasMap = stepData!.extras as Map;
+      final iconName = extrasMap['image'] as String?;
+      final colorString = extrasMap['color'] as String?;
+      if (iconName != null && colorString != null) {
+        final iconColor = Styles().colors.getColor(colorString);
+        return _buildIconContainer(iconName, iconColor!);
+      }
+    }
+    // Fallback to default icons map
+    final fallback = stepIcons[stepKey];
+    if (fallback != null) {
+      final iconName = fallback['image'] as String;
+      final colorString = fallback['color'] as String;
+      final iconColor = Styles().colors.getColor(colorString);
+      return _buildIconContainer(iconName, iconColor!);
+    }
+    return null;
+  }
+
   Widget _buildContent(BuildContext context) {
-    if (_loading) {
-      return _buildScaffold(_buildLoadingContent());
-    }
-    if (_currentStep == null) {
-      return _buildScaffold(_buildErrorContent());
-    }
+    if (_loading) return _buildScaffold(_buildLoadingContent());
+    if (_currentStep == null) return _buildScaffold(_buildErrorContent());
     final question = _currentStep!;
     final opts = (question is SurveyQuestionMultipleChoice) ? question.options : [];
-
-    Widget? stepIconWidget;
-    try {
-      final currentStepKey = _currentStep!.key;
-      final stepData = _survey.data[currentStepKey];
-      if (stepData != null && stepData.extras != null && stepData.extras is Map) {
-        final extrasMap = stepData.extras as Map<String, dynamic>;
-        final iconName = extrasMap['image'] as String?;
-        final colorString = extrasMap['color'] as String?;
-        Color? iconColor = Styles().colors.accentColor4;
-        if (colorString != null) {
-          iconColor = Styles().colors.getColor(colorString);
-        }
-
-        if (iconName != null) {
-          stepIconWidget = Container(
-            width: 67,
-            height: 67,
-            decoration: BoxDecoration(
-              color: iconColor,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Styles().images.getImage(
-                iconName,
-                excludeFromSemantics: true,
-                size: 36,
-                fit: BoxFit.contain,
-                color: Colors.white,
-              ) ?? Container(),
-            ),
-          );
-        }
-      }
-
-      if (stepIconWidget == null) {
-        final fallbackIconData = stepIcons[currentStepKey];
-        if (fallbackIconData != null) {
-          stepIconWidget = Container(
-            width: 67,
-            height: 67,
-            decoration: BoxDecoration(
-              color: Styles().colors.getColor(fallbackIconData['color'] as String),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Styles().images.getImage(
-                fallbackIconData['image'] as String,
-                excludeFromSemantics: true,
-                size: 36,
-                fit: BoxFit.contain,
-                color: Colors.white,
-              ) ?? Container(),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      final fallbackIconData = stepIcons[_currentStep!.key];
-      if (fallbackIconData != null) {
-        stepIconWidget = Container(width: 67, height: 67,
-          decoration: BoxDecoration(color: Styles().colors.getColor(fallbackIconData['color'] as String), shape: BoxShape.circle,),
-          child: Center(
-            child: Styles().images.getImage(fallbackIconData['image'] as String, excludeFromSemantics: true, size: 36, fit: BoxFit.contain, color: Colors.white,) ?? Container(),
-          ),
-        );
-      }
-    }
+    Widget? stepIconWidget = _getStepIconWidget(_currentStep!.key);
 
     return Scaffold(
       backgroundColor: Styles().colors.background,
