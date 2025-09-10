@@ -160,6 +160,16 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     }
   }
 
+  Widget _buildScaffold(Widget body) {
+    return Scaffold(
+      backgroundColor: Styles().colors.background,
+      appBar: HeaderBar(onLeading: _handleBack),
+      body: body,
+      bottomNavigationBar: uiuc.TabBar(),
+    );
+  }
+
+
   Widget _buildOption(String title) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -228,25 +238,11 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
 
   Widget _buildContent(BuildContext context) {
     if (_loading) {
-      return Scaffold(
-        backgroundColor: Styles().colors.background,
-        appBar: HeaderBar(
-          onLeading: _handleBack,
-        ),
-        body: _buildLoadingContent(),
-      );
+      return _buildScaffold(_buildLoadingContent());
     }
-
     if (_currentStep == null) {
-      return Scaffold(
-        backgroundColor: Styles().colors.background,
-        appBar: HeaderBar(
-          onLeading: _handleBack,
-        ),
-        body: _buildErrorContent(),
-      );
+      return _buildScaffold(_buildErrorContent());
     }
-
     final question = _currentStep!;
     final opts = (question is SurveyQuestionMultipleChoice) ? question.options : [];
 
