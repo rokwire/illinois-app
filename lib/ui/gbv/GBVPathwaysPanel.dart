@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/GBV.dart';
+import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
+import 'package:illinois/ui/gbv/GBVResourceDirectoryPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/localization.dart';
@@ -22,8 +25,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:illinois/service/Analytics.dart';
 
-import '../../model/GBV.dart';
-import 'GBVResourceDirectoryPanel.dart';
 
 class GBVPathwaysPanel extends StatefulWidget {
 
@@ -251,14 +252,9 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
 
 
   Future<GBVData?> _loadResources() async {
-    // temporary json load from assets
-    String? GBVjson = await AppBundle.loadString('assets/extra/gbv/gbv.json');
-    GBVData? gbv = (GBVjson != null)
-        ? GBVData.fromJson(JsonUtils.decodeMap(GBVjson))
-        : null;
+    dynamic contentItem = await Content().loadContentItem('gbv');
     _survey = await Surveys().loadSurvey("cabb1338-48df-4299-8c2a-563e021f82ca");
-    await Future.delayed(Duration(seconds: 1));
-    return gbv;
+    return GBVData.fromJson(JsonUtils.mapValue(contentItem));
   }
 
   Widget _buildLinkDetail(String? text) =>
