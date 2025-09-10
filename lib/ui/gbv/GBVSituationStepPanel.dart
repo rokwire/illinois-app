@@ -12,12 +12,12 @@ import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
 import '../../model/GBV.dart';
 
-const Map<String, Map<String, Object>> stepIcons = <String, Map<String, Object>>{
-  'situation': <String, Object>{'image': 'compass', 'color': 'accentColor4'},
-  'whats_happening': <String, Object>{'image': 'ban', 'color': 'diningColor'},
-  'involved': <String, Object>{'image': 'user', 'color': 'accentColor3'},
-  'next': <String, Object>{'image': 'signs-post', 'color': 'accentColor2'},
-  'services': <String, Object>{'image': 'timeline', 'color': 'accentColor4'},
+const Map<String, Map<String, Object>> stepIcons = {
+  'situation':      {'image': 'compass',      'color': 'accentColor4'},
+  'whats_happening':{'image': 'ban',          'color': 'diningColor'},
+  'involved':       {'image': 'user',         'color': 'accentColor3'},
+  'next':           {'image': 'signs-post',   'color': 'accentColor2'},
+  'services':       {'image': 'timeline',     'color': 'accentColor4'},
 };
 
 class GBVSituationStepPanel extends StatefulWidget {
@@ -250,10 +250,9 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
         final extrasMap = stepData.extras as Map<String, dynamic>;
         final iconName = extrasMap['image'] as String?;
         final colorString = extrasMap['color'] as String?;
-
-        Color iconColor = const Color(0xFF9318BB);
-        if (colorString != null && colorString.startsWith('0x')) {
-          iconColor = Color(int.parse(colorString));
+        Color? iconColor = Styles().colors.accentColor4;
+        if (colorString != null) {
+          iconColor = Styles().colors.getColor(colorString);
         }
 
         if (iconName != null) {
@@ -284,7 +283,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
             width: 67,
             height: 67,
             decoration: BoxDecoration(
-              color: Color(fallbackIconData['color'] as int),
+              color: Styles().colors.getColor(fallbackIconData['color'] as String),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -303,7 +302,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       final fallbackIconData = stepIcons[_currentStep!.key];
       if (fallbackIconData != null) {
         stepIconWidget = Container(width: 67, height: 67,
-          decoration: BoxDecoration(color: Color(fallbackIconData['color'] as int), shape: BoxShape.circle,),
+          decoration: BoxDecoration(color: Styles().colors.getColor(fallbackIconData['color'] as String), shape: BoxShape.circle,),
           child: Center(
             child: Styles().images.getImage(fallbackIconData['image'] as String, excludeFromSemantics: true, size: 36, fit: BoxFit.contain, color: Colors.white,) ?? Container(),
           ),
@@ -337,9 +336,8 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
             const SizedBox(height: 12),
             LinearProgressIndicator(
               value: (_stepHistory.length) / 5,
-              backgroundColor: Colors.grey[300],
-              valueColor: const AlwaysStoppedAnimation(Color(0xFFED6647)),
-            ),
+              backgroundColor: Styles().colors.surface,
+              valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary)),
             const SizedBox(height: 24),
             ...opts.map((o) => _buildOption(o.title)),
             if (question.allowSkip)
