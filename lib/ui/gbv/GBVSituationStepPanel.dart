@@ -230,8 +230,8 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     if (_loading) {
       return Scaffold(
         backgroundColor: Styles().colors.background,
-        appBar: AppBar(
-          leading: HeaderBar(onLeading: _handleBack),
+        appBar: HeaderBar(
+          onLeading: _handleBack,
         ),
         body: _buildLoadingContent(),
       );
@@ -240,8 +240,8 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     if (_currentStep == null) {
       return Scaffold(
         backgroundColor: Styles().colors.background,
-        appBar: AppBar(
-          leading: HeaderBar(onLeading: _handleBack),
+        appBar: HeaderBar(
+          onLeading: _handleBack,
         ),
         body: _buildErrorContent(),
       );
@@ -332,10 +332,8 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
 
     return Scaffold(
       backgroundColor: Styles().colors.background,
-      appBar: AppBar(
-        leading: HeaderBar(
-          onLeading: _handleBack,
-        ),
+      appBar: HeaderBar(
+        onLeading: _handleBack,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
