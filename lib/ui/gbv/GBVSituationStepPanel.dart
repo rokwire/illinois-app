@@ -50,25 +50,21 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
 
   Future<void> _selectOption(String title) async {
     if (_currentStep == null) return;
-    if (!mounted) return;
-
-    setState(() {
-      _loading = true;
-    });
+    if (mounted) {
+      setState(() {_loading = true;});
+    }
 
     _currentStep!.response = title;
-
     await Surveys().evaluate(_survey);
-    if (!mounted) return;
 
     final next = Surveys().getFollowUp(_survey, _currentStep!);
     if (next != null) {
-      if (!mounted) return;
-      setState(() {
-        _currentStep = next;
-        _stepHistory.add(next.key);
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _currentStep = next;
+          _stepHistory.add(next.key);
+          _loading = false;});
+      }
     } else await _showResults();
   }
 
@@ -79,31 +75,35 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       summarizeResultRules: false,
       returnMultiple: true,
     );
-    if (!mounted) return;
-
     SurveyStats? stats = _survey.stats;
     final lastStepKey = _stepHistory.last;
-
     final String? resp = stats?.responseData[lastStepKey] as String?;
     final String lookupKey = resp ?? (stats?.responseData['next'] as String? ?? '');
-
     final Map<String, dynamic>? entryMap =
     (_survey.data['gbv_resource_map'] as SurveyData).extras?[lookupKey] as Map<String, dynamic>?;
 
     if (entryMap == null) {
-      setState(() { _loading = false; });
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
       _onFileReport(context, widget.gbvData);
+      return;
     }
 
-    // If skip_to_report flag in survey is true, go straight to the report page
-    if (entryMap?['skip_to_report'] == true) {
-      setState(() { _loading = false; });
+    if (entryMap['skip_to_report'] == true) {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
       _onFileReport(context, widget.gbvData);
+      return;
     }
 
     // Otherwise group resources by category as before
-    final List<String> resourceIds =
-    (entryMap?['resource_ids'] as List<dynamic>).cast<String>();
+    final List resourceIds = (entryMap['resource_ids'] as List).cast();
     final availableIds = widget.gbvData.resources.map((r) => r.id).toSet();
     final validIds = resourceIds.where(availableIds.contains).toList();
 
@@ -121,14 +121,6 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
         .map((e) => GBVResourceList(title: e.key, resourceIds: e.value))
         .toList();
 
-    // final screen = GBVResourceListScreen(
-    //   type: 'panel',
-    //   title: 'Your Top Resources',
-    //   description: 'Based on what you shared, here are some options that may help. '
-    //       'You’re in control of what happens next—take your time and explore what feels right. '
-    //       'You’re not alone, and support is available if you need it.',
-    //   content: content,
-    // );
     final screen = GBVResourceListScreen(
       type: 'panel',
       title: Localization().getStringEx('panel.sexual_misconduct.survey_result.title', 'Your Top Resources'),
@@ -151,29 +143,27 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       ),
     );
 
-    if (!mounted) return;
-    setState(() {
-      _loading = false;
-    });
+    if (mounted) {
+      setState(() {_loading = false;});}
   }
 
   void _handleBack() {
     if (_stepHistory.length > 1) {
       _stepHistory.removeLast();
       final previousKey = _stepHistory.last;
-      setState(() {
-        _currentStep = _survey.data[previousKey];
-        _currentStep?.response = null;
-        _loading = false;
-      });
-
+      if (mounted) {
+        setState(() {
+          _currentStep = _survey.data[previousKey];
+          _currentStep?.response = null;
+          _loading = false;
+        });
+      }
       Surveys().evaluate(_survey).then((_) {
-        if (!mounted) return;
-        setState(() {});
-      });
+        if (mounted) {
+          setState(() {});
+        }});
     } else {
-      Navigator.pop(context);
-    }
+      Navigator.pop(context);}
   }
 
   void _onFileReport(BuildContext context, GBVData gbvContent) {
