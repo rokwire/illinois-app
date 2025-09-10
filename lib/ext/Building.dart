@@ -1,6 +1,6 @@
 
 import 'package:collection/collection.dart';
-import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/model/Building.dart';
 
 extension BuildingSearch on Building {
 

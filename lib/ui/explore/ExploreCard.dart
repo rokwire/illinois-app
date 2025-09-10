@@ -20,6 +20,7 @@ import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Game.dart';
 import 'package:illinois/ext/StudentCourse.dart';
+import 'package:illinois/model/Building.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/FlexUI.dart';

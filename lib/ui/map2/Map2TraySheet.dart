@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
+import 'package:illinois/model/Building.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
