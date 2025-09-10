@@ -13,7 +13,10 @@ class FavoriteStarIcon extends StatelessWidget {
   final FavoriteIconStyle style;
   final EdgeInsetsGeometry padding;
 
-  FavoriteStarIcon({Key? key, this.selected, required this.style, this.padding = const EdgeInsets.all(16) }) : super(key: key);
+  static const EdgeInsets defaultPadding = const EdgeInsets.all(defaultSpacing);
+  static const double defaultSpacing = 16;
+
+  FavoriteStarIcon({Key? key, this.selected, required this.style, this.padding = defaultPadding }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +59,7 @@ class FavoriteButton extends StatelessWidget {
   final FavoriteIconStyle style;
   final EdgeInsetsGeometry padding;
 
-  FavoriteButton({Key? key, this.favorite, required this.style, this.padding = const EdgeInsets.all(16)}) :
+  FavoriteButton({Key? key, this.favorite, required this.style, this.padding = FavoriteStarIcon.defaultPadding }) :
     super(key: key);
 
   @override
