@@ -8,7 +8,6 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
 import '../../model/GBV.dart';
-import 'dart:convert';
 
 const Map<String, Map<String, Object>> stepIcons = <String, Map<String, Object>>{
   'situation': <String, Object>{'image': 'compass', 'color': 0xFF9318BB},
@@ -36,7 +35,6 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
   late Survey _survey;
   SurveyData? _currentStep;
   bool _loading = false;
-  bool _navigated = false;
   final List<String> _stepHistory = <String>[];
 
   @override
@@ -67,7 +65,6 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
         _currentStep = next;
         _stepHistory.add(next.key);
         _loading = false;
-        _navigated = false;
       });
     } else {
       await _showResults();
@@ -138,7 +135,6 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       ),
     );
 
-    _navigated = true;
     if (!mounted) return;
     setState(() {
       _loading = false;
@@ -153,7 +149,6 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
         _currentStep = _survey.data[previousKey];
         _currentStep?.response = null;
         _loading = false;
-        _navigated = false;
       });
 
       Surveys().evaluate(_survey).then((_) {
