@@ -42,7 +42,6 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
 
   @override
   void initState() {
-
     _loadResources().then((gbv) {
       if (mounted) {
         setState(() {
@@ -56,7 +55,6 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
         }
       }
     });
-
     super.initState();
   }
 
@@ -144,8 +142,8 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
         if (gbvContent.resourceListScreens?.confidentialResources != null) _buildPathwayButton(context, 'Talk to someone confidentially', () => _onTalkToSomeone(context, gbvContent)),
         if (gbvContent.resources.any((resource) => resource.id == 'filing_a_report')) _buildPathwayButton(context, 'File a report', () => _onFileReport(context, gbvContent)),
         if (gbvContent.resourceListScreens?.supportingAFriend != null) _buildPathwayButton(context, 'Support a friend', () => _onSupportFriend(context, gbvContent)),
-        //Do a conditional variable check to make sure the survey came back or failed and add a flag check to _buildPathwayButton
-        if (gbvContent.resources.isNotEmpty) _buildPathwayButton(context, "I'm not sure yet", () => _onNotSure(context, gbvContent)),
+        if (gbvContent.resources.isNotEmpty && _survey != null) _buildPathwayButton(context, "I'm not sure yet", () => _onNotSure(context, gbvContent)),
+
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
         _buildQuickExit(context),
         // ),
@@ -196,6 +194,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
   }
 
   Widget _buildPathwayButton(BuildContext context, String label, VoidCallback onTap) {
+    bool isNotSureButton = label == "I'm not sure yet";
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: RoundedButton(
@@ -203,6 +202,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
         textStyle: Styles().textStyles.getTextStyle('widget.title.regular.fat'),
         onTap: onTap,
         backgroundColor: Styles().colors.white,
+        progress: isNotSureButton ? _loading : false,
       ),
     );
   }
@@ -244,24 +244,11 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(resourceListScreen: gbvContent.resourceListScreens!.supportingAFriend!, gbvData: gbvContent)));
     // Navigate to Supporting a Friend Resources
   }
-  void _onNotSure(BuildContext context, GBVData gbvContent) async {
+  void _onNotSure(BuildContext context, GBVData gbvContent) {
     Analytics().logSelect(target: 'I\'m not sure yet');
-    if (_survey != null) {
-      Navigator.push(
-        context,
-        CupertinoPageRoute(
-          builder: (context) => GBVSituationStepPanel(
-            survey: _survey!,
-            gbvData: gbvContent,
-          ),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Unable to load the survey.")),
-      );
-    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVSituationStepPanel(survey: _survey!, gbvData: gbvContent)));
   }
+
 
   Future<GBVData?> _loadResources() async {
     // temporary json load from assets
