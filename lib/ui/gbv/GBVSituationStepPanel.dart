@@ -79,8 +79,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     final lastStepKey = _stepHistory.last;
     final String? resp = stats?.responseData[lastStepKey] as String?;
     final String lookupKey = resp ?? (stats?.responseData['next'] as String? ?? '');
-    final Map<String, dynamic>? entryMap =
-    (_survey.data['gbv_resource_map'] as SurveyData).extras?[lookupKey] as Map<String, dynamic>?;
+    final Map<String, dynamic>? entryMap = (_survey.data['gbv_resource_map'] as SurveyData).extras?[lookupKey] as Map<String, dynamic>?;
 
     if (entryMap == null) {
       if (mounted) {
