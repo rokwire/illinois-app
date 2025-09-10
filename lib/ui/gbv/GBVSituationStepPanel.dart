@@ -88,11 +88,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
 
     final String? resp = stats?.responseData[lastStepKey] as String?;
     final String lookupKey = resp ?? (stats?.responseData['next'] as String? ?? '');
-
-    String gbvResourceMapJson = jsonEncode(_survey.data['gbv_resource_map']);
-    Map<String, dynamic> gbvResourceMap = jsonDecode(gbvResourceMapJson);
-
-    final Map<String, dynamic>? extrasMap = gbvResourceMap['extras'] as Map<String, dynamic>?;
+    final Map<String, dynamic>? extrasMap = _survey.data['gbv_resource_map']?.extras;
     var resourceEntry = extrasMap?[lookupKey];
 
     List<String> resourceIds = <String>[];
