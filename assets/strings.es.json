@@ -451,8 +451,13 @@
     "panel.map2.filter.starred.text":"Starred",
     "panel.map2.filter.amenities.text":"Amenities",
     "panel.map2.filter.buildings.text":"Buildings",
+    "panel.map2.filter.sort.text":"Sort",
     "panel.map2.filter.on.text":"On",
     "panel.map2.filter.off.text":"Off",
+
+    "model.map2.sort_type.date_time": "Date & Time",
+    "model.map2.sort_type.alphabetical": "Alphabetical",
+    "model.map2.sort_type.proximity": "Proximity",
 
     "panel.map2.filter.amenities.title":"Amenities",
     "panel.map2.filter.amenities.info":"Choose from the below amenities to view buildings with one or more of these amenities.",

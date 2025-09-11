@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -20,6 +21,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Dinings.dart';
@@ -34,6 +36,7 @@ import 'package:illinois/ui/map2/Map2FilterBuildingAmenitiesPanel.dart';
 import 'package:illinois/ui/map2/Map2TraySheet.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -49,6 +52,7 @@ import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, Laundries, BusStops, Therapists, MyLocations }
+enum Map2SortType { dateTime, alphabetical, proximity }
 
 typedef LoadExploresTask = Future<List<Explore>?>;
 typedef BuildMarkersTask = Future<Set<Marker>>;
@@ -73,6 +77,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   final GlobalKey _scaffoldKey = GlobalKey();
   final GlobalKey _contentHeadingBarKey = GlobalKey();
   final GlobalKey _traySheetKey = GlobalKey();
+  final GlobalKey _sortButtonKey = GlobalKey();
 
   UniqueKey _mapKey = UniqueKey();
   GoogleMapController? _mapController;
@@ -92,6 +97,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   final Map<Map2ContentType, _Map2Filter> _filters = <Map2ContentType, _Map2Filter>{};
   bool _searchOn = false;
+  double? _sortDropdownWidth;
 
   List<Explore>? _explores;
   List<Explore>? _filteredExplores;
@@ -920,15 +926,6 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       onTap: _onSearch,
     );
 
-  Widget get _sortFilterButton =>
-    Map2FilterTextButton(
-      title: Localization().getStringEx('panel.map2.button.sort.title', 'Sort'),
-      hint: Localization().getStringEx('panel.map2.button.sort.hint', 'Tap to sort locations'),
-      leftIcon: Styles().images.getImage('sort', size: 16),
-      rightIcon: Styles().images.getImage('chevron-down'),
-      onTap: _onSort,
-    );
-
   Widget get _starredBuildingsFilterButton =>
     Map2FilterTextButton(
       title: Localization().getStringEx('panel.map2.button.starred.title', 'Starred'),
@@ -946,6 +943,70 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       rightIcon: Styles().images.getImage('chevron-right'),
       onTap: _onAmenities,
     );
+
+  Widget get _sortFilterButton =>
+    MergeSemantics(key: _sortButtonKey, child:
+      Semantics(value: _selectedSortType?.displayTitle, child:
+        DropdownButtonHideUnderline(child:
+          DropdownButton2<Map2SortType>(
+            dropdownStyleData: DropdownStyleData(
+              width:  _evaluateSortDropdownWidth(), // _sortDropdownWidth ??=
+              padding: EdgeInsets.zero
+            ),
+        customButton: Map2FilterTextButton(
+          title: Localization().getStringEx('panel.map2.button.sort.title', 'Sort'),
+          hint: Localization().getStringEx('panel.map2.button.sort.hint', 'Tap to sort locations'),
+          leftIcon: Styles().images.getImage('sort', size: 16),
+          rightIcon: Styles().images.getImage('chevron-down'),
+          //onTap: _onSort,
+        ),
+        isExpanded: false,
+        items: _buildSortDropdownItems(),
+        onChanged: _onSortType,
+      )
+    )),
+  );
+
+  List<DropdownMenuItem<Map2SortType>> _buildSortDropdownItems() {
+    List<DropdownMenuItem<Map2SortType>> items = <DropdownMenuItem<Map2SortType>>[];
+    bool locationAvailable = ((_locationServicesStatus == LocationServicesStatus.permissionAllowed) || (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined));
+    for (Map2SortType sortType in Map2SortType.values) {
+      if ((_selectedContentType?.supportsSortType(sortType) == true) &&
+          ((sortType != Map2SortType.proximity) || locationAvailable)
+      ) {
+        items.add(AccessibleDropDownMenuItem<Map2SortType>(key: ObjectKey(sortType), value: sortType,
+          child: Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true,
+            child: Text(sortType.displayTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style:
+            (_selectedSortType == sortType) ? _sortEntrySelectedTextStyle : _sortEntryNormalTextStyle,
+        ))));
+      }
+    }
+    return items;
+  }
+
+  double _evaluateSortDropdownWidth() {
+    double width = 0;
+    for (Map2SortType sortType in Map2SortType.values) {
+      final Size sizeFull = (TextPainter(
+          text: TextSpan(
+            text: sortType.displayTitle,
+            style: _sortEntrySelectedTextStyle,
+          ),
+          textScaler: MediaQuery.of(context).textScaler,
+          textDirection: TextDirection.ltr,
+        )..layout()).size;
+      if (width < sizeFull.width) {
+        width = sizeFull.width;
+      }
+    }
+    return math.min(width + 2 * 18, MediaQuery.of(context).size.width / 2); // add horizontal padding
+  }
+
+  Map2SortType? get _selectedSortType => _selectedFilterIfExists?.sortType;
+  set _selectedSortType(Map2SortType? value) => _selectedFilter?.sortType = value;
+
+  TextStyle? get _sortEntryNormalTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
+  TextStyle? get _sortEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
 
   Widget get _filterButtonsSpacing =>
     SizedBox(width: 6,);
@@ -974,7 +1035,6 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       return null;
     }
   }
-
 
   Widget get _contentFilterSearchBar =>
     Container(padding: EdgeInsets.only(left: 16), child:
@@ -1047,10 +1107,19 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     _updateFilteredExplores();
   }
 
-  void _onSort() {
+  void _onSortType(Map2SortType? value) {
+    Analytics().logSelect(target: 'Sort');
+    if (_selectedSortType != value) {
+      setStateIfMounted(() {
+        _selectedSortType = value;
+      });
+      _updateFilteredExplores();
+      Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
+        AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
+      );
+    }
 
   }
-
 
   void _onStarred() {
     _Map2CampusBuildingsFilters? filter = _campusBuildingsFilter;
@@ -1615,6 +1684,57 @@ extension _Map2ContentType on Map2ContentType {
 
   Map2ContentType? _ensure({ Iterable<Map2ContentType>? availableTypes }) =>
       (availableTypes?.contains(this) != false) ? this : null;
+
+  bool supportsSortType(Map2SortType sortType) => (sortType != Map2SortType.dateTime) || supportsDateTimeSort;
+
+  bool get supportsDateTimeSort {
+    switch(this) {
+      case Map2ContentType.Events2:
+      case Map2ContentType.StudentCourses:       return true;
+
+      case Map2ContentType.CampusBuildings:
+      case Map2ContentType.DiningLocations:
+      case Map2ContentType.Laundries:
+      case Map2ContentType.BusStops:
+      case Map2ContentType.Therapists:
+      case Map2ContentType.MyLocations:          return false;
+    }
+  }
+
+}
+
+extension Map2SortTypeImpl on Map2SortType {
+
+  static Map2SortType? fromJson(dynamic value) {
+    if (value == 'date_time') {
+      return Map2SortType.dateTime;
+    }
+    else if (value == 'alphabetical') {
+      return Map2SortType.alphabetical;
+    }
+    else if (value == 'proximity') {
+      return Map2SortType.proximity;
+    }
+    else {
+      return null;
+    }
+  }
+
+  toJson() {
+    switch (this) {
+      case Map2SortType.dateTime: return 'date_time';
+      case Map2SortType.alphabetical: return 'alphabetical';
+      case Map2SortType.proximity: return 'proximity';
+    }
+  }
+
+  String get displayTitle {
+    switch (this) {
+      case Map2SortType.dateTime: return Localization().getStringEx('model.map2.sort_type.date_time', 'Date & Time');
+      case Map2SortType.alphabetical: return Localization().getStringEx('model.map2.sort_type.alphabetical', 'Alphabetical');
+      case Map2SortType.proximity: return Localization().getStringEx('model.map2.sort_type.proximity', 'Proximity');
+    }
+  }
 }
 
 extension _StorageMapExt on Storage {
@@ -1672,8 +1792,8 @@ extension ExplorePOIImpl on ExplorePOI {
 
 class _Map2Filter {
 
-  String get searchText => '';
-  set searchText(String value) {}
+  String searchText = '';
+  Map2SortType? sortType;
 
   LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) =>
     LinkedHashMap<String, List<String>>();
@@ -1692,34 +1812,80 @@ class _Map2Filter {
     }
   }
 
-  List<Explore> process(List<Explore> explores) => explores;
+  List<Explore> process(List<Explore> explores, { Position? position }) {
+    if (explores.isNotEmpty) {
+      if (_hasFilter) {
+        List<Explore> filtered = _filter(explores);
+        if (_hasSort) {
+          _sort(filtered, position: position);
+        }
+        return filtered;
+      }
+      else if (_hasSort) {
+        List<Explore> sorted = List<Explore>.from(explores);
+        _sort(sorted, position: position);
+        return sorted;
+      }
+    }
+    return explores;
+  }
+
+  bool get _hasFilter => false;
+  List<Explore> _filter(List<Explore> explores) => explores;
+
+  bool get _hasSort => (sortType != null);
+  void _sort(List<Explore> explores, { Position? position }) {
+    switch (sortType) {
+      case Map2SortType.dateTime: _sortByDateTime(explores); break;
+      case Map2SortType.alphabetical: _sortAlphabeticaly(explores); break;
+      case Map2SortType.proximity: _sortByProximity(explores, position: position); break;
+      default: break;
+    }
+  }
+
+  void _sortAlphabeticaly(List<Explore> explores) =>
+    explores.sort((Explore explore1, Explore explore2) =>
+      SortUtils.compare(explore1.exploreTitle, explore2.exploreTitle)
+    );
+
+  void _sortByProximity(List<Explore> explores, { Position? position }) =>
+    explores.sort((Explore explore1, Explore explore2) {
+      LatLng? location1 = explore1.exploreLocation?.exploreLocationMapCoordinate;
+      double? distance1 = ((location1 != null) && (position != null)) ? Geolocator.distanceBetween(location1.latitude, location1.longitude, position.latitude, position.longitude) : 0.0;
+
+      LatLng? location2 = explore2.exploreLocation?.exploreLocationMapCoordinate;
+      double? distance2 = ((location2 != null) && (position != null)) ? Geolocator.distanceBetween(location2.latitude, location2.longitude, position.latitude, position.longitude) : 0.0;
+
+      return SortUtils.compare(distance1, distance2);
+    });
+
+  void _sortByDateTime(List<Explore> explores) =>
+    explores.sort((Explore explore1, Explore explore2) =>
+      SortUtils.compare(explore1.exploreDateTimeUtc, explore2.exploreDateTimeUtc)
+    );
 }
 
 class _Map2CampusBuildingsFilters extends _Map2Filter {
-  String searchText = '';
   bool starred = false;
   LinkedHashSet<String> amenityIds = LinkedHashSet<String>();
 
   @override
-  List<Explore> process(List<Explore> explores) {
-    if (explores.isNotEmpty && ((searchText.isNotEmpty == true) || (starred == true) || (amenityIds.isNotEmpty == true))) {
-      String? searchLowerCase = searchText.toLowerCase();
+  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (amenityIds.isNotEmpty == true));
 
-      List<Explore> filtered = <Explore>[];
-      for (Explore explore in explores) {
-        if ((explore is Building) &&
-            ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchTextLowerCase(searchLowerCase))) &&
-            ((starred != true) || (Auth2().prefs?.isFavorite(explore as Favorite) == true)) &&
-            ((amenityIds.isNotEmpty != true) || (explore.matchAmenityIds(amenityIds)))
-          ) {
-          filtered.add(explore);
-        }
+  @override
+  List<Explore> _filter(List<Explore> explores) {
+    String? searchLowerCase = searchText.toLowerCase();
+    List<Explore> filtered = <Explore>[];
+    for (Explore explore in explores) {
+      if ((explore is Building) &&
+          ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchTextLowerCase(searchLowerCase))) &&
+          ((starred != true) || (Auth2().prefs?.isFavorite(explore as Favorite) == true)) &&
+          ((amenityIds.isNotEmpty != true) || (explore.matchAmenityIds(amenityIds)))
+        ) {
+        filtered.add(explore);
       }
-      return filtered;
     }
-    else {
-      return explores;
-    }
+    return filtered;
   }
 
   @override
@@ -1739,6 +1905,11 @@ class _Map2CampusBuildingsFilters extends _Map2Filter {
       String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
       String starredValue = Localization().getStringEx('panel.map2.filter.on.text', 'On');
       descriptionMap[starredKey] = <String>[starredValue];
+    }
+    if (sortType != null) {
+      String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
+      String sortValue = sortType?.displayTitle ?? '';
+      descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
       String buildingsKey = Localization().getStringEx('panel.map2.filter.buildings.text', 'Buildings');
