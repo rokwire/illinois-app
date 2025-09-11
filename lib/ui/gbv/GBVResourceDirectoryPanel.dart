@@ -29,17 +29,14 @@ class GBVResourceDirectoryPanel extends StatefulWidget {
 class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
 
   List<String> _expandedSections = [];
-  GestureRecognizer? _weCareRecognizer;
 
   @override
   void initState() {
-    // _weCareRecognizer = TapGestureRecognizer()..onTap = () => _onWeCare(context);
     super.initState();
   }
 
   @override
   void dispose() {
-    _weCareRecognizer?.dispose();
     super.dispose();
   }
 
@@ -138,7 +135,6 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
                   : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link))
                     ? Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                     : Container()
-                  // Styles().images.getImage((resource.type == GBVResourceType.panel) ? 'chevron-right' : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link) ? 'external-link' : ''), width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                 )
               ])
             )
@@ -146,12 +142,6 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
         )
       );
   }
-
-  // void _expandSection(String category) {
-  //   setState(() {
-  //     this._expandedSection = (_expandedSection == category) ? '' : category;
-  //   });
-  // }
 
   void _expandSection(String section) {
     setState(() {
@@ -204,7 +194,6 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
         Uri? uri = Uri.tryParse(url!);
         if ((uri != null) && (await canLaunchUrl(uri))) {
           AppLaunchUrl.launch(context: context, url: url);
-          // launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       }
     }

@@ -101,8 +101,11 @@ class GBVResourceListPanel extends StatelessWidget {
                     descriptionWidget
                   ])
                 ),
-                Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
-                  Styles().images.getImage((resource.type == GBVResourceType.external_link) ? 'external-link' : 'chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: (resource.type == GBVResourceType.panel)
+                    ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                    : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link))
+                      ? Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                      : Container()
                 )
               ])
             )
@@ -136,30 +139,20 @@ class GBVResourceListPanel extends StatelessWidget {
 
   Widget? _buildUrlDetail(BuildContext context) {
     if (showDirectoryLink) {
-      // Show directory link instead of external URL
-      return Padding(
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-          child: RichText(
-              text: TextSpan(
-                  children: [
-                    TextSpan(
-                        text: Localization().getStringEx('', 'For more options, view the '),
-                        style: Styles().textStyles.getTextStyle('widget.detail.regular')
-                    ),
-                    TextSpan(
-                        text: Localization().getStringEx('', 'Resource Directory'),
-                        style: Styles().textStyles.getTextStyle('widget.detail.regular'),
-                        recognizer: TapGestureRecognizer()..onTap = () => _navigateToDirectory(context)
-                    ),
-                    WidgetSpan(
-                        child: Padding(
-                            padding: EdgeInsets.only(left: 4),
-                            child: Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-                        )
-                    )
-                  ]
-              )
-          )
+      return Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
+        Align(alignment: Alignment.center, child:
+          RichText(textAlign: TextAlign.center, text: TextSpan(children: [
+            TextSpan(
+                text: Localization().getStringEx('', 'For more options, view the '),
+                style: Styles().textStyles.getTextStyle('widget.description.regular')
+            ),
+            TextSpan(
+              text: Localization().getStringEx('', 'Resource Directory.'),
+              style: Styles().textStyles.getTextStyle('widget.description.regular.underline'),
+              recognizer: TapGestureRecognizer()..onTap = () => _navigateToDirectory(context)
+            )
+          ]))
+        )
       );
     } else {
       // Original Illinois We Care URL logic

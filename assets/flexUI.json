@@ -127,7 +127,8 @@
 				"assistant.grok_assistant"                : ["${config.settings.groups.grok_assistant}"],
 				"assistant.perplexity_assistant"          : ["${config.settings.groups.perplexity_assistant}"],
 				"assistant.google_assistant"              : ["${config.settings.groups.google_assistant}"],
-				"essential_skills_coach"                  : ["${config.settings.groups.essential_skills_coach}"]
+				"essential_skills_coach"                  : ["${config.settings.groups.essential_skills_coach}"],
+				"sexual_misconduct"                       : ["${config.settings.groups.sexual_misconduct}"]
 			},
 			"locations": {
 			},
