@@ -612,4 +612,9 @@ class Storage extends rokwire.Storage with NotificationsListener {
   static const String accessibilityReduceMotionKey = 'edu.illinois.rokwire.setting.accessibility.motion';
   bool? get accessibilityReduceMotion => getBoolWithName(accessibilityReduceMotionKey);
   set accessibilityReduceMotion(bool? value) => setBoolWithName(accessibilityReduceMotionKey, value);
+
+  // GBV
+  static const String _gbvQuickExitPromptedKey = 'edu.illinois.rokwire.gbv.quick_exit_prompted';
+  bool? get gbvQuickExitPrompted => getBoolWithName(_gbvQuickExitPromptedKey);
+  set gbvQuickExitPrompted(bool? value) => setBoolWithName(_gbvQuickExitPromptedKey, value);
 }
