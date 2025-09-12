@@ -816,7 +816,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     }
     for (Event2 event in _events!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
-        Event2Card(event, userLocation: _currentLocation, onTap: () => _onEvent(event),),
+        Event2Card(event, userLocation: _currentLocation, timeFilter: _timeFilter, onTap: () => _onEvent(event),),
       ),);
     }
     if (_extendingEvents) {
