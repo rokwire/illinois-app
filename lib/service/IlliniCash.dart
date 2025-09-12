@@ -197,7 +197,7 @@ class IlliniCash with Service, NetworkAuthProvider, NotificationsListener {
     String? lastName = Auth2().account?.authType?.uiucUser?.lastName;
 
     if ((Config().illiniCashUrl != null) && StringUtils.isNotEmpty(_networkAuthHeaderToken) && StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(firstName) && StringUtils.isNotEmpty(lastName)) {
-      String url =  "${Config().illiniCashUrl}/StudentSummary/$uin/$firstName/$lastName";
+      String url =  "${Config().illiniCashUrl}/StudentSummary/$uin";
       String analyticsUrl = "${Config().illiniCashUrl}/StudentSummary/${Analytics.LogAnonymousUin}/${Analytics.LogAnonymousFirstName}/${Analytics.LogAnonymousLastName}";
       Response? response;
       try { response = await Network().get(url, analyticsUrl: analyticsUrl, auth: this); } on Exception catch(e) { print(e.toString()); }
@@ -386,7 +386,7 @@ class IlliniCash with Service, NetworkAuthProvider, NotificationsListener {
 
   Future<bool?> _isEligible({String? uin, String? firstName, String? lastName}) async {
     if ((Config().illiniCashUrl != null) && !StringUtils.isEmpty(uin) && !StringUtils.isEmpty(firstName) && !StringUtils.isEmpty(lastName)) {
-      String url = "${Config().illiniCashUrl}/ICEligible/$uin/$firstName/$lastName";
+      String url = "${Config().illiniCashUrl}/ICEligible/$uin";
       String analyticsUrl = "${Config().illiniCashUrl}/ICEligible/${Analytics.LogAnonymousUin}/${Analytics.LogAnonymousFirstName}/${Analytics.LogAnonymousLastName}";
       Response? response;
       try { response = await Network().get(url, analyticsUrl: analyticsUrl); } on Exception catch(e) { print(e.toString()); }
