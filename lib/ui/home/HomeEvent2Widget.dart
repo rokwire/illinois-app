@@ -172,6 +172,8 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
 
+  Event2TimeFilter? _queryTimeFilter;
+
   _HomeEvent2WidgetState({
     this.timeFilter, this.customStartTime, this.customEndTime,
     this.attributes, this.types, this.sortType
@@ -311,7 +313,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
         pages.add(Padding(
           key: _contentKeys[contentKey] ??= GlobalKey(),
           padding: HomeCard.defaultPageMargin,
-          child: Event2Card(event, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, onTap: () => _onTapEvent2(event),)));
+          child: Event2Card(event, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, timeFilter: _queryTimeFilter, onTap: () => _onTapEvent2(event),)));
       }
 
       if (_hasMoreEvents != false) {
@@ -343,7 +345,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
     }
     else {
       contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
-        Event2Card(_events!.first, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, onTap: () => _onTapEvent2(_events!.first))
+        Event2Card(_events!.first, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, timeFilter: _queryTimeFilter, onTap: () => _onTapEvent2(_events!.first))
       );
     }
 
@@ -471,6 +473,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
       queryCustomStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
       queryCustomEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
     }
+    _queryTimeFilter = queryTimeFilter;
 
     LinkedHashSet<Event2TypeFilter>? queryTypes = _queryTypes;
     Event2SortType? querySortType = _querySortType;

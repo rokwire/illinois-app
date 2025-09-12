@@ -156,7 +156,7 @@ class Assistant with Service, NotificationsListener {
       int? responseCode = response?.statusCode;
       String? responseString = response?.body;
       if (responseCode == 200) {
-        Log.i('Succeeded to load assistant settings:\n$responseString');
+        Log.i('Succeeded to load assistant settings.');
         return responseString;
       } else {
         Log.w('Failed to load assistant settings. Reason: $responseCode, $responseString');
