@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Changed
+- Added New Sexual Misconduct Section (GBV project) [#4954](https://github.com/rokwire/illinois-app/issues/4954).
 
 ## [7.3.4] - 2025-09-05
 ### Changed

@@ -43,6 +43,7 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
+import 'package:illinois/ui/gbv/GBVPathwaysPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -622,6 +623,8 @@ class _BrowseEntry extends StatelessWidget {
       case "safety.safewalk_request":        _onTapSafewalkRequest(context); break;
       case "safety.saferides":               _onTapSafeRides(context); break;
       case "safety.safety_resources":        _onTapSafetyResources(context); break;
+      case "safety.sexual_misconduct":       _onTapSexualMisconduct(context, analyticsTarget: "Sexual Misconduct Resources"); break;
+      case "sexual_misconduct.sexual_misconduct": _onTapSexualMisconduct(context, analyticsTarget: "Concerns about Sexual, Dating, or Harassment Experiences"); break;
 
       case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
       case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
@@ -895,6 +898,11 @@ class _BrowseEntry extends StatelessWidget {
     else {
       AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safewalks.not_available.text", "SafeWalk feature is not currently available."));
     }
+  }
+
+  static void _onTapSexualMisconduct(BuildContext context, {String? analyticsTarget}) {
+    Analytics().logSelect(target: analyticsTarget ?? "Sexual Misconduct Resources");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVPathwaysPanel()));
   }
 
   static void _onTapSafeRides(BuildContext context) {
