@@ -174,6 +174,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       setState(() {_loading = true;});
 
       _currentStep!.response = title;
+      Analytics().logSelect(target: 'selected {$title}');
       await Surveys().evaluate(_survey);
       if (mounted) {
         final next = Surveys().getFollowUp(_survey, _currentStep!);
