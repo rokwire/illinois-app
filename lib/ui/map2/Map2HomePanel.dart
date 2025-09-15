@@ -101,7 +101,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   List<Explore>? _explores;
   List<Explore>? _filteredExplores;
-  List<Explore>? _visibleExplores;
+  List<Explore>? _sortedExplores;
+  List<Explore>? _trayExplores;
   LoadExploresTask? _exploresTask;
   bool _exploresProgress = false;
 
@@ -242,7 +243,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           Column(children: [
             _contentHeadingBar,
             Expanded(child:
-              Visibility(visible: ((_exploresProgress == false) && ((_visibleExplores?.isNotEmpty == true) || (_pinnedExplore != null))), child:
+              Visibility(visible: ((_exploresProgress == false) && ((_trayExplores?.isNotEmpty == true) || (_pinnedExplore != null))), child:
                 _traySheet,
               ),
             )
@@ -337,7 +338,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   void _onMapCameraIdle() {
     // debugPrint('Map2 camera idle' );
-    _updateVisibleExplores();
+    _updateTrayExplores();
     _updateMapContentForZoom();
   }
 
@@ -514,7 +515,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   void _onUnselectContentType() {
     setState(() {
       Storage()._storedMap2ContentType = _selectedContentType = null;
-      _explores = _filteredExplores = _visibleExplores = null;
+      _explores = _filteredExplores = _sortedExplores = _trayExplores = null;
       _exploresTask = null;
       _exploresProgress = false;
 
@@ -541,7 +542,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       setState(() {
         _pinnedExplore = pinnedExplore;
       });
-      _updateVisibleExplores();
+      _updateTrayExplores();
       _updatePinMarker();
     }
   }
@@ -574,7 +575,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
       builder: (BuildContext context, ScrollController scrollController) => Map2TraySheet(
         key: _traySheetKey,
-        visibleExplores: _pinnedVisibleExplores ?? _visibleExplores,
+        visibleExplores: _pinnedVisibleExplores ?? _trayExplores,
         scrollController: scrollController,
         currentLocation: _currentLocation,
         totalExploresCount: _pinnedExploresCount ?? ExploreMap.validCountFromList(_filteredExplores ?? _explores),
@@ -611,7 +612,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         setState(() {
           _exploresTask = exploresTask;
           _exploresProgress = true;
-          _explores = _filteredExplores = _visibleExplores = null;
+          _explores = _filteredExplores = _sortedExplores = _trayExplores = null;
           _pinnedExplore = null;
           _pinnedMarker = null;
         });
@@ -622,10 +623,12 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
         if (mounted && (exploresTask == _exploresTask)) {
           await _buildMapContentData(filteredExplores, updateCamera: true);
+          List<Explore>? sortedExplores = _sortExplores(filteredExplores);
           if (mounted && (exploresTask == _exploresTask)) {
             setState(() {
               _explores = explores;
               _filteredExplores = filteredExplores;
+              _sortedExplores = sortedExplores;
               _exploresTask = null;
               _exploresProgress = false;
               _mapKey = UniqueKey(); // force map rebuild
@@ -635,7 +638,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       }
       else {
         setState(() {
-          _explores = _filteredExplores = _visibleExplores = null;
+          _explores = _filteredExplores = _sortedExplores = _trayExplores = null;
           _exploresTask = null;
           _exploresProgress = false;
 
@@ -669,18 +672,19 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
         if (mounted && (exploresTask == _exploresTask) && !DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
           await _buildMapContentData(filteredExplores, updateCamera: false, showProgress: true);
+          List<Explore>? sortedExplores = _sortExplores(filteredExplores);
           if (mounted && (exploresTask == _exploresTask)) {
-
             setState(() {
               _explores = explores;
               _filteredExplores = filteredExplores;
+              _sortedExplores = sortedExplores;
               _exploresTask = null;
               if ((_pinnedExplore != null) && (explores?.contains(_pinnedExplore) == true)) {
                 _pinnedExplore = null;
                 _pinnedMarker = null;
               }
             });
-            _updateVisibleExplores();
+            _updateTrayExplores();
           }
         }
       }
@@ -692,13 +696,27 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       List<Explore>? filteredExplores = _filterExplores(_explores);
       if (mounted && !DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
         await _buildMapContentData(filteredExplores, updateCamera: true, showProgress: true);
+        List<Explore>? sortedExplores = _sortExplores(filteredExplores);
         if (mounted) {
           setState(() {
             _filteredExplores = filteredExplores;
+            _sortedExplores = sortedExplores;
             _mapKey = UniqueKey(); // force map rebuild
           });
-          _updateVisibleExplores();
+          _updateTrayExplores();
         }
+      }
+    }
+  }
+
+  Future<void> _updateSortedExplores() async {
+    if (mounted) {
+      List<Explore>? sortedExplores = _sortExplores(_filteredExplores);
+      if (mounted && !DeepCollectionEquality().equals(_sortedExplores, sortedExplores)) {
+        setState(() {
+          _sortedExplores = sortedExplores;
+        });
+        _updateTrayExplores();
       }
     }
   }
@@ -784,35 +802,38 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   }
 
   List<Explore>? _filterExplores(List<Explore>? explores) =>
-    ((explores != null) ? _selectedFilterIfExists?.process(explores) : explores) ?? explores;
+    ((explores != null) ? _selectedFilterIfExists?.filter(explores) : explores) ?? explores;
+
+  List<Explore>? _sortExplores(List<Explore>? explores) =>
+    ((explores != null) ? _selectedFilterIfExists?.sort(explores, position: _currentLocation) : explores) ?? explores;
 
   // Visible Explores
 
-  Future<List<Explore>?> _buildVisibleExplores() async {
-    List<Explore>? visibleExplores;
+  Future<List<Explore>?> _buildTrayExplores() async {
+    List<Explore>? trayExplores;
     if (_mapController != null) {
-      visibleExplores = <Explore>[];
+      trayExplores = <Explore>[];
       LatLngBounds clipBounds = await _visibleMapBounds() ??
         _shrinkBoundsForSiblings(await _mapController!.getVisibleRegion());
 
-      if (_filteredExplores?.isNotEmpty == true) {
-        for (Explore explore in _filteredExplores!) {
+      if (_sortedExplores?.isNotEmpty == true) {
+        for (Explore explore in _sortedExplores!) {
           LatLng? exploreLocation = explore.exploreLocation?.exploreLocationMapCoordinate;
           if ((exploreLocation != null) && clipBounds.contains(exploreLocation)) {
-            visibleExplores.add(explore);
+            trayExplores.add(explore);
           }
         }
       }
     }
 
-    return visibleExplores;
+    return trayExplores;
   }
 
-  Future<void> _updateVisibleExplores() async {
-    List<Explore>? visibleExplores = await _buildVisibleExplores();
-    if (mounted && !DeepCollectionEquality().equals(_visibleExplores, visibleExplores)) {
+  Future<void> _updateTrayExplores() async {
+    List<Explore>? trayExplores = await _buildTrayExplores();
+    if (mounted && !DeepCollectionEquality().equals(_trayExplores, trayExplores)) {
       setState(() {
-        _visibleExplores = visibleExplores;
+        _trayExplores = trayExplores;
       });
     }
   }
@@ -950,7 +971,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
         DropdownButtonHideUnderline(child:
           DropdownButton2<Map2SortType>(
             dropdownStyleData: DropdownStyleData(
-              width:  _evaluateSortDropdownWidth(), // _sortDropdownWidth ??=
+              width:  _sortDropdownWidth ??= _evaluateSortDropdownWidth(),
               padding: EdgeInsets.zero
             ),
         customButton: Map2FilterTextButton(
@@ -1113,7 +1134,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       setStateIfMounted(() {
         _selectedSortType = value;
       });
-      _updateFilteredExplores();
+      _updateSortedExplores();
       Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
         AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
       );
@@ -1193,7 +1214,7 @@ extension _Map2PanelContent on _Map2HomePanelState {
     if (targetCameraUpdate != null) {
       _mapController?.animateCamera(targetCameraUpdate).then((_){
         if (mounted) {
-          _updateVisibleExplores();
+          _updateTrayExplores();
           _updateMapContentForZoom();
         }
       });
@@ -1812,26 +1833,22 @@ class _Map2Filter {
     }
   }
 
-  List<Explore> process(List<Explore> explores, { Position? position }) {
-    if (explores.isNotEmpty) {
-      if (_hasFilter) {
-        List<Explore> filtered = _filter(explores);
-        if (_hasSort) {
-          _sort(filtered, position: position);
-        }
-        return filtered;
-      }
-      else if (_hasSort) {
-        List<Explore> sorted = List<Explore>.from(explores);
-        _sort(sorted, position: position);
-        return sorted;
-      }
-    }
-    return explores;
-  }
+  List<Explore> filter(List<Explore> explores) =>
+    (explores.isNotEmpty && _hasFilter) ? _filter(explores) : explores;
 
   bool get _hasFilter => false;
   List<Explore> _filter(List<Explore> explores) => explores;
+
+  List<Explore> sort(List<Explore> explores, { Position? position }) {
+    if (explores.isNotEmpty && _hasSort) {
+      List<Explore> sortedExplores = List<Explore>.from(explores);
+      _sort(sortedExplores, position: position);
+      return sortedExplores;
+    }
+    else {
+      return explores;
+    }
+  }
 
   bool get _hasSort => (sortType != null);
   void _sort(List<Explore> explores, { Position? position }) {
@@ -1848,16 +1865,20 @@ class _Map2Filter {
       SortUtils.compare(explore1.exploreTitle, explore2.exploreTitle)
     );
 
-  void _sortByProximity(List<Explore> explores, { Position? position }) =>
+  void _sortByProximity(List<Explore> explores, { Position? position }) {
+    Map<String, double> debug = <String, double>{};
     explores.sort((Explore explore1, Explore explore2) {
       LatLng? location1 = explore1.exploreLocation?.exploreLocationMapCoordinate;
       double? distance1 = ((location1 != null) && (position != null)) ? Geolocator.distanceBetween(location1.latitude, location1.longitude, position.latitude, position.longitude) : 0.0;
+      debug[explore1.exploreId ?? ''] = distance1;
 
       LatLng? location2 = explore2.exploreLocation?.exploreLocationMapCoordinate;
       double? distance2 = ((location2 != null) && (position != null)) ? Geolocator.distanceBetween(location2.latitude, location2.longitude, position.latitude, position.longitude) : 0.0;
+      debug[explore2.exploreId ?? ''] = distance2;
 
-      return SortUtils.compare(distance1, distance2);
+      return distance1.compareTo(distance2); // SortUtils.compare(distance1, distance2);
     });
+  }
 
   void _sortByDateTime(List<Explore> explores) =>
     explores.sort((Explore explore1, Explore explore2) =>
