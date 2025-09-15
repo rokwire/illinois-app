@@ -486,7 +486,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> with Notification
     List<Widget> cardsList = <Widget>[];
     for (Event2 event in _events!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: 8), child:
-        Event2Card(event, userLocation: _userLocation, onTap: () => _onTapEvent(event),),
+        Event2Card(event, userLocation: _userLocation, timeFilter: _timeFilter, onTap: () => _onTapEvent(event),),
       ),);
     }
     if (_extendClient != null) {
