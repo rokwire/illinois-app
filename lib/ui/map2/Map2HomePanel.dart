@@ -1006,7 +1006,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   set _selectedSortType(Map2SortType? value) => _selectedFilter?.sortType = value;
 
   TextStyle? get _sortEntryNormalTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
-  TextStyle? get _sortEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
+  TextStyle? get _sortEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
 
   Widget get _filterButtonsSpacing =>
     SizedBox(width: 6,);
