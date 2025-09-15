@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Added New Sexual Misconduct Section (GBV project) [#4954](https://github.com/rokwire/illinois-app/issues/4954).
+- Load Assistant promo content in Events panel from content service [#5380](https://github.com/rokwire/illinois-app/issues/5380).
 ### Fixed
 - Show sub-events based on the selected time filter [#5371](https://github.com/rokwire/illinois-app/issues/5371).
 ### Removed

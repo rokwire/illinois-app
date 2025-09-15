@@ -7,6 +7,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -14,14 +15,18 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Assistant with Service, NotificationsListener {
+class Assistant with Service, NotificationsListener implements ContentItemCategoryClient {
 
   static const String notifySettingsChanged = "edu.illinois.rokwire.assistant.settings.changed";
   static const String notifyUserChanged = "edu.illinois.rokwire.assistant.user.changed";
+  static const String notifyPromoContentChanged = "edu.illinois.rokwire.assistant.promo.content.changed";
 
+  static const String _promoContentCategory = "assistant_promo";
+
+  String? _sessionID;
   AssistantUser? _user;
   AssistantSettings? _settings;
-  String? _sessionID;
+  Map<String, dynamic>? _promoContent;
 
   DateTime?  _pausedDateTime;
 
@@ -52,6 +57,7 @@ class Assistant with Service, NotificationsListener {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,
+      Content.notifyContentItemsChanged,
     ]);
   }
 
@@ -107,13 +113,15 @@ class Assistant with Service, NotificationsListener {
       }
     }
 
+    _promoContent = JsonUtils.mapValue(Content().contentItem(_promoContentCategory)) ;
+
     await super.initService();
   }
 
 
   @override
   Set<Service> get serviceDependsOn =>
-    <Service>{ Storage(), Config(), Auth2() };
+    <Service>{ Storage(), Config(), Auth2(), Content() };
 
   // NotificationsListener
 
@@ -126,6 +134,9 @@ class Assistant with Service, NotificationsListener {
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
+    }
+    else if (name == Content.notifyContentItemsChanged) {
+      _onContentItemsChanged(param);
     }
   }
 
@@ -143,6 +154,22 @@ class Assistant with Service, NotificationsListener {
       }
     }
   }
+
+  void _onContentItemsChanged(Set<String>? categoriesDiff) {
+    if (categoriesDiff?.contains(_promoContent) == true) {
+      _promoContent = JsonUtils.mapValue(Content().contentItem(_promoContentCategory)) ;
+      NotificationService().notify(notifyPromoContentChanged);
+    }
+  }
+
+  // ContentItemCategoryClient
+
+  @override
+  List<String> get contentItemCategory => <String>[_promoContentCategory];
+
+  // Promo Content
+
+  dynamic promoContent(String category) => _promoContent?[category];
 
   // Settings
   AssistantSettings? get settings => _settings;
