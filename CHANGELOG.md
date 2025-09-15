@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updates to Event Feed Intro Screen [#5332](https://github.com/rokwire/illinois-app/issues/5332)
 - Group Event Notifications redirect to Group Detail Panel and after that to EventDetailPanel [#5348](https://github.com/rokwire/illinois-app/issues/5348).
 - Split iOS build script into copying GoogleService-Info.plist and uploading DSYMs for Crashlytics, fixed run script's input & output files.
+- Load Assistant promo content in Events panel from content service [#5380](https://github.com/rokwire/illinois-app/issues/5380).
 ### Fixed
 - UI Clean Up: fixed shadow cut off of home cards when embedded in ExpandablePageView [#5289](https://github.com/rokwire/illinois-app/issues/5289).
 - UI Clean Up: fixed spacings within favorites widget headings and bodies [#5331](https://github.com/rokwire/illinois-app/issues/5331).
