@@ -58,11 +58,12 @@ class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
   final Survey? survey;
   final Group? group;
   final Position? userLocation;
+  final Event2TimeFilter? timeFilter;
   final Event2Selector2? eventSelector;
   final void Function(Event2DetailPanelState)? onInitialized;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.eventSelector, this.onInitialized, this.analyticsFeature});
+  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.timeFilter, this.eventSelector, this.onInitialized, this.analyticsFeature});
   
   @override
   State<StatefulWidget> createState() => Event2DetailPanelState();
@@ -1765,7 +1766,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
   String? get _eventId => widget.event?.id ?? widget.eventId;
   bool get _isGroupEvent => (_event?.isGroupEvent == true);
 
-  Event2TimeFilter get _queryTimeFilter => Event2TimeFilterImpl.fromJson(Storage().events2Time) ?? Event2TimeFilter.upcoming;
+  Event2TimeFilter get _queryTimeFilter => (widget.timeFilter ?? Event2TimeFilterImpl.fromJson(Storage().events2Time)) ?? Event2TimeFilter.upcoming;
 
   Event2? get event => _event;
 }

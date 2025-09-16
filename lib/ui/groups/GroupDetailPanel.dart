@@ -1729,6 +1729,7 @@ class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsLi
         content.add(Padding(padding: EdgeInsets.only(bottom: 16),
             child: Event2Card(key: ObjectKey(groupEvent),
                 groupEvent, group: widget.group,
+                timeFilter: widget.timeFilter,
                 onTap: () => _onTapEvent(groupEvent))));
       }
 
@@ -1777,7 +1778,7 @@ class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsLi
     Analytics().logSelect(target: 'Group Event: ${event.name}');
     Navigator.push(context, CupertinoPageRoute( builder: (context) => (event.hasGame == true) ?
     AthleticsGameDetailPanel(game: event.game, event: event, group: widget.group) :
-    Event2DetailPanel(event: event, group: widget.group)));
+    Event2DetailPanel(event: event, timeFilter: widget.timeFilter, group: widget.group)));
   }
 
   //Logic
