@@ -51,7 +51,10 @@ class GBVResourceListPanel extends StatelessWidget {
   }
 
   Widget _buildResourceSection(BuildContext context, GBVResourceList resourceList, List<GBVResource> allResources) {
-    List<GBVResource> filteredResources = List.from(allResources.where((resource) => resourceList.resourceIds.any((id) => id == resource.id)));
+    List<GBVResource> filteredResources = resourceList.resourceIds
+        .map((id) => allResources.firstWhereOrNull((resource) => resource.id == id))
+        .whereType<GBVResource>()
+        .toList();
     List<Widget> resources = filteredResources.map((resource) => _resourceWidget(context, resource)).toList();
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
