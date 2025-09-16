@@ -1161,12 +1161,16 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   }
 
   void _onTapCancelSearchText() {
-    setStateIfMounted((){
+    if (_searchTextController.text.isNotEmpty) {
       _searchTextController.text = '';
-      if (_searchTextController.text.isEmpty) {
+    }
+    else {
+      setStateIfMounted((){
+        _selectedFilter?.searchText = '';
         _searchOn = false;
-      }
-    });
+      });
+      _updateFilteredExplores();
+    }
   }
   
   void _onTapSearchText() {
