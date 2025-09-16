@@ -1403,6 +1403,24 @@ class Event2FilterParam {
     );
   }
 
+  factory Event2FilterParam.fromStorage() => Event2FilterParam(
+    timeFilter: Event2TimeFilterImpl.fromJson(Storage().events2Time) ?? Event2TimeFilter.upcoming,
+    customStartTime: TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime)),
+    customEndTime: TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime)),
+    types: LinkedHashSetUtils.from<Event2TypeFilter>(Event2TypeFilterListImpl.listFromJson(Storage().events2Types)),
+    attributes: Storage().events2Attributes
+  );
+
+  void saveToStorage() {
+    Storage().events2Time = timeFilter?.toJson();
+    Storage().events2CustomStartTime = JsonUtils.encode(customStartTime?.toJson());
+    Storage().events2CustomEndTime = JsonUtils.encode(customEndTime?.toJson());
+    Storage().events2Types = types?.toJson();
+    Storage().events2Attributes = attributes;
+  }
+
+  bool get isNotEmpty => ((timeFilter != null) && (timeFilter != Event2TimeFilter.upcoming)) || (types?.isNotEmpty == true) || (attributes?.isNotEmpty == true);
+
   static void notifySubscribersChanged({NotificationsListener? except}) {
     Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifyChanged);
     if (subscribers != null) {

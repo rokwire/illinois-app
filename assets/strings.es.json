@@ -447,6 +447,8 @@
     "panel.map2.button.starred.hint":"Tap to show only starred locations",
     "panel.map2.button.amenities.title":"Amenities",
     "panel.map2.button.amenities.hint":"Tap to edit amenities for visible location",
+    "panel.map2.button.filters.title":"Filters",
+    "panel.map2.button.filters.hint":"Tap to edit filters",
     "panel.map2.filter.search.text":"Search",
     "panel.map2.filter.starred.text":"Starred",
     "panel.map2.filter.amenities.text":"Amenities",
