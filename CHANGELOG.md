@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show sub-events based on the selected time filter [#5371](https://github.com/rokwire/illinois-app/issues/5371).
 - Acknowledge time filter when showing group events [#5371](https://github.com/rokwire/illinois-app/issues/5371).
 ### Removed
-- Removed first and last name paramters to some Illini Cash API calls [#5376](https://github.com/rokwire/illinois-app/issues/5376).
+- Removed first and last name parameters to some Illini Cash API calls [#5376](https://github.com/rokwire/illinois-app/issues/5376).
 
 ## [7.2.22] - 2025-08-05
 ### Changed
