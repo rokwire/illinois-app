@@ -1258,8 +1258,6 @@
     "panel.events2.home.attributes.event_time.hint.semantics": "Toca dos veces para mostrar las opciones de fecha y hora.",
     "panel.events2.home.message.failed.title": "Error",
     "panel.events2.home.message.empty.description": "No hay eventos que coincidan con los filtros seleccionados.",
-    "panel.events2.assistant.prompt.header.text": "Intenta preguntar al asistente de Illinois: ",
-    "panel.events2.assistant.prompt.question.text": "¿Qué pasa este fin de semana?",
 
     "panel.event2.filters.header.title": "Filtros para los Eventos",
 

@@ -194,12 +194,10 @@ class IlliniCash with Service, NetworkAuthProvider, NotificationsListener {
 
   Future<dynamic> loadStudentSummaryResponse() async {
     String? uin = Auth2().uin;
-    String? firstName = Auth2().account?.authType?.uiucUser?.firstName;
-    String? lastName = Auth2().account?.authType?.uiucUser?.lastName;
 
-    if ((Config().illiniCashUrl != null) && StringUtils.isNotEmpty(_networkAuthHeaderToken) && StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(firstName) && StringUtils.isNotEmpty(lastName)) {
-      String url =  "${Config().illiniCashUrl}/StudentSummary/$uin/$firstName/$lastName";
-      String analyticsUrl = "${Config().illiniCashUrl}/StudentSummary/${Analytics.LogAnonymousUin}/${Analytics.LogAnonymousFirstName}/${Analytics.LogAnonymousLastName}";
+    if ((Config().illiniCashUrl != null) && StringUtils.isNotEmpty(_networkAuthHeaderToken) && StringUtils.isNotEmpty(uin)) {
+      String url =  "${Config().illiniCashUrl}/StudentSummary/$uin";
+      String analyticsUrl = "${Config().illiniCashUrl}/StudentSummary/${Analytics.LogAnonymousUin}";
       Response? response;
       try { response = await Network().get(url, analyticsUrl: analyticsUrl, auth: this, headers: rokwire_auth.Auth2Csrf().networkAuthHeaders); } on Exception catch(e) { print(e.toString()); }
       return response;
@@ -330,7 +328,7 @@ class IlliniCash with Service, NetworkAuthProvider, NotificationsListener {
         if (!_buyIlliniCashInProgress) {
           _buyIlliniCashInProgress = true;
 
-          bool? eligible = await _isEligible(uin: uin, firstName: firstName, lastName: lastName);
+          bool? eligible = await _isEligible(uin: uin);
           if (eligible != true) {
             _throwBuyIlliniCashError(Localization().getStringEx("panel.settings.add_illini_cash.error.buy_illini_cash_elligible.text", "The recipient is not eligible to buy Illini Cash"));
           }
@@ -385,10 +383,10 @@ class IlliniCash with Service, NetworkAuthProvider, NotificationsListener {
     }
   }
 
-  Future<bool?> _isEligible({String? uin, String? firstName, String? lastName}) async {
-    if ((Config().illiniCashUrl != null) && !StringUtils.isEmpty(uin) && !StringUtils.isEmpty(firstName) && !StringUtils.isEmpty(lastName)) {
-      String url = "${Config().illiniCashUrl}/ICEligible/$uin/$firstName/$lastName";
-      String analyticsUrl = "${Config().illiniCashUrl}/ICEligible/${Analytics.LogAnonymousUin}/${Analytics.LogAnonymousFirstName}/${Analytics.LogAnonymousLastName}";
+  Future<bool?> _isEligible({String? uin}) async {
+    if ((Config().illiniCashUrl != null) && !StringUtils.isEmpty(uin)) {
+      String url = "${Config().illiniCashUrl}/ICEligible/$uin";
+      String analyticsUrl = "${Config().illiniCashUrl}/ICEligible/${Analytics.LogAnonymousUin}";
       Response? response;
       try { response = await Network().get(url, headers: rokwire_auth.Auth2Csrf().networkAuthHeaders, analyticsUrl: analyticsUrl); } on Exception catch(e) { print(e.toString()); }
       int responseCode = response?.statusCode ?? -1;
