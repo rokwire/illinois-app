@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/model/survey.dart';
@@ -90,7 +92,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
         ...opts.map((o) => _buildOption(o.title)),
 
         if (question?.allowSkip == true)
-          _allowSkipButton,
+          _allowSkipButton(question),
 
         if (_loading)
           _loadingProgressIndicator,
@@ -116,14 +118,16 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     );
   }
 
-  Widget get _allowSkipButton =>
+  Widget _allowSkipButton(question) {
+    String skipText = question.extras["skip_text"] ?? 'Skip this question';
+    return
     Align(alignment: Alignment.centerRight, child:
-      TextButton(onPressed: () => _selectOption('__skipped__'), child:
-        Text(Localization().getStringEx('panel.sexual_misconduct.survey.skip', 'Skip this question'),
-          style: Styles().textStyles.getTextStyle('widget.detail.regular'),
-        ),
-      ),
+    TextButton(onPressed: () => _selectOption('__skipped__'), child:
+    Text(skipText, style: Styles().textStyles.getTextStyle('widget.detail.regular.underline'),
+    ),
+    ),
     );
+  }
 
   Widget get _loadingProgressIndicator =>
     Center(child:
@@ -208,6 +212,8 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       final String? resp = stats?.responseData[lastStepKey] as String?;
       final String lookupKey = resp ?? (stats?.responseData['next'] as String? ?? '');
       final Map<String, dynamic>? entryMap = (_survey.data['gbv_resource_map'] as SurveyData).extras?[lookupKey] as Map<String, dynamic>?;
+      print("lookupKey: {$lookupKey}"); //__skipped__
+      print("entryMap: {$entryMap}");
 
       if (entryMap == null) {
         _onFileReport(widget.gbvData);
