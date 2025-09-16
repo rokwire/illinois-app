@@ -1,6 +1,6 @@
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum GBVResourceType {panel, external_link, directory}
+enum GBVResourceType {panel, external_link, directory, resource_list}
 
 enum GBVResourceDetailType {text, address, phone, email, external_link, button}
 
@@ -120,7 +120,10 @@ class GBVResource {
     String? typeString = (json != null) ? JsonUtils.stringValue(json['type']) : null;
     return (json != null) ? GBVResource(
       id: JsonUtils.stringValue(json['id']) ?? "",
-      type: (typeString == 'external_link') ? GBVResourceType.external_link : (typeString == 'panel') ? GBVResourceType.panel : GBVResourceType.directory,
+      type: (typeString == 'external_link') ? GBVResourceType.external_link
+          : (typeString == 'panel') ? GBVResourceType.panel
+          : (typeString == 'resource_list') ? GBVResourceType.resource_list   // Added here
+          : GBVResourceType.directory,
       categories: JsonUtils.listValue(json['categories']) ?? [],
       title: JsonUtils.stringValue(json['title']) ?? "",
       directoryContent: GBVResourceDetail.listFromJson(JsonUtils.listValue(json['directoryContent'])),

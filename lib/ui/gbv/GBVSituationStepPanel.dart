@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/model/survey.dart';
@@ -212,6 +210,9 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       final String? resp = stats?.responseData[lastStepKey] as String?;
       final String lookupKey = resp ?? (stats?.responseData['next'] as String? ?? '');
       final Map<String, dynamic>? entryMap = (_survey.data['gbv_resource_map'] as SurveyData).extras?[lookupKey] as Map<String, dynamic>?;
+
+      final Map<String, dynamic>? debug = stats?.responseData;
+      print("responseData debug: {$debug}");
       print("lookupKey: {$lookupKey}"); //__skipped__
       print("entryMap: {$entryMap}");
 
@@ -281,7 +282,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       final String category = resource.categories.first;
       categoryToIds.putIfAbsent(category, () => []).add(id);
     }
-
+    print("idsToProcess debug: {$idsToProcess}");
     final content = categoryToIds.entries.map((e) => GBVResourceList(title: e.key, resourceIds: e.value)).toList();
 
     final screen = GBVResourceListScreen(type: 'panel',

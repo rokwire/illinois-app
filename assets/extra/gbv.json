@@ -844,6 +844,15 @@
             "detailsList": []
         },
         {
+            "id": "support_a_friend",
+            "type": "resource_list",
+            "categories":["RESOURCES TO SUPPORT A FRIEND"],
+            "title": "Support a friend",
+            "directoryContent": [
+                {"type": "external_link", "content": "https://wecare.illinois.edu/policies/campus/rights/"}
+            ]
+        },
+        {
             "id": "become_an_ally",
             "type": "external_link",
             "categories": [],

@@ -130,9 +130,12 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
                     descriptionWidget
                   ])
                 ),
-                Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: (resource.type == GBVResourceType.panel)
-                  ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-                  : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link))
+                Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
+                (resource.type == GBVResourceType.panel)
+                    ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                    : (resource.type == GBVResourceType.resource_list)
+                    ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                    : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link))
                     ? Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                     : Container()
                 )
@@ -161,6 +164,7 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
       }
       case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: resource))); break;
       case GBVResourceType.directory: break;
+      case GBVResourceType.resource_list: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: resource))); break;
     }
   }
 
