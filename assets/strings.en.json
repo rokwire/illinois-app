@@ -1258,8 +1258,6 @@
     "panel.events2.home.attributes.event_time.hint.semantics": "Double tap to show date & time options.",
     "panel.events2.home.message.failed.title": "Failed",
     "panel.events2.home.message.empty.description": "There are no events matching the selected filters.",
-    "panel.events2.assistant.prompt.header.text": "Try asking the Illinois Assistant: ",
-    "panel.events2.assistant.prompt.question.text": "What's happening this weekend?",
 
     "panel.event2.filters.header.title": "Event Filters",
 
