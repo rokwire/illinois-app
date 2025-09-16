@@ -846,11 +846,10 @@
         {
             "id": "support_a_friend",
             "type": "resource_list",
+            "resourceScreenId": "supporting_a_friend",
             "categories":["RESOURCES TO SUPPORT A FRIEND"],
             "title": "Support a friend",
-            "directoryContent": [
-                {"type": "external_link", "content": "https://wecare.illinois.edu/policies/campus/rights/"}
-            ]
+            "directoryContent": []
         },
         {
             "id": "become_an_ally",

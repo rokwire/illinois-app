@@ -140,7 +140,16 @@ class GBVResourceListPanel extends StatelessWidget {
       }
       case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: resource))); break;
       case GBVResourceType.directory: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDirectoryPanel(gbvData: this.gbvData))); break;
-      case GBVResourceType.resource_list: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: resource))); break;
+      case GBVResourceType.resource_list: {
+            GBVResourceListScreen? targetScreen = (resource.resourceScreenId == "supporting_a_friend") ?
+            gbvData.resourceListScreens?.supportingAFriend : null;
+            if (targetScreen != null){
+            Navigator.push(context,
+            CupertinoPageRoute(builder: (context) =>
+            GBVResourceListPanel(gbvData: gbvData,
+            resourceListScreen: targetScreen)));
+            } else break;
+      }
     }
   }
 

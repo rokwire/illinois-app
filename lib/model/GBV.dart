@@ -105,6 +105,7 @@ class GBVResource {
   final List<GBVResourceDetail> directoryContent;
   final String? description;
   final List<GBVDetailListSection>? detailsList;
+  final String? resourceScreenId;
 
   GBVResource({
     required this.id,
@@ -113,7 +114,8 @@ class GBVResource {
     required this.title,
     required this.directoryContent,
     this.description,
-    this.detailsList
+    this.detailsList,
+    this.resourceScreenId
   });
 
   static GBVResource? fromJson(Map<String, dynamic>? json) {

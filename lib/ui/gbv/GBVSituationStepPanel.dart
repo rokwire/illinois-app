@@ -212,9 +212,6 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       final Map<String, dynamic>? entryMap = (_survey.data['gbv_resource_map'] as SurveyData).extras?[lookupKey] as Map<String, dynamic>?;
 
       final Map<String, dynamic>? debug = stats?.responseData;
-      print("responseData debug: {$debug}");
-      print("lookupKey: {$lookupKey}"); //__skipped__
-      print("entryMap: {$entryMap}");
 
       if (entryMap == null) {
         _onFileReport(widget.gbvData);
@@ -282,7 +279,6 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       final String category = resource.categories.first;
       categoryToIds.putIfAbsent(category, () => []).add(id);
     }
-    print("idsToProcess debug: {$idsToProcess}");
     final content = categoryToIds.entries.map((e) => GBVResourceList(title: e.key, resourceIds: e.value)).toList();
 
     final screen = GBVResourceListScreen(type: 'panel',
@@ -326,5 +322,4 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
         SizedBox(width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),),
         const Expanded(flex: 2, child: SizedBox())],
     );
-
 }
