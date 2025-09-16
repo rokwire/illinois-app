@@ -132,9 +132,7 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
                   ])
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
-                (resource.type == GBVResourceType.panel)
-                    ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-                    : (resource.type == GBVResourceType.resource_list)
+                  (resource.type != GBVResourceType.external_link)
                     ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                     : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link))
                     ? Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
