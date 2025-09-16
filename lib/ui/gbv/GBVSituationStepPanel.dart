@@ -174,7 +174,6 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
   Future<void> _selectOption(String title) async {
     if (_currentStep != null) {
       setState(() {_loading = true;});
-
       _currentStep!.response = title;
       Analytics().logSelect(target: 'selected {$title}');
       await Surveys().evaluate(_survey);
@@ -210,8 +209,6 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       final String? resp = stats?.responseData[lastStepKey] as String?;
       final String lookupKey = resp ?? (stats?.responseData['next'] as String? ?? '');
       final Map<String, dynamic>? entryMap = (_survey.data['gbv_resource_map'] as SurveyData).extras?[lookupKey] as Map<String, dynamic>?;
-
-      final Map<String, dynamic>? debug = stats?.responseData;
 
       if (entryMap == null) {
         _onFileReport(widget.gbvData);
