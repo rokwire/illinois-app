@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+
+## [7.2.23] - 2025-09-17
 ### Added
 - Acknowledge Reaction innerContext field [#5238](https://github.com/rokwire/illinois-app/issues/5238).
 - Sort "My Courses" chronologically [#4897](https://github.com/rokwire/illinois-app/issues/4897).

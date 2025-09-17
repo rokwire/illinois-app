@@ -182,7 +182,7 @@ PODS:
     - Flutter
   - record_darwin (1.0.0):
     - Flutter
-  - rokwire_plugin (1.11.0):
+  - rokwire_plugin (1.11.1):
     - Flutter
   - SeosMobileKeysSDK-Debug (7.7.5):
     - BerTlv
