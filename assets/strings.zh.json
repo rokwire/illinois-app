@@ -1253,8 +1253,6 @@
 	"panel.events2.home.attributes.event_time.hint.semantics": "点击两下显示日期与时间的选项。",
 	"panel.events2.home.message.failed.title": "失败",
 	"panel.events2.home.message.empty.description": "没有活动符合筛选条件。",
-	"panel.events2.assistant.prompt.header.text": "試著詢問伊利諾伊州助理： ",
-	"panel.events2.assistant.prompt.question.text": "這個週末有什麼活動？",
 
 	"panel.event2.filters.header.title": "活动筛选器",
 

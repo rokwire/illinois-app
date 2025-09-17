@@ -97,7 +97,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel> with Notifications
 
     if (_events != null) {
       for (Event2 groupEvent in _events!) {
-        content.add(Padding(padding: EdgeInsets.only(bottom: 16), child: Event2Card(groupEvent, group: widget.group, onTap: () => _onTapEvent(groupEvent))));
+        content.add(Padding(padding: EdgeInsets.only(bottom: 16), child: Event2Card(groupEvent, timeFilter: widget.timeFilter, group: widget.group, onTap: () => _onTapEvent(groupEvent))));
       }
 
       if (_extendingEvents) {
@@ -222,7 +222,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel> with Notifications
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game, event: event, group: widget.group,)));
     }
     else {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, group: widget.group)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, timeFilter: widget.timeFilter, group: widget.group)));
     }
   }
 
