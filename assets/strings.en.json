@@ -3566,6 +3566,8 @@
     "panel.sexual_misconduct.view_resources": "view a list of resources.",
     "panel.sexual_misconduct.options.we_care": "We Care at Illinois website",
     "panel.sexual_misconduct.options.resource_directory": "Resource Directory",
+    "panel.sexual_misconduct.quick_exit.privacy": "Privacy: ",
+    "panel.sexual_misconduct.quick_exit.app_activity": "your app activity is not shared with others. Use the quick exit icon to return Home.",
     "panel.sexual_misconduct.resource_directory.view_additional": "View additional resources on the ",
     "panel.sexual_misconduct.resource_directory.we_care": "Illinois We Care website.",
     "panel.sexual_misconduct.resource_list.view_confidential": "View additional confidential resources on the ",
@@ -3576,7 +3578,7 @@
     "panel.sexual_misconduct.survey_result.description": "Based on what you shared, here are some options that may help. You’re in control of what happens next—take your time and explore what feels right. You’re not alone, and support is available if you need it.",
 
     "widget.sexual_misconduct.quick_exit.privacy": "Privacy: ",
-    "widget.sexual_misconduct.quick_exit.app_activity": "your app activity is not shared with others. Use the quick exit icon to return Home.",
+    "widget.sexual_misconduct.quick_exit.app_activity": "your app activity is not shared with others.",
     "widget.sexual_misconduct.quick_exit.dialog.description": "Use the quick exit icon at any time to be routed to the Illinois app home screen.",
 
     "panel.home_canvas_course.header.title": "Course",

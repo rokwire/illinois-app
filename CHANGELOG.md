@@ -6,48 +6,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
-### Changed
-- Added New Sexual Misconduct Section (GBV project) [#4954](https://github.com/rokwire/illinois-app/issues/4954).
-- Load Assistant promo content in Events panel from content service [#5380](https://github.com/rokwire/illinois-app/issues/5380).
-### Fixed
-- Show sub-events based on the selected time filter [#5371](https://github.com/rokwire/illinois-app/issues/5371).
-### Removed
-- Removed first and last name paramters to some Illini Cash API calls [#5376](https://github.com/rokwire/illinois-app/issues/5376).
 
 ## [7.3.4] - 2025-09-05
-### Changed
-- Split iOS build script into copying GoogleService-Info.plist and uploading DSYMs for Crashlytics, fixed run script's input & output files.
 ### Fixed
 - Accessibility enhancements in HomeCustomizeFavoritesPanel [#1971](https://github.com/rokwire/illinois-app/issues/1971).
-- Fixed HomeFavoritesWidget update exception.
 ### Added
-- Sort "My Courses" chronologically [#4897](https://github.com/rokwire/illinois-app/issues/4897).
 - Add assistant memory [#5365](https://github.com/rokwire/illinois-app/issues/5365)
 
 ## [7.3.3] - 2025-08-21
-### Changed
-- Group Event Notifications redirect to Group Detail Panel and after that to EventDetailPanel [#5348](https://github.com/rokwire/illinois-app/issues/5348).
 ### Added
 - Show list items in Assistant response [#5334](https://github.com/rokwire/illinois-app/issues/5334).
 - Introduce AccessibleViewPage used to reduce resize animation of the ExpandableViewPage widget. Depends on Storage.accessibilityReduceMotionKey setting [#5259](https://github.com/rokwire/illinois-app/issues/5259).
-### Fixed
-- Hide link to floorplans if the building has no floors in the campus data [#5340](https://github.com/rokwire/illinois-app/issues/5340).
-- Ensure that the content in Customize panel is visible [#5354](https://github.com/rokwire/illinois-app/issues/5354).
 
 ## [7.3.2] - 2025-08-13
 ### Fixed
 - Android: Fix various compilation warnings [#5339](https://github.com/rokwire/illinois-app/issues/5339).
-### Added
-- Acknowledge Reaction innerContext field [#5238](https://github.com/rokwire/illinois-app/issues/5238).
 
 ## [7.3.1] - 2025-08-08
-### Changed
-- Updates to Event Feed Intro Screen [#5332](https://github.com/rokwire/illinois-app/issues/5332)
 
 ## [7.3.0] - 2025-08-07
+
+## [7.2.23] - 2025-09-17
+### Added
+- Acknowledge Reaction innerContext field [#5238](https://github.com/rokwire/illinois-app/issues/5238).
+- Sort "My Courses" chronologically [#4897](https://github.com/rokwire/illinois-app/issues/4897).
+- Added New Sexual Misconduct Section (GBV project) [#4954](https://github.com/rokwire/illinois-app/issues/4954).
+### Changed
+- Updates to Event Feed Intro Screen [#5332](https://github.com/rokwire/illinois-app/issues/5332)
+- Group Event Notifications redirect to Group Detail Panel and after that to EventDetailPanel [#5348](https://github.com/rokwire/illinois-app/issues/5348).
+- Split iOS build script into copying GoogleService-Info.plist and uploading DSYMs for Crashlytics, fixed run script's input & output files.
+- Load Assistant promo content in Events panel from content service [#5380](https://github.com/rokwire/illinois-app/issues/5380).
 ### Fixed
 - UI Clean Up: fixed shadow cut off of home cards when embedded in ExpandablePageView [#5289](https://github.com/rokwire/illinois-app/issues/5289).
 - UI Clean Up: fixed spacings within favorites widget headings and bodies [#5331](https://github.com/rokwire/illinois-app/issues/5331).
+- Hide link to floorplans if the building has no floors in the campus data [#5340](https://github.com/rokwire/illinois-app/issues/5340).
+- Ensure that the content in Customize panel is visible [#5354](https://github.com/rokwire/illinois-app/issues/5354).
+- Fixed HomeFavoritesWidget update exception.
+- Show sub-events based on the selected time filter [#5371](https://github.com/rokwire/illinois-app/issues/5371).
+- Acknowledge time filter when showing group events [#5371](https://github.com/rokwire/illinois-app/issues/5371).
+### Removed
+- Removed first and last name parameters to some Illini Cash API calls [#5376](https://github.com/rokwire/illinois-app/issues/5376).
 
 ## [7.2.22] - 2025-08-05
 ### Changed
