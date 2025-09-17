@@ -90,7 +90,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
         ...opts.map((o) => _buildOption(o.title)),
 
         if (question?.allowSkip == true)
-          _allowSkipButton,
+          _allowSkipButton(question),
 
         if (_loading)
           _loadingProgressIndicator,
@@ -116,14 +116,16 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     );
   }
 
-  Widget get _allowSkipButton =>
+  Widget _allowSkipButton(question) {
+    String skipText = question.extras["skip_text"] ?? 'Skip this question';
+    return
     Align(alignment: Alignment.centerRight, child:
-      TextButton(onPressed: () => _selectOption('__skipped__'), child:
-        Text(Localization().getStringEx('panel.sexual_misconduct.survey.skip', 'Skip this question'),
-          style: Styles().textStyles.getTextStyle('widget.detail.regular'),
-        ),
-      ),
+    TextButton(onPressed: () => _selectOption('__skipped__'), child:
+    Text(skipText, style: Styles().textStyles.getTextStyle('widget.detail.regular.underline'),
+    ),
+    ),
     );
+  }
 
   Widget get _loadingProgressIndicator =>
     Center(child:
@@ -172,8 +174,8 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
   Future<void> _selectOption(String title) async {
     if (_currentStep != null) {
       setState(() {_loading = true;});
-
       _currentStep!.response = title;
+      Analytics().logSelect(target: 'selected {$title}');
       await Surveys().evaluate(_survey);
       if (mounted) {
         final next = Surveys().getFollowUp(_survey, _currentStep!);
@@ -274,7 +276,6 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       final String category = resource.categories.first;
       categoryToIds.putIfAbsent(category, () => []).add(id);
     }
-
     final content = categoryToIds.entries.map((e) => GBVResourceList(title: e.key, resourceIds: e.value)).toList();
 
     final screen = GBVResourceListScreen(type: 'panel',
@@ -318,5 +319,4 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
         SizedBox(width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),),
         const Expanded(flex: 2, child: SizedBox())],
     );
-
 }

@@ -844,6 +844,14 @@
             "detailsList": []
         },
         {
+            "id": "support_a_friend",
+            "type": "resource_list",
+            "resourceScreenId": "supporting_a_friend",
+            "categories":["RESOURCES TO SUPPORT A FRIEND"],
+            "title": "Support a friend",
+            "directoryContent": []
+        },
+        {
             "id": "become_an_ally",
             "type": "external_link",
             "categories": [],
