@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
+import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -130,9 +131,10 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
                     descriptionWidget
                   ])
                 ),
-                Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: (resource.type == GBVResourceType.panel)
-                  ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-                  : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link))
+                Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
+                  (resource.type != GBVResourceType.external_link)
+                    ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                    : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link))
                     ? Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                     : Container()
                 )
@@ -161,8 +163,15 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
       }
       case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: resource))); break;
       case GBVResourceType.directory: break;
+      case GBVResourceType.resource_list: {
+        GBVResourceListScreen? targetScreen = (resource.resourceScreenId == "supporting_a_friend") ?
+        widget.gbvData.resourceListScreens?.supportingAFriend : null;
+        if (targetScreen != null){
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(gbvData: widget.gbvData, resourceListScreen: targetScreen)));
+        } else break;
+      }
+      }
     }
-  }
 
   Widget? _buildWeCareUrlWidget() {
     String? url = Config().gbvWeCareUrl;

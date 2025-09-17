@@ -51,7 +51,10 @@ class GBVResourceListPanel extends StatelessWidget {
   }
 
   Widget _buildResourceSection(BuildContext context, GBVResourceList resourceList, List<GBVResource> allResources) {
-    List<GBVResource> filteredResources = List.from(allResources.where((resource) => resourceList.resourceIds.any((id) => id == resource.id)));
+    List<GBVResource> filteredResources = resourceList.resourceIds
+        .map((id) => allResources.firstWhereOrNull((resource) => resource.id == id))
+        .whereType<GBVResource>()
+        .toList();
     List<Widget> resources = filteredResources.map((resource) => _resourceWidget(context, resource)).toList();
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -101,11 +104,12 @@ class GBVResourceListPanel extends StatelessWidget {
                     descriptionWidget
                   ])
                 ),
-                Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: (resource.type == GBVResourceType.panel)
+                Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
+                  (resource.type != GBVResourceType.external_link)
                     ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                     : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link))
-                      ? Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-                      : Container()
+                    ? Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                    : Container()
                 )
               ])
             )
@@ -134,6 +138,16 @@ class GBVResourceListPanel extends StatelessWidget {
       }
       case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: resource))); break;
       case GBVResourceType.directory: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDirectoryPanel(gbvData: this.gbvData))); break;
+      case GBVResourceType.resource_list: {
+            GBVResourceListScreen? targetScreen = (resource.resourceScreenId == "supporting_a_friend") ?
+            gbvData.resourceListScreens?.supportingAFriend : null;
+            if (targetScreen != null){
+            Navigator.push(context,
+            CupertinoPageRoute(builder: (context) =>
+            GBVResourceListPanel(gbvData: gbvData,
+            resourceListScreen: targetScreen)));
+            } else break;
+      }
     }
   }
 
