@@ -119,13 +119,9 @@ class GBVResource {
   });
 
   static GBVResource? fromJson(Map<String, dynamic>? json) {
-    String? typeString = (json != null) ? JsonUtils.stringValue(json['type']) : null;
     return (json != null) ? GBVResource(
       id: JsonUtils.stringValue(json['id']) ?? "",
-      type: (typeString == 'external_link') ? GBVResourceType.external_link
-          : (typeString == 'panel') ? GBVResourceType.panel
-          : (typeString == 'resource_list') ? GBVResourceType.resource_list   // Added here
-          : GBVResourceType.directory,
+      type: GBVResourceTypeImpl.fromJson(JsonUtils.stringValue(json['type'])) ?? GBVResourceType.directory,
       categories: JsonUtils.listValue(json['categories']) ?? [],
       title: JsonUtils.stringValue(json['title']) ?? "",
       directoryContent: GBVResourceDetail.listFromJson(JsonUtils.listValue(json['directoryContent'])),
@@ -216,5 +212,17 @@ class GBVResourceListScreen {
       resourceIds.addAll(resourceList.resourceIds);
     }
     return resourceIds;
+  }
+}
+
+extension GBVResourceTypeImpl on GBVResourceType {
+  static GBVResourceType? fromJson(String? json) {
+    switch (json) {
+      case 'external_link': return GBVResourceType.external_link;
+      case 'panel': return GBVResourceType.panel;
+      case 'resource_list': return GBVResourceType.resource_list;
+      case 'directory': return GBVResourceType.directory;
+      default: return null;
+    }
   }
 }
