@@ -131,6 +131,7 @@ class GBVResource {
       directoryContent: GBVResourceDetail.listFromJson(JsonUtils.listValue(json['directoryContent'])),
       description: JsonUtils.stringValue(json['description']),
       detailsList: GBVDetailListSection.listFromJson(JsonUtils.listValue(json['detailsList'])),
+      resourceScreenId: JsonUtils.stringValue(json['resourceScreenId']),
     ) : null;
   }
 
