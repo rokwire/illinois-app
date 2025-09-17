@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/utils/AudioUtils.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -45,16 +46,15 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
     if (widget.bytes != null || widget.url != null) {
       _audioPlayer = AudioPlayer();
 
-      // Duration? duration;
       try {
-        // Uri? uri = widget.url != null ? Uri.tryParse(widget.url ?? '') : null;
-        // Uint8List? bytes = widget.bytes;
-        // if (uri != null) {
-        //   duration = await _audioPlayer?.setAudioSource(AudioSource.uri(uri), preload: false);
-        // }
-        // else if (bytes != null) {
-        //   duration = await _audioPlayer?.setAudioSource(Uint8ListAudioSource(bytes));
-        // }
+        Uri? uri = widget.url != null ? Uri.tryParse(widget.url ?? '') : null;
+        Uint8List? bytes = widget.bytes;
+        if (uri != null) {
+          await _audioPlayer?.setAudioSource(AudioSource.uri(uri), preload: false);
+        }
+        else if (bytes != null) {
+          await _audioPlayer?.setAudioSource(Uint8ListAudioSource(bytes));
+        }
         _audioPlayer?.playerStateStream.listen((state) {
           if ((state.processingState == ProcessingState.completed) && mounted) {
             setStateIfMounted(() {
