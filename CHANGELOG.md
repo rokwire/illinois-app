@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Fixed
+- Modifying event attendance details [#5385](https://github.com/rokwire/illinois-app/issues/5385).
 
 ## [7.2.23] - 2025-09-17
 ### Added
