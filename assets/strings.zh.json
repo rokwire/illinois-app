@@ -3131,7 +3131,6 @@
 	"panel.group.detail.post.header.title": "贴文",
 	"panel.group.detail.post.header.title.message": "Message",
 	"panel.group.detail.post.delete.confirm.msg": "您确定要删除此贴文？",
-	"panel.group.detail.post.delete.many_groups.confirm.msg": "這篇文章在多個群組中可見。您確定要刪除它嗎？",
 	"panel.group.detail.post.delete.failed.msg": "无法删除此贴文。",
 	"panel.group.detail.post.reply.delete.confirm.msg": "您确定要删除此回复？",
 	"panel.group.detail.post.reply.delete.failed.msg": "无法删除此回复。",
