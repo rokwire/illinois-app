@@ -22,6 +22,7 @@ import 'package:flutter/rendering.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:illinois/ext/Group.dart';
@@ -554,16 +555,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
         context: context,
         contentWidget: Text(deleteMsg),
         actions: <Widget>[
-          TextButton(
+          PointerInterceptor(child: TextButton(
               child:
-                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+              Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Navigator.of(context).pop();
                 _deletePost();
-              }),
-          TextButton(
+              })),
+          PointerInterceptor(child: TextButton(
               child: Text(Localization().getStringEx('dialog.no.title', 'No')),
-              onPressed: () => Navigator.of(context).pop())
+              onPressed: () => Navigator.of(context).pop()))
         ]);
   }
 
@@ -676,20 +677,20 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
             'panel.group.detail.post.reply.delete.confirm.msg',
             'Are you sure that you want to delete this reply?')),
         actions: <Widget>[
-          TextButton(
+          PointerInterceptor(child: TextButton(
               child:
-                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+              Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Analytics().logAlert(text: 'Are you sure that you want to delete this reply?', selection: 'Yes');
                 Navigator.of(context).pop();
                 _deleteReply(reply);
-              }),
-          TextButton(
+              })),
+          PointerInterceptor(child: TextButton(
               child: Text(Localization().getStringEx('dialog.no.title', 'No')),
               onPressed: () {
                 Analytics().logAlert(text: 'Are you sure that you want to delete this reply?', selection: 'No');
                 Navigator.of(context).pop();
-              })
+              }))
         ]);
   }
 

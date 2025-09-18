@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Fixed
+- WEB: Handle click action for popups over group post [#5388](https://github.com/rokwire/illinois-app/issues/5388).
 
 ## [7.2.23] - 2025-09-17
 ### Added
