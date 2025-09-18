@@ -6,8 +6,8 @@ Patches for [ **illinois-app** ] will only be applied to the following versions:
 
 | Version  | Supported |
 |----------| ------------------ |
-| 7.2.23   | :white_check_mark: |
-| < 7.2.23 | :x: |
+| 7.2.24   | :white_check_mark: |
+| < 7.2.24 | :x: |
 | 7.1.19   | :white_check_mark: |
 | < 7.1.19 | :x: |
 | 7.0.20   | :white_check_mark: |

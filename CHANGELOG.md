@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+
+## [7.2.24] - 2025-09-18
 ### Changed
 - Acknowledge Comment innerContext field and pass it when create/delete/load comments [#5356](https://github.com/rokwire/illinois-app/issues/5356).
 ### Fixed
