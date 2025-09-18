@@ -6,14 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
-### Fixed
-- WEB: Handle click action for popups over group post [#5388](https://github.com/rokwire/illinois-app/issues/5388).
 
 ## [7.2.24] - 2025-09-18
 ### Changed
 - Acknowledge Comment innerContext field and pass it when create/delete/load comments [#5356](https://github.com/rokwire/illinois-app/issues/5356).
 ### Fixed
 - Modifying event attendance details [#5385](https://github.com/rokwire/illinois-app/issues/5385).
+- WEB: Handle click action for popups over group post [#5388](https://github.com/rokwire/illinois-app/issues/5388).
 
 ## [7.2.23] - 2025-09-17
 ### Added
