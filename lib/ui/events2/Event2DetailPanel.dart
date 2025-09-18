@@ -1409,6 +1409,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
     Analytics().logSelect(target: "Event Attendance", attributes: _event?.analyticsAttributes);
     Navigator.push<dynamic>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(
       event: _event,
+      attendanceDetails: _event?.attendanceDetails,
     ))).then((dynamic event) {
       if (event is Event2) {
         setStateIfMounted(() {
