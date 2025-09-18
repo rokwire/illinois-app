@@ -3030,7 +3030,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
         !Event2RegistrationDetails.equals(widget.event?.registrationDetails, _registrationDetails) ||
         //(widget.event?.registrationDetails != _registrationDetails) ||
-        (widget.event?.attendanceDetails != _attendanceDetails) ||
+
+        // Do not compare the attendance details when the event is modified. They are updated in a separate panel using separate API
+        //(widget.event?.attendanceDetails != _attendanceDetails) ||
         (widget.event?.surveyDetails != _surveyDetails) ||
         (widget.survey != _survey) ||
 

@@ -22,6 +22,7 @@ import 'package:flutter/rendering.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:illinois/ext/Group.dart';
@@ -365,7 +366,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
     String? postId = _post?.id;
     if (StringUtils.isNotEmpty(postId)) {
       _setLoading(true);
-      Social().loadComments(postId: postId!).then((comments) {
+      Social().loadComments(postId: postId!, innerContextIdentifier:  _groupId).then((comments) {
         _replies = comments;
         _sortReplies(_replies);
         _setLoading(false);
@@ -546,30 +547,27 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
 
   void _onTapDeletePost() {
     Analytics().logSelect(target: 'Delete Post');
-    String deleteMsg = (_post?.isLinkedToMoreThanOneGroup ?? false)
-        ? Localization().getStringEx('panel.group.detail.post.delete.many_groups.confirm.msg',
-            'This post is visible in more than one group. Are you sure that you want to delete it?')
-        : Localization().getStringEx('panel.group.detail.post.delete.confirm.msg', 'Are you sure that you want to delete this post?');
+    String deleteMsg = Localization().getStringEx('panel.group.detail.post.delete.confirm.msg', 'Are you sure that you want to delete this post?');
     AppAlert.showCustomDialog(
         context: context,
         contentWidget: Text(deleteMsg),
         actions: <Widget>[
-          TextButton(
+          PointerInterceptor(child: TextButton(
               child:
-                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+              Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Navigator.of(context).pop();
                 _deletePost();
-              }),
-          TextButton(
+              })),
+          PointerInterceptor(child: TextButton(
               child: Text(Localization().getStringEx('dialog.no.title', 'No')),
-              onPressed: () => Navigator.of(context).pop())
+              onPressed: () => Navigator.of(context).pop()))
         ]);
   }
 
   void _deletePost() {
     _setLoading(true);
-    Social().deletePost(post: _post!).then((succeeded) {
+    Social().deletePost(post: _post!, innerContextIdentifier: _groupId).then((succeeded) {
       _setLoading(false);
       if (succeeded) {
         Navigator.of(context).pop();
@@ -676,20 +674,20 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
             'panel.group.detail.post.reply.delete.confirm.msg',
             'Are you sure that you want to delete this reply?')),
         actions: <Widget>[
-          TextButton(
+          PointerInterceptor(child: TextButton(
               child:
-                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+              Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Analytics().logAlert(text: 'Are you sure that you want to delete this reply?', selection: 'Yes');
                 Navigator.of(context).pop();
                 _deleteReply(reply);
-              }),
-          TextButton(
+              })),
+          PointerInterceptor(child: TextButton(
               child: Text(Localization().getStringEx('dialog.no.title', 'No')),
               onPressed: () {
                 Analytics().logAlert(text: 'Are you sure that you want to delete this reply?', selection: 'No');
                 Navigator.of(context).pop();
-              })
+              }))
         ]);
   }
 
@@ -857,7 +855,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
       } else if (_post != null) {
         parentId = _post!.id;
       }
-      Comment comment = Comment(parentId: parentId, body: htmlModifiedBody, imageUrl: imageUrl);
+      Comment comment = Comment(parentId: parentId, body: htmlModifiedBody, imageUrl: imageUrl, innerContext: ContextItem(identifier: _groupId));
       Social().createComment(comment: comment).then((succeeded) {
         _onSendFinished(succeeded);
       });
