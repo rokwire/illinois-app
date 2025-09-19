@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -12,6 +13,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
@@ -479,6 +481,12 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
   bool _loadingLocationServicesStatus = false;
   Position? _currentLocation;
 
+  static const String _assistantPromoCategoryKey = "events";
+  static const String _assistantPromoLabelKey = "label";
+  static const String _assistantPromoQuestionKey = "question";
+  GestureRecognizer? _assistantPromoQuestionRecognizer;
+  Map<String, dynamic>? _assistantPromo;
+
   ScrollController _scrollController = ScrollController();
 
   GlobalKey? _sortButtonKey;
@@ -495,6 +503,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       Event2FilterParam.notifyChanged,
       Events2.notifyChanged,
       Events2.notifyUpdated,
+      Assistant.notifyPromoContentChanged,
     ]);
 
     _scrollController.addListener(_scrollListener);
@@ -518,12 +527,15 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       _ensureCurrentLocation();
       _reload();
     });
+
+    _assistantPromo = JsonUtils.mapValue(Assistant().promoContent(_assistantPromoCategoryKey));
     super.initState();
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _assistantPromoQuestionRecognizer?.dispose();
     super.dispose();
   }
 
@@ -551,6 +563,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     }
     else if (name == Events2.notifyUpdated) {
       _updateEventIfNeeded(param);
+    }
+    else if (name == Assistant.notifyPromoContentChanged) {
+      _updateAssistantPromo();
     }
   }
 
@@ -811,12 +826,12 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   Widget _buildEventsList() {
     List<Widget> cardsList = <Widget>[];
-    if (_isAssistantPromptVisible) {
-      cardsList.add(_buildAssistantPrompt());
+    if (_isAssistantPromoVisible) {
+      cardsList.add(_buildAssistantPromo());
     }
     for (Event2 event in _events!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
-        Event2Card(event, userLocation: _currentLocation, onTap: () => _onEvent(event),),
+        Event2Card(event, userLocation: _currentLocation, timeFilter: _timeFilter, onTap: () => _onEvent(event),),
       ),);
     }
     if (_extendingEvents) {
@@ -828,53 +843,6 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       Column(children:  cardsList,)
     );
   }
-
-  Widget _buildAssistantPrompt() {
-    Widget? imageWidget = Styles().images.getImage('assistant-prompt-orange');
-    return CustomPaint(
-      painter: _AssistantPromptShadowPainter(),
-      child: ClipPath(
-        clipper: _AssistantPromptClipper(),
-        child: Container(
-            padding: EdgeInsets.only(bottom: 20),
-            decoration: BoxDecoration(
-              color: Styles().colors.surface,
-              borderRadius: BorderRadius.all(Radius.circular(12)),
-            ),
-            child: Stack(children: [
-              Padding(
-                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 16, right: 30),
-                  child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                    (imageWidget != null) ? Padding(padding: EdgeInsets.only(right: 10), child: imageWidget) : Container(),
-                    Expanded(
-                        child: RichText(
-                            textAlign: TextAlign.left,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 4,
-                            text: TextSpan(style: Styles().textStyles.getTextStyle('widget.message.regular'), children: [
-                              TextSpan(text: Localization().getStringEx('panel.events2.assistant.prompt.header.text', 'Try asking the Illinois Assistant: '), style: Styles().textStyles.getTextStyle('widget.message.regular')),
-                              TextSpan(text: Localization().getStringEx('panel.events2.assistant.prompt.question.text', "What's happening this weekend?"), style: Styles().textStyles.getTextStyle('widget.item.regular_underline.thin'), recognizer: TapGestureRecognizer()..onTap = () => _onTapAskAssistant()),
-                            ])))
-                  ])),
-              Align(alignment: Alignment.topRight, child: GestureDetector(onTap: _onTapCloseAssistantPrompt, child: Padding(padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 16), child: Styles().images.getImage('close-circle-small', excludeFromSemantics: true))))
-            ])),
-      ),
-    );
-  }
-
-  void _onTapAskAssistant() {
-    Analytics().logEventsAssistantPrompt(action: 'clicked');
-    AssistantHomePanel.present(context, initialQuestion: Localization().getStringEx('panel.events2.assistant.prompt.question.text', "What's happening this weekend?"));
-  }
-
-  void _onTapCloseAssistantPrompt() {
-    Analytics().logEventsAssistantPrompt(action: 'closed');
-    setStateIfMounted(() {
-      Storage().assistantEventsPromptHidden = true;
-    });
-  }
-
-  bool get _isAssistantPromptVisible => Auth2().isOidcLoggedIn && (Storage().assistantEventsPromptHidden != true);
 
   double get _screenHeight => MediaQuery.of(context).size.height;
 
@@ -1153,6 +1121,93 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
         });
       }
     }
+  }
+
+  // Assistant Promo
+
+  void _updateAssistantPromo() {
+    Map<String, dynamic>? assistantPromo = JsonUtils.mapValue(Assistant().promoContent(_assistantPromoCategoryKey));
+    if (!DeepCollectionEquality().equals(_assistantPromo, assistantPromo)) {
+      setState(() {
+        _assistantPromo = assistantPromo;
+      });
+    }
+  }
+
+  bool get _isAssistantPromoVisible => (_assistantPromo != null) && Auth2().isOidcLoggedIn && (Storage().assistantEventsPromptHidden != true);
+
+  Widget _buildAssistantPromo() {
+    Widget? imageWidget = Styles().images.getImage('assistant-prompt-orange');
+    String? promoLabel = _assistantPromoLabel;
+    String? promoQuestion = _assistantPromoQuestion;
+    TextStyle? regularTextStyle = Styles().textStyles.getTextStyle('widget.message.regular');
+    TextStyle? linkTextStyle = Styles().textStyles.getTextStyle('widget.item.regular_underline.thin');
+    return CustomPaint(painter: _AssistantPromptShadowPainter(), child:
+      ClipPath(clipper: _AssistantPromptClipper(), child:
+        Container(padding: EdgeInsets.only(bottom: 20), decoration: _assistantPromptDecoration, child:
+          Stack(children: [
+            Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 16, right: 30), child:
+              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                if (imageWidget != null)
+                  Padding(padding: EdgeInsets.only(right: 10), child: imageWidget),
+                Expanded(child:
+                  RichText(overflow: TextOverflow.ellipsis, maxLines: 4, text:
+                    TextSpan(style: regularTextStyle, children: [
+                      if (promoLabel != null)
+                        TextSpan(text: promoLabel, style: regularTextStyle),
+                      if (promoQuestion != null)
+                        TextSpan(text: promoQuestion, style: linkTextStyle, recognizer: _assistantPromoQuestionRecognizerImpl),
+                    ])
+                  )
+                )
+              ])
+            ),
+            Align(alignment: Alignment.topRight, child:
+              GestureDetector(onTap: _onTapCloseAssistantPrompt, child:
+                Padding(padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 16), child:
+                  Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
+                )
+              )
+            )
+          ])
+        ),
+      ),
+    );
+  }
+
+  BoxDecoration get _assistantPromptDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    borderRadius: BorderRadius.all(Radius.circular(12)),
+  );
+
+  String? get _assistantPromoLabel => _assistantPromoString(_assistantPromo?[_assistantPromoLabelKey]);
+  String? get _assistantPromoQuestion => _assistantPromoString(_assistantPromo?[_assistantPromoQuestionKey]);
+  static String? _assistantPromoString(dynamic value) {
+    if (value is String) {
+      return value;
+    }
+    else if (value is Map) {
+      return JsonUtils.stringValue(value[Localization().currentLocale?.languageCode]) ??
+        JsonUtils.stringValue(value[Localization().defaultLocale?.languageCode]);
+    }
+    else {
+      return value?.toString();
+    }
+  }
+
+  GestureRecognizer get _assistantPromoQuestionRecognizerImpl =>
+    _assistantPromoQuestionRecognizer ??= TapGestureRecognizer()..onTap = () => _onTapAskAssistant();
+
+  void _onTapAskAssistant() {
+    Analytics().logEventsAssistantPrompt(action: 'clicked');
+    AssistantHomePanel.present(context, initialQuestion: _assistantPromoQuestion);
+  }
+
+  void _onTapCloseAssistantPrompt() {
+    Analytics().logEventsAssistantPrompt(action: 'assistant promo closed');
+    setStateIfMounted(() {
+      Storage().assistantEventsPromptHidden = true;
+    });
   }
 
   // Command Handlers

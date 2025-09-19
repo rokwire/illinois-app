@@ -20,7 +20,7 @@
 			"home.connect": ["netid", "phone_or_email"],
 			"home.dinings": ["dinings_all", "dinings_open"],
 
-			"browse": ["academics", "appointments", "athletics", "campus_guide", "dinings", "directory", "events", "feeds", "laundry", "groups", "messages", "mtd", "my", "polls", "music_and_news", "recent", "safety", "surveys", "research_projects", "wellness"],
+			"browse": ["academics", "appointments", "athletics", "campus_guide", "dinings", "directory", "events", "feeds", "laundry", "groups", "messages", "mtd", "my", "polls", "music_and_news", "recent", "safety", "sexual_misconduct", "surveys", "research_projects", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "appointments", "my_illini"],
 			"browse.appointments": ["appointments"],
 			"browse.athletics": ["my_athletics", "my_game_day", "my_news", "sport_events", "sport_news", "sport_teams"],
@@ -36,7 +36,8 @@
 			"browse.polls": ["create_poll", "recent_polls"],
 			"browse.music_and_news": ["illini_radio", "daily_illini"],
 			"browse.recent": ["recent_items"],
-			"browse.safety": ["safewalk_request", "saferides", "safety_resources"],
+			"browse.safety": ["safewalk_request", "saferides", "safety_resources", "sexual_misconduct"],
+			"browse.sexual_misconduct": ["sexual_misconduct"],
 			"browse.wellness": ["wellness_recreation", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener"],
 
 			"wallet": ["illini_id", "bus_pass", "library_card", "meal_plan", "illini_cash", "add_illini_cash"],
@@ -126,7 +127,8 @@
 				"assistant.grok_assistant"                : ["${config.settings.groups.grok_assistant}"],
 				"assistant.perplexity_assistant"          : ["${config.settings.groups.perplexity_assistant}"],
 				"assistant.google_assistant"              : ["${config.settings.groups.google_assistant}"],
-				"essential_skills_coach"                  : ["${config.settings.groups.essential_skills_coach}"]
+				"essential_skills_coach"                  : ["${config.settings.groups.essential_skills_coach}"],
+				"sexual_misconduct"                       : ["${config.settings.groups.sexual_misconduct}"]
 			},
 			"locations": {
 			},

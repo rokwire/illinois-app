@@ -266,6 +266,8 @@
     "panel.browse.section.recent.description": "Revisit your recent app activity.",
     "panel.browse.section.safety.title": "Safety",
     "panel.browse.section.safety.description": "Get home safely, prepare for emergencies, and discover support resources.",
+    "panel.browse.section.sexual_misconduct.title": "Concerns about Sexual, Dating, or Harassment Experiences",
+    "panel.browse.section.sexual_misconduct.description": "Did a situation seem unsafe or uncomfortable? It can be sexual or not. Resources are available. (Reminder: your app activity is not shared with others.)",
     "panel.browse.section.surveys.title": "Surveys",
     "panel.browse.section.surveys.description": "Participate in surveys available to you.",
     "panel.browse.section.wallet.title": "Wallet",
@@ -340,6 +342,9 @@
     "panel.browse.entry.safety.safewalk_request.title": "Request a SafeWalk",
     "panel.browse.entry.safety.saferides.title": "SafeRides (MTD)",
     "panel.browse.entry.safety.safety_resources.title": "Safety Resources",
+    "panel.browse.entry.safety.sexual_misconduct.title": "Sexual Misconduct Resources",
+
+    "panel.browse.entry.sexual_misconduct.sexual_misconduct.title": "Sexual Misconduct Resources",
 
     "panel.browse.entry.surveys.public_surveys.title": "Surveys",
 
@@ -1254,8 +1259,6 @@
     "panel.events2.home.attributes.event_time.hint.semantics": "Double tap to show date & time options.",
     "panel.events2.home.message.failed.title": "Failed",
     "panel.events2.home.message.empty.description": "There are no events matching the selected filters.",
-    "panel.events2.assistant.prompt.header.text": "Try asking the Illinois Assistant: ",
-    "panel.events2.assistant.prompt.question.text": "What's happening this weekend?",
 
     "panel.event2.filters.header.title": "Event Filters",
 
@@ -3150,7 +3153,6 @@
     "panel.group.detail.post.header.title": "Post",
     "panel.group.detail.post.header.title.message": "Message",
     "panel.group.detail.post.delete.confirm.msg": "Are you sure that you want to delete this post?",
-    "panel.group.detail.post.delete.many_groups.confirm.msg": "This post is visible in more than one group. Are you sure that you want to delete it?",
     "panel.group.detail.post.delete.failed.msg": "Failed to delete post.",
     "panel.group.detail.post.reply.delete.confirm.msg": "Are you sure that you want to delete this reply?",
     "panel.group.detail.post.reply.delete.failed.msg": "Failed to delete reply.",
@@ -3535,6 +3537,29 @@
     "widget.safewalks_request.message.sms.logged_out.text": "Hi, I'd like to request a SafeWalk.\n\nMy Current Location:\n{{safewalk_origin}}\n{{safewalk_origin_url}}\n\nMy Destination:\n{{safewalk_destination}}\n{{safewalk_destination_url}}",
     "widget.safewalks_request.unknown.user.text": "Unauthenticated User",
     "widget.safewalks_request.unknown.location.text": "Unknwon",
+
+    "panel.sexual_misconduct.header.title": "Inappropriate Sexual Behavior",
+    "panel.sexual_misconduct.error": "Failed to load resources.",
+    "panel.sexual_misconduct.title": "A Path Forward",
+    "panel.sexual_misconduct.description": "If you think you or a friend has experienced inappropriate sexual behavior or an unhealthy relationship, help is available.",
+    "panel.sexual_misconduct.choose_pathways": "Choose one of the below pathways or ",
+    "panel.sexual_misconduct.view_resources": "view a list of resources.",
+    "panel.sexual_misconduct.options.we_care": "We Care at Illinois website",
+    "panel.sexual_misconduct.options.resource_directory": "Resource Directory",
+    "panel.sexual_misconduct.quick_exit.privacy": "Privacy: ",
+    "panel.sexual_misconduct.quick_exit.app_activity": "your app activity is not shared with others. Use the quick exit icon to return Home.",
+    "panel.sexual_misconduct.resource_directory.view_additional": "View additional resources on the ",
+    "panel.sexual_misconduct.resource_directory.we_care": "Illinois We Care website.",
+    "panel.sexual_misconduct.resource_list.view_confidential": "View additional confidential resources on the ",
+    "panel.sexual_misconduct.resource_list.confidential_we_care": "Illinois We Care website.",
+    "panel.sexual_misconduct.survey_result.error": "Failed to load survey.",
+    "panel.sexual_misconduct.survey.skip": "Skip this question",
+    "panel.sexual_misconduct.survey_result.title": "Your Top Resources",
+    "panel.sexual_misconduct.survey_result.description": "Based on what you shared, here are some options that may help. You’re in control of what happens next—take your time and explore what feels right. You’re not alone, and support is available if you need it.",
+
+    "widget.sexual_misconduct.quick_exit.privacy": "Privacy: ",
+    "widget.sexual_misconduct.quick_exit.app_activity": "your app activity is not shared with others.",
+    "widget.sexual_misconduct.quick_exit.dialog.description": "Use the quick exit icon at any time to be routed to the Illinois app home screen.",
 
     "panel.home_canvas_course.header.title": "Course",
     "panel.home_canvas_course.load.failed.error.msg": "Failed to load course. Please try again later.",
