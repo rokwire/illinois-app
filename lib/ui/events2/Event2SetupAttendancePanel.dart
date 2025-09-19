@@ -25,14 +25,12 @@ import 'package:sprintf/sprintf.dart';
 
 class Event2SetupAttendancePanel extends StatefulWidget with AnalyticsInfo {
   final Event2? event;
-  final Event2AttendanceDetails? _attendanceDetails;
+  final Event2AttendanceDetails? attendanceDetails;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  Event2SetupAttendancePanel({ super.key, this.event, Event2AttendanceDetails? attendanceDetails, Event2RegistrationDetails? registrationDetails, this.analyticsFeature }) :
-    _attendanceDetails = attendanceDetails;
+  Event2SetupAttendancePanel({ super.key, this.event, this.attendanceDetails, this.analyticsFeature });
 
   String? get eventId => event?.id;
-  Event2AttendanceDetails? get attendanceDetails => (eventId != null) ? event?.attendanceDetails : _attendanceDetails;
 
   @override
   State<StatefulWidget> createState() => _Event2SetupAttendancePanelState();
@@ -560,7 +558,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   void _onHeaderBarBack() {
     Analytics().logSelect(target: 'HeaderBar: Back');
-    Navigator.of(context).pop(_isCreating ? _buildAttendanceDetails() : null);
+    Navigator.of(context).pop(_buildAttendanceDetails());
     //Future.delayed(Duration(seconds: 1), () {});
   }
 }
