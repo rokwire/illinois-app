@@ -454,6 +454,8 @@
 	"panel.map2.filter.amenities.text":"Amenities",
 	"panel.map2.filter.buildings.text":"Buildings",
 	"panel.map2.filter.sort.text":"Sort",
+	"panel.map2.filter.filter.text":"Filter",
+	"panel.map2.filter.events.text":"Events",
 	"panel.map2.filter.on.text":"On",
 	"panel.map2.filter.off.text":"Off",
 

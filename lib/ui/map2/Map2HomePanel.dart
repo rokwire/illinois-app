@@ -2045,4 +2045,46 @@ class _Map2Events2Filter extends _Map2Filter {
   _Map2Events2Filter() {
     super.sortType = Map2SortTypeImpl.fromEvent2SortType(Event2SortTypeImpl.fromJson(Storage().events2SortType));
   }
+
+  @override
+  bool get _hasFilter => true;
+
+  @override
+  List<Explore> _filter(List<Explore> explores) {
+    List<Explore> filtered = <Explore>[];
+    for (Explore explore in explores) {
+      if (explore.exploreLocation?.isLocationCoordinateValid == true) {
+        filtered.add(explore);
+      }
+    }
+    return filtered;
+  }
+
+  @override
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
+    LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
+    if (searchText.isNotEmpty) {
+      String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
+      descriptionMap[searchKey] = <String>[searchText];
+    }
+
+    List<String> filters = event2Filter.rawDescription;
+    if (filters.isNotEmpty) {
+      String filterKey = Localization().getStringEx('panel.map2.filter.filter.text', 'Filter');
+      descriptionMap[filterKey] = filters;
+    }
+
+    if (sortType != null) {
+      String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
+      String sortValue = sortType?.displayTitle ?? '';
+      descriptionMap[sortKey] = <String>[sortValue];
+    }
+
+    if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
+      String eventsKey = Localization().getStringEx('panel.map2.filter.events.text', 'Events');
+      String eventsValue = filteredExplores.length.toString();
+      descriptionMap[eventsKey] = <String>[eventsValue];
+    }
+    return descriptionMap;
+  }
 }

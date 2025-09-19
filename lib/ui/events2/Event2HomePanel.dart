@@ -738,7 +738,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
   Widget _buildContentDescription() {
     TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
     TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
-    List<InlineSpan> descriptionList = _currentFilterParam.buildDescription(boldStyle: boldStyle, regularStyle: regularStyle);
+    List<InlineSpan> descriptionList = _currentFilterParam.buildDescription(textStyle: regularStyle);
 
     if (descriptionList.isNotEmpty) {
       descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
@@ -1436,28 +1436,36 @@ class Event2FilterParam {
 // Event2FilterParamUi
 
 extension Event2FilterParamUi on Event2FilterParam {
-  List<InlineSpan> buildDescription({ TextStyle? boldStyle, TextStyle? regularStyle}) {
+
+  List<InlineSpan> buildDescription({ TextStyle? textStyle}) {
+    textStyle ??= Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    boldStyle ??= Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
-    regularStyle ??= Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+    for (String entry in rawDescription) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: ", " , style: textStyle,));
+      }
+      descriptionList.add(TextSpan(text: entry, style: textStyle,),);
+    }
+    return descriptionList;
+  }
+
+  List<String> get rawDescription {
+    List<String> descriptionList = <String>[];
 
     String? timeDescription = (timeFilter != Event2TimeFilter.customRange) ?
       event2TimeFilterToDisplayString(timeFilter) :
       event2TimeFilterDisplayInfo(Event2TimeFilter.customRange, customStartTime: customStartTime, customEndTime: customEndTime);
 
     if (timeDescription != null) {
-      if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
-      }
-      descriptionList.add(TextSpan(text: timeDescription, style: regularStyle,),);
+      descriptionList.add(timeDescription);
     }
 
     if (types != null) {
       for (Event2TypeFilter type in types!) {
-        if (descriptionList.isNotEmpty) {
-          descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+        String? typeDisplayString = event2TypeFilterToDisplayString(type);
+        if (typeDisplayString != null) {
+          descriptionList.add(typeDisplayString);
         }
-        descriptionList.add(TextSpan(text: event2TypeFilterToDisplayString(type), style: regularStyle,),);
       }
     }
 
@@ -1468,10 +1476,7 @@ extension Event2FilterParamUi on Event2FilterParam {
         List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(attributes, complete: true);
         if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
           for (String attributeValue in displayAttributeValues) {
-            if (descriptionList.isNotEmpty) {
-              descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
-            }
-            descriptionList.add(TextSpan(text: attributeValue, style: regularStyle,),);
+            descriptionList.add(attributeValue);
           }
         }
       }
