@@ -55,6 +55,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, Laundries, BusStops, Therapists, MyLocations }
 enum Map2SortType { dateTime, alphabetical, proximity }
+enum _ExploreProgressType { init, update }
 
 typedef LoadExploresTask = Future<List<Explore>?>;
 typedef BuildMarkersTask = Future<Set<Marker>>;
@@ -106,7 +107,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   List<Explore>? _sortedExplores;
   List<Explore>? _trayExplores;
   LoadExploresTask? _exploresTask;
-  bool _exploresProgress = false;
+  _ExploreProgressType? _exploresProgress;
 
   Set<Marker>? _mapMarkers;
   Set<dynamic>? _exploreMapGroups;
@@ -227,7 +228,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     Stack(key: _scaffoldKey, children: [
 
       Positioned.fill(child:
-        Visibility(visible: (_exploresProgress == false), child:
+        Visibility(visible: (_exploresProgress == null), child:
           _mapView
         ),
       ),
@@ -245,7 +246,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           Column(children: [
             _contentHeadingBar,
             Expanded(child:
-              Visibility(visible: ((_exploresProgress == false) && ((_trayExplores?.isNotEmpty == true) || (_pinnedExplore != null))), child:
+              Visibility(visible: ((_exploresProgress == null) && ((_trayExplores?.isNotEmpty == true) || (_pinnedExplore != null))), child:
                 _traySheet,
               ),
             )
@@ -253,7 +254,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         ),
       ),
 
-      if (_exploresProgress == true)
+      if (_exploresProgress != null)
         Positioned.fill(child:
           Center(child:
             _exploresProgressIndicator,
@@ -484,9 +485,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         _contentFilterSearchBar,
       ] : <Widget>[
         _contentTitleBar,
-        if (_exploresProgress == false)
+        if ((_exploresProgress == null) || (_exploresProgress == _ExploreProgressType.update))
           _contentFilterButtonsBar ?? Container(),
-        if (_exploresProgress == false)
+        if (_exploresProgress == null)
           _contentFilterDescriptionBar ?? Container(),
       ],),
     );
@@ -519,7 +520,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       Storage()._storedMap2ContentType = _selectedContentType = null;
       _explores = _filteredExplores = _sortedExplores = _trayExplores = null;
       _exploresTask = null;
-      _exploresProgress = false;
+      _exploresProgress = null;
 
       _mapMarkers = null;
       _exploreMapGroups = null;
@@ -606,14 +607,14 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   // Explores
 
-  Future<void> _initExplores() async {
+  Future<void> _initExplores({_ExploreProgressType progressType = _ExploreProgressType.init}) async {
     if (mounted) {
       LoadExploresTask? exploresTask = _loadExplores();
       if (exploresTask != null) {
         // start loading
         setState(() {
           _exploresTask = exploresTask;
-          _exploresProgress = true;
+          _exploresProgress = progressType;
           _explores = _filteredExplores = _sortedExplores = _trayExplores = null;
           _pinnedExplore = null;
           _pinnedMarker = null;
@@ -632,7 +633,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
               _filteredExplores = filteredExplores;
               _sortedExplores = sortedExplores;
               _exploresTask = null;
-              _exploresProgress = false;
+              _exploresProgress = null;
               _mapKey = UniqueKey(); // force map rebuild
             });
           }
@@ -642,7 +643,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         setState(() {
           _explores = _filteredExplores = _sortedExplores = _trayExplores = null;
           _exploresTask = null;
-          _exploresProgress = false;
+          _exploresProgress = null;
 
           _mapMarkers = null;
           _exploreMapGroups = null;
@@ -699,52 +700,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           }
         }
       }
-    }
-  }
-
-  Future<void> _updateFilteredExplores() async {
-    if (mounted) {
-      switch(_selectedContentType) {
-        case Map2ContentType.CampusBuildings: _manualUpdateFilteredExplores(); break;
-        case Map2ContentType.Events2: _initExplores(); break;
-        default: break;
-      }
-    }
-  }
-
-  Future<void> _manualUpdateFilteredExplores() async {
-    List<Explore>? filteredExplores = _filterExplores(_explores);
-    if (mounted && !DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
-      await _buildMapContentData(filteredExplores, updateCamera: true, showProgress: true);
-      List<Explore>? sortedExplores = _sortExplores(filteredExplores);
-      if (mounted) {
-        setState(() {
-          _filteredExplores = filteredExplores;
-          _sortedExplores = sortedExplores;
-          _mapKey = UniqueKey(); // force map rebuild
-        });
-        _updateTrayExplores();
-      }
-    }
-  }
-
-  Future<void> _updateSortedExplores() async {
-    if (mounted) {
-      switch(_selectedContentType) {
-        case Map2ContentType.CampusBuildings: _manualUpdateSortedExplores(); break;
-        case Map2ContentType.Events2: _initExplores(); break;
-        default: break;
-      }
-    }
-  }
-
-  Future<void> _manualUpdateSortedExplores() async {
-    List<Explore>? sortedExplores = _sortExplores(_filteredExplores);
-    if (mounted && !DeepCollectionEquality().equals(_sortedExplores, sortedExplores)) {
-      setState(() {
-        _sortedExplores = sortedExplores;
-      });
-      _updateTrayExplores();
     }
   }
 
@@ -879,7 +834,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 extension _Map2PanelFilters on _Map2HomePanelState {
   
   Widget? get _contentFilterButtonsBar {
-    List<Widget>? filterButtonsList = (_exploresProgress == false) ? _filterButtons : null;
+    List<Widget>? filterButtonsList = ((_exploresProgress == null) || (_exploresProgress == _ExploreProgressType.update)) ? _filterButtons : null;
     return ((filterButtonsList != null) && filterButtonsList.isNotEmpty) ?
       Container(decoration: _contentFiltersBarDecoration, padding: _contentFilterButtonsBarPadding, constraints: _contentFiltersBarConstraints, child:
         SingleChildScrollView(
@@ -1169,7 +1124,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
         _selectedFilter?.searchText = '';
         _searchOn = false;
       });
-      _updateFilteredExplores();
+      _onFilterChanged();
     }
   }
   
@@ -1179,7 +1134,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       _searchTextController.text = '';
       _searchOn = false;
     });
-    _updateFilteredExplores();
+    _onFilterChanged();
   }
 
   void _onSortType(Map2SortType? value) {
@@ -1188,7 +1143,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       setStateIfMounted(() {
         _selectedSortType = value;
       });
-      _updateSortedExplores();
+      _onSortChanged();
       Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
         AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
       );
@@ -1202,7 +1157,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       setStateIfMounted((){
         filter.starred = (filter.starred != true);
       });
-      _updateFilteredExplores();
+      _onFilterChanged();
     }
   }
 
@@ -1217,7 +1172,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
           setStateIfMounted(() {
             filter.amenityIds = amenityIds;
           });
-          _updateFilteredExplores();
+          _onFilterChanged();
         }
       }));
     }
@@ -1233,7 +1188,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
           filter?.event2Filter = filterResult;
         });
         filterResult.saveToStorage();
-        _updateFilteredExplores();
+        _onFilterChanged();
       }
     });
   }
@@ -1246,7 +1201,53 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     setStateIfMounted(() {
       _filters.remove(_selectedContentType);
     });
-    _updateFilteredExplores();
+    _onFilterChanged();
+  }
+
+  void _onFilterChanged() {
+    if (mounted) {
+      switch(_selectedContentType) {
+        case Map2ContentType.CampusBuildings: _updateFilteredExplores(); break;
+        case Map2ContentType.Events2: _initExplores(progressType: _ExploreProgressType.update); break;
+        default: break;
+      }
+    }
+  }
+
+  Future<void> _updateFilteredExplores() async {
+    List<Explore>? filteredExplores = _filterExplores(_explores);
+    if (mounted && !DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
+      await _buildMapContentData(filteredExplores, updateCamera: true, showProgress: true);
+      List<Explore>? sortedExplores = _sortExplores(filteredExplores);
+      if (mounted) {
+        setStateIfMounted(() {
+          _filteredExplores = filteredExplores;
+          _sortedExplores = sortedExplores;
+          _mapKey = UniqueKey(); // force map rebuild
+        });
+        _updateTrayExplores();
+      }
+    }
+  }
+
+  Future<void> _onSortChanged() async {
+    if (mounted) {
+      switch(_selectedContentType) {
+        case Map2ContentType.CampusBuildings: _updateSortedExplores(); break;
+        case Map2ContentType.Events2: _initExplores(progressType: _ExploreProgressType.update); break;
+        default: break;
+      }
+    }
+  }
+
+  Future<void> _updateSortedExplores() async {
+    List<Explore>? sortedExplores = _sortExplores(_filteredExplores);
+    if (mounted && !DeepCollectionEquality().equals(_sortedExplores, sortedExplores)) {
+      setStateIfMounted(() {
+        _sortedExplores = sortedExplores;
+      });
+      _updateTrayExplores();
+    }
   }
 }
 
@@ -1924,9 +1925,9 @@ class _Map2Filter {
 
   List<Explore> filter(List<Explore> explores) =>
     (explores.isNotEmpty && _hasFilter) ? _filter(explores) : explores;
-
   bool get _hasFilter => false;
   List<Explore> _filter(List<Explore> explores) => explores;
+
 
   List<Explore> sort(List<Explore> explores, { Position? position }) {
     if (explores.isNotEmpty && _hasSort) {
@@ -1938,8 +1939,16 @@ class _Map2Filter {
       return explores;
     }
   }
+  bool get _hasSort => false;
+  void _sort(List<Explore> explores, { Position? position }) {}
+}
 
+class _Map2SortImplFilter extends _Map2Filter {
+
+  @override
   bool get _hasSort => (sortType != null);
+
+  @override
   void _sort(List<Explore> explores, { Position? position }) {
     switch (sortType) {
       case Map2SortType.dateTime: _sortByDateTime(explores); break;
@@ -1975,7 +1984,7 @@ class _Map2Filter {
     );
 }
 
-class _Map2CampusBuildingsFilter extends _Map2Filter {
+class _Map2CampusBuildingsFilter extends _Map2SortImplFilter {
   bool starred = false;
   LinkedHashSet<String> amenityIds = LinkedHashSet<String>();
 
@@ -2036,10 +2045,4 @@ class _Map2Events2Filter extends _Map2Filter {
   _Map2Events2Filter() {
     super.sortType = Map2SortTypeImpl.fromEvent2SortType(Event2SortTypeImpl.fromJson(Storage().events2SortType));
   }
-
-  @override
-  bool get _hasFilter => false;
-
-  @override
-  bool get _hasSort => false;
 }
