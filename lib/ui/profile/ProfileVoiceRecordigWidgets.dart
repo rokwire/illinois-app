@@ -209,7 +209,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
         setState(() { _editActivity = true; });
         Auth2UserProfile profile = Auth2UserProfile.fromOther(Auth2().profile,
           override: Auth2UserProfile(
-            pronunciationUrl: Content().getUserNamePronunciationUrl(accountId: Auth2().accountId),
+            pronunciationUrl: Content().getUserNamePronunciationFileName(accountId: Auth2().accountId),
           ),
           scope: { Auth2UserProfileScope.pronunciationUrl }
         );
@@ -230,7 +230,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
     if (mounted && (promptResult == true)) {
       setState(() => _deleteActivity = true);
       
-      AudioResult? audioResult = await Content().deleteUserNamePronunciation(); 
+      AudioResult? audioResult = await Content().deleteUserNamePronunciation(extension: ''); //widget is unused
       if (audioResult?.resultType == AudioResultType.succeeded) {
         Auth2UserProfile profile = Auth2UserProfile.fromOther(Auth2().profile,
           override: Auth2UserProfile(),

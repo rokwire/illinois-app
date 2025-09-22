@@ -579,7 +579,7 @@ class ProfileInfoLoad {
     if (hasContentUserNamePronunciation != null) {
       bool profileHasPronunciationUrl = StringUtils.isNotEmpty(profilePronunciationUrl);
       if (profileHasPronunciationUrl != hasContentUserNamePronunciation) {
-        profilePronunciationUrl = hasContentUserNamePronunciation ? Content().getUserNamePronunciationUrl(accountId: Auth2().accountId) : "";
+        profilePronunciationUrl = hasContentUserNamePronunciation ? Content().getUserNamePronunciationFileName(accountId: Auth2().accountId) : "";
         updateProfileScope.add(Auth2UserProfileScope.pronunciationUrl);
       }
     }

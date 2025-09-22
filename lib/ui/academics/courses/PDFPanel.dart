@@ -154,10 +154,11 @@ class _PDFPanelState extends State<PDFPanel> with WidgetsBindingObserver {
 
   Future<void> _loadFileContents() async {
     if (widget.resourceKey != null && Config().essentialSkillsCoachKey != null) {
-      Uint8List? fileContents = await Content().getFileContentItem(widget.resourceKey!, Config().essentialSkillsCoachKey!);
-      if (fileContents != null && mounted) {
+      //TODO: this content BB API call will not work because resourceKey is a file name
+      Map<String, Uint8List> files = await Content().getFileContentItems([widget.resourceKey!], Config().essentialSkillsCoachKey!);
+      if (files.isNotEmpty && mounted) {
         setState(() {
-          _fileContents = fileContents;
+          _fileContents = files[widget.resourceKey!];
         });
       }
     } else if (mounted) {

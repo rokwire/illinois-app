@@ -14,6 +14,7 @@ import 'package:illinois/ui/messages/MessagesDirectoryPanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/AudioUtils.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
@@ -111,7 +112,7 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
   Widget get _expandedHeadingTextAndPronunciationContent =>
     Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
       _expandedHeadingTextContent,
-      DirectoryPronunciationButton(url: widget.account.profile?.pronunciationUrl,),
+      DirectoryPronunciationButton(fileName: widget.account.profile?.pronunciationUrl ?? '',),
     ],);
 
   Widget get _expandedHeadingTextContent =>
@@ -633,12 +634,12 @@ class DirectoryProfilePhotoUtils {
 // DirectoryPronunciationButton
 
 class DirectoryPronunciationButton extends StatefulWidget {
-  final String? url;
+  final String? fileName;
   final Uint8List? data;
   final EdgeInsetsGeometry padding;
 
   DirectoryPronunciationButton({
-    super.key, this.url, this.data,
+    super.key, this.fileName, this.data,
     this.padding = const EdgeInsets.symmetric(horizontal: 13, vertical: 18)
   });
 
@@ -699,9 +700,11 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
         });
 
         Uint8List? audioData = widget.data;
+        String? contentType;
         if (audioData == null) {
-          AudioResult? result = await Content().loadUserNamePronunciationFromUrl(widget.url);
+          AudioResult? result = await Content().loadUserNamePronunciation(fileName: widget.fileName);
           audioData = (result?.resultType == AudioResultType.succeeded) ? result?.audioData : null;
+          contentType = FileUtils.mimeTypeExt(result?.audioFileExtension);
         }
 
         if (mounted) {
@@ -722,7 +725,10 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
             });
 
             Duration? duration;
-            try { duration = await _audioPlayer?.setAudioSource(Uint8ListAudioSource(audioData)); }
+            try {
+              duration = await _audioPlayer?.setAudioSource(
+                  Uint8ListAudioSource(audioData, contentType: contentType));
+            }
             catch(e) {}
 
             if (mounted) {
