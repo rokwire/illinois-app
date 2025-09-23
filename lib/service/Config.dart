@@ -148,6 +148,7 @@ class Config extends rokwire.Config {
   String? get preferredFirstNameStmntUrl => JsonUtils.stringValue(otherUniversityServices['preferred_first_name_stmnt_url']);
   String? get smartHealthyInitiativeUrl  => JsonUtils.stringValue(otherUniversityServices['smart_healthy_initiative_url']);
   String? get gbvWeCareUrl  => JsonUtils.stringValue(otherUniversityServices['gbv_we_care_url']) ?? 'https://wecare.illinois.edu/resources/students';
+  String? get gbvWeCareResourcesUrl  => JsonUtils.stringValue(otherUniversityServices['gbv_we_care_resources_url']) ?? 'https://wecare.illinois.edu/resources/students';
 
 
   // Getters: Platform Building Blocks
