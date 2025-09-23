@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
@@ -276,7 +277,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                       Padding(
                                           padding: const EdgeInsets.all(16.0),
                                           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                            InkWell(onLongPress: () => _onLongPressMessage(message), splashColor: Colors.transparent, child:
+                                            GestureDetector(onLongPressStart: (details) => _onLongPressMessage(message, details), child:
                                               message.example
                                                 ? Text(
                                                 Localization().getStringEx('panel.assistant.label.example.eg.title', "eg. ") +
@@ -328,13 +329,45 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     ]);
   }
 
-  void _onLongPressMessage(Message message) {
+  void _onLongPressMessage(Message message, LongPressStartDetails longPressDetails) {
     Analytics().logSelect(target: 'Assistant: Copy To Clipboard');
     if (!_canCopyMessage(message)) {
       return;
     }
     String textContent = message.content;
-    Clipboard.setData(ClipboardData(text: textContent));
+    if (Platform.isIOS) {
+      _showIosContextMenu(textContent: textContent, longPressDetails: longPressDetails);
+    } else {
+      _copyToClipboard(textContent);
+    }
+  }
+
+  void _showIosContextMenu({required String textContent, required LongPressStartDetails longPressDetails}) {
+    if (Platform.isIOS) {
+      const String copyItemValue = 'copy';
+      Offset globalPosition = longPressDetails.globalPosition;
+      final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+
+      showMenu<String>(context: context, position: RelativeRect.fromRect(globalPosition & const Size(40, 40), Offset.zero & overlay.size), items: [
+        _buildPopupMenuItemWidget(value: copyItemValue, label: Localization().getStringEx('dialog.copy.title', 'Copy'))
+      ]).then((value) {
+        switch (value) {
+          case copyItemValue:
+            _copyToClipboard(textContent);
+            break;
+          default:
+            break;
+        }
+      });
+    }
+  }
+
+  void _copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text));
+  }
+
+  PopupMenuItem<String> _buildPopupMenuItemWidget({required String value, required String label}) {
+    return PopupMenuItem(value: value, height: 32, child: DefaultTextStyle(style: TextStyle(color: CupertinoColors.label, fontSize: 16), child: Text(label)));
   }
 
   bool _canCopyMessage(Message message) {
