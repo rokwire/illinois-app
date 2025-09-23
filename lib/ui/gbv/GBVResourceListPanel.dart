@@ -170,7 +170,7 @@ class GBVResourceListPanel extends StatelessWidget {
       );
     } else {
       // Original Illinois We Care URL logic
-      String? url = Config().gbvWeCareUrl;
+      String? url = Config().gbvWeCareResourcesUrl;
       return (url != null) ?
       Padding(
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
