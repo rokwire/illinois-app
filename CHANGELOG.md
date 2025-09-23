@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Fixed
+- Loading Women's Volleyball events [#5396](https://github.com/rokwire/illinois-app/issues/5396).
 
 ## [7.3.4] - 2025-09-05
 ### Fixed
