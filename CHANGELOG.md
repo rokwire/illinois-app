@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+
+## [7.2.25] - 2025-09-23
 ### Added
 - Add separate we care resources url [#4954](https://github.com/rokwire/illinois-app/issues/4954).
 ### Changed
