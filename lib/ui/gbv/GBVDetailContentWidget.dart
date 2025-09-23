@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/GBV.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -91,7 +90,7 @@ class GBVDetailContentWidget extends StatelessWidget {
         return [
           Expanded(child:
             Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-              Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small"))
+              SelectableText(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small"))
             )
           )
         ];

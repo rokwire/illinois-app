@@ -174,7 +174,7 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
     }
 
   Widget? _buildWeCareUrlWidget() {
-    String? url = Config().gbvWeCareUrl;
+    String? url = Config().gbvWeCareResourcesUrl;
     return (url != null) ?
       Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
             RichText(text: TextSpan(children: [
