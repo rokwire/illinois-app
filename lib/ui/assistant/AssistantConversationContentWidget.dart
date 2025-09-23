@@ -55,6 +55,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:universal_io/io.dart';
 
 class AssistantConversationContentWidget extends StatefulWidget {
   final Stream shouldClearAllMessages;
@@ -343,13 +344,45 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   // ignore: unused_element
-  void _onLongPressMessage(Message message) {
+  void _onLongPressMessage(Message message, LongPressStartDetails longPressDetails) {
     Analytics().logSelect(target: 'Assistant: Copy To Clipboard');
     if (!_canCopyMessage(message)) {
       return;
     }
     String textContent = message.content;
-    Clipboard.setData(ClipboardData(text: textContent));
+    if (Platform.isIOS) {
+      _showIosContextMenu(textContent: textContent, longPressDetails: longPressDetails);
+    } else {
+      _copyToClipboard(textContent);
+    }
+  }
+
+  void _showIosContextMenu({required String textContent, required LongPressStartDetails longPressDetails}) {
+    if (Platform.isIOS) {
+      const String copyItemValue = 'copy';
+      Offset globalPosition = longPressDetails.globalPosition;
+      final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+
+      showMenu<String>(context: context, position: RelativeRect.fromRect(globalPosition & const Size(40, 40), Offset.zero & overlay.size), items: [
+        _buildPopupMenuItemWidget(value: copyItemValue, label: Localization().getStringEx('dialog.copy.title', 'Copy'))
+      ]).then((value) {
+        switch (value) {
+          case copyItemValue:
+            _copyToClipboard(textContent);
+            break;
+          default:
+            break;
+        }
+      });
+    }
+  }
+
+  void _copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text));
+  }
+
+  PopupMenuItem<String> _buildPopupMenuItemWidget({required String value, required String label}) {
+    return PopupMenuItem(value: value, height: 32, child: DefaultTextStyle(style: TextStyle(color: CupertinoColors.label, fontSize: 16), child: Text(label)));
   }
 
   bool _canCopyMessage(Message message) {
