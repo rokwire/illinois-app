@@ -34,7 +34,11 @@
 	"dialog.delete.title":"Delete",
 	"dialog.delete.hint":"",
 	"dialog.share.title":"Share",
- "dialog.share.hint":"",
+	"dialog.share.hint":"",
+	"dialog.print.title":"Print",
+	"dialog.print.hint":"",
+	"dialog.copy.title":"Copy",
+	"dialog.copy.hint":"",
 
 	"tabbar.home.title":"主页",
 	"tabbar.home.hint":"主页",
