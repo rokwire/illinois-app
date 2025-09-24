@@ -914,6 +914,7 @@
     "camera-viewfinder": {"src": "0xe0da", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "share-nodes": {"src": "0xf1e0", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "share": {"src": "0xf064", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "back-light": {"src": "0xf053", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "print": {"src": "0xf02f", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 20},
     "notification": {"src": "images/notifications-blue.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "color issue, size issue"},
     "notification-orange": {"src": "images/notifications-white.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24},
