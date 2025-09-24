@@ -467,6 +467,13 @@
     "model.map2.sort_type.alphabetical": "Alphabetical",
     "model.map2.sort_type.proximity": "Proximity",
 
+    "model.map2.sort_order.ascending": "Ascending",
+    "model.map2.sort_order.ascending.mnemo": "Asc",
+    "model.map2.sort_order.ascending.mark": "↓",
+    "model.map2.sort_order.descending": "Descending",
+    "model.map2.sort_order.descending.mnemo": "Desc",
+    "model.map2.sort_order.descending.mark": "↑",
+
     "panel.map2.filter.amenities.title":"Amenities",
     "panel.map2.filter.amenities.info":"Choose from the below amenities to view buildings with one or more of these amenities.",
     "panel.map2.filter.amenities.clear.title":"Clear",

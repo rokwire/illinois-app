@@ -55,6 +55,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, Laundries, BusStops, Therapists, MyLocations }
 enum Map2SortType { dateTime, alphabetical, proximity }
+enum Map2SortOrder { ascending, descending }
 enum _ExploreProgressType { init, update }
 
 typedef LoadExploresTask = Future<List<Explore>?>;
@@ -1014,10 +1015,11 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       if ((_selectedContentType?.supportsSortType(sortType) == true) &&
           ((sortType != Map2SortType.proximity) || locationAvailable)
       ) {
+        String itemTitle = (_selectedSortType == sortType) ? "${sortType.displayTitle} ${_selectedSortOrder.displayMarker}" : sortType.displayTitle;
+        TextStyle? itemTextStyle = (_selectedSortType == sortType) ? _sortEntrySelectedTextStyle : _sortEntryNormalTextStyle;
         items.add(AccessibleDropDownMenuItem<Map2SortType>(key: ObjectKey(sortType), value: sortType,
           child: Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true,
-            child: Text(sortType.displayTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style:
-            (_selectedSortType == sortType) ? _sortEntrySelectedTextStyle : _sortEntryNormalTextStyle,
+            child: Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,
         ))));
       }
     }
@@ -1029,7 +1031,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     for (Map2SortType sortType in Map2SortType.values) {
       final Size sizeFull = (TextPainter(
           text: TextSpan(
-            text: sortType.displayTitle,
+            text: "${sortType.displayTitle} ${Map2SortOrder.ascending.displayMarker}" ,
             style: _sortEntrySelectedTextStyle,
           ),
           textScaler: MediaQuery.of(context).textScaler,
@@ -1044,6 +1046,9 @@ extension _Map2PanelFilters on _Map2HomePanelState {
 
   Map2SortType? get _selectedSortType => _selectedFilterIfExists?.sortType;
   set _selectedSortType(Map2SortType? value) => _selectedFilter?.sortType = value;
+
+  Map2SortOrder get _selectedSortOrder => _selectedFilterIfExists?.sortOrder ?? Map2SortOrder.ascending;
+  set _selectedSortOrder(Map2SortOrder value) => _selectedFilter?.sortOrder = value;
 
   TextStyle? get _sortEntryNormalTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
   TextStyle? get _sortEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
@@ -1155,15 +1160,19 @@ extension _Map2PanelFilters on _Map2HomePanelState {
 
   void _onSortType(Map2SortType? value) {
     Analytics().logSelect(target: 'Sort');
-    if (_selectedSortType != value) {
-      setStateIfMounted(() {
+    setStateIfMounted(() {
+      if (_selectedSortType != value) {
         _selectedSortType = value;
-      });
-      _onSortChanged();
-      Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
-        AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
-      );
-    }
+        _selectedSortOrder = Map2SortOrder.ascending;
+      }
+      else {
+        _selectedSortOrder = (_selectedSortOrder != Map2SortOrder.ascending) ? Map2SortOrder.ascending : Map2SortOrder.descending;
+      }
+    });
+    _onSortChanged();
+    Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
+      AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
+    );
 
   }
 
@@ -1734,14 +1743,69 @@ extension Map2SortTypeImpl on Map2SortType {
     }
   }
 
-
-
-
   String get displayTitle {
     switch (this) {
       case Map2SortType.dateTime: return Localization().getStringEx('model.map2.sort_type.date_time', 'Date & Time');
       case Map2SortType.alphabetical: return Localization().getStringEx('model.map2.sort_type.alphabetical', 'Alphabetical');
       case Map2SortType.proximity: return Localization().getStringEx('model.map2.sort_type.proximity', 'Proximity');
+    }
+  }
+}
+
+extension Map2SortOrderImpl on Map2SortOrder {
+
+  static Map2SortOrder? fromJson(dynamic value) {
+    if (value == 'ascending') {
+      return Map2SortOrder.ascending;
+    }
+    else if (value == 'descending') {
+      return Map2SortOrder.descending;
+    }
+    else {
+      return null;
+    }
+  }
+
+  String toJson() {
+    switch (this) {
+      case Map2SortOrder.ascending: return 'ascending';
+      case Map2SortOrder.descending: return 'descending';
+    }
+  }
+
+  static Map2SortOrder? fromEvent2SortType(Event2SortOrder? value) {
+    switch (value) {
+      case Event2SortOrder.ascending: return Map2SortOrder.ascending;
+      case Event2SortOrder.descending: return Map2SortOrder.descending;
+      default: return null;
+    }
+  }
+
+  Event2SortOrder toEvent2SortType() {
+    switch(this) {
+      case Map2SortOrder.ascending: return Event2SortOrder.ascending;
+      case Map2SortOrder.descending: return Event2SortOrder.descending;
+    }
+  }
+
+  String get displayTitle {
+    switch (this) {
+      case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending', 'Ascending');
+      case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.descending', 'Descending');
+    }
+  }
+
+  String get displayMnemo {
+    switch (this) {
+      case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending.mnemo', 'Asc');
+      case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.descending.mnemo', 'Desc');
+    }
+  }
+
+  String get displayMarker {
+    switch (this) {
+      case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending.mark', '↓');
+      case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.descending.mark', '↑');
     }
   }
 }
@@ -1803,6 +1867,7 @@ class _Map2Filter {
 
   String searchText = '';
   Map2SortType? sortType;
+  Map2SortOrder? sortOrder;
 
   LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) =>
     LinkedHashMap<String, List<String>>();
@@ -1849,27 +1914,24 @@ class _Map2Filter {
   }
   void _sortAlphabeticaly(List<Explore> explores) =>
     explores.sort((Explore explore1, Explore explore2) =>
-      SortUtils.compare(explore1.exploreTitle, explore2.exploreTitle)
+      SortUtils.compare(explore1.exploreTitle, explore2.exploreTitle, descending: (sortOrder == Map2SortOrder.descending))
     );
 
   void _sortByProximity(List<Explore> explores, { Position? position }) {
-    Map<String, double> debug = <String, double>{};
     explores.sort((Explore explore1, Explore explore2) {
       LatLng? location1 = explore1.exploreLocation?.exploreLocationMapCoordinate;
       double? distance1 = ((location1 != null) && (position != null)) ? Geolocator.distanceBetween(location1.latitude, location1.longitude, position.latitude, position.longitude) : 0.0;
-      debug[explore1.exploreId ?? ''] = distance1;
 
       LatLng? location2 = explore2.exploreLocation?.exploreLocationMapCoordinate;
       double? distance2 = ((location2 != null) && (position != null)) ? Geolocator.distanceBetween(location2.latitude, location2.longitude, position.latitude, position.longitude) : 0.0;
-      debug[explore2.exploreId ?? ''] = distance2;
 
-      return distance1.compareTo(distance2); // SortUtils.compare(distance1, distance2);
+      return (sortOrder == Map2SortOrder.descending) ? distance2.compareTo(distance1) : distance1.compareTo(distance2); // SortUtils.compare(distance1, distance2);
     });
   }
 
   void _sortByDateTime(List<Explore> explores) =>
     explores.sort((Explore explore1, Explore explore2) =>
-      SortUtils.compare(explore1.exploreDateTimeUtc, explore2.exploreDateTimeUtc)
+      SortUtils.compare(explore1.exploreDateTimeUtc, explore2.exploreDateTimeUtc, descending: (sortOrder == Map2SortOrder.descending))
     );
 }
 
@@ -1917,6 +1979,12 @@ class _Map2CampusBuildingsFilter extends _Map2Filter {
     if (sortType != null) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
       String sortValue = sortType?.displayTitle ?? '';
+      if (sortValue.isNotEmpty && (sortOrder != null)) {
+        String? sortOrderValue = sortOrder?.displayMnemo;
+        if ((sortOrderValue != null) && sortOrderValue.isNotEmpty) {
+          sortValue += " $sortOrderValue";
+        }
+      }
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
