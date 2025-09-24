@@ -916,16 +916,34 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   }
 
   List<Widget> get _campusBuildingsFilterButtons => <Widget>[
-    _searchFilterButton, _filterButtonsSpacing,
-    _sortFilterButton, _filterButtonsSpacing,
-    _starredBuildingsFilterButton, _filterButtonsSpacing,
-    _amenitiesBuildingsFilterButton, _filterButtonsEdgeSpacing,
+    Padding(padding: _filterButtonsPadding, child:
+      _searchFilterButton,
+    ),
+    if (_isSortAvailable)
+      Padding(padding: _filterButtonsPadding, child:
+        _sortFilterButton,
+      ),
+    Padding(padding: _filterButtonsPadding, child:
+      _starredBuildingsFilterButton,
+    ),
+    Padding(padding: _filterButtonsPadding, child:
+      _amenitiesBuildingsFilterButton,
+    ),
+    _filterButtonsEdgeSpacing,
   ];
 
   List<Widget> get _events2FilterButtons => <Widget>[
-    _searchFilterButton, _filterButtonsSpacing,
-    _sortFilterButton, _filterButtonsSpacing,
-    _filtersFilterButton, _filterButtonsEdgeSpacing,
+    Padding(padding: _filterButtonsPadding, child:
+      _searchFilterButton,
+    ),
+    if (_isSortAvailable)
+      Padding(padding: _filterButtonsPadding, child:
+        _sortFilterButton,
+      ),
+    Padding(padding: _filterButtonsPadding, child:
+      _filtersFilterButton,
+    ),
+    _filterButtonsEdgeSpacing,
   ];
 
 
@@ -963,6 +981,8 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       rightIcon: Styles().images.getImage('chevron-right'),
       onTap: _onFilters,
     );
+
+  bool get _isSortAvailable => (_selectedExploreGroup?.isNotEmpty == true);
 
   Widget get _sortFilterButton =>
     MergeSemantics(key: _sortButtonKey, child:
@@ -1028,11 +1048,10 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   TextStyle? get _sortEntryNormalTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
   TextStyle? get _sortEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
 
-  Widget get _filterButtonsSpacing =>
-    SizedBox(width: 6,);
+  static const EdgeInsetsGeometry _filterButtonsPadding = EdgeInsets.only(right: 6);
 
   Widget get _filterButtonsEdgeSpacing =>
-    SizedBox(width: 24,);
+    SizedBox(width: 18,);
 
   _Map2Filter? get _selectedFilter => _getFilter(_selectedContentType, ensure: true);
   _Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
@@ -1807,7 +1826,6 @@ class _Map2Filter {
   bool get _hasFilter => false;
   List<Explore> _filter(List<Explore> explores) => explores;
 
-
   List<Explore> sort(List<Explore> explores, { Position? position }) {
     if (explores.isNotEmpty && _hasSort) {
       List<Explore> sortedExplores = List<Explore>.from(explores);
@@ -1818,16 +1836,9 @@ class _Map2Filter {
       return explores;
     }
   }
-  bool get _hasSort => false;
-  void _sort(List<Explore> explores, { Position? position }) {}
-}
 
-class _Map2SortImplFilter extends _Map2Filter {
-
-  @override
   bool get _hasSort => (sortType != null);
 
-  @override
   void _sort(List<Explore> explores, { Position? position }) {
     switch (sortType) {
       case Map2SortType.dateTime: _sortByDateTime(explores); break;
@@ -1836,7 +1847,6 @@ class _Map2SortImplFilter extends _Map2Filter {
       default: break;
     }
   }
-
   void _sortAlphabeticaly(List<Explore> explores) =>
     explores.sort((Explore explore1, Explore explore2) =>
       SortUtils.compare(explore1.exploreTitle, explore2.exploreTitle)
@@ -1863,7 +1873,7 @@ class _Map2SortImplFilter extends _Map2Filter {
     );
 }
 
-class _Map2CampusBuildingsFilter extends _Map2SortImplFilter {
+class _Map2CampusBuildingsFilter extends _Map2Filter {
   bool starred = false;
   LinkedHashSet<String> amenityIds = LinkedHashSet<String>();
 
