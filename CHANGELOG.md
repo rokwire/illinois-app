@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Added
+- Add separate we care resources url [#4954](https://github.com/rokwire/illinois-app/issues/4954).
+### Changed
+- Make resource detail text selectable [#5394](https://github.com/rokwire/illinois-app/issues/5394).
+- Show custom context menu in iOS when long pressing an Assistant message [#5391](https://github.com/rokwire/illinois-app/issues/5391).
+### Fixed
+- Loading Women's Volleyball events [#5396](https://github.com/rokwire/illinois-app/issues/5396).
 
 ## [7.3.4] - 2025-09-05
 ### Fixed
