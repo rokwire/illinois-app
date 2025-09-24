@@ -340,6 +340,7 @@ extension ExploreMap on Explore {
 
   Color? get mapMarkerColor => uiColor ?? unknownMarkerColor;
   static Color? get unknownMarkerColor => Styles().colors.accentColor2;
+  static Color? get passiveMarkerColor => Styles().colors.surfaceAccent;
 
   Color? get mapMarkerBorderColor => (this is Place) ? (this as Place).mapMarkerBorderColor : defaultMarkerBorderColor;
   static Color? get defaultMarkerBorderColor => Styles().colors.fillColorPrimary;

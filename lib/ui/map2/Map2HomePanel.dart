@@ -115,7 +115,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   MarkerIconsCache _markerIconsCache = <String, BitmapDescriptor>{};
   bool _markersProgress = false;
 
-  Iterable<Explore>? _selectedExploreGroup;
+  Set<Explore>? _selectedExploreGroup;
 
   Explore? _pinnedExplore;
   Marker? _pinnedMarker;
@@ -352,6 +352,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       setState(() {
         _selectedExploreGroup = null;
       });
+      _updateMapMarkers();
       _updateTrayExplores();
     }
     else if (_selectedContentType == Map2ContentType.MyLocations) {
@@ -373,6 +374,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       setState(() {
         _selectedExploreGroup = null;
       });
+      _updateMapMarkers();
       _updateTrayExplores();
     }
     else if (_selectedContentType == Map2ContentType.MyLocations) {
@@ -389,13 +391,15 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       setState(() {
         _selectedExploreGroup = null;
       });
+      _updateMapMarkers();
       _updateTrayExplores();
       origin.exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
     }
-    else if (origin is Iterable<Explore>) {
+    else if (origin is Set<Explore>) {
       setState(() {
         _selectedExploreGroup = DeepCollectionEquality().equals(_selectedExploreGroup, origin) ? null : origin;
       });
+      _updateMapMarkers();
       _updateTrayExplores();
     }
   }
@@ -1323,24 +1327,47 @@ extension _Map2PanelContent on _Map2HomePanelState {
 
         if ((_buildMarkersTask == buildMarkersTask) && mounted) {
           //debugPrint('Applying Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance => ${targetMarkers.length}');
-          _mapMarkers = targetMarkers;
-          _exploreMapGroups = exploreMapGroups;
-          _targetCameraUpdate = targetCameraUpdate;
-          _buildMarkersTask = null;
-          _lastMapZoom = null;
           setStateIfMounted(() {
+            _mapMarkers = targetMarkers;
+            _exploreMapGroups = exploreMapGroups;
+            _targetCameraUpdate = targetCameraUpdate;
+            _buildMarkersTask = null;
+            _lastMapZoom = null;
             _markersProgress = false;
           });
         }
       }
     }
     else if (mounted) {
-      _mapMarkers = null;
-      _exploreMapGroups = null;
-      _targetCameraUpdate = targetCameraUpdate;
-      _buildMarkersTask = null;
-      _lastMapZoom = null;
       setStateIfMounted(() {
+        _mapMarkers = null;
+        _exploreMapGroups = null;
+        _targetCameraUpdate = targetCameraUpdate;
+        _buildMarkersTask = null;
+        _lastMapZoom = null;
+        _markersProgress = false;
+      });
+    }
+  }
+
+  Future<void> _updateMapMarkers({ bool showProgress = false }) async {
+    BuildMarkersTask buildMarkersTask = _buildMarkers(context, exploreGroups: _exploreMapGroups, );
+    _buildMarkersTask = buildMarkersTask;
+    if (showProgress && mounted) {
+      setStateIfMounted(() {
+        _markersProgress = true;
+      });
+    }
+
+    //debugPrint('Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance markersSource: ${exploreMapGroups?.length}');
+    Set<Marker> targetMarkers = await buildMarkersTask;
+    //debugPrint('Finished Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance => ${targetMarkers.length}');
+
+    if ((_buildMarkersTask == buildMarkersTask) && mounted) {
+      //debugPrint('Applying Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance => ${targetMarkers.length}');
+      setStateIfMounted(() {
+        _mapMarkers = targetMarkers;
+        _buildMarkersTask = null;
         _markersProgress = false;
       });
     }
@@ -1472,7 +1499,7 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
     if (exploreGroups != null) {
       for (dynamic entry in exploreGroups) {
         Marker? marker;
-        if (entry is Iterable<Explore>) {
+        if (entry is Set<Explore>) {
           marker = await _createExploreGroupMarker(entry, imageConfiguration: imageConfiguration);
         }
         else if (entry is Explore) {
@@ -1487,11 +1514,11 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
     return markers;
   }
 
-  Future<Marker?> _createExploreGroupMarker(Iterable<Explore>? exploreGroup, { required ImageConfiguration imageConfiguration }) async {
+  Future<Marker?> _createExploreGroupMarker(Set<Explore>? exploreGroup, { required ImageConfiguration imageConfiguration }) async {
     LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
     if ((exploreGroup != null) && (markerPosition != null)) {
       Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
-      Color? markerColor = sameExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
+      Color? markerColor = ((_selectedExploreGroup != null) && (_selectedExploreGroup?.intersection(exploreGroup).isNotEmpty != true)) ? ExploreMap.passiveMarkerColor : sameExplore?.mapMarkerColor;
       Color? markerBorderColor = sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor;
       Color? markerTextColor = sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor;
       String markerKey = "map-marker-group-${markerColor?.toARGB32() ?? 0}-${exploreGroup.length}";
@@ -1552,7 +1579,7 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
     }
   }
 
-  Future<Marker?> _createExploreMarker(Explore? explore, { required ImageConfiguration imageConfiguration, Color? markerColor}) async {
+  Future<Marker?> _createExploreMarker(Explore? explore, { required ImageConfiguration imageConfiguration }) async {
     LatLng? markerPosition = explore?.exploreLocation?.exploreLocationMapCoordinate;
     if (markerPosition != null) {
       BitmapDescriptor? markerIcon;
@@ -1564,7 +1591,7 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
         markerAnchor = _mapCircleMarkerAnchor;
       }
       else {
-        Color? exploreColor = markerColor ?? explore?.mapMarkerColor;
+        Color? exploreColor = (((_selectedExploreGroup != null) && (_selectedExploreGroup?.contains(explore) != true)) ? ExploreMap.passiveMarkerColor : explore?.mapMarkerColor);
         markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : BitmapDescriptor.defaultMarker;
         markerAnchor = _mapPinMarkerAnchor;
       }
