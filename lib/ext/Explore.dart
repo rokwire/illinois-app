@@ -463,7 +463,7 @@ extension ExploreMap on Explore {
   String get _defaultTravelMode => ((this is MTDStop) || (this is ExplorePOI)) ?
     GeoMapUtils.traveModeTransit : GeoMapUtils.traveModeWalking;
 
-  static Explore? mapGroupSameExploreForList(List<Explore>? explores) {
+  static Explore? mapGroupSameExploreForList(Iterable<Explore>? explores) {
     Explore? sameExplore;
     if (explores != null) {
       for (Explore explore in explores) {
@@ -558,7 +558,7 @@ extension ExploreMap on Explore {
     return ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) ? LatLngBounds(southwest: LatLng(minLat, minLng), northeast: LatLng(maxLat, maxLng)) : null;
   }
 
-  static LatLng? centerOfList(List<Explore>? explores) {
+  static LatLng? centerOfList(Iterable<Explore>? explores) {
     if (explores != null) {
       int count = 0;
       double x = 0, y = 0, z = 0;

@@ -115,7 +115,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   MarkerIconsCache _markerIconsCache = <String, BitmapDescriptor>{};
   bool _markersProgress = false;
 
-  List<Explore>? _selectedExploreGroup;
+  Iterable<Explore>? _selectedExploreGroup;
 
   Explore? _pinnedExplore;
   Marker? _pinnedMarker;
@@ -392,7 +392,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       _updateTrayExplores();
       origin.exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
     }
-    else if (origin is List<Explore>) {
+    else if (origin is Iterable<Explore>) {
       setState(() {
         _selectedExploreGroup = origin;
       });
@@ -805,8 +805,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   List<Explore>? _filterExplores(List<Explore>? explores) =>
     ((explores != null) ? _selectedFilterIfExists?.filter(explores) : explores) ?? explores;
 
-  List<Explore>? _sortExplores(List<Explore>? explores) =>
-    ((explores != null) ? _selectedFilterIfExists?.sort(explores, position: _currentLocation) : explores) ?? explores;
+  List<Explore>? _sortExplores(Iterable<Explore>? explores) => (explores != null) ?
+  (_selectedFilterIfExists?.sort(explores, position: _currentLocation) ?? List.from(explores)) : null;
 
   // Tray Explores
 
@@ -1349,23 +1349,23 @@ extension _Map2PanelContent on _Map2HomePanelState {
   static Set<dynamic>? _buildExplorMapGroups(List<Explore>? explores, { double thresoldDistance = 0 }) {
     if (explores != null) {
       // group by thresoldDistance
-      List<List<Explore>> exploreGroups = <List<Explore>>[];
+      Set<Set<Explore>> exploreGroups = <Set<Explore>>{};
 
       for (Explore explore in explores) {
         ExploreLocation? exploreLocation = explore.exploreLocation;
         if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
-          List<Explore>? groupExploreList = _lookupExploreGroup(exploreGroups, exploreLocation, thresoldDistance: thresoldDistance);
-          if (groupExploreList != null) {
-            groupExploreList.add(explore);
+          Set<Explore>? groupExploreSet = _lookupExploreGroup(exploreGroups, exploreLocation, thresoldDistance: thresoldDistance);
+          if (groupExploreSet != null) {
+            groupExploreSet.add(explore);
           }
           else {
-            exploreGroups.add(<Explore>[explore]);
+            exploreGroups.add(<Explore>{explore});
           }
         }
       }
 
       Set<dynamic> markerGroups = <dynamic>{};
-      for (List<Explore> exploreGroup in exploreGroups) {
+      for (Set<Explore> exploreGroup in exploreGroups) {
         if (exploreGroup.length == 1) {
           markerGroups.add(exploreGroup.first);
         }
@@ -1375,16 +1375,15 @@ extension _Map2PanelContent on _Map2HomePanelState {
       }
 
       return markerGroups;
-
-      // no grouping
-      // return Set<dynamic>.from(explores);
     }
-    return null;
+    else {
+      return null;
+    }
   }
 
-  static List<Explore>? _lookupExploreGroup(List<List<Explore>> exploreGroups, ExploreLocation exploreLocation, { double thresoldDistance = 0 }) {
-    for (List<Explore> groupExploreList in exploreGroups) {
-      for (Explore groupExplore in groupExploreList) {
+  static Set<Explore>? _lookupExploreGroup(Set<Set<Explore>> exploreGroups, ExploreLocation exploreLocation, { double thresoldDistance = 0 }) {
+    for (Set<Explore> groupExploreSet in exploreGroups) {
+      for (Explore groupExplore in groupExploreSet) {
         double distance = GeoMapUtils.getDistance(
           exploreLocation.latitude?.toDouble() ?? 0,
           exploreLocation.longitude?.toDouble() ?? 0,
@@ -1392,7 +1391,7 @@ extension _Map2PanelContent on _Map2HomePanelState {
           groupExplore.exploreLocation?.longitude?.toDouble() ?? 0
         );
         if (distance <= thresoldDistance) {
-          return groupExploreList;
+          return groupExploreSet;
         }
       }
     }
@@ -1473,7 +1472,7 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
     if (exploreGroups != null) {
       for (dynamic entry in exploreGroups) {
         Marker? marker;
-        if (entry is List<Explore>) {
+        if (entry is Iterable<Explore>) {
           marker = await _createExploreGroupMarker(entry, imageConfiguration: imageConfiguration);
         }
         else if (entry is Explore) {
@@ -1488,7 +1487,7 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
     return markers;
   }
 
-  Future<Marker?> _createExploreGroupMarker(List<Explore>? exploreGroup, { required ImageConfiguration imageConfiguration }) async {
+  Future<Marker?> _createExploreGroupMarker(Iterable<Explore>? exploreGroup, { required ImageConfiguration imageConfiguration }) async {
     LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
     if ((exploreGroup != null) && (markerPosition != null)) {
       Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
@@ -1891,15 +1890,12 @@ class _Map2Filter {
   bool get _hasFilter => false;
   List<Explore> _filter(List<Explore> explores) => explores;
 
-  List<Explore> sort(List<Explore> explores, { Position? position }) {
+  List<Explore> sort(Iterable<Explore> explores, { Position? position }) {
+    List<Explore> sortedExplores = List<Explore>.from(explores);
     if (explores.isNotEmpty && _hasSort) {
-      List<Explore> sortedExplores = List<Explore>.from(explores);
       _sort(sortedExplores, position: position);
-      return sortedExplores;
     }
-    else {
-      return explores;
-    }
+    return sortedExplores;
   }
 
   bool get _hasSort => (sortType != null);
