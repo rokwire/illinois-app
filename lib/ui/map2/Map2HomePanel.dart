@@ -104,7 +104,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   List<Explore>? _explores;
   List<Explore>? _filteredExplores;
-  List<Explore>? _sortedExplores;
   List<Explore>? _trayExplores;
   LoadExploresTask? _exploresTask;
   _ExploreProgressType? _exploresProgress;
@@ -114,6 +113,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   BuildMarkersTask? _buildMarkersTask;
   MarkerIconsCache _markerIconsCache = <String, BitmapDescriptor>{};
   bool _markersProgress = false;
+
+  List<Explore>? _selectedExploreGroup;
 
   Explore? _pinnedExplore;
   Marker? _pinnedMarker;
@@ -341,13 +342,18 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   void _onMapCameraIdle() {
     // debugPrint('Map2 camera idle' );
-    _updateTrayExplores();
     _updateMapContentForZoom();
   }
 
   void _onMapTap(LatLng coordinate) {
     // debugPrint('Map2 tap' );
-    if (_selectedContentType == Map2ContentType.MyLocations) {
+    if (_selectedExploreGroup != null) {
+      setState(() {
+        _selectedExploreGroup = null;
+      });
+      _updateTrayExplores();
+    }
+    else if (_selectedContentType == Map2ContentType.MyLocations) {
       if (_pinnedExplore != null) {
         _pinExplore(null);
       }
@@ -362,7 +368,13 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   void _onMapPoiTap(PointOfInterest poi) {
     // debugPrint('Map2 POI tap' );
-    if (_selectedContentType == Map2ContentType.MyLocations) {
+    if (_selectedExploreGroup != null) {
+      setState(() {
+        _selectedExploreGroup = null;
+      });
+      _updateTrayExplores();
+    }
+    else if (_selectedContentType == Map2ContentType.MyLocations) {
       ExplorePOI explorePOI = ExplorePOIImpl.fromMapPOI(poi);
       if (_explores?.contains(explorePOI) != true) {
         _pinExplore(explorePOI);
@@ -373,10 +385,17 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   void _onTapMarker(dynamic origin) {
     // debugPrint('Map2 Marker tap' );
     if (origin is Explore) {
+      setState(() {
+        _selectedExploreGroup = null;
+      });
+      _updateTrayExplores();
       origin.exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
     }
     else if (origin is List<Explore>) {
-      _ensureExploresVisibility(origin);
+      setState(() {
+        _selectedExploreGroup = origin;
+      });
+      _updateTrayExplores();
     }
   }
 
@@ -518,7 +537,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   void _onUnselectContentType() {
     setState(() {
       Storage()._storedMap2ContentType = _selectedContentType = null;
-      _explores = _filteredExplores = _sortedExplores = _trayExplores = null;
+      _explores = _filteredExplores = _selectedExploreGroup = _trayExplores = null;
       _exploresTask = null;
       _exploresProgress = null;
 
@@ -545,7 +564,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       setState(() {
         _pinnedExplore = pinnedExplore;
       });
-      _updateTrayExplores();
       _updatePinMarker();
     }
   }
@@ -615,7 +633,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         setState(() {
           _exploresTask = exploresTask;
           _exploresProgress = progressType;
-          _explores = _filteredExplores = _sortedExplores = _trayExplores = null;
+          _explores = _filteredExplores = _selectedExploreGroup = _trayExplores = null;
           _pinnedExplore = null;
           _pinnedMarker = null;
         });
@@ -626,12 +644,10 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
         if (mounted && (exploresTask == _exploresTask)) {
           await _buildMapContentData(filteredExplores, updateCamera: true);
-          List<Explore>? sortedExplores = _sortExplores(filteredExplores);
           if (mounted && (exploresTask == _exploresTask)) {
             setState(() {
               _explores = explores;
               _filteredExplores = filteredExplores;
-              _sortedExplores = sortedExplores;
               _exploresTask = null;
               _exploresProgress = null;
               _mapKey = UniqueKey(); // force map rebuild
@@ -641,7 +657,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       }
       else {
         setState(() {
-          _explores = _filteredExplores = _sortedExplores = _trayExplores = null;
+          _explores = _filteredExplores = _selectedExploreGroup = _trayExplores = null;
           _exploresTask = null;
           _exploresProgress = null;
 
@@ -676,12 +692,11 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         if (mounted && (exploresTask == _exploresTask)) {
           if (!DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
             await _buildMapContentData(filteredExplores, updateCamera: false, showProgress: true);
-            List<Explore>? sortedExplores = _sortExplores(filteredExplores);
             if (mounted && (exploresTask == _exploresTask)) {
               setState(() {
                 _explores = explores;
                 _filteredExplores = filteredExplores;
-                _sortedExplores = sortedExplores;
+                _selectedExploreGroup = null;
                 _exploresTask = null;
                 _markersProgress = false;
                 if ((_pinnedExplore != null) && (explores?.contains(_pinnedExplore) == true)) {
@@ -689,7 +704,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
                   _pinnedMarker = null;
                 }
               });
-              _updateTrayExplores();
             }
           }
           else {
@@ -793,30 +807,13 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   List<Explore>? _sortExplores(List<Explore>? explores) =>
     ((explores != null) ? _selectedFilterIfExists?.sort(explores, position: _currentLocation) : explores) ?? explores;
 
-  // Visible Explores
+  // Tray Explores
 
-  Future<List<Explore>?> _buildTrayExplores() async {
-    List<Explore>? trayExplores;
-    if (_mapController != null) {
-      trayExplores = <Explore>[];
-      LatLngBounds clipBounds = await _visibleMapBounds() ??
-        _shrinkBoundsForSiblings(await _mapController!.getVisibleRegion());
+  List<Explore>? _buildTrayExplores() =>
+    _sortExplores(_selectedExploreGroup);
 
-      if (_sortedExplores?.isNotEmpty == true) {
-        for (Explore explore in _sortedExplores!) {
-          LatLng? exploreLocation = explore.exploreLocation?.exploreLocationMapCoordinate;
-          if ((exploreLocation != null) && clipBounds.contains(exploreLocation)) {
-            trayExplores.add(explore);
-          }
-        }
-      }
-    }
-
-    return trayExplores;
-  }
-
-  Future<void> _updateTrayExplores() async {
-    List<Explore>? trayExplores = await _buildTrayExplores();
+  void _updateTrayExplores() {
+    List<Explore>? trayExplores = _buildTrayExplores();
     if (mounted && !DeepCollectionEquality().equals(_trayExplores, trayExplores)) {
       setState(() {
         _trayExplores = trayExplores;
@@ -1218,37 +1215,18 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     List<Explore>? filteredExplores = _filterExplores(_explores);
     if (mounted && !DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
       await _buildMapContentData(filteredExplores, updateCamera: true, showProgress: true);
-      List<Explore>? sortedExplores = _sortExplores(filteredExplores);
       if (mounted) {
         setStateIfMounted(() {
           _filteredExplores = filteredExplores;
-          _sortedExplores = sortedExplores;
+          _trayExplores = _selectedExploreGroup = null;
           _mapKey = UniqueKey(); // force map rebuild
         });
-        _updateTrayExplores();
       }
     }
   }
 
-  Future<void> _onSortChanged() async {
-    if (mounted) {
-      switch(_selectedContentType) {
-        case Map2ContentType.CampusBuildings: _updateSortedExplores(); break;
-        case Map2ContentType.Events2: _initExplores(progressType: _ExploreProgressType.update); break;
-        default: break;
-      }
-    }
-  }
-
-  Future<void> _updateSortedExplores() async {
-    List<Explore>? sortedExplores = _sortExplores(_filteredExplores);
-    if (mounted && !DeepCollectionEquality().equals(_sortedExplores, sortedExplores)) {
-      setStateIfMounted(() {
-        _sortedExplores = sortedExplores;
-      });
-      _updateTrayExplores();
-    }
-  }
+  void _onSortChanged() =>
+    _updateTrayExplores();
 }
 
 // Map2 Content
@@ -1275,19 +1253,6 @@ extension _Map2PanelContent on _Map2HomePanelState {
       else if ((_lastMapZoom! - mapZoom).abs() > groupMarkersUpdateThresoldDelta) {
         _buildMapContentData(_filteredExplores, updateCamera: false, showProgress: true, zoom: mapZoom,);
       }
-    }
-  }
-
-  Future<void> _ensureExploresVisibility(List<Explore>? explores) async {
-    LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
-    CameraUpdate? targetCameraUpdate = (exploresBounds != null) ? _cameraUpdateForBounds(exploresBounds) : null;
-    if (targetCameraUpdate != null) {
-      _mapController?.animateCamera(targetCameraUpdate).then((_){
-        if (mounted) {
-          _updateTrayExplores();
-          _updateMapContentForZoom();
-        }
-      });
     }
   }
 
@@ -1431,7 +1396,7 @@ extension _Map2PanelContent on _Map2HomePanelState {
   }
 
   LatLngBounds _updateBoundsForSiblings(LatLngBounds bounds) => (bounds.northeast != bounds.southwest) ?
-    _enlargeBoundsForSiblings(bounds, topPadding: mapPadding, bottomPadding: 2 * mapPadding) : bounds;
+    _enlargeBoundsForSiblings(bounds, topPadding: mapPadding, bottomPadding: mapPadding) : bounds;
 
   LatLngBounds _enlargeBoundsForSiblings(LatLngBounds bounds, { double? topPadding, double? bottomPadding, }) {
     double northLat = bounds.northeast.latitude;
@@ -1443,14 +1408,6 @@ extension _Map2PanelContent on _Map2HomePanelState {
       double headingBarHeight = _contentHeadingBarKey.renderBoxSize?.height ?? 0.0;
       if (0 < headingBarHeight) {
         northLat += (headingBarHeight / mapHeight) * boundHeight;
-      }
-
-      double trayHeight = _traySheetKey.renderBoxSize?.height ?? 0.0;
-      if (trayHeight <= 0.0) {
-        trayHeight = _trayInitialSize * math.max(mapHeight - headingBarHeight, 0.0);
-      }
-      if (0.0 < trayHeight) {
-        southLat -= (trayHeight / mapHeight) * boundHeight;
       }
 
       if ((topPadding != null) && (0 < topPadding)) {
@@ -1470,84 +1427,6 @@ extension _Map2PanelContent on _Map2HomePanelState {
       }
     }
     return bounds;
-  }
-
-  LatLngBounds _shrinkBoundsForSiblings(LatLngBounds bounds, { double? topPadding, double? bottomPadding, }) {
-    double northLat = bounds.northeast.latitude;
-    double southLat = bounds.southwest.latitude;
-    double boundHeight = northLat - southLat;
-    double? mapHeight = _scaffoldKey.renderBoxSize?.height;
-    if ((southLat < northLat) && (mapHeight != null) && (mapHeight > 0))
-    {
-      double headingBarHeight = _contentHeadingBarKey.renderBoxSize?.height ?? 0.0;
-      if (0 < headingBarHeight) {
-        northLat -= (headingBarHeight / mapHeight) * boundHeight;
-      }
-
-      double trayHeight = _traySheetKey.renderBoxSize?.height ?? 0.0;
-      if (trayHeight <= 0.0) {
-        trayHeight = _trayInitialSize * math.max(mapHeight - headingBarHeight, 0.0);
-      }
-      if (0.0 < trayHeight) {
-        southLat += (trayHeight / mapHeight) * boundHeight;
-      }
-
-      if ((topPadding != null) && (0 < topPadding)) {
-        northLat -= (topPadding / mapHeight) * boundHeight;
-      }
-
-      if ((bottomPadding != null) && (0 < bottomPadding)) {
-        southLat += (bottomPadding / mapHeight) * boundHeight;
-      }
-
-      if (southLat <= northLat) {
-        // debugPrint("[${northLat.toStringAsFixed(6)}, ${southLat.toStringAsFixed(6)}] => [${north2Lat.toStringAsFixed(6)}, ${south2Lat.toStringAsFixed(6)}]");
-        return LatLngBounds(
-          northeast: LatLng(northLat, bounds.northeast.longitude),
-          southwest: LatLng(southLat, bounds.southwest.longitude)
-        );
-      }
-    }
-    return bounds;
-  }
-
-  Future<LatLngBounds?> _visibleMapBounds({ double? topPadding, double? bottomPadding, }) async {
-    Size? mapSize = _scaffoldKey.renderBoxSize;
-    if ((mapSize != null) && (mapSize.width > 0) && (mapSize.height > 0) && (_mapController != null)) {
-      double top = 0, bottom = mapSize.height;
-
-      double headingBarHeight = _contentHeadingBarKey.renderBoxSize?.height ?? 0.0;
-      if (0 < headingBarHeight) {
-        top += headingBarHeight;
-      }
-
-      double trayHeight = _traySheetKey.renderBoxSize?.height ?? 0.0;
-      if (trayHeight <= 0.0) {
-        trayHeight = _trayInitialSize * math.max(mapSize.height - headingBarHeight, 0);
-      }
-      if (0.0 < trayHeight) {
-        bottom -= trayHeight;
-      }
-
-      if ((topPadding != null) && (0 < topPadding)) {
-        top += topPadding;
-      }
-
-      if ((bottomPadding != null) && (0 < bottomPadding)) {
-        bottom -= bottomPadding;
-      }
-
-      if (top < bottom) {
-        // southwest, northeast
-        List<LatLng> result = await Future.wait<LatLng>(<Future<LatLng>>[
-          _mapController!.getLatLng(ScreenCoordinate(x:                     0, y: bottom.round())), // southwest
-          _mapController!.getLatLng(ScreenCoordinate(x: mapSize.width.round(), y: top.round())), // northeast
-        ]);
-        return LatLngBounds(southwest: result[0], northeast: result[1]);
-      }
-    }
-
-    return null;
   }
 }
 
