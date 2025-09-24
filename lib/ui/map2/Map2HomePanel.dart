@@ -394,7 +394,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     }
     else if (origin is Iterable<Explore>) {
       setState(() {
-        _selectedExploreGroup = origin;
+        _selectedExploreGroup = DeepCollectionEquality().equals(_selectedExploreGroup, origin) ? null : origin;
       });
       _updateTrayExplores();
     }
