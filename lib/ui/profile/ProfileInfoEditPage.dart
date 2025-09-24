@@ -468,7 +468,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
     ProfileSoundRecorderDialog.show(context).then((AudioResult? result) {
       if (result?.resultType == AudioResultType.succeeded) {
         setState(() {
-          _pronunciationText = Content().getUserNamePronunciationFileName(accountId: Auth2().accountId);
+          _pronunciationText = Content().getUserNamePronunciationUrl(accountId: Auth2().accountId);
           _pronunciationAudioData = result?.audioData;
         });
       }
@@ -483,26 +483,23 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
         setState(() {
           _clearingUserPronunciation = true;
         });
-        List<String> splitPronunciationText = _pronunciationText?.split('.') ?? [];
-        if (splitPronunciationText.length >= 2) {
-          Content().deleteUserNamePronunciation(extension: '.${splitPronunciationText.last}').then((AudioResult? result){
-            if (mounted) {
-              if (result?.resultType == AudioResultType.succeeded) {
-                setState(() {
-                  _clearingUserPronunciation = false;
-                  _pronunciationText = null;
-                  _pronunciationAudioData = null;
-                });
-              }
-              else {
-                setState(() {
-                  _clearingUserPronunciation = false;
-                });
-                AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile_info.pronunciation.delete.failed.msg', 'Failed to delete pronunciation audio. Please try again later.'));
-              }
+        Content().deleteUserNamePronunciation().then((AudioResult? result){
+          if (mounted) {
+            if (result?.resultType == AudioResultType.succeeded) {
+              setState(() {
+                _clearingUserPronunciation = false;
+                _pronunciationText = null;
+                _pronunciationAudioData = null;
+              });
             }
-          });
-        }
+            else {
+              setState(() {
+                _clearingUserPronunciation = false;
+              });
+              AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile_info.pronunciation.delete.failed.msg', 'Failed to delete pronunciation audio. Please try again later.'));
+            }
+          }
+        });
       }
     });
   }

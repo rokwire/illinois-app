@@ -6,9 +6,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class Uint8ListAudioSource extends StreamAudioSource {
   final Uint8List _data;
-  final String? contentType;
 
-  Uint8ListAudioSource(this._data, {this.contentType});
+  Uint8ListAudioSource(this._data);
 
   @override
   Future<StreamAudioResponse> request([int? start, int? end]) async {
@@ -18,14 +17,8 @@ class Uint8ListAudioSource extends StreamAudioSource {
       contentLength: (end ?? _data.length) - (start ?? 0),
       offset: start ?? 0,
       stream: Stream.fromIterable([_data.sublist(start ?? 0, end)]),
-      contentType: contentType ?? (_isWav(_data) ? 'audio/wav' : 'audio/mp4'),
+      contentType: 'audio/mp4',
     );
-  }
-
-  bool _isWav(List<int> bytes) {
-    return bytes.length >= 12 &&
-        String.fromCharCodes(bytes.sublist(0, 4)) == 'RIFF' &&
-        String.fromCharCodes(bytes.sublist(8, 12)) == 'WAVE';
   }
 }
 

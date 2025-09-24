@@ -91,7 +91,7 @@ class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
         if (_publicProfile?.pronunciationUrl?.isNotEmpty == true)
           WidgetSpan(alignment: PlaceholderAlignment.middle, child:
             DirectoryPronunciationButton(
-              fileName: _publicProfile?.pronunciationUrl,
+              url: _publicProfile?.pronunciationUrl,
               data: widget.pronunciationAudioData,
               padding: EdgeInsets.symmetric(horizontal: 13, vertical: 12),
             ),

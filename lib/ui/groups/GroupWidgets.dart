@@ -3121,31 +3121,26 @@ class GroupProfilePronouncementState extends State<GroupProfilePronouncementWidg
   Uint8List? _pronunciationAudioData;
   bool? _hasPronouncement;
   bool _loading = false;
-  String? _extension;
 
   @override
   void initState() {
     setStateIfMounted(() => _loading = true);
-
-    if (widget.accountId != null) {
-      //TODO: for now try .m4a first, then .wav (see if there is a more efficient method for this)
-      String extension = '.m4a';
-      Content().loadUserNamePronunciation(fileName: widget.accountId! + extension).then((audio) async {
-        bool hasPronouncement = audio?.succeeded == true;
-        if (!hasPronouncement) {
-          extension = '.wav';
-          AudioResult? audioRetry = await Content().loadUserNamePronunciation(fileName: widget.accountId! + extension);
-          hasPronouncement = audioRetry?.succeeded == true;
-          audio = audioRetry;
-        }
+    Content().checkUserNamePronunciation(accountId: widget.accountId).then((bool? hasPronunciation){
+      if(hasPronunciation == true){
+        Content().loadUserNamePronunciation(accountId: widget.accountId).then((audio){
+          setStateIfMounted(() {
+            _loading = false;
+            _hasPronouncement = hasPronunciation;
+            _pronunciationAudioData = audio?.audioData;
+          });
+        });
+      } else {
         setStateIfMounted(() {
           _loading = false;
-          _hasPronouncement = hasPronouncement;
-          _pronunciationAudioData = audio?.audioData;
-          _extension = hasPronouncement ? extension : null;
+          _hasPronouncement = hasPronunciation;
         });
-      });
-    }
+      }
+    });
     super.initState();
   }
   @override
@@ -3153,9 +3148,9 @@ class GroupProfilePronouncementState extends State<GroupProfilePronouncementWidg
     _loadingContent : _content;
 
   Widget get _content =>
-      Visibility(visible: StringUtils.isNotEmpty(widget.accountId) && _hasPronouncement == true && _extension != null,
+      Visibility(visible: StringUtils.isNotEmpty(widget.accountId) && _hasPronouncement == true,
         child: DirectoryPronunciationButton(
-            fileName: widget.accountId! + _extension!,
+            url: Content().getUserNamePronunciationUrl(accountId: widget.accountId),
             data: _pronunciationAudioData,
             padding: _contentPadding
         ));

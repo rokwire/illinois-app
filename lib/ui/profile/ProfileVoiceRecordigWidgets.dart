@@ -209,7 +209,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
         setState(() { _editActivity = true; });
         Auth2UserProfile profile = Auth2UserProfile.fromOther(Auth2().profile,
           override: Auth2UserProfile(
-            pronunciationUrl: Content().getUserNamePronunciationFileName(accountId: Auth2().accountId),
+            pronunciationUrl: Content().getUserNamePronunciationUrl(accountId: Auth2().accountId),
           ),
           scope: { Auth2UserProfileScope.pronunciationUrl }
         );
@@ -230,7 +230,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
     if (mounted && (promptResult == true)) {
       setState(() => _deleteActivity = true);
       
-      AudioResult? audioResult = await Content().deleteUserNamePronunciation(extension: ''); //widget is unused
+      AudioResult? audioResult = await Content().deleteUserNamePronunciation();
       if (audioResult?.resultType == AudioResultType.succeeded) {
         Auth2UserProfile profile = Auth2UserProfile.fromOther(Auth2().profile,
           override: Auth2UserProfile(),
@@ -546,7 +546,7 @@ class _ProfileSoundRecorderController {
         notifyChanged(() => _recording = true);
         String? path = await _constructFilePath;
         if (kIsWeb || path != null) {
-          await _audioRecorder.start(RecordConfig(encoder: Platform.isIOS ? AudioEncoder.aacLc : AudioEncoder.wav), path: path ?? '');
+          await _audioRecorder.start(RecordConfig(), path: path ?? '');
           // _recording = await _audioRecorder.isRecording();
         }
       }
@@ -659,7 +659,7 @@ class _ProfileSoundRecorderController {
 
   bool get _haveAudio => CollectionUtils.isNotEmpty(_audio);
 
-  String get extension => Platform.isIOS ? '.m4a' : '.wav';
+  String get extension => '.m4a'; // Platform.isIOS ? '.m4a' : '.wav';
 
   Future<String?> get _constructFilePath async {
     Directory? dir = kIsWeb ? null : await getApplicationDocumentsDirectory();
