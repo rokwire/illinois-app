@@ -1518,9 +1518,10 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
     LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
     if ((exploreGroup != null) && (markerPosition != null)) {
       Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
-      Color? markerColor = ((_selectedExploreGroup != null) && (_selectedExploreGroup?.intersection(exploreGroup).isNotEmpty != true)) ? ExploreMap.passiveMarkerColor : sameExplore?.mapMarkerColor;
-      Color? markerBorderColor = sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor;
-      Color? markerTextColor = sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor;
+      bool exploreDisabled = (_selectedExploreGroup != null) && (_selectedExploreGroup?.intersection(exploreGroup).isNotEmpty != true);
+      Color? markerColor = exploreDisabled ? ExploreMap.disabledMarkerColor : sameExplore?.mapMarkerColor;
+      Color? markerBorderColor = exploreDisabled ? ExploreMap.disabledGroupMarkerBorderColor : (sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor);
+      Color? markerTextColor = exploreDisabled ? ExploreMap.disabledMarkerTextColor : (sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor);
       String markerKey = "group-${markerColor?.toARGB32() ?? 0}-${exploreGroup.length}";
       return Marker(
         markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
@@ -1554,16 +1555,16 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
         markerAnchor = _mapCircleMarkerAnchor;
       }
       else {
-        // Color? exploreColor = (((_selectedExploreGroup != null) && (_selectedExploreGroup?.contains(explore) != true)) ? ExploreMap.passiveMarkerColor : explore?.mapMarkerColor);
-        Color? exploreColor = explore?.mapMarkerColor;
-        Color? markerBorderColor = explore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor;
+        bool exploreDisabled = (_selectedExploreGroup != null) && (_selectedExploreGroup?.contains(explore) != true);
+        Color? exploreColor = exploreDisabled ? ExploreMap.disabledMarkerColor : explore?.mapMarkerColor;
+        Color? borderColor = exploreDisabled ? ExploreMap.disabledExploreMarkerBorderColor : (explore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor);
         String markerKey = "explore-${exploreColor?.toARGB32() ?? 0}";
         markerIcon = _markerIconsCache[markerKey] ??= await _markerIcon(context,
           imageSize: _mapExploreMarkerSize,
           backColor: Styles().colors.white,
           backColor2: exploreColor,
           backColor2Offset: 8,
-          borderColor: markerBorderColor,
+          borderColor: borderColor,
           borderWidth: 1,
           borderOffset: 0,
         );
@@ -1616,7 +1617,7 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
       Color? borderColor, double borderWidth = 1, double borderOffset = 0,
       Color? textColor, String? text
   }) async {
-    Uint8List? markerImageBytes = await ImageUtils.mapGroupMarkerImage(
+    Uint8List? markerImageBytes = await ImageUtils.mapMarkerImage(
       imageSize: imageSize * MediaQuery.of(context).devicePixelRatio,
       backColor: backColor,
       backColor2: backColor2,

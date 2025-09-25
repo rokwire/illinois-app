@@ -340,7 +340,6 @@ extension ExploreMap on Explore {
 
   Color? get mapMarkerColor => uiColor ?? unknownMarkerColor;
   static Color? get unknownMarkerColor => Styles().colors.accentColor2;
-  static Color? get passiveMarkerColor => Styles().colors.surfaceAccent;
 
   Color? get mapMarkerBorderColor => (this is Place) ? (this as Place).mapMarkerBorderColor : defaultMarkerBorderColor;
   static Color? get defaultMarkerBorderColor => Styles().colors.fillColorPrimary;
@@ -348,9 +347,18 @@ extension ExploreMap on Explore {
   Color? get mapMarkerTextColor => (this is Place) ? (this as Place).mapMarkerTextColor : defaultMarkerTextColor;
   static Color? get defaultMarkerTextColor => Styles().colors.background;
 
-  String? get mapMarkerTitle {
-    return exploreTitle;
-  }
+
+  static Color? get disabledMarkerColor => Styles().colors.surfaceAccent;
+  static Color? get disabledExploreMarkerBorderColor => Styles().colors.mediumGray2;
+  static Color? get disabledGroupMarkerBorderColor => Styles().colors.mediumGray1;
+  static Color? get disabledMarkerTextColor => Styles().colors.mediumGray1;
+
+  //static Color? get disabledMarkerColor => Styles().colors.mediumGray2;
+  //static Color? get disabledExploreMarkerBorderColor => defaultMarkerBorderColor;
+  //static Color? get disabledGroupMarkerBorderColor => defaultMarkerBorderColor;
+  //static Color? get disabledMarkerTextColor => defaultMarkerTextColor;
+
+  String? get mapMarkerTitle => exploreTitle;
 
   String? get mapMarkerSnippet {
     if (this is Event2) {
