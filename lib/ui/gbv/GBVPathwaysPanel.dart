@@ -306,13 +306,14 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
   }
 
   void _onTapOptions(BuildContext context) {
+    final double bottomPadding = MediaQuery.of(context).viewPadding.bottom;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
       isScrollControlled: true,
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-      builder: (context) => Container(padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16), child:
+      builder: (context) => Container(padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16 + bottomPadding), child:
       Column(mainAxisSize: MainAxisSize.min, children: [
         RibbonButton(label: Localization().getStringEx('panel.sexual_misconduct.options.we_care', 'We Care at Illinois website'), rightIconKey: 'external-link', onTap: () => _onTapWeCare(context)),
         RibbonButton(label: Localization().getStringEx('panel.sexual_misconduct.options.resource_directory', 'Resource Directory'), onTap: () => _onResourceDirectory(context, _gbv!))
