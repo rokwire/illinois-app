@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+## [7.2.26] - 2025-09-25
+### Fixed
+- Fixed bottom sheet overlap in GBVPathwaysPanel [#5402](https://github.com/rokwire/illinois-app/issues/5402).
 
 ## [7.2.25] - 2025-09-23
 ### Added
