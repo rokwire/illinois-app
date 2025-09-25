@@ -119,7 +119,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   Explore? _pinnedExplore;
   Marker? _pinnedMarker;
-  BitmapDescriptor? _pinMarkerIcon;
 
   DateTime? _pausedDateTime;
   Position? _currentLocation;
@@ -1488,8 +1487,9 @@ extension _Map2PanelContent on _Map2HomePanelState {
 
 extension _Map2PanelMarkers on _Map2HomePanelState {
 
-  static const double _mapPinMarkerSize = 24;
+  static const double _mapExploreMarkerSize = 18;
   static const double _mapGroupMarkerSize = 24;
+  static const double _mapPinMarkerSize = 24;
   static const Offset _mapPinMarkerAnchor = Offset(0.5, 1);
   static const Offset _mapCircleMarkerAnchor = Offset(0.5, 0.5);
 
@@ -1521,20 +1521,17 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
       Color? markerColor = ((_selectedExploreGroup != null) && (_selectedExploreGroup?.intersection(exploreGroup).isNotEmpty != true)) ? ExploreMap.passiveMarkerColor : sameExplore?.mapMarkerColor;
       Color? markerBorderColor = sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor;
       Color? markerTextColor = sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor;
-      String markerKey = "map-marker-group-${markerColor?.toARGB32() ?? 0}-${exploreGroup.length}";
-      BitmapDescriptor markerIcon = _markerIconsCache[markerKey] ??
-        (_markerIconsCache[markerKey] = await _groupMarkerIcon(
-          context: context,
+      String markerKey = "group-${markerColor?.toARGB32() ?? 0}-${exploreGroup.length}";
+      return Marker(
+        markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
+        position: markerPosition,
+        icon: _markerIconsCache[markerKey] ??= await _markerIcon(context,
           imageSize: _mapGroupMarkerSize,
           backColor: markerColor,
           borderColor: markerBorderColor,
           textColor: markerTextColor,
           text: exploreGroup.length.toString(),
-        ));
-      return Marker(
-        markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
-        position: markerPosition,
-        icon: markerIcon,
+        ),
         anchor: _mapCircleMarkerAnchor,
         consumeTapEvents: true,
         onTap: () => _onTapMarker(exploreGroup),
@@ -1547,52 +1544,29 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
     return null;
   }
 
-  static Future<BitmapDescriptor> _groupMarkerIcon({required BuildContext context, required double imageSize,
-      Color? backColor, Color? backColor2,
-      Color? borderColor, double borderWidth = 1, double borderOffset = 0,
-      Color? textColor, String? text
-  }) async {
-    Uint8List? markerImageBytes = await ImageUtils.mapGroupMarkerImage(
-      imageSize: imageSize * MediaQuery.of(context).devicePixelRatio,
-      backColor: backColor, backColor2: backColor2,
-      strokeColor: borderColor,
-      strokeWidth: borderWidth * MediaQuery.of(context).devicePixelRatio,
-      strokeOffset: borderOffset  * MediaQuery.of(context).devicePixelRatio,
-      text: text,
-      textStyle: (text != null) ? Styles().textStyles.getTextStyle("widget.text.fat")?.copyWith(
-        fontSize: 12 * MediaQuery.of(context).devicePixelRatio,
-        color: textColor,
-        overflow: TextOverflow.visible //defined in code to be sure it is set
-      ) : null,
-    );
-    if (markerImageBytes != null) {
-      return BitmapDescriptor.bytes(markerImageBytes,
-        imagePixelRatio: MediaQuery.of(context).devicePixelRatio,
-        width: imageSize, height: imageSize,
-      );
-    }
-    else if (backColor != null) {
-      return BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(backColor).toDouble());
-    }
-    else {
-      return BitmapDescriptor.defaultMarker;
-    }
-  }
-
   Future<Marker?> _createExploreMarker(Explore? explore, { required ImageConfiguration imageConfiguration }) async {
     LatLng? markerPosition = explore?.exploreLocation?.exploreLocationMapCoordinate;
     if (markerPosition != null) {
       BitmapDescriptor? markerIcon;
       Offset? markerAnchor;
       if (explore is MTDStop) {
-        String markerAsset = 'images/map-marker-mtd-stop.png';
-        markerIcon = _markerIconsCache[markerAsset] ??
-          (_markerIconsCache[markerAsset] = await BitmapDescriptor.asset(imageConfiguration, markerAsset));
+        markerIcon = _markerIconsCache['mtd'] ??= await BitmapDescriptor.asset(imageConfiguration, 'images/map-marker-mtd-stop.png');
         markerAnchor = _mapCircleMarkerAnchor;
       }
       else {
-        Color? exploreColor = (((_selectedExploreGroup != null) && (_selectedExploreGroup?.contains(explore) != true)) ? ExploreMap.passiveMarkerColor : explore?.mapMarkerColor);
-        markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : BitmapDescriptor.defaultMarker;
+        // Color? exploreColor = (((_selectedExploreGroup != null) && (_selectedExploreGroup?.contains(explore) != true)) ? ExploreMap.passiveMarkerColor : explore?.mapMarkerColor);
+        Color? exploreColor = explore?.mapMarkerColor;
+        Color? markerBorderColor = explore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor;
+        String markerKey = "explore-${exploreColor?.toARGB32() ?? 0}";
+        markerIcon = _markerIconsCache[markerKey] ??= await _markerIcon(context,
+          imageSize: _mapExploreMarkerSize,
+          backColor: Styles().colors.white,
+          backColor2: exploreColor,
+          backColor2Offset: 6,
+          borderColor: markerBorderColor,
+          borderWidth: 1,
+          borderOffset: 0,
+        );
         markerAnchor = _mapPinMarkerAnchor;
       }
       return Marker(
@@ -1617,7 +1591,14 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
     return (markerPosition != null) ? Marker(
       markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.longitude.toStringAsFixed(6)}"),
       position: markerPosition,
-      icon: _pinMarkerIcon ??= await _createPinMarkerIcon(),
+      icon: _markerIconsCache['pin'] ??= await _markerIcon(context,
+          imageSize: _mapPinMarkerSize,
+          backColor: Styles().colors.accentColor3,
+          backColor2: Styles().colors.mtdColor,
+          borderColor: Styles().colors.white,
+          borderWidth: 2,
+          borderOffset: 3,
+        ),
       anchor: markerAnchor,
       consumeTapEvents: true,
       onTap: () => _onTapMarker(explore),
@@ -1628,15 +1609,40 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
     ) : null;
   }
 
-  Future<BitmapDescriptor> _createPinMarkerIcon() => _groupMarkerIcon(
-    context: context,
-    imageSize: _mapPinMarkerSize,
-    backColor: Styles().colors.accentColor3,
-    backColor2: Styles().colors.mtdColor,
-    borderColor: Styles().colors.white,
-    borderWidth: 2,
-    borderOffset: 3,
-  );
+  static Future<BitmapDescriptor> _markerIcon(BuildContext context, {required double imageSize,
+      Color? backColor,
+      Color? backColor2, double backColor2Offset = 1,
+      Color? borderColor, double borderWidth = 1, double borderOffset = 0,
+      Color? textColor, String? text
+  }) async {
+    Uint8List? markerImageBytes = await ImageUtils.mapGroupMarkerImage(
+      imageSize: imageSize * MediaQuery.of(context).devicePixelRatio,
+      backColor: backColor,
+      backColor2: backColor2,
+      backColor2Offset: backColor2Offset,
+      strokeColor: borderColor,
+      strokeWidth: borderWidth * MediaQuery.of(context).devicePixelRatio,
+      strokeOffset: borderOffset  * MediaQuery.of(context).devicePixelRatio,
+      text: text,
+      textStyle: (text != null) ? Styles().textStyles.getTextStyle("widget.text.fat")?.copyWith(
+        fontSize: 12 * MediaQuery.of(context).devicePixelRatio,
+        color: textColor,
+        overflow: TextOverflow.visible //defined in code to be sure it is set
+      ) : null,
+    );
+    if (markerImageBytes != null) {
+      return BitmapDescriptor.bytes(markerImageBytes,
+        imagePixelRatio: MediaQuery.of(context).devicePixelRatio,
+        width: imageSize, height: imageSize,
+      );
+    }
+    else if (backColor != null) {
+      return BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(backColor).toDouble());
+    }
+    else {
+      return BitmapDescriptor.defaultMarker;
+    }
+  }
 }
 
 extension _Map2ContentType on Map2ContentType {
