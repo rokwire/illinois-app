@@ -1,6 +1,6 @@
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum GBVResourceType {panel, external_link, directory}
+enum GBVResourceType {panel, external_link, directory, resource_list}
 
 enum GBVResourceDetailType {text, address, phone, email, external_link, button}
 
@@ -105,6 +105,7 @@ class GBVResource {
   final List<GBVResourceDetail> directoryContent;
   final String? description;
   final List<GBVDetailListSection>? detailsList;
+  final String? resourceScreenId;
 
   GBVResource({
     required this.id,
@@ -113,19 +114,20 @@ class GBVResource {
     required this.title,
     required this.directoryContent,
     this.description,
-    this.detailsList
+    this.detailsList,
+    this.resourceScreenId
   });
 
   static GBVResource? fromJson(Map<String, dynamic>? json) {
-    String? typeString = (json != null) ? JsonUtils.stringValue(json['type']) : null;
     return (json != null) ? GBVResource(
       id: JsonUtils.stringValue(json['id']) ?? "",
-      type: (typeString == 'external_link') ? GBVResourceType.external_link : (typeString == 'panel') ? GBVResourceType.panel : GBVResourceType.directory,
+      type: GBVResourceTypeImpl.fromJson(JsonUtils.stringValue(json['type'])) ?? GBVResourceType.directory,
       categories: JsonUtils.listValue(json['categories']) ?? [],
       title: JsonUtils.stringValue(json['title']) ?? "",
       directoryContent: GBVResourceDetail.listFromJson(JsonUtils.listValue(json['directoryContent'])),
       description: JsonUtils.stringValue(json['description']),
       detailsList: GBVDetailListSection.listFromJson(JsonUtils.listValue(json['detailsList'])),
+      resourceScreenId: JsonUtils.stringValue(json['resourceScreenId']),
     ) : null;
   }
 
@@ -210,5 +212,17 @@ class GBVResourceListScreen {
       resourceIds.addAll(resourceList.resourceIds);
     }
     return resourceIds;
+  }
+}
+
+extension GBVResourceTypeImpl on GBVResourceType {
+  static GBVResourceType? fromJson(String? json) {
+    switch (json) {
+      case 'external_link': return GBVResourceType.external_link;
+      case 'panel': return GBVResourceType.panel;
+      case 'resource_list': return GBVResourceType.resource_list;
+      case 'directory': return GBVResourceType.directory;
+      default: return null;
+    }
   }
 }

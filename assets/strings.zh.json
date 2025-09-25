@@ -34,7 +34,11 @@
 	"dialog.delete.title":"Delete",
 	"dialog.delete.hint":"",
 	"dialog.share.title":"Share",
- "dialog.share.hint":"",
+	"dialog.share.hint":"",
+	"dialog.print.title":"Print",
+	"dialog.print.hint":"",
+	"dialog.copy.title":"Copy",
+	"dialog.copy.hint":"",
 
 	"tabbar.home.title":"主页",
 	"tabbar.home.hint":"主页",
@@ -1256,8 +1260,6 @@
 	"panel.events2.home.attributes.event_time.hint.semantics": "点击两下显示日期与时间的选项。",
 	"panel.events2.home.message.failed.title": "失败",
 	"panel.events2.home.message.empty.description": "没有活动符合筛选条件。",
-	"panel.events2.assistant.prompt.header.text": "試著詢問伊利諾伊州助理： ",
-	"panel.events2.assistant.prompt.question.text": "這個週末有什麼活動？",
 
 	"panel.event2.filters.header.title": "活动筛选器",
 
@@ -3136,7 +3138,6 @@
 	"panel.group.detail.post.header.title": "贴文",
 	"panel.group.detail.post.header.title.message": "Message",
 	"panel.group.detail.post.delete.confirm.msg": "您确定要删除此贴文？",
-	"panel.group.detail.post.delete.many_groups.confirm.msg": "這篇文章在多個群組中可見。您確定要刪除它嗎？",
 	"panel.group.detail.post.delete.failed.msg": "无法删除此贴文。",
 	"panel.group.detail.post.reply.delete.confirm.msg": "您确定要删除此回复？",
 	"panel.group.detail.post.reply.delete.failed.msg": "无法删除此回复。",
@@ -3526,13 +3527,15 @@
 	"panel.sexual_misconduct.view_resources": "view a list of resources.",
 	"panel.sexual_misconduct.options.we_care": "We Care at Illinois website",
 	"panel.sexual_misconduct.options.resource_directory": "Resource Directory",
+	"panel.sexual_misconduct.quick_exit.privacy": "Privacy: ",
+	"panel.sexual_misconduct.quick_exit.app_activity": "your app activity is not shared with others. Use the quick exit icon to return Home.",
 	"panel.sexual_misconduct.resource_directory.view_additional": "View additional resources on the ",
 	"panel.sexual_misconduct.resource_directory.we_care": "Illinois We Care website.",
 	"panel.sexual_misconduct.resource_list.view_confidential": "View additional confidential resources on the ",
 	"panel.sexual_misconduct.resource_list.confidential_we_care": "Illinois We Care website.",
 
 	"widget.sexual_misconduct.quick_exit.privacy": "Privacy: ",
-	"widget.sexual_misconduct.quick_exit.app_activity": "your app activity is not shared with others. Use the quick exit icon to return Home.",
+	"widget.sexual_misconduct.quick_exit.app_activity": "your app activity is not shared with others.",
 	"widget.sexual_misconduct.quick_exit.dialog.description": "Use the quick exit icon at any time to be routed to the Illinois app home screen.",
 
 	"panel.home_canvas_course.header.title": "課程",
