@@ -337,7 +337,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   // If dateUpdatedUtc is not null, show a small “(edited)” label
                   if (message.dateUpdatedUtc != null)
                     Padding(padding: EdgeInsets.only(left: 4), child:
-                    Text(Localization().getStringEx('', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
+                    Text(Localization().getStringEx('panel.messages.conversation.edited.message.label', '(edited)'), style: Styles().textStyles.getTextStyle('widget.message.light.small')?.copyWith(fontStyle: FontStyle.italic),),
                     ),
                 ],),
                 if (!kIsWeb)
@@ -372,8 +372,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         context: context,
         builder: (_) {
           return AlertDialog(
-            title: Text(Localization().getStringEx('', 'Message Options'), style: TextStyle(color: Styles().colors.fillColorPrimary)),
-            content: Text(Localization().getStringEx('', 'Edit or delete this message?'), style: TextStyle(color: Styles().colors.fillColorPrimary)),
+            title: Text(Localization().getStringEx('panel.messages.conversation.message.options.title', 'Message Options'), style: TextStyle(color: Styles().colors.fillColorPrimary)),
+            content: Text(Localization().getStringEx('panel.messages.conversation.message.options.text', 'Edit or delete this message?'), style: TextStyle(color: Styles().colors.fillColorPrimary)),
             actions: [
               TextButton(
                 onPressed: () {
@@ -502,7 +502,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   child: Padding(
                     padding: EdgeInsets.only(left: 16),
                     child: Text(
-                      Localization().getStringEx('', 'Conversation Members'),
+                      Localization().getStringEx('panel.messages.conversation.members.header.label', 'Conversation Members'),
                       style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),
                     ),
                   ),
@@ -737,7 +737,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Widget _buildAttachFileButton() {
-    return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Attach"),
+    return MergeSemantics(child: Semantics(label: Localization().getStringEx('panel.messages.conversation.attach_files.button.label', "Attach"),
         child: InkWell(
             child: Styles().images.getImage('plus-circle', size: 24, fit: BoxFit.cover),
             onTap: _openAttachFileMenu
@@ -773,7 +773,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                 child: Padding(
                   padding: EdgeInsets.only(left: 16),
                   child: Text(
-                    Localization().getStringEx('', 'Attach Files'),
+                    Localization().getStringEx('panel.messages.conversation.attach_files.header.label', 'Attach Files'),
                     style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),
                   ),
                 ),
@@ -798,27 +798,27 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                 padding: EdgeInsets.all(16.0),
                 child: Column(children: [
                   RibbonButton(
-                      label: Localization().getStringEx('', 'Upload an image or video'),
+                      label: Localization().getStringEx('panel.messages.conversation.select.image_video.button.label', 'Upload an image or video'),
                       leftIconKey: 'image',
                       onTap: _onTapUploadImageOrVideo),
                   SizedBox(height: 4),
                   RibbonButton(
-                      label: Localization().getStringEx('', 'Take a photo'),
+                      label: Localization().getStringEx('panel.messages.conversation.select.image.button.label', 'Take a photo'),
                       leftIconKey: 'camera',
                       onTap: _onTapCamera),
                   SizedBox(height: 4),
                   RibbonButton(
-                      label: Localization().getStringEx('', 'Record a video'),
+                      label: Localization().getStringEx('panel.messages.conversation.select.video.button.label', 'Record a video'),
                       leftIconKey: 'video-camera',
                       onTap: () => _onTapCamera(isVideo: true)),
                   SizedBox(height: 4),
                   RibbonButton(
-                      label: Localization().getStringEx('', 'Record an audio clip'),
+                      label: Localization().getStringEx('panel.messages.conversation.select.audio.button.label', 'Record an audio clip'),
                       leftIconKey: 'microphone',
                       onTap: _onTapRecordAudio),
                   SizedBox(height: 4),
                   RibbonButton(
-                      label: Localization().getStringEx('', 'Upload a file'),
+                      label: Localization().getStringEx('panel.messages.conversation.select.file.button.label', 'Upload a file'),
                       leftIconKey: 'file',
                       onTap: _onTapAttachFile)
                 ])
@@ -873,7 +873,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     final hasFiles = _attachedFiles.isNotEmpty;
     if (hasText || hasFiles) {
       // Show send button if there's text
-      return MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Send"), enabled: enabled,
+      return MergeSemantics(child: Semantics(label: Localization().getStringEx('panel.messages.conversation.send.button.label', "Send"), enabled: enabled,
           child: IconButton(
               splashRadius: 24,
               icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.textColorDisabled, semanticLabel: ""),
@@ -886,7 +886,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       // Show microphone if no text and speech-to-text is enabled
       return Visibility(
           visible: enabled && SpeechToText().isEnabled,
-          child: MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Speech to text"),
+          child: MergeSemantics(child: Semantics(label: Localization().getStringEx('panel.messages.conversation.speech_to_text.button.label', "Speech to text"),
               child: IconButton(
                   splashRadius: 24,
                   icon: _listening
@@ -1160,14 +1160,14 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Widget get _imageErrorBuilder => AspectRatio(aspectRatio: 16/9, child:
-  Container(color: Styles().colors.surfaceAccent, child:
-  Padding(padding: const EdgeInsets.symmetric(horizontal: 32), child:
-  Center(child: Styles().images.getImage('exclamation', size: 48),
-    // Text(Localization().getStringEx('', 'This image type is not supported'),
-    //     style: Styles().textStyles.getTextStyle('widget.title.dark.small')),
-  ),
-  ),
-  )
+    Container(color: Styles().colors.surfaceAccent, child:
+      Padding(padding: const EdgeInsets.symmetric(horizontal: 32), child:
+        Center(child: Styles().images.getImage('exclamation', size: 48),
+          // Text(Localization().getStringEx('', 'This image type is not supported'),
+          //     style: Styles().textStyles.getTextStyle('widget.title.dark.small')),
+        ),
+      ),
+    )
   );
 
   Future<void> _initConversationAndMessages() async {
@@ -1398,7 +1398,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
           setState(() {
             _messages.remove(tempMessage);
           });
-          AppToast.showMessage(Localization().getStringEx('', 'Failed to send message'));
+          AppToast.showMessage(Localization().getStringEx('panel.messages.conversation.send.failed.message', 'Failed to send message'));
         }
       }
       _submitting = false;
@@ -1411,7 +1411,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
     int failedFileCount = _attachedFileData.length - (uploaded?.length ?? 0);
     if (failedFileCount > 0) {
-      AppToast.showMessage(sprintf(Localization().getStringEx('', 'Failed to upload %s file(s)'), [failedFileCount]));
+      AppToast.showMessage(sprintf(Localization().getStringEx('panel.messages.conversation.upload.failed.message', 'Failed to upload %s file(s)'), [failedFileCount]));
     }
 
     return uploaded;
@@ -1476,7 +1476,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
               debugPrint('Could not find the old message with globalId: ${_editingMessage?.globalId} to replace.');
             }
           } else {
-            AppToast.showMessage(Localization().getStringEx('', 'Failed to update message'));
+            AppToast.showMessage(Localization().getStringEx('panel.messages.conversation.update.failed.message', 'Failed to update message'));
           }
         }
       }

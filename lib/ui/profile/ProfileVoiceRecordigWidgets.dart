@@ -215,7 +215,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
         if (mounted) {
           setState(() { _editActivity = false; });
           if (profileResult != true) {
-            AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
+            AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload audio. Please try again later."));
           }
         }
       }
@@ -545,7 +545,7 @@ class _ProfileSoundRecorderController {
         String? path = await _constructFilePath;
         if (kIsWeb || path != null) {
           await _audioRecorder.start(RecordConfig(), path: path ?? '');
-          // _recording = await _audioRecorder.isRecording();
+          _recording = await _audioRecorder.isRecording();
         }
       }
     } catch (e, stackTrace) {

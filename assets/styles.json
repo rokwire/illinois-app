@@ -931,6 +931,7 @@
     "attendance": {"src": "0xf7f3", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "report": {"src": "0xf06a", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "clock": {"src": "0xf017", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
+    "exclamation": {"src": "0x21", "type": "fa.icon", "weight": "solid", "color": "alert", "size": 18},
 
     "down-to-bracket": {"src": "0xe4e7", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "up-from-bracket": {"src": "0xe590", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
