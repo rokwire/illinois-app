@@ -7,6 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:xml/xml.dart';
+import 'package:mime/mime.dart';
+
+class FileUtils {
+  static bool isImage(String? path) => (mimeTypeExt(path)?.startsWith('image/') == true);
+  static bool isGif(String? path) => (mimeTypeExt(path) == 'image/gif');
+  static bool isVideo(String? path) => (mimeTypeExt(path)?.startsWith('video/') == true);
+  static bool isAudio(String? path) => (mimeTypeExt(path)?.startsWith('audio/') == true);
+
+  static String? mimeTypeExt(String? path) => path != null ? lookupMimeType(path) : null;
+}
 
 class XmlUtils {
   

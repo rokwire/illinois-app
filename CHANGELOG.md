@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Added
+- Add file attachments to conversation messages [#5378](https://github.com/rokwire/illinois-app/issues/5378).
 
 ## [7.3.4] - 2025-09-05
 ### Fixed

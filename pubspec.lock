@@ -77,10 +77,10 @@ packages:
     dependency: transitive
     description:
       name: async
-      sha256: d2872f9c19731c2e5f10444b14686eb7cc85c76274bd6c16e1816bff9a3bab63
+      sha256: "758e6d74e971c3e5aceb4110bfd6698efc7f501675bcfe0c775459a8140750eb"
       url: "https://pub.dev"
     source: hosted
-    version: "2.12.0"
+    version: "2.13.0"
   audio_session:
     dependency: transitive
     description:
@@ -365,10 +365,10 @@ packages:
     dependency: transitive
     description:
       name: fake_async
-      sha256: "6a95e56b2449df2273fd8c45a662d6947ce1ebb7aafe80e550a3f68297f3cacc"
+      sha256: "5368f224a74523e8d2e7399ea1638b37aecfca824a3cc4dfdf77bf1fa905ac44"
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.2"
+    version: "1.3.3"
   ffi:
     dependency: transitive
     description:
@@ -385,6 +385,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.1"
+  file_picker:
+    dependency: "direct main"
+    description:
+      name: file_picker
+      sha256: ab13ae8ef5580a411c458d6207b6774a6c237d77ac37011b13994879f68a8810
+      url: "https://pub.dev"
+    source: hosted
+    version: "8.3.7"
   file_selector_linux:
     dependency: transitive
     description:
@@ -543,6 +551,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.2"
+  flutter_file_dialog:
+    dependency: "direct main"
+    description:
+      name: flutter_file_dialog
+      sha256: "9344b8f07be6a1b6f9854b723fb0cf84a8094ba94761af1d213589d3cb087488"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.2"
   flutter_html:
     dependency: transitive
     description:
@@ -719,12 +735,13 @@ packages:
     source: hosted
     version: "8.2.12"
   font_awesome_flutter:
-    dependency: "direct main"
+    dependency: transitive
     description:
-      path: "plugin/plugins/font_awesome_flutter"
-      relative: true
-    source: path
-    version: "10.6.0"
+      name: font_awesome_flutter
+      sha256: d3a89184101baec7f4600d58840a764d2ef760fe1c5a20ef9e6b0e9b24a07a3a
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.8.0"
   fwfh_cached_network_image:
     dependency: transitive
     description:
@@ -849,39 +866,35 @@ packages:
   google_maps_flutter_android:
     dependency: transitive
     description:
-      path: "packages/google_maps_flutter/google_maps_flutter_android"
-      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
-      url: "https://github.com/rokwire/packages.git"
-    source: git
-    version: "2.13.0"
+      name: google_maps_flutter_android
+      sha256: f199fdcb8a8e1b77f6aaed78aeed1e46b7526daf9007d5c71536a8266c4f0081
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.15.0"
   google_maps_flutter_ios:
     dependency: transitive
     description:
-      path: "packages/google_maps_flutter/google_maps_flutter_ios"
-      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
-      url: "https://github.com/rokwire/packages.git"
-    source: git
-    version: "2.12.0"
+      name: google_maps_flutter_ios
+      sha256: "7b5663bfcfbbe8ff96f394ba351b53fa00a8ba75cfc894b790426df4e2d888d6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.14.0"
   google_maps_flutter_platform_interface:
     dependency: transitive
     description:
-      path: "packages/google_maps_flutter/google_maps_flutter_platform_interface"
-      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
-      url: "https://github.com/rokwire/packages.git"
-    source: git
-    version: "2.9.0"
+      name: google_maps_flutter_platform_interface
+      sha256: "970c8f766c02909c7be282dea923c971f83a88adaf07f8871d0aacebc3b07bb2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.11.1"
   google_maps_flutter_web:
     dependency: transitive
     description:
-      path: "packages/google_maps_flutter/google_maps_flutter_web"
-      ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
-      url: "https://github.com/rokwire/packages.git"
-    source: git
-    version: "0.5.10"
+      name: google_maps_flutter_web
+      sha256: a45786ea6691cc7cdbe2cf3ce2c2daf4f82a885745666b4a36baada3a4e12897
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.12"
   gtk:
     dependency: transitive
     description:
@@ -939,7 +952,7 @@ packages:
     source: hosted
     version: "0.0.15"
   image_picker:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: image_picker
       sha256: "021834d9c0c3de46bf0fe40341fa07168407f694d9b2bb18d532dc1261867f7a"
@@ -1022,10 +1035,10 @@ packages:
     dependency: "direct main"
     description:
       name: intl
-      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
+      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
       url: "https://pub.dev"
     source: hosted
-    version: "0.19.0"
+    version: "0.20.2"
   js:
     dependency: transitive
     description:
@@ -1070,10 +1083,10 @@ packages:
     dependency: transitive
     description:
       name: leak_tracker
-      sha256: c35baad643ba394b40aac41080300150a4f08fd0fd6a10378f8f7c6bc161acec
+      sha256: "6bb818ecbdffe216e81182c2f0714a2e62b593f4a4f13098713ff1685dfb6ab0"
       url: "https://pub.dev"
     source: hosted
-    version: "10.0.8"
+    version: "10.0.9"
   leak_tracker_flutter_testing:
     dependency: transitive
     description:
@@ -1171,13 +1184,13 @@ packages:
     source: hosted
     version: "1.16.0"
   mime:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: mime
-      sha256: "41a20518f0cb1256669420fdba0cd90d21561e560ac240f26ef8322e45bb7ed6"
+      sha256: "801fd0b26f14a4a58ccb09d5892c3fbdeff209594300a542492cf13fba9d247a"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "1.0.6"
   mime_type:
     dependency: transitive
     description:
@@ -1802,10 +1815,10 @@ packages:
     dependency: "direct main"
     description:
       name: table_calendar
-      sha256: b2896b7c86adf3a4d9c911d860120fe3dbe03c85db43b22fd61f14ee78cdbb63
+      sha256: "0c0c6219878b363a2d5f40c7afb159d845f253d061dc3c822aa0d5fe0f721982"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.3"
+    version: "3.2.0"
   term_glyph:
     dependency: transitive
     description:
@@ -1838,6 +1851,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  universal_html:
+    dependency: "direct main"
+    description:
+      name: universal_html
+      sha256: "56536254004e24d9d8cfdb7dbbf09b74cf8df96729f38a2f5c238163e3d58971"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.4"
   universal_io:
     dependency: transitive
     description:
@@ -2002,10 +2023,10 @@ packages:
     dependency: transitive
     description:
       name: vm_service
-      sha256: "0968250880a6c5fe7edc067ed0a13d4bae1577fe2771dcf3010d52c4a9d3ca14"
+      sha256: ddfa8d30d89985b96407efce8acbdd124701f96741f2d981ca860662f1c0dc02
       url: "https://pub.dev"
     source: hosted
-    version: "14.3.1"
+    version: "15.0.0"
   vsc_quill_delta_to_html:
     dependency: "direct main"
     description:
