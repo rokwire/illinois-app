@@ -474,9 +474,13 @@
     "model.map2.sort_order.descending.mnemo": "Desc",
     "model.map2.sort_order.descending.mark": "↑",
 
+    "model.map2.terms.selection.mark": "✓",
+
     "panel.map2.filter.amenities.title":"Amenities",
     "panel.map2.filter.amenities.info":"Choose from the below amenities to view buildings with one or more of these amenities.",
     "panel.map2.filter.amenities.clear.title":"Clear",
+
+    "panel.map2.filter.terms.title":"Terms",
 
     "panel.map2.tray.header.selected.label": "Selected: ",
 

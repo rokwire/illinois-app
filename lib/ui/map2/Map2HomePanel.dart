@@ -21,6 +21,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
+import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -82,6 +83,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   final GlobalKey _contentHeadingBarKey = GlobalKey();
   final GlobalKey _traySheetKey = GlobalKey();
   final GlobalKey _sortButtonKey = GlobalKey();
+  final GlobalKey _termsButtonKey = GlobalKey();
 
   UniqueKey _mapKey = UniqueKey();
   GoogleMapController? _mapController;
@@ -102,6 +104,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   final Map<Map2ContentType, _Map2Filter> _filters = <Map2ContentType, _Map2Filter>{};
   bool _searchOn = false;
   double? _sortDropdownWidth;
+  double? _termsDropdownWidth;
 
   List<Explore>? _explores;
   List<Explore>? _filteredExplores;
@@ -908,8 +911,8 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   List<Widget>? get _filterButtons {
     switch (_selectedContentType) {
       case Map2ContentType.CampusBuildings:      return _campusBuildingsFilterButtons;
-      case Map2ContentType.StudentCourses:
-      case Map2ContentType.DiningLocations:
+      case Map2ContentType.StudentCourses:       return _studentCoursesFilterButtons;
+      case Map2ContentType.DiningLocations:      return <Widget>[];
       case Map2ContentType.Events2:              return _events2FilterButtons;
       case Map2ContentType.Laundries:
       case Map2ContentType.BusStops:
@@ -933,6 +936,18 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     Padding(padding: _filterButtonsPadding, child:
       _amenitiesBuildingsFilterButton,
     ),
+    _filterButtonsEdgeSpacing,
+  ];
+
+  List<Widget> get _studentCoursesFilterButtons => <Widget>[
+    if (_isSortAvailable)
+      Padding(padding: _filterButtonsPadding, child:
+        _sortFilterButton,
+      ),
+    if (StudentCourses().terms?.isNotEmpty == true)
+      Padding(padding: _filterButtonsPadding, child:
+        _termsButton,
+      ),
     _filterButtonsEdgeSpacing,
   ];
 
@@ -977,6 +992,70 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       onTap: _onAmenities,
     );
 
+  Widget get _termsButton =>
+    MergeSemantics(key: _termsButtonKey, child:
+      Semantics(value: StudentCourses().displayTerm?.name, child:
+        DropdownButtonHideUnderline(child:
+          DropdownButton2<StudentCourseTerm>(
+            dropdownStyleData: DropdownStyleData(
+              width:  _termsDropdownWidth ??= _evaluateTermsDropdownWidth(),
+              padding: EdgeInsets.zero
+            ),
+        customButton: Map2FilterTextButton(
+          title: StudentCourses().displayTerm?.name ?? Localization().getStringEx('panel.map2.button.terms.title', 'Terms'),
+          hint: Localization().getStringEx('panel.map2.button.terms.hint', 'Tap to choose term'),
+          rightIcon: Styles().images.getImage('chevron-down'),
+          //onTap: _onSort,
+        ),
+        isExpanded: false,
+        items: _buildTermsDropdownItems(),
+        onChanged: _onTerm,
+      )
+    )),
+  );
+
+  List<DropdownMenuItem<StudentCourseTerm>> _buildTermsDropdownItems() {
+    List<DropdownMenuItem<StudentCourseTerm>> items = <DropdownMenuItem<StudentCourseTerm>>[];
+    String? displayTermId = StudentCourses().displayTermId;
+    List<StudentCourseTerm>? terms = StudentCourses().terms;
+    if (terms != null) {
+      for (StudentCourseTerm term in terms) {
+        String itemTitle = term.name ?? '';
+        TextStyle? itemTextStyle = (term.id == displayTermId) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
+        Widget? itemIcon = (term.id == displayTermId) ? Styles().images.getImage('check', size: 18, color: Styles().colors.fillColorPrimary) : null;
+        items.add(AccessibleDropDownMenuItem<StudentCourseTerm>(key: ObjectKey(term), value: term,
+          child: Semantics(label: itemTitle, button: true, container: true, inMutuallyExclusiveGroup: true,
+            child: Wrap(children: [
+              Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
+              if (itemIcon != null)
+                Padding(padding: EdgeInsets.only(left: 4), child: itemIcon,) ,
+            ],) )));
+      }
+    }
+    return items;
+  }
+
+  double _evaluateTermsDropdownWidth() {
+    double width = 0;
+    List<StudentCourseTerm>? terms = StudentCourses().terms;
+    if (terms != null) {
+      for (StudentCourseTerm term in terms) {
+        final Size sizeFull = (TextPainter(
+            text: TextSpan(
+              text: term.name ?? Localization().getStringEx('panel.map2.button.terms.title', 'Terms'),
+              style: _dropdownEntrySelectedTextStyle,
+            ),
+            textScaler: MediaQuery.of(context).textScaler,
+            textDirection: TextDirection.ltr,
+          )..layout()).size;
+        if (width < sizeFull.width) {
+          width = sizeFull.width;
+        }
+      }
+    }
+    return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width / 2); // add horizontal padding
+  }
+
   Widget get _filtersFilterButton =>
     Map2FilterTextButton(
       title: Localization().getStringEx('panel.map2.button.filters.title', 'Filters'),
@@ -1019,7 +1098,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
           ((sortType != Map2SortType.proximity) || locationAvailable)
       ) {
         String itemTitle = (_selectedSortType == sortType) ? "${sortType.displayTitle} ${_selectedSortOrder.displayMarker}" : sortType.displayTitle;
-        TextStyle? itemTextStyle = (_selectedSortType == sortType) ? _sortEntrySelectedTextStyle : _sortEntryNormalTextStyle;
+        TextStyle? itemTextStyle = (_selectedSortType == sortType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
         items.add(AccessibleDropDownMenuItem<Map2SortType>(key: ObjectKey(sortType), value: sortType,
           child: Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true,
             child: Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,
@@ -1035,7 +1114,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       final Size sizeFull = (TextPainter(
           text: TextSpan(
             text: "${sortType.displayTitle} ${Map2SortOrder.ascending.displayMarker}" ,
-            style: _sortEntrySelectedTextStyle,
+            style: _dropdownEntrySelectedTextStyle,
           ),
           textScaler: MediaQuery.of(context).textScaler,
           textDirection: TextDirection.ltr,
@@ -1053,8 +1132,8 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   Map2SortOrder get _selectedSortOrder => _selectedFilterIfExists?.sortOrder ?? Map2SortOrder.ascending;
   set _selectedSortOrder(Map2SortOrder value) => _selectedFilter?.sortOrder = value;
 
-  TextStyle? get _sortEntryNormalTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
-  TextStyle? get _sortEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
+  TextStyle? get _dropdownEntryNormalTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
+  TextStyle? get _dropdownEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
 
   static const EdgeInsetsGeometry _filterButtonsPadding = EdgeInsets.only(right: 6);
 
@@ -1066,9 +1145,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
 
   _Map2CampusBuildingsFilter? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
   _Map2CampusBuildingsFilter? get _campusBuildingsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: false));
-
   _Map2Events2Filter? get _events2Filter => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: true));
-  //_Map2Events2Filter? get _events2FilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: false));
 
   _Map2Filter? _getFilter(Map2ContentType? contentType, { bool ensure = false }) {
     if (contentType != null) {
@@ -1162,7 +1239,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   }
 
   void _onSortType(Map2SortType? value) {
-    Analytics().logSelect(target: 'Sort');
+    Analytics().logSelect(target: 'Sort: ${value?.displayTitle}');
     setStateIfMounted(() {
       if (_selectedSortType != value) {
         _selectedSortType = value;
@@ -1177,6 +1254,14 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
     );
 
+  }
+
+  void _onTerm(StudentCourseTerm? value) {
+    Analytics().logSelect(target: 'Term: ${value?.name}');
+    setStateIfMounted((){
+      StudentCourses().selectedTermId = value?.id;
+    });
+    _onFilterChanged();
   }
 
   void _onStarred() {
@@ -1234,10 +1319,11 @@ extension _Map2PanelFilters on _Map2HomePanelState {
 
   void _onFilterChanged() {
     if (mounted) {
-      switch(_selectedContentType) {
-        case Map2ContentType.CampusBuildings: _updateFilteredExplores(); break;
-        case Map2ContentType.Events2: _initExplores(progressType: _ExploreProgressType.update); break;
-        default: break;
+      if (_selectedContentType?.supportsManualFilters == true) {
+        _updateFilteredExplores();
+      }
+      else {
+        _initExplores(progressType: _ExploreProgressType.update);
       }
     }
   }
@@ -1717,21 +1803,11 @@ extension _Map2ContentType on Map2ContentType {
   Map2ContentType? _ensure({ Iterable<Map2ContentType>? availableTypes }) =>
       (availableTypes?.contains(this) != false) ? this : null;
 
-  bool supportsSortType(Map2SortType sortType) => (sortType != Map2SortType.dateTime) || supportsDateTimeSort;
+  bool get supportsManualFilters => (this == Map2ContentType.CampusBuildings);
 
-  bool get supportsDateTimeSort {
-    switch(this) {
-      case Map2ContentType.Events2:
-      case Map2ContentType.StudentCourses:       return true;
+  bool supportsSortType(Map2SortType sortType) =>
+    (sortType != Map2SortType.dateTime) || (this == Map2ContentType.Events2);
 
-      case Map2ContentType.CampusBuildings:
-      case Map2ContentType.DiningLocations:
-      case Map2ContentType.Laundries:
-      case Map2ContentType.BusStops:
-      case Map2ContentType.Therapists:
-      case Map2ContentType.MyLocations:          return false;
-    }
-  }
 
 }
 
@@ -1909,9 +1985,9 @@ class _Map2Filter {
   static _Map2Filter? fromContentType(Map2ContentType? contentType) {
     switch (contentType) {
       case Map2ContentType.CampusBuildings:      return _Map2CampusBuildingsFilter();
-      case Map2ContentType.Events2:              return _Map2Events2Filter();
-      case Map2ContentType.StudentCourses:
+      case Map2ContentType.StudentCourses:       return _Map2StudentCoursesFilter();
       case Map2ContentType.DiningLocations:
+      case Map2ContentType.Events2:              return _Map2Events2Filter();
       case Map2ContentType.Laundries:
       case Map2ContentType.BusStops:
       case Map2ContentType.Therapists:
@@ -2024,6 +2100,22 @@ class _Map2CampusBuildingsFilter extends _Map2Filter {
       descriptionMap[buildingsKey] = <String>[buildingsValue];
     }
     return descriptionMap;
+  }
+}
+
+class _Map2StudentCoursesFilter extends _Map2Filter {
+  @override
+  bool get _hasFilter => true;
+
+  @override
+  List<Explore> _filter(List<Explore> explores) {
+    List<Explore> filtered = <Explore>[];
+    for (Explore explore in explores) {
+      if (explore.exploreLocation?.isLocationCoordinateValid == true) {
+        filtered.add(explore);
+      }
+    }
+    return filtered;
   }
 }
 
