@@ -585,7 +585,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   // Tray Sheet
 
-  static const List<double> _traySnapSizes = [0.03, 0.35, 0.65, 0.97];
+  static const List<double> _traySnapSizes = [0.03, 0.35, if (kDebugMode) 0.65, 0.97];
   final double _trayInitialSize = _traySnapSizes[1];
   final double _trayMinSize = _traySnapSizes.first;
   final double _trayMaxSize = _traySnapSizes.last;
