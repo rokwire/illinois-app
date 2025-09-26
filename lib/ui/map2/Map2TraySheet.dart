@@ -22,6 +22,7 @@ import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -58,7 +59,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
             pinned: true,
             toolbarHeight: _traySheetDragHandleHeight + _traySheetPadding.height,
             backgroundColor: Colors.transparent,
-            title: _traySheetDebugDragHandle,
+            title: _traySheetHeading,
           ),
           //SliverPadding(padding: EdgeInsets.only(top: 42), sliver:
           SliverList(
@@ -76,14 +77,36 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
   BorderRadius get _traySheetBorderRadius => BorderRadius.vertical(top: Radius.circular(_traySheetTopRadius));
   BoxShadow get _traySheetBoxShadow => BoxShadow(color: Styles().colors.blackTransparent018 /* Colors.black26 */, blurRadius: 12.0,);
 
-  Widget get _traySheetDebugDragHandle => Row(children: [
-    Expanded(child: Container()),
-    _traySheetDragHandle,
-    Expanded(child: Align(alignment: Alignment.centerRight, child: _traySheetDebugDragInfo))
-  ],);
+  Widget get _traySheetHeading =>
+  Stack(children: [
+    Row(children: [
+      Expanded(child:
+        Padding(padding: EdgeInsets.only(left: 6), child:
+          _traySheetHeadingInfo,
+        )
+      ),
+    ],),
+    Positioned.fill(child:
+      Center(child:
+        _traySheetDragHandle,
+      )
+    ),
 
-  Widget get _traySheetDebugDragInfo =>
-    Text('${widget.visibleExplores?.length} / ${widget.totalExploresCount}', style: Styles().textStyles.getTextStyle('widget.message.tiny'),);
+  ],);
+  /*Row(children: [
+    Expanded(child: Align(alignment: Alignment.centerRight, child: _traySheetDebugDragInfo)),
+    _traySheetDragHandle,
+    Expanded(child: Container()),
+  ],);*/
+
+  Widget get _traySheetHeadingInfo {
+    TextStyle? boldStyle = Styles().textStyles.getTextStyle('widget.message.tiny.fat');
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.message.tiny'); // widget.message.tiny
+    return RichText(text: TextSpan(style: regularStyle, children: <InlineSpan>[
+      TextSpan(text: Localization().getStringEx('panel.map2.tray.header.selected.label', 'Selected: '), style: boldStyle,),
+      TextSpan(text: '${widget.visibleExplores?.length}/${widget.totalExploresCount}', style: regularStyle,),
+    ]));
+  }
 
   Widget get _traySheetDragHandle => Container(
     width: _traySheetWidth * _traySheetDragHandleWidthFactor, height: _traySheetDragHandleHeight,
