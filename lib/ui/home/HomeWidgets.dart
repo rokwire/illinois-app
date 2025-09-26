@@ -262,19 +262,16 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
 // HomeFavoriteWidget
 
 class HomeFavoriteWidget extends StatefulWidget {
-  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 24);
 
   final String? title;
   final Widget? child;
   final String? favoriteId;
   final List<Widget>? actions;
-  final EdgeInsetsGeometry childPadding;
 
 
   const HomeFavoriteWidget({Key? key,
     this.title,
     this.child,
-    this.childPadding = EdgeInsets.zero,
     this.favoriteId,
     this.actions,
   }) : super(key: key);
@@ -287,6 +284,11 @@ class HomeFavoriteWidget extends StatefulWidget {
 
 class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with NotificationsListener {
   late bool _expanded;
+
+  static const EdgeInsets favoriteButtonPadding = const EdgeInsets.symmetric(
+    horizontal: FavoriteStarIcon.defaultSpacing,
+    vertical: FavoriteStarIcon.defaultSpacing - HomeCard.shadowMargin, // Preserve card shadow & keep small vertical offset #5289 & #5331
+  );
 
   @override
   void initState() {
@@ -314,10 +316,8 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
   @override
   Widget build(BuildContext context) => Column(children: [
     _headerWidget,
-    if (_expanded)
-      Padding(padding: widget.childPadding, child:
-        widget.child,
-      ),
+    if (_expanded && (widget.child != null))
+      widget.child ?? Container(),
   ],);
 
   Widget get _headerWidget {
@@ -326,33 +326,43 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
     double titleRightPadding = (((actions != null) && actions.isNotEmpty) || (favoriteId == null)) ? 12 : 0;
     double actionsRightPadding = ((actions != null) && actions.isNotEmpty && (favoriteId == null)) ? 12 : 0;
 
-    return Row(children: [
-      Expanded(child:
-        _titleWidget(rightPadding: titleRightPadding)
-      ),
-
-      if ((actions != null) && actions.isNotEmpty)
-        Padding(padding: EdgeInsets.only(right: actionsRightPadding), child:
-          Row(mainAxisSize: MainAxisSize.min, children:
-            actions,
-          )
+    return Padding(padding: _headerPadding, child:
+      Row(children: [
+        Expanded(child:
+          _titleWidget(rightPadding: titleRightPadding)
         ),
 
-      if (favoriteId != null)
-        HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: FavoriteIconStyle.Button, prompt: true),
-    ],);
+        if ((actions != null) && actions.isNotEmpty)
+          Padding(padding: EdgeInsets.only(right: actionsRightPadding), child:
+            Row(mainAxisSize: MainAxisSize.min, children:
+              actions,
+            )
+          ),
+
+        if (favoriteId != null)
+          HomeFavoriteButton(
+            favorite: HomeFavorite(favoriteId),
+            style: FavoriteIconStyle.Button,
+            padding: favoriteButtonPadding,
+            prompt: true
+          ),
+      ],),
+    );
   }
+
+  EdgeInsets get _headerPadding =>
+    EdgeInsets.only(top: HomeCard.shadowMargin, bottom: _expanded ? 0 : HomeCard.shadowMargin);
 
   Widget _titleWidget({ double rightPadding = 0 }) {
     Widget? dropdownIcon = _dropdownIcon;
     return InkWell(onTap : _onToggleExoanded, child:
       Row(children: [
         if (dropdownIcon != null)
-          Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 12, bottom: 12), child:
+          Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
             dropdownIcon
           ),
         Expanded(child:
-          Padding(padding: EdgeInsets.only(left: (dropdownIcon == null) ? 16 : 0, right: rightPadding, top: 12, bottom: 12), child:
+          Padding(padding: EdgeInsets.only(left: (dropdownIcon == null) ? 16 : 0, right: rightPadding, top: 10, bottom: 10), child:
             Text(widget.title?.toUpperCase() ?? '',
               style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
             ),
@@ -402,14 +412,14 @@ class HomeCardWidget extends StatelessWidget {
   final void Function()? onClose;
 
   HomeCardWidget({super.key, this.title, this.child,
-    this.padding = HomeMessageCard.defaultPadding,
-    this.margin = HomeMessageCard.defaultCardMargin,
+    this.padding = HomeWidget.defaultPadding,
+    this.margin = HomeWidget.defaultMargin,
     this.onClose,
   });
 
   @override
   Widget build(BuildContext context) =>
-    Container(padding: EdgeInsets.only(left: padding.left, bottom: padding.bottom), margin: margin, decoration: HomeCard.defaultDecoration, child:
+    Container(padding: EdgeInsets.only(left: padding.left, bottom: padding.bottom), margin: margin, decoration: HomeCard.boxDecoration, child:
       Column(mainAxisSize: MainAxisSize.min, children: [
         Row(children: [
           Expanded(child:
@@ -459,8 +469,8 @@ class HomeFavoriteButton extends FavoriteButton {
   final HomeFavorite? favorite;
   final bool prompt;
 
-  HomeFavoriteButton({Key? key, this.favorite, required FavoriteIconStyle style, EdgeInsetsGeometry padding = const EdgeInsets.all(16), this.prompt = false}) :
-    super(key: key, favorite: favorite, style: style, padding: padding);
+  HomeFavoriteButton({super.key, this.favorite, required super.style, super.padding = FavoriteStarIcon.defaultPadding, this.prompt = false}) :
+    super(favorite: favorite);
 
   @override
   bool? get isFavorite {
@@ -662,7 +672,7 @@ class HomeCommandButton extends StatelessWidget {
     return Semantics(label: title, hint: description, button: true, child:
       InkWell(onTap: onTap, child: Container(
           padding: EdgeInsets.only(left: 16, bottom: 16),
-          decoration: HomeCard.defaultDecoration,
+          decoration: HomeCard.boxDecoration,
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
@@ -692,31 +702,69 @@ class HomeCommandButton extends StatelessWidget {
 }
 
 ////////////////////////////
+// HomeWidget
+
+class HomeWidget {
+  static const EdgeInsets defaultPadding = const EdgeInsets.all(16);
+
+  static const EdgeInsets defaultMargin = const EdgeInsets.symmetric(
+      horizontal: horizontalMargin,
+      vertical: verticalMargin
+  );
+  static const double horizontalMargin = 16;
+  static const double verticalMargin = 24;
+}
+
+////////////////////////////
 // HomeCard
 
 class HomeCard {
   
-  static BoxDecoration get defaultDecoration => BoxDecoration(
-    color: defaultBackColor,
-    borderRadius: defaultBorderRadius,
-    boxShadow: [defaultShadow],
+  static BoxDecoration get boxDecoration => BoxDecoration(
+    color: backColor,
+    borderRadius: borderRadius,
+    boxShadow: [boxShadow],
   );
 
-  static Color get defaultBackColor => Styles().colors.surface;
+  static Color get backColor => Styles().colors.surface;
 
-  static const BorderRadius defaultBorderRadius = const BorderRadius.all(defaultRadius);
-  static const Radius defaultRadius = const Radius.circular(12);
+  static const BorderRadius borderRadius = const BorderRadius.all(radius);
+  static const Radius radius = const Radius.circular(12);
 
-  static BoxShadow get defaultShadow => BoxShadow(
-    color: defaultShadowColor,
-    spreadRadius: defaultShadowSpreadRadius,
-    blurRadius: defaultShadowBlurRadius,
-    offset: defaultShadowOffset
+  static BoxShadow get boxShadow => BoxShadow(
+    color: shadowColor,
+    spreadRadius: shadowSpreadRadius,
+    blurRadius: shadowBlurRadius,
+    offset: shadowOffset
   );
-  static Color get defaultShadowColor => Styles().colors.dropShadow;
-  static const double defaultShadowSpreadRadius = 1.0;
-  static const double defaultShadowBlurRadius = 3.0;
-  static const Offset defaultShadowOffset = const Offset(1, 1);
+  static Color get shadowColor => Styles().colors.dropShadow;
+  static const double shadowSpreadRadius = 1.0;
+  static const double shadowBlurRadius = 3.0;
+  static const Offset shadowOffset = const Offset(1, 1);
+  
+  static const double shadowMargin = shadowBlurRadius;
+
+  // When a single static card is embedded inside HomeFavoriteWidget
+  static const EdgeInsets defaultChildMargin = const EdgeInsets.only(
+      left: HomeWidget.horizontalMargin,
+      right: HomeWidget.horizontalMargin,
+      top: HomeCard.shadowMargin,
+      bottom: HomeWidget.verticalMargin
+  );
+
+  // When a card is item of ExpandablePageView, embedded inside HomeFavoriteWidget
+  static const EdgeInsets defaultPageMargin = const EdgeInsets.only(
+      right: pageSpacing,
+      top: HomeCard.shadowMargin,
+      bottom: HomeCard.shadowMargin
+  );
+  static const double pageSpacing = 16;
+
+  // When a single (non-scrollable) card takes space of ExpandablePageView, embedded inside HomeFavoriteWidget
+  static const EdgeInsets defaultSingleCardMargin = const EdgeInsets.symmetric(
+      horizontal: HomeWidget.horizontalMargin,
+      vertical: HomeCard.shadowMargin,
+  );
 }
 
 ////////////////////////////
@@ -732,20 +780,17 @@ class HomeMessageCard extends StatelessWidget {
   HomeMessageCard({Key? key,
     this.title,
     this.message,
-    this.margin = defaultChildMargin,
-    this.padding = defaultPadding,
+    this.margin = HomeCard.defaultChildMargin,
+    this.padding = HomeWidget.defaultPadding,
   }) : super(key: key);
 
-  static const EdgeInsets defaultPadding = const EdgeInsets.all(16);
-  static const EdgeInsets defaultChildMargin = const EdgeInsets.only(left: 16, right: 16, bottom: 24);
-  static const EdgeInsets defaultCardMargin = const EdgeInsets.symmetric(horizontal: 16, vertical: 24);
 
   @override
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
       Semantics(child:
         Container(padding: padding,
-          decoration: HomeCard.defaultDecoration,
+          decoration: HomeCard.boxDecoration,
           child: Column(children: <Widget>[
             StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
               Expanded(child:
@@ -780,8 +825,8 @@ class HomeMessageHtmlCard extends StatelessWidget {
 
   HomeMessageHtmlCard({Key? key,
     this.title, this.message,
-    this.margin = HomeMessageCard.defaultChildMargin,
-    this.padding = HomeMessageCard.defaultPadding,
+    this.margin = HomeCard.defaultChildMargin,
+    this.padding = HomeWidget.defaultPadding,
     this.linkColor, this.onTapLink
   }) : super(key: key);
 
@@ -789,7 +834,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
       Container(padding: padding,
-        decoration: HomeCard.defaultDecoration,
+        decoration: HomeCard.boxDecoration,
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
@@ -835,7 +880,7 @@ class HomeProgressWidget extends StatelessWidget {
   final Color? progressColor;
 
   HomeProgressWidget({Key? key,
-    this.padding = const EdgeInsets.only(left: 16, right: 16, top: 96, bottom: 32),
+    this.padding = const EdgeInsets.only(left: 16, right: 16, top: 48, bottom: 48),
     this.progessSize = const Size(24, 24),
     this.progessWidth = 3,
     this.progressColor,
@@ -871,7 +916,6 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   String? get emptyTitle => null;
   String? get emptyMessage;
 
-  double  get pageSpacing => 16;
   double  get contentSpacing => 16;
   double  get contentInnerSpacing => 8;
 
@@ -937,7 +981,6 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: favoriteId,
       title: title,
-      childPadding: EdgeInsets.zero,
       child: _buildContent(),
     );
   }
@@ -947,19 +990,23 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
       return HomeMessageCard(title: emptyTitle, message: emptyMessage,);
     }
     else if (_displayCodes?.length == 1) {
-      return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: contentSpacing), child:
+      return Padding(padding: HomeCard.defaultChildMargin, child:
         widgetFromCode(_displayCodes!.single) ?? Container()
       );
     }
     else if (direction == Axis.horizontal) {
       List<Widget> pages = <Widget>[];
       for (String code in _displayCodes!) {
-        pages.add(Padding(key: _contentKeys[code] ??= GlobalKey(), padding: EdgeInsets.only(right: pageSpacing, bottom: contentSpacing / 2), child: widgetFromCode(code) ?? Container()));
+        pages.add(Padding(
+          key: _contentKeys[code] ??= GlobalKey(),
+          padding: HomeCard.defaultPageMargin,
+          child: widgetFromCode(code) ?? Container()
+        ));
       }
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage);
       }
 
@@ -982,10 +1029,16 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
     else { // (direction == Axis.vertical)
       List<Widget> contentList = <Widget>[];
       for (String code in _displayCodes!) {
-        contentList.add(Padding(padding: EdgeInsets.only(bottom: contentInnerSpacing), child: widgetFromCode(code) ?? Container()));
+        Widget? contentWidget = widgetFromCode(code);
+        if (contentWidget != null) {
+          contentList.add(Padding(
+            padding: EdgeInsets.only(top: contentList.isNotEmpty ? contentInnerSpacing : 0),
+            child: contentWidget
+          ));
+        }
       }
 
-      return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: contentSpacing + 2, ), child:
+      return Padding(padding: HomeCard.defaultChildMargin, child:
         Column(children: contentList,),
       );
     }
@@ -1064,7 +1117,9 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
 
       _pageViewKey = UniqueKey();
       // _pageController = null;
-      _pageController?.jumpToPage(0);
+      if (_displayCodes?.isNotEmpty == true) {
+        _pageController?.jumpToPage(0);
+      }
     }
   }
 }

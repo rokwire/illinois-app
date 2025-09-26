@@ -737,10 +737,10 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   }
 
   BoxDecoration get _cardDecoration => (widget.displayType == GroupCardDisplayType.homeGroups) ?
-      HomeCard.defaultDecoration : _defaultCardDecoration;
+      HomeCard.boxDecoration : _defaultCardDecoration;
 
   static BoxDecoration get _defaultCardDecoration => BoxDecoration(
-    color: HomeCard.defaultBackColor,
+    color: HomeCard.backColor,
     borderRadius: defaultCardBorderRadius,
     boxShadow: [_defaultCardShadow]
   );
@@ -3993,13 +3993,13 @@ class _GroupReactionsState extends State<GroupReactionsLayout> with Notification
   void _onTapReaction(Reaction? reaction){
     _sendReaction(reaction?.isCurrentUserReacted == true ?
         reaction :
-        Reaction.emoji(emojiSource: reaction?.emoji, emojiName: reaction?.emojiName));
+        Reaction.emoji(emojiSource: reaction?.emoji, emojiName: reaction?.emojiName, innerContext: ContextItem(identifier: widget.group?.id)));
   }
 
   void _reactWithEmoji(emoji.Emoji emoji){//Emoji coming from the Emoji picker
     List<Reaction>? userReactions = ReactionExt.extractUsersReactions(_reactions, emoji: emoji.emoji);
     _sendReaction(CollectionUtils.isNotEmpty(userReactions) ? userReactions!.first :
-          Reaction.emoji(emojiSource: emoji.emoji, emojiName: emoji.name));
+          Reaction.emoji(emojiSource: emoji.emoji, emojiName: emoji.name, innerContext: ContextItem(identifier: widget.group?.id)));
   }
 
   void _sendReaction(Reaction? reaction){
@@ -4091,7 +4091,7 @@ class _GroupReactionsState extends State<GroupReactionsLayout> with Notification
     setStateIfMounted(() {
       _loading = true;
     });
-    Social().loadReactions(entityId: widget.entityId!, source: widget.reactionSource).then((result) =>
+    Social().loadReactions(entityId: widget.entityId!, source: widget.reactionSource, innerContextIdentifier: widget.group?.id).then((result) =>
         _reactions = result
     ).whenComplete(()=>
       setStateIfMounted(() =>

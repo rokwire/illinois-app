@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [7.2.25] - 2025-09-23
+### Added
+- Add separate we care resources url [#4954](https://github.com/rokwire/illinois-app/issues/4954).
+### Changed
+- Make resource detail text selectable [#5394](https://github.com/rokwire/illinois-app/issues/5394).
+- Show custom context menu in iOS when long pressing an Assistant message [#5391](https://github.com/rokwire/illinois-app/issues/5391).
+### Fixed
+- Loading Women's Volleyball events [#5396](https://github.com/rokwire/illinois-app/issues/5396).
+
+## [7.2.24] - 2025-09-18
+### Changed
+- Acknowledge Comment innerContext field and pass it when create/delete/load comments [#5356](https://github.com/rokwire/illinois-app/issues/5356).
+### Fixed
+- Modifying event attendance details [#5385](https://github.com/rokwire/illinois-app/issues/5385).
+
+## [7.2.23] - 2025-09-17
+### Added
+- Acknowledge Reaction innerContext field [#5238](https://github.com/rokwire/illinois-app/issues/5238).
+- Sort "My Courses" chronologically [#4897](https://github.com/rokwire/illinois-app/issues/4897).
+- Added New Sexual Misconduct Section (GBV project) [#4954](https://github.com/rokwire/illinois-app/issues/4954).
+### Changed
+- Updates to Event Feed Intro Screen [#5332](https://github.com/rokwire/illinois-app/issues/5332)
+- Group Event Notifications redirect to Group Detail Panel and after that to EventDetailPanel [#5348](https://github.com/rokwire/illinois-app/issues/5348).
+- Split iOS build script into copying GoogleService-Info.plist and uploading DSYMs for Crashlytics, fixed run script's input & output files.
+- Load Assistant promo content in Events panel from content service [#5380](https://github.com/rokwire/illinois-app/issues/5380).
+### Fixed
+- UI Clean Up: fixed shadow cut off of home cards when embedded in ExpandablePageView [#5289](https://github.com/rokwire/illinois-app/issues/5289).
+- UI Clean Up: fixed spacings within favorites widget headings and bodies [#5331](https://github.com/rokwire/illinois-app/issues/5331).
+- Hide link to floorplans if the building has no floors in the campus data [#5340](https://github.com/rokwire/illinois-app/issues/5340).
+- Ensure that the content in Customize panel is visible [#5354](https://github.com/rokwire/illinois-app/issues/5354).
+- Fixed HomeFavoritesWidget update exception.
+- Show sub-events based on the selected time filter [#5371](https://github.com/rokwire/illinois-app/issues/5371).
+- Acknowledge time filter when showing group events [#5371](https://github.com/rokwire/illinois-app/issues/5371).
+### Removed
+- Removed first and last name parameters to some Illini Cash API calls [#5376](https://github.com/rokwire/illinois-app/issues/5376).
+
 ## [7.2.22] - 2025-08-05
 ### Changed
 - Add space in the text for polls timestamp [#5321](https://github.com/rokwire/illinois-app/issues/5321).

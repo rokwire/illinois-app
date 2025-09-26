@@ -97,7 +97,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> with Notification
 
   BoxDecoration get _cardDecoration {
     switch (widget.displayMode) {
-      case CardDisplayMode.home: return HomeCard.defaultDecoration;
+      case CardDisplayMode.home: return HomeCard.boxDecoration;
       case CardDisplayMode.browse: return _browseDecoration;
     }
   }

@@ -51,13 +51,14 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> with 
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessRingsWidget.title,
-      childPadding: HomeFavoriteWidget.defaultChildPadding,
-      child: _buildContent(),
+      child: Padding(padding: HomeCard.defaultChildMargin,
+        child: _buildContent(),
+      ),
     );
   }
 
   Widget _buildContent() {
-    return Container(decoration: HomeCard.defaultDecoration, child:
+    return Container(decoration: HomeCard.boxDecoration, child:
       Padding(padding: EdgeInsets.only(top: 20, right: 13, bottom: 0, left: 2), child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [

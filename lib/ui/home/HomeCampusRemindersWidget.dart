@@ -56,7 +56,6 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
-  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -127,14 +126,16 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         Map<String, dynamic>? reminderItem = JsonUtils.mapValue(_reminderItems![index]);
-        pages.add(Padding(key: _contentKeys[Guide().entryId(reminderItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8), child:
-          GuideEntryCard(reminderItem, displayMode: CardDisplayMode.home,)
+        pages.add(Padding(
+          key: _contentKeys[Guide().entryId(reminderItem) ?? ''] ??= GlobalKey(),
+          padding: HomeCard.defaultPageMargin,
+          child: GuideEntryCard(reminderItem, displayMode: CardDisplayMode.home,)
         ));
       }
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport);
       }
 
@@ -150,14 +151,14 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
 
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         GuideEntryCard(_reminderItems?.first, displayMode: CardDisplayMode.home)
       );
     }
     return Column(children: <Widget>[
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
-      HomeBrowseLinkButton(
+        HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.campus_reminders.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.campus_reminders.button.all.hint', 'Tap to view all reminders'),
           onTap: _onViewAll,
@@ -173,7 +174,9 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
         _reminderItems = List<Map<String, dynamic>>.from(reminderItems);
         _pageViewKey = UniqueKey();
         // _pageController = null;
-        _pageController?.jumpToPage(0);
+        if (_reminderItems?.isNotEmpty == true) {
+          _pageController?.jumpToPage(0);
+        }
         _contentKeys.clear();
       });
     }

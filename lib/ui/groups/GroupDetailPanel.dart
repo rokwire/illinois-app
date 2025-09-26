@@ -89,11 +89,12 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
 
   final Group? group;
   final String? groupIdentifier;
-  final String? groupPostId;
-  final String? groupPostCommentId;
+  final String? groupPostId; //Preload post
+  final String? groupPostCommentId; //Preload post comment
+  final String? groupEventId; //Preload event
   final AnalyticsFeature? _analyticsFeature;
 
-  GroupDetailPanel({this.group, this.groupIdentifier, this.groupPostId, AnalyticsFeature? analyticsFeature, this.groupPostCommentId}) :
+  GroupDetailPanel({this.group, this.groupIdentifier, this.groupPostId, AnalyticsFeature? analyticsFeature, this.groupPostCommentId, this.groupEventId}) :
     _analyticsFeature = analyticsFeature;
 
   @override
@@ -408,7 +409,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         //   _currentTab = DetailTab.About; //TBD
         // }
         _tabs = _buildDetailTabs();
-        _redirectToGroupPostIfExists();
+        _redirectToInnerDetailIfNeeded();
         _loadGroupAdmins();
 
         _updateController.add(GroupDetailPanel.notifyRefresh);
@@ -438,7 +439,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   ///
   /// Loads group post by id (if exists) and redirects to Post detail panel
   ///
-  void _redirectToGroupPostIfExists() {
+  void _redirectToInnerDetailIfNeeded() {
     if ((_groupId != null) && (_postId != null)) {
       _increaseProgress();
       Social().loadSinglePost(groupId: _group!.id, postId: _postId!).then((post) {
@@ -448,6 +449,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
           Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group!, post: post, visibleCommentId: widget.groupPostCommentId, analyticsFeature: widget.analyticsFeature)));
         }
       });
+    } else if (_groupId != null && StringUtils.isNotEmpty(widget.groupEventId)){
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(group: _group!, eventId: widget.groupEventId,)));
     }
   }
 
@@ -1724,6 +1727,7 @@ class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsLi
         content.add(Padding(padding: EdgeInsets.only(bottom: 16),
             child: Event2Card(key: ObjectKey(groupEvent),
                 groupEvent, group: widget.group,
+                timeFilter: widget.timeFilter,
                 onTap: () => _onTapEvent(groupEvent))));
       }
 
@@ -1772,7 +1776,7 @@ class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsLi
     Analytics().logSelect(target: 'Group Event: ${event.name}');
     Navigator.push(context, CupertinoPageRoute( builder: (context) => (event.hasGame == true) ?
     AthleticsGameDetailPanel(game: event.game, event: event, group: widget.group) :
-    Event2DetailPanel(event: event, group: widget.group)));
+    Event2DetailPanel(event: event, timeFilter: widget.timeFilter, group: widget.group)));
   }
 
   //Logic

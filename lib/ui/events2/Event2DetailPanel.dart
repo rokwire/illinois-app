@@ -16,6 +16,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/RecentItems.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
 import 'package:illinois/ui/events2/Event2AdvancedSettingsPanel.dart';
 import 'package:illinois/ui/events2/Event2ManageDataPanel.dart';
@@ -58,11 +59,12 @@ class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
   final Survey? survey;
   final Group? group;
   final Position? userLocation;
+  final Event2TimeFilter? timeFilter;
   final Event2Selector2? eventSelector;
   final void Function(Event2DetailPanelState)? onInitialized;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.eventSelector, this.onInitialized, this.analyticsFeature});
+  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.timeFilter, this.eventSelector, this.onInitialized, this.analyticsFeature});
   
   @override
   State<StatefulWidget> createState() => Event2DetailPanelState();
@@ -1388,6 +1390,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
     Analytics().logSelect(target: "Event Attendance", attributes: _event?.analyticsAttributes);
     Navigator.push<dynamic>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(
       event: _event,
+      attendanceDetails: _event?.attendanceDetails,
     ))).then((dynamic event) {
       if (event is Event2) {
         setStateIfMounted(() {
@@ -1535,7 +1538,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
       List<Event2Grouping>? linkedEventsGroupings = _event?.linkedEventsGroupingQuery;
       int? linkedEventsIndex = ((linkedEventsGroupings != null) && (_linkedEvents == null)) ? futures.length : null;
       if (linkedEventsIndex != null) {
-        futures.add(Events2().loadEvents(Events2Query(groupings: linkedEventsGroupings, limit: _linkedEventsPageLength)));
+        futures.add(Events2().loadEvents(Events2Query(groupings: linkedEventsGroupings, timeFilter: _queryTimeFilter, limit: _linkedEventsPageLength)));
         //TMP: futures.add(Events2().loadEvents(Events2Query(searchText: 'Prairie')));
         setState(() {
           _linkedEventsLoading = true;
@@ -1619,7 +1622,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
           List<Event2Grouping>? linkedEventsGroupings = event.linkedEventsGroupingQuery;
           int? linkedEventsIndex = (linkedEventsGroupings != null) ? futures.length : null;
           if (linkedEventsIndex != null) {
-            futures.add(Events2().loadEvents(Events2Query(groupings: linkedEventsGroupings, limit: (_linkedEvents?.length ?? _linkedEventsPageLength))));
+            futures.add(Events2().loadEvents(Events2Query(groupings: linkedEventsGroupings, timeFilter: _queryTimeFilter, limit: (_linkedEvents?.length ?? _linkedEventsPageLength))));
           }
 
           int? superEventIndex = event.isSuperEventChild ? futures.length : null;
@@ -1708,7 +1711,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
       setStateIfMounted(() {
         _extendingLinkedEvents = true;
       });
-      Events2ListResult? linkedEventsListResult = await Events2().loadEvents(Events2Query(groupings: linkedEventsGroupings, offset: _linkedEvents?.length ?? 0, limit: _linkedEventsPageLength));
+      Events2ListResult? linkedEventsListResult = await Events2().loadEvents(Events2Query(groupings: linkedEventsGroupings, timeFilter: _queryTimeFilter, offset: _linkedEvents?.length ?? 0, limit: _linkedEventsPageLength));
       List<Event2>? events = linkedEventsListResult?.events;
       int? totalCount = linkedEventsListResult?.totalCount;
 
@@ -1744,6 +1747,8 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
   bool get _isGroupEvent => (_event?.isGroupEvent == true);
+
+  Event2TimeFilter get _queryTimeFilter => (widget.timeFilter ?? Event2TimeFilterImpl.fromJson(Storage().events2Time)) ?? Event2TimeFilter.upcoming;
 
   Event2? get event => _event;
 }

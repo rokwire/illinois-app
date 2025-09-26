@@ -171,7 +171,8 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
   Key _visibilityDetectorKey = UniqueKey();
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
-  final double _pageSpacing = 16;
+
+  Event2TimeFilter? _queryTimeFilter;
 
   _HomeEvent2WidgetState({
     this.timeFilter, this.customStartTime, this.customEndTime,
@@ -311,14 +312,14 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
         String contentKey = "${event.id}-$index";
         pages.add(Padding(
           key: _contentKeys[contentKey] ??= GlobalKey(),
-          padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
-          child: Event2Card(event, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, onTap: () => _onTapEvent2(event),)));
+          padding: HomeCard.defaultPageMargin,
+          child: Event2Card(event, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, timeFilter: _queryTimeFilter, onTap: () => _onTapEvent2(event),)));
       }
 
       if (_hasMoreEvents != false) {
         pages.add(Padding(
           key: _contentKeys[_progressContentKey] ??= GlobalKey(),
-          padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
+          padding: EdgeInsets.only(right: HomeCard.pageSpacing, bottom: 8),
           child: HomeProgressWidget(
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 36),
           ),
@@ -327,7 +328,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport);
       }
 
@@ -343,8 +344,8 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 8), child:
-        Event2Card(_events!.first, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, onTap: () => _onTapEvent2(_events!.first))
+      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
+        Event2Card(_events!.first, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, timeFilter: _queryTimeFilter, onTap: () => _onTapEvent2(_events!.first))
       );
     }
 
@@ -472,6 +473,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
       queryCustomStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
       queryCustomEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
     }
+    _queryTimeFilter = queryTimeFilter;
 
     LinkedHashSet<Event2TypeFilter>? queryTypes = _queryTypes;
     Event2SortType? querySortType = _querySortType;

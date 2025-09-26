@@ -1,0 +1,1755 @@
+{
+    "directoryCategories": [
+        "EMERGENCY",
+        "24/7 HOTLINES",
+        "ON CAMPUS (PRIMARY)",
+        "ON CAMPUS (OTHER)",
+        "OFF CAMPUS",
+        "EDUCATIONAL"
+    ],
+    "screens": {
+        "confidential_resources": {
+            "type": "panel",
+            "title": "Confidential Resources",
+            "description": "A confidential resource is an individual who is not required to disclose reports of sexual misconduct to the university or law enforcement.",
+            "content": [
+                {
+                    "title": "ON CAMPUS",
+                    "resourceIds": [
+                        "confidential_advisors",
+                        "mckinley_health_center_medical",
+                        "counseling_center"
+                    ]
+                },
+                {
+                    "title": "OFF CAMPUS",
+                    "resourceIds": [
+                        "rape_advocacy_and_counseling",
+                        "courage_connection"
+                    ]
+                }
+            ]
+        },
+        "supporting_a_friend": {
+            "type": "panel",
+            "title": "Supporting a Friend",
+            "description": "",
+            "content": [
+                {
+                    "title": "",
+                    "resourceIds": [
+                        "strive_to_support_a_friend",
+                        "learn_about_resources",
+                        "become_an_ally"
+                    ]
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "id": "emergencies_911",
+            "type": "external_link",
+            "categories": [
+                "EMERGENCY"
+            ],
+            "title": "Emergencies (911)",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "Report emergencies or non-emergency criminal violations. 911 from a public phone or cell phone."
+                },
+                {
+                    "type": "phone",
+                    "content": "911"
+                }
+            ]
+        },
+        {
+            "id": "become_an_ally",
+            "type": "external_link",
+            "categories": [],
+            "title": "Become an ally, educator, or advocate in the prevention of sex-based misconduct",
+            "directoryContent": [
+                {
+                    "type": "external_link",
+                    "content": "https://wecare.illinois.edu/prevention/students/"
+                }
+            ],
+            "description": "",
+            "detailsList": []
+        },
+        {
+            "id": "carle_foundation_hospital",
+            "type": "panel",
+            "categories": [
+                "OFF CAMPUS",
+                "EMERGENCY"
+            ],
+            "title": "Carle Foundation Hospital",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "The emergency department is open 24 hours/day and 365 days/year and offers evidence collection (rape kit) and medical treatment."
+                }
+            ],
+            "description": "The emergency department offers medical forensic services provided by a trained Sexual Assault Nurse Examiner (SANE). Even if you do not opt for forensic evidence collection, health care professionals can treat injuries and take steps to address concerns of pregnancy and/or sexually transmitted diseases/infections.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                        {
+                            "type": "address",
+                            "content": "611 W. Park St., Urbana, IL 61801"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-383-3319"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-326-6452"
+                        },
+                        {
+                            "type": "text",
+                            "content": "When contacting the Emergency Department at 217-383-3319, ask to speak with a SANE nurse."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Contact a SANE Coordinator at 217-326-6452 for consultation Monday through Friday, 8 a.m. - 4 p.m."
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Emergency Department: 24 hours/day, 365 days/year"
+                        }
+                    ]
+                },
+                {
+                    "title": "Staff",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "There is a trained SANE nurse either staffed in the emergency department or on call 24/7 to respond to and care for survivors of sexual violence."
+                        }
+                    ]
+                },
+                {
+                    "title": "What do I say when seeking support?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "You will check into the emergency department and inform registration staff that you are there for treatment after a sexual assault. You do not need to share any details about the incident with registration or triage staff."
+                        },
+                        {
+                            "type": "text",
+                            "content": "A nurse will take your vital signs and ask routine screening questions unrelated to the assault."
+                        },
+                        {
+                            "type": "text",
+                            "content": "After triage, you’ll be taken to a private room to wait for the SANE to arrive."
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "If you choose to have a medical forensic exam after a sexual assault, here’s what you should know:"
+                        },
+                        {
+                            "type": "text",
+                            "content": "What the Exam May Include:\n• A physical exam\nEvidence collection\n• Forensic photography\n• Lab tests and/or medications\n• Support from a rape crisis center advocate"
+                        },
+                        {
+                            "type": "text",
+                            "content": "You Are in Control:\n• You decide which parts of the exam yoou want or don't want.\n• Nothing will be done without your consent."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Evidence Collection\nAvailable within 7 days of the assault.\nYou can choose:\n• To have evidence collected or not.\n• To release your evidence for testing now or store it for up to 10 years.\n• To collect and store evidence even if you’re not ready to notify law enforcement."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Law Enforcement Notification\n• Hospital staff must notify law enforcement that a crime occurred, but your identity can remain anonymous.\n• You decide if and when to report to law enforcement and what information is shared."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Coverage for Your Visit\n• You will receive a payment voucher that covers:\n• Your initial Emergency Department (ED) visit\n• Any related follow-up care within 180 days, including:\n• Medications\n• Lab Tests\n• Mental health resources\n• Your primary insurance will be billed, but you will have no out-of-pocket costs related to your visit.\n• If you are not the policyholder on your insurance (e.g., a parent, caregiver, or spouse is), you can opt out of billing your primary insurance to keep your visit private."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "champaign_police_department",
+            "type": "panel",
+            "categories": [
+                "OFF CAMPUS"
+            ],
+            "title": "Champaign Police Department",
+            "directoryContent": [],
+            "description": "To file a report with a local police department, call 217-333-8911. Dispatchers will connect callers with a police officer from a local agency based on the location of the incident. Online reports cannot be accepted.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                         {
+                            "type": "text",
+                            "content": "Located near the intersection of First Street and University Avenue in Champaign."
+                        },
+                        {
+                            "type": "address",
+                            "content": "82 E. University Ave., Champaign, IL 61820"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-333-8911"
+                        },
+                         {
+                            "type": "phone",
+                            "content": "911"
+                        },
+                         {
+                            "type": "text",
+                            "content": "Always call 911 in an emergency."
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Officers and building lobby are available 24/7 to promote safety in the community."
+                        }
+                    ]
+                },
+                {
+                    "title": "Staff",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Law enforcement personnel meet with survivors and conduct interviews for a criminal investigation of an incident of gender-based violence. The City of Champaign’s Justice Victim Advocates provide referrals to trauma-informed care."
+                        }
+                    ]
+                },
+                {
+                    "title": "What do I say when seeking support?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "When calling the department, explain what occurred and where it took place. Dispatchers will send an officer from the appropriate agency based on location."
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Officers will conduct interviews of survivors, witnesses, and reported subjects to ensure incident reporting, evidence gathering, and investigation of an incident of gender-based violence. Investigations are reviewed by the Champaign County State’s Attorney’s Office for final decisions on charges in the criminal justice system."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "confidential_advisors",
+            "type": "panel",
+            "categories": [
+                "ON CAMPUS (PRIMARY)"
+            ],
+            "title": "Confidential Advisors at WRC",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "Available to students and employees of ALL genders."
+                }
+            ],
+            "description": "Confidential Advisors are staff trained and dedicated to provide survivor support and advocacy at the Women’s Resources Center (WRC), an on-campus resource for students and employees of ALL genders.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                        {
+                            "type": "address",
+                            "content": "616 East Green Street, Suite 213 Champaign, IL 61820"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-333-3137"
+                        },
+                        {
+                            "type": "email",
+                            "content": "wrcadvocacy@illinois.edu"
+                        },
+                        {
+                            "type": "external_link",
+                            "content": "https:/wrc.illinois.edu/advocacy/confidential-advising"
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "In-person services can be accessed on weekdays from 9 a.m. to 5 p.m. on a walk-in basis or by making an appointment."
+                        },
+                        {
+                            "type": "text",
+                            "content": "To schedule a free appointment over the phone, call us at 217-333-3137 (select extension 2 when prompted) and leave the following limited pieces of information (voicemails are not confidential and we want to keep you as safe as possible):"
+                        },
+                        {
+                            "type": "text",
+                            "content": "• Your first name;\n• A safe phone number where we can reach you; and\n• Whether it is safe for us to leave you a voicemail when calling you back."
+                        },
+                        {
+                            "type": "text",
+                            "content": "You will receive a follow-up email or phone call from a confidential advisor within one business day."
+                        }
+                    ]
+                },
+                {
+                    "title": "Staff",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Advocacy staff members serve as Confidential Advisors and are available to meet with survivors. To learn more about the entire WRC team, visit:"
+                        },
+                        {
+                            "type": "external_link",
+                            "content": "https://wrc.illinois.edu/about/our-team"
+                        }
+                    ]
+                },
+                {
+                    "title": "What do I say when seeking support?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Students can make appointments by calling, emailing, or walking into the WRC."
+                        },
+                        {
+                            "type": "text",
+                            "content": "[Subject: Request]"
+                        },
+                        {
+                            "type": "text",
+                            "content": "I am a student at the University of Illinois. I'd like to meet with a confidential advisor."
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "After contacting the WRC, you will receive a follow-up email or phone call from a confidential advisor within one business day."
+                        },
+                        {
+                            "type": "text",
+                            "content": "When visiting the WRC in person:"
+                        },
+                        {
+                            "type": "text",
+                            "content": "The WRC is located at 616 E. Green St, Suite 213, between McDonald's and Subway on the second floor. When you reach the 2nd floor, Suite 213 is down the hall on the left."
+                        },
+                        {
+                            "type": "text",
+                            "content": "You'll be greeted by staff (or student staff) at the front desk. They will offer you coffee/tea/water and invite you to complete an intake form to prepare for your appointment."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "connie_frank_care",
+            "type": "panel",
+            "categories": [
+                "ON CAMPUS (OTHER)"
+            ],
+            "title": "Connie Frank CARE (Coordination, Assistance, Response, and Education) Center",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "The center can connect students to desired resources. Reports of sexual misconduct will be forwarded to the Title IX Office."
+                }
+            ],
+            "description": "The Connie Frank CARE Center in the Office of the Dean of Students can take reports, facilitate connecting students to desired resources, and provide assistance and support to all students. No appointment is needed to meet with a staff member during drop-in hours.\n\nReports of sexual misconduct made to the Connie Frank CARE Center will be forwarded to the Title IX Office.\n\nThe office also manages the Emergency Dean program, which provides after-hours and weekend/holiday assistance for situations that require an immediate university response before the next business day. Staff members serve on rotation and take calls from home.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                        {
+                            "type": "external_link",
+                            "content": "https://www.odos.illinois.edu/community-of-care/CAREcenter"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-333-0050"
+                        },
+                        {
+                            "type": "text",
+                            "content": "Call to speak with staff or to schedule appointments."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Drop-In Hours (no appointment needed):\nMonday, Tuesday, Thursday, Friday: 10 a.m. - 3 p.m.\nWednesday: 1 - 4 p.m."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Appointments\nAll appointments must be scheduled at least one day in advance. Call to schedule an appointment. Please be sure to indicate your preferred appointment type (phone, in-person, video conference) when you call."
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Drop-In Hours\nMonday and Tuesday: 10 a.m. - 3 p.m.\nWednesday: 1 p.m. - 4 p.m.\nThursday and Friday: 10 a.m. - 3 p.m."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Please note that staff is only able to meet with one student at a time, so there may be a wait. Staff will meet with students in the order they arrive. For issues that are more complex, we ask that you please schedule an appointment."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Office Hours\nMonday - Friday: 8:30 a.m. - 5 p.m."
+                        }
+                    ]
+                },
+                {
+                    "title": "Staff",
+                    "content": [
+                        {
+                            "type": "external_link",
+                            "content": "https://odos.illinois.edu/community-of-care/CAREcenter#team"
+                        }
+                    ]
+                },
+                {
+                    "title": "What do I say when seeking support?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "When checking in or calling, simply let the front office staff know that you would like to speak with someone about a personal matter. Feel free to state that you are seeking academic assistance if that is something that you would like to discuss."
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Upon entering the office, front office staff will ask how we can help you. You will then be asked to complete a check-in form. After submitting the form, there may be a wait until the staff member on duty comes to get you. You will then meet privately to discuss your needs/concerns."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "counseling_center",
+            "type": "panel",
+            "categories": [
+                "ON CAMPUS (OTHER)"
+            ],
+            "title": "Counseling Center",
+            "directoryContent": [],
+            "description": "The Counseling Center offers a variety of resources including same-day appointments, online scheduled initial appointments, unscheduled same-day urgent appointments, and group counseling.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                         {
+                            "type": "text",
+                            "content": "Room 206, Turner Student Services Building (2nd floor)"
+                        },
+                        {
+                            "type": "address",
+                            "content": "610 East John St., Champaign, IL 61820"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-333-3704"
+                        },
+                        {
+                            "type": "external_link",
+                            "content": "https://counselingcenter.illinois.edu/counseling/individual-counseling"
+                        },
+                         {
+                            "type": "text",
+                            "content": "Counseling Center clinicians are available during business hours for same-day urgent meetings without an appointment. If possible, we request you call to let us know you're on your way. Our same-day urgent meetings are brief (15-30 minute) one-time meetings for students feeling overwhelming distress such as:\n• Thoughts of harming themselves or others.\n• Experienced a recent traumatic event."                      
+                        },
+                         {
+                            "type": "text",
+                            "content": "We offer individual appointments. Please call us or visit our make-an-appointment feature on our website. We also offer several group therapy options appropriate for survivors of sexual violence."                      
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Monday, Tuesday, and Friday: 8 a.m. - 5 p.m."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Wednesday and Thursday: 8 a.m. - 7 p.m. (during Fall and Spring semesters)"
+                        },
+                        {
+                            "type": "external_link",
+                            "content": "https://counselingcenter.illinois.edu/i-want/contact-us"
+                        }
+                    ]
+                },
+                {
+                    "title": "Staff",
+                    "content": [
+                        {
+                            "type": "external_link",
+                            "content": "https://counselingcenter.illinois.edu/directory#block-views-block-directory-block-3"
+                        }
+                    ]
+                },
+                {
+                    "title": "What do I say when seeking support?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "“I need to talk to a counselor about a traumatic experience I’ve had.”"
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Your most immediate need is safety. If necessary, physically remove yourself from an unsafe situation and seek medical attention."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Once you call or come to the Counseling Center, you’ll see a counselor who can provide support, confidentially discuss your options, and connect you with additional resources on campus and in the community."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "courage_connection",
+            "type": "panel",
+            "categories": [
+                "OFF CAMPUS"
+            ],
+            "title": "Courage Connection",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "Education, resources, and support for those experiencing domestic violence."
+                }
+            ],
+            "description": "Courage Connection is a comprehensive domestic violence service provider offering free, confidential, and multilingual support to all members of the community—regardless of gender, sexual orientation, or immigration status. Services include a local 24/7 domestic violence hotline, emergency shelter, legal advocacy, safety planning, and individual and group-based counseling.\n\nDomestic violence is defined by the Illinois Coalition Against Domestic Violence as “a pattern of coercive control that one person exercises over another.” This can include physical, sexual, emotional, digital, or financial abuse.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                        {
+                            "type": "phone",
+                            "content": "217-384-4390"
+                        },
+                        {
+                            "type": "external_link",
+                            "content": "https://courageconnection.org/"
+                        },
+                         {
+                            "type": "phone",
+                            "content": "877-384-4390"
+                        },
+                          {
+                            "type": "text",
+                            "content": "If you or someone you love needs help, please call our 24/7 Domestic Violence Hotline."
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Monday - Friday, 8 a.m. - 5 p.m."
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "You can expect culturally competent, trauma-informed advocates to listen without judgement, connect you with services, and empower you with resources for safety."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "courage_connection_hotline",
+            "type": "external_link",
+            "categories": [
+                "24/7 HOTLINES"
+            ],
+            "title": "Courage Connection Hotline (local)",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "Education, resources, and support for those experiencing domestic violence."
+                },
+                {
+                    "type": "phone",
+                    "content": "(217) 384-4390"
+                }
+            ]
+        },
+        {
+            "id": "filing_a_report",
+            "type": "panel",
+            "categories": [],
+            "title": "Filing A Report",
+            "directoryContent": [],
+            "description": "Students have the right to report (or not report) an incident of sexual misconduct to the University of Illinois Title IX Office, law enforcement, or both.\nFor assistance in making a report, Confidential Advisors at the Women's Resources Center are available to students and employees of ALL genders.",
+            "detailsList": [
+                {
+                    "title": "University Reporting Form (Title IX Office)",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Submit a report to the University of Illinois Title IX Office."
+                        },
+                        {
+                            "type": "button",
+                            "title": "University Reporting Form",
+                            "content": "https://wecare.illinois.edu/report/"
+                        },
+                        {
+                            "type": "text",
+                            "content": "An individual may report an incident using this form  without disclosing their name, identifying the respondent, or requesting any action. Please note that choosing to make an anonymous report can significantly limit the ability of the university to respond."
+                        }
+                    ]
+                },
+                {
+                    "title": "Police Reporting Options",
+                    "content": [
+                        {
+                            "type": "phone",
+                            "content": "217-333-8911"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "911"
+                        },   
+                        {
+                            "type": "text",
+                            "content": "Always call 911 in an emergency."
+                        },
+                        {
+                            "type": "text",
+                            "content": "To file a report with the University of Illinois, Champaign, or Urbana police departments, call the Champaign County dispatch center at 217-333-8911 to connect with a police officer based on the location of the incident."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Online reports cannot be accepted."
+                        }
+                    ]
+                },
+                {
+                    "title": "FAQs about Reporting",
+                    "content": [
+                        {
+                            "type": "external_link",
+                            "content": "https://wecare.illinois.edu/faq/reporting/"
+                        }
+                    ]
+                },
+                {
+                    "title": "University Employee Reporting Obligations",
+                    "content": [
+                        {
+                            "type": "external_link",
+                            "content": "https://wecare.illinois.edu/faq/employees"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "learn_about_resources",
+            "type": "directory",
+            "categories": [],
+            "title": "Learn about resources to support a friend",
+            "directoryContent": [],
+            "description": "",
+            "detailsList": []
+        },
+        {
+            "id": "mckinley_health_center_medical",
+            "type": "panel",
+            "categories": [
+                "ON CAMPUS (OTHER)"
+            ],
+            "title": "McKinley Health Center (Medical)",
+            "directoryContent": [],
+            "description": "Health care professionals at McKinley Health Center can treat injuries and take steps to address concerns of pregnancy and/or sexually transmitted diseases/infections.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                        {
+                            "type": "address",
+                            "content": "1109 South Lincoln Avenue, Urbana, Illinois 61801"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-333-2700"
+                        },
+                        {
+                            "type": "text",
+                            "content": "McKinley Health Center is located on the southeast part of campus—south of the Lincoln-Allen Residence Hall and north of the Pennsylvania-Florida Residence Hall."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Contact Dial-a-Nurse Services at 217-333-2700, 24 hours/day, 365 days/year."
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                      
+                        {
+                            "type": "text",
+                            "content": "During the academic year: Monday - Friday, 8 a.m. - 5 p.m."
+                        },
+                        {
+                            "type": "text",
+                            "content": "During academic breaks and summer: Monday - Friday, 8 a.m. - 4:30 p.m."
+                        }, 
+                        {
+                            "type": "text",
+                            "content": "Dial-a-Nurse Services: 24 hours/day, 365 days/year"
+                        },
+                        {
+                            "type": "external_link",
+                            "content": "https://mckinley.illinois.edu/hours"
+                        }
+                    ]
+                },
+                {
+                    "title": "Staff",
+                    "content": [
+                        {
+                            "type": "external_link",
+                            "content": "https://www.mckinley.illinois.edu/health-care-providers"
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Medical and Women’s Health appointments range from 15-40 minutes and can offer medical treatment but not evidence collection."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "mckinley_health_center_mental",
+            "type": "panel",
+            "categories": [
+                "ON CAMPUS (OTHER)"
+            ],
+            "title": "McKinley Health Center (Mental Health)",
+            "directoryContent": [],
+            "description": "McKinley's Mental Health Clinic provides evaluation consultation for a variety of emotional and behavior difficulties. Medication and short-term psychotherapy are provided when needed. McKinley's staff of mental health professionals include psychiatry, clinical psychologists, licensed clinical social workers, case manager and registered nurse. Limited psychiatry services are available by referral from McKinley primary caregivers.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                        {
+                            "type": "address",
+                            "content": "1109 South Lincoln Avenue, Urbana, IL 61801"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-333-2700"
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "During the academic year: Monday - Friday, 8 a.m. - 5 p.m."
+                        },
+                         {
+                            "type": "text",
+                            "content": "During academic breaks and summer: Monday - Friday, 8 a.m. - 4:30 p.m."
+                        },
+                        {
+                            "type": "external_link",
+                            "content": "https://mckinley.illinois.edu/hours"
+                        },
+                        {
+                            "type": "text",
+                            "content": "Acute assessment (Emergency Triage) is available 8 a.m. to 4 p.m. weekdays for students experiencing a mental health crisis. One clinician is scheduled daily for this role. Triage is focused on the assessment of the client’s safety, possible harm to self or others and, as needed, may include transfer to a local hospital for further assessment and possible admission. When appropriate and as time permits, the clinician may introduce interventions, coping skills, campus resources, and community therapy options."
+                        }
+                    ]
+                },
+                {
+                    "title": "Staff",
+                    "content": [
+                        {
+                            "type": "external_link",
+                            "content": "https://mckinley.illinois.edu/mentalhealthpros"
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "The first appointment will provide the student with an oppurtunity to talk confidentially with a licensed mental health caregiver about immediate concerns."
+                        },
+                        {
+                            "type": "text",
+                            "content": "• The student should plan for this appointment to last about 60 to 90 minutes in total."
+                        },
+                        {
+                            "type": "text",
+                            "content": "• The student will complete initial intake forms and meet for about 45 minutes."
+                        },
+                        {
+                            "type": "text",
+                            "content": "• The student will talk about some of the reasons for the appointment, and the caregiver will collaborate with the student to help determine what services and resources will be most helpful."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "national_domestic_violence_hotline",
+            "type": "external_link",
+            "categories": [
+                "24/7 HOTLINES"
+            ],
+            "title": "National Domestic Violence Hotline",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "Phone and online hotlines 24 hours/day, 365 days/year"
+                },
+                {
+                    "type": "phone",
+                    "content": "800-799-7233"
+                },
+                {
+                    "type": "external_link",
+                    "content": "https://www.thehotline.org/"
+                }
+            ]
+        },
+        {
+            "id": "national_suicide_prevention_hotline",
+            "type": "external_link",
+            "categories": [
+                "24/7 HOTLINES"
+            ],
+            "title": "National Suicide Prevention Hotline",
+            "directoryContent": [
+                {
+                    "type": "phone",
+                    "content": "988"
+                }
+            ]
+        },
+        {
+            "id": "non_emergency_university_police_services",
+            "type": "external_link",
+            "categories": [
+                "24/7 HOTLINES"
+            ],
+            "title": "Non-emergency university police services",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "In a non-emergency situation, call to discuss filing a report."
+                },
+                {
+                    "type": "phone",
+                    "content": "217-333-8911"
+                }
+            ]
+        },
+        {
+            "id": "osf_medical_center",
+            "type": "panel",
+            "categories": [
+                "OFF CAMPUS",
+                "EMERGENCY"
+            ],
+            "title": "OSF Heart of Mary Medical Center",
+            "directoryContent": [],
+            "description": "OSF Heart of Mary is a Catholic hospital offering medical treatment for injuries, concerns of pregnancy, and sexually transmitted diseases/infections. Forensic evidence collection is NOT offered.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                        {
+                            "type": "address",
+                            "content": "1400 W. Park St., Urbana"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-337-2000"
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "24 hours/day, 365 days/year"
+                        }
+                    ]
+                },
+                {
+                    "title": "Staff",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Physician staffed"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "office_for_access_and_equity",
+            "type": "panel",
+            "categories": [
+                "ON CAMPUS (OTHER)"
+            ],
+            "title": "Office for Access and Equity (OAE)",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "Addresses reports of discrimination, harassment, sexual misconduct, or retaliation by university employees."
+                }
+            ],
+            "description": "OAE addresses reports in which a university employee is alleged to have violated the university’s Nondiscrimination Policy or Sexual Misconduct Policy. Informal and formal resolution options are available, as well as supportive measures. Contact the Equal Employment Opportunity (EEO) Division in OAE to file a complaint or talk to a staff member.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                        {
+                            "type": "address",
+                            "content": "614 E. Daniel St., Suite 303, Champaign, IL 61821"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-333-0885"
+                        },
+                        {
+                            "type": "email",
+                            "content": "eeodivision@illinois.edu"
+                        },
+                        {
+                            "type": "external_link",
+                            "content": "https://oae.illinois.edu"
+                        },
+                        {
+                            "type": "external_link",
+                            "content": "http://go.illinois.edu/discrimination"
+                        },
+                        {
+                            "type": "text",
+                            "content": "When calling, choose option #2."
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Our office is generally open weekdays, 8:30 a.m. - 5 p.m."
+                        },
+                         {
+                            "type": "text",
+                            "content": "We encourage making an appointment in advance whenever possible."
+                        }
+                    ]
+                },
+                {
+                    "title": "Staff",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Director: Claire Sharples Brooks"
+                        },
+                         {
+                            "type": "text",
+                            "content": "Case Manager: Chandra Hall"
+                        }
+                    ]
+                },
+                {
+                    "title": "What do I say when seeking support?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "“I’d like to talk to someone about an incident of discrimination or harassment”"
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "A staff member will talk to you about your situation, the options that OAE can offer you, your confidentiality rights, and what other resources may be available."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "office_for_student_conflict_resolution",
+            "type": "panel",
+            "categories": [
+                "ON CAMPUS (OTHER)"
+            ],
+            "title": "Office for Student Conflict Resolution",
+            "directoryContent": [],
+            "description": "OSCR can assist by providing formal investigation, informal resolutions, no contact directives, and/or educational conversations.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Turner Student Services Building (3rd floor)"
+                        },
+                        {
+                            "type": "address",
+                            "content": "610 E. John Street, Champaign, IL 61820"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-333-3680"
+                        },
+                        {
+                            "type": "email",
+                            "content": "conflictresolution@illinois.edu"
+                        },
+                        {
+                            "type": "external_link",
+                            "content": "https://go.illinois.edu/ReportMisconduct"
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Monday - Friday, 8:30 a.m. - 5 p.m."
+                        }
+                    ]
+                },
+                {
+                    "title": "Staff",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "We have multiple support staff and seven trained investigators."
+                        }
+                    ]
+                },
+                {
+                    "title": "What do I say when seeking support?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "When coming in person or calling, please inform staff that you would like to learn more about resources for responding to sexual misconduct."
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Thorough explanation of options and how to proceed with an option you might select."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "rape_advocacy_and_counseling",
+            "type": "panel",
+            "categories": [
+                "OFF CAMPUS"
+            ],
+            "title": "Rape Advocacy Counseling & Education Services (R.A.C.E.S.)",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "For sexual assault and stalking concerns."
+                }
+            ],
+            "description": "R.A.C.E.S. has a 24-hour crisis hotline, medical and legal advocacy, counseling services, and public education and training. All services are free of charge.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                        {
+                            "type": "address",
+                            "content": "301 S. Vine Street, Suite 103, Urbana, IL 61801"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-384-4444"
+                        },
+                        {
+                            "type": "external_link",
+                            "content": "https://www.cu-races.org/"
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Hotline and ER Response: 24/7"
+                        },
+                         {
+                            "type": "text",
+                            "content": "Office:\nMonday, Wednesday, Friday, 8:30 a.m. - 5 p.m.\nTuesday, Thursday, 8:30 a.m. - 7 p.m."
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Hotline calls are answered by an answering service. Callers will be asked to provide a first name and phone number for a call back. The caller does not need to use their real name. A trained crisis intervention worker will then call back from a blocked number. For all services, R.A.C.E.S. provides support and options following the lead of the survivor."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "national_sexual_assault_hotline",
+            "type": "external_link",
+            "categories": [
+                "24/7 HOTLINES"
+            ],
+            "title": "Rape, Abuse and Incest National Network (RAINN)",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "Phone and online hotlines 24 hours/day, 365 days/year"
+                },
+                {
+                    "type": "phone",
+                    "content": "(800) 656-4673"
+                },
+                {
+                    "type": "external_link",
+                    "content": "https://rainn.org/"
+                }
+            ]
+        },
+        {
+            "id": "rape_crisis_hotline",
+            "type": "external_link",
+            "categories": [
+                "24/7 HOTLINES"
+            ],
+            "title": "Rape Crisis 24-Hour Hotline (local)",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "Report a sexual assault or request crisis services."
+                },
+                {
+                    "type": "phone",
+                    "content": "217-384-4444"
+                }
+            ]
+        },
+        {
+            "id": "rights_and_options",
+            "type": "external_link",
+            "categories": [
+                "EDUCATIONAL"
+            ],
+            "title": "Rights and Options",
+            "directoryContent": [
+                {
+                    "type": "external_link",
+                    "content": "https://wecare.illinois.edu/policies/campus/rights/"
+                }
+            ]
+        },
+        {
+            "id": "rosecrance_hotline",
+            "type": "external_link",
+            "categories": [
+                "24/7 HOTLINES"
+            ],
+            "title": "Rosecrance Hotline (local)",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "Rosecrance offers a crisis hotline and prevention, intervention, and behavioral health services."
+                },
+                {
+                    "type": "phone",
+                    "content": "(217) 359-4141"
+                }
+            ]
+        },
+        {
+            "id": "strive_to_support_a_friend",
+            "type": "panel",
+            "categories": [],
+            "title": "Say the right things to my friend.",
+            "directoryContent": [],
+            "description": "Your support can be extremely helpful to a survivor. Be as supportive and non-judgmental as possible. There is no one-size-fits-all response. Your response can significantly impact whether the survivor feels validated and/or seeks help.\n\nIf someone shares their experience with you, you can show support through STRIVE.",
+            "detailsList": [
+                {
+                    "title": "Start by believing.",
+                    "label": "S",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Believe the person's experience. Don’t question or minimize what the survivor tells you. It's important to recognize the impact on the survivor. Something that seems minor to you might be harmful to the survivor."
+                        },
+                        {
+                            "type": "text",
+                            "content": "It is very common for survivors to blame themselves, but the blame rests squarely and only with the person who chose to harm them."
+                        }
+                    ]
+                },
+                {
+                    "title": "Talk less, listen more.",
+                    "label": "T",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Let them know you want to listen. Listening looks like:"
+                        },
+                        {
+                            "type": "text",
+                            "content": "· Let them share at their own pace. Try to avoid giving advice, unless they ask. They may just need to feel heard."
+                        },
+                        {
+                            "type": "text",
+                            "content": "· When you ask them what they need from you, hear and support them. Even if it's not what you think you would do in this situation."
+                        },
+                        {
+                            "type": "text",
+                            "content": "· You may feel nervous or awkward, but it’s okay to sit in pauses and silence for a bit."
+                        }
+                    ]
+                },
+                {
+                    "title": "Respect Survivors' Decisions",
+                    "label": "R",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Every survivor’s experience and healing journey is unique. Respect their concerns and their choices. Give the survivor control and autonomy."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Any steps taken to increase a survivor's safety should be done with the survivor's consent. Part of reasserting that a survivor has power means respecting their choices to use/not use help that is offered and allowing them to pursue options according to their own timeline."
+                        }
+                    ]
+                },
+                {
+                    "title": "Inform survivors of resources",
+                    "label": "I",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Survivors do not have to navigate healing on their own. Help the survivor process by exploring resources and options, offering to accompany them to meetings, and finding other ways to increase their safety."
+                        },
+                        {
+                            "type": "text",
+                            "content": "You, as their supporter, are not alone. Resources exist for you, too. Resources can be found at:"
+                        },
+                        {
+                            "type": "external_link",
+                            "content": "https://wecare.illinois.edu/resources/"
+                        }
+                    ]
+                },
+                {
+                    "title": "Validate survivors' responses",
+                    "label": "V",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "There is no “right” way for a survivor to respond. A survivor may feel many emotions: numb, sad, angry, in denial, terrified, depressed, agitated, withdrawn, etc. A survivor’s reactions, wants, needs, and feelings might change over time. Be patient with them."
+                        },
+                        {
+                            "type": "text",
+                            "content": "It is very common for survivors to blame themselves, but the blame rests squarely and only with the person who chose to harm them."
+                        }
+                    ]
+                },
+                {
+                    "title": "Empower with Empathy",
+                    "label": "E",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Empathetic support is an attitude of acceptance of all feelings, an atmosphere of warmth and safety. Be there for them. Try to understand what they are going through. Check in and be a source of support."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Remind the survivor this is not their fault. They did the very best they knew how in a threatening situation. Let them decide who knows about what happened, and do not share their story with anyone else unless it is with their permission."
+                        },
+                        {
+                            "type": "text",
+                            "content": "However, please note that Responsible Employees who are made aware of sexual misconduct must immediately report the incident to the Title IX Office."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "support_a_friend",
+            "type": "resource_list",
+            "resourceScreenId": "supporting_a_friend",
+            "categories":["RESOURCES TO SUPPORT A FRIEND"],
+            "title": "Support a friend",
+            "directoryContent": []
+        },
+        {
+            "id": "title_ix_office",
+            "type": "panel",
+            "categories": [
+                "ON CAMPUS (PRIMARY)"
+            ],
+            "title": "Title IX Office",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "Official university resource for filing a report and providing supportive measures."
+                }
+            ],
+            "description": "Contact the Title IX Office to report an incident to the university, request any supportive measures, learn about your rights, and explore resolution options, including university formal complaints and police reporting.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                        {
+                            "type": "address",
+                            "content": "614 E. Daniel Street, Suite 303, Champaign, IL 61820"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-333-3333"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "844-616-7978"
+                        },
+                        {
+                            "type": "email",
+                            "content": "titleixcoordinator@illinois.edu"
+                        },
+                        {
+                            "type": "external_link",
+                            "content": "https://wecare.illinois.edu"
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Monday - Friday: 8:30 a.m. to 5 p.m."
+                        }
+                    ]
+                },
+                {
+                    "title": "Staff",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Danielle Fleenor, Title IX Coordinator"
+                        },
+                        {
+                            "type": "text",
+                            "content": "Jenna Cler, Associate Director"
+                        },
+                        {
+                            "type": "text",
+                            "content": "Felina Kelly, Resource & Support Coordinator"
+                        },
+                        {
+                            "type": "text",
+                            "content": "Ashe Fukuda, Office Support Specialist"
+                        }
+                    ]
+                },
+                {
+                    "title": "What do I say when seeking support?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "When you contact the Title IX Office, you can say as much or as little as you would like. We are here to help answer questions and schedule appointments with office staff."
+                        },
+                         {
+                            "type": "text",
+                            "content": "If you choose to submit a report of sexual misconduct to the university, you can do so online, in person, over the phone, or via email."
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "If you call the office, you will be connected with a staff member. If one is not available, you can leave a voicemail and your call will be returned. We reply to emails typically within one business day."
+                        },
+                        {
+                            "type": "text",
+                            "content": "When a report is submitted, someone from the Title IX Office or their designee will contact you (the impacted party) within a business day to offer to set up a meeting. The meeting is optional. In the meeting, you can share as much or as little information as you wish. The staff member will review your rights and options, including available supportive measures and options to take further action, such as police and university options. You can bring an advisor or support person of your choosing to the meeting."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Making a report does not automatically initiate an investigation. The U of I reserves the right to investigate or otherwise address any report, regardless of when it is made, based on concern for the safety or well-being of the university community."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "ui_police_department",
+            "type": "panel",
+            "categories": [
+                "ON CAMPUS (OTHER)"
+            ],
+            "title": "UIPD (University of Illinois Police Department)",
+            "directoryContent": [],
+            "description": "UIPD has officers and detectives on the Special Victims Unit with specialized trauma informed investigative training. Police are available to respond to calls and take reports 24/7/365.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                        {
+                            "type": "address",
+                            "content": "1110 W. Springfield Ave., Urbana, IL 61801"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-333-8911"
+                        },
+                         {
+                            "type": "phone",
+                            "content": "911"
+                        },
+                        {
+                            "type": "text",
+                            "content": "Call or text 911 in an emergency"
+                        },
+                        {
+                            "type": "text",
+                            "content": "Call the Champaign County non-emergency line 217-333-8911 to file a report or connect with a police officer from the agency with jurisdiction (based on crime location)."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Activate any emergency phone on campus"
+                        },
+                        {
+                            "type": "text",
+                            "content": "Online reports cannot be accepted for these situations"
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "24 hours/day, 365 days/year"
+                        }
+                    ]
+                },
+                {
+                    "title": "Staff",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Dispatchers will answer your call."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Telecommunicators at the front desk will speak with you if you activate any emergency phone on campus or walk into UIPD."
+                        },
+                        {
+                            "type": "text",
+                            "content": "UIPD officers and sometimes crisis responders will respond to emergency scenes or meet with you to take a report."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Officers from other jurisdictions may be dispatched based on crime location."
+                        }
+                    ]
+                },
+                {
+                    "title": "What do I say when seeking support?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "“I need police to respond…” OR “I would like to file a report about…”"
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "A police officer will respond to your location in an emergency. If you call to report an incident, an officer may speak with you over the phone or meet with you in person. Some reports may require investigation, and you may be contacted by a detective following the initial report."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "university_emergency_dean",
+            "type": "panel",
+            "categories": [
+                "EMERGENCY",
+                "ON CAMPUS (OTHER)"
+            ],
+            "title": "University Emergency Dean (after hours)",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "Provides referrals, information, and support to students after hours but is not a substitute for trained emergency personnel."
+                }
+            ],
+            "description": "One of the resources the university makes available to students is the support and guidance of a university administrator who is on call and can be reached when university offices are closed. The Emergency Dean supports students who are experiencing health or safety emergency situations in which an immediate university response is needed and which cannot wait until the next business day. The Emergency Dean is not a substitute for trained emergency personnel such as 911, police, or fire professionals.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                        {
+                            "type": "phone",
+                            "content": "217-649-4129"
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "The Emergency Dean is a full-time employee of the university who volunteers to be on call at home, and is available:"
+                        },
+                        {
+                            "type": "text",
+                            "content": "Monday through Thursday, 5 p.m. - 8:30 a.m."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Friday at 5 p.m. through Monday at 8:30 a.m."
+                        },
+                        {
+                            "type": "text",
+                            "content": "Holidays and other days when the university is closed."
+                        }
+                    ]
+                },
+                {
+                    "title": "Staff",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Members of the Office of the Dean of Students staff serve in the role of Emergency Deans"
+                        }
+                    ]
+                },
+                {
+                    "title": "What do I say when seeking support?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "Describe the crisis that you are experiencing and your need for assistance."
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "If calling late at night or early in the morning, the call may wake the Emergency Dean, so you may need to speak slowly while they become alert.  Otherwise, the Emergency Dean will discuss resources and options available, as well as provide guidance."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "urbana_police_department",
+            "type": "panel",
+            "categories": [
+                "OFF CAMPUS"
+            ],
+            "title": "Urbana Police Department",
+            "directoryContent": [],
+            "description": "To file a report with the University of Illinois, Champaign, or Urbana police departments, call the Champaign County dispatch center at 217-333-8911 to connect with a police officer based on the location of the incident. Online reports cannot be accepted.",
+            "detailsList": [
+                {
+                    "title": "Contact Information",
+                    "content": [
+                        {
+                            "type": "address",
+                            "content": "400 South Vine, Urbana, IL 61801"
+                        },
+                        {
+                            "type": "text",
+                            "content": "Direct line to the front desk:"
+                        },
+                        {
+                            "type": "phone",
+                            "content": "217-384-2324"
+                        },
+                         {
+                            "type": "phone",
+                            "content": "217-333-8911"
+                        },
+                         {
+                            "type": "phone",
+                            "content": "911"
+                        },
+                         {
+                            "type": "text",
+                            "content": "Always call 911 in an emergency."
+                        }
+                    ]
+                },
+                {
+                    "title": "Hours",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "24/7 (the front desk is staffed 7 a.m. - 11 p.m. every day)"
+                        }
+                    ]
+                },
+                {
+                    "title": "Staff",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "The police department has an authorized staff of over 60 officers and more than a dozen civilian employees. The department is divided into three divisions — Patrol, Investigations, and Services."
+                        }
+                    ]
+                },
+                {
+                    "title": "What do I say when seeking support?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "When you call the Urbana Police Department for support, let the front desk know you're seeking help with a personal or sensitive situation. If you're comfortable, briefly describing the nature of the issue will help us connect you with the most appropriate resource, whether that's an officer, an advocate, or a community partner trained to assist in these matters."
+                        }
+                    ]
+                },
+                {
+                    "title": "What should I expect?",
+                    "content": [
+                        {
+                            "type": "text",
+                            "content": "When you call, you can expect to be treated with respect and care. Our staff will listen without judgment and connect you to the most appropriate resource based on your needs. This may include speaking with a trained officer, a support professional, or being referred to a trusted community partner. We understand that every situation is different, and we’re here to help in a way that feels safe and supportive to you."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "we_care_brochure",
+            "type": "external_link",
+            "categories": [
+                "EDUCATIONAL"
+            ],
+            "title": "We Care at Illinois (brochure)",
+            "directoryContent": [
+                {
+                    "type": "external_link",
+                    "content": "https://go.illinois.edu/WeCareBrochure"
+                }
+            ]
+        },
+        {
+            "id": "we_care_at_illinois_website",
+            "type": "external_link",
+            "categories": [
+                "EDUCATIONAL"
+            ],
+            "title": "We Care at Illinois (website)",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "A website with various resources for sexual misconduct support, response, and prevention."
+                },
+                {
+                    "type": "external_link",
+                    "content": "https://wecare.illinois.edu"
+                }
+            ]
+        },
+        {
+            "id": "womens_resources_center",
+            "type": "external_link",
+            "categories": [
+                "EDUCATIONAL"
+            ],
+            "title": "Women's Resources Center (website)",
+            "directoryContent": [
+                {
+                    "type": "text",
+                    "content": "For students and employees of ALL genders."
+                },
+                {
+                    "type": "external_link",
+                    "content": "https://wrc.illinois.edu/"
+                }
+            ]
+        }
+    ]
+}

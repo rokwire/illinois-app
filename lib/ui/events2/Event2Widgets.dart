@@ -141,12 +141,13 @@ class Event2Card extends StatefulWidget {
   final Group? group;
   final Event2CardDisplayMode displayMode;
   final Event2GroupingType? linkType;
+  final Event2TimeFilter? timeFilter;
   final Position? userLocation;
   final void Function()? onTap;
   
   final List<String>? displayCategories;
   
-  Event2Card(this.event, { Key? key, this.group, this.displayMode = Event2CardDisplayMode.list, this.linkType, this.userLocation, this.onTap}) :
+  Event2Card(this.event, { Key? key, this.group, this.displayMode = Event2CardDisplayMode.list, this.linkType, this.timeFilter, this.userLocation, this.onTap}) :
     displayCategories = Events2().displaySelectedContentAttributeLabelsFromSelection(event.attributes, usage: ContentAttributeUsage.category),
     super(key: key);
 
@@ -162,7 +163,7 @@ class Event2Card extends StatefulWidget {
 class _Event2CardState extends State<Event2Card>  with NotificationsListener {
 
   // Keep a copy of the user position in the State because it gets cleared somehow in the widget
-  // when sending the appliction to background in iOS.
+  // when sending the application to background in iOS.
   late Event2 _event;
   Position? _userLocation; 
 
@@ -355,7 +356,7 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
 
   static Decoration get _pageContentDecoration =>
-    HomeCard.defaultDecoration;
+    HomeCard.boxDecoration;
   /*BoxDecoration(
     color: Styles().colors.surface,
     borderRadius: _pageContentBorderRadius,
@@ -369,16 +370,16 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   );
 
   static Decoration get _pageBottomContentDecoration => BoxDecoration(
-    color: HomeCard.defaultBackColor,
+    color: HomeCard.backColor,
     borderRadius: _pageContentBottomBorderRadius,
     boxShadow: _pageContentShadow
   );
 
   static List<BoxShadow> get _pageContentShadow => [
-    HomeCard.defaultShadow
+    HomeCard.boxShadow
   ];
 
-  static Radius get _pageContentRadius => HomeCard.defaultRadius;
+  static Radius get _pageContentRadius => HomeCard.radius;
   static BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.all(_pageContentRadius);
   static BorderRadiusGeometry get _pageContentTopBorderRadius => BorderRadius.vertical(top: _pageContentRadius);
   static BorderRadiusGeometry get _pageContentBottomBorderRadius => BorderRadius.vertical(bottom: _pageContentRadius);
@@ -614,7 +615,7 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   List<Widget> get _linkedEventsPagerWidget {
     List<Event2Grouping>? linkedGroupingQueries = _event.linkedEventsGroupingQuery;
     return (linkedGroupingQueries != null) ? <Widget>[
-      LinkedEvents2Pager(linkedGroupingQueries, mainEventId: _event.id, contentBuilder: _linkedEventsPagerBuilder, userLocation: widget.userLocation)
+      LinkedEvents2Pager(linkedGroupingQueries, mainEventId: _event.id, contentBuilder: _linkedEventsPagerBuilder, timeFilter: widget.timeFilter, userLocation: widget.userLocation)
     ] : <Widget>[];
   }
 
@@ -707,9 +708,10 @@ typedef LinkedEvents2PagerContentBuilder = Widget Function(LinkedEvents2PagerCon
 class LinkedEvents2Pager extends StatefulWidget {
   final String? mainEventId;
   final List<Event2Grouping> linkedGroupingQueries;
+  final Event2TimeFilter? timeFilter;
   final LinkedEvents2PagerContentBuilder? contentBuilder;
   final Position? userLocation;
-  LinkedEvents2Pager(this.linkedGroupingQueries, {super.key, this.mainEventId, this.contentBuilder, this.userLocation });
+  LinkedEvents2Pager(this.linkedGroupingQueries, {super.key, this.mainEventId, this.contentBuilder, this.userLocation, this.timeFilter });
 
   @override
   State<StatefulWidget> createState() => _LinkedEvents2PagerState();
@@ -731,7 +733,6 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
-  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -781,7 +782,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
           String contentKey = "${event.id}-$index";
           pages.add(Padding(
             key: _contentKeys[contentKey] ??= GlobalKey(),
-            padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 4),
+            padding: HomeCard.defaultPageMargin,
             child: Event2Card(event,
               displayMode: Event2CardDisplayMode.cardLink,
               linkType: CollectionUtils.isNotEmpty(widget.linkedGroupingQueries) ? widget.linkedGroupingQueries.first.type : null,
@@ -795,7 +796,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
       if (_hasMoreEvents != false) {
         pages.add(Padding(
           key: _contentKeys[_progressContentKey] ??= GlobalKey(),
-          padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
+          padding: EdgeInsets.only(right: HomeCard.pageSpacing, bottom: 8),
           child: HomeProgressWidget(
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 36),
           ),
@@ -804,7 +805,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width - 32;
-        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport);
       }
 
@@ -821,14 +822,16 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
     }
     else {
       // Show it if the event is not the main event
-      return Visibility(visible: !_isMainEvent(_events?.first.id), child: Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-        Event2Card(_events!.first,
-          displayMode: Event2CardDisplayMode.cardLink,
-          linkType: CollectionUtils.isNotEmpty(widget.linkedGroupingQueries) ? widget.linkedGroupingQueries.first.type : null,
-          userLocation: widget.userLocation,
-          onTap: () => _onTapEvent2(_events!.first)
+      return Visibility(visible: !_isMainEvent(_events?.first.id), child:
+        Padding(padding: HomeCard.defaultChildMargin, child:
+          Event2Card(_events!.first,
+            displayMode: Event2CardDisplayMode.cardLink,
+            linkType: CollectionUtils.isNotEmpty(widget.linkedGroupingQueries) ? widget.linkedGroupingQueries.first.type : null,
+            userLocation: widget.userLocation,
+            onTap: () => _onTapEvent2(_events!.first)
+          )
         )
-      ));
+      );
     }
   }
 
@@ -888,6 +891,8 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
     return false;
   }
 
+  Event2TimeFilter get _timeFilter => widget.timeFilter ?? Event2TimeFilter.upcoming;
+
   void _onPageChanged(int index) {
     if ((_events?.length ?? 0) < (index + (_containsMainEvent ? 2 : 1)) && (_hasMoreEvents != false) && !_extendingEvents && !_loadingEvents) {
       _extend();
@@ -909,7 +914,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
         _loadingEvents = true;
         _extendingEvents = false;
       });
-      dynamic result = await Events2().loadEventsEx(Events2Query(groupings: widget.linkedGroupingQueries, limit: limit));
+      dynamic result = await Events2().loadEventsEx(Events2Query(groupings: widget.linkedGroupingQueries, timeFilter: _timeFilter, limit: limit));
       Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
       List<Event2>? events = listResult?.events;
       String? errorTextResult = (result is String) ? result : null;
@@ -932,7 +937,7 @@ class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
         _extendingEvents = true;
       });
 
-      Events2ListResult? loadResult = await Events2().loadEvents(Events2Query(groupings: widget.linkedGroupingQueries, offset: _events?.length ?? 0, limit: _eventsPageLength));
+      Events2ListResult? loadResult = await Events2().loadEvents(Events2Query(groupings: widget.linkedGroupingQueries, timeFilter: _timeFilter, offset: _events?.length ?? 0, limit: _eventsPageLength));
       List<Event2>? events = loadResult?.events;
       int? totalCount = loadResult?.totalCount;
 
