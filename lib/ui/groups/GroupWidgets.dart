@@ -3126,20 +3126,20 @@ class GroupProfilePronouncementState extends State<GroupProfilePronouncementWidg
   void initState() {
     setStateIfMounted(() => _loading = true);
     Content().checkUserNamePronunciation(accountId: widget.accountId).then((bool? hasPronunciation){
-      if(hasPronunciation == true){
-        Content().loadUserNamePronunciation(accountId: widget.accountId).then((audio){
-          setStateIfMounted(() {
-            _loading = false;
-            _hasPronouncement = hasPronunciation;
-            _pronunciationAudioData = audio?.audioData;
-          });
-        });
-      } else {
-        setStateIfMounted(() {
-          _loading = false;
-          _hasPronouncement = hasPronunciation;
-        });
-      }
+          if(hasPronunciation == true){
+            Content().loadUserNamePronunciation(accountId: widget.accountId).then((audio){
+              setStateIfMounted(() {
+                _loading = false;
+                _hasPronouncement = hasPronunciation;
+                _pronunciationAudioData = audio?.audioData;
+              });
+            });
+          } else {
+            setStateIfMounted(() {
+              _loading = false;
+              _hasPronouncement = hasPronunciation;
+            });
+          }
     });
     super.initState();
   }
@@ -3148,7 +3148,7 @@ class GroupProfilePronouncementState extends State<GroupProfilePronouncementWidg
     _loadingContent : _content;
 
   Widget get _content =>
-      Visibility(visible: StringUtils.isNotEmpty(widget.accountId) && _hasPronouncement == true,
+    Visibility(visible: StringUtils.isNotEmpty(widget.accountId) && _hasPronouncement == true,
         child: DirectoryPronunciationButton(
             url: Content().getUserNamePronunciationUrl(accountId: widget.accountId),
             data: _pronunciationAudioData,
