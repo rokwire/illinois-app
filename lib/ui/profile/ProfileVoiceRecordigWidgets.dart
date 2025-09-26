@@ -1,6 +1,4 @@
 
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -659,7 +657,7 @@ class _ProfileSoundRecorderController {
 
   bool get _haveAudio => CollectionUtils.isNotEmpty(_audio);
 
-  String get extension => '.m4a'; // Platform.isIOS ? '.m4a' : '.wav';
+  String get extension => '.m4a'; //TODO: web platform will need to use .wav (Platform.isIOS ? '.m4a' : '.wav');
 
   Future<String?> get _constructFilePath async {
     Directory? dir = kIsWeb ? null : await getApplicationDocumentsDirectory();
