@@ -13,6 +13,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Building.dart';
+import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Map2.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -84,6 +85,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   final GlobalKey _traySheetKey = GlobalKey();
   final GlobalKey _sortButtonKey = GlobalKey();
   final GlobalKey _termsButtonKey = GlobalKey();
+  final GlobalKey _paymentTypesButtonKey = GlobalKey();
 
   UniqueKey _mapKey = UniqueKey();
   GoogleMapController? _mapController;
@@ -105,6 +107,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   bool _searchOn = false;
   double? _sortDropdownWidth;
   double? _termsDropdownWidth;
+  double? _paymentTypesDropdownWidth;
 
   List<Explore>? _explores;
   List<Explore>? _filteredExplores;
@@ -746,11 +749,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     return (termId != null) ? await StudentCourses().loadCourses(termId: termId) : null;
   }
 
-  Future<List<Explore>?> _loadDiningLocations() async {
-    PaymentType? paymentType = null;
-    bool onlyOpened = false;
-    return await Dinings().loadBackendDinings(onlyOpened, paymentType, null);
-  }
+  Future<List<Explore>?> _loadDiningLocations() async =>
+    Dinings().loadBackendDinings(false, null, null);
 
   Future<List<Explore>?> _loadEvents2() async =>
     Events2().loadEventsList(await _event2QueryParam());
@@ -912,7 +912,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     switch (_selectedContentType) {
       case Map2ContentType.CampusBuildings:      return _campusBuildingsFilterButtons;
       case Map2ContentType.StudentCourses:       return _studentCoursesFilterButtons;
-      case Map2ContentType.DiningLocations:      return <Widget>[];
+      case Map2ContentType.DiningLocations:      return _diningLocationsFilterButtons;
       case Map2ContentType.Events2:              return _events2FilterButtons;
       case Map2ContentType.Laundries:
       case Map2ContentType.BusStops:
@@ -931,7 +931,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
         _sortFilterButton,
       ),
     Padding(padding: _filterButtonsPadding, child:
-      _starredBuildingsFilterButton,
+      _starredFilterButton,
     ),
     Padding(padding: _filterButtonsPadding, child:
       _amenitiesBuildingsFilterButton,
@@ -951,6 +951,26 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     _filterButtonsEdgeSpacing,
   ];
 
+  List<Widget> get _diningLocationsFilterButtons => <Widget>[
+    Padding(padding: _filterButtonsPadding, child:
+      _searchFilterButton,
+    ),
+    if (_isSortAvailable)
+      Padding(padding: _filterButtonsPadding, child:
+        _sortFilterButton,
+      ),
+    Padding(padding: _filterButtonsPadding, child:
+      _starredFilterButton,
+    ),
+    Padding(padding: _filterButtonsPadding, child:
+      _openNowDiningLocationsFilterButton,
+    ),
+    Padding(padding: _filterButtonsPadding, child:
+      _paymentTypesDiningLocationsFilterButton,
+    ),
+    _filterButtonsEdgeSpacing,
+  ];
+
   List<Widget> get _events2FilterButtons => <Widget>[
     Padding(padding: _filterButtonsPadding, child:
       _searchFilterButton,
@@ -965,6 +985,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     _filterButtonsEdgeSpacing,
   ];
 
+  // Search Filter Button
 
   Widget get _searchFilterButton =>
     Map2FilterImageButton(
@@ -974,14 +995,57 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       onTap: _onSearch,
     );
 
-  Widget get _starredBuildingsFilterButton =>
+  void _onSearch() {
+    setStateIfMounted((){
+      _searchOn = true;
+      _searchTextController.text = _selectedFilterIfExists?.searchText ?? '';
+    });
+  }
+
+  void _onSearchTextChanged(String text) {
+  }
+
+  void _onTapCancelSearchText() {
+    if (_searchTextController.text.isNotEmpty) {
+      _searchTextController.text = '';
+    }
+    else {
+      setStateIfMounted((){
+        _selectedFilter?.searchText = '';
+        _searchOn = false;
+      });
+      _onFilterChanged();
+    }
+  }
+
+  void _onTapSearchText() {
+    setStateIfMounted((){
+      _selectedFilter?.searchText = _searchTextController.text;
+      _searchTextController.text = '';
+      _searchOn = false;
+    });
+    _onFilterChanged();
+  }
+
+  // Starred Filter Button
+
+  Widget get _starredFilterButton =>
     Map2FilterTextButton(
       title: Localization().getStringEx('panel.map2.button.starred.title', 'Starred'),
       hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations'),
       leftIcon: Styles().images.getImage('star-filled', size: 16),
-      toggled: _campusBuildingsFilterIfExists?.starred == true,
+      toggled: _selectedFilterIfExists?.starred == true,
       onTap: _onStarred,
     );
+
+  void _onStarred() {
+    setStateIfMounted((){
+      _selectedFilter?.starred = (_selectedFilter?.starred != true);
+    });
+    _onFilterChanged();
+  }
+
+  // Amenities Buildings Filter Button
 
   Widget get _amenitiesBuildingsFilterButton =>
     Map2FilterTextButton(
@@ -991,6 +1055,25 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       rightIcon: Styles().images.getImage('chevron-right'),
       onTap: _onAmenities,
     );
+
+  void _onAmenities() {
+    _Map2CampusBuildingsFilter? filter = _campusBuildingsFilter;
+    if (filter != null) {
+      Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
+        amenities: JsonUtils.cast<List<Building>>(_explores)?.featureNames ?? <String, String>{},
+        selectedAmenityIds: filter.amenityIds,
+      ),)).then(((LinkedHashSet<String>? amenityIds) {
+        if (amenityIds != null) {
+          setStateIfMounted(() {
+            filter.amenityIds = amenityIds;
+          });
+          _onFilterChanged();
+        }
+      }));
+    }
+  }
+
+  // Terms Student Courses Button
 
   Widget get _termsButton =>
     MergeSemantics(key: _termsButtonKey, child:
@@ -1005,7 +1088,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
           title: StudentCourses().displayTerm?.name ?? Localization().getStringEx('panel.map2.button.terms.title', 'Terms'),
           hint: Localization().getStringEx('panel.map2.button.terms.hint', 'Tap to choose term'),
           rightIcon: Styles().images.getImage('chevron-down'),
-          //onTap: _onSort,
+          //onTap: _onTerm,
         ),
         isExpanded: false,
         items: _buildTermsDropdownItems(),
@@ -1056,6 +1139,112 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width / 2); // add horizontal padding
   }
 
+  void _onTerm(StudentCourseTerm? value) {
+    Analytics().logSelect(target: 'Term: ${value?.name}');
+    setStateIfMounted((){
+      StudentCourses().selectedTermId = value?.id;
+    });
+    _onFilterChanged();
+  }
+
+  // Open Now Dining Locations Filter Button
+
+  Widget get _openNowDiningLocationsFilterButton =>
+    Map2FilterTextButton(
+      title: Localization().getStringEx('panel.map2.button.open_now.title', 'Open Now'),
+      hint: Localization().getStringEx('panel.map2.button.open_now.hint', 'Tap to show only currently opened locations'),
+      toggled: _diningLocationsFilterIfExists?.onlyOpened == true,
+      onTap: _onOpenNow,
+    );
+
+  void _onOpenNow() {
+    setStateIfMounted((){
+      _diningLocationsFilter?.onlyOpened = (_diningLocationsFilterIfExists?.onlyOpened != true);
+    });
+    _onFilterChanged();
+  }
+
+  // Payment Types Dining Locations Filter Button
+
+  Widget get _paymentTypesDiningLocationsFilterButton =>
+    MergeSemantics(key: _paymentTypesButtonKey, child:
+      Semantics(value: _selectedPaymentType?.displayTitle, child:
+        DropdownButtonHideUnderline(child:
+          DropdownButton2<PaymentType>(
+            dropdownStyleData: DropdownStyleData(
+              width:  _paymentTypesDropdownWidth ??= _evaluatePaymentTypesDropdownWidth(),
+              padding: EdgeInsets.zero
+            ),
+        customButton: Map2FilterTextButton(
+          title: _selectedPaymentType?.displayTitle ?? Localization().getStringEx('panel.map2.button.payment_type.title', 'Payment Type'),
+          hint: Localization().getStringEx('panel.map2.button.payment_type.hint', 'Tap to select a payment type'),
+          rightIcon: Styles().images.getImage('chevron-down'),
+          //onTap: _onPaymentType,
+        ),
+        isExpanded: false,
+        items: _buildPaymentTypesDropdownItems(),
+        onChanged: _onPaymentType,
+      )
+    )),
+  );
+
+  List<DropdownMenuItem<PaymentType>> _buildPaymentTypesDropdownItems() {
+    List<DropdownMenuItem<PaymentType>> items = <DropdownMenuItem<PaymentType>>[];
+    for (PaymentType paymentType in PaymentType.values) {
+      String itemTitle = paymentType.displayTitle;
+      TextStyle? itemTextStyle = (paymentType == _selectedPaymentType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
+      Widget? itemIcon = (paymentType == _selectedPaymentType) ? Styles().images.getImage('check', size: 18, color: Styles().colors.fillColorPrimary) : null;
+      items.add(AccessibleDropDownMenuItem<PaymentType>(key: ObjectKey(paymentType), value: paymentType,
+        child: Semantics(label: itemTitle, button: true, container: true, inMutuallyExclusiveGroup: true,
+          child: Wrap(children: [
+            Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
+            if (itemIcon != null)
+              Padding(padding: EdgeInsets.only(left: 4), child: itemIcon,) ,
+          ],) )));
+    }
+    return items;
+  }
+
+  double _evaluatePaymentTypesDropdownWidth() {
+    double width = 0;
+    for (PaymentType paymentType in PaymentType.values) {
+      final Size sizeFull = (TextPainter(
+          text: TextSpan(
+            text: paymentType.displayTitle,
+            style: _dropdownEntrySelectedTextStyle,
+          ),
+          textScaler: MediaQuery.of(context).textScaler,
+          textDirection: TextDirection.ltr,
+        )..layout()).size;
+      if (width < sizeFull.width) {
+        width = sizeFull.width;
+      }
+    }
+    return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width / 2); // add horizontal padding
+  }
+
+  void _onPaymentType(PaymentType? value) {
+    Analytics().logSelect(target: 'Payment Type: ${value?.displayTitle}');
+    setStateIfMounted(() {
+      if (_selectedPaymentType != value) {
+        _selectedPaymentType = value;
+      }
+      else {
+        _selectedPaymentType = null;
+      }
+    });
+    _onFilterChanged();
+    Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
+      AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
+    );
+
+  }
+
+  PaymentType? get _selectedPaymentType => _diningLocationsFilterIfExists?.paymentType;
+  set _selectedPaymentType(PaymentType? value) => _diningLocationsFilter?.paymentType = value;
+
+  // Filters Filter Button
+
   Widget get _filtersFilterButton =>
     Map2FilterTextButton(
       title: Localization().getStringEx('panel.map2.button.filters.title', 'Filters'),
@@ -1064,6 +1253,23 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       rightIcon: Styles().images.getImage('chevron-right'),
       onTap: _onFilters,
     );
+
+  void _onFilters() {
+    Analytics().logSelect(target: 'Filters');
+
+    _Map2Events2Filter? filter = _events2Filter;
+    Event2HomePanel.presentFiltersV2(context, filter?.event2Filter ?? Event2FilterParam.fromStorage()).then((Event2FilterParam? filterResult) {
+      if ((filterResult != null) && mounted) {
+        setStateIfMounted(() {
+          filter?.event2Filter = filterResult;
+        });
+        filterResult.saveToStorage();
+        _onFilterChanged();
+      }
+    });
+  }
+
+  // Sort Filter Button
 
   bool get _isSortAvailable => (_selectedExploreGroup?.isNotEmpty == true);
 
@@ -1126,6 +1332,24 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     return math.min(width + 2 * 18, MediaQuery.of(context).size.width / 2); // add horizontal padding
   }
 
+  void _onSortType(Map2SortType? value) {
+    Analytics().logSelect(target: 'Sort: ${value?.displayTitle}');
+    setStateIfMounted(() {
+      if (_selectedSortType != value) {
+        _selectedSortType = value;
+        _selectedSortOrder = Map2SortOrder.ascending;
+      }
+      else {
+        _selectedSortOrder = (_selectedSortOrder != Map2SortOrder.ascending) ? Map2SortOrder.ascending : Map2SortOrder.descending;
+      }
+    });
+    _onSortChanged();
+    Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
+      AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
+    );
+
+  }
+
   Map2SortType? get _selectedSortType => _selectedFilterIfExists?.sortType;
   set _selectedSortType(Map2SortType? value) => _selectedFilter?.sortType = value;
 
@@ -1144,7 +1368,9 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   _Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
 
   _Map2CampusBuildingsFilter? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
-  _Map2CampusBuildingsFilter? get _campusBuildingsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: false));
+  //_Map2CampusBuildingsFilter? get _campusBuildingsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: false));
+  _Map2DiningLocationsFilter? get _diningLocationsFilter => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: true));
+  _Map2DiningLocationsFilter? get _diningLocationsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: false));
   _Map2Events2Filter? get _events2Filter => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: true));
 
   _Map2Filter? _getFilter(Map2ContentType? contentType, { bool ensure = false }) {
@@ -1205,106 +1431,6 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   );
 
   //void _onFilterButtonsScroll() {}
-
-  void _onSearch() {
-    setStateIfMounted((){
-      _searchOn = true;
-      _searchTextController.text = _selectedFilterIfExists?.searchText ?? '';
-    });
-  }
-  
-  void _onSearchTextChanged(String text) {
-  }
-
-  void _onTapCancelSearchText() {
-    if (_searchTextController.text.isNotEmpty) {
-      _searchTextController.text = '';
-    }
-    else {
-      setStateIfMounted((){
-        _selectedFilter?.searchText = '';
-        _searchOn = false;
-      });
-      _onFilterChanged();
-    }
-  }
-  
-  void _onTapSearchText() {
-    setStateIfMounted((){
-      _selectedFilter?.searchText = _searchTextController.text;
-      _searchTextController.text = '';
-      _searchOn = false;
-    });
-    _onFilterChanged();
-  }
-
-  void _onSortType(Map2SortType? value) {
-    Analytics().logSelect(target: 'Sort: ${value?.displayTitle}');
-    setStateIfMounted(() {
-      if (_selectedSortType != value) {
-        _selectedSortType = value;
-        _selectedSortOrder = Map2SortOrder.ascending;
-      }
-      else {
-        _selectedSortOrder = (_selectedSortOrder != Map2SortOrder.ascending) ? Map2SortOrder.ascending : Map2SortOrder.descending;
-      }
-    });
-    _onSortChanged();
-    Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
-      AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
-    );
-
-  }
-
-  void _onTerm(StudentCourseTerm? value) {
-    Analytics().logSelect(target: 'Term: ${value?.name}');
-    setStateIfMounted((){
-      StudentCourses().selectedTermId = value?.id;
-    });
-    _onFilterChanged();
-  }
-
-  void _onStarred() {
-    _Map2CampusBuildingsFilter? filter = _campusBuildingsFilter;
-    if (filter != null) {
-      setStateIfMounted((){
-        filter.starred = (filter.starred != true);
-      });
-      _onFilterChanged();
-    }
-  }
-
-  void _onAmenities() {
-    _Map2CampusBuildingsFilter? filter = _campusBuildingsFilter;
-    if (filter != null) {
-      Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
-        amenities: JsonUtils.cast<List<Building>>(_explores)?.featureNames ?? <String, String>{},
-        selectedAmenityIds: filter.amenityIds,
-      ),)).then(((LinkedHashSet<String>? amenityIds) {
-        if (amenityIds != null) {
-          setStateIfMounted(() {
-            filter.amenityIds = amenityIds;
-          });
-          _onFilterChanged();
-        }
-      }));
-    }
-  }
-
-  void _onFilters() {
-    Analytics().logSelect(target: 'Filters');
-
-    _Map2Events2Filter? filter = _events2Filter;
-    Event2HomePanel.presentFiltersV2(context, filter?.event2Filter ?? Event2FilterParam.fromStorage()).then((Event2FilterParam? filterResult) {
-      if ((filterResult != null) && mounted) {
-        setStateIfMounted(() {
-          filter?.event2Filter = filterResult;
-        });
-        filterResult.saveToStorage();
-        _onFilterChanged();
-      }
-    });
-  }
 
   void _onShareFilter() {
 
@@ -1803,12 +1929,13 @@ extension _Map2ContentType on Map2ContentType {
   Map2ContentType? _ensure({ Iterable<Map2ContentType>? availableTypes }) =>
       (availableTypes?.contains(this) != false) ? this : null;
 
-  bool get supportsManualFilters => (this == Map2ContentType.CampusBuildings);
+  static const Set<Map2ContentType> _manualFiltersTypes = <Map2ContentType>{
+    Map2ContentType.CampusBuildings, Map2ContentType.DiningLocations,
+  };
+  bool get supportsManualFilters => _manualFiltersTypes.contains(this);
 
   bool supportsSortType(Map2SortType sortType) =>
     (sortType != Map2SortType.dateTime) || (this == Map2ContentType.Events2);
-
-
 }
 
 extension Map2SortTypeImpl on Map2SortType {
@@ -1976,6 +2103,7 @@ extension ExplorePOIImpl on ExplorePOI {
 class _Map2Filter {
 
   String searchText = '';
+  bool starred = false;
   Map2SortType? sortType;
   Map2SortOrder? sortOrder;
 
@@ -1986,7 +2114,7 @@ class _Map2Filter {
     switch (contentType) {
       case Map2ContentType.CampusBuildings:      return _Map2CampusBuildingsFilter();
       case Map2ContentType.StudentCourses:       return _Map2StudentCoursesFilter();
-      case Map2ContentType.DiningLocations:
+      case Map2ContentType.DiningLocations:      return _Map2DiningLocationsFilter();
       case Map2ContentType.Events2:              return _Map2Events2Filter();
       case Map2ContentType.Laundries:
       case Map2ContentType.BusStops:
@@ -1996,10 +2124,16 @@ class _Map2Filter {
     }
   }
 
+  // Filter
+
   List<Explore> filter(List<Explore> explores) =>
     (explores.isNotEmpty && _hasFilter) ? _filter(explores) : explores;
+
   bool get _hasFilter => false;
+
   List<Explore> _filter(List<Explore> explores) => explores;
+
+  // Sort
 
   List<Explore> sort(Iterable<Explore> explores, { Position? position }) {
     List<Explore> sortedExplores = List<Explore>.from(explores);
@@ -2043,7 +2177,6 @@ class _Map2Filter {
 }
 
 class _Map2CampusBuildingsFilter extends _Map2Filter {
-  bool starred = false;
   LinkedHashSet<String> amenityIds = LinkedHashSet<String>();
 
   @override
@@ -2080,8 +2213,7 @@ class _Map2CampusBuildingsFilter extends _Map2Filter {
     }
     if (starred) {
       String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
-      String starredValue = Localization().getStringEx('panel.map2.filter.on.text', 'On');
-      descriptionMap[starredKey] = <String>[starredValue];
+      descriptionMap[starredKey] = <String>[];
     }
     if (sortType != null) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
@@ -2116,6 +2248,72 @@ class _Map2StudentCoursesFilter extends _Map2Filter {
       }
     }
     return filtered;
+  }
+}
+
+class _Map2DiningLocationsFilter extends _Map2Filter {
+  bool onlyOpened = false;
+  PaymentType? paymentType = null;
+
+  @override
+  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (onlyOpened != false) || (paymentType != null));
+
+  @override
+  List<Explore> _filter(List<Explore> explores) {
+    String? searchLowerCase = searchText.toLowerCase();
+    List<Explore> filtered = <Explore>[];
+    for (Explore explore in explores) {
+      if ((explore is Dining) &&
+          ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchTextLowerCase(searchLowerCase))) &&
+          ((starred != true) || (Auth2().prefs?.isFavorite(explore as Favorite) == true)) &&
+          ((onlyOpened != true) || (explore.isOpen == true)) &&
+          ((paymentType == null) || (explore.paymentTypes?.contains(paymentType) == true))
+        ) {
+        filtered.add(explore);
+      }
+    }
+    return filtered;
+  }
+
+  @override
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
+    LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
+    if (searchText.isNotEmpty) {
+      String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
+      descriptionMap[searchKey] = <String>[searchText];
+    }
+    if (paymentType != null) {
+      String? paymentTypeValue = PaymentTypeHelper.paymentTypeToDisplayString(paymentType);
+      if ((paymentTypeValue != null) && paymentTypeValue.isNotEmpty) {
+        String paymentTypeKey = Localization().getStringEx('panel.map2.filter.payment_type.text', 'Payment Type');
+        descriptionMap[paymentTypeKey] = <String>[paymentTypeValue];
+      }
+    }
+    if (starred) {
+      String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
+      descriptionMap[starredKey] = <String>[];
+    }
+    if (onlyOpened) {
+      String onlyOpenedKey = Localization().getStringEx('panel.map2.filter.open_now.text', 'Open Now');
+      descriptionMap[onlyOpenedKey] = <String>[];
+    }
+    if (sortType != null) {
+      String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
+      String sortValue = sortType?.displayTitle ?? '';
+      if (sortValue.isNotEmpty && (sortOrder != null)) {
+        String? sortOrderValue = sortOrder?.displayMnemo;
+        if ((sortOrderValue != null) && sortOrderValue.isNotEmpty) {
+          sortValue += " $sortOrderValue";
+        }
+      }
+      descriptionMap[sortKey] = <String>[sortValue];
+    }
+    if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.dinings.text', 'Dining Locations');
+      String buildingsValue = filteredExplores.length.toString();
+      descriptionMap[buildingsKey] = <String>[buildingsValue];
+    }
+    return descriptionMap;
   }
 }
 

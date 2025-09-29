@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:collection/collection.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -14,4 +15,35 @@ extension DiningExt on Dining {
 
   Color? get uiColor => Styles().colors.diningColor;
 
+}
+
+extension DiningFilter on Dining {
+  bool matchSearchTextLowerCase(String searchLowerCase) =>
+    (searchLowerCase.isNotEmpty && (
+      (title?.toLowerCase().contains(searchLowerCase) == true) ||
+      (diningType?.toLowerCase().contains(searchLowerCase) == true) ||
+      (description?.toLowerCase().contains(searchLowerCase) == true) ||
+      (location?.name?.toLowerCase().contains(searchLowerCase) == true) ||
+      (location?.description?.toLowerCase().contains(searchLowerCase) == true) ||
+      (location?.building?.toLowerCase().contains(searchLowerCase) == true) ||
+      (location?.fullAddress?.toLowerCase().contains(searchLowerCase) == true) ||
+      (location?.address?.toLowerCase().contains(searchLowerCase) == true) ||
+      (diningSchedules?.matchSearchTextLowerCase(searchLowerCase) == true)
+    ));
+}
+
+extension DiningScheduleFilter on DiningSchedule {
+  bool matchSearchTextLowerCase(String searchLowerCase) =>
+    (searchLowerCase.isNotEmpty && (
+      (meal?.toLowerCase().contains(searchLowerCase) == true)
+    ));
+}
+
+extension DiningSchedulesFilter on Iterable<DiningSchedule> {
+  bool matchSearchTextLowerCase(String searchLowerCase) =>
+    firstWhereOrNull((DiningSchedule diningSchedule) => diningSchedule.matchSearchTextLowerCase(searchLowerCase)) != null;
+}
+
+extension PaymentTypeImpl on PaymentType {
+  String get displayTitle => PaymentTypeHelper.paymentTypeToDisplayString(this) ?? '';
 }

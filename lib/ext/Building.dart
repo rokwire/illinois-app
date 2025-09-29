@@ -2,7 +2,7 @@
 import 'package:collection/collection.dart';
 import 'package:illinois/model/Building.dart';
 
-extension BuildingSearch on Building {
+extension BuildingFilter on Building {
 
   bool matchSearchTextLowerCase(String searchLowerCase) =>
     (searchLowerCase.isNotEmpty && (
