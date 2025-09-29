@@ -18,7 +18,7 @@ import 'dart:convert';
 import 'dart:core';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/model/Building.dart';
 import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/Auth2.dart';
