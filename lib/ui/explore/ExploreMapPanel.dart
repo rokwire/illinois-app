@@ -2410,7 +2410,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
   
   static Future<BitmapDescriptor> _groupMarkerIcon({required BuildContext context, required double imageSize, Color? backColor, Color? borderColor, Color? textColor, int? count}) async {
-    Uint8List? markerImageBytes = await ImageUtils.mapGroupMarkerImage(
+    Uint8List? markerImageBytes = await ImageUtils.mapMarkerImage(
       imageSize: imageSize * MediaQuery.of(context).devicePixelRatio,
       backColor: backColor,
       strokeColor: borderColor,

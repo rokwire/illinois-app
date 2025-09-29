@@ -31,8 +31,13 @@ class MTDStopCard extends StatelessWidget {
   final void Function(MTDStop? stop)? onDetail;
   final void Function(MTDStop? stop)? onExpand;
   final Position? currentPosition;
+  final EdgeInsetsGeometry padding;
 
-  MTDStopCard({Key? key, this.stop, this.expanded, this.onDetail, this.onExpand, this.currentPosition }) : super(key: key);
+  MTDStopCard({Key? key, this.stop, this.expanded,
+    this.onDetail, this.onExpand,
+    this.currentPosition,
+    this.padding = const EdgeInsets.only(bottom: 4),
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +86,7 @@ class MTDStopCard extends StatelessWidget {
       favoritePadding = EdgeInsets.all(16);
     }
 
-    return Padding(padding: EdgeInsets.only(bottom: 4), child:
+    return Padding(padding: padding, child:
       InkWell(onTap: () => _onTapDetail(stop), child:
         Container(
           decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
