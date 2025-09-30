@@ -85,7 +85,7 @@ class Sports with Service, NotificationsListener {
   @override
   Future<void> initService() async {
 
-    await Future.wait([
+    /* TMP: await */ Future.wait([
       _initSports(),
       _initSportSocialMedia(),
     ]);

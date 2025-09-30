@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Building.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:webview_flutter/webview_flutter.dart' as flutter_webview;
-
-import '../../model/StudentCourse.dart';
 
 class DisplayFloorPlanPanel extends StatefulWidget {
   final Building? building;
