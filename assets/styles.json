@@ -182,6 +182,7 @@
     "widget.message.light.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray"},
     "widget.message.light.small.semi_fat": {"font_family": "medium", "size": 14.0, "color": "mediumGray"},
     "widget.message.tiny": {"font_family": "regular", "size": 12.0, "color": "fillColorPrimary"},
+    "widget.message.tiny.fat": {"extends": "widget.message.tiny", "font_family": "bold"},
     "widget.message.light.regular": {"font_family": "regular", "size": 16.0, "color": "mediumGray"},
     "widget.message.light.variant.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray2"},
     "widget.message.dark.regular": {"font_family": "regular", "size": 16.0, "color": "textBackground"},
@@ -931,6 +932,7 @@
     "attendance": {"src": "0xf7f3", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "report": {"src": "0xf06a", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "clock": {"src": "0xf017", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
+    "toilet": {"src": "0xf7d8", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "exclamation": {"src": "0x21", "type": "fa.icon", "weight": "solid", "color": "alert", "size": 18},
 
     "down-to-bracket": {"src": "0xe4e7", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},

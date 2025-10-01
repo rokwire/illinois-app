@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
-import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/model/Building.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';

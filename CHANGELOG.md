@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add file attachments to conversation messages [#5378](https://github.com/rokwire/illinois-app/issues/5378).
 
+## [7.3.5] - 2025-09-29
+### Added
+- Published first draft of Map2 [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+
 ## [7.3.4] - 2025-09-05
 ### Fixed
 - Accessibility enhancements in HomeCustomizeFavoritesPanel [#1971](https://github.com/rokwire/illinois-app/issues/1971).

@@ -7,6 +7,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
+import 'package:illinois/model/Building.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
@@ -281,51 +282,56 @@ extension ExploreExt on Explore {
   }
 
   void exploreLaunchDetail(BuildContext context, { Core.Position? initialLocationData, AnalyticsFeature? analyticsFeature, ExploreSelectLocationBuilder? selectLocationBuilder }) {
+    Widget? panel = exploreDetailPanel(initialLocationData: initialLocationData, analyticsFeature: analyticsFeature, selectLocationBuilder: selectLocationBuilder);
+    if (panel != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => panel));
+    }
+    else {
+      launchDirections();
+    }
+  }
+
+  Widget? exploreDetailPanel({ Core.Position? initialLocationData, AnalyticsFeature? analyticsFeature, ExploreSelectLocationBuilder? selectLocationBuilder }) {
     // NB: selectLocationBuilder parameter is acknowledged only in ExploreBuildingDetailPanel for now.
     // Acknowledge it in other detail panels when other types of explores need to get selectable.
 
-    Route? route;
     if (this is Event2) {
         Event2 event2 = (this as Event2);
         if (event2.hasGame) {
-          route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event2.game, analyticsFeature: analyticsFeature,));
+          return AthleticsGameDetailPanel(game: event2.game, analyticsFeature: analyticsFeature,);
         } else {
-          route = CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event2, userLocation: initialLocationData, analyticsFeature: analyticsFeature));
+          return  Event2DetailPanel(event: event2, userLocation: initialLocationData, analyticsFeature: analyticsFeature);
         }
     }
     else if (this is Dining) {
-      route = CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature,),);
+      return ExploreDiningDetailPanel(dining: this as Dining, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature,);
     }
     else if (this is LaundryRoom) {
-      route = CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: this as LaundryRoom, analyticsFeature: analyticsFeature,),);
+      return LaundryRoomDetailPanel(room: this as LaundryRoom, analyticsFeature: analyticsFeature,);
     }
     else if (this is Game) {
-      route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: this as Game, analyticsFeature: analyticsFeature,),);
+      return AthleticsGameDetailPanel(game: this as Game, analyticsFeature: analyticsFeature,);
     }
     else if (this is Building) {
-      route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: this as Building, analyticsFeature: analyticsFeature, selectLocationBuilder: selectLocationBuilder,),);
+      return ExploreBuildingDetailPanel(building: this as Building, analyticsFeature: analyticsFeature, selectLocationBuilder: selectLocationBuilder,);
     }
     else if (this is WellnessBuilding) {
-      route = CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as WellnessBuilding).guideId, analyticsFeature: analyticsFeature ?? AnalyticsFeature.Wellness,),);
+      return GuideDetailPanel(guideEntryId: (this as WellnessBuilding).guideId, analyticsFeature: analyticsFeature ?? AnalyticsFeature.Wellness,);
     }
     else if (this is MTDStop) {
-      route = CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: this as MTDStop, analyticsFeature: analyticsFeature,),);
+      return MTDStopDeparturesPanel(stop: this as MTDStop, analyticsFeature: analyticsFeature,);
     }
     else if (this is StudentCourse) {
-      route = CupertinoPageRoute(builder: (context) => StudentCourseDetailPanel(course: this as StudentCourse, analyticsFeature: analyticsFeature,),);
+      return StudentCourseDetailPanel(course: this as StudentCourse, analyticsFeature: analyticsFeature,);
     }
     else if (this is Appointment) {
-      route = CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: this as Appointment, analyticsFeature: analyticsFeature,),);
+      return AppointmentDetailPanel(appointment: this as Appointment, analyticsFeature: analyticsFeature,);
     }
     else if (this is ExplorePOI) {
-      // Not supported
+      return null;
     }
     else {
-      route = CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: this, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature,),);
-    }
-
-    if (route != null) {
-      Navigator.push(context, route);
+      return ExploreDetailPanel(explore: this, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature,);
     }
   }
 }
@@ -341,9 +347,18 @@ extension ExploreMap on Explore {
   Color? get mapMarkerTextColor => (this is Place) ? (this as Place).mapMarkerTextColor : defaultMarkerTextColor;
   static Color? get defaultMarkerTextColor => Styles().colors.background;
 
-  String? get mapMarkerTitle {
-    return exploreTitle;
-  }
+
+  static Color? get disabledMarkerColor => Styles().colors.surfaceAccent;
+  static Color? get disabledExploreMarkerBorderColor => Styles().colors.mediumGray2;
+  static Color? get disabledGroupMarkerBorderColor => Styles().colors.mediumGray1;
+  static Color? get disabledMarkerTextColor => Styles().colors.mediumGray1;
+
+  //static Color? get disabledMarkerColor => Styles().colors.mediumGray2;
+  //static Color? get disabledExploreMarkerBorderColor => defaultMarkerBorderColor;
+  //static Color? get disabledGroupMarkerBorderColor => defaultMarkerBorderColor;
+  //static Color? get disabledMarkerTextColor => defaultMarkerTextColor;
+
+  String? get mapMarkerTitle => exploreTitle;
 
   String? get mapMarkerSnippet {
     if (this is Event2) {
@@ -457,7 +472,7 @@ extension ExploreMap on Explore {
   String get _defaultTravelMode => ((this is MTDStop) || (this is ExplorePOI)) ?
     GeoMapUtils.traveModeTransit : GeoMapUtils.traveModeWalking;
 
-  static Explore? mapGroupSameExploreForList(List<Explore>? explores) {
+  static Explore? mapGroupSameExploreForList(Iterable<Explore>? explores) {
     Explore? sameExplore;
     if (explores != null) {
       for (Explore explore in explores) {
@@ -481,6 +496,22 @@ extension ExploreMap on Explore {
       }
     }
     return validExplores;
+  }
+
+  static int? validCountFromList(List<Explore>? explores) {
+    if (explores != null) {
+      int validCount = 0;
+      for (Explore explore in explores) {
+        ExploreLocation? exploreLocation = explore.exploreLocation;
+        if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
+          validCount++;
+        }
+      }
+      return validCount;
+    }
+    else {
+      return null;
+    }
   }
 
   static LatLngBounds? boundsOfList(List<Explore>? explores) {
@@ -512,7 +543,31 @@ extension ExploreMap on Explore {
     return ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) ? LatLngBounds(southwest: LatLng(minLat, minLng), northeast: LatLng(maxLat, maxLng)) : null;
   }
 
-  static LatLng? centerOfList(List<Explore>? explores) {
+  static LatLngBounds? boundsOfSet(Iterable<LatLng> coordinates) {
+    double? minLat, minLng, maxLat, maxLng;
+    for (LatLng coordinate in coordinates) {
+      double coordinateLat = coordinate.latitude.toDouble();
+      double coordinateLng = coordinate.longitude.toDouble();
+      if ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) {
+        if (coordinateLat < minLat)
+          minLat = coordinateLat;
+        else if (maxLat < coordinateLat)
+          maxLat = coordinateLat;
+
+        if (coordinateLng < minLng)
+          minLng = coordinateLng;
+        else if (maxLng < coordinateLng)
+          maxLng = coordinateLng;
+      }
+      else {
+        minLat = maxLat = coordinateLat;
+        minLng = maxLng = coordinateLng;
+      }
+    }
+    return ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) ? LatLngBounds(southwest: LatLng(minLat, minLng), northeast: LatLng(maxLat, maxLng)) : null;
+  }
+
+  static LatLng? centerOfList(Iterable<Explore>? explores) {
     if (explores != null) {
       int count = 0;
       double x = 0, y = 0, z = 0;
