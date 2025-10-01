@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+## [7.3.6] - 2025-10-01
 ### Added
 - Alert the user when the system logs him/her out [#5411](https://github.com/rokwire/illinois-app/issues/5411).
 
