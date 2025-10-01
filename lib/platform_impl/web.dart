@@ -12,10 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:html';
-
-import 'package:flutter/foundation.dart';
-
 import 'package:illinois/platform_impl/base.dart';
 
 import 'package:file_picker/_internal/file_picker_web.dart';
