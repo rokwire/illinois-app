@@ -4528,6 +4528,9 @@
     "common.message.exit_app":"¿Está seguro de que desea salir?",
     "common.message.login.not_available":"To sign in, {{link.settings}} to 4 or 5 under Settings",
     "common.message.login.not_available.link.settings":"set your privacy level",
+    "common.message.logout.title":"You were signed out due to the inability to renew your access token.",
+    "common.message.logout.description.token":"You were signed out due to the inability to renew your access token.",
+    "common.message.logout.description.authorization":"You were signed out because authorization is not available. Usually the reason for this is a low value of privacy level.",
 
     "privacy.features2.entry.disable_location_awareness":"Deshabilitar reconocimiento de ubicación.",
     "privacy.features2.entry.dont_store_location":"No almacenar tu ubicación.",

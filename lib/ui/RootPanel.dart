@@ -25,6 +25,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
+import 'package:illinois/service/Auth2.dart' as uiuc;
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Gateway.dart';
@@ -60,6 +61,7 @@ import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:rokwire_plugin/model/actions.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -226,11 +228,13 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FlexUI.notifyChanged,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
-      uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
       HomeFavoritesPanel.notifySelect,
       BrowsePanel.notifySelect,
       ExploreMapPanel.notifySelect,
+      Auth2.notifyLogout,
+
+      uiuc.TabBar.notifySelectionChanged,
     ]);
 
     _tabs = _getTabs();
@@ -584,10 +588,13 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == ExploreMapPanel.notifySelect) {
       _onSelectMaps(param);
     }
+    else if (name == Auth2.notifyLogout) {
+      _alertLogout(JsonUtils.cast(param));
+    }
+
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
     }
-
   }
 
 
@@ -1399,6 +1406,41 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
+  void _alertLogout(String? reason) {
+    String? message, messageEn;
+    if (reason == Auth2.logoutReasonToken) {
+      message = Localization().getStringEx('common.message.logout.description.token', 'You were signed out due to the inability to renew your access token');
+      messageEn = Localization().getStringEx('common.message.logout.description.token', 'You were signed out due to the inability to renew your access token', language: 'en');
+    }
+    else if (reason == uiuc.Auth2.logoutReasonAuthorization) {
+      message = Localization().getStringEx('common.message.logout.description.authorization', 'You were signed out because authorization is not available. Usually the reason for this is a low value of privacy level.');
+      messageEn = Localization().getStringEx('common.message.logout.description.authorization', 'You were signed out because authorization is not available. Usually the reason for this is a low value of privacy level.', language: 'en');
+    }
+    if ((message != null) && context.mounted) {
+      showDialog(context: context, builder: (context) => Dialog(child:
+        Padding(padding: EdgeInsets.all(18), child:
+          Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+            Text(Localization().getStringEx("common.message.logout.title", "Signed Out"),
+              style: Styles().textStyles.getTextStyle("widget.message.dark.extra_large"),
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: 26), child:
+              Text(message ?? '', textAlign: TextAlign.left,
+                style: Styles().textStyles.getTextStyle("widget.message.dark.medium")
+              ),
+            ),
+            Align(alignment: Alignment.centerRight, child:
+              TextButton(onPressed: () {
+                Analytics().logAlert(text: messageEn ?? message, selection: "OK");
+                Navigator.of(context).pop();
+              }, child:
+                Text(Localization().getStringEx("dialog.ok.title", "OK"))
+              ),
+            )
+          ],),
+        ),
+      ));
+    }
+  }
 }
 
 RootTab? rootTabFromString(String? value) {
