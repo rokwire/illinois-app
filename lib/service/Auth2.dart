@@ -40,8 +40,10 @@ class Auth2 extends rokwire.Auth2 {
   static const String notifyProfilePictureChanged  = "edu.illinois.rokwire.auth2.profile.picture.changed";
   static const String notifyProfileNamePronunciationChanged = "edu.illinois.rokwire.auth2.profile.name.pronunciation.changed";
 
+  static const String logoutReasonAuthorization = "edu.illinois.rokwire.auth2.logout.reason.authorization";
+
   static const String _iCardFileName             = "idCard.json";
-  static const String _profilePictureFileName      = "profilePicture.small.bin";
+  static const String _profilePictureFileName    = "profilePicture.small.bin";
 
   Auth2Token? _uiucToken;
 
@@ -102,21 +104,13 @@ class Auth2 extends rokwire.Auth2 {
   void onNotification(String name, dynamic param) {
     super.onNotification(name, param);
     if (name == FlexUI.notifyChanged) {
-      _checkEnabled();
+      _checkLoginEnabled();
     }
     else if (name == Content.notifyUserProfilePictureChanged || name == Auth2.notifyProfileChanged) {
       _refreshProfilePicture();
     }
     else if (name == Auth2.notifyAccountChanged) {
       _refreshICard();
-    }
-  }
-
-  void _checkEnabled() {
-    if (isLoggedIn && !FlexUI().isAuthenticationAvailable) {
-      onUserPrefsChanged(account?.prefs).then((_) {
-        logout();
-      });
     }
   }
 
@@ -136,6 +130,19 @@ class Auth2 extends rokwire.Auth2 {
           _refreshProfilePicture();
         }
       }
+    }
+  }
+
+
+  bool _processingLoginDisabled = false;
+
+  void _checkLoginEnabled() {
+    if (isLoggedIn && !FlexUI().isAuthenticationAvailable && !_processingLoginDisabled) {
+      _processingLoginDisabled = true;
+      onUserPrefsChanged(account?.prefs).then((_) {
+        logout(reason: logoutReasonAuthorization);
+        _processingLoginDisabled = false;
+      });
     }
   }
 
@@ -184,7 +191,7 @@ class Auth2 extends rokwire.Auth2 {
   }
 
   @override
-  void logout({ Auth2UserPrefs? prefs }) {
+  void logout({ String? reason, Auth2UserPrefs? prefs }) {
     if (_uiucToken != null) {
       Storage().auth2UiucToken = _uiucToken = null;
     }
@@ -202,7 +209,7 @@ class Auth2 extends rokwire.Auth2 {
       NotificationService().notify(notifyProfilePictureChanged);
     }
 
-    super.logout(prefs: prefs);
+    super.logout(reason: reason, prefs: prefs);
   }
 
   @protected

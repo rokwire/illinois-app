@@ -4432,10 +4432,10 @@
     "model.event2.registration_type.internal": "Via the app",
     "model.event2.registration_type.external": "Via external link",
 
-	"model.event2.registrant_type.self": "Self-Registered",
-	"model.event2.registrant_type.registrants": "Guest List",
-	"model.event2.registrant_type.creator": "Creator",
-	"model.event2.registrant_type.unknown": "Unknown",
+    "model.event2.registrant_type.self": "Self-Registered",
+    "model.event2.registrant_type.registrants": "Guest List",
+    "model.event2.registrant_type.creator": "Creator",
+    "model.event2.registrant_type.unknown": "Unknown",
 
     "model.canvas.calendar.event.type.event.label": "Event",
     "model.canvas.calendar.event.type.assignment.label": "Assignment",
@@ -4547,6 +4547,9 @@
     "common.message.exit_app":"Are you sure you want to exit?",
     "common.message.login.not_available":"To sign in, {{link.settings}} to 4 or 5 under Settings",
     "common.message.login.not_available.link.settings":"set your privacy level",
+    "common.message.logout.title":"Signed Out",
+    "common.message.logout.description.token":"You were signed out due to the inability to renew your access token.",
+    "common.message.logout.description.authorization":"You were signed out because authorization is not available. Usually the reason for this is a low value of privacy level.",
 
     "privacy.features2.entry.disable_location_awareness":"Disable location awareness.",
     "privacy.features2.entry.dont_store_location":"Not store your location.",
