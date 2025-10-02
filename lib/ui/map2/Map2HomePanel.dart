@@ -56,7 +56,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, Laundries, BusStops, Therapists, MyLocations }
+enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, LaundryRooms, BusStops, Therapists, MyLocations }
 enum Map2SortType { dateTime, alphabetical, proximity }
 enum Map2SortOrder { ascending, descending }
 enum _ExploreProgressType { init, update }
@@ -734,7 +734,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       case Map2ContentType.StudentCourses:       return _loadStudentCourses();
       case Map2ContentType.DiningLocations:      return _loadDiningLocations();
       case Map2ContentType.Events2:              return _loadEvents2();
-      case Map2ContentType.Laundries:            return _loadLaundries();
+      case Map2ContentType.LaundryRooms:         return _loadLaundryRooms();
       case Map2ContentType.BusStops:             return _loadBusStops();
       case Map2ContentType.Therapists:           return _loadTherapists();
       case Map2ContentType.MyLocations:          return _loadMyLocations();
@@ -772,7 +772,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     );
   }
 
-  Future<List<Explore>?> _loadLaundries() async {
+  Future<List<Explore>?> _loadLaundryRooms() async {
     LaundrySchool? laundrySchool = await Laundries().loadSchoolRooms();
     return laundrySchool?.rooms;
   }
@@ -915,7 +915,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       case Map2ContentType.StudentCourses:       return _studentCoursesFilterButtons;
       case Map2ContentType.DiningLocations:      return _diningLocationsFilterButtons;
       case Map2ContentType.Events2:              return _events2FilterButtons;
-      case Map2ContentType.Laundries:
+      case Map2ContentType.LaundryRooms:
       case Map2ContentType.BusStops:
       case Map2ContentType.Therapists:
       case Map2ContentType.MyLocations:
@@ -1869,7 +1869,7 @@ extension _Map2ContentType on Map2ContentType {
       case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses', language: language);
       case Map2ContentType.DiningLocations:      return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining', language: language);
       case Map2ContentType.Events2:              return Localization().getStringEx('panel.explore.button.events2.title', 'Events', language: language);
-      case Map2ContentType.Laundries:            return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry', language: language);
+      case Map2ContentType.LaundryRooms:         return Localization().getStringEx('panel.explore.button.laundry_room.title', 'Laundry Rooms', language: language);
       case Map2ContentType.BusStops:             return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Stops', language: language);
       case Map2ContentType.Therapists:           return Localization().getStringEx('panel.explore.button.mental_health.title', 'Find a Therapist', language: language);
       case Map2ContentType.MyLocations:          return Localization().getStringEx('panel.explore.button.my_locations.title', 'My Locations', language: language);
@@ -1882,7 +1882,7 @@ extension _Map2ContentType on Map2ContentType {
       case 'student_courses': return Map2ContentType.StudentCourses;
       case 'dining': return Map2ContentType.DiningLocations;
       case 'events2': return Map2ContentType.Events2;
-      case 'laundry': return Map2ContentType.Laundries;
+      case 'laundry': return Map2ContentType.LaundryRooms;
       case 'mtd_stops': return Map2ContentType.BusStops;
       case 'mental_health': return Map2ContentType.Therapists;
       case 'my_locations': return Map2ContentType.MyLocations;
@@ -1896,7 +1896,7 @@ extension _Map2ContentType on Map2ContentType {
       case Map2ContentType.StudentCourses:       return 'student_courses';
       case Map2ContentType.DiningLocations:      return 'dining';
       case Map2ContentType.Events2:              return 'events2';
-      case Map2ContentType.Laundries:            return 'laundry';
+      case Map2ContentType.LaundryRooms:         return 'laundry';
       case Map2ContentType.BusStops:             return 'mtd_stops';
       case Map2ContentType.Therapists:           return 'mental_health';
       case Map2ContentType.MyLocations:          return 'my_locations';

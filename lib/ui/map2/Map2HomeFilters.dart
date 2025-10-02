@@ -38,7 +38,7 @@ class Map2Filter {
       case Map2ContentType.StudentCourses:       return Map2StudentCoursesFilter();
       case Map2ContentType.DiningLocations:      return Map2DiningLocationsFilter();
       case Map2ContentType.Events2:              return Map2Events2Filter();
-      case Map2ContentType.Laundries:            return Map2LaundriesFilter();
+      case Map2ContentType.LaundryRooms:            return Map2LaundryRoomsFilter();
       case Map2ContentType.BusStops:             return Map2BusStopsFilter();
       case Map2ContentType.Therapists:
       case Map2ContentType.MyLocations:
@@ -289,7 +289,7 @@ class Map2Events2Filter extends Map2Filter {
   }
 }
 
-class Map2LaundriesFilter extends Map2Filter {
+class Map2LaundryRoomsFilter extends Map2Filter {
 
   @override
   bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true));
@@ -332,7 +332,7 @@ class Map2LaundriesFilter extends Map2Filter {
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.laundries.text', 'Laundries');
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.laundry_rooms.text', 'Laundry Rooms');
       String buildingsValue = filteredExplores.length.toString();
       descriptionMap[buildingsKey] = <String>[buildingsValue];
     }
