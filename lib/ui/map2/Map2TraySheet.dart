@@ -70,7 +70,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
     );
 
   BoxDecoration get _traySheetDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: Styles().colors.background,
     borderRadius: _traySheetBorderRadius,
     boxShadow: [_traySheetBoxShadow],
   );
@@ -109,8 +109,12 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
   }
 
   Widget get _traySheetDragHandle => Container(
-    width: _traySheetWidth * _traySheetDragHandleWidthFactor, height: _traySheetDragHandleHeight,
-    decoration: BoxDecoration(color: Styles().colors.lightGray, borderRadius: BorderRadius.circular(2.0),),
+    width: _traySheetWidth * _traySheetDragHandleWidthFactor,
+    height: _traySheetDragHandleHeight,
+    decoration: BoxDecoration(
+      color: Styles().colors.dividerLineAccent,
+      borderRadius: BorderRadius.circular(2.0),
+    ),
   );
 
   double get _traySheetWidth => _traySheetKey.renderBoxSize?.width ?? _screenWidth;
