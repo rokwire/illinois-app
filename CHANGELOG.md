@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+
+## [7.3.7] - 2025-10-02
 ### Changed
 - Support 16KB page sizes for Android [#5362](https://github.com/rokwire/illinois-app/issues/5362).
 ### Removed
