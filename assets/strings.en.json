@@ -3771,6 +3771,8 @@
     "widget.card.button.favorite.on.hint":"",
     "widget.card.button.favorite.off.title":"Remove from Favorites",
     "widget.card.button.favorite.off.hint":"",
+    "widget.card.button.title.edit.title":"Edit Title",
+    "widget.card.button.title.edit.hint":"",
     "widget.card.label.interests":"Because of your interest in:",
     "widget.card.label.converge":"match",
 

@@ -3744,6 +3744,8 @@
 	"widget.card.button.favorite.on.hint":"",
 	"widget.card.button.favorite.off.title":"从收藏夹中删除",
 	"widget.card.button.favorite.off.hint":"",
+	"widget.card.button.title.edit.title":"Edit Title",
+	"widget.card.button.title.edit.hint":"",
 	"widget.card.label.interests":"由于您对以下内容感兴趣：",
 	"widget.card.label.converge":"比赛",
 

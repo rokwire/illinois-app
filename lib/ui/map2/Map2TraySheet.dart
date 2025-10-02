@@ -174,7 +174,13 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
         padding: EdgeInsets.zero,
       );
     }
-    else if ((explore is Building) || (explore is WellnessBuilding) || (explore is ExplorePOI))  {
+    else if (explore is ExplorePOI) {
+      return Map2ExplorePOICard(explore,
+        currentLocation: widget.currentLocation,
+        onTap: () => _onTapListCard(explore),
+      );
+    }
+    else if ((explore is Building) || (explore is WellnessBuilding))  {
       return Map2LocationCard(explore,
         currentLocation: widget.currentLocation,
         onTap: () => _onTapListCard(explore),
