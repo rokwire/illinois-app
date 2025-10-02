@@ -32,6 +32,7 @@ import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/ImageDescriptionInput.dart';
 import 'package:illinois/ui/widgets/WebEmbed.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -568,7 +569,10 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     if (isReadyUrl) {
       //ready
       AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-      Navigator.pop(context, ImagesResult.succeed(imageUrl: url));
+      _requestImageDescriptionChange(url).then((success){
+        Navigator.pop(context, ImagesResult.succeed(imageUrl: url));
+      });
+
     } else {
       //we need to process it
       setState(() {
@@ -584,6 +588,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
 
         ImagesResultType? resultType = logicResult.resultType;
+
         switch (resultType) {
           case ImagesResultType.cancelled:
           //do nothing
@@ -594,10 +599,23 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
           case ImagesResultType.succeeded:
           //ready
             AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-            Navigator.pop(context, logicResult);
+            _requestImageDescriptionChange(logicResult.imageUrl).then((success){
+              Navigator.pop(context, logicResult);
+            });
+
             break;
         }
       });
+    }
+  }
+
+  Future<bool> _requestImageDescriptionChange(String? url) async {
+    ImageDescriptionData? inputData = await ImageDescriptionInput.showAsDialog(context: context);
+    if(inputData != null &&  url!= null){
+      ImagesResult result = await Content().uploadImageMetaData(imageUrl: url, imageMetaData: inputData.toMetaData);
+      return result.succeeded;
+    } else { //canceled
+      return false;
     }
   }
 

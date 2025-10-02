@@ -24,8 +24,11 @@ SOFTWARE.*/
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/widgets/ImageDescriptionInput.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:path/path.dart';
+import 'package:rokwire_plugin/model/content.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -40,8 +43,9 @@ class ImageEditPanel extends StatefulWidget {
   final bool isUserPic;
 
   final String? preloadImageUrl;
+  final String? imageDescription;
 
-  const ImageEditPanel({Key? key, this.storagePath, this.width = 1080, this.isUserPic = false, this.preloadImageUrl}) : super(key: key);
+  const ImageEditPanel({Key? key, this.storagePath, this.width = 1080, this.isUserPic = false, this.preloadImageUrl, this.imageDescription}) : super(key: key);
 
   _ImageEditState createState() => _ImageEditState();
 }
@@ -52,6 +56,8 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   String? _contentType;
   bool _loading = false;
   bool _saving = false;
+
+  ImageDescriptionData _imageInputData = ImageDescriptionData(description: "Test initial Description");
 
   @override
   void initState() {
@@ -117,11 +123,20 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                       showImagePickerDialog();
                     },),
               Container(height: 10,),
+              ImageDescriptionInput(
+                  imageDescriptionData: _imageInputData,
+                  onChanged: (_)=> setStateIfMounted()),
+              Container(height: 10),
               Row(
                 children: [
                   Expanded(
                   child:
-                    RoundedButton(label: "Ok", onTap: _onFinish, progress: _saving, progressSize: 24,),
+                    RoundedButton(label: "Ok",
+                      onTap: _onFinish,
+                      progress: _saving,
+                      progressSize: 24,
+                      enabled: _imageInputData.isValidated,
+                      borderColor: _imageInputData.isValidated ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,),
                   ),
                   Container(width: 16,),
                   Expanded(
@@ -244,6 +259,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         onImageStartLoading: _showLoader,
         onImageEndLoading: _hideLoader,
         visibleOtherAspectRatios: true,
+        useInitialFullCrop: true,
         squareBorderWidth: 2,
         squareCircleColor: Styles().colors.fillColorPrimary,
         defaultTextColor: Styles().colors.fillColorPrimary,
@@ -296,14 +312,29 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         setState(() {
           _saving = true;
         });
+
         Content().uploadImage(imageBytes: _imageBytes, fileName: _imageName, mediaType: _contentType, storagePath: widget.storagePath, width: widget.width, isUserPic: widget.isUserPic)
             .then((value) {
-              if (mounted) {
-                setState(() {
-                  _saving = false;
+              if(value.resultType == ImagesResultType.succeeded && value.imageUrl != null && !_imageInputData.decorative){
+                Content().uploadImageMetaData(
+                  imageUrl: value.imageUrl ?? "",
+                  imageMetaData: ImageMetaData(altText: _imageInputData.description)).then((metaDataResult){
+                    if (mounted) {
+                      setState(() {
+                        _saving = false;
+                      });
+                      Navigator.pop(this.context, value);
+                    }
                 });
-                Navigator.pop(this.context, value);
+              } else {
+                if (mounted) {
+                  setState(() {
+                    _saving = false;
+                  });
+                  Navigator.pop(this.context, value);
+                }
               }
+
         });
       }
     } else {
@@ -317,9 +348,11 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
     _showLoader();
     if(widget.preloadImageUrl != null){
       _imageBytes = await readNetworkImage(widget.preloadImageUrl!);
+      _imageInputData.description = await readImageAltText(widget.preloadImageUrl!);
       if(_imageBytes != null) {
         _imageName = basename(widget.preloadImageUrl!);
         _contentType = mime(_imageName);
+        _imageInputData.description = widget.imageDescription;
       }
     }
     _hideLoader();
@@ -337,6 +370,10 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
       return null;
     }
   }
+
+  static Future<String?> readImageAltText(String? imageUrl) async => imageUrl != null ?
+    (await Content().loadImageMetaData(imageUrl: imageUrl))?.altText : null;
+
 }
 
 /// class for dialog button
