@@ -36,6 +36,7 @@ import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/map2/Map2FilterBuildingAmenitiesPanel.dart';
+import 'package:illinois/ui/map2/Map2HomeFilters.dart';
 import 'package:illinois/ui/map2/Map2TraySheet.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -103,7 +104,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   Map2ContentType? _selectedContentType;
   double _contentTypesScrollOffset = 0;
 
-  final Map<Map2ContentType, _Map2Filter> _filters = <Map2ContentType, _Map2Filter>{};
+  final Map<Map2ContentType, Map2Filter> _filters = <Map2ContentType, Map2Filter>{};
   bool _searchOn = false;
   double? _sortDropdownWidth;
   double? _termsDropdownWidth;
@@ -756,7 +757,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     Events2().loadEventsList(await _event2QueryParam());
 
   Future<Events2Query> _event2QueryParam() async {
-    _Map2Events2Filter? filter = _events2Filter;
+    Map2Events2Filter? filter = _events2Filter;
     return Events2Query(
       searchText: (filter?.searchText.isNotEmpty == true) ? filter?.searchText : null,
       timeFilter: filter?.event2Filter.timeFilter ?? Event2TimeFilter.upcoming,
@@ -777,10 +778,10 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   }
 
   Future<List<Explore>?> _loadBusStops() async {
+    List<Explore>? result;
     if (MTD().stops == null) {
       await MTD().refreshStops();
     }
-    List<Explore>? result;
     if (MTD().stops != null) {
       _collectBusStops(result = <Explore>[], stops: MTD().stops?.stops);
     }
@@ -1057,7 +1058,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     );
 
   void _onAmenities() {
-    _Map2CampusBuildingsFilter? filter = _campusBuildingsFilter;
+    Map2CampusBuildingsFilter? filter = _campusBuildingsFilter;
     if (filter != null) {
       Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
         amenities: JsonUtils.cast<List<Building>>(_explores)?.featureNames ?? <String, String>{},
@@ -1257,7 +1258,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   void _onFilters() {
     Analytics().logSelect(target: 'Filters');
 
-    _Map2Events2Filter? filter = _events2Filter;
+    Map2Events2Filter? filter = _events2Filter;
     Event2HomePanel.presentFiltersV2(context, filter?.event2Filter ?? Event2FilterParam.fromStorage()).then((Event2FilterParam? filterResult) {
       if ((filterResult != null) && mounted) {
         setStateIfMounted(() {
@@ -1364,20 +1365,20 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   Widget get _filterButtonsEdgeSpacing =>
     SizedBox(width: 18,);
 
-  _Map2Filter? get _selectedFilter => _getFilter(_selectedContentType, ensure: true);
-  _Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
+  Map2Filter? get _selectedFilter => _getFilter(_selectedContentType, ensure: true);
+  Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
 
-  _Map2CampusBuildingsFilter? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
-  //_Map2CampusBuildingsFilter? get _campusBuildingsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: false));
-  _Map2DiningLocationsFilter? get _diningLocationsFilter => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: true));
-  _Map2DiningLocationsFilter? get _diningLocationsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: false));
-  _Map2Events2Filter? get _events2Filter => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: true));
+  Map2CampusBuildingsFilter? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
+  //Map2CampusBuildingsFilter? get _campusBuildingsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: false));
+  Map2DiningLocationsFilter? get _diningLocationsFilter => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: true));
+  Map2DiningLocationsFilter? get _diningLocationsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: false));
+  Map2Events2Filter? get _events2Filter => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: true));
 
-  _Map2Filter? _getFilter(Map2ContentType? contentType, { bool ensure = false }) {
+  Map2Filter? _getFilter(Map2ContentType? contentType, { bool ensure = false }) {
     if (contentType != null) {
-      _Map2Filter? filter = _filters[contentType];
+      Map2Filter? filter = _filters[contentType];
       if ((filter == null) && ensure) {
-        filter = _Map2Filter.fromContentType(contentType);
+        filter = Map2Filter.fromContentType(contentType);
         if (filter != null) {
           _filters[contentType] = filter;
         }
@@ -2100,269 +2101,3 @@ extension ExplorePOIImpl on ExplorePOI {
     );
 }
 
-class _Map2Filter {
-
-  String searchText = '';
-  bool starred = false;
-  Map2SortType? sortType;
-  Map2SortOrder? sortOrder;
-
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) =>
-    LinkedHashMap<String, List<String>>();
-
-  static _Map2Filter? fromContentType(Map2ContentType? contentType) {
-    switch (contentType) {
-      case Map2ContentType.CampusBuildings:      return _Map2CampusBuildingsFilter();
-      case Map2ContentType.StudentCourses:       return _Map2StudentCoursesFilter();
-      case Map2ContentType.DiningLocations:      return _Map2DiningLocationsFilter();
-      case Map2ContentType.Events2:              return _Map2Events2Filter();
-      case Map2ContentType.Laundries:
-      case Map2ContentType.BusStops:
-      case Map2ContentType.Therapists:
-      case Map2ContentType.MyLocations:
-      default: return null;
-    }
-  }
-
-  // Filter
-
-  List<Explore> filter(List<Explore> explores) =>
-    (explores.isNotEmpty && _hasFilter) ? _filter(explores) : explores;
-
-  bool get _hasFilter => false;
-
-  List<Explore> _filter(List<Explore> explores) => explores;
-
-  // Sort
-
-  List<Explore> sort(Iterable<Explore> explores, { Position? position }) {
-    List<Explore> sortedExplores = List<Explore>.from(explores);
-    if (explores.isNotEmpty && _hasSort) {
-      _sort(sortedExplores, position: position);
-    }
-    return sortedExplores;
-  }
-
-  bool get _hasSort => (sortType != null);
-
-  void _sort(List<Explore> explores, { Position? position }) {
-    switch (sortType) {
-      case Map2SortType.dateTime: _sortByDateTime(explores); break;
-      case Map2SortType.alphabetical: _sortAlphabeticaly(explores); break;
-      case Map2SortType.proximity: _sortByProximity(explores, position: position); break;
-      default: break;
-    }
-  }
-  void _sortAlphabeticaly(List<Explore> explores) =>
-    explores.sort((Explore explore1, Explore explore2) =>
-      SortUtils.compare(explore1.exploreTitle, explore2.exploreTitle, descending: (sortOrder == Map2SortOrder.descending))
-    );
-
-  void _sortByProximity(List<Explore> explores, { Position? position }) {
-    explores.sort((Explore explore1, Explore explore2) {
-      LatLng? location1 = explore1.exploreLocation?.exploreLocationMapCoordinate;
-      double? distance1 = ((location1 != null) && (position != null)) ? Geolocator.distanceBetween(location1.latitude, location1.longitude, position.latitude, position.longitude) : 0.0;
-
-      LatLng? location2 = explore2.exploreLocation?.exploreLocationMapCoordinate;
-      double? distance2 = ((location2 != null) && (position != null)) ? Geolocator.distanceBetween(location2.latitude, location2.longitude, position.latitude, position.longitude) : 0.0;
-
-      return (sortOrder == Map2SortOrder.descending) ? distance2.compareTo(distance1) : distance1.compareTo(distance2); // SortUtils.compare(distance1, distance2);
-    });
-  }
-
-  void _sortByDateTime(List<Explore> explores) =>
-    explores.sort((Explore explore1, Explore explore2) =>
-      SortUtils.compare(explore1.exploreDateTimeUtc, explore2.exploreDateTimeUtc, descending: (sortOrder == Map2SortOrder.descending))
-    );
-}
-
-class _Map2CampusBuildingsFilter extends _Map2Filter {
-  LinkedHashSet<String> amenityIds = LinkedHashSet<String>();
-
-  @override
-  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (amenityIds.isNotEmpty == true));
-
-  @override
-  List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
-    List<Explore> filtered = <Explore>[];
-    for (Explore explore in explores) {
-      if ((explore is Building) &&
-          ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchTextLowerCase(searchLowerCase))) &&
-          ((starred != true) || (Auth2().prefs?.isFavorite(explore as Favorite) == true)) &&
-          ((amenityIds.isNotEmpty != true) || (explore.matchAmenityIds(amenityIds)))
-        ) {
-        filtered.add(explore);
-      }
-    }
-    return filtered;
-  }
-
-  @override
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
-    LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
-    if (searchText.isNotEmpty) {
-      String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
-      descriptionMap[searchKey] = <String>[searchText];
-    }
-    if (amenityIds.isNotEmpty) {
-      String amenitiesKey = Localization().getStringEx('panel.map2.filter.amenities.text', 'Amenities');
-      Map<String, String?> amenities = JsonUtils.cast<List<Building>>(explores ?? filteredExplores)?.featureNames ?? <String, String>{};
-      List<String> amenityValues = List<String>.from(amenityIds.map<String>((String amenityId) => amenities[amenityId] ?? amenityId));
-      descriptionMap[amenitiesKey] = amenityValues;
-    }
-    if (starred) {
-      String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
-      descriptionMap[starredKey] = <String>[];
-    }
-    if (sortType != null) {
-      String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = sortType?.displayTitle ?? '';
-      if (sortValue.isNotEmpty && (sortOrder != null)) {
-        String? sortOrderValue = sortOrder?.displayMnemo;
-        if ((sortOrderValue != null) && sortOrderValue.isNotEmpty) {
-          sortValue += " $sortOrderValue";
-        }
-      }
-      descriptionMap[sortKey] = <String>[sortValue];
-    }
-    if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.buildings.text', 'Buildings');
-      String buildingsValue = filteredExplores.length.toString();
-      descriptionMap[buildingsKey] = <String>[buildingsValue];
-    }
-    return descriptionMap;
-  }
-}
-
-class _Map2StudentCoursesFilter extends _Map2Filter {
-  @override
-  bool get _hasFilter => true;
-
-  @override
-  List<Explore> _filter(List<Explore> explores) {
-    List<Explore> filtered = <Explore>[];
-    for (Explore explore in explores) {
-      if (explore.exploreLocation?.isLocationCoordinateValid == true) {
-        filtered.add(explore);
-      }
-    }
-    return filtered;
-  }
-}
-
-class _Map2DiningLocationsFilter extends _Map2Filter {
-  bool onlyOpened = false;
-  PaymentType? paymentType = null;
-
-  @override
-  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (onlyOpened != false) || (paymentType != null));
-
-  @override
-  List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
-    List<Explore> filtered = <Explore>[];
-    for (Explore explore in explores) {
-      if ((explore is Dining) &&
-          ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchTextLowerCase(searchLowerCase))) &&
-          ((starred != true) || (Auth2().prefs?.isFavorite(explore as Favorite) == true)) &&
-          ((onlyOpened != true) || (explore.isOpen == true)) &&
-          ((paymentType == null) || (explore.paymentTypes?.contains(paymentType) == true))
-        ) {
-        filtered.add(explore);
-      }
-    }
-    return filtered;
-  }
-
-  @override
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
-    LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
-    if (searchText.isNotEmpty) {
-      String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
-      descriptionMap[searchKey] = <String>[searchText];
-    }
-    if (paymentType != null) {
-      String? paymentTypeValue = PaymentTypeHelper.paymentTypeToDisplayString(paymentType);
-      if ((paymentTypeValue != null) && paymentTypeValue.isNotEmpty) {
-        String paymentTypeKey = Localization().getStringEx('panel.map2.filter.payment_type.text', 'Payment Type');
-        descriptionMap[paymentTypeKey] = <String>[paymentTypeValue];
-      }
-    }
-    if (starred) {
-      String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
-      descriptionMap[starredKey] = <String>[];
-    }
-    if (onlyOpened) {
-      String onlyOpenedKey = Localization().getStringEx('panel.map2.filter.open_now.text', 'Open Now');
-      descriptionMap[onlyOpenedKey] = <String>[];
-    }
-    if (sortType != null) {
-      String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = sortType?.displayTitle ?? '';
-      if (sortValue.isNotEmpty && (sortOrder != null)) {
-        String? sortOrderValue = sortOrder?.displayMnemo;
-        if ((sortOrderValue != null) && sortOrderValue.isNotEmpty) {
-          sortValue += " $sortOrderValue";
-        }
-      }
-      descriptionMap[sortKey] = <String>[sortValue];
-    }
-    if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.dinings.text', 'Dining Locations');
-      String buildingsValue = filteredExplores.length.toString();
-      descriptionMap[buildingsKey] = <String>[buildingsValue];
-    }
-    return descriptionMap;
-  }
-}
-
-class _Map2Events2Filter extends _Map2Filter {
-  Event2FilterParam event2Filter = Event2FilterParam.fromStorage();
-
-  _Map2Events2Filter() {
-    super.sortType = Map2SortTypeImpl.fromEvent2SortType(Event2SortTypeImpl.fromJson(Storage().events2SortType));
-  }
-
-  @override
-  bool get _hasFilter => true;
-
-  @override
-  List<Explore> _filter(List<Explore> explores) {
-    List<Explore> filtered = <Explore>[];
-    for (Explore explore in explores) {
-      if (explore.exploreLocation?.isLocationCoordinateValid == true) {
-        filtered.add(explore);
-      }
-    }
-    return filtered;
-  }
-
-  @override
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
-    LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
-    if (searchText.isNotEmpty) {
-      String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
-      descriptionMap[searchKey] = <String>[searchText];
-    }
-
-    List<String> filters = event2Filter.rawDescription;
-    if (filters.isNotEmpty) {
-      String filterKey = Localization().getStringEx('panel.map2.filter.filter.text', 'Filter');
-      descriptionMap[filterKey] = filters;
-    }
-
-    if (sortType != null) {
-      String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = sortType?.displayTitle ?? '';
-      descriptionMap[sortKey] = <String>[sortValue];
-    }
-
-    if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String eventsKey = Localization().getStringEx('panel.map2.filter.events.text', 'Events');
-      String eventsValue = filteredExplores.length.toString();
-      descriptionMap[eventsKey] = <String>[eventsValue];
-    }
-    return descriptionMap;
-  }
-}
