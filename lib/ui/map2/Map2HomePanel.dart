@@ -1549,8 +1549,13 @@ extension _Map2PanelContent on _Map2HomePanelState {
       }
       else {
         thresoldDistance = 0;
-        exploreMapGroups =  (explores != null) ? <dynamic>{ ExploreMap.validFromList(explores) } : null;
+        List<Explore>? validExplores = (explores != null) ? ExploreMap.validFromList(explores) : null;
+        if ((validExplores != null) && validExplores.isNotEmpty) {
+          dynamic groupEntry = (validExplores.length == 1) ? validExplores.first : Set<Explore>.from(validExplores);
+          exploreMapGroups = <dynamic>{ groupEntry };
+        }
       }
+
       if (!DeepCollectionEquality().equals(_exploreMapGroups, exploreMapGroups)) {
         BuildMarkersTask buildMarkersTask = _buildMarkers(context, exploreGroups: exploreMapGroups, );
         _buildMarkersTask = buildMarkersTask;
