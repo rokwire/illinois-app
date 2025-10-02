@@ -6,8 +6,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Building.dart';
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/LaundryRoom.dart';
+import 'package:illinois/ext/MTD.dart';
 import 'package:illinois/model/Building.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
@@ -34,8 +38,8 @@ class Map2Filter {
       case Map2ContentType.StudentCourses:       return Map2StudentCoursesFilter();
       case Map2ContentType.DiningLocations:      return Map2DiningLocationsFilter();
       case Map2ContentType.Events2:              return Map2Events2Filter();
-      case Map2ContentType.Laundries:
-      case Map2ContentType.BusStops:
+      case Map2ContentType.Laundries:            return Map2LaundriesFilter();
+      case Map2ContentType.BusStops:             return Map2BusStopsFilter();
       case Map2ContentType.Therapists:
       case Map2ContentType.MyLocations:
       default: return null;
@@ -285,3 +289,105 @@ class Map2Events2Filter extends Map2Filter {
   }
 }
 
+class Map2LaundriesFilter extends Map2Filter {
+
+  @override
+  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true));
+
+  @override
+  List<Explore> _filter(List<Explore> explores) {
+    String? searchLowerCase = searchText.toLowerCase();
+    List<Explore> filtered = <Explore>[];
+    for (Explore explore in explores) {
+      if ((explore is LaundryRoom) &&
+          ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchTextLowerCase(searchLowerCase))) &&
+          ((starred != true) || (Auth2().prefs?.isFavorite(explore as Favorite) == true))
+        ) {
+        filtered.add(explore);
+      }
+    }
+    return filtered;
+  }
+
+  @override
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
+    LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
+    if (searchText.isNotEmpty) {
+      String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
+      descriptionMap[searchKey] = <String>[searchText];
+    }
+    if (starred) {
+      String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
+      descriptionMap[starredKey] = <String>[];
+    }
+    if (sortType != null) {
+      String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
+      String sortValue = sortType?.displayTitle ?? '';
+      if (sortValue.isNotEmpty && (sortOrder != null)) {
+        String? sortOrderValue = sortOrder?.displayMnemo;
+        if ((sortOrderValue != null) && sortOrderValue.isNotEmpty) {
+          sortValue += " $sortOrderValue";
+        }
+      }
+      descriptionMap[sortKey] = <String>[sortValue];
+    }
+    if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.laundries.text', 'Laundries');
+      String buildingsValue = filteredExplores.length.toString();
+      descriptionMap[buildingsKey] = <String>[buildingsValue];
+    }
+    return descriptionMap;
+  }
+}
+
+
+class Map2BusStopsFilter extends Map2Filter {
+
+  @override
+  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true));
+
+  @override
+  List<Explore> _filter(List<Explore> explores) {
+    String? searchLowerCase = searchText.toLowerCase();
+    List<Explore> filtered = <Explore>[];
+    for (Explore explore in explores) {
+      if ((explore is MTDStop) &&
+          ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchTextLowerCase(searchLowerCase))) &&
+          ((starred != true) || (Auth2().prefs?.isFavorite(explore as Favorite) == true))
+        ) {
+        filtered.add(explore);
+      }
+    }
+    return filtered;
+  }
+
+  @override
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
+    LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
+    if (searchText.isNotEmpty) {
+      String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
+      descriptionMap[searchKey] = <String>[searchText];
+    }
+    if (starred) {
+      String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
+      descriptionMap[starredKey] = <String>[];
+    }
+    if (sortType != null) {
+      String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
+      String sortValue = sortType?.displayTitle ?? '';
+      if (sortValue.isNotEmpty && (sortOrder != null)) {
+        String? sortOrderValue = sortOrder?.displayMnemo;
+        if ((sortOrderValue != null) && sortOrderValue.isNotEmpty) {
+          sortValue += " $sortOrderValue";
+        }
+      }
+      descriptionMap[sortKey] = <String>[sortValue];
+    }
+    if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.bus_stops.text', 'Bus Stops');
+      String buildingsValue = filteredExplores.length.toString();
+      descriptionMap[buildingsKey] = <String>[buildingsValue];
+    }
+    return descriptionMap;
+  }
+}

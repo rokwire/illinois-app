@@ -464,6 +464,8 @@
     "panel.map2.filter.starred.text":"Starred",
     "panel.map2.filter.amenities.text":"Amenities",
     "panel.map2.filter.buildings.text":"Buildings",
+    "panel.map2.filter.bus_stops.text":"Bus Stops",
+    "panel.map2.filter.laundries.text":"Laundries",
     "panel.map2.filter.payment_type.text":"Payment Type",
     "panel.map2.filter.open_now.text":"Open Now",
     "panel.map2.filter.dinings.text":"Dining Locations",
