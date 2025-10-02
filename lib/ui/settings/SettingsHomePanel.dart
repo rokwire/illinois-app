@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
@@ -30,7 +29,6 @@ import 'package:illinois/ui/settings/SettingsAssessmentsPage.dart';
 import 'package:illinois/ui/settings/SettingsCalendarPage.dart';
 import 'package:illinois/ui/settings/SettingsContactsPage.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersPage.dart';
-import 'package:illinois/ui/settings/SettingsICardPage.dart';
 import 'package:illinois/ui/settings/SettingsLanguagePage.dart';
 import 'package:illinois/ui/settings/SettingsMapsPage.dart';
 import 'package:illinois/ui/settings/SettingsNotificationPreferencesPage.dart';
@@ -47,7 +45,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum SettingsContentType { food_filters, sports, favorites, assessments, calendar, recent_items, appointments, i_card, language, contact, maps, research, privacy, notifications, accessibility}
+enum SettingsContentType { food_filters, sports, favorites, assessments, calendar, recent_items, appointments, language, contact, maps, research, privacy, notifications, accessibility}
 
 class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'settings_home_content_panel';
@@ -64,7 +62,6 @@ class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
     SettingsContentType.language,
     SettingsContentType.privacy,
     SettingsContentType.notifications,
-    SettingsContentType.i_card,
     SettingsContentType.accessibility,
   };
 
@@ -117,7 +114,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      MobileAccess.notifyMobileStudentIdChanged,
       Localization.notifyLocaleChanged,
     ]);
     _contentTypes = _SettingsContentTypeList.fromAvailableContentTypes(SettingsHomePanel._dropdownContentTypes);
@@ -303,7 +299,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
       case SettingsContentType.appointments: return SettingsAppointmentsPage();
       case SettingsContentType.favorites: return null;
       case SettingsContentType.assessments: return SettingsAssessmentsPage();
-      case SettingsContentType.i_card: return SettingsICardPage();
       case SettingsContentType.language: return SettingsLanguagePage();
       case SettingsContentType.contact: return SettingsContactsPage();
       case SettingsContentType.maps: return SettingsMapsPage();
@@ -331,10 +326,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
   
   @override
   void onNotification(String name, dynamic param) {
-    if (name == MobileAccess.notifyMobileStudentIdChanged) {
-      setStateIfMounted(() {});
-    }
-    else if (name == Localization.notifyLocaleChanged) {
+    if (name == Localization.notifyLocaleChanged) {
       setStateIfMounted(() {});
     }
   }
@@ -393,7 +385,6 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case SettingsContentType.appointments: return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'My Appointments', language: language);
       case SettingsContentType.favorites: return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'Customize Favorites', language: language);
       case SettingsContentType.assessments: return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments', language: language);
-      case SettingsContentType.i_card: return Localization().getStringEx('panel.settings.home.settings.sections.i_card.label', 'Illini ID', language: language);
       case SettingsContentType.language: return Localization().getStringEx('panel.settings.home.settings.sections.language.label', 'My Language', language: language);
       case SettingsContentType.contact: return Localization().getStringEx('panel.settings.home.settings.sections.contact.label', 'About the App', language: language);
       case SettingsContentType.maps: return Localization().getStringEx('panel.settings.home.settings.sections.maps.label', 'Maps & Wayfinding', language: language);
@@ -413,7 +404,6 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case SettingsContentType.appointments: return 'appointments';
       case SettingsContentType.favorites: return 'favorites';
       case SettingsContentType.assessments: return 'assessments';
-      case SettingsContentType.i_card: return 'i_card';
       case SettingsContentType.language: return 'language';
       case SettingsContentType.contact: return 'contact';
       case SettingsContentType.maps: return 'maps';
@@ -433,7 +423,6 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case 'appointments': return SettingsContentType.appointments;
       case 'favorites': return SettingsContentType.favorites;
       case 'assessments': return SettingsContentType.assessments;
-      case 'i_card': return SettingsContentType.i_card;
       case 'language': return SettingsContentType.language;
       case 'contact': return SettingsContentType.contact;
       case 'maps': return SettingsContentType.maps;
@@ -445,15 +434,6 @@ extension SettingsContentTypeImpl on SettingsContentType {
     }
   }
 
-  bool get isAvailable {
-    switch (this) {
-      // Add i_card content only if icard mobile is available
-      case SettingsContentType.i_card: return MobileAccess().isMobileAccessAvailable;
-
-      default: return true;
-    }
-  }
-
   SettingsContentType? _ensure({List<SettingsContentType>? availableTypes}) =>
       (availableTypes?.contains(this) != false) ? this : null;
 }
@@ -462,7 +442,7 @@ extension _SettingsContentTypeList on List<SettingsContentType> {
   void sortAlphabetical() => sort((SettingsContentType t1, SettingsContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
 
   static List<SettingsContentType> fromAvailableContentTypes(Iterable<SettingsContentType> contentTypes) {
-    List<SettingsContentType> contentTypesList = List<SettingsContentType>.from(contentTypes.where((contentType) => contentType.isAvailable));
+    List<SettingsContentType> contentTypesList = List<SettingsContentType>.from(contentTypes);
     contentTypesList.sortAlphabetical();
     return contentTypesList;
   }

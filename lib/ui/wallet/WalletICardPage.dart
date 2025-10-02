@@ -15,21 +15,13 @@
  */
 
 import 'dart:io';
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Identity.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/service/Identity.dart';
-import 'package:illinois/service/MobileAccess.dart';
-import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/wallet/WalletPhotoWrapper.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
-import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
@@ -38,11 +30,9 @@ import 'package:rokwire_plugin/service/auth2.dart' as rokwire_auth;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 //////////////////////////
@@ -63,30 +53,16 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
   DateTime? _buildingAccessTime;
   late bool _loadingBuildingAccess;
 
-  int _mobileAccessLoadingProgress = 0;
-  bool _isIcardMobileAvailable = false;
-  List<dynamic>? _mobileAccessKeys;
-  List<MobileIdCredential>? _mobileIdCredentials;
-  PageController? _mobileAccessPageController;
-
-  bool _submittingDeviceRegistration = false;
-  bool _deleteMobileCredential = false;
-  bool _renewingMobileId = false;
-
   GestureRecognizer? _lostCardLaunchRecognizer;
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      MobileAccess.notifyMobileStudentIdChanged,
-      MobileAccess.notifyStartFinished,
       AppLivecycle.notifyStateChanged,
     ]);
 
     _lostCardLaunchRecognizer = TapGestureRecognizer()..onTap = _onLaunchLostCardUrl;
-
-    MobileAccess().startIfNeeded();
 
     _loadingBuildingAccess = true;
     _loadBuildingAccess().then((bool? buildingAccess) {
@@ -103,15 +79,12 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
         }
       });
 
-      _checkIcarMobileAvailable();
-
     // Auth2().updateAuthCard();
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _mobileAccessPageController?.dispose();
     _lostCardLaunchRecognizer?.dispose();
     super.dispose();
   }
@@ -120,15 +93,7 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == MobileAccess.notifyMobileStudentIdChanged) {
-      MobileAccess().startIfNeeded();
-      _checkIcarMobileAvailable();
-      setStateIfMounted(() { });
-    }
-    else if (name == MobileAccess.notifyStartFinished) {
-      _checkIcarMobileAvailable();
-      setStateIfMounted(() { });
-    } else if (name == AppLivecycle.notifyStateChanged) {
+    if (name == AppLivecycle.notifyStateChanged) {
       if ((param is AppLifecycleState) && (param == AppLifecycleState.resumed)) {
         setStateIfMounted(() {});
       }
@@ -233,123 +198,6 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
       ),
 
       Container(height: 32,),
-
-      _buildMobileAccessContent(),
-    ]);
-  }
-
-  Widget _buildMobileAccessContent() {
-    if (!_isIcardMobileAvailable) {
-      return Container();
-    } else if (_isMobileAccessLoading) {
-      return Center(child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary));
-    } else {
-      return Padding(
-        padding: EdgeInsets.only(bottom: 30),
-        child: Column(children: [
-          Container(color: Styles().colors.dividerLine, height: 1),
-          Padding(padding: EdgeInsets.only(top: 20), child: Styles().images.getImage('mobile-access-logo', excludeFromSemantics: true)),
-          (_hasMobileAccess ? _buildExistingMobileAccessContent() : _buildMissingMobileAccessContent())
-        ]));
-    }
-
-  }
-
-  Widget _buildExistingMobileAccessContent() {
-    if (!_hasMobileAccess) {
-      return Container();
-    }
-    if (_mobileAccessPageController == null) {
-      _mobileAccessPageController = PageController();
-    }
-    int credentialsCount = _mobileIdCredentials!.length;
-    List<Widget> credentialWidgets = <Widget>[];
-    for(MobileIdCredential credential in _mobileIdCredentials!) {
-      Widget credentialWidget = _buildSingleMobileAccessCredentialContent(credential);
-      credentialWidgets.add(credentialWidget);
-    }
-    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      ExpandablePageView(children: credentialWidgets, controller: _mobileAccessPageController),
-      AccessibleViewPagerNavigationButtons(controller: _mobileAccessPageController, pagesCount: () => credentialsCount),
-      Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: InkWell(
-              onTap: _onTapMobileAccessPermissions,
-              child: Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Padding(padding: EdgeInsets.only(right: 0), child: (Styles().images.getImage('settings') ?? Container())),
-                LinkButton(
-                    title: Localization().getStringEx('widget.id_card.label.mobile_access.permissions', 'Set mobile access permissions'),
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    textStyle: Styles().textStyles.getTextStyle('panel.id_card.mobile_access.link_button.description.medium.underline'),
-                    onTap: _onTapMobileAccessPermissions)
-              ])))
-    ]);
-  }
-
-  Widget _buildSingleMobileAccessCredentialContent(MobileIdCredential credential) {
-    String? credentialId = credential.id;
-    String? expirationDateString = credential.displayExpirationDate;
-
-    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Padding(
-          padding: EdgeInsets.only(left: 16, bottom: 2, right: 16),
-          child: Text(
-              sprintf(
-                  Localization().getStringEx('widget.id_card.label.mobile_access.my', 'My Mobile Access: %s'), [credentialId]),
-              textAlign: TextAlign.center,
-              style: Styles().textStyles.getTextStyle('panel.id_card.detail.title.large'))),
-      Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: Text(
-              sprintf(Localization().getStringEx('widget.id_card.label.mobile_access.expires', 'Expires: %s'),
-                  [StringUtils.ensureNotEmpty(expirationDateString, defaultValue: '---')]),
-              style: Styles().textStyles.getTextStyle('panel.id_card.detail.title.tiny'))),
-      Visibility(visible: MobileAccess().canRenewMobileId, child: Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: RoundedButton(
-              label: Localization().getStringEx('widget.id_card.button.mobile_access.renew', 'Renew'),
-              hint: Localization().getStringEx('widget.id_card.button.mobile_access.renew.hint', ''),
-              textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-              backgroundColor: Colors.white,
-              contentWeight: 0.0,
-              progress: _renewingMobileId,
-              borderColor: Styles().colors.fillColorSecondary,
-              onTap: _onTapRenewMobileAccessButton)))
-    ]);
-  }
-
-  Widget _buildMissingMobileAccessContent() {
-    if (_hasMobileAccess) {
-      return Container();
-    }
-
-    return Column(children: [
-      Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: Text(Localization().getStringEx('widget.id_card.label.mobile_access', 'Mobile Access'),
-              style: Styles().textStyles.getTextStyle('panel.id_card.detail.title.extra_large'))),
-      Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: RoundedButton(
-              label: _submitButtonLabel,
-              hint: _submitButtonHint,
-              textStyle: _submitButtonEnabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
-              backgroundColor: Colors.white,
-              enabled: _submitButtonEnabled,
-              contentWeight: 0.0,
-              borderColor: _submitButtonEnabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
-              progress: _submittingDeviceRegistration,
-              onTap: _onTapSubmitMobileAccessButton)),
-      Visibility(visible: MobileAccess().isMobileAccessWaiting, child: Padding(padding: EdgeInsets.only(bottom: 10), child: Text(
-          StringUtils.ensureNotEmpty(_mobileAccessWaitingLabel),
-          style: Styles().textStyles.getTextStyle('panel.id_card.detail.title.tiny')))),
-      Padding(
-          padding: EdgeInsets.symmetric(horizontal: 50),
-          child: Text(
-              Localization().getStringEx('widget.id_card.label.mobile_access.i_card.not_available',
-                  'Access various services and buildings on campus with your Illini ID.'),
-              textAlign: TextAlign.center,
-              style: Styles().textStyles.getTextStyle('panel.id_card.mobile_access.description.italic')))
     ]);
   }
 
@@ -365,36 +213,6 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
       return (responseJson != null) ? JsonUtils.boolValue(responseJson['allowAccess']) : null;
     }
     return null;
-  }
-
-  Future<void> _loadMobileAccessDetails() async {
-    if (_isIcardMobileAvailable) {
-      _increaseMobileAccessLoadingProgress();
-      MobileAccess().loadStudentId().then((studentId) {
-        List<MobileIdCredential>? mobileCredentials = studentId?.mobileCredentials;
-        if (CollectionUtils.isNotEmpty(mobileCredentials)) {
-          _mobileIdCredentials = mobileCredentials;
-          MobileAccess().getAvailableKeys().then((accessKeys) {
-            List<dynamic>? mobileKeys = accessKeys;
-            if (CollectionUtils.isNotEmpty(mobileKeys)) {
-              _mobileAccessKeys = accessKeys;
-            } else if (!_hasDeleteTimeout) {
-              _deleteMobileCredential = true;
-            }
-            _decreaseMobileAccessLoadingProgress();
-          });
-        } else {
-          _mobileIdCredentials = null;
-          _mobileAccessKeys = null;
-          _decreaseMobileAccessLoadingProgress();
-        }
-      });
-    } else {
-      setStateIfMounted(() {
-        _mobileAccessKeys = null;
-        _mobileIdCredentials = null;
-      });
-    }
   }
 
   Widget get _lostCardInfoWidget {
@@ -449,183 +267,11 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
     return true;
   }
 
-  void _onTapSubmitMobileAccessButton() {
-    if (_submittingDeviceRegistration || !_submitButtonEnabled) {
-      return;
-    }
-    Analytics().logSelect(target: _hasDeleteTimeout ? 'Download' : 'Request');
-    _setSubmittingDeviceRegistration(true);
-    if (_deleteMobileCredential) {
-      Identity().deleteMobileCredential().then((deleteInitiated) {
-        late String deleteMsg;
-        if (deleteInitiated) {
-          Storage().mobileAccessDeleteTimeoutUtcInMillis = DateTime.now().add(Duration(minutes: Config().mobileAccessDeleteTimeoutMins)).toUtc().millisecondsSinceEpoch;
-          deleteMsg = Localization().getStringEx('widget.id_card.mobile_access.delete_credential.success.msg', 'Please, wait about 10 minutes until mobile access is available to download.');
-        } else {
-          deleteMsg = Localization().getStringEx('widget.id_card.mobile_access.delete_credential.failed.msg', 'Failed to request mobile access.');
-        }
-        _setSubmittingDeviceRegistration(false);
-        AppAlert.showDialogResult(context, deleteMsg);
-      });
-    } else {
-      MobileAccess().requestDeviceRegistration().then((error) {
-        late String requestMsg;
-        if (error != null) {
-          requestMsg = _registrationErrorToString(error)!;
-        } else {
-          requestMsg = Localization().getStringEx('widget.id_card.mobile_access.request_register_device.success.msg', 'Successfully initiated device registration.');
-          // Load mobile access details after successful device registration.
-          _loadMobileAccessDetails();
-        }
-        _setSubmittingDeviceRegistration(false);
-        AppAlert.showDialogResult(context, requestMsg);
-      });
-    }
-  }
-
-  void _onTapRenewMobileAccessButton() {
-    if (_renewingMobileId) {
-      return;
-    }
-    Analytics().logSelect(target: 'Renew Mobile Access');
-    setStateIfMounted(() {
-      _renewingMobileId = true;
-    });
-    MobileAccess().renewMobileId().then((result) {
-      bool success = (result?.isRenewed == true);
-      late String msg;
-      if (success) {
-        msg = Localization().getStringEx('widget.id_card.mobile_access.renew.success.msg', 'Mobile Access was successfully renewed.');
-      } else {
-        msg = sprintf(Localization().getStringEx('widget.id_card.mobile_access.renew.fail.msg', 'Failed to renew Mobile Access. Reason: %s'), [result?.resultDescription ?? 'unknown']);
-      }
-      setStateIfMounted(() {
-        _renewingMobileId = false;
-      });
-      AppAlert.showDialogResult(context, msg).then((value) {
-        if (success) {
-          _loadMobileAccessDetails();
-        }
-      });
-    });
-  }
-
-  void _onTapMobileAccessPermissions() {
-    Analytics().logSelect(target: 'Mobile Access Permissions');
-    SettingsHomePanel.present(context, content: SettingsContentType.i_card);
-  }
-
-  void _checkIcarMobileAvailable() {
-    bool isIcardMobileAvailable = MobileAccess().isMobileAccessAvailable && MobileAccess().isStarted;
-    if (_isIcardMobileAvailable != isIcardMobileAvailable) {
-      _isIcardMobileAvailable = isIcardMobileAvailable;
-      _loadMobileAccessDetails();
-    }
-  }
-
-  void _increaseMobileAccessLoadingProgress() {
-    setStateIfMounted(() {
-      _mobileAccessLoadingProgress++;
-    });
-  }
-
-  void _decreaseMobileAccessLoadingProgress() {
-    setStateIfMounted(() {
-      _mobileAccessLoadingProgress--;
-    });
-  }
-
-  bool get _isMobileAccessLoading {
-    return (_mobileAccessLoadingProgress > 0);
-  }
-
-  void _setSubmittingDeviceRegistration(bool value) {
-    setStateIfMounted(() {
-      _submittingDeviceRegistration = value;
-    });
-  }
-
   String? get _userQRCodeContent {
     String? qrCodeContent = Auth2().iCard!.magTrack2;
     return ((qrCodeContent != null) && (0 < qrCodeContent.length)) ? qrCodeContent : Auth2().iCard?.uin;
   }
 
   bool get _hasBuildingAccess => false;
-
-  bool get _hasMobileAccess => (_hasMobileAccessKeys && _hasMobileIdentityCredentials);
-
-  bool get _hasMobileAccessKeys => ((_mobileAccessKeys != null) && _mobileAccessKeys!.isNotEmpty);
-
-  bool get _hasMobileIdentityCredentials => CollectionUtils.isNotEmpty(_mobileIdCredentials);
-
-  bool get _submitButtonEnabled {
-    return ((!_hasDeleteTimeout || _deleteTimeoutPassed) && !MobileAccess().isMobileAccessWaiting);
-  }
-
-  DateTime? get _deleteTimeoutUtc {
-    int? timeOutInMillis = Storage().mobileAccessDeleteTimeoutUtcInMillis;
-    return (timeOutInMillis != null) ? DateTime.fromMillisecondsSinceEpoch(timeOutInMillis, isUtc: true) : null;
-  }
-
-  bool get _hasDeleteTimeout {
-    return (_deleteTimeoutUtc != null);
-  }
-
-  bool get _deleteTimeoutPassed {
-    return _hasDeleteTimeout && _deleteTimeoutUtc!.isBefore(DateTime.now().toUtc());
-  }
-
-  String get _submitButtonLabel {
-    return _hasDeleteTimeout
-        ? Localization().getStringEx('widget.id_card.button.mobile_access.download', 'Download')
-        : Localization().getStringEx('widget.id_card.button.mobile_access.request', 'Request');
-  }
-
-  String get _submitButtonHint {
-    return _hasDeleteTimeout
-        ? Localization().getStringEx('widget.id_card.button.mobile_access.download.hint', '')
-        : Localization().getStringEx('widget.id_card.button.mobile_access.request.hint', '');
-  }
-
-  String? get _mobileAccessWaitingLabel {
-    if (MobileAccess().isMobileAccessIssuing) {
-      return Localization().getStringEx('widget.id_card.mobile_access.pending.label', 'Pending');
-    } else if (MobileAccess().isMobileAccessPending) {
-      return Localization().getStringEx('widget.id_card.mobile_access.issuing.label', 'Issuing');
-    } else {
-      return null;
-    }
-  }
-
-  static String? _registrationErrorToString(MobileAccessRequestDeviceRegistrationError? error) {
-    switch (error) {
-      case MobileAccessRequestDeviceRegistrationError.not_using_bb:
-        return Localization()
-            .getStringEx('widget.id_card.mobile_access.request_register_device.error.not_using_bb', 'You are not allowed to request mobile access.');
-      case MobileAccessRequestDeviceRegistrationError.icard_not_allowed:
-        return Localization()
-            .getStringEx('widget.id_card.mobile_access.request_register_device.error.icard_not_allowed', 'You are not a member of a required group.');
-      case MobileAccessRequestDeviceRegistrationError.device_already_registered:
-        return Localization()
-            .getStringEx('widget.id_card.mobile_access.request_register_device.error.device_already_registered', 'Your device had already been registered.');
-      case MobileAccessRequestDeviceRegistrationError.no_mobile_credential:
-        return Localization()
-            .getStringEx('widget.id_card.mobile_access.request_register_device.error.no_mobile_credential', 'No mobile identity credential available.');
-      case MobileAccessRequestDeviceRegistrationError.no_pending_invitation:
-        return Localization()
-            .getStringEx('widget.id_card.mobile_access.request_register_device.error.no_pending_invitation', 'No mobile identity invitation available.');
-      case MobileAccessRequestDeviceRegistrationError.no_invitation_code:
-        return Localization()
-            .getStringEx('widget.id_card.mobile_access.request_register_device.error.no_invitation_code', 'No mobile identity invitation code available.');
-      case MobileAccessRequestDeviceRegistrationError.invitation_code_expired:
-        return Localization()
-            .getStringEx('widget.id_card.mobile_access.request_register_device.error.invitation_code_expired', 'Invitation code has been expired.');
-      case MobileAccessRequestDeviceRegistrationError.registration_initiation_failed:
-        return Localization().getStringEx(
-            'widget.id_card.mobile_access.request_register_device.error.registration_initiation_failed', 'Failed to initiate device registration.');
-      default:
-        return null;
-    }
-  }
 }
 

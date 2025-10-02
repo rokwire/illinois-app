@@ -25,7 +25,6 @@ import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/ui/debug/DebugGuideBrowsePanel.dart';
-import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
@@ -472,17 +471,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
                 ),
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
-
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
-                    RoundedButton(
-                      label: 'Mobile Access Keys',
-                      backgroundColor: Styles().colors.background,
-                      fontSize: 16.0,
-                      textColor: Styles().colors.fillColorPrimary,
-                      borderColor: Styles().colors.fillColorPrimary,
-                      onTap: _onTapMobileAccessKeys
-                    )
-                  ),
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
 
@@ -986,10 +974,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
 
   void _onTapReviewApp() {
     InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
-  }
-
-  void _onTapMobileAccessKeys() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugMobileAccessHomePanel()));
   }
 
   void _onTapHttpProxy() {
