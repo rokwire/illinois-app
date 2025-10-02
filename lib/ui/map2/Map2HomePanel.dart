@@ -227,8 +227,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     super.build(context);
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx("panel.map2.header.title", "Map2")),
-      body: _scaffoldBody,
       backgroundColor: Styles().colors.background,
+      body: _scaffoldBody,
     );
   }
 
@@ -915,8 +915,8 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       case Map2ContentType.StudentCourses:       return _studentCoursesFilterButtons;
       case Map2ContentType.DiningLocations:      return _diningLocationsFilterButtons;
       case Map2ContentType.Events2:              return _events2FilterButtons;
-      case Map2ContentType.LaundryRooms:
-      case Map2ContentType.BusStops:
+      case Map2ContentType.LaundryRooms:         return _laundryRoomsFilterButtons;
+      case Map2ContentType.BusStops:             return _busStopsFilterButtons;
       case Map2ContentType.Therapists:
       case Map2ContentType.MyLocations:
       default: return <Widget>[];
@@ -982,6 +982,34 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       ),
     Padding(padding: _filterButtonsPadding, child:
       _filtersFilterButton,
+    ),
+    _filterButtonsEdgeSpacing,
+  ];
+
+  List<Widget> get _laundryRoomsFilterButtons => <Widget>[
+    Padding(padding: _filterButtonsPadding, child:
+      _searchFilterButton,
+    ),
+    if (_isSortAvailable)
+      Padding(padding: _filterButtonsPadding, child:
+        _sortFilterButton,
+      ),
+    Padding(padding: _filterButtonsPadding, child:
+      _starredFilterButton,
+    ),
+    _filterButtonsEdgeSpacing,
+  ];
+
+  List<Widget> get _busStopsFilterButtons => <Widget>[
+    Padding(padding: _filterButtonsPadding, child:
+      _searchFilterButton,
+    ),
+    if (_isSortAvailable)
+      Padding(padding: _filterButtonsPadding, child:
+        _sortFilterButton,
+      ),
+    Padding(padding: _filterButtonsPadding, child:
+      _starredFilterButton,
     ),
     _filterButtonsEdgeSpacing,
   ];
@@ -1369,7 +1397,6 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
 
   Map2CampusBuildingsFilter? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
-  //Map2CampusBuildingsFilter? get _campusBuildingsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: false));
   Map2DiningLocationsFilter? get _diningLocationsFilter => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: true));
   Map2DiningLocationsFilter? get _diningLocationsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: false));
   Map2Events2Filter? get _events2Filter => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: true));
@@ -1932,6 +1959,7 @@ extension _Map2ContentType on Map2ContentType {
 
   static const Set<Map2ContentType> _manualFiltersTypes = <Map2ContentType>{
     Map2ContentType.CampusBuildings, Map2ContentType.DiningLocations,
+    Map2ContentType.LaundryRooms, Map2ContentType.BusStops,
   };
   bool get supportsManualFilters => _manualFiltersTypes.contains(this);
 
