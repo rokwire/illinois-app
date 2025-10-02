@@ -5,10 +5,6 @@ PODS:
     - Flutter
   - audio_session (0.0.1):
     - Flutter
-  - BerTlv (0.2.5)
-  - CocoaLumberjack (3.8.5):
-    - CocoaLumberjack/Core (= 3.8.5)
-  - CocoaLumberjack/Core (3.8.5)
   - connectivity_plus (0.0.1):
     - Flutter
   - device_calendar (0.0.1):
@@ -141,26 +137,14 @@ PODS:
     - Flutter
   - in_app_review (2.0.0):
     - Flutter
-  - JSONModel (1.8.0)
   - just_audio (0.0.1):
     - Flutter
     - FlutterMacOS
-  - Mixpanel (5.0.7)
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - OrigoSDK-Debug (1.10.0):
-    - BerTlv
-    - CocoaLumberjack
-    - JSONModel
-    - Mixpanel (~> 5.0.2)
-  - OrigoSDK-Release (1.10.0):
-    - BerTlv
-    - CocoaLumberjack
-    - JSONModel
-    - Mixpanel (~> 5.0.2)
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -179,16 +163,6 @@ PODS:
     - Flutter
   - rokwire_plugin (1.12.0):
     - Flutter
-  - SeosMobileKeysSDK-Debug (7.7.5):
-    - BerTlv
-    - CocoaLumberjack
-    - JSONModel
-    - Mixpanel
-  - SeosMobileKeysSDK-Release (7.7.5):
-    - BerTlv
-    - CocoaLumberjack
-    - JSONModel
-    - Mixpanel
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
@@ -244,8 +218,6 @@ DEPENDENCIES:
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/darwin`)
-  - OrigoSDK-Debug (from `../libs/hid-origo/ios/Debug/OrigoSDK-Debug.podspec`)
-  - OrigoSDK-Release (from `../libs/hid-origo/ios/Release/OrigoSDK-Release.podspec`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - printing (from `.symlinks/plugins/printing/ios`)
@@ -253,8 +225,6 @@ DEPENDENCIES:
   - quill_native_bridge_ios (from `.symlinks/plugins/quill_native_bridge_ios/ios`)
   - record_darwin (from `.symlinks/plugins/record_darwin/ios`)
   - rokwire_plugin (from `.symlinks/plugins/rokwire_plugin/ios`)
-  - SeosMobileKeysSDK-Debug (from `../libs/hid-origo/ios/Debug/SeosMobileKeysSDK-Debug.podspec`)
-  - SeosMobileKeysSDK-Release (from `../libs/hid-origo/ios/Release/SeosMobileKeysSDK-Release.podspec`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sms_mms (from `.symlinks/plugins/sms_mms/ios`)
@@ -268,8 +238,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - BerTlv
-    - CocoaLumberjack
     - Firebase
     - FirebaseCore
     - FirebaseCoreExtension
@@ -283,8 +251,6 @@ SPEC REPOS:
     - GoogleDataTransport
     - GoogleMaps
     - GoogleUtilities
-    - JSONModel
-    - Mixpanel
     - nanopb
     - PromisesObjC
     - PromisesSwift
@@ -342,10 +308,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/in_app_review/ios"
   just_audio:
     :path: ".symlinks/plugins/just_audio/darwin"
-  OrigoSDK-Debug:
-    :path: "../libs/hid-origo/ios/Debug/OrigoSDK-Debug.podspec"
-  OrigoSDK-Release:
-    :path: "../libs/hid-origo/ios/Release/OrigoSDK-Release.podspec"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
@@ -360,10 +322,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/record_darwin/ios"
   rokwire_plugin:
     :path: ".symlinks/plugins/rokwire_plugin/ios"
-  SeosMobileKeysSDK-Debug:
-    :path: "../libs/hid-origo/ios/Debug/SeosMobileKeysSDK-Debug.podspec"
-  SeosMobileKeysSDK-Release:
-    :path: "../libs/hid-origo/ios/Release/SeosMobileKeysSDK-Release.podspec"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
@@ -387,8 +345,6 @@ SPEC CHECKSUMS:
   app_links: 76b66b60cc809390ca1ad69bfd66b998d2387ac7
   app_settings: 5127ae0678de1dcc19f2293271c51d37c89428b2
   audio_session: 9bb7f6c970f21241b19f5a3658097ae459681ba0
-  BerTlv: c94b89a7b93bf8c1881691a8d105ec87a4a10759
-  CocoaLumberjack: 6a459bc897d6d80bd1b8c78482ec7ad05dffc3f0
   connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
   device_calendar: b55b2c5406cfba45c95a59f9059156daee1f74ed
   device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
@@ -423,12 +379,8 @@ SPEC CHECKSUMS:
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
   image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
   in_app_review: 5596fe56fab799e8edb3561c03d053363ab13457
-  JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
   just_audio: 4e391f57b79cad2b0674030a00453ca5ce817eed
-  Mixpanel: 25b7ccefcd20749841db42295c5dba4ed89a805e
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  OrigoSDK-Debug: ddce2aa647451fd65e8941a884d12d41e523b4b7
-  OrigoSDK-Release: b9a38aa4675d68f45a62e2b595929bf93ffbab30
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   printing: 54ff03f28fe9ba3aa93358afb80a8595a071dd07
@@ -438,8 +390,6 @@ SPEC CHECKSUMS:
   quill_native_bridge_ios: f47af4b14e7757968486641656c5d23250cee521
   record_darwin: fb1f375f1d9603714f55b8708a903bbb91ffdb0a
   rokwire_plugin: 2d1457e00a08434486172e34b499545d366ee16b
-  SeosMobileKeysSDK-Debug: 904c47d1a191addfa7ad5af4f41d1253ab7a73d4
-  SeosMobileKeysSDK-Release: daed718b42c97f3d5337de9f081881077d9815f0
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
   shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
   sms_mms: b4f3aca9cc8105b1c5ad66afc982df8625223294
@@ -452,6 +402,6 @@ SPEC CHECKSUMS:
   webview_flutter_wkwebview: 1821ceac936eba6f7984d89a9f3bcb4dea99ebb2
   ZXingObjC: 512b34b9b6920e8ef0461a4159d0814c5e48c28a
 
-PODFILE CHECKSUM: c8f369b35b6a0a9696fca6fcb87fa541810e4486
+PODFILE CHECKSUM: 7bb9bce737bced74e5be4f2ecfc758b2ef5f4199
 
 COCOAPODS: 1.16.2
