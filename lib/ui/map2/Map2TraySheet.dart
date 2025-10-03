@@ -188,9 +188,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
       );
     }
     else if (explore is ExplorePOI) {
-      return Map2ExplorePOICard(explore,
-        onTap: () => _onTapListCard(explore),
-      );
+      return Map2ExplorePOICard(explore,);
     }
     else if ((explore is Building) || (explore is WellnessBuilding))  {
       return Map2LocationCard(explore,

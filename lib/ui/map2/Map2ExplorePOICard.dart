@@ -12,11 +12,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class Map2ExplorePOICard extends StatefulWidget {
   final ExplorePOI explorePOI;
-  final void Function()? onTap;
 
-  Map2ExplorePOICard(this.explorePOI, { super.key,
-    this.onTap,
-  });
+  Map2ExplorePOICard(this.explorePOI, { super.key,});
 
   @override
   State<StatefulWidget> createState() => _Map2ExplorePOICardState();
@@ -78,10 +75,8 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
   @override
   Widget build(BuildContext context) =>
     Semantics(label: _semanticsLabel, button: true, child:
-      InkWell(onTap: widget.onTap, child:
-        Semantics(excludeSemantics: true, child:
-          _cardWidget
-        )
+      InkWell(onTap: _onEditTitleCancel, child:
+        _cardWidget
       )
     );
 
@@ -106,7 +101,9 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
       ],),
     );
 
-  Widget get _titleTextWidget => Text(_titleText, overflow: TextOverflow.ellipsis, style: _titleTextStyle);
+  Widget get _titleTextWidget => InkWell(onTap: _onEditTitle, child:
+    Text(_titleText, overflow: TextOverflow.ellipsis, style: _titleTextStyle),
+  );
   TextStyle? get _titleTextStyle => Styles().textStyles.getTextStyle('widget.title.medium.fat');
   String get _titleText => _explorePOI.exploreTitle ?? '';
 
@@ -239,6 +236,15 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
           _canSubmitTitle = false;
         });
       }
+    }
+  }
+
+  void _onEditTitleCancel() {
+    if (_isEditingTitle == true) {
+      setState(() {
+        _isEditingTitle = false;
+        _canSubmitTitle = false;
+      });
     }
   }
 
