@@ -299,7 +299,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       myLocationEnabled: _userLocationEnabled,
       myLocationButtonEnabled: _userLocationEnabled,
       mapToolbarEnabled: Storage().debugMapShowLevels == true,
-      markers: ((_pinnedExplore != null) ? _pinnedMarkers : _mapMarkers) ?? <Marker>{},
+      markers: ((_pinnedMarker != null) ? _mapMarkers?.union(<Marker>{_pinnedMarker!}) : _mapMarkers) ?? <Marker>{},
       style: _currentMapStyle,
       indoorViewEnabled: true,
       //trafficEnabled: true,
@@ -589,6 +589,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         _pinnedExplore = pinnedExplore;
       });
       _updatePinMarker();
+      _updateMapMarkers();
     }
   }
 
@@ -599,7 +600,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     });
   }
 
-  Set<Marker>? get _pinnedMarkers => (_pinnedMarker != null) ? <Marker> { _pinnedMarker! } : null;
   List<Explore>? get _pinnedVisibleExplores => (_pinnedExplore != null) ? <Explore>[_pinnedExplore!] : null;
   int? get _pinnedExploresCount => (_pinnedExplore != null) ? 1 : null;
 
@@ -1835,7 +1835,7 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
     LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
     if ((exploreGroup != null) && (markerPosition != null)) {
       Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
-      bool exploreDisabled = (_selectedExploreGroup != null) && (_selectedExploreGroup?.intersection(exploreGroup).isNotEmpty != true);
+      bool exploreDisabled = (_pinnedExplore != null) || ((_selectedExploreGroup != null) && (_selectedExploreGroup?.intersection(exploreGroup).isNotEmpty != true));
       Color? markerColor = exploreDisabled ? ExploreMap.disabledMarkerColor : sameExplore?.mapMarkerColor;
       Color? markerBorderColor = exploreDisabled ? ExploreMap.disabledGroupMarkerBorderColor : (sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor);
       Color? markerTextColor = exploreDisabled ? ExploreMap.disabledMarkerTextColor : (sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor);
@@ -1872,7 +1872,7 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
         markerAnchor = _mapCircleMarkerAnchor;
       }
       else {
-        bool exploreDisabled = (_selectedExploreGroup != null) && (_selectedExploreGroup?.contains(explore) != true);
+        bool exploreDisabled = (_pinnedExplore != null) || (_selectedExploreGroup != null) && (_selectedExploreGroup?.contains(explore) != true);
         Color? exploreColor = exploreDisabled ? ExploreMap.disabledMarkerColor : explore?.mapMarkerColor;
         Color? borderColor = exploreDisabled ? ExploreMap.disabledExploreMarkerBorderColor : (explore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor);
         String markerKey = "explore-${exploreColor?.toARGB32() ?? 0}";
