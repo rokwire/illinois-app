@@ -45,6 +45,7 @@ import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
+import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
@@ -177,6 +178,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyWellnessResourcesNotification,
       FirebaseMessaging.notifyWellnessRingsNotification,
       FirebaseMessaging.notifyWellnessTodoListNotification,
+      FirebaseMessaging.notifyLaundryNotification,
       FirebaseMessaging.notifyWalletNotification,
       FirebaseMessaging.notifyWalletIlliniIdNotification,
       FirebaseMessaging.notifyWalletBusPassNotification,
@@ -430,21 +432,23 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == FirebaseMessaging.notifyWellnessTodoListNotification) {
       _onFirebaseWellnessNotification(WellnessContentType.todo);
     }
-
+    else if (name == FirebaseMessaging.notifyLaundryNotification) {
+      _onFirebaseLaundryNotification();
+    }
     else if (name == FirebaseMessaging.notifyWalletNotification) {
       _onFirebaseTabNotification(RootTab.Wallet);
     }
     else if (name == FirebaseMessaging.notifyWalletIlliniIdNotification) {
-      _onFirebaseWaletNotification(WalletContentType.illiniId);
+      _onFirebaseWalletNotification(WalletContentType.illiniId);
     }
     else if (name == FirebaseMessaging.notifyWalletBusPassNotification) {
-      _onFirebaseWaletNotification(WalletContentType.busPass);
+      _onFirebaseWalletNotification(WalletContentType.busPass);
     }
     else if (name == FirebaseMessaging.notifyWalletMealPlanNotification) {
-      _onFirebaseWaletNotification(WalletContentType.mealPlan);
+      _onFirebaseWalletNotification(WalletContentType.mealPlan);
     }
     else if (name == FirebaseMessaging.notifyWalletAddIlliniCashNotification) {
-      _onFirebaseWaletNotification(WalletContentType.addIlliniCash);
+      _onFirebaseWalletNotification(WalletContentType.addIlliniCash);
     }
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
@@ -1227,9 +1231,15 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
-  void _onFirebaseWaletNotification(WalletContentType contentType) {
+  void _onFirebaseWalletNotification(WalletContentType contentType) {
     if (context.mounted) {
       WalletHomePanel.present(context, contentType: contentType);
+    }
+  }
+
+  void _onFirebaseLaundryNotification() {
+    if (context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
     }
   }
 
