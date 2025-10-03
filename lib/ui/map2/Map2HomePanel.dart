@@ -761,18 +761,27 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
         if (mounted && (exploresTask == _exploresTask)) {
           if (!DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
+
+            setState(() {
+              _explores = explores;
+              _filteredExplores = filteredExplores;
+              if ((_pinnedExplore != null) && (explores?.contains(_pinnedExplore) == true)) {
+                _selectedExploreGroup = <Explore>{_pinnedExplore!};
+                _pinnedExplore = null;
+                _pinnedMarker = null;
+              }
+              else {
+                _selectedExploreGroup = null;
+              }
+              _trayExplores = _buildTrayExplores();
+            });
+
             await _buildMapContentData(filteredExplores, updateCamera: false, showProgress: true);
+
             if (mounted && (exploresTask == _exploresTask)) {
               setState(() {
-                _explores = explores;
-                _filteredExplores = filteredExplores;
-                _selectedExploreGroup = null;
                 _exploresTask = null;
                 _markersProgress = false;
-                if ((_pinnedExplore != null) && (explores?.contains(_pinnedExplore) == true)) {
-                  _pinnedExplore = null;
-                  _pinnedMarker = null;
-                }
               });
             }
           }
@@ -1600,8 +1609,12 @@ extension _Map2PanelContent on _Map2HomePanelState {
         if (debugThresoldDistance != null) {
           thresoldDistance = debugThresoldDistance;
         }
-        else {
+        else if (updateCamera) {
           zoom ??= GeoMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * mapPadding, 0), math.max(mapSize.height - 2 * mapPadding, 0));
+          thresoldDistance = _thresoldDistanceForZoom(zoom);
+        }
+        else {
+          zoom ??= await _mapController?.getZoomLevel() ?? _lastMapZoom ?? defaultCameraZoom;
           thresoldDistance = _thresoldDistanceForZoom(zoom);
         }
         exploreMapGroups = _buildExplorMapGroups(explores, thresoldDistance: thresoldDistance);
