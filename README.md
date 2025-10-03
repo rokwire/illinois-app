@@ -104,13 +104,8 @@ The Firebase configuration file for iOS generated from Google Firebase console.
 #### • android/app/src/illinois/keys.properties
 Contains:
 - GoogleMaps API key for the Illinois flavor.
-- Origo configuration specific keys and ids.
 ```
 googleMapsApiKey=XXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
-origoAppId=XXXXXXXXXXXXXXXXX
-origoLockServiceCode=X
-origoAidFilter1=XXXXXXXXXXXXXXXXXXXX
-origoAidFilter2=XXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
 #### • android/app/src/illinois/dev/google-services.json
