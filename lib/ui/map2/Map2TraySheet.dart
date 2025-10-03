@@ -1,4 +1,5 @@
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
@@ -28,13 +29,13 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Map2TraySheet extends StatefulWidget {
-  final int? totalExploresCount;
+  final List<Explore>? explores;
+  final int? totalCount;
   final Position? currentLocation;
-  final List<Explore>? visibleExplores;
   final ScrollController? scrollController;
   final AnalyticsFeature? analyticsFeature;
 
-  Map2TraySheet({super.key, this.visibleExplores, this.scrollController, this.currentLocation, this.totalExploresCount, this.analyticsFeature});
+  Map2TraySheet({super.key, this.explores, this.scrollController, this.currentLocation, this.totalCount, this.analyticsFeature});
 
   @override
   State<StatefulWidget> createState() => _Map2TraySheetState();
@@ -49,7 +50,18 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
   static const double _traySheetDragHandleHeight = 3.0;
   static const double _traySheetDragHandleWidthFactor = 0.25;
 
+  UniqueKey _sliverListKey = UniqueKey();
   Set<String> _expandedBusStops = <String>{};
+
+  @override
+  void didUpdateWidget(Map2TraySheet oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (mounted && (!DeepCollectionEquality().equals(widget.explores, oldWidget.explores) || (widget.totalCount != oldWidget.totalCount)  )) {
+      setState(() {
+        _sliverListKey = UniqueKey();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) =>
@@ -63,7 +75,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
             title: _traySheetHeading,
           ),
           //SliverPadding(padding: EdgeInsets.only(top: 42), sliver:
-          SliverList(
+          SliverList(key: _sliverListKey,
             delegate: SliverChildListDelegate(_traySheetListContent),
           ),
         ],),
@@ -105,7 +117,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
     TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.message.tiny'); // widget.message.tiny
     return RichText(text: TextSpan(style: regularStyle, children: <InlineSpan>[
       TextSpan(text: Localization().getStringEx('panel.map2.tray.header.selected.label', 'Selected: '), style: boldStyle,),
-      TextSpan(text: '${widget.visibleExplores?.length}/${widget.totalExploresCount}', style: regularStyle,),
+      TextSpan(text: '${widget.explores?.length}/${widget.totalCount}', style: regularStyle,),
     ]));
   }
 
@@ -123,8 +135,8 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
 
   List<Widget> get _traySheetListContent {
     List<Widget> items = <Widget>[];
-    if (widget.visibleExplores != null) {
-      for (Explore explore in widget.visibleExplores!) {
+    if (widget.explores != null) {
+      for (Explore explore in widget.explores!) {
         if (items.isNotEmpty) {
           items.add(SizedBox(height: _traySheetListCardSpacing(explore),));
         }

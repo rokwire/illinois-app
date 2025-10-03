@@ -666,10 +666,10 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
       builder: (BuildContext context, ScrollController scrollController) => Map2TraySheet(
         key: _traySheetKey,
-        visibleExplores: _pinnedVisibleExplores ?? _trayExplores,
+        explores: _pinnedVisibleExplores ?? _trayExplores,
         scrollController: scrollController,
         currentLocation: _currentLocation,
-        totalExploresCount: _pinnedExploresCount ?? ExploreMap.validCountFromList(_filteredExplores ?? _explores),
+        totalCount: _pinnedExploresCount ?? ExploreMap.validCountFromList(_filteredExplores ?? _explores),
         analyticsFeature: widget.analyticsFeature,
       ),
     );
