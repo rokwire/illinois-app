@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+### Added
+- Laundry deep link [#5420](https://github.com/rokwire/illinois-app/issues/5420).
 
 ## [7.3.7] - 2025-10-02
 ### Changed
