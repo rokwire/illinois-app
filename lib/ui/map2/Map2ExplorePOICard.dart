@@ -30,6 +30,7 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
   late bool _isFavorite;
 
   bool _isEditingTitle = false;
+  bool _canSubmitTitle = false;
   final TextEditingController _titleTextController = TextEditingController();
   final FocusNode _titleTextNode = FocusNode();
 
@@ -119,9 +120,10 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
     child: TextField(
       controller: _titleTextController,
       focusNode: _titleTextNode,
+      onChanged: (_) => _onEditTitleChanged(),
       onSubmitted: (_) => _onEditTitleDone(),
       autofocus: true,
-      cursorColor: Styles().colors.fillColorSecondary,
+      cursorColor: Styles().colors.fillColorPrimary,
       keyboardType: TextInputType.text,
       style: _titleTextStyle,
       decoration: InputDecoration(
@@ -131,7 +133,8 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
   );
 
   List<Widget> get _titleActionButtons => _isEditingTitle ? <Widget>[
-    _titleEditDoneButton,
+    if (_canSubmitTitle)
+      _titleEditDoneButton,
     _titleEditCancelButton,
   ] : <Widget>[
     _titleEditButton,
@@ -155,7 +158,7 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
     return InkWell(onTap: () => _onEditTitleDone(), child:
       Semantics(container: true, label: semanticLabel, hint: semanticHint, button: true, excludeSemantics: true, child:
         Padding(padding: _titleActionButtonPadding, child:
-          Styles().images.getImage('check', size: 12)
+          Styles().images.getImage('check-accent', size: 22)
         )
       )
     );
@@ -167,7 +170,7 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
     return InkWell(onTap: () => _onEditTitleClear(), child:
       Semantics(container: true, label: semanticLabel, hint: semanticHint, button: true, excludeSemantics: true, child:
         Padding(padding: _titleActionButtonPadding, child:
-          Styles().images.getImage('close', size: 12)
+          Styles().images.getImage('times', size: 22)
         )
       )
     );
@@ -211,9 +214,10 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
 
   void _onEditTitle() {
     if (_isEditingTitle != true) {
-      _titleTextController.text = _titleText;
       setState(() {
         _isEditingTitle = true;
+        _titleTextController.text = _titleText;
+        _canSubmitTitle = _titleText.isNotEmpty;
       });
       WidgetsBinding.instance.addPostFrameCallback((_){
         _titleTextNode.requestFocus();
@@ -224,21 +228,35 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
   void _onEditTitleClear() {
     if (_isEditingTitle == true) {
       if (_titleTextController.text.isNotEmpty) {
-        _titleTextController.text = '';
+        setState(() {
+          _titleTextController.text = '';
+          _canSubmitTitle = false;
+        });
       }
       else {
         setState(() {
           _isEditingTitle = false;
+          _canSubmitTitle = false;
         });
       }
     }
   }
 
   void _onEditTitleDone() {
-    if ((_isEditingTitle == true) && _titleTextController.text.isNotEmpty) {
+    if ((_isEditingTitle == true) && _canSubmitTitle) {
       //TBD: set the value
       setState(() {
         _isEditingTitle = false;
+        _canSubmitTitle = false;
+      });
+    }
+  }
+
+  void _onEditTitleChanged() {
+    bool canSubmitTitle = _titleTextController.text.isNotEmpty;
+    if (_canSubmitTitle != canSubmitTitle) {
+      setState(() {
+        _canSubmitTitle = canSubmitTitle;
       });
     }
   }
