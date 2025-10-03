@@ -394,12 +394,15 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   void _onTapMarker(dynamic origin) {
     // debugPrint('Map2 Marker tap' );
     if (origin is Explore) {
+      bool isExplorePOI = origin is ExplorePOI;
       setState(() {
-        _selectedExploreGroup = null;
+        _selectedExploreGroup = isExplorePOI ? <Explore>{origin} : null;
       });
       _updateMapMarkers();
       _updateTrayExplores();
-      origin.exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
+      if (!isExplorePOI) {
+        origin.exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
+      }
     }
     else if (origin is Set<Explore>) {
       setState(() {

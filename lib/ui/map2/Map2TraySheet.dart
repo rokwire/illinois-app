@@ -17,6 +17,7 @@ import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
+import 'package:illinois/ui/map2/Map2ExplorePOICard.dart';
 import 'package:illinois/ui/map2/Map2LocationCard.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
@@ -176,7 +177,6 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
     }
     else if (explore is ExplorePOI) {
       return Map2ExplorePOICard(explore,
-        currentLocation: widget.currentLocation,
         onTap: () => _onTapListCard(explore),
       );
     }

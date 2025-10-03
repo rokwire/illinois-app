@@ -4,7 +4,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/ext/Position.dart';
-import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -14,8 +13,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-
-// Map2LocationCard
 
 class Map2LocationCard extends StatefulWidget {
   final Explore? explore;
@@ -105,41 +102,20 @@ class _Map2LocationCardState extends State<Map2LocationCard> with NotificationsL
   Widget? get _colorHeadingWidget =>
     (_headingColor != null) ? Container(decoration: _colorHeadingDecoration, height: _colorHeadingHeight,) : null;
 
-  Widget get _titleWidget {
-    List<Widget> titleActions = _titleActions;
-    EdgeInsetsGeometry favoriteButtonInsets = titleActions.isNotEmpty ? _favoriteButtonCondensedInsets : _favoriteButtonStandardInsets;
-    return Padding(padding: _titleWidgetInsets, child:
+  Widget get _titleWidget =>
+    Padding(padding: _canFavorite ? EdgeInsets.only(left: 16) : EdgeInsets.only(left: 16, right: 16, top: 16), child:
       Row(children: [
         Expanded(child:
-          _titleWidgetImpl
+          Text(widget.explore?.exploreTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), overflow: TextOverflow.ellipsis)
         ),
-        ... titleActions,
         if (_canFavorite)
-          _favoriteButton(padding: favoriteButtonInsets),
+          _favoriteButton,
       ],),
     );
-  }
-
-
-  static const double _titleWidgetPadding = 16;
-  EdgeInsetsGeometry get _titleWidgetInsets => _canFavorite ?
-    EdgeInsets.only(left: _titleWidgetPadding) :
-    EdgeInsets.only(left: _titleWidgetPadding, right: _titleWidgetPadding, top: _titleWidgetPadding);
-
-  Widget get _titleWidgetImpl =>
-    Text(_titleText, style: _titleTextStyle, overflow: TextOverflow.ellipsis);
-
-  String get _titleText =>
-    widget.explore?.exploreTitle ?? '';
-
-  TextStyle? get _titleTextStyle =>
-    Styles().textStyles.getTextStyle('widget.title.medium.fat');
-
-  List<Widget> get _titleActions => <Widget>[];
 
   bool get _canFavorite => (_isFavorite != null);
 
-  Widget _favoriteButton({EdgeInsetsGeometry padding = _favoriteButtonStandardInsets }) {
+  Widget get _favoriteButton {
     Favorite? favorite = widget.exploreFavorite;
     bool isFavorite = (_isFavorite == true);
     Widget? favoriteStarIcon = favorite?.favoriteStarIcon(selected: isFavorite);
@@ -147,27 +123,12 @@ class _Map2LocationCardState extends State<Map2LocationCard> with NotificationsL
     String semanticHint = isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', '');
     return InkWell(onTap: () => _onTapFavorite(), child:
       Semantics(container: true, label: semanticLabel, hint: semanticHint, button: true, excludeSemantics: true, child:
-        Padding(padding: padding, child:
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
           favoriteStarIcon
         )
       )
     );
   }
-
-  static const double _favoriteButtonStandardPadding = 16;
-  static const EdgeInsetsGeometry _favoriteButtonStandardInsets = EdgeInsets.only(
-    left: _favoriteButtonStandardPadding,
-    right: _favoriteButtonStandardPadding,
-    top: _favoriteButtonStandardPadding,
-    bottom: _favoriteButtonStandardPadding
-  );
-  static const double _favoriteButtonCondensedPadding = _favoriteButtonStandardPadding / 2;
-  static const EdgeInsetsGeometry _favoriteButtonCondensedInsets = EdgeInsets.only(
-      left: _favoriteButtonCondensedPadding,
-      right: _favoriteButtonStandardPadding,
-      top: _favoriteButtonStandardPadding,
-      bottom: _favoriteButtonStandardPadding
-  );
 
   Widget get _detailsWidget {
     List<Widget> detailWidgets = ListUtils.stripNull(<Widget?>[
@@ -275,145 +236,4 @@ class _Map2LocationCardState extends State<Map2LocationCard> with NotificationsL
   String get _semanticsLabel => '$_semanticsTitle, $_semanticsLocation';
   String get _semanticsTitle => widget.explore?.exploreTitle ?? '';
   String get _semanticsLocation => ListUtils.last(_locationDetailTexts) ?? '';
-}
-
-class Map2ExplorePOICard extends Map2LocationCard {
-
-  final ExplorePOI? explorePOI;
-
-  Map2ExplorePOICard(this.explorePOI, { super.key,
-    super.currentLocation,
-    super.onTap,
-  }) : super(explorePOI,);
-
-  @override
-  State<StatefulWidget> createState() => _Map2ExplorePOICardState();
-}
-
-class _Map2ExplorePOICardState extends _Map2LocationCardState {
-
-  bool _isEditing = false;
-  final TextEditingController _titleTextController = TextEditingController();
-  final FocusNode _titleTextNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _titleTextController.dispose();
-    _titleTextNode.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget get _titleWidgetImpl => _isEditing ? _titleTextField : super._titleWidgetImpl;
-
-  @override
-  List<Widget> get _titleActions => _isEditing ? <Widget>[
-    _titleEditDoneButton,
-    _titleEditCancelButton,
-  ] : <Widget>[
-    _titleEditButton,
-  ];
-
-  Widget get _titleTextField => Semantics(
-    label: Localization().getStringEx('panel.search.field.search.title', 'Search'),
-    hint: Localization().getStringEx('panel.search.field.search.hint', ''),
-    textField: true,
-    excludeSemantics: true,
-    child: TextField(
-      controller: _titleTextController,
-      focusNode: _titleTextNode,
-      onSubmitted: (_) => _onEditDone(),
-      autofocus: true,
-      cursorColor: Styles().colors.fillColorSecondary,
-      keyboardType: TextInputType.text,
-      style: _titleTextStyle,
-      decoration: InputDecoration(
-        border: InputBorder.none,
-      ),
-    ),
-  );
-
-  Widget get _titleEditButton {
-    String semanticLabel = Localization().getStringEx('widget.card.button.title.edit.title', 'Edit Title');
-    String semanticHint = Localization().getStringEx('widget.card.button.title.edit.hint', '');
-    return InkWell(onTap: () => _onTapEdit(), child:
-      Semantics(container: true, label: semanticLabel, hint: semanticHint, button: true, excludeSemantics: true, child:
-        Padding(padding: _actionButtonCondensedPadding, child:
-          Styles().images.getImage('edit')
-        )
-      )
-    );
-  }
-
-  Widget get _titleEditDoneButton {
-    String semanticLabel = Localization().getStringEx('panel.search.button.search.title', 'Search');
-    String semanticHint = Localization().getStringEx('panel.search.button.search.hint', '');
-    return InkWell(onTap: () => _onEditDone(), child:
-      Semantics(container: true, label: semanticLabel, hint: semanticHint, button: true, excludeSemantics: true, child:
-        Padding(padding: _actionButtonCondensedPadding, child:
-          Styles().images.getImage('check', size: 12)
-        )
-      )
-    );
-  }
-
-  Widget get _titleEditCancelButton {
-    String semanticLabel = Localization().getStringEx('panel.search.button.clear.title', 'Clear');
-    String semanticHint = Localization().getStringEx('panel.search.button.clear.hint', '');
-    return InkWell(onTap: () => _onEditClear(), child:
-      Semantics(container: true, label: semanticLabel, hint: semanticHint, button: true, excludeSemantics: true, child:
-        Padding(padding: _actionButtonCondensedPadding, child:
-          Styles().images.getImage('close', size: 12)
-        )
-      )
-    );
-  }
-
-  static const EdgeInsetsGeometry _actionButtonCondensedPadding = EdgeInsets.only(
-      left: _Map2LocationCardState._favoriteButtonCondensedPadding,
-      right: _Map2LocationCardState._favoriteButtonCondensedPadding,
-      top: _Map2LocationCardState._favoriteButtonStandardPadding,
-      bottom: _Map2LocationCardState._favoriteButtonStandardPadding
-  );
-
-  void _onTapEdit() {
-    if (_isEditing != true) {
-      _titleTextController.text = _titleText;
-      setState(() {
-        _isEditing = true;
-      });
-      WidgetsBinding.instance.addPostFrameCallback((_){
-        _titleTextNode.requestFocus();
-      });
-    }
-  }
-
-  void _onEditClear() {
-    if (_isEditing == true) {
-      if (_titleTextController.text.isNotEmpty) {
-        _titleTextController.text = '';
-      }
-      else {
-        setState(() {
-          _isEditing = false;
-        });
-      }
-    }
-  }
-
-  void _onEditDone() {
-    if ((_isEditing == true) && _titleTextController.text.isNotEmpty) {
-      //TBD: set the value
-      setState(() {
-        _isEditing = false;
-      });
-    }
-  }
-
-
 }
