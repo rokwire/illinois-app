@@ -18,8 +18,6 @@ class Map2ExplorePOICard extends StatefulWidget {
     this.onTap,
   });
 
-  bool get isFavorite => Auth2().canFavorite && Auth2().isFavorite(explorePOI);
-
   @override
   State<StatefulWidget> createState() => _Map2ExplorePOICardState();
 }
@@ -53,7 +51,7 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
       Auth2UserPrefs.notifyFavoritesChanged,
     ]);
     _explorePOI = widget.explorePOI;
-    _isFavorite = widget.isFavorite;
+    _isFavorite = _isPOIFavorite();
     super.initState();
   }
 
@@ -68,7 +66,7 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
   @override
   void onNotification(String name, param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      bool? isFavorite = widget.isFavorite;
+      bool? isFavorite = _isPOIFavorite();
       if ((_isFavorite != isFavorite) && mounted) {
         setState((){
           _isFavorite = isFavorite;
@@ -207,6 +205,8 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
   String get _positionDetailText =>
     _explorePOI.exploreLocation?.displayCoordinates ?? '';
 
+  bool _isPOIFavorite() => Auth2().canFavorite && Auth2().isFavorite(_explorePOI);
+
   void _onTapFavorite() {
     Analytics().logSelect(target: "Favorite: ${_explorePOI.exploreTitle}", source: '${runtimeType.toString()}(${_explorePOI.favoriteKey})');
     Auth2().prefs?.toggleFavorite(_explorePOI);
@@ -243,12 +243,19 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
   }
 
   void _onEditTitleDone() {
-    if ((_isEditingTitle == true) && _canSubmitTitle) {
-      //TBD: set the value
+    if ((_isEditingTitle == true) && _canSubmitTitle && (_titleTextController.text != _titleText)) {
+      ExplorePOI oldExplorePOI = _explorePOI;
+      ExplorePOI newExplorePOI = ExplorePOI.fromOther(_explorePOI,
+        name: _titleTextController.text
+      );
       setState(() {
+        _explorePOI = newExplorePOI;
         _isEditingTitle = false;
         _canSubmitTitle = false;
       });
+      if (Auth2().canFavorite && Auth2().isFavorite(oldExplorePOI)) {
+        Auth2().prefs?.replaceFavorite(oldExplorePOI, newExplorePOI);
+      }
     }
   }
 

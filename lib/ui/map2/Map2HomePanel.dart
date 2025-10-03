@@ -139,6 +139,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       Connectivity.notifyStatusChanged,
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
+      Auth2UserPrefs.notifyFavoriteReplaced,
       FlexUI.notifyChanged,
     ]);
 
@@ -182,8 +183,17 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       _updateLocationServicesStatus(status: param);
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      if (_selectedContentType == Map2ContentType.MyLocations) {
+      if ((_selectedContentType == Map2ContentType.MyLocations) && mounted) {
         _updateExplores();
+      }
+    }
+    else if (name == Auth2UserPrefs.notifyFavoriteReplaced) {
+      if ((_selectedContentType == Map2ContentType.MyLocations) && (param is Pair) && mounted) {
+        Explore? oldExplore = JsonUtils.cast(param.left);
+        Explore? newExplore = JsonUtils.cast(param.right);
+        if ((oldExplore != null) && (newExplore != null)) {
+          _onExplorePOIUpdate(oldExplore, newExplore);
+        }
       }
     }
     else if (name == FlexUI.notifyChanged) {
@@ -284,8 +294,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       onMapCreated: _onMapCreated,
       onCameraIdle: _onMapCameraIdle,
       onCameraMove: _onMapCameraMove,
-      onTap: _onMapTap,
-      onPoiTap: _onMapPoiTap,
+      onTap: _onTapMap,
+      onPoiTap: _onTapMapPoi,
       myLocationEnabled: _userLocationEnabled,
       myLocationButtonEnabled: _userLocationEnabled,
       mapToolbarEnabled: Storage().debugMapShowLevels == true,
@@ -352,7 +362,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     _updateMapContentForZoom();
   }
 
-  void _onMapTap(LatLng coordinate) {
+  void _onTapMap(LatLng coordinate) {
     // debugPrint('Map2 tap' );
     if (_selectedExploreGroup != null) {
       setState(() {
@@ -374,7 +384,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     }
   }
 
-  void _onMapPoiTap(PointOfInterest poi) {
+  void _onTapMapPoi(PointOfInterest poi) {
     // debugPrint('Map2 POI tap' );
     if (_selectedExploreGroup != null) {
       setState(() {
@@ -592,6 +602,52 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   Set<Marker>? get _pinnedMarkers => (_pinnedMarker != null) ? <Marker> { _pinnedMarker! } : null;
   List<Explore>? get _pinnedVisibleExplores => (_pinnedExplore != null) ? <Explore>[_pinnedExplore!] : null;
   int? get _pinnedExploresCount => (_pinnedExplore != null) ? 1 : null;
+
+  void _onExplorePOIUpdate(Explore oldExplore, Explore newExplore) {
+    if (_explores?.contains(oldExplore) == true) {
+      _explores?.remove(oldExplore);
+      _explores?.insert(0, newExplore);
+    }
+
+    if (_filteredExplores?.contains(oldExplore) == true) {
+      _filteredExplores?.remove(oldExplore);
+      _filteredExplores?.insert(0, newExplore);
+    }
+
+    bool groupsModified = false;
+    if (_exploreMapGroups != null) {
+      if (_exploreMapGroups?.contains(oldExplore) == true) {
+        _exploreMapGroups?.remove(oldExplore);
+        _exploreMapGroups?.add(newExplore);
+        groupsModified = true;
+      }
+      else {
+        for (dynamic exploreMapGroup in _exploreMapGroups!) {
+          if ((exploreMapGroup is Set<Explore>) && exploreMapGroup.contains(oldExplore)) {
+            exploreMapGroup.remove(oldExplore);
+            exploreMapGroup.add(newExplore);
+            groupsModified = true;
+          }
+        }
+      }
+    }
+
+    if (_selectedExploreGroup?.contains(oldExplore) == true) {
+      _selectedExploreGroup?.remove(oldExplore);
+      _selectedExploreGroup?.add(newExplore);
+      groupsModified = true;
+    }
+
+    if (groupsModified) {
+      _updateMapMarkers();
+      _updateTrayExplores();
+    }
+
+    if (_pinnedExplore == oldExplore) {
+      _pinnedExplore = newExplore;
+      _updatePinMarker();
+    }
+  }
 
   // Tray Sheet
 
