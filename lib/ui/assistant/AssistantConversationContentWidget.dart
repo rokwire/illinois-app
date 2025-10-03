@@ -491,7 +491,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     }
     PageController? currentController = _structsPageControllers![messageId];
     if (currentController == null) {
-      currentController = PageController();
+      const int pageSpacing = 8;
+      double screenWidth = MediaQuery.of(context).size.width - (2 * pageSpacing);
+      double pageViewport = (screenWidth - 2 * pageSpacing) / screenWidth;
+      currentController = PageController(viewportFraction: pageViewport);
       _structsPageControllers![messageId] = currentController;
     }
     int elementsCount = elements.length;
@@ -516,7 +519,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     return Container(
         padding: EdgeInsets.only(top: 10),
         child: Column(children: <Widget>[
-          ExpandablePageView(allowImplicitScrolling: true, controller: currentController, children: pages),
+          ExpandablePageView(allowImplicitScrolling: true, controller: currentController, children: pages, padEnds: false,),
           AccessibleViewPagerNavigationButtons(controller: currentController, pagesCount: () => elementsCount),
         ]));
   }
