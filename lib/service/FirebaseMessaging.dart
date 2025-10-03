@@ -78,6 +78,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String notifyMapMyLocationsNotification                 = '$notifyBase.map.my_locations';
   static const String notifyMapMentalHealthNotification                = '$notifyBase.map.mental_health';
   static const String notifyMapStoriedSitesNotification                = '$notifyBase.map.storied_sites';
+  static const String notifyMapLaundryNotification                     = '$notifyBase.map.laundry';
   static const String notifyAcademicsNotification                      = "$notifyBase.academics";
   static const String notifyAcademicsAppointmentsNotification          = "$notifyBase.academics.appointments";
   static const String notifyAcademicsCanvasCoursesNotification         = "$notifyBase.academics.canvas_courses";
@@ -229,6 +230,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String payloadTypeMapMtdStops = 'map.mtd_stops';
   static const String payloadTypeMapMyLocations = 'map.my_locations';
   static const String payloadTypeMapMentalHealth = 'map.mental_health';
+  static const String payloadTypeMapLaundry = 'map.laundry';
   static const String payloadTypeAcademics = 'academics';
   static const String payloadTypeAcademicsGiesCheckilst = 'academics.gies_checklist';
   static const String payloadTypeAcademicsUiucCheckilst = 'academics.uiuc_checklist';
@@ -497,6 +499,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
     }
     else if (type == payloadTypeMapMentalHealth) {
       NotificationService().notify(notifyMapMentalHealthNotification, data);
+    }
+    else if (type == payloadTypeMapLaundry) {
+      NotificationService().notify(notifyMapLaundryNotification, data);
     }
     else if (type == payloadTypeAcademics) {
       NotificationService().notify(notifyAcademicsNotification, data);

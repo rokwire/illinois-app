@@ -157,6 +157,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyMapMtdStopsNotification,
       FirebaseMessaging.notifyMapMyLocationsNotification,
       FirebaseMessaging.notifyMapMentalHealthNotification,
+      FirebaseMessaging.notifyMapLaundryNotification,
       FirebaseMessaging.notifyAcademicsNotification,
       FirebaseMessaging.notifyAcademicsAppointmentsNotification,
       FirebaseMessaging.notifyAcademicsCanvasCoursesNotification,
@@ -365,6 +366,9 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
     else if (name == FirebaseMessaging.notifyMapMentalHealthNotification) {
       _onFirebaseMapNotification(ExploreMapType.MentalHealth);
+    }
+    else if (name == FirebaseMessaging.notifyMapLaundryNotification) {
+      _onFirebaseMapNotification(ExploreMapType.Laundry);
     }
     else if (name == FirebaseMessaging.notifyMapStoriedSitesNotification) {
       _onFirebaseMapNotification(ExploreMapType.StoriedSites);
