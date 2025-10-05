@@ -60,6 +60,7 @@ import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -1229,7 +1230,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
   Widget get _imageWidget => (widget.isClickable != true) ? ModalImageHolder(child: _rawImageWidget) : _rawImageWidget;
-  Widget get _rawImageWidget => Image.network(widget.post?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true);
+  Widget get _rawImageWidget => AccessibleImageHolder(child: Image.network(widget.post?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true));
 
   //ReactionWidget //TBD move to GroupReaction when ready to hook BB
 
@@ -1442,7 +1443,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Visibility(visible: StringUtils.isNotEmpty(widget.reply?.imageUrl),
                 child: Container(
                       padding: EdgeInsets.only(top: 14),
-                      child: Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+                      child: AccessibleImageHolder(child: Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true))
               )),
 
               WebEmbed(body: bodyText),
@@ -2394,7 +2395,9 @@ class _ImageChooserState extends State<ImageChooserWidget>{
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(imageUrl)
-              ? Positioned.fill(child: ModalImageHolder(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)))
+              ? Positioned.fill(child: ModalImageHolder(child:
+                  AccessibleImageHolder(emptySemanticsLabel: widget.imageSemanticsLabel ?? "", prefixSemanticsLabel: widget.imageSemanticsLabel ?? "", child:
+                    Image.network(imageUrl!,  fit: BoxFit.cover))))
               : Container(),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),

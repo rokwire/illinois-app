@@ -90,7 +90,7 @@ class _ImageDescriptionInputState extends State<ImageDescriptionInput> {
           _buildSwitch(
               title: Localization().getStringEx("",
                   "This image is decorative and does not convey any information"),
-              value: _imageDescriptionData.decorative == false,
+              value: _imageDescriptionData.decorative == true,
               onTap: () =>
                   setStateIfMounted(() {
                     _imageDescriptionData.decorative = !_imageDescriptionData.decorative;
@@ -187,6 +187,11 @@ class ImageDescriptionData {
 }
 
 extension ImageDescriptionInputDataExt on ImageDescriptionData{
+  static ImageDescriptionData fromMetaData(ImageMetaData data) => ImageDescriptionData(
+    description: data.altText,
+    decorative: data.decorative ?? false,
+  );
+
   bool get isValidated => (decorative) || StringUtils.isNotEmpty(description);
 
   ImageMetaData get toMetaData => ImageMetaData(altText: description, decorative: decorative);
