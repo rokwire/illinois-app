@@ -29,17 +29,24 @@ class Map2Filter {
   Map2SortType? sortType;
   Map2SortOrder? sortOrder;
 
+  Map2Filter._({
+    this.searchText = '',
+    this.starred = false,
+    this.sortType,
+    this.sortOrder,
+  });
+
   LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) =>
     LinkedHashMap<String, List<String>>();
 
   static Map2Filter? fromContentType(Map2ContentType? contentType) {
     switch (contentType) {
-      case Map2ContentType.CampusBuildings:      return Map2CampusBuildingsFilter();
-      case Map2ContentType.StudentCourses:       return Map2StudentCoursesFilter();
-      case Map2ContentType.DiningLocations:      return Map2DiningLocationsFilter();
-      case Map2ContentType.Events2:              return Map2Events2Filter();
-      case Map2ContentType.LaundryRooms:            return Map2LaundryRoomsFilter();
-      case Map2ContentType.BusStops:             return Map2BusStopsFilter();
+      case Map2ContentType.CampusBuildings:      return Map2CampusBuildingsFilter.defaultFilter();
+      case Map2ContentType.StudentCourses:       return Map2StudentCoursesFilter.defaultFilter();
+      case Map2ContentType.DiningLocations:      return Map2DiningLocationsFilter.defaultFilter();
+      case Map2ContentType.Events2:              return Map2Events2Filter.defaultFilter();
+      case Map2ContentType.LaundryRooms:         return Map2LaundryRoomsFilter.defaultFilter();
+      case Map2ContentType.BusStops:             return Map2BusStopsFilter.defaultFilter();
       case Map2ContentType.Therapists:
       case Map2ContentType.MyLocations:
       default: return null;
@@ -101,6 +108,26 @@ class Map2Filter {
 class Map2CampusBuildingsFilter extends Map2Filter {
   LinkedHashSet<String> amenityIds = LinkedHashSet<String>();
 
+  Map2CampusBuildingsFilter._({
+    required this.amenityIds,
+
+    String searchText = '',
+    bool starred = false,
+    Map2SortType? sortType,
+    Map2SortOrder? sortOrder,
+  }) : super._(
+    searchText: searchText,
+    starred: starred,
+    sortType: sortType,
+    sortOrder: sortOrder,
+  );
+
+  factory Map2CampusBuildingsFilter.defaultFilter({ String searchText = '', bool starred = false }) => Map2CampusBuildingsFilter._(
+    amenityIds: LinkedHashSet<String>(),
+    searchText: searchText,
+    starred: starred,
+  );
+
   @override
   bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (amenityIds.isNotEmpty == true));
 
@@ -158,6 +185,21 @@ class Map2CampusBuildingsFilter extends Map2Filter {
 }
 
 class Map2StudentCoursesFilter extends Map2Filter {
+
+  Map2StudentCoursesFilter._({
+    String searchText = '',
+    bool starred = false,
+    Map2SortType? sortType,
+    Map2SortOrder? sortOrder,
+  }) : super._(
+    searchText: searchText,
+    starred: starred,
+    sortType: sortType,
+    sortOrder: sortOrder,
+  );
+
+  factory Map2StudentCoursesFilter.defaultFilter() => Map2StudentCoursesFilter._();
+
   @override
   bool get _hasFilter => true;
 
@@ -176,6 +218,26 @@ class Map2StudentCoursesFilter extends Map2Filter {
 class Map2DiningLocationsFilter extends Map2Filter {
   bool onlyOpened = false;
   PaymentType? paymentType = null;
+
+  Map2DiningLocationsFilter._({
+    this.onlyOpened = false,
+    this.paymentType,
+
+    String searchText = '',
+    bool starred = false,
+    Map2SortType? sortType,
+    Map2SortOrder? sortOrder,
+  }) : super._(
+    searchText: searchText,
+    starred: starred,
+    sortType: sortType,
+    sortOrder: sortOrder,
+  );
+
+  factory Map2DiningLocationsFilter.defaultFilter({bool onlyOpened = false, PaymentType? paymentType}) => Map2DiningLocationsFilter._(
+    onlyOpened: onlyOpened,
+    paymentType: paymentType,
+  );
 
   @override
   bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (onlyOpened != false) || (paymentType != null));
@@ -242,9 +304,25 @@ class Map2DiningLocationsFilter extends Map2Filter {
 class Map2Events2Filter extends Map2Filter {
   Event2FilterParam event2Filter = Event2FilterParam.fromStorage();
 
-  Map2Events2Filter() {
-    super.sortType = Map2SortTypeImpl.fromEvent2SortType(Event2SortTypeImpl.fromJson(Storage().events2SortType));
-  }
+  Map2Events2Filter._({
+    required this.event2Filter,
+
+    String searchText = '',
+    bool starred = false,
+    Map2SortType? sortType,
+    Map2SortOrder? sortOrder,
+  }) : super._(
+    searchText: searchText,
+    starred: starred,
+    sortType: sortType,
+    sortOrder: sortOrder,
+  );
+
+  factory Map2Events2Filter.defaultFilter({ String searchText = '' }) => Map2Events2Filter._(
+    event2Filter: Event2FilterParam.fromStorage(),
+    sortType: Map2SortTypeImpl.fromEvent2SortType(Event2SortTypeImpl.fromJson(Storage().events2SortType)),
+    searchText: searchText,
+  );
 
   @override
   bool get _hasFilter => true;
@@ -290,6 +368,20 @@ class Map2Events2Filter extends Map2Filter {
 }
 
 class Map2LaundryRoomsFilter extends Map2Filter {
+
+  Map2LaundryRoomsFilter._({
+    String searchText = '',
+    bool starred = false,
+    Map2SortType? sortType,
+    Map2SortOrder? sortOrder,
+  }) : super._(
+    searchText: searchText,
+    starred: starred,
+    sortType: sortType,
+    sortOrder: sortOrder,
+  );
+
+  factory Map2LaundryRoomsFilter.defaultFilter() => Map2LaundryRoomsFilter._();
 
   @override
   bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true));
@@ -342,6 +434,23 @@ class Map2LaundryRoomsFilter extends Map2Filter {
 
 
 class Map2BusStopsFilter extends Map2Filter {
+
+  Map2BusStopsFilter._({
+    String searchText = '',
+    bool starred = false,
+    Map2SortType? sortType,
+    Map2SortOrder? sortOrder,
+  }) : super._(
+    searchText: searchText,
+    starred: starred,
+    sortType: sortType,
+    sortOrder: sortOrder,
+  );
+
+  factory Map2BusStopsFilter.defaultFilter({String searchText = '', bool starred = false }) => Map2BusStopsFilter._(
+    searchText: searchText,
+    starred: starred,
+  );
 
   @override
   bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true));

@@ -66,6 +66,11 @@ typedef BuildMarkersTask = Future<Set<Marker>>;
 typedef MarkerIconsCache = Map<String, BitmapDescriptor>;
 
 class Map2HomePanel extends StatefulWidget with AnalyticsInfo {
+  static const String notifySelect = "edu.illinois.rokwire.map2.select";
+  static const String selectParamKey = "select-param";
+
+  final Map<String, dynamic> initParams = <String, dynamic>{};
+
   Map2HomePanel({super.key});
 
   @override
@@ -75,6 +80,22 @@ class Map2HomePanel extends StatefulWidget with AnalyticsInfo {
     /*_state?._selectedMapType?.analyticsFeature ??
     _selectedExploreType(exploreTypes: _buildExploreTypes())?.analyticsFeature ?? */
     AnalyticsFeature.Map;
+
+  static bool get hasState => _state != null;
+
+  static _Map2HomePanelState? get _state {
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifySelect);
+    if (subscribers != null) {
+      for (NotificationsListener subscriber in subscribers) {
+        if ((subscriber is _Map2HomePanelState) && subscriber.mounted) {
+          return subscriber;
+        }
+      }
+    }
+    return null;
+  }
+
+  dynamic get _initialSelectParam => initParams[selectParamKey];
 }
 
 class _Map2HomePanelState extends State<Map2HomePanel>
@@ -140,15 +161,20 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2UserPrefs.notifyFavoriteReplaced,
+      Map2HomePanel.notifySelect,
       FlexUI.notifyChanged,
     ]);
 
     _availableContentTypes = _Map2ContentType.availableTypes;
-    _selectedContentType = _Map2ContentType.initialType(availableTypes: _availableContentTypes);
+    _selectedContentType = _Map2ContentType.initialType(
+      initialSelectParam: widget._initialSelectParam,
+      availableTypes: _availableContentTypes
+    );
 
     _contentTypesScrollController.addListener(_onContentTypesScroll);
     //_filterButtonsScrollController.addListener(_onFilterButtonsScroll);
 
+    _initSelectNotificationFilters(widget._initialSelectParam);
     _updateLocationServicesStatus(init: true);
     _initMapStyles();
     _initExplores();
@@ -195,6 +221,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           _onExplorePOIUpdate(oldExplore, newExplore);
         }
       }
+    }
+    else if (name == Map2HomePanel.notifySelect) {
+      _processSelectNotification(param);
     }
     else if (name == FlexUI.notifyChanged) {
       _updateAvailableContentTypes();
@@ -517,6 +546,28 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   void _updateContentTypesScrollPosition() {
     if (_contentTypesScrollController.hasClients) {
       _contentTypesScrollController.jumpTo(_contentTypesScrollOffset);
+    }
+  }
+
+  void _processSelectNotification(dynamic param) {
+    Map2ContentType? contentType = _Map2ContentType.selectParamType(param);
+    if ((contentType != null) && mounted) {
+      _initSelectNotificationFilters(param);
+      _onContentTypeEntry(contentType);
+    }
+  }
+
+  void _initSelectNotificationFilters(dynamic param) {
+    if (param is Map2FilterEvents2Param) {
+      _filters[Map2ContentType.Events2] = Map2Events2Filter.defaultFilter(
+        searchText: param.searchText
+      );
+    }
+    else if (param is Map2FilterBusStopsParam) {
+      _filters[Map2ContentType.BusStops] = Map2BusStopsFilter.defaultFilter(
+        searchText: param.searchText,
+        starred: param.starred,
+      );
     }
   }
 
@@ -1467,12 +1518,12 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   Map2CampusBuildingsFilter? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
   Map2DiningLocationsFilter? get _diningLocationsFilter => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: true));
   Map2DiningLocationsFilter? get _diningLocationsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: false));
-  Map2Events2Filter? get _events2Filter => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: true));
+  Map2Events2Filter?         get _events2Filter => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: true));
 
-  Map2Filter? _getFilter(Map2ContentType? contentType, { bool ensure = false }) {
+  Map2Filter? _getFilter(Map2ContentType? contentType, { bool ensure = false, bool reset = false }) {
     if (contentType != null) {
       Map2Filter? filter = _filters[contentType];
-      if ((filter == null) && ensure) {
+      if (((filter == null) && ensure) || reset) {
         filter = Map2Filter.fromContentType(contentType);
         if (filter != null) {
           _filters[contentType] = filter;
@@ -2009,12 +2060,23 @@ extension _Map2ContentType on Map2ContentType {
 
   static const Map2ContentType _defaultType = Map2ContentType.CampusBuildings;
 
-  static Map2ContentType? initialType({ Iterable<Map2ContentType>? availableTypes }) {
-    dynamic storedType = Storage()._storedAvailableMap2ContentType(availableTypes: availableTypes);
-    return (storedType is Map2ContentType?) ? storedType : (
-      (_defaultType._ensure(availableTypes: availableTypes)) ??
-      ((availableTypes?.isNotEmpty == true) ? availableTypes?.first : null)
-    );
+  static Map2ContentType? initialType({ dynamic initialSelectParam, Iterable<Map2ContentType>? availableTypes }) => (
+    (selectParamType(initialSelectParam)?._ensure(availableTypes: availableTypes)) ??
+    (Storage()._storedMap2ContentType?._ensure(availableTypes: availableTypes)) ??
+    (_defaultType._ensure(availableTypes: availableTypes)) ??
+    ((availableTypes?.isNotEmpty == true) ? availableTypes?.first : null)
+  );
+
+  static Map2ContentType? selectParamType(dynamic param) {
+    if (param is Map2ContentType) {
+      return param;
+    } else if (param is Map2FilterEvents2Param) {
+      return Map2ContentType.Events2;
+    } else if (param is Map2FilterBusStopsParam) {
+      return Map2ContentType.BusStops;
+    } else {
+      return null;
+    }
   }
 
   static Set<Map2ContentType> get availableTypes {
@@ -2156,31 +2218,9 @@ extension Map2SortOrderImpl on Map2SortOrder {
 extension _StorageMapExt on Storage {
   static const String _nullContentTypeJson = 'null';
 
-  // ignore: unused_element
   Map2ContentType? get _storedMap2ContentType => _Map2ContentType.fromJson(Storage().selectedMap2ContentType);
   set _storedMap2ContentType(Map2ContentType? value) => Storage().selectedMap2ContentType = value?.toJson() ?? _nullContentTypeJson;
 
-  dynamic _storedAvailableMap2ContentType({ Iterable<Map2ContentType>? availableTypes }) {
-    String? storedTypeJson = Storage().selectedMap2ContentType;
-    if (storedTypeJson != null) {
-      Map2ContentType? storedType = _Map2ContentType.fromJson(storedTypeJson);
-      if (storedType == null) {
-        return null; // selected: null
-      }
-      else {
-        Map2ContentType? ensuredStoredType = storedType._ensure(availableTypes: availableTypes);
-        if (ensuredStoredType != null) {
-          return ensuredStoredType; // selected: ensuredStoredType
-        }
-        else {
-          return false; // selected: n.a.
-        }
-      }
-    }
-    else {
-      return false; // selected: n.a.
-    }
-  }
 }
 
 extension ExplorePOIImpl on ExplorePOI {
@@ -2206,3 +2246,13 @@ extension ExplorePOIImpl on ExplorePOI {
     );
 }
 
+class Map2FilterEvents2Param {
+  final String searchText;
+  Map2FilterEvents2Param([this.searchText = '']);
+}
+
+class Map2FilterBusStopsParam {
+  final String searchText;
+  final bool starred;
+  Map2FilterBusStopsParam({this.searchText = '', this.starred = false});
+}

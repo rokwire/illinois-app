@@ -20,12 +20,12 @@ import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
+import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
@@ -232,7 +232,7 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(scope: MTDStopsScope.all)));
     }
     else if (lowerCaseKey == ExplorePOI.favoriteKeyName.toLowerCase()) {
-      NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapType.MyLocations);
+      NotificationService().notify(Map2HomePanel.notifySelect, Map2ContentType.MyLocations);
     }
     else if (lowerCaseKey == GuideFavorite.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
