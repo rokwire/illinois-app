@@ -1130,7 +1130,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
         : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
 
     return Stack(alignment: Alignment.topRight, children: [
-      Semantics(button:true,
+      Semantics(container: true, button:true,
         child:GestureDetector(
           onTap: widget.isClickable == true ? _onTapCard : (){},
           child: Container(
@@ -3983,11 +3983,11 @@ class _GroupReactionsState extends State<GroupReactionsLayout> with Notification
                   color: Styles().colors.background,
                   borderRadius: BorderRadius.all(Radius.circular(15)),
                   border: Border.all(color: Styles().colors.surfaceAccent)),
-                child: InkWell(
+                child: Semantics(label: "Add Reaction", button: true, child: InkWell(
                     onTap: () => ReactionKeyboard.showEmojiBottomSheet(context: context, onSelect: _reactWithEmoji),
                     child: Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         child:Styles().images.getImage('add_emoji', excludeFromSemantics: true, size: 18, color: Styles().colors.mediumGray2))
-                )))),
+                ))))),
         ]
     );
   }
