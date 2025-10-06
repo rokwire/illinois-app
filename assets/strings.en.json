@@ -494,6 +494,8 @@
 
     "panel.map2.tray.header.selected.label": "Selected: ",
 
+    "card.map2.explore_poi.label.directions.text": "Directions",
+
     "panel.map.select.header.title": "Select Location",
     "panel.map.select.button.select.title": "Select",
     "panel.map.select.button.select.hint": "",

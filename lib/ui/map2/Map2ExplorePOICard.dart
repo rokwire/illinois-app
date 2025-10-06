@@ -5,6 +5,7 @@ import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -187,7 +188,10 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
   Widget get _detailsWidget =>
     Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
       Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        _positionDetailWidget
+        _positionDetailWidget,
+        Padding(padding: EdgeInsets.only(top: 16), child:
+          _directionsDetailWidget,
+        ),
       ],)
     );
 
@@ -202,11 +206,51 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
   String get _positionDetailText =>
     _explorePOI.exploreLocation?.displayCoordinates ?? '';
 
+  Widget get _directionsDetailWidget => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    _directionsDetailTitle,
+    if (_explorePOI.location?.isLocationCoordinateValid == true)
+      Padding(padding: EdgeInsets.only(top: 8), child:
+        _directionsDetailCommands,
+      ),
+  ],);
+
+  Widget get _directionsDetailTitle => Row(children: [
+    Expanded(child:
+      RichText(text:
+        TextSpan(style: _directionsDetailTitleTextStyle, children: <InlineSpan>[
+          TextSpan(text: Localization().getStringEx('card.map2.explore_poi.label.directions.text', 'Directions')),
+          TextSpan(text: ' '),
+          WidgetSpan(alignment: PlaceholderAlignment.middle, child:
+            Styles().images.getImage('external-link-dark', size: 14) ?? Container()
+          )
+        ]),
+      )
+    )
+  ],);
+
+  TextStyle? get _directionsDetailTitleTextStyle => Styles().textStyles.getTextStyle('widget.title.regular.fat');
+
+  Widget get _directionsDetailCommands => Row(children: [
+    Expanded(child:
+      Wrap(spacing: 8, runSpacing: 8, children: [
+        _DirectionsButton('person-walking', onTap: () => _onTapDirections(GeoMapUtils.traveModeWalking)),
+        _DirectionsButton('bicycle', onTap: () => _onTapDirections(GeoMapUtils.traveModeBycycling)),
+        _DirectionsButton('car', onTap: () => _onTapDirections(GeoMapUtils.traveModeDriving)),
+        _DirectionsButton('bus', onTap: () => _onTapDirections(GeoMapUtils.traveModeTransit)),
+      ],),
+    )
+  ],);
+
   bool _isPOIFavorite() => Auth2().canFavorite && Auth2().isFavorite(_explorePOI);
 
   void _onTapFavorite() {
     Analytics().logSelect(target: "Favorite: ${_explorePOI.exploreTitle}", source: '${runtimeType.toString()}(${_explorePOI.favoriteKey})');
     Auth2().prefs?.toggleFavorite(_explorePOI);
+  }
+
+  void _onTapDirections(String travelMode) {
+    Analytics().logSelect(target: "Directions: $travelMode", source: '${runtimeType.toString()}(${_explorePOI.favoriteKey})');
+    GeoMapUtils.launchDirections(destination: _explorePOI.location?.exploreLocationMapCoordinate, travelMode: travelMode);
   }
 
   void _onEditTitle() {
@@ -277,4 +321,35 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
   String get _semanticsLabel => '$_semanticsTitle, $_semanticsLocation';
   String get _semanticsTitle => _explorePOI.exploreTitle ?? '';
   String get _semanticsLocation => _positionDetailText;
+}
+
+class _DirectionsButton extends StatelessWidget {
+  final String imageKey;
+  final void Function()? onTap;
+
+  // ignore: unused_element_parameter
+  _DirectionsButton(this.imageKey, {super.key, this.onTap});
+
+  @override
+  Widget build(BuildContext context) => InkWell(onTap: onTap, child:
+    Container(decoration: _buttonDecoration, child:
+      Padding(padding: EdgeInsets.all(12), child:
+        SizedBox(width: _iconSize, height: _iconSize, child:
+          Center(child:
+            Styles().images.getImage(imageKey, size: _iconSize, color: Styles().colors.fillColorPrimary),
+          ),
+        )
+      )
+    )
+  );
+
+  static Decoration get _buttonDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    borderRadius: _buttonBorderRadius,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+  );
+
+  static const BorderRadiusGeometry _buttonBorderRadius = BorderRadius.all(_buttonRadius);
+  static const Radius _buttonRadius = Radius.circular(8);
+  static const double _iconSize = 18;
 }
