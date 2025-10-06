@@ -45,6 +45,7 @@ import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
+import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
@@ -156,6 +157,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyMapMtdStopsNotification,
       FirebaseMessaging.notifyMapMyLocationsNotification,
       FirebaseMessaging.notifyMapMentalHealthNotification,
+      FirebaseMessaging.notifyMapLaundryNotification,
       FirebaseMessaging.notifyAcademicsNotification,
       FirebaseMessaging.notifyAcademicsAppointmentsNotification,
       FirebaseMessaging.notifyAcademicsCanvasCoursesNotification,
@@ -177,6 +179,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyWellnessResourcesNotification,
       FirebaseMessaging.notifyWellnessRingsNotification,
       FirebaseMessaging.notifyWellnessTodoListNotification,
+      FirebaseMessaging.notifyLaundryNotification,
       FirebaseMessaging.notifyWalletNotification,
       FirebaseMessaging.notifyWalletIlliniIdNotification,
       FirebaseMessaging.notifyWalletBusPassNotification,
@@ -231,7 +234,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       HomePanel.notifySelect,
       HomeFavoritesPanel.notifySelect,
       BrowsePanel.notifySelect,
-      ExploreMapPanel.notifySelect,
+      Map2HomePanel.notifySelect,
       Auth2.notifyLogout,
 
       uiuc.TabBar.notifySelectionChanged,
@@ -341,31 +344,34 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       _onFirebaseTabNotification(RootTab.Maps);
     }
     else if (name == FirebaseMessaging.notifyMapEventsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.Events2);
+      _onFirebaseMap2Notification(Map2ContentType.Events2);
     }
     else if (name == FirebaseMessaging.notifyMapDiningNotification) {
-      _onFirebaseMapNotification(ExploreMapType.Dining);
+      _onFirebaseMap2Notification(Map2ContentType.DiningLocations);
     }
     else if (name == FirebaseMessaging.notifyMapBuildingsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.Buildings);
+      _onFirebaseMap2Notification(Map2ContentType.CampusBuildings);
     }
     else if (name == FirebaseMessaging.notifyMapStudentCoursesNotification) {
-      _onFirebaseMapNotification(ExploreMapType.StudentCourse);
+      _onFirebaseMap2Notification(Map2ContentType.StudentCourses);
     }
     else if (name == FirebaseMessaging.notifyMapAppointmentsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.Appointments);
+      // Not supported in Maps2: _onFirebaseMap2Notification(Map2ContentType.Appointments);
     }
     else if (name == FirebaseMessaging.notifyMapMtdStopsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.MTDStops);
+      _onFirebaseMap2Notification(Map2ContentType.BusStops);
     }
     else if (name == FirebaseMessaging.notifyMapMyLocationsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.MyLocations);
+      _onFirebaseMap2Notification(Map2ContentType.MyLocations);
     }
     else if (name == FirebaseMessaging.notifyMapMentalHealthNotification) {
-      _onFirebaseMapNotification(ExploreMapType.MentalHealth);
+      _onFirebaseMap2Notification(Map2ContentType.Therapists);
+    }
+    else if (name == FirebaseMessaging.notifyMapLaundryNotification) {
+      _onFirebaseMap2Notification(Map2ContentType.LaundryRooms);
     }
     else if (name == FirebaseMessaging.notifyMapStoriedSitesNotification) {
-      _onFirebaseMapNotification(ExploreMapType.StoriedSites);
+      // Map2 TBD: _onFirebaseMap2Notification(Map2ContentType.StoriedSites);
     }
     else if (name == FirebaseMessaging.notifyAcademicsNotification) {
       _onFirebaseTabNotification(RootTab.Academics);
@@ -430,21 +436,23 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == FirebaseMessaging.notifyWellnessTodoListNotification) {
       _onFirebaseWellnessNotification(WellnessContentType.todo);
     }
-
+    else if (name == FirebaseMessaging.notifyLaundryNotification) {
+      _onFirebaseLaundryNotification();
+    }
     else if (name == FirebaseMessaging.notifyWalletNotification) {
       _onFirebaseTabNotification(RootTab.Wallet);
     }
     else if (name == FirebaseMessaging.notifyWalletIlliniIdNotification) {
-      _onFirebaseWaletNotification(WalletContentType.illiniId);
+      _onFirebaseWalletNotification(WalletContentType.illiniId);
     }
     else if (name == FirebaseMessaging.notifyWalletBusPassNotification) {
-      _onFirebaseWaletNotification(WalletContentType.busPass);
+      _onFirebaseWalletNotification(WalletContentType.busPass);
     }
     else if (name == FirebaseMessaging.notifyWalletMealPlanNotification) {
-      _onFirebaseWaletNotification(WalletContentType.mealPlan);
+      _onFirebaseWalletNotification(WalletContentType.mealPlan);
     }
     else if (name == FirebaseMessaging.notifyWalletAddIlliniCashNotification) {
-      _onFirebaseWaletNotification(WalletContentType.addIlliniCash);
+      _onFirebaseWalletNotification(WalletContentType.addIlliniCash);
     }
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
@@ -585,8 +593,8 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == BrowsePanel.notifySelect) {
       _onSelectTab(RootTab.Browse);
     }
-    else if (name == ExploreMapPanel.notifySelect) {
-      _onSelectMaps(param);
+    else if (name == Map2HomePanel.notifySelect) {
+      _onSelectMaps2(param);
     }
     else if (name == Auth2.notifyLogout) {
       _alertLogout(JsonUtils.cast(param));
@@ -1155,8 +1163,8 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     NotificationService().notify(HomePanel.notifySelect, homeType);
   }
 
-  void _onFirebaseMapNotification(ExploreMapType mapType) {
-    NotificationService().notify(ExploreMapPanel.notifySelect, mapType);
+  void _onFirebaseMap2Notification(Map2ContentType mapType) {
+    NotificationService().notify(Map2HomePanel.notifySelect, mapType);
   }
 
   void _onFirebaseInboxNotification() {
@@ -1227,9 +1235,15 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
-  void _onFirebaseWaletNotification(WalletContentType contentType) {
+  void _onFirebaseWalletNotification(WalletContentType contentType) {
     if (context.mounted) {
       WalletHomePanel.present(context, contentType: contentType);
+    }
+  }
+
+  void _onFirebaseLaundryNotification() {
+    if (context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
     }
   }
 
@@ -1391,16 +1405,15 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
-  void _onSelectMaps(dynamic param) {
-    int? mapsIndex = _getIndexByRootTab(RootTab.Maps);
+  void _onSelectMaps2(dynamic param) {
+    int? mapsIndex = _getIndexByRootTab(RootTab.Maps2);
     if (mounted && (mapsIndex != null)) {
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
       if (mapsIndex != _currentTabIndex) {
         _selectTab(mapsIndex);
-        if ((param != null) && !ExploreMapPanel.hasState) {
-          Widget? mapsWidget = _panels[RootTab.Maps];
-          ExploreMapPanel? mapsPanel = (mapsWidget is ExploreMapPanel) ? mapsWidget : null;
-          mapsPanel?.params[ExploreMapPanel.selectParamKey] = param;
+        if ((param != null) && !Map2HomePanel.hasState) {
+          Map2HomePanel? maps2Panel = JsonUtils.cast(_panels[RootTab.Maps2]);
+          maps2Panel?.initParams[Map2HomePanel.selectParamKey] = param;
         }
       }
     }

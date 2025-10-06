@@ -4,8 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-
 ## Unreleased
+
+## [7.3.8] - 2025-10-06
+### Added
+- Laundry deep link [#5420](https://github.com/rokwire/illinois-app/issues/5420).
+- Assistant: Show dining title in each menu item [#5379](https://github.com/rokwire/illinois-app/issues/5379).
+- Published second draft of Map2 [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+### Changed
+- Assistant: show the next item in the horizontal scroll [#5422](https://github.com/rokwire/illinois-app/issues/5422).
 
 ## [7.3.7] - 2025-10-02
 ### Changed

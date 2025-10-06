@@ -18,6 +18,7 @@
 
     "surface"                               :"#FFFFFF",
     "surfaceAccent"                         :"#DADDE1",
+    "surfaceAccent2"                        :"#CFCFCF",
     "surfaceAccentTransparent15"            :"#26DADDE1",
     "background"                            :"#F5F5F5",
     "backgroundVariant"                     :"#E8E9EA",
@@ -905,7 +906,10 @@
     "paper-plane": {"src": "0xf1d8", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "paper-plane-top": {"src": "0xe20a", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "person-to-door": {"src": "0xe433", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 24},
-    "person-walking": {"src": "0xf554", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "person-walking": {"src": "0xf554", "type": "fa.icon", "weight": "solid", "regular": "fillColorSecondary", "size": 18},
+    "bicycle": {"src": "0xf206", "type": "fa.icon", "weight": "solid", "regular": "fillColorSecondary", "size": 18},
+    "car": {"src": "0xf1b9", "type": "fa.icon", "weight": "solid", "regular": "fillColorSecondary", "size": 18},
+    "bus": {"src": "0xf207", "type": "fa.icon", "weight": "solid", "regular": "fillColorSecondary", "size": 18},
     "web": {"src": "0xf08e", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 15, "todo":  "same as external-link"},
     "camera-viewfinder": {"src": "0xe0da", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "share-nodes": {"src": "0xf1e0", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
@@ -927,6 +931,7 @@
     "report": {"src": "0xf06a", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "clock": {"src": "0xf017", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "toilet": {"src": "0xf7d8", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
+    "times": {"src": "0xf00d", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
 
     "down-to-bracket": {"src": "0xe4e7", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "up-from-bracket": {"src": "0xe590", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},

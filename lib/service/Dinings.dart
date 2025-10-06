@@ -116,6 +116,20 @@ class Dinings with Service implements ContentItemCategoryClient{
     return null;
   }
 
+  Future<Dining?> loadDining(String diningOptionId) async {
+    List<Dining>? dinings = await loadBackendDinings(false, null, null);
+    Dining? result;
+    if ((dinings != null) && dinings.isNotEmpty) {
+      for (Dining dining in dinings) {
+        if (dining.id == diningOptionId) {
+          result = dining;
+          break;
+        }
+      }
+    }
+    return result;
+  }
+
   Future<void> _cleanDinigsCacheFile() async {
     Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
     String? configFilePath = (appDocDir != null) ? join(appDocDir.path, _olddiningsFileName) : null;

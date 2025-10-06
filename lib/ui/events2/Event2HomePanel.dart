@@ -24,11 +24,11 @@ import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/events2/Event2SearchPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
-import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
@@ -1284,7 +1284,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   void _onMapView() {
     Analytics().logSelect(target: 'Map View');
-    NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapSearchEventsParam(''));
+    NotificationService().notify(Map2HomePanel.notifySelect, Map2FilterEvents2Param());
   }
 
   void _onEvent(Event2 event) {

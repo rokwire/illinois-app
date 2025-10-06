@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -23,12 +24,7 @@ extension DiningFilter on Dining {
       (title?.toLowerCase().contains(searchLowerCase) == true) ||
       (diningType?.toLowerCase().contains(searchLowerCase) == true) ||
       (description?.toLowerCase().contains(searchLowerCase) == true) ||
-      (location?.name?.toLowerCase().contains(searchLowerCase) == true) ||
-      (location?.description?.toLowerCase().contains(searchLowerCase) == true) ||
-      (location?.building?.toLowerCase().contains(searchLowerCase) == true) ||
-      (location?.fullAddress?.toLowerCase().contains(searchLowerCase) == true) ||
-      (location?.address?.toLowerCase().contains(searchLowerCase) == true) ||
-      (diningSchedules?.matchSearchTextLowerCase(searchLowerCase) == true)
+      (location?.matchSearchTextLowerCase(searchLowerCase) == true)
     ));
 }
 

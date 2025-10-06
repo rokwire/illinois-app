@@ -10,7 +10,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
-import 'package:illinois/ui/explore/ExploreMapPanel.dart';
+import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopSearchPanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
@@ -420,7 +420,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> with Notification
 
   void _onMapView() {
     Analytics().logSelect(target: 'Map View');
-    NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapSearchMTDStopsParam(scope: _selectedScope ?? MTDStopsScope.all));
+    NotificationService().notify(Map2HomePanel.notifySelect, Map2FilterBusStopsParam(starred: _selectedScope?.starred == true));
   }
 }
 
@@ -462,8 +462,10 @@ extension MTDStopsScopeImpl on MTDStopsScope {
     }
   }
 
+  bool get starred => this == MTDStopsScope.my;
+
   MTDStopsScope? _ensure({List<MTDStopsScope>? availableScopes}) =>
-      (availableScopes?.contains(this) != false) ? this : null;
+    (availableScopes?.contains(this) != false) ? this : null;
 }
 
 extension _MTDStopsScopeList on List<MTDStopsScope> {

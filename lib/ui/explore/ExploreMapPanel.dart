@@ -110,7 +110,7 @@ class ExploreMapPanel extends StatefulWidget with AnalyticsInfo {
 
   List<ExploreMapType> _buildExploreTypes() {
     List<ExploreMapType> exploreTypes = <ExploreMapType>[];
-    List<dynamic>? codes = FlexUI()['explore.map'];
+    List<dynamic>? codes = FlexUI()['map.types'];
     if (codes != null) {
       for (dynamic code in codes) {
         ExploreMapType? codeType = ExploreMapTypeImpl.fromCode(code);
