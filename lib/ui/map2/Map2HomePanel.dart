@@ -2091,7 +2091,7 @@ extension _Map2ContentType on Map2ContentType {
   }
 
   static Set<Map2ContentType> get availableTypes {
-    List<dynamic>? codes = FlexUI()['explore.map'];
+    List<dynamic>? codes = FlexUI()['map2.types'];
     Set<Map2ContentType> availableTypes = <Map2ContentType>{};
     if (codes != null) {
       for (dynamic code in codes) {
