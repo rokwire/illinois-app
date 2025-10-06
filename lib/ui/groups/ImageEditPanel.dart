@@ -56,7 +56,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   bool _loading = false;
   bool _saving = false;
 
-  ImageDescriptionData? _imageInputData;
+  ImageDescriptionData? _imageDescriptionData;
 
   @override
   void initState() {
@@ -123,7 +123,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                     },),
               Container(height: 10,),
               ImageDescriptionInput(
-                  imageDescriptionData: _imageInputData,
+                  imageDescriptionData: _imageDescriptionData,
                   onChanged: (data)=> setStateIfMounted(
                       // () => _imageInputData = data ?? _imageInputData
                   )
@@ -137,8 +137,8 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                       onTap: _onFinish,
                       progress: _saving,
                       progressSize: 24,
-                      enabled: _imageInputData?.isValidated == true,
-                      borderColor: _imageInputData?.isValidated == true? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,),
+                      enabled: _imageDescriptionData?.isValidated == true,
+                      borderColor: _imageDescriptionData?.isValidated == true? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,),
                   ),
                   Container(width: 16,),
                   Expanded(
@@ -318,11 +318,11 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         Content().uploadImage(imageBytes: _imageBytes, fileName: _imageName, mediaType: _contentType, storagePath: widget.storagePath, width: widget.width, isUserPic: widget.isUserPic)
             .then((value) {
               if(value.resultType == ImagesResultType.succeeded &&
-                  value.imageUrl != null && _imageInputData != null &&
-                  _imageInputData?.decorative == false){
+                  value.imageUrl != null && _imageDescriptionData != null &&
+                  _imageDescriptionData?.decorative == false){
                 Content().uploadImageMetaData(
                   imageUrl: value.imageUrl ?? "",
-                  imageMetaData: _imageInputData!.toMetaData).then((metaDataResult){
+                  imageMetaData: _imageDescriptionData!.toMetaData).then((metaDataResult){
                     if (mounted) {
                       setState(() {
                         _saving = false;
@@ -353,8 +353,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
     if(widget.preloadImageUrl != null){
       _imageBytes = await readNetworkImage(widget.preloadImageUrl!);
       ImageMetaData? metaData = await _loadImageMetaData(widget.preloadImageUrl!);
-      _imageInputData = metaData != null ? ImageDescriptionInputDataExt.fromMetaData(metaData) :
-        _imageInputData ??= ImageDescriptionData();
+      _imageDescriptionData = metaData != null ? ImageDescriptionDataExt.fromMetaData(metaData) : ImageDescriptionData();
 
       if(_imageBytes != null) {
         _imageName = basename(widget.preloadImageUrl!);
@@ -365,7 +364,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   }
 
   Future<ImageMetaData?> _loadImageMetaData(String? imageUrl) async => imageUrl != null ?
-    (await Content().loadImageMetaData(imageUrl: imageUrl)) : null;
+    (await Content().loadImageMetaData(imageUrl: imageUrl)).metaData : null;
 
   //Utils: TBD move to Utils file if we keeps it
   // Reading bytes from a network image

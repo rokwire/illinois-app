@@ -24,13 +24,12 @@ class ImageDescriptionInput extends StatefulWidget {
     showDialog(context: context, barrierDismissible: false, builder: (_) =>
       Dialog(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24), child:
-            ImageDescriptionInput(imageDescriptionData: imageDescriptionData ??= ImageDescriptionData(), onChanged: onChanged, mode: ImageDescriptionInputMode.dialog)
+            ImageDescriptionInput(imageDescriptionData: imageDescriptionData, onChanged: onChanged, mode: ImageDescriptionInputMode.dialog)
           )));
 
   @override
   State<StatefulWidget> createState() => _ImageDescriptionInputState();
 }
-
 class _ImageDescriptionInputState extends State<ImageDescriptionInput> {
   EdgeInsetsGeometry _dialogButtonPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8);
   TextEditingController _textController = TextEditingController();
@@ -186,11 +185,11 @@ class ImageDescriptionData {
     ImageDescriptionData({this.description, this.decorative = false});
 }
 
-extension ImageDescriptionInputDataExt on ImageDescriptionData{
-  static ImageDescriptionData fromMetaData(ImageMetaData data) => ImageDescriptionData(
+extension ImageDescriptionDataExt on ImageDescriptionData{
+  static ImageDescriptionData? fromMetaData(ImageMetaData? data) => data != null ? ImageDescriptionData(
     description: data.altText,
     decorative: data.decorative ?? false,
-  );
+  ) : null;
 
   bool get isValidated => (decorative) || StringUtils.isNotEmpty(description);
 

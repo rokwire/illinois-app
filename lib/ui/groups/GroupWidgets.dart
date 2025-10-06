@@ -570,7 +570,9 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     if (isReadyUrl) {
       //ready
       AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+      setStateIfMounted(() => _showProgress = true);
       _requestImageDescriptionChange(url).then((success){
+        setStateIfMounted(() => _showProgress = false);
         Navigator.pop(context, ImagesResult.succeed(imageUrl: url));
       });
 
@@ -599,8 +601,10 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
             break;
           case ImagesResultType.succeeded:
           //ready
+            setStateIfMounted(() => _showProgress = true);
             AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
             _requestImageDescriptionChange(logicResult.imageUrl).then((success){
+              setStateIfMounted(() => _showProgress = false);
               Navigator.pop(context, logicResult);
             });
 
@@ -611,18 +615,25 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
   }
 
   Future<bool> _requestImageDescriptionChange(String? url) async {
-    ImageDescriptionData? inputData = await ImageDescriptionInput.showAsDialog(context: context);
-    if(inputData != null &&  url!= null){
-      ImagesResult result = await Content().uploadImageMetaData(imageUrl: url, imageMetaData: inputData.toMetaData);
-      return result.succeeded;
-    } else { //canceled
-      return false;
+    if(url != null) {
+      ImageDescriptionData? inputData = await ImageDescriptionInput.showAsDialog(context: context,
+          imageDescriptionData: ImageDescriptionDataExt.fromMetaData(
+              (await Content().loadImageMetaData(imageUrl: url)).metaData));
+
+      if (inputData != null) {
+        ImagesResult result = await Content().uploadImageMetaData(
+            imageUrl: url, imageMetaData: inputData.toMetaData);
+        return result.succeeded;
+      } else { //canceled
+        return false;
+      }
     }
+
+    return false;
   }
 
   void _onTapChooseFromDevice() {
     Analytics().logSelect(target: "Choose From Device");
-
     setState(() {
       _showProgress = true;
     });
