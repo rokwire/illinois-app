@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Laundry deep link [#5420](https://github.com/rokwire/illinois-app/issues/5420).
 - Assistant: Show dining title in each menu item [#5379](https://github.com/rokwire/illinois-app/issues/5379).
+- Published second draft of Map2 [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 ### Changed
 - Assistant: show the next item in the horizontal scroll [#5422](https://github.com/rokwire/illinois-app/issues/5422).
 
