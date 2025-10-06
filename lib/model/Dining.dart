@@ -531,6 +531,7 @@ class NutritionNameValuePair{
 class DiningProductItem {
   String? itemID;
   String? scheduleId;
+  String? diningOptionId;
   String? name;
   String? servingUnit;
   String? course;
@@ -561,7 +562,7 @@ class DiningProductItem {
   }
 
 
-  DiningProductItem({this.itemID, this.name, this.scheduleId, this.servingUnit, this.course, this.traits, this.category, this.courseSort, this.meal});
+  DiningProductItem({this.itemID, this.name, this.scheduleId, this.diningOptionId, this.servingUnit, this.course, this.traits, this.category, this.courseSort, this.meal});
 
   bool containsFoodType(Set<String>? foodTypePrefs){
     if ((foodTypePrefs == null) || foodTypePrefs.isEmpty) {
@@ -603,6 +604,7 @@ class DiningProductItem {
     return (json != null) ? DiningProductItem(
       itemID: json['ItemID'].toString(),
       scheduleId: json['ScheduleID'].toString(),
+      diningOptionId: json['DiningOptionID'].toString(),
       name: json['FormalName'],
       servingUnit: json['ServingUnit'],
       traits: json['Traits'],
