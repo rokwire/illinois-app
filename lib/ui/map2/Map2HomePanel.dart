@@ -1036,9 +1036,9 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       case Map2ContentType.Events2:              return _events2FilterButtons;
       case Map2ContentType.LaundryRooms:         return _laundryRoomsFilterButtons;
       case Map2ContentType.BusStops:             return _busStopsFilterButtons;
-      case Map2ContentType.Therapists:
-      case Map2ContentType.MyLocations:
-      default: return <Widget>[];
+      case Map2ContentType.Therapists:           return null;
+      case Map2ContentType.MyLocations:          return _myLocationsFilterButtons;
+      default: return null;
     }
   }
 
@@ -1130,6 +1130,17 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     Padding(padding: _filterButtonsPadding, child:
       _starredFilterButton,
     ),
+    _filterButtonsEdgeSpacing,
+  ];
+
+  List<Widget> get _myLocationsFilterButtons => <Widget>[
+    Padding(padding: _filterButtonsPadding, child:
+      _searchFilterButton,
+    ),
+    if (_isSortAvailable)
+      Padding(padding: _filterButtonsPadding, child:
+        _sortFilterButton,
+      ),
     _filterButtonsEdgeSpacing,
   ];
 
@@ -2098,7 +2109,7 @@ extension _Map2ContentType on Map2ContentType {
 
   static const Set<Map2ContentType> _manualFiltersTypes = <Map2ContentType>{
     Map2ContentType.CampusBuildings, Map2ContentType.DiningLocations,
-    Map2ContentType.LaundryRooms, Map2ContentType.BusStops,
+    Map2ContentType.LaundryRooms, Map2ContentType.BusStops, Map2ContentType.MyLocations,
   };
   bool get supportsManualFilters => _manualFiltersTypes.contains(this);
 

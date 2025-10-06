@@ -677,5 +677,14 @@ extension ExplorePOIExt on ExplorePOI {
   Color? get uiColor => Styles().colors.accentColor3;
 }
 
+extension ExplorePOIFilter on ExplorePOI {
+  bool matchSearchTextLowerCase(String searchLowerCase) =>
+    (searchLowerCase.isNotEmpty && (
+      (name?.toLowerCase().contains(searchLowerCase) == true) ||
+      (location?.matchSearchTextLowerCase(searchLowerCase) == true)
+    ));
+}
+
+
 enum ExploreSelectLocationContext { card, detail }
 typedef ExploreSelectLocationBuilder = Widget? Function(BuildContext context, ExploreSelectLocationContext selectContext, { Explore? explore } );
