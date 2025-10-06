@@ -70,9 +70,9 @@
 
 			"polls.features": ["authentication", "netid_login"],
 
-			"explore.list": ["events", "dining"],
-			"explore.map":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "my_locations", "storied_sites"],
-	
+			"map.types":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "my_locations", "storied_sites"],
+			"map2.types":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health",                "mtd_stops", "my_locations", "storied_sites"],
+
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 	
 			"assessments": ["settings"],
@@ -220,8 +220,10 @@
 			},
 			"enable" : {
 				"emergency"                               : false,
-				"explore.map.laundry"                     : false,
-				"voter_registration"                      : "${config.settings.voterRegistrationEnabled}",
+				"maps"                                    : false,
+				"map.types.laundry"                       : false,
+				"maps2"                                   : true,
+				"map2.types.laundry"                      : true,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
 				"onboarding2.video_tutorial"              : [["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"], "AND", "${app.storage.onBoarding2ShowTutorial}"],
 				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
@@ -229,6 +231,7 @@
 				"onboarding2.privacy_store_activity"      : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"onboarding2.privacy_share_activity"      : [["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"], "AND", "${app.storage.onBoarding2PrivacyStoreActivitySelection}"],
 				"onboarding2.privacy_level"               : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
+				"voter_registration"                      : "${config.settings.voterRegistrationEnabled}",
 				"student_courses"                         : "${config.settings.studentCoursesEnabled}",
 				"illini_cash"                             : "${config.settings.wallet.illiniCashEnabled}",
 				"add_illini_cash"                         : "${config.settings.wallet.addIlliniCashEnabled}",
