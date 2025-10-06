@@ -658,9 +658,33 @@ extension ExploreLocationMap on ExploreLocation {
   LatLng? get exploreLocationMapCoordinate => (isLocationCoordinateValid == true) ? LatLng(latitude?.toDouble() ?? 0, longitude?.toDouble() ?? 0) : null;
 }
 
+extension ExploreLocationFilter on ExploreLocation {
+  bool matchSearchTextLowerCase(String searchLowerCase) =>
+    (searchLowerCase.isNotEmpty && (
+      (name?.toLowerCase().contains(searchLowerCase) == true) ||
+      (description?.toLowerCase().contains(searchLowerCase) == true) ||
+      (building?.toLowerCase().contains(searchLowerCase) == true) ||
+      (fullAddress?.toLowerCase().contains(searchLowerCase) == true) ||
+      (address?.toLowerCase().contains(searchLowerCase) == true) ||
+      (city?.toLowerCase().contains(searchLowerCase) == true) ||
+      (state?.toLowerCase().contains(searchLowerCase) == true) ||
+      (zip?.toLowerCase().contains(searchLowerCase) == true)
+    ));
+}
+
+
 extension ExplorePOIExt on ExplorePOI {
   Color? get uiColor => Styles().colors.accentColor3;
 }
+
+extension ExplorePOIFilter on ExplorePOI {
+  bool matchSearchTextLowerCase(String searchLowerCase) =>
+    (searchLowerCase.isNotEmpty && (
+      (name?.toLowerCase().contains(searchLowerCase) == true) ||
+      (location?.matchSearchTextLowerCase(searchLowerCase) == true)
+    ));
+}
+
 
 enum ExploreSelectLocationContext { card, detail }
 typedef ExploreSelectLocationBuilder = Widget? Function(BuildContext context, ExploreSelectLocationContext selectContext, { Explore? explore } );

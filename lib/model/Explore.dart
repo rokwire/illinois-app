@@ -17,6 +17,12 @@ class ExplorePOI with Explore implements Favorite {
 
   ExplorePOI({this.placeId, this.name, this.location});
 
+  factory ExplorePOI.fromOther(ExplorePOI other, {String? placeId, String? name, ExploreLocation? location}) => ExplorePOI(
+    placeId: placeId ?? other.placeId,
+    name: name ?? other.name,
+    location: location ?? other.location,
+  );
+
   static ExplorePOI? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? ExplorePOI(
       placeId: JsonUtils.stringValue(json['placeId']),

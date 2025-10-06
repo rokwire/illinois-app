@@ -463,6 +463,9 @@
     "panel.map2.filter.starred.text":"Starred",
     "panel.map2.filter.amenities.text":"Amenities",
     "panel.map2.filter.buildings.text":"Buildings",
+    "panel.map2.filter.bus_stops.text":"Bus Stops",
+    "panel.map2.filter.laundry_rooms.text":"Laundry Rooms",
+    "panel.map2.filter.my_locations.text":"My Locations",
     "panel.map2.filter.payment_type.text":"Payment Type",
     "panel.map2.filter.open_now.text":"Open Now",
     "panel.map2.filter.dinings.text":"Dining Locations",
@@ -490,6 +493,8 @@
     "panel.map2.filter.terms.title":"Terms",
 
     "panel.map2.tray.header.selected.label": "Selected: ",
+
+    "card.map2.explore_poi.label.directions.text": "Directions",
 
     "panel.map.select.header.title": "Elegir el Sitio",
     "panel.map.select.button.select.title": "Elegir",
@@ -1037,6 +1042,8 @@
     "panel.explore.button.dining.hint":"",
     "panel.explore.button.laundry.title":"Ropa sucia",
     "panel.explore.button.laundry.hint":"",
+    "panel.explore.button.laundry_room.title":"Lavanderías",
+    "panel.explore.button.laundry_room.hint":"",
     "panel.explore.button.buildings.title":"Edificios del campus",
     "panel.explore.button.buildings.hint":"",
     "panel.explore.button.mtd_stops.title":"Paradas de autobus",
@@ -3765,6 +3772,8 @@
     "widget.card.button.favorite.on.hint":"",
     "widget.card.button.favorite.off.title":"Eliminar de favoritos",
     "widget.card.button.favorite.off.hint":"",
+    "widget.card.button.title.edit.title":"Edit Title",
+    "widget.card.button.title.edit.hint":"",
     "widget.card.label.interests":"Debido a su interés en:",
     "widget.card.label.converge":"partido",
 
