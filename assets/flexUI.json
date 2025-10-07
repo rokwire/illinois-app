@@ -220,8 +220,8 @@
 			},
 			"enable" : {
 				"emergency"                               : false,
-				"maps"                                    : false,
-				"map.types.laundry"                       : false,
+				"maps"                                    : true,
+				"map.types.laundry"                       : true,
 				"maps2"                                   : true,
 				"map2.types.laundry"                      : true,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
