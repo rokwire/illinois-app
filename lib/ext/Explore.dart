@@ -18,6 +18,7 @@ import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
+import 'package:illinois/ui/explore/ExplorePlaceDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
@@ -326,6 +327,9 @@ extension ExploreExt on Explore {
     }
     else if (this is Appointment) {
       return AppointmentDetailPanel(appointment: this as Appointment, analyticsFeature: analyticsFeature,);
+    }
+    else if (this is Place) {
+      return ExplorePlaceDetailPanel(place: this as Place, analyticsFeature: analyticsFeature,);
     }
     else if (this is ExplorePOI) {
       return null;

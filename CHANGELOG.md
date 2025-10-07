@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Assistant: fixed color and padding for "Copy" context button in iOS [#5391](https://github.com/rokwire/illinois-app/issues/5391).
+### Added
+- Map2: Added Storied Sites [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 
 ## [7.3.8] - 2025-10-06
 ### Added
