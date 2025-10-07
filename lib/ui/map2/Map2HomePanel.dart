@@ -16,6 +16,7 @@ import 'package:illinois/ext/Building.dart';
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Map2.dart';
+import 'package:illinois/ext/Places.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Building.dart';
 import 'package:illinois/model/Dining.dart';
@@ -46,17 +47,19 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/model/places.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, LaundryRooms, BusStops, Therapists, MyLocations }
+enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, LaundryRooms, BusStops, Therapists, StoriedSites, MyLocations, }
 enum Map2SortType { dateTime, alphabetical, proximity }
 enum Map2SortOrder { ascending, descending }
 enum _ExploreProgressType { init, update }
@@ -116,7 +119,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   double? _lastMapZoom;
 
   final ScrollController _contentTypesScrollController = ScrollController();
-  final ScrollController _filterButtonsScrollController = ScrollController();
   final DraggableScrollableController _traySheetController = DraggableScrollableController();
   final TextEditingController _searchTextController = TextEditingController();
   final FocusNode _searchTextNode = FocusNode();
@@ -136,6 +138,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   List<Explore>? _trayExplores;
   LoadExploresTask? _exploresTask;
   _ExploreProgressType? _exploresProgress;
+
+  LinkedHashMap<String, dynamic>? _storiedSitesTags;
+  String? _expandedStoriedSitesTag;
 
   Set<Marker>? _mapMarkers;
   Set<dynamic>? _exploreMapGroups;
@@ -172,7 +177,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     );
 
     _contentTypesScrollController.addListener(_onContentTypesScroll);
-    //_filterButtonsScrollController.addListener(_onFilterButtonsScroll);
 
     _initSelectNotificationFilters(widget._initialSelectParam);
     _updateLocationServicesStatus(init: true);
@@ -187,7 +191,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     NotificationService().unsubscribe(this);
     _traySheetController.dispose();
     _contentTypesScrollController.dispose();
-    _filterButtonsScrollController.dispose();
     _searchTextController.dispose();
     _searchTextNode.dispose();
     super.dispose();
@@ -581,6 +584,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         _contentTitleBar,
         if ((_exploresProgress == null) || (_exploresProgress == _ExploreProgressType.update))
           _contentFilterButtonsBar ?? Container(),
+        if ((_exploresProgress == null) || (_exploresProgress == _ExploreProgressType.update))
+          ...(_contentFilterButtonsExtraBars ?? []),
         if (_exploresProgress == null)
           _contentFilterDescriptionBar ?? Container(),
       ],),
@@ -615,6 +620,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       _explores = _filteredExplores = _selectedExploreGroup = _trayExplores = null;
       _exploresTask = null;
       _exploresProgress = null;
+
+      _storiedSitesTags = null;
+      _expandedStoriedSitesTag = null;
 
       _mapMarkers = null;
       _exploreMapGroups = null;
@@ -755,6 +763,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           _exploresTask = exploresTask;
           _exploresProgress = progressType;
           _explores = _filteredExplores = _selectedExploreGroup = _trayExplores = null;
+          _storiedSitesTags = null;
+          _expandedStoriedSitesTag = null;
           _pinnedExplore = null;
           _pinnedMarker = null;
         });
@@ -771,6 +781,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
               _filteredExplores = filteredExplores;
               _exploresTask = null;
               _exploresProgress = null;
+              _storiedSitesTags = JsonUtils.cast<List<Place>>(explores)?.tags;
               _mapKey = UniqueKey(); // force map rebuild
             });
           }
@@ -781,6 +792,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           _explores = _filteredExplores = _selectedExploreGroup = _trayExplores = null;
           _exploresTask = null;
           _exploresProgress = null;
+          _storiedSitesTags = null;
+          _expandedStoriedSitesTag = null;
 
           _mapMarkers = null;
           _exploreMapGroups = null;
@@ -825,6 +838,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
                 _selectedExploreGroup = null;
               }
               _trayExplores = _buildTrayExplores();
+              _storiedSitesTags = JsonUtils.cast<List<Place>>(explores)?.tags;
+              _expandedStoriedSitesTag = null;
             });
 
             await _buildMapContentData(filteredExplores, updateCamera: false, showProgress: true);
@@ -856,6 +871,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       case Map2ContentType.LaundryRooms:         return _loadLaundryRooms();
       case Map2ContentType.BusStops:             return _loadBusStops();
       case Map2ContentType.Therapists:           return _loadTherapists();
+      case Map2ContentType.StoriedSites:         return _loadStoriedSites();
       case Map2ContentType.MyLocations:          return _loadMyLocations();
       default: return null;
     }
@@ -923,6 +939,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   Future<List<Explore>?> _loadTherapists() =>
     Wellness().loadMentalHealthBuildings();
 
+  Future<List<Explore>?> _loadStoriedSites() =>
+    Places().getAllPlaces();
+
   List<Explore>? _loadMyLocations() {
     List<ExplorePOI>? locations = ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
     return (locations != null) ? List.from(locations.reversed) : null;
@@ -957,17 +976,34 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
 extension _Map2PanelFilters on _Map2HomePanelState {
   
-  Widget? get _contentFilterButtonsBar {
-    List<Widget>? filterButtonsList = ((_exploresProgress == null) || (_exploresProgress == _ExploreProgressType.update)) ? _filterButtons : null;
-    return ((filterButtonsList != null) && filterButtonsList.isNotEmpty) ?
-      Container(decoration: _contentFiltersBarDecoration, padding: _contentFilterButtonsBarPadding, constraints: _contentFiltersBarConstraints, child:
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          controller: _filterButtonsScrollController,
-          child: Row(mainAxisSize: MainAxisSize.min, children: filterButtonsList,)
-        )
-      ) : null;
+  Widget? get _contentFilterButtonsBar => _buildContentFilterButtonsBar(_filterButtons,
+    decoration: _contentFiltersBarDecoration,
+    padding: _contentFilterButtonsBarPadding,
+  );
+
+  List<Widget>? get _contentFilterButtonsExtraBars {
+    List<List<Widget>>? filterExtraButtonsLists = _filterExtraButtons;
+    if (filterExtraButtonsLists != null) {
+      List<Widget> bars = <Widget>[];
+      for (List<Widget> buttons in filterExtraButtonsLists) {
+        ListUtils.add(bars, _buildContentFilterButtonsBar(buttons,
+          padding: _contentFilterExtraButtonsBarPadding,
+        ));
+      }
+      return bars.isNotEmpty ? bars : null;
+    }
+    else {
+      return null;
+    }
   }
+
+  Widget? _buildContentFilterButtonsBar(List<Widget>? buttons, { BoxDecoration? decoration, EdgeInsetsGeometry? padding}) => ((buttons != null) && buttons.isNotEmpty) ?
+    Container(decoration: decoration, padding: padding, constraints: _contentFiltersBarConstraints, child:
+      SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(mainAxisSize: MainAxisSize.min, children: buttons,)
+      )
+    ) : null;
 
   Widget? get _contentFilterDescriptionBar {
     LinkedHashMap<String, List<String>>? descriptionMap = _selectedFilter?.description(_filteredExplores, explores: _explores);
@@ -1025,6 +1061,9 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   EdgeInsetsGeometry get _contentFilterButtonsBarPadding =>
     EdgeInsets.only(left: 16, top: 8, bottom: 8);
 
+  EdgeInsetsGeometry get _contentFilterExtraButtonsBarPadding =>
+    EdgeInsets.only(left: 16, bottom: 8);
+
   EdgeInsetsGeometry get _contentFilterDescriptionBarPadding =>
     EdgeInsets.only(left: 16);
 
@@ -1037,7 +1076,15 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       case Map2ContentType.LaundryRooms:         return _laundryRoomsFilterButtons;
       case Map2ContentType.BusStops:             return _busStopsFilterButtons;
       case Map2ContentType.Therapists:           return null;
+      case Map2ContentType.StoriedSites:         return _storiedSitesFilterButtons;
       case Map2ContentType.MyLocations:          return _myLocationsFilterButtons;
+      default: return null;
+    }
+  }
+
+  List<List<Widget>>? get _filterExtraButtons {
+    switch (_selectedContentType) {
+      case Map2ContentType.StoriedSites:         return _storiedSitesFilterExtraButtons;
       default: return null;
     }
   }
@@ -1132,6 +1179,75 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     ),
     _filterButtonsEdgeSpacing,
   ];
+
+
+  List<Widget> get _storiedSitesFilterButtons => <Widget>[
+    Padding(padding: _filterButtonsPadding, child:
+      _searchFilterButton,
+    ),
+    if (_isSortAvailable)
+      Padding(padding: _filterButtonsPadding, child:
+        _sortFilterButton,
+      ),
+    Padding(padding: _filterButtonsPadding, child:
+      _visitedStoriedSitesFilterButton,
+    ),
+    if (_storiedSitesTags != null)
+      ..._storiedSitesTagButtons(_storiedSitesTags!)
+  ];
+
+  List<List<Widget>>? get _storiedSitesFilterExtraButtons {
+    if ((_storiedSitesTags != null) && (_expandedStoriedSitesTag != null)) {
+      List<List<Widget>> buttons = <List<Widget>>[];
+      String tagPrefix = '';
+      LinkedHashMap<String, dynamic>? subTags = _storiedSitesTags;
+      List<String> expandedTags = _expandedStoriedSitesTag?.split('.') ?? <String>[];
+      for (String expandedTag in expandedTags) {
+        LinkedHashMap<String, dynamic>? expandedSubTags = subTags?[expandedTag];
+        String expandedTagPrefix = tagPrefix.isNotEmpty ? "$tagPrefix.$expandedTag" : expandedTag;
+        List<Widget>? subTagButtons = (expandedSubTags != null) ? _storiedSitesTagButtons(expandedSubTags, tagPrefix: expandedTagPrefix) : null;
+        if ((subTagButtons != null) && subTagButtons.isNotEmpty) {
+          buttons.add(subTagButtons);
+          subTags = expandedSubTags;
+          tagPrefix = expandedTagPrefix;
+        }
+        else {
+          break;
+        }
+      }
+      return buttons;
+    }
+    else {
+      return null;
+    }
+  }
+
+  List<Widget> _storiedSitesTagButtons(LinkedHashMap<String, dynamic> tags, { String? tagPrefix }) {
+    List<Widget> buttons = <Widget>[];
+
+    // First add simple tag buttons
+    for (String tagEntry in tags.keys) {
+      LinkedHashMap? tagValue = JsonUtils.cast(tags[tagEntry]);
+      if (tagValue?.isNotEmpty != true) {
+        String tag = (tagPrefix?.isNotEmpty == true) ? "$tagPrefix.$tagEntry" : tagEntry;
+        buttons.add(Padding(padding: _filterButtonsPadding, child:
+          _storiedSiteSimpleTagButton(tag, title: tagEntry),
+        ));
+      }
+    }
+
+    // Then add compound tag buttons after the single
+    for (String tagEntry in tags.keys) {
+      LinkedHashMap? tagValue = JsonUtils.cast(tags[tagEntry]);
+      if (tagValue?.isNotEmpty == true) {
+        String tag = (tagPrefix?.isNotEmpty == true) ? "$tagPrefix.$tagEntry" : tagEntry;
+        buttons.add(Padding(padding: _filterButtonsPadding, child:
+          _storiedSiteCompoundTagButton(tag, title: tagEntry),
+        ));
+      }
+    }
+    return buttons;
+  }
 
   List<Widget> get _myLocationsFilterButtons => <Widget>[
     Padding(padding: _filterButtonsPadding, child:
@@ -1428,6 +1544,63 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     });
   }
 
+  // Visited Storied Sites Filter Button
+
+  Widget get _visitedStoriedSitesFilterButton =>
+    Map2FilterTextButton(
+      title: Localization().getStringEx('panel.map2.button.visited.title', 'Visited'),
+      hint: Localization().getStringEx('panel.map2.button.visited.hint', 'Tap to show only visited'),
+      toggled: _storiedSitesFilterIfExists?.onlyVisited == true,
+      onTap: _onOnlyVisited,
+    );
+
+  void _onOnlyVisited() {
+    setStateIfMounted((){
+      _storiedSitesFilter?.onlyVisited = (_storiedSitesFilterIfExists?.onlyVisited != true);
+    });
+    _onFilterChanged();
+  }
+
+  // Storied Sites Tag Buttons
+
+  Widget _storiedSiteSimpleTagButton(String tag , { String? title }) =>
+    Map2FilterTextButton(
+      title: title ?? tag,
+      hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations'),
+      toggled: _storiedSitesFilterIfExists?.tags.contains(tag) == true,
+      onTap: () => _onStoriedSiteSimpleTag(tag),
+    );
+
+  void _onStoriedSiteSimpleTag(String tag) {
+    Analytics().logSelect(target: tag);
+    setStateIfMounted((){
+      LinkedHashSet<String>? tags = _storiedSitesFilter?.tags;
+      if (tags?.contains(tag) == true) {
+        tags?.remove(tag);
+      }
+      else {
+        tags?.add(tag);
+      }
+    });
+    _onFilterChanged();
+  }
+
+  Widget _storiedSiteCompoundTagButton(String tag, { String? title }) =>
+    Map2FilterTextButton(
+      title: title ?? tag,
+      hint: Localization().getStringEx('panel.map2.button.tags.hint', 'Tap to filter by tag'),
+      rightIcon: (_expandedStoriedSitesTag?.startsWith(tag) == true) ? Styles().images.getImage('chevron-up') : Styles().images.getImage('chevron-down'),
+      onTap: () => _onStoriedSiteCompoundTag(tag),
+    );
+
+  void _onStoriedSiteCompoundTag(String tag) {
+    Analytics().logSelect(target: tag);
+    setStateIfMounted((){
+      _expandedStoriedSitesTag = (_expandedStoriedSitesTag?.startsWith(tag) == true) ?
+        tag.tagHead : tag;
+    });
+  }
+
   // Sort Filter Button
 
   bool get _isSortAvailable => (_selectedExploreGroup?.isNotEmpty == true);
@@ -1530,6 +1703,8 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   Map2DiningLocationsFilter? get _diningLocationsFilter => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: true));
   Map2DiningLocationsFilter? get _diningLocationsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: false));
   Map2Events2Filter?         get _events2Filter => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: true));
+  Map2StoriedSitesFilter?    get _storiedSitesFilter => JsonUtils.cast(_getFilter(Map2ContentType.StoriedSites, ensure: true));
+  Map2StoriedSitesFilter?    get _storiedSitesFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.StoriedSites, ensure: false));
 
   Map2Filter? _getFilter(Map2ContentType? contentType, { bool ensure = false, bool reset = false }) {
     if (contentType != null) {
@@ -2038,21 +2213,23 @@ extension _Map2ContentType on Map2ContentType {
       case Map2ContentType.LaundryRooms:         return Localization().getStringEx('panel.explore.button.laundry_room.title', 'Laundry Rooms', language: language);
       case Map2ContentType.BusStops:             return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Stops', language: language);
       case Map2ContentType.Therapists:           return Localization().getStringEx('panel.explore.button.mental_health.title', 'Find a Therapist', language: language);
+      case Map2ContentType.StoriedSites:         return Localization().getStringEx('panel.explore.button.stored_sites.title', 'Storied Sites', language: language);
       case Map2ContentType.MyLocations:          return Localization().getStringEx('panel.explore.button.my_locations.title', 'My Locations', language: language);
     }
   }
 
   static Map2ContentType? fromJson(String? value) {
     switch (value) {
-      case 'buildings': return Map2ContentType.CampusBuildings;
+      case 'buildings':       return Map2ContentType.CampusBuildings;
       case 'student_courses': return Map2ContentType.StudentCourses;
-      case 'dining': return Map2ContentType.DiningLocations;
-      case 'events2': return Map2ContentType.Events2;
-      case 'laundry': return Map2ContentType.LaundryRooms;
-      case 'mtd_stops': return Map2ContentType.BusStops;
-      case 'mental_health': return Map2ContentType.Therapists;
-      case 'my_locations': return Map2ContentType.MyLocations;
-      default: return null;
+      case 'dining':          return Map2ContentType.DiningLocations;
+      case 'events2':         return Map2ContentType.Events2;
+      case 'laundry':         return Map2ContentType.LaundryRooms;
+      case 'mtd_stops':       return Map2ContentType.BusStops;
+      case 'mental_health':   return Map2ContentType.Therapists;
+      case 'storied_sites':   return Map2ContentType.StoriedSites;
+      case 'my_locations':    return Map2ContentType.MyLocations;
+      default:                return null;
     }
   }
 
@@ -2065,6 +2242,7 @@ extension _Map2ContentType on Map2ContentType {
       case Map2ContentType.LaundryRooms:         return 'laundry';
       case Map2ContentType.BusStops:             return 'mtd_stops';
       case Map2ContentType.Therapists:           return 'mental_health';
+      case Map2ContentType.StoriedSites:         return 'storied_sites';
       case Map2ContentType.MyLocations:          return 'my_locations';
     }
   }
@@ -2109,7 +2287,8 @@ extension _Map2ContentType on Map2ContentType {
 
   static const Set<Map2ContentType> _manualFiltersTypes = <Map2ContentType>{
     Map2ContentType.CampusBuildings, Map2ContentType.DiningLocations,
-    Map2ContentType.LaundryRooms, Map2ContentType.BusStops, Map2ContentType.MyLocations,
+    Map2ContentType.LaundryRooms, Map2ContentType.BusStops,
+    Map2ContentType.StoriedSites, Map2ContentType.MyLocations,
   };
   bool get supportsManualFilters => _manualFiltersTypes.contains(this);
 
