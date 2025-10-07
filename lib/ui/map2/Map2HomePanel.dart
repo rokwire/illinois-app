@@ -16,6 +16,7 @@ import 'package:illinois/ext/Building.dart';
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Map2.dart';
+import 'package:illinois/ext/Places.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Building.dart';
 import 'package:illinois/model/Dining.dart';
@@ -36,6 +37,7 @@ import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/map2/Map2FilterBuildingAmenitiesPanel.dart';
+import 'package:illinois/ui/map2/Map2HomeFilters.dart';
 import 'package:illinois/ui/map2/Map2TraySheet.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -45,17 +47,19 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/model/places.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, Laundries, BusStops, Therapists, MyLocations }
+enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, LaundryRooms, BusStops, Therapists, StoriedSites, MyLocations, }
 enum Map2SortType { dateTime, alphabetical, proximity }
 enum Map2SortOrder { ascending, descending }
 enum _ExploreProgressType { init, update }
@@ -65,6 +69,11 @@ typedef BuildMarkersTask = Future<Set<Marker>>;
 typedef MarkerIconsCache = Map<String, BitmapDescriptor>;
 
 class Map2HomePanel extends StatefulWidget with AnalyticsInfo {
+  static const String notifySelect = "edu.illinois.rokwire.map2.select";
+  static const String selectParamKey = "select-param";
+
+  final Map<String, dynamic> initParams = <String, dynamic>{};
+
   Map2HomePanel({super.key});
 
   @override
@@ -74,6 +83,22 @@ class Map2HomePanel extends StatefulWidget with AnalyticsInfo {
     /*_state?._selectedMapType?.analyticsFeature ??
     _selectedExploreType(exploreTypes: _buildExploreTypes())?.analyticsFeature ?? */
     AnalyticsFeature.Map;
+
+  static bool get hasState => _state != null;
+
+  static _Map2HomePanelState? get _state {
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifySelect);
+    if (subscribers != null) {
+      for (NotificationsListener subscriber in subscribers) {
+        if ((subscriber is _Map2HomePanelState) && subscriber.mounted) {
+          return subscriber;
+        }
+      }
+    }
+    return null;
+  }
+
+  dynamic get _initialSelectParam => initParams[selectParamKey];
 }
 
 class _Map2HomePanelState extends State<Map2HomePanel>
@@ -94,7 +119,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   double? _lastMapZoom;
 
   final ScrollController _contentTypesScrollController = ScrollController();
-  final ScrollController _filterButtonsScrollController = ScrollController();
   final DraggableScrollableController _traySheetController = DraggableScrollableController();
   final TextEditingController _searchTextController = TextEditingController();
   final FocusNode _searchTextNode = FocusNode();
@@ -103,7 +127,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   Map2ContentType? _selectedContentType;
   double _contentTypesScrollOffset = 0;
 
-  final Map<Map2ContentType, _Map2Filter> _filters = <Map2ContentType, _Map2Filter>{};
+  final Map<Map2ContentType, Map2Filter> _filters = <Map2ContentType, Map2Filter>{};
   bool _searchOn = false;
   double? _sortDropdownWidth;
   double? _termsDropdownWidth;
@@ -114,6 +138,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   List<Explore>? _trayExplores;
   LoadExploresTask? _exploresTask;
   _ExploreProgressType? _exploresProgress;
+
+  LinkedHashMap<String, dynamic>? _storiedSitesTags;
+  String? _expandedStoriedSitesTag;
 
   Set<Marker>? _mapMarkers;
   Set<dynamic>? _exploreMapGroups;
@@ -138,15 +165,20 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       Connectivity.notifyStatusChanged,
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
+      Auth2UserPrefs.notifyFavoriteReplaced,
+      Map2HomePanel.notifySelect,
       FlexUI.notifyChanged,
     ]);
 
     _availableContentTypes = _Map2ContentType.availableTypes;
-    _selectedContentType = _Map2ContentType.initialType(availableTypes: _availableContentTypes);
+    _selectedContentType = _Map2ContentType.initialType(
+      initialSelectParam: widget._initialSelectParam,
+      availableTypes: _availableContentTypes
+    );
 
     _contentTypesScrollController.addListener(_onContentTypesScroll);
-    //_filterButtonsScrollController.addListener(_onFilterButtonsScroll);
 
+    _initSelectNotificationFilters(widget._initialSelectParam);
     _updateLocationServicesStatus(init: true);
     _initMapStyles();
     _initExplores();
@@ -159,7 +191,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     NotificationService().unsubscribe(this);
     _traySheetController.dispose();
     _contentTypesScrollController.dispose();
-    _filterButtonsScrollController.dispose();
     _searchTextController.dispose();
     _searchTextNode.dispose();
     super.dispose();
@@ -181,9 +212,21 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       _updateLocationServicesStatus(status: param);
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      if (_selectedContentType == Map2ContentType.MyLocations) {
+      if ((_selectedContentType == Map2ContentType.MyLocations) && mounted) {
         _updateExplores();
       }
+    }
+    else if (name == Auth2UserPrefs.notifyFavoriteReplaced) {
+      if ((_selectedContentType == Map2ContentType.MyLocations) && (param is Pair) && mounted) {
+        Explore? oldExplore = JsonUtils.cast(param.left);
+        Explore? newExplore = JsonUtils.cast(param.right);
+        if ((oldExplore != null) && (newExplore != null)) {
+          _onExplorePOIUpdate(oldExplore, newExplore);
+        }
+      }
+    }
+    else if (name == Map2HomePanel.notifySelect) {
+      _processSelectNotification(param);
     }
     else if (name == FlexUI.notifyChanged) {
       _updateAvailableContentTypes();
@@ -226,8 +269,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     super.build(context);
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx("panel.map2.header.title", "Map2")),
-      body: _scaffoldBody,
       backgroundColor: Styles().colors.background,
+      body: _scaffoldBody,
     );
   }
 
@@ -283,12 +326,12 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       onMapCreated: _onMapCreated,
       onCameraIdle: _onMapCameraIdle,
       onCameraMove: _onMapCameraMove,
-      onTap: _onMapTap,
-      onPoiTap: _onMapPoiTap,
+      onTap: _onTapMap,
+      onPoiTap: _onTapMapPoi,
       myLocationEnabled: _userLocationEnabled,
       myLocationButtonEnabled: _userLocationEnabled,
       mapToolbarEnabled: Storage().debugMapShowLevels == true,
-      markers: ((_pinnedExplore != null) ? _pinnedMarkers : _mapMarkers) ?? <Marker>{},
+      markers: ((_pinnedMarker != null) ? _mapMarkers?.union(<Marker>{_pinnedMarker!}) : _mapMarkers) ?? <Marker>{},
       style: _currentMapStyle,
       indoorViewEnabled: true,
       //trafficEnabled: true,
@@ -351,7 +394,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     _updateMapContentForZoom();
   }
 
-  void _onMapTap(LatLng coordinate) {
+  void _onTapMap(LatLng coordinate) {
     // debugPrint('Map2 tap' );
     if (_selectedExploreGroup != null) {
       setState(() {
@@ -373,7 +416,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     }
   }
 
-  void _onMapPoiTap(PointOfInterest poi) {
+  void _onTapMapPoi(PointOfInterest poi) {
     // debugPrint('Map2 POI tap' );
     if (_selectedExploreGroup != null) {
       setState(() {
@@ -393,12 +436,15 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   void _onTapMarker(dynamic origin) {
     // debugPrint('Map2 Marker tap' );
     if (origin is Explore) {
+      bool isExplorePOI = origin is ExplorePOI;
       setState(() {
-        _selectedExploreGroup = null;
+        _selectedExploreGroup = isExplorePOI ? <Explore>{origin} : null;
       });
       _updateMapMarkers();
       _updateTrayExplores();
-      origin.exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
+      if (!isExplorePOI) {
+        origin.exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
+      }
     }
     else if (origin is Set<Explore>) {
       setState(() {
@@ -506,6 +552,28 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     }
   }
 
+  void _processSelectNotification(dynamic param) {
+    Map2ContentType? contentType = _Map2ContentType.selectParamType(param);
+    if ((contentType != null) && mounted) {
+      _initSelectNotificationFilters(param);
+      _onContentTypeEntry(contentType);
+    }
+  }
+
+  void _initSelectNotificationFilters(dynamic param) {
+    if (param is Map2FilterEvents2Param) {
+      _filters[Map2ContentType.Events2] = Map2Events2Filter.defaultFilter(
+        searchText: param.searchText
+      );
+    }
+    else if (param is Map2FilterBusStopsParam) {
+      _filters[Map2ContentType.BusStops] = Map2BusStopsFilter.defaultFilter(
+        searchText: param.searchText,
+        starred: param.starred,
+      );
+    }
+  }
+
   // Content Filters
 
   Widget get _contentHeadingBar =>
@@ -516,6 +584,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         _contentTitleBar,
         if ((_exploresProgress == null) || (_exploresProgress == _ExploreProgressType.update))
           _contentFilterButtonsBar ?? Container(),
+        if ((_exploresProgress == null) || (_exploresProgress == _ExploreProgressType.update))
+          ...(_contentFilterButtonsExtraBars ?? []),
         if (_exploresProgress == null)
           _contentFilterDescriptionBar ?? Container(),
       ],),
@@ -551,6 +621,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       _exploresTask = null;
       _exploresProgress = null;
 
+      _storiedSitesTags = null;
+      _expandedStoriedSitesTag = null;
+
       _mapMarkers = null;
       _exploreMapGroups = null;
       _targetCameraUpdate = null;
@@ -575,6 +648,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         _pinnedExplore = pinnedExplore;
       });
       _updatePinMarker();
+      _updateMapMarkers();
     }
   }
 
@@ -585,9 +659,54 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     });
   }
 
-  Set<Marker>? get _pinnedMarkers => (_pinnedMarker != null) ? <Marker> { _pinnedMarker! } : null;
   List<Explore>? get _pinnedVisibleExplores => (_pinnedExplore != null) ? <Explore>[_pinnedExplore!] : null;
   int? get _pinnedExploresCount => (_pinnedExplore != null) ? 1 : null;
+
+  void _onExplorePOIUpdate(Explore oldExplore, Explore newExplore) {
+    if (_explores?.contains(oldExplore) == true) {
+      _explores?.remove(oldExplore);
+      _explores?.insert(0, newExplore);
+    }
+
+    if (_filteredExplores?.contains(oldExplore) == true) {
+      _filteredExplores?.remove(oldExplore);
+      _filteredExplores?.insert(0, newExplore);
+    }
+
+    bool groupsModified = false;
+    if (_exploreMapGroups != null) {
+      if (_exploreMapGroups?.contains(oldExplore) == true) {
+        _exploreMapGroups?.remove(oldExplore);
+        _exploreMapGroups?.add(newExplore);
+        groupsModified = true;
+      }
+      else {
+        for (dynamic exploreMapGroup in _exploreMapGroups!) {
+          if ((exploreMapGroup is Set<Explore>) && exploreMapGroup.contains(oldExplore)) {
+            exploreMapGroup.remove(oldExplore);
+            exploreMapGroup.add(newExplore);
+            groupsModified = true;
+          }
+        }
+      }
+    }
+
+    if (_selectedExploreGroup?.contains(oldExplore) == true) {
+      _selectedExploreGroup?.remove(oldExplore);
+      _selectedExploreGroup?.add(newExplore);
+      groupsModified = true;
+    }
+
+    if (groupsModified) {
+      _updateMapMarkers();
+      _updateTrayExplores();
+    }
+
+    if (_pinnedExplore == oldExplore) {
+      _pinnedExplore = newExplore;
+      _updatePinMarker();
+    }
+  }
 
   // Tray Sheet
 
@@ -606,10 +725,10 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
       builder: (BuildContext context, ScrollController scrollController) => Map2TraySheet(
         key: _traySheetKey,
-        visibleExplores: _pinnedVisibleExplores ?? _trayExplores,
+        explores: _pinnedVisibleExplores ?? _trayExplores,
         scrollController: scrollController,
         currentLocation: _currentLocation,
-        totalExploresCount: _pinnedExploresCount ?? ExploreMap.validCountFromList(_filteredExplores ?? _explores),
+        totalCount: _pinnedExploresCount ?? ExploreMap.validCountFromList(_filteredExplores ?? _explores),
         analyticsFeature: widget.analyticsFeature,
       ),
     );
@@ -644,6 +763,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           _exploresTask = exploresTask;
           _exploresProgress = progressType;
           _explores = _filteredExplores = _selectedExploreGroup = _trayExplores = null;
+          _storiedSitesTags = null;
+          _expandedStoriedSitesTag = null;
           _pinnedExplore = null;
           _pinnedMarker = null;
         });
@@ -660,6 +781,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
               _filteredExplores = filteredExplores;
               _exploresTask = null;
               _exploresProgress = null;
+              _storiedSitesTags = JsonUtils.cast<List<Place>>(explores)?.tags;
               _mapKey = UniqueKey(); // force map rebuild
             });
           }
@@ -670,6 +792,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           _explores = _filteredExplores = _selectedExploreGroup = _trayExplores = null;
           _exploresTask = null;
           _exploresProgress = null;
+          _storiedSitesTags = null;
+          _expandedStoriedSitesTag = null;
 
           _mapMarkers = null;
           _exploreMapGroups = null;
@@ -701,18 +825,29 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
         if (mounted && (exploresTask == _exploresTask)) {
           if (!DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
+
+            setState(() {
+              _explores = explores;
+              _filteredExplores = filteredExplores;
+              if ((_pinnedExplore != null) && (explores?.contains(_pinnedExplore) == true)) {
+                _selectedExploreGroup = <Explore>{_pinnedExplore!};
+                _pinnedExplore = null;
+                _pinnedMarker = null;
+              }
+              else {
+                _selectedExploreGroup = null;
+              }
+              _trayExplores = _buildTrayExplores();
+              _storiedSitesTags = JsonUtils.cast<List<Place>>(explores)?.tags;
+              _expandedStoriedSitesTag = null;
+            });
+
             await _buildMapContentData(filteredExplores, updateCamera: false, showProgress: true);
+
             if (mounted && (exploresTask == _exploresTask)) {
               setState(() {
-                _explores = explores;
-                _filteredExplores = filteredExplores;
-                _selectedExploreGroup = null;
                 _exploresTask = null;
                 _markersProgress = false;
-                if ((_pinnedExplore != null) && (explores?.contains(_pinnedExplore) == true)) {
-                  _pinnedExplore = null;
-                  _pinnedMarker = null;
-                }
               });
             }
           }
@@ -733,9 +868,10 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       case Map2ContentType.StudentCourses:       return _loadStudentCourses();
       case Map2ContentType.DiningLocations:      return _loadDiningLocations();
       case Map2ContentType.Events2:              return _loadEvents2();
-      case Map2ContentType.Laundries:            return _loadLaundries();
+      case Map2ContentType.LaundryRooms:         return _loadLaundryRooms();
       case Map2ContentType.BusStops:             return _loadBusStops();
       case Map2ContentType.Therapists:           return _loadTherapists();
+      case Map2ContentType.StoriedSites:         return _loadStoriedSites();
       case Map2ContentType.MyLocations:          return _loadMyLocations();
       default: return null;
     }
@@ -756,7 +892,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     Events2().loadEventsList(await _event2QueryParam());
 
   Future<Events2Query> _event2QueryParam() async {
-    _Map2Events2Filter? filter = _events2Filter;
+    Map2Events2Filter? filter = _events2Filter;
     return Events2Query(
       searchText: (filter?.searchText.isNotEmpty == true) ? filter?.searchText : null,
       timeFilter: filter?.event2Filter.timeFilter ?? Event2TimeFilter.upcoming,
@@ -771,16 +907,16 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     );
   }
 
-  Future<List<Explore>?> _loadLaundries() async {
+  Future<List<Explore>?> _loadLaundryRooms() async {
     LaundrySchool? laundrySchool = await Laundries().loadSchoolRooms();
     return laundrySchool?.rooms;
   }
 
   Future<List<Explore>?> _loadBusStops() async {
+    List<Explore>? result;
     if (MTD().stops == null) {
       await MTD().refreshStops();
     }
-    List<Explore>? result;
     if (MTD().stops != null) {
       _collectBusStops(result = <Explore>[], stops: MTD().stops?.stops);
     }
@@ -802,6 +938,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   Future<List<Explore>?> _loadTherapists() =>
     Wellness().loadMentalHealthBuildings();
+
+  Future<List<Explore>?> _loadStoriedSites() =>
+    Places().getAllPlaces();
 
   List<Explore>? _loadMyLocations() {
     List<ExplorePOI>? locations = ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
@@ -837,17 +976,34 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
 extension _Map2PanelFilters on _Map2HomePanelState {
   
-  Widget? get _contentFilterButtonsBar {
-    List<Widget>? filterButtonsList = ((_exploresProgress == null) || (_exploresProgress == _ExploreProgressType.update)) ? _filterButtons : null;
-    return ((filterButtonsList != null) && filterButtonsList.isNotEmpty) ?
-      Container(decoration: _contentFiltersBarDecoration, padding: _contentFilterButtonsBarPadding, constraints: _contentFiltersBarConstraints, child:
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          controller: _filterButtonsScrollController,
-          child: Row(mainAxisSize: MainAxisSize.min, children: filterButtonsList,)
-        )
-      ) : null;
+  Widget? get _contentFilterButtonsBar => _buildContentFilterButtonsBar(_filterButtons,
+    decoration: _contentFiltersBarDecoration,
+    padding: _contentFilterButtonsBarPadding,
+  );
+
+  List<Widget>? get _contentFilterButtonsExtraBars {
+    List<List<Widget>>? filterExtraButtonsLists = _filterExtraButtons;
+    if (filterExtraButtonsLists != null) {
+      List<Widget> bars = <Widget>[];
+      for (List<Widget> buttons in filterExtraButtonsLists) {
+        ListUtils.add(bars, _buildContentFilterButtonsBar(buttons,
+          padding: _contentFilterExtraButtonsBarPadding,
+        ));
+      }
+      return bars.isNotEmpty ? bars : null;
+    }
+    else {
+      return null;
+    }
   }
+
+  Widget? _buildContentFilterButtonsBar(List<Widget>? buttons, { BoxDecoration? decoration, EdgeInsetsGeometry? padding}) => ((buttons != null) && buttons.isNotEmpty) ?
+    Container(decoration: decoration, padding: padding, constraints: _contentFiltersBarConstraints, child:
+      SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(mainAxisSize: MainAxisSize.min, children: buttons,)
+      )
+    ) : null;
 
   Widget? get _contentFilterDescriptionBar {
     LinkedHashMap<String, List<String>>? descriptionMap = _selectedFilter?.description(_filteredExplores, explores: _explores);
@@ -905,6 +1061,9 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   EdgeInsetsGeometry get _contentFilterButtonsBarPadding =>
     EdgeInsets.only(left: 16, top: 8, bottom: 8);
 
+  EdgeInsetsGeometry get _contentFilterExtraButtonsBarPadding =>
+    EdgeInsets.only(left: 16, bottom: 8);
+
   EdgeInsetsGeometry get _contentFilterDescriptionBarPadding =>
     EdgeInsets.only(left: 16);
 
@@ -914,11 +1073,19 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       case Map2ContentType.StudentCourses:       return _studentCoursesFilterButtons;
       case Map2ContentType.DiningLocations:      return _diningLocationsFilterButtons;
       case Map2ContentType.Events2:              return _events2FilterButtons;
-      case Map2ContentType.Laundries:
-      case Map2ContentType.BusStops:
-      case Map2ContentType.Therapists:
-      case Map2ContentType.MyLocations:
-      default: return <Widget>[];
+      case Map2ContentType.LaundryRooms:         return _laundryRoomsFilterButtons;
+      case Map2ContentType.BusStops:             return _busStopsFilterButtons;
+      case Map2ContentType.Therapists:           return null;
+      case Map2ContentType.StoriedSites:         return _storiedSitesFilterButtons;
+      case Map2ContentType.MyLocations:          return _myLocationsFilterButtons;
+      default: return null;
+    }
+  }
+
+  List<List<Widget>>? get _filterExtraButtons {
+    switch (_selectedContentType) {
+      case Map2ContentType.StoriedSites:         return _storiedSitesFilterExtraButtons;
+      default: return null;
     }
   }
 
@@ -982,6 +1149,114 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     Padding(padding: _filterButtonsPadding, child:
       _filtersFilterButton,
     ),
+    _filterButtonsEdgeSpacing,
+  ];
+
+  List<Widget> get _laundryRoomsFilterButtons => <Widget>[
+    Padding(padding: _filterButtonsPadding, child:
+      _searchFilterButton,
+    ),
+    if (_isSortAvailable)
+      Padding(padding: _filterButtonsPadding, child:
+        _sortFilterButton,
+      ),
+    Padding(padding: _filterButtonsPadding, child:
+      _starredFilterButton,
+    ),
+    _filterButtonsEdgeSpacing,
+  ];
+
+  List<Widget> get _busStopsFilterButtons => <Widget>[
+    Padding(padding: _filterButtonsPadding, child:
+      _searchFilterButton,
+    ),
+    if (_isSortAvailable)
+      Padding(padding: _filterButtonsPadding, child:
+        _sortFilterButton,
+      ),
+    Padding(padding: _filterButtonsPadding, child:
+      _starredFilterButton,
+    ),
+    _filterButtonsEdgeSpacing,
+  ];
+
+
+  List<Widget> get _storiedSitesFilterButtons => <Widget>[
+    Padding(padding: _filterButtonsPadding, child:
+      _searchFilterButton,
+    ),
+    if (_isSortAvailable)
+      Padding(padding: _filterButtonsPadding, child:
+        _sortFilterButton,
+      ),
+    Padding(padding: _filterButtonsPadding, child:
+      _visitedStoriedSitesFilterButton,
+    ),
+    if (_storiedSitesTags != null)
+      ..._storiedSitesTagButtons(_storiedSitesTags!)
+  ];
+
+  List<List<Widget>>? get _storiedSitesFilterExtraButtons {
+    if ((_storiedSitesTags != null) && (_expandedStoriedSitesTag != null)) {
+      List<List<Widget>> buttons = <List<Widget>>[];
+      String tagPrefix = '';
+      LinkedHashMap<String, dynamic>? subTags = _storiedSitesTags;
+      List<String> expandedTags = _expandedStoriedSitesTag?.split('.') ?? <String>[];
+      for (String expandedTag in expandedTags) {
+        LinkedHashMap<String, dynamic>? expandedSubTags = subTags?[expandedTag];
+        String expandedTagPrefix = tagPrefix.isNotEmpty ? "$tagPrefix.$expandedTag" : expandedTag;
+        List<Widget>? subTagButtons = (expandedSubTags != null) ? _storiedSitesTagButtons(expandedSubTags, tagPrefix: expandedTagPrefix) : null;
+        if ((subTagButtons != null) && subTagButtons.isNotEmpty) {
+          buttons.add(subTagButtons);
+          subTags = expandedSubTags;
+          tagPrefix = expandedTagPrefix;
+        }
+        else {
+          break;
+        }
+      }
+      return buttons;
+    }
+    else {
+      return null;
+    }
+  }
+
+  List<Widget> _storiedSitesTagButtons(LinkedHashMap<String, dynamic> tags, { String? tagPrefix }) {
+    List<Widget> buttons = <Widget>[];
+
+    // First add simple tag buttons
+    for (String tagEntry in tags.keys) {
+      LinkedHashMap? tagValue = JsonUtils.cast(tags[tagEntry]);
+      if (tagValue?.isNotEmpty != true) {
+        String tag = (tagPrefix?.isNotEmpty == true) ? "$tagPrefix.$tagEntry" : tagEntry;
+        buttons.add(Padding(padding: _filterButtonsPadding, child:
+          _storiedSiteSimpleTagButton(tag, title: tagEntry),
+        ));
+      }
+    }
+
+    // Then add compound tag buttons after the single
+    for (String tagEntry in tags.keys) {
+      LinkedHashMap? tagValue = JsonUtils.cast(tags[tagEntry]);
+      if (tagValue?.isNotEmpty == true) {
+        String tag = (tagPrefix?.isNotEmpty == true) ? "$tagPrefix.$tagEntry" : tagEntry;
+        buttons.add(Padding(padding: _filterButtonsPadding, child:
+          _storiedSiteCompoundTagButton(tag, title: tagEntry),
+        ));
+      }
+    }
+    return buttons;
+  }
+
+  List<Widget> get _myLocationsFilterButtons => <Widget>[
+    Padding(padding: _filterButtonsPadding, child:
+      _searchFilterButton,
+    ),
+    if (_isSortAvailable)
+      Padding(padding: _filterButtonsPadding, child:
+        _sortFilterButton,
+      ),
     _filterButtonsEdgeSpacing,
   ];
 
@@ -1057,7 +1332,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     );
 
   void _onAmenities() {
-    _Map2CampusBuildingsFilter? filter = _campusBuildingsFilter;
+    Map2CampusBuildingsFilter? filter = _campusBuildingsFilter;
     if (filter != null) {
       Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
         amenities: JsonUtils.cast<List<Building>>(_explores)?.featureNames ?? <String, String>{},
@@ -1257,7 +1532,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   void _onFilters() {
     Analytics().logSelect(target: 'Filters');
 
-    _Map2Events2Filter? filter = _events2Filter;
+    Map2Events2Filter? filter = _events2Filter;
     Event2HomePanel.presentFiltersV2(context, filter?.event2Filter ?? Event2FilterParam.fromStorage()).then((Event2FilterParam? filterResult) {
       if ((filterResult != null) && mounted) {
         setStateIfMounted(() {
@@ -1266,6 +1541,63 @@ extension _Map2PanelFilters on _Map2HomePanelState {
         filterResult.saveToStorage();
         _onFilterChanged();
       }
+    });
+  }
+
+  // Visited Storied Sites Filter Button
+
+  Widget get _visitedStoriedSitesFilterButton =>
+    Map2FilterTextButton(
+      title: Localization().getStringEx('panel.map2.button.visited.title', 'Visited'),
+      hint: Localization().getStringEx('panel.map2.button.visited.hint', 'Tap to show only visited'),
+      toggled: _storiedSitesFilterIfExists?.onlyVisited == true,
+      onTap: _onOnlyVisited,
+    );
+
+  void _onOnlyVisited() {
+    setStateIfMounted((){
+      _storiedSitesFilter?.onlyVisited = (_storiedSitesFilterIfExists?.onlyVisited != true);
+    });
+    _onFilterChanged();
+  }
+
+  // Storied Sites Tag Buttons
+
+  Widget _storiedSiteSimpleTagButton(String tag , { String? title }) =>
+    Map2FilterTextButton(
+      title: title ?? tag,
+      hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations'),
+      toggled: _storiedSitesFilterIfExists?.tags.contains(tag) == true,
+      onTap: () => _onStoriedSiteSimpleTag(tag),
+    );
+
+  void _onStoriedSiteSimpleTag(String tag) {
+    Analytics().logSelect(target: tag);
+    setStateIfMounted((){
+      LinkedHashSet<String>? tags = _storiedSitesFilter?.tags;
+      if (tags?.contains(tag) == true) {
+        tags?.remove(tag);
+      }
+      else {
+        tags?.add(tag);
+      }
+    });
+    _onFilterChanged();
+  }
+
+  Widget _storiedSiteCompoundTagButton(String tag, { String? title }) =>
+    Map2FilterTextButton(
+      title: title ?? tag,
+      hint: Localization().getStringEx('panel.map2.button.tags.hint', 'Tap to filter by tag'),
+      rightIcon: (_expandedStoriedSitesTag?.startsWith(tag) == true) ? Styles().images.getImage('chevron-up') : Styles().images.getImage('chevron-down'),
+      onTap: () => _onStoriedSiteCompoundTag(tag),
+    );
+
+  void _onStoriedSiteCompoundTag(String tag) {
+    Analytics().logSelect(target: tag);
+    setStateIfMounted((){
+      _expandedStoriedSitesTag = (_expandedStoriedSitesTag?.startsWith(tag) == true) ?
+        tag.tagHead : tag;
     });
   }
 
@@ -1364,20 +1696,21 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   Widget get _filterButtonsEdgeSpacing =>
     SizedBox(width: 18,);
 
-  _Map2Filter? get _selectedFilter => _getFilter(_selectedContentType, ensure: true);
-  _Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
+  Map2Filter? get _selectedFilter => _getFilter(_selectedContentType, ensure: true);
+  Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
 
-  _Map2CampusBuildingsFilter? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
-  //_Map2CampusBuildingsFilter? get _campusBuildingsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: false));
-  _Map2DiningLocationsFilter? get _diningLocationsFilter => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: true));
-  _Map2DiningLocationsFilter? get _diningLocationsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: false));
-  _Map2Events2Filter? get _events2Filter => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: true));
+  Map2CampusBuildingsFilter? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
+  Map2DiningLocationsFilter? get _diningLocationsFilter => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: true));
+  Map2DiningLocationsFilter? get _diningLocationsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: false));
+  Map2Events2Filter?         get _events2Filter => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: true));
+  Map2StoriedSitesFilter?    get _storiedSitesFilter => JsonUtils.cast(_getFilter(Map2ContentType.StoriedSites, ensure: true));
+  Map2StoriedSitesFilter?    get _storiedSitesFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.StoriedSites, ensure: false));
 
-  _Map2Filter? _getFilter(Map2ContentType? contentType, { bool ensure = false }) {
+  Map2Filter? _getFilter(Map2ContentType? contentType, { bool ensure = false, bool reset = false }) {
     if (contentType != null) {
-      _Map2Filter? filter = _filters[contentType];
-      if ((filter == null) && ensure) {
-        filter = _Map2Filter.fromContentType(contentType);
+      Map2Filter? filter = _filters[contentType];
+      if (((filter == null) && ensure) || reset) {
+        filter = Map2Filter.fromContentType(contentType);
         if (filter != null) {
           _filters[contentType] = filter;
         }
@@ -1513,16 +1846,25 @@ extension _Map2PanelContent on _Map2HomePanelState {
         if (debugThresoldDistance != null) {
           thresoldDistance = debugThresoldDistance;
         }
-        else {
+        else if (updateCamera) {
           zoom ??= GeoMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * mapPadding, 0), math.max(mapSize.height - 2 * mapPadding, 0));
+          thresoldDistance = _thresoldDistanceForZoom(zoom);
+        }
+        else {
+          zoom ??= await _mapController?.getZoomLevel() ?? _lastMapZoom ?? defaultCameraZoom;
           thresoldDistance = _thresoldDistanceForZoom(zoom);
         }
         exploreMapGroups = _buildExplorMapGroups(explores, thresoldDistance: thresoldDistance);
       }
       else {
         thresoldDistance = 0;
-        exploreMapGroups =  (explores != null) ? <dynamic>{ ExploreMap.validFromList(explores) } : null;
+        List<Explore>? validExplores = (explores != null) ? ExploreMap.validFromList(explores) : null;
+        if ((validExplores != null) && validExplores.isNotEmpty) {
+          dynamic groupEntry = (validExplores.length == 1) ? validExplores.first : Set<Explore>.from(validExplores);
+          exploreMapGroups = <dynamic>{ groupEntry };
+        }
       }
+
       if (!DeepCollectionEquality().equals(_exploreMapGroups, exploreMapGroups)) {
         BuildMarkersTask buildMarkersTask = _buildMarkers(context, exploreGroups: exploreMapGroups, );
         _buildMarkersTask = buildMarkersTask;
@@ -1730,7 +2072,7 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
     LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
     if ((exploreGroup != null) && (markerPosition != null)) {
       Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
-      bool exploreDisabled = (_selectedExploreGroup != null) && (_selectedExploreGroup?.intersection(exploreGroup).isNotEmpty != true);
+      bool exploreDisabled = (_pinnedExplore != null) || ((_selectedExploreGroup != null) && (_selectedExploreGroup?.intersection(exploreGroup).isNotEmpty != true));
       Color? markerColor = exploreDisabled ? ExploreMap.disabledMarkerColor : sameExplore?.mapMarkerColor;
       Color? markerBorderColor = exploreDisabled ? ExploreMap.disabledGroupMarkerBorderColor : (sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor);
       Color? markerTextColor = exploreDisabled ? ExploreMap.disabledMarkerTextColor : (sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor);
@@ -1767,7 +2109,7 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
         markerAnchor = _mapCircleMarkerAnchor;
       }
       else {
-        bool exploreDisabled = (_selectedExploreGroup != null) && (_selectedExploreGroup?.contains(explore) != true);
+        bool exploreDisabled = (_pinnedExplore != null) || (_selectedExploreGroup != null) && (_selectedExploreGroup?.contains(explore) != true);
         Color? exploreColor = exploreDisabled ? ExploreMap.disabledMarkerColor : explore?.mapMarkerColor;
         Color? borderColor = exploreDisabled ? ExploreMap.disabledExploreMarkerBorderColor : (explore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor);
         String markerKey = "explore-${exploreColor?.toARGB32() ?? 0}";
@@ -1868,24 +2210,26 @@ extension _Map2ContentType on Map2ContentType {
       case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses', language: language);
       case Map2ContentType.DiningLocations:      return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining', language: language);
       case Map2ContentType.Events2:              return Localization().getStringEx('panel.explore.button.events2.title', 'Events', language: language);
-      case Map2ContentType.Laundries:            return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry', language: language);
+      case Map2ContentType.LaundryRooms:         return Localization().getStringEx('panel.explore.button.laundry_room.title', 'Laundry Rooms', language: language);
       case Map2ContentType.BusStops:             return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Stops', language: language);
       case Map2ContentType.Therapists:           return Localization().getStringEx('panel.explore.button.mental_health.title', 'Find a Therapist', language: language);
+      case Map2ContentType.StoriedSites:         return Localization().getStringEx('panel.explore.button.stored_sites.title', 'Storied Sites', language: language);
       case Map2ContentType.MyLocations:          return Localization().getStringEx('panel.explore.button.my_locations.title', 'My Locations', language: language);
     }
   }
 
   static Map2ContentType? fromJson(String? value) {
     switch (value) {
-      case 'buildings': return Map2ContentType.CampusBuildings;
+      case 'buildings':       return Map2ContentType.CampusBuildings;
       case 'student_courses': return Map2ContentType.StudentCourses;
-      case 'dining': return Map2ContentType.DiningLocations;
-      case 'events2': return Map2ContentType.Events2;
-      case 'laundry': return Map2ContentType.Laundries;
-      case 'mtd_stops': return Map2ContentType.BusStops;
-      case 'mental_health': return Map2ContentType.Therapists;
-      case 'my_locations': return Map2ContentType.MyLocations;
-      default: return null;
+      case 'dining':          return Map2ContentType.DiningLocations;
+      case 'events2':         return Map2ContentType.Events2;
+      case 'laundry':         return Map2ContentType.LaundryRooms;
+      case 'mtd_stops':       return Map2ContentType.BusStops;
+      case 'mental_health':   return Map2ContentType.Therapists;
+      case 'storied_sites':   return Map2ContentType.StoriedSites;
+      case 'my_locations':    return Map2ContentType.MyLocations;
+      default:                return null;
     }
   }
 
@@ -1895,25 +2239,37 @@ extension _Map2ContentType on Map2ContentType {
       case Map2ContentType.StudentCourses:       return 'student_courses';
       case Map2ContentType.DiningLocations:      return 'dining';
       case Map2ContentType.Events2:              return 'events2';
-      case Map2ContentType.Laundries:            return 'laundry';
+      case Map2ContentType.LaundryRooms:         return 'laundry';
       case Map2ContentType.BusStops:             return 'mtd_stops';
       case Map2ContentType.Therapists:           return 'mental_health';
+      case Map2ContentType.StoriedSites:         return 'storied_sites';
       case Map2ContentType.MyLocations:          return 'my_locations';
     }
   }
 
   static const Map2ContentType _defaultType = Map2ContentType.CampusBuildings;
 
-  static Map2ContentType? initialType({ Iterable<Map2ContentType>? availableTypes }) {
-    dynamic storedType = Storage()._storedAvailableMap2ContentType(availableTypes: availableTypes);
-    return (storedType is Map2ContentType?) ? storedType : (
-      (_defaultType._ensure(availableTypes: availableTypes)) ??
-      ((availableTypes?.isNotEmpty == true) ? availableTypes?.first : null)
-    );
+  static Map2ContentType? initialType({ dynamic initialSelectParam, Iterable<Map2ContentType>? availableTypes }) => (
+    (selectParamType(initialSelectParam)?._ensure(availableTypes: availableTypes)) ??
+    (Storage()._storedMap2ContentType?._ensure(availableTypes: availableTypes)) ??
+    (_defaultType._ensure(availableTypes: availableTypes)) ??
+    ((availableTypes?.isNotEmpty == true) ? availableTypes?.first : null)
+  );
+
+  static Map2ContentType? selectParamType(dynamic param) {
+    if (param is Map2ContentType) {
+      return param;
+    } else if (param is Map2FilterEvents2Param) {
+      return Map2ContentType.Events2;
+    } else if (param is Map2FilterBusStopsParam) {
+      return Map2ContentType.BusStops;
+    } else {
+      return null;
+    }
   }
 
   static Set<Map2ContentType> get availableTypes {
-    List<dynamic>? codes = FlexUI()['explore.map'];
+    List<dynamic>? codes = FlexUI()['map2.types'];
     Set<Map2ContentType> availableTypes = <Map2ContentType>{};
     if (codes != null) {
       for (dynamic code in codes) {
@@ -1931,6 +2287,8 @@ extension _Map2ContentType on Map2ContentType {
 
   static const Set<Map2ContentType> _manualFiltersTypes = <Map2ContentType>{
     Map2ContentType.CampusBuildings, Map2ContentType.DiningLocations,
+    Map2ContentType.LaundryRooms, Map2ContentType.BusStops,
+    Map2ContentType.StoriedSites, Map2ContentType.MyLocations,
   };
   bool get supportsManualFilters => _manualFiltersTypes.contains(this);
 
@@ -2050,31 +2408,9 @@ extension Map2SortOrderImpl on Map2SortOrder {
 extension _StorageMapExt on Storage {
   static const String _nullContentTypeJson = 'null';
 
-  // ignore: unused_element
   Map2ContentType? get _storedMap2ContentType => _Map2ContentType.fromJson(Storage().selectedMap2ContentType);
   set _storedMap2ContentType(Map2ContentType? value) => Storage().selectedMap2ContentType = value?.toJson() ?? _nullContentTypeJson;
 
-  dynamic _storedAvailableMap2ContentType({ Iterable<Map2ContentType>? availableTypes }) {
-    String? storedTypeJson = Storage().selectedMap2ContentType;
-    if (storedTypeJson != null) {
-      Map2ContentType? storedType = _Map2ContentType.fromJson(storedTypeJson);
-      if (storedType == null) {
-        return null; // selected: null
-      }
-      else {
-        Map2ContentType? ensuredStoredType = storedType._ensure(availableTypes: availableTypes);
-        if (ensuredStoredType != null) {
-          return ensuredStoredType; // selected: ensuredStoredType
-        }
-        else {
-          return false; // selected: n.a.
-        }
-      }
-    }
-    else {
-      return false; // selected: n.a.
-    }
-  }
 }
 
 extension ExplorePOIImpl on ExplorePOI {
@@ -2100,269 +2436,13 @@ extension ExplorePOIImpl on ExplorePOI {
     );
 }
 
-class _Map2Filter {
-
-  String searchText = '';
-  bool starred = false;
-  Map2SortType? sortType;
-  Map2SortOrder? sortOrder;
-
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) =>
-    LinkedHashMap<String, List<String>>();
-
-  static _Map2Filter? fromContentType(Map2ContentType? contentType) {
-    switch (contentType) {
-      case Map2ContentType.CampusBuildings:      return _Map2CampusBuildingsFilter();
-      case Map2ContentType.StudentCourses:       return _Map2StudentCoursesFilter();
-      case Map2ContentType.DiningLocations:      return _Map2DiningLocationsFilter();
-      case Map2ContentType.Events2:              return _Map2Events2Filter();
-      case Map2ContentType.Laundries:
-      case Map2ContentType.BusStops:
-      case Map2ContentType.Therapists:
-      case Map2ContentType.MyLocations:
-      default: return null;
-    }
-  }
-
-  // Filter
-
-  List<Explore> filter(List<Explore> explores) =>
-    (explores.isNotEmpty && _hasFilter) ? _filter(explores) : explores;
-
-  bool get _hasFilter => false;
-
-  List<Explore> _filter(List<Explore> explores) => explores;
-
-  // Sort
-
-  List<Explore> sort(Iterable<Explore> explores, { Position? position }) {
-    List<Explore> sortedExplores = List<Explore>.from(explores);
-    if (explores.isNotEmpty && _hasSort) {
-      _sort(sortedExplores, position: position);
-    }
-    return sortedExplores;
-  }
-
-  bool get _hasSort => (sortType != null);
-
-  void _sort(List<Explore> explores, { Position? position }) {
-    switch (sortType) {
-      case Map2SortType.dateTime: _sortByDateTime(explores); break;
-      case Map2SortType.alphabetical: _sortAlphabeticaly(explores); break;
-      case Map2SortType.proximity: _sortByProximity(explores, position: position); break;
-      default: break;
-    }
-  }
-  void _sortAlphabeticaly(List<Explore> explores) =>
-    explores.sort((Explore explore1, Explore explore2) =>
-      SortUtils.compare(explore1.exploreTitle, explore2.exploreTitle, descending: (sortOrder == Map2SortOrder.descending))
-    );
-
-  void _sortByProximity(List<Explore> explores, { Position? position }) {
-    explores.sort((Explore explore1, Explore explore2) {
-      LatLng? location1 = explore1.exploreLocation?.exploreLocationMapCoordinate;
-      double? distance1 = ((location1 != null) && (position != null)) ? Geolocator.distanceBetween(location1.latitude, location1.longitude, position.latitude, position.longitude) : 0.0;
-
-      LatLng? location2 = explore2.exploreLocation?.exploreLocationMapCoordinate;
-      double? distance2 = ((location2 != null) && (position != null)) ? Geolocator.distanceBetween(location2.latitude, location2.longitude, position.latitude, position.longitude) : 0.0;
-
-      return (sortOrder == Map2SortOrder.descending) ? distance2.compareTo(distance1) : distance1.compareTo(distance2); // SortUtils.compare(distance1, distance2);
-    });
-  }
-
-  void _sortByDateTime(List<Explore> explores) =>
-    explores.sort((Explore explore1, Explore explore2) =>
-      SortUtils.compare(explore1.exploreDateTimeUtc, explore2.exploreDateTimeUtc, descending: (sortOrder == Map2SortOrder.descending))
-    );
+class Map2FilterEvents2Param {
+  final String searchText;
+  Map2FilterEvents2Param([this.searchText = '']);
 }
 
-class _Map2CampusBuildingsFilter extends _Map2Filter {
-  LinkedHashSet<String> amenityIds = LinkedHashSet<String>();
-
-  @override
-  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (amenityIds.isNotEmpty == true));
-
-  @override
-  List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
-    List<Explore> filtered = <Explore>[];
-    for (Explore explore in explores) {
-      if ((explore is Building) &&
-          ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchTextLowerCase(searchLowerCase))) &&
-          ((starred != true) || (Auth2().prefs?.isFavorite(explore as Favorite) == true)) &&
-          ((amenityIds.isNotEmpty != true) || (explore.matchAmenityIds(amenityIds)))
-        ) {
-        filtered.add(explore);
-      }
-    }
-    return filtered;
-  }
-
-  @override
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
-    LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
-    if (searchText.isNotEmpty) {
-      String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
-      descriptionMap[searchKey] = <String>[searchText];
-    }
-    if (amenityIds.isNotEmpty) {
-      String amenitiesKey = Localization().getStringEx('panel.map2.filter.amenities.text', 'Amenities');
-      Map<String, String?> amenities = JsonUtils.cast<List<Building>>(explores ?? filteredExplores)?.featureNames ?? <String, String>{};
-      List<String> amenityValues = List<String>.from(amenityIds.map<String>((String amenityId) => amenities[amenityId] ?? amenityId));
-      descriptionMap[amenitiesKey] = amenityValues;
-    }
-    if (starred) {
-      String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
-      descriptionMap[starredKey] = <String>[];
-    }
-    if (sortType != null) {
-      String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = sortType?.displayTitle ?? '';
-      if (sortValue.isNotEmpty && (sortOrder != null)) {
-        String? sortOrderValue = sortOrder?.displayMnemo;
-        if ((sortOrderValue != null) && sortOrderValue.isNotEmpty) {
-          sortValue += " $sortOrderValue";
-        }
-      }
-      descriptionMap[sortKey] = <String>[sortValue];
-    }
-    if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.buildings.text', 'Buildings');
-      String buildingsValue = filteredExplores.length.toString();
-      descriptionMap[buildingsKey] = <String>[buildingsValue];
-    }
-    return descriptionMap;
-  }
-}
-
-class _Map2StudentCoursesFilter extends _Map2Filter {
-  @override
-  bool get _hasFilter => true;
-
-  @override
-  List<Explore> _filter(List<Explore> explores) {
-    List<Explore> filtered = <Explore>[];
-    for (Explore explore in explores) {
-      if (explore.exploreLocation?.isLocationCoordinateValid == true) {
-        filtered.add(explore);
-      }
-    }
-    return filtered;
-  }
-}
-
-class _Map2DiningLocationsFilter extends _Map2Filter {
-  bool onlyOpened = false;
-  PaymentType? paymentType = null;
-
-  @override
-  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (onlyOpened != false) || (paymentType != null));
-
-  @override
-  List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
-    List<Explore> filtered = <Explore>[];
-    for (Explore explore in explores) {
-      if ((explore is Dining) &&
-          ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchTextLowerCase(searchLowerCase))) &&
-          ((starred != true) || (Auth2().prefs?.isFavorite(explore as Favorite) == true)) &&
-          ((onlyOpened != true) || (explore.isOpen == true)) &&
-          ((paymentType == null) || (explore.paymentTypes?.contains(paymentType) == true))
-        ) {
-        filtered.add(explore);
-      }
-    }
-    return filtered;
-  }
-
-  @override
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
-    LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
-    if (searchText.isNotEmpty) {
-      String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
-      descriptionMap[searchKey] = <String>[searchText];
-    }
-    if (paymentType != null) {
-      String? paymentTypeValue = PaymentTypeHelper.paymentTypeToDisplayString(paymentType);
-      if ((paymentTypeValue != null) && paymentTypeValue.isNotEmpty) {
-        String paymentTypeKey = Localization().getStringEx('panel.map2.filter.payment_type.text', 'Payment Type');
-        descriptionMap[paymentTypeKey] = <String>[paymentTypeValue];
-      }
-    }
-    if (starred) {
-      String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
-      descriptionMap[starredKey] = <String>[];
-    }
-    if (onlyOpened) {
-      String onlyOpenedKey = Localization().getStringEx('panel.map2.filter.open_now.text', 'Open Now');
-      descriptionMap[onlyOpenedKey] = <String>[];
-    }
-    if (sortType != null) {
-      String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = sortType?.displayTitle ?? '';
-      if (sortValue.isNotEmpty && (sortOrder != null)) {
-        String? sortOrderValue = sortOrder?.displayMnemo;
-        if ((sortOrderValue != null) && sortOrderValue.isNotEmpty) {
-          sortValue += " $sortOrderValue";
-        }
-      }
-      descriptionMap[sortKey] = <String>[sortValue];
-    }
-    if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.dinings.text', 'Dining Locations');
-      String buildingsValue = filteredExplores.length.toString();
-      descriptionMap[buildingsKey] = <String>[buildingsValue];
-    }
-    return descriptionMap;
-  }
-}
-
-class _Map2Events2Filter extends _Map2Filter {
-  Event2FilterParam event2Filter = Event2FilterParam.fromStorage();
-
-  _Map2Events2Filter() {
-    super.sortType = Map2SortTypeImpl.fromEvent2SortType(Event2SortTypeImpl.fromJson(Storage().events2SortType));
-  }
-
-  @override
-  bool get _hasFilter => true;
-
-  @override
-  List<Explore> _filter(List<Explore> explores) {
-    List<Explore> filtered = <Explore>[];
-    for (Explore explore in explores) {
-      if (explore.exploreLocation?.isLocationCoordinateValid == true) {
-        filtered.add(explore);
-      }
-    }
-    return filtered;
-  }
-
-  @override
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
-    LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
-    if (searchText.isNotEmpty) {
-      String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
-      descriptionMap[searchKey] = <String>[searchText];
-    }
-
-    List<String> filters = event2Filter.rawDescription;
-    if (filters.isNotEmpty) {
-      String filterKey = Localization().getStringEx('panel.map2.filter.filter.text', 'Filter');
-      descriptionMap[filterKey] = filters;
-    }
-
-    if (sortType != null) {
-      String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = sortType?.displayTitle ?? '';
-      descriptionMap[sortKey] = <String>[sortValue];
-    }
-
-    if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String eventsKey = Localization().getStringEx('panel.map2.filter.events.text', 'Events');
-      String eventsValue = filteredExplores.length.toString();
-      descriptionMap[eventsKey] = <String>[eventsValue];
-    }
-    return descriptionMap;
-  }
+class Map2FilterBusStopsParam {
+  final String searchText;
+  final bool starred;
+  Map2FilterBusStopsParam({this.searchText = '', this.starred = false});
 }

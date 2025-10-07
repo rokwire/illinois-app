@@ -1,4 +1,5 @@
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
@@ -17,23 +18,26 @@ import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
+import 'package:illinois/ui/map2/Map2ExplorePOICard.dart';
 import 'package:illinois/ui/map2/Map2LocationCard.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
+import 'package:illinois/ui/map2/Map2PlaceCard.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/model/places.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Map2TraySheet extends StatefulWidget {
-  final int? totalExploresCount;
+  final List<Explore>? explores;
+  final int? totalCount;
   final Position? currentLocation;
-  final List<Explore>? visibleExplores;
   final ScrollController? scrollController;
   final AnalyticsFeature? analyticsFeature;
 
-  Map2TraySheet({super.key, this.visibleExplores, this.scrollController, this.currentLocation, this.totalExploresCount, this.analyticsFeature});
+  Map2TraySheet({super.key, this.explores, this.scrollController, this.currentLocation, this.totalCount, this.analyticsFeature});
 
   @override
   State<StatefulWidget> createState() => _Map2TraySheetState();
@@ -48,7 +52,18 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
   static const double _traySheetDragHandleHeight = 3.0;
   static const double _traySheetDragHandleWidthFactor = 0.25;
 
+  UniqueKey _sliverListKey = UniqueKey();
   Set<String> _expandedBusStops = <String>{};
+
+  @override
+  void didUpdateWidget(Map2TraySheet oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (mounted && (!DeepCollectionEquality().equals(widget.explores, oldWidget.explores) || (widget.totalCount != oldWidget.totalCount)  )) {
+      setState(() {
+        _sliverListKey = UniqueKey();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) =>
@@ -62,7 +77,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
             title: _traySheetHeading,
           ),
           //SliverPadding(padding: EdgeInsets.only(top: 42), sliver:
-          SliverList(
+          SliverList(key: _sliverListKey,
             delegate: SliverChildListDelegate(_traySheetListContent),
           ),
         ],),
@@ -70,7 +85,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
     );
 
   BoxDecoration get _traySheetDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: Styles().colors.background,
     borderRadius: _traySheetBorderRadius,
     boxShadow: [_traySheetBoxShadow],
   );
@@ -104,13 +119,17 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
     TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.message.tiny'); // widget.message.tiny
     return RichText(text: TextSpan(style: regularStyle, children: <InlineSpan>[
       TextSpan(text: Localization().getStringEx('panel.map2.tray.header.selected.label', 'Selected: '), style: boldStyle,),
-      TextSpan(text: '${widget.visibleExplores?.length}/${widget.totalExploresCount}', style: regularStyle,),
+      TextSpan(text: '${widget.explores?.length}/${widget.totalCount}', style: regularStyle,),
     ]));
   }
 
   Widget get _traySheetDragHandle => Container(
-    width: _traySheetWidth * _traySheetDragHandleWidthFactor, height: _traySheetDragHandleHeight,
-    decoration: BoxDecoration(color: Styles().colors.lightGray, borderRadius: BorderRadius.circular(2.0),),
+    width: _traySheetWidth * _traySheetDragHandleWidthFactor,
+    height: _traySheetDragHandleHeight,
+    decoration: BoxDecoration(
+      color: Styles().colors.dividerLineAccent,
+      borderRadius: BorderRadius.circular(2.0),
+    ),
   );
 
   double get _traySheetWidth => _traySheetKey.renderBoxSize?.width ?? _screenWidth;
@@ -118,8 +137,8 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
 
   List<Widget> get _traySheetListContent {
     List<Widget> items = <Widget>[];
-    if (widget.visibleExplores != null) {
-      for (Explore explore in widget.visibleExplores!) {
+    if (widget.explores != null) {
+      for (Explore explore in widget.explores!) {
         if (items.isNotEmpty) {
           items.add(SizedBox(height: _traySheetListCardSpacing(explore),));
         }
@@ -170,7 +189,16 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
         padding: EdgeInsets.zero,
       );
     }
-    else if ((explore is Building) || (explore is WellnessBuilding) || (explore is ExplorePOI))  {
+    else if (explore is ExplorePOI) {
+      return Map2ExplorePOICard(explore,);
+    }
+    else if (explore is Place) {
+      return Map2PlaceCard(explore,
+        currentLocation: widget.currentLocation,
+        onTap: () => _onTapListCard(explore),
+      );
+    }
+    else if ((explore is Building) || (explore is WellnessBuilding))  {
       return Map2LocationCard(explore,
         currentLocation: widget.currentLocation,
         onTap: () => _onTapListCard(explore),
