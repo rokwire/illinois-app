@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'dart:ui';
 
 import 'package:rokwire_plugin/model/places.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -32,6 +33,19 @@ extension PlaceFilter on Place {
       }
     }
     return false;
+  }
+}
+
+extension PlaceUI on Place {
+  List<String> get displayTypes {
+    List<String> displayTypes = <String>[];
+    if (isVisited) {
+      displayTypes.add(Localization().getStringEx('panel.map2.filter.visited.text', 'Visited'));
+    }
+    if (types?.isNotEmpty == true) {
+      displayTypes.addAll(types ?? []);
+    }
+    return displayTypes;
   }
 }
 

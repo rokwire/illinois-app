@@ -21,9 +21,11 @@ import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/map2/Map2ExplorePOICard.dart';
 import 'package:illinois/ui/map2/Map2LocationCard.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
+import 'package:illinois/ui/map2/Map2PlaceCard.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/model/places.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -189,6 +191,12 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
     }
     else if (explore is ExplorePOI) {
       return Map2ExplorePOICard(explore,);
+    }
+    else if (explore is Place) {
+      return Map2PlaceCard(explore,
+        currentLocation: widget.currentLocation,
+        onTap: () => _onTapListCard(explore),
+      );
     }
     else if ((explore is Building) || (explore is WellnessBuilding))  {
       return Map2LocationCard(explore,
