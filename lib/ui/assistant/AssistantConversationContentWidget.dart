@@ -348,9 +348,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       Offset globalPosition = longPressDetails.globalPosition;
       final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
-      showMenu<String>(context: context, position: RelativeRect.fromRect(globalPosition & const Size(40, 40), Offset.zero & overlay.size), items: [
-        _buildPopupMenuItemWidget(value: copyItemValue, label: Localization().getStringEx('dialog.copy.title', 'Copy'))
-      ]).then((value) {
+      showMenu<String>(context: context,
+          position: RelativeRect.fromRect(globalPosition & const Size(40, 40), Offset.zero & overlay.size),
+          constraints: BoxConstraints(minWidth: 80, minHeight: 40),
+          items: [_buildPopupMenuItemWidget(value: copyItemValue, label: Localization().getStringEx('dialog.copy.title', 'Copy'))],
+          color: Styles().colors.white).then((value) {
         switch (value) {
           case copyItemValue:
             _copyToClipboard(textContent);
@@ -367,7 +369,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   PopupMenuItem<String> _buildPopupMenuItemWidget({required String value, required String label}) {
-    return PopupMenuItem(value: value, height: 32, child: DefaultTextStyle(style: TextStyle(color: CupertinoColors.label, fontSize: 16), child: Text(label)));
+    return PopupMenuItem(value: value, height: 32, padding: EdgeInsets.zero, child:
+      Container(alignment: Alignment.center,
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          child: DefaultTextStyle(style: TextStyle(color: CupertinoColors.label, fontSize: 16), child: Text(label))));
   }
 
   bool _canCopyMessage(Message message) {
