@@ -35,11 +35,14 @@ import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
+import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/map2/Map2FilterBuildingAmenitiesPanel.dart';
 import 'package:illinois/ui/map2/Map2HomeFilters.dart';
 import 'package:illinois/ui/map2/Map2TraySheet.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -322,7 +325,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   Widget get _mapView => Container(decoration: _mapViewDecoration, child:
     GoogleMap(
       key: _mapKey,
-      initialCameraPosition: _lastCameraPosition ?? _Map2PanelContent.defaultCameraPosition,
+      initialCameraPosition: _lastCameraPosition ?? _Map2HomePanelContent.defaultCameraPosition,
       onMapCreated: _onMapCreated,
       onCameraIdle: _onMapCameraIdle,
       onCameraMove: _onMapCameraMove,
@@ -481,7 +484,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         });
 
         if (init) {
-          CameraPosition cameraPosition = CameraPosition(target: currentLocation.gmsLatLng, zoom: _Map2PanelContent.defaultCameraZoom);
+          CameraPosition cameraPosition = CameraPosition(target: currentLocation.gmsLatLng, zoom: _Map2HomePanelContent.defaultCameraZoom);
           if (_mapController != null) {
             _mapController?.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
           }
@@ -784,6 +787,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
               _storiedSitesTags = JsonUtils.cast<List<Place>>(explores)?.tags;
               _mapKey = UniqueKey(); // force map rebuild
             });
+            _showContentMessageIfNeeded();
           }
         }
       }
@@ -974,7 +978,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
 // Map2 Filters
 
-extension _Map2PanelFilters on _Map2HomePanelState {
+extension _Map2HomePanelFilters on _Map2HomePanelState {
   
   Widget? get _contentFilterButtonsBar => _buildContentFilterButtonsBar(_filterButtons,
     decoration: _contentFiltersBarDecoration,
@@ -1824,9 +1828,71 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     _updateTrayExplores();
 }
 
+// Content Messages
+
+extension _Map2HomePanelMessages on _Map2HomePanelState {
+
+  static const String _privacyUrl = 'privacy://level';
+  static const String _privacyUrlMacro = '{{privacy_url}}';
+
+  void _showContentMessageIfNeeded() {
+    if (_explores == null) {
+      _showMessagePopup(_selectedContentType?.displayFailedContentMessage);
+    }
+    else if (_explores?.length == 0) {
+      if (_selectedContentType == Map2ContentType.MyLocations) {
+        String messageHtml = Localization().getStringEx('panel.explore.missing.my_locations.msg', "You currently have no saved locations.<br><br>Select a location on the map and tap the \u2606 to save it as a favorite. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)").
+          replaceAll(_privacyUrlMacro, _privacyUrl);
+        _showMessagePopup(messageHtml);
+      }
+      else {
+        _showMessagePopup(_selectedContentType?.displayEmptyContentMessage);
+      }
+    }
+    else if ((_selectedContentType == Map2ContentType.BusStops) && (Storage().showMtdStopsMapInstructions != false)) {
+      String messageHtml = Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Tap a bus stop on the map to get bus schedules.<br><br>Tap the \u2606 to save the bus stop. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)").
+        replaceAll(_privacyUrlMacro, _privacyUrl);
+      _showOptionalMessagePopup(messageHtml, showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,);
+    }
+    else if ((_selectedContentType == Map2ContentType.MyLocations) && (Storage().showMyLocationsMapInstructions != false)) {
+      String messageHtml = Localization().getStringEx("panel.explore.instructions.my_locations.msg", "Select a location on the map and tap the \u2606  to save it as a favorite. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)",).
+        replaceAll(_privacyUrlMacro, _privacyUrl);
+      _showOptionalMessagePopup(messageHtml, showPopupStorageKey: Storage().showMyLocationsMapInstructionsKey);
+    }
+  }
+
+  void _showMessagePopup(String? message) {
+    if ((message != null) && message.isNotEmpty) {
+      ExploreMessagePopup.show(context, message, onTapUrl: _handleLocalUrl);
+    }
+  }
+
+  void _showOptionalMessagePopup(String message, { String? showPopupStorageKey }) {
+    showDialog(context: context, builder: (context) =>
+      ExploreOptionalMessagePopup(
+        message: message,
+        showPopupStorageKey: showPopupStorageKey,
+        onTapUrl: _handleLocalUrl,
+      )
+    );
+  }
+
+  bool _handleLocalUrl(String url) {
+    if (url == _privacyUrl) {
+      Analytics().logSelect(target: 'Privacy Level');
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+}
+
 // Map2 Content
 
-extension _Map2PanelContent on _Map2HomePanelState {
+extension _Map2HomePanelContent on _Map2HomePanelState {
   static const CameraPosition defaultCameraPosition = CameraPosition(target: defaultCameraTarget, zoom: defaultCameraZoom);
   static const LatLng defaultCameraTarget = LatLng(40.102116, -88.227129);
   static const double defaultCameraZoom = 17;
@@ -2058,7 +2124,7 @@ extension _Map2PanelContent on _Map2HomePanelState {
 
 // Map2 Markers
 
-extension _Map2PanelMarkers on _Map2HomePanelState {
+extension _Map2HomePanelMarkers on _Map2HomePanelState {
 
   static const double _mapExploreMarkerSize = 18;
   static const double _mapGroupMarkerSize = 24;
@@ -2221,21 +2287,6 @@ extension _Map2PanelMarkers on _Map2HomePanelState {
 }
 
 extension _Map2ContentType on Map2ContentType {
-  String get displayTitle => displayTitleEx();
-
-  String displayTitleEx({String? language}) {
-    switch(this) {
-      case Map2ContentType.CampusBuildings:      return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings', language: language);
-      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses', language: language);
-      case Map2ContentType.DiningLocations:      return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining', language: language);
-      case Map2ContentType.Events2:              return Localization().getStringEx('panel.explore.button.events2.title', 'Events', language: language);
-      case Map2ContentType.LaundryRooms:         return Localization().getStringEx('panel.explore.button.laundry_room.title', 'Laundry Rooms', language: language);
-      case Map2ContentType.BusStops:             return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Stops', language: language);
-      case Map2ContentType.Therapists:           return Localization().getStringEx('panel.explore.button.mental_health.title', 'Find a Therapist', language: language);
-      case Map2ContentType.StoriedSites:         return Localization().getStringEx('panel.explore.button.stored_sites.title', 'Storied Sites', language: language);
-      case Map2ContentType.MyLocations:          return Localization().getStringEx('panel.explore.button.my_locations.title', 'My Locations', language: language);
-    }
-  }
 
   static Map2ContentType? fromJson(String? value) {
     switch (value) {
@@ -2313,6 +2364,50 @@ extension _Map2ContentType on Map2ContentType {
 
   bool supportsSortType(Map2SortType sortType) =>
     (sortType != Map2SortType.dateTime) || (this == Map2ContentType.Events2);
+
+  String get displayTitle => displayTitleEx();
+
+  String displayTitleEx({String? language}) {
+    switch(this) {
+      case Map2ContentType.CampusBuildings:      return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings', language: language);
+      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses', language: language);
+      case Map2ContentType.DiningLocations:      return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining', language: language);
+      case Map2ContentType.Events2:              return Localization().getStringEx('panel.explore.button.events2.title', 'Events', language: language);
+      case Map2ContentType.LaundryRooms:         return Localization().getStringEx('panel.explore.button.laundry_room.title', 'Laundry Rooms', language: language);
+      case Map2ContentType.BusStops:             return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Stops', language: language);
+      case Map2ContentType.Therapists:           return Localization().getStringEx('panel.explore.button.mental_health.title', 'Find a Therapist', language: language);
+      case Map2ContentType.StoriedSites:         return Localization().getStringEx('panel.explore.button.stored_sites.title', 'Storied Sites', language: language);
+      case Map2ContentType.MyLocations:          return Localization().getStringEx('panel.explore.button.my_locations.title', 'My Locations', language: language);
+    }
+  }
+
+  String get displayEmptyContentMessage {
+    switch (this) {
+      case Map2ContentType.CampusBuildings:      return Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.');
+      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses registered.');
+      case Map2ContentType.DiningLocations:      return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
+      case Map2ContentType.Events2:              return Localization().getStringEx('panel.explore.state.online.empty.events2', 'No events are available.');
+      case Map2ContentType.LaundryRooms:         return Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.');
+      case Map2ContentType.BusStops:             return Localization().getStringEx('panel.explore.state.online.empty.mtd_stops', 'No MTD stop locations available.');
+      case Map2ContentType.Therapists:           return Localization().getStringEx('panel.explore.state.online.empty.mental_health', 'No therapist locations are available.');
+      case Map2ContentType.StoriedSites:         return Localization().getStringEx('panel.explore.state.online.empty.stored_sites', 'No storied sites are available.');
+      case Map2ContentType.MyLocations:          return Localization().getStringEx('panel.explore.state.online.empty.my_locations', 'No saved locations available.');
+    }
+  }
+
+  String get displayFailedContentMessage {
+    switch (this) {
+      case Map2ContentType.CampusBuildings:      return Localization().getStringEx('panel.explore.state.failed.buildings', 'Failed to load building locations.');
+      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.state.failed.student_course', 'Failed to load student courses.');
+      case Map2ContentType.DiningLocations:      return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
+      case Map2ContentType.Events2:              return Localization().getStringEx('panel.explore.state.failed.events2', 'Failed to load all events.');
+      case Map2ContentType.LaundryRooms:         return Localization().getStringEx('panel.explore.state.failed.laundry', 'Failed to load laundry locations.');
+      case Map2ContentType.BusStops:             return Localization().getStringEx('panel.explore.state.failed.mtd_stops', 'Failed to load MTD stop locations.');
+      case Map2ContentType.Therapists:           return Localization().getStringEx('panel.explore.state.failed.mental_health', 'Failed to load therapist locations.');
+      case Map2ContentType.StoriedSites:         return Localization().getStringEx('panel.explore.state.failed.stored_sites', 'Failed to load storied sites.');
+      case Map2ContentType.MyLocations:          return Localization().getStringEx('panel.explore.state.failed.my_locations', 'Failed to load saved locations.');
+    }
+  }
 }
 
 extension Map2SortTypeImpl on Map2SortType {
