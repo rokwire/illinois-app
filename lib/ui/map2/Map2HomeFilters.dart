@@ -17,6 +17,7 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
+import 'package:illinois/ui/map2/Map2HomeExts.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
