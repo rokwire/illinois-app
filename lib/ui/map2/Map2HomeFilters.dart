@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Building.dart';
 import 'package:illinois/ext/Dining.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/LaundryRoom.dart';
 import 'package:illinois/ext/MTD.dart';
@@ -15,7 +16,6 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -42,7 +42,7 @@ class Map2Filter {
   LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) =>
     LinkedHashMap<String, List<String>>();
 
-  static Map2Filter? fromContentType(Map2ContentType? contentType) {
+  static Map2Filter? defaultFromContentType(Map2ContentType? contentType) {
     switch (contentType) {
       case Map2ContentType.CampusBuildings:      return Map2CampusBuildingsFilter.defaultFilter();
       case Map2ContentType.StudentCourses:       return Map2StudentCoursesFilter.defaultFilter();
@@ -53,6 +53,21 @@ class Map2Filter {
       case Map2ContentType.Therapists:           return null;
       case Map2ContentType.StoriedSites:         return Map2StoriedSitesFilter.defaultFilter();
       case Map2ContentType.MyLocations:          return Map2MyLocationsFilter.defaultFilter();
+      default: return null;
+    }
+  }
+
+  static Map2Filter? emptyFromContentType(Map2ContentType? contentType) {
+    switch (contentType) {
+      case Map2ContentType.CampusBuildings:      return Map2CampusBuildingsFilter.emptyFilter();
+      case Map2ContentType.StudentCourses:       return Map2StudentCoursesFilter.emptyFilter();
+      case Map2ContentType.DiningLocations:      return Map2DiningLocationsFilter.emptyFilter();
+      case Map2ContentType.Events2:              return Map2Events2Filter.emptyFilter();
+      case Map2ContentType.LaundryRooms:         return Map2LaundryRoomsFilter.emptyFilter();
+      case Map2ContentType.BusStops:             return Map2BusStopsFilter.emptyFilter();
+      case Map2ContentType.Therapists:           return null;
+      case Map2ContentType.StoriedSites:         return Map2StoriedSitesFilter.emptyFilter();
+      case Map2ContentType.MyLocations:          return Map2MyLocationsFilter.emptyFilter();
       default: return null;
     }
   }
@@ -126,10 +141,12 @@ class Map2CampusBuildingsFilter extends Map2Filter {
     sortOrder: sortOrder,
   );
 
-  factory Map2CampusBuildingsFilter.defaultFilter({ String searchText = '', bool starred = false }) => Map2CampusBuildingsFilter._(
+  factory Map2CampusBuildingsFilter.defaultFilter() => Map2CampusBuildingsFilter._(
     amenityIds: LinkedHashSet<String>(),
-    searchText: searchText,
-    starred: starred,
+  );
+
+  factory Map2CampusBuildingsFilter.emptyFilter() => Map2CampusBuildingsFilter._(
+    amenityIds: LinkedHashSet<String>(),
   );
 
   @override
@@ -203,6 +220,7 @@ class Map2StudentCoursesFilter extends Map2Filter {
   );
 
   factory Map2StudentCoursesFilter.defaultFilter() => Map2StudentCoursesFilter._();
+  factory Map2StudentCoursesFilter.emptyFilter() => Map2StudentCoursesFilter._();
 
   @override
   bool get _hasFilter => true;
@@ -224,7 +242,9 @@ class Map2DiningLocationsFilter extends Map2Filter {
   PaymentType? paymentType = null;
 
   Map2DiningLocationsFilter._({
+    // ignore: unused_element_parameter
     this.onlyOpened = false,
+    // ignore: unused_element_parameter
     this.paymentType,
 
     String searchText = '',
@@ -238,10 +258,8 @@ class Map2DiningLocationsFilter extends Map2Filter {
     sortOrder: sortOrder,
   );
 
-  factory Map2DiningLocationsFilter.defaultFilter({bool onlyOpened = false, PaymentType? paymentType}) => Map2DiningLocationsFilter._(
-    onlyOpened: onlyOpened,
-    paymentType: paymentType,
-  );
+  factory Map2DiningLocationsFilter.defaultFilter() => Map2DiningLocationsFilter._();
+  factory Map2DiningLocationsFilter.emptyFilter() => Map2DiningLocationsFilter._();
 
   @override
   bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (onlyOpened != false) || (paymentType != null));
@@ -324,8 +342,15 @@ class Map2Events2Filter extends Map2Filter {
 
   factory Map2Events2Filter.defaultFilter({ String searchText = '' }) => Map2Events2Filter._(
     event2Filter: Event2FilterParam.fromStorage(),
-    sortType: Map2SortTypeImpl.fromEvent2SortType(Event2SortTypeImpl.fromJson(Storage().events2SortType)),
+    sortType: Map2SortTypeImpl.fromEvent2SortType(Event2SortTypeAppImpl.fromStorage()),
     searchText: searchText,
+  );
+
+  factory Map2Events2Filter.emptyFilter() => Map2Events2Filter._(
+    event2Filter: Event2FilterParam(
+      timeFilter: Event2TimeFilter.upcoming,
+    ),
+    sortType:  Map2SortType.dateTime,
   );
 
   @override
@@ -386,6 +411,7 @@ class Map2LaundryRoomsFilter extends Map2Filter {
   );
 
   factory Map2LaundryRoomsFilter.defaultFilter() => Map2LaundryRoomsFilter._();
+  factory Map2LaundryRoomsFilter.emptyFilter() => Map2LaundryRoomsFilter._();
 
   @override
   bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true));
@@ -454,6 +480,7 @@ class Map2BusStopsFilter extends Map2Filter {
     searchText: searchText,
     starred: starred,
   );
+  factory Map2BusStopsFilter.emptyFilter() => Map2BusStopsFilter._();
 
   @override
   bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true));
@@ -525,6 +552,10 @@ class Map2StoriedSitesFilter extends Map2Filter {
   );
 
   factory Map2StoriedSitesFilter.defaultFilter() => Map2StoriedSitesFilter._(
+    tags: LinkedHashSet<String>()
+  );
+
+  factory Map2StoriedSitesFilter.emptyFilter() => Map2StoriedSitesFilter._(
     tags: LinkedHashSet<String>()
   );
 
@@ -603,6 +634,7 @@ class Map2MyLocationsFilter extends Map2Filter {
   );
 
   factory Map2MyLocationsFilter.defaultFilter() => Map2MyLocationsFilter._();
+  factory Map2MyLocationsFilter.emptyFilter() => Map2MyLocationsFilter._();
 
   @override
   bool get _hasFilter => (searchText.isNotEmpty == true);

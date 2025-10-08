@@ -1710,7 +1710,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     if (contentType != null) {
       Map2Filter? filter = _filters[contentType];
       if (((filter == null) && ensure) || reset) {
-        filter = Map2Filter.fromContentType(contentType);
+        filter = Map2Filter.defaultFromContentType(contentType);
         if (filter != null) {
           _filters[contentType] = filter;
         }
@@ -1770,10 +1770,19 @@ extension _Map2PanelFilters on _Map2HomePanelState {
   }
 
   void _onClearFilter() {
-    setStateIfMounted(() {
-      _filters.remove(_selectedContentType);
-    });
-    _onFilterChanged();
+    Map2ContentType? contentType = _selectedContentType;
+    if (contentType != null) {
+      Map2Filter? emptyFilter = Map2Filter.emptyFromContentType(_selectedContentType);
+      setStateIfMounted(() {
+        if (emptyFilter != null) {
+          _filters[contentType] = emptyFilter;
+        }
+        else {
+          _filters.remove(contentType);
+        }
+      });
+      _onFilterChanged();
+    }
   }
 
   void _onFilterChanged() {
