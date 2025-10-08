@@ -1383,8 +1383,10 @@ extension _Map2PanelFilters on _Map2HomePanelState {
         Widget? itemIcon = (term.id == displayTermId) ? Styles().images.getImage('check', size: 18, color: Styles().colors.fillColorPrimary) : null;
         items.add(AccessibleDropDownMenuItem<StudentCourseTerm>(key: ObjectKey(term), value: term,
           child: Semantics(label: itemTitle, button: true, container: true, inMutuallyExclusiveGroup: true,
-            child: Wrap(children: [
-              Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
+            child: Row(children: [
+              Expanded(child:
+                Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
+              ),
               if (itemIcon != null)
                 Padding(padding: EdgeInsets.only(left: 4), child: itemIcon,) ,
             ],) )));
@@ -1471,8 +1473,10 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       Widget? itemIcon = (paymentType == _selectedPaymentType) ? Styles().images.getImage('check', size: 18, color: Styles().colors.fillColorPrimary) : null;
       items.add(AccessibleDropDownMenuItem<PaymentType>(key: ObjectKey(paymentType), value: paymentType,
         child: Semantics(label: itemTitle, button: true, container: true, inMutuallyExclusiveGroup: true,
-          child: Wrap(children: [
-            Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
+          child: Row(children: [
+            Expanded(child:
+              Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
+            ),
             if (itemIcon != null)
               Padding(padding: EdgeInsets.only(left: 4), child: itemIcon,) ,
           ],) )));
@@ -1635,12 +1639,18 @@ extension _Map2PanelFilters on _Map2HomePanelState {
       if ((_selectedContentType?.supportsSortType(sortType) == true) &&
           ((sortType != Map2SortType.proximity) || locationAvailable)
       ) {
-        String itemTitle = (_selectedSortType == sortType) ? "${sortType.displayTitle} ${_selectedSortOrder.displayMarker}" : sortType.displayTitle;
+        String itemMarker = (_selectedSortType == sortType) ? _selectedSortOrder.displayMarker : '';
         TextStyle? itemTextStyle = (_selectedSortType == sortType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
-        items.add(AccessibleDropDownMenuItem<Map2SortType>(key: ObjectKey(sortType), value: sortType,
-          child: Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true,
-            child: Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,
-        ))));
+        items.add(AccessibleDropDownMenuItem<Map2SortType>(key: ObjectKey(sortType), value: sortType, child:
+          Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true, child:
+            Row(children: [
+              Expanded(child:
+                Text(sortType.displayTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,)
+              ),
+              Text(itemMarker, semanticsLabel: '', style: itemTextStyle,)
+            ],)
+          )
+        ));
       }
     }
     return items;
