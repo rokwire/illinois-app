@@ -782,7 +782,11 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   void _onTabSelectionChanged(int tabIndex) {
     if (mounted) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      RootTab? tab = getRootTabByIndex(tabIndex);
+      // Do not pop to first when the tabs are bottom sheets
+      if ((tab != RootTab.Assistant) && (tab != RootTab.Wallet)) {
+        Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      }
       _selectTab(tabIndex);
     }
   }
