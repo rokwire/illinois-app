@@ -125,9 +125,15 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
               ImageDescriptionInput(
                   imageDescriptionData: _imageDescriptionData,
                   onChanged: (data)=> setStateIfMounted(
-                      // () => _imageInputData = data ?? _imageInputData
+                      () => _imageDescriptionData = data ?? _imageDescriptionData
                   )
               ),
+              Container(height: 10,),
+                _imageName!=null?
+                RoundedButton(label: "Edit Image", onTap: _onEdit)
+                    : Container(),
+              Container(height: 10,),
+              RoundedButton(label: _imageName!=null? "Upload New Image" : "Choose Image", onTap: showImagePickerDialog),
               Container(height: 10),
               Row(
                 children: [
@@ -136,9 +142,9 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                     RoundedButton(label: "Ok",
                       onTap: _onFinish,
                       progress: _saving,
-                      progressSize: 24,
-                      enabled: _imageDescriptionData?.isValidated == true,
-                      borderColor: _imageDescriptionData?.isValidated == true? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,),
+                      progressSize: 24,)
+                      // enabled: _imageDescriptionData?.isValidated == true,
+                      // borderColor: _imageDescriptionData?.isValidated == true? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,),
                   ),
                   Container(width: 16,),
                   Expanded(
@@ -147,12 +153,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                   )
                 ],
               ),
-              Container(height: 8,),
-              RoundedButton(label: "Choose Image", onTap: showImagePickerDialog),
               Container(height: 10,),
-              _imageName!=null?
-                RoundedButton(label: "Edit", onTap: _onEdit)
-              : Container()
         ],)))])),
           _loading ?
           Positioned.fill(child:

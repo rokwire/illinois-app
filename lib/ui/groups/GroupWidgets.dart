@@ -534,7 +534,9 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                       Padding(
                           padding: EdgeInsets.all(10),
                           child: RoundedButton(
-                              label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from Device"),
+                              label: StringUtils.isNotEmpty(widget.url) ?
+                                  Localization().getStringEx("widget.add_image.button.edit_image.label","Edit Image") : //TBD localize
+                                  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from Device"),
                               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                               borderColor: Styles().colors.fillColorSecondary,
                               backgroundColor: Styles().colors.background,
