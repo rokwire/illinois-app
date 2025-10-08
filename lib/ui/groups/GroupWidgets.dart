@@ -620,11 +620,11 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     if(url != null) {
       ImageDescriptionData? inputData = await ImageDescriptionInput.showAsDialog(context: context,
           imageDescriptionData: ImageDescriptionDataExt.fromMetaData(
-              (await Content().loadImageMetaData(imageUrl: url)).metaData));
+              (await Content().loadMetaData(key: url)).metaData));
 
       if (inputData != null) {
-        ImagesResult result = await Content().uploadImageMetaData(
-            imageUrl: url, imageMetaData: inputData.toMetaData);
+        ImagesResult result = await Content().uploadMetaData(
+            key: url, metaData: inputData.toMetaData.toJson());
         return result.succeeded;
       } else { //canceled
         return false;

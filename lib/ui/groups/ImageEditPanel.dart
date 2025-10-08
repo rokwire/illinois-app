@@ -319,11 +319,10 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         Content().uploadImage(imageBytes: _imageBytes, fileName: _imageName, mediaType: _contentType, storagePath: widget.storagePath, width: widget.width, isUserPic: widget.isUserPic)
             .then((value) {
               if(value.resultType == ImagesResultType.succeeded &&
-                  value.imageUrl != null && _imageDescriptionData != null &&
-                  _imageDescriptionData?.decorative == false){
-                Content().uploadImageMetaData(
-                  imageUrl: value.imageUrl ?? "",
-                  imageMetaData: _imageDescriptionData!.toMetaData).then((metaDataResult){
+                  value.imageUrl != null && _imageDescriptionData != null){
+                Content().uploadMetaData(
+                  key: value.imageUrl,
+                  metaData: _imageDescriptionData?.toMetaData.toJson()).then((metaDataResult){
                     if (mounted) {
                       setState(() {
                         _saving = false;
@@ -365,7 +364,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   }
 
   Future<ImageMetaData?> _loadImageMetaData(String? imageUrl) async => imageUrl != null ?
-    (await Content().loadImageMetaData(imageUrl: imageUrl)).metaData : null;
+    (await Content().loadMetaData(key: imageUrl)).metaData : null;
 
   //Utils: TBD move to Utils file if we keeps it
   // Reading bytes from a network image
