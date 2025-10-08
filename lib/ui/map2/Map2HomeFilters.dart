@@ -39,7 +39,7 @@ class Map2Filter {
     this.sortOrder,
   });
 
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) =>
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores, bool canSort = false }) =>
     LinkedHashMap<String, List<String>>();
 
   static Map2Filter? defaultFromContentType(Map2ContentType? contentType) {
@@ -169,7 +169,7 @@ class Map2CampusBuildingsFilter extends Map2Filter {
   }
 
   @override
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores, bool canSort = false }) {
     LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
     if (searchText.isNotEmpty) {
       String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
@@ -185,7 +185,7 @@ class Map2CampusBuildingsFilter extends Map2Filter {
       String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
       descriptionMap[starredKey] = <String>[];
     }
-    if (sortType != null) {
+    if ((sortType != null) && canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
       String sortValue = sortType?.displayTitle ?? '';
       if (sortValue.isNotEmpty && (sortOrder != null)) {
@@ -282,7 +282,7 @@ class Map2DiningLocationsFilter extends Map2Filter {
   }
 
   @override
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores, bool canSort = false }) {
     LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
     if (searchText.isNotEmpty) {
       String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
@@ -303,7 +303,7 @@ class Map2DiningLocationsFilter extends Map2Filter {
       String onlyOpenedKey = Localization().getStringEx('panel.map2.filter.open_now.text', 'Open Now');
       descriptionMap[onlyOpenedKey] = <String>[];
     }
-    if (sortType != null) {
+    if ((sortType != null) && canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
       String sortValue = sortType?.displayTitle ?? '';
       if (sortValue.isNotEmpty && (sortOrder != null)) {
@@ -368,7 +368,7 @@ class Map2Events2Filter extends Map2Filter {
   }
 
   @override
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores, bool canSort = false }) {
     LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
     if (searchText.isNotEmpty) {
       String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
@@ -381,7 +381,7 @@ class Map2Events2Filter extends Map2Filter {
       descriptionMap[filterKey] = filters;
     }
 
-    if (sortType != null) {
+    if ((sortType != null) && canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
       String sortValue = sortType?.displayTitle ?? '';
       descriptionMap[sortKey] = <String>[sortValue];
@@ -432,7 +432,7 @@ class Map2LaundryRoomsFilter extends Map2Filter {
   }
 
   @override
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores, bool canSort = false }) {
     LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
     if (searchText.isNotEmpty) {
       String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
@@ -442,7 +442,7 @@ class Map2LaundryRoomsFilter extends Map2Filter {
       String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
       descriptionMap[starredKey] = <String>[];
     }
-    if (sortType != null) {
+    if ((sortType != null) && canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
       String sortValue = sortType?.displayTitle ?? '';
       if (sortValue.isNotEmpty && (sortOrder != null)) {
@@ -501,7 +501,7 @@ class Map2BusStopsFilter extends Map2Filter {
   }
 
   @override
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores, bool canSort = false }) {
     LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
     if (searchText.isNotEmpty) {
       String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
@@ -511,7 +511,7 @@ class Map2BusStopsFilter extends Map2Filter {
       String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
       descriptionMap[starredKey] = <String>[];
     }
-    if (sortType != null) {
+    if ((sortType != null) && canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
       String sortValue = sortType?.displayTitle ?? '';
       if (sortValue.isNotEmpty && (sortOrder != null)) {
@@ -579,7 +579,7 @@ class Map2StoriedSitesFilter extends Map2Filter {
   }
 
   @override
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores, bool canSort = false }) {
     LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
     if (searchText.isNotEmpty) {
       String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
@@ -599,7 +599,7 @@ class Map2StoriedSitesFilter extends Map2Filter {
       String visitedKey = Localization().getStringEx('panel.map2.filter.visited.text', 'Visited');
       descriptionMap[visitedKey] = <String>[];
     }
-    if (sortType != null) {
+    if ((sortType != null) && canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
       String sortValue = sortType?.displayTitle ?? '';
       if (sortValue.isNotEmpty && (sortOrder != null)) {
@@ -654,13 +654,13 @@ class Map2MyLocationsFilter extends Map2Filter {
   }
 
   @override
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores }) {
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores, bool canSort = false }) {
     LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
     if (searchText.isNotEmpty) {
       String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
       descriptionMap[searchKey] = <String>[searchText];
     }
-    if (sortType != null) {
+    if ((sortType != null) && canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
       String sortValue = sortType?.displayTitle ?? '';
       if (sortValue.isNotEmpty && (sortOrder != null)) {

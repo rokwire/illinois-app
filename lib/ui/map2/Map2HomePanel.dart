@@ -1006,7 +1006,7 @@ extension _Map2PanelFilters on _Map2HomePanelState {
     ) : null;
 
   Widget? get _contentFilterDescriptionBar {
-    LinkedHashMap<String, List<String>>? descriptionMap = _selectedFilter?.description(_filteredExplores, explores: _explores);
+    LinkedHashMap<String, List<String>>? descriptionMap = _selectedFilter?.description(_filteredExplores, explores: _explores, canSort: _trayExplores?.isNotEmpty == true);
     if ((descriptionMap != null) && descriptionMap.isNotEmpty)  {
       TextStyle? boldStyle = Styles().textStyles.getTextStyle('widget.card.title.tiny.fat');
       TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.card.detail.small.regular');
