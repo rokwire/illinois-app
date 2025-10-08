@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Assistant: fixed color and padding for "Copy" context button in iOS [#5391](https://github.com/rokwire/illinois-app/issues/5391).
+- Map2: Fixes and cleanup [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 ### Added
 - Map2: Added Storied Sites [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Map2: Added content messages [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 - Assistant: Show campus buildings as UI fragments [#5430](https://github.com/rokwire/illinois-app/issues/5430).
 ### Changed
 - Do not pop to home panel when switching tabs to Assistant or Wallet [#5368](https://github.com/rokwire/illinois-app/issues/5368).
