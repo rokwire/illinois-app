@@ -6,6 +6,7 @@ import 'package:illinois/ext/Position.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -752,6 +753,10 @@ extension Events2Ext on Events2 {
       return Event2Result.fail("Unable to duplicate main event");
     });
   }
+}
+
+extension Event2SortTypeAppImpl on Event2SortType {
+  static Event2SortType? fromStorage() => Event2SortTypeImpl.fromJson(Storage().events2SortType);
 }
 
 class Event2Result<T>{
