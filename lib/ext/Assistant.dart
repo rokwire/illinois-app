@@ -15,6 +15,7 @@
  */
 
 import 'package:illinois/model/Assistant.dart';
+import 'package:illinois/model/Building.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -40,6 +41,8 @@ extension MessageUI on Message {
             ListUtils.add(elements, DiningProductItem.fromJson(item.data));
           } else if (item.type == AssistantStructOutputItemType.nutrition_info) {
             ListUtils.add(elements, DiningNutritionItem.fromJson(item.data));
+          } else if (item.type == AssistantStructOutputItemType.campus_building) {
+            ListUtils.add(elements, Building.fromJson(item.data));
           }
         }
       }
