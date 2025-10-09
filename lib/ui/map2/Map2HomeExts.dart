@@ -236,8 +236,8 @@ extension Map2SortOrderImpl on Map2SortOrder {
 
   String get displayMarker {
     switch (this) {
-      case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending.mark', '↓');
-      case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.descending.mark', '↑');
+      case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.descending.mark', '↑');
+      case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.ascending.mark', '↓');
     }
   }
 }
