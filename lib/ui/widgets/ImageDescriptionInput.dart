@@ -114,15 +114,15 @@ class _ImageDescriptionInputState extends State<ImageDescriptionInput> {
                      RoundedButton(label: "Ok",
                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                        backgroundColor: Colors.white,
-                       borderColor: widget.imageDescriptionData?.isValidated == true ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
-                       enabled: widget.imageDescriptionData?.isValidated == true,
+                       // borderColor: _imageDescriptionData.isValidated == true ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
+                       // enabled: _imageDescriptionData.isValidated == true,
                        rightIcon: Container(),
                        padding: _dialogButtonPadding,
                        onTap: (){
                          // if(StringUtils.isNotEmpty(imageUrl) && imageDescriptionData?.isValidated == true){
                          //   Content().uploadImageMetaData(imageUrl: imageUrl ?? "", imageMetaData: imageDescriptionData.)
                          // }
-                         Navigator.pop(context, widget.imageDescriptionData);//we will return the modified data. It can be also used from the passed instance, as we modify directly in it
+                         Navigator.pop(context, _imageDescriptionData);
                        },
                        // enabled: _imageInputData.isValidated,
                        // borderColor: _imageInputData.isValidated ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
