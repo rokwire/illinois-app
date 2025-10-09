@@ -512,7 +512,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
     attributes ?? Storage().events2Attributes;
 
   Event2SortType? get _querySortType =>
-    sortType ?? event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
+    sortType ?? Event2SortTypeAppImpl.fromStorage() ?? Event2SortTypeAppImpl.defaultSortType;
 
   Future<void> _reloadIfVisible({ int limit = _eventsPageLength }) async {
     if (_visible) {
