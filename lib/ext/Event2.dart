@@ -756,6 +756,7 @@ extension Events2Ext on Events2 {
 }
 
 extension Event2SortTypeAppImpl on Event2SortType {
+  static const Event2SortType defaultSortType = Event2SortType.dateTime;
   static Event2SortType? fromStorage() => Event2SortTypeImpl.fromJson(Storage().events2SortType);
 }
 

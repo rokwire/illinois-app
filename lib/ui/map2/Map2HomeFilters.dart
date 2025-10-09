@@ -126,7 +126,7 @@ class Map2Filter {
 }
 
 class Map2CampusBuildingsFilter extends Map2Filter {
-  LinkedHashSet<String> amenityIds = LinkedHashSet<String>();
+  LinkedHashSet<String> amenityIds;
 
   Map2CampusBuildingsFilter._({
     required this.amenityIds,
@@ -239,8 +239,8 @@ class Map2StudentCoursesFilter extends Map2Filter {
 }
 
 class Map2DiningLocationsFilter extends Map2Filter {
-  bool onlyOpened = false;
-  PaymentType? paymentType = null;
+  bool onlyOpened;
+  PaymentType? paymentType;
 
   Map2DiningLocationsFilter._({
     // ignore: unused_element_parameter
@@ -325,7 +325,7 @@ class Map2DiningLocationsFilter extends Map2Filter {
 }
 
 class Map2Events2Filter extends Map2Filter {
-  Event2FilterParam event2Filter = Event2FilterParam.fromStorage();
+  Event2FilterParam event2Filter;
 
   Map2Events2Filter._({
     required this.event2Filter,
@@ -341,18 +341,28 @@ class Map2Events2Filter extends Map2Filter {
     sortOrder: sortOrder,
   );
 
-  factory Map2Events2Filter.defaultFilter({ String searchText = '' }) => Map2Events2Filter._(
-    event2Filter: Event2FilterParam.fromStorage(),
-    sortType: Map2SortTypeImpl.fromEvent2SortType(Event2SortTypeAppImpl.fromStorage()),
-    searchText: searchText,
-  );
+  factory Map2Events2Filter.defaultFilter({ String searchText = '' }) {
+    Event2FilterParam eventFilter = Event2FilterParam.fromStorage();
+    Event2SortType? sortType = Event2SortTypeAppImpl.fromStorage() ??  Event2SortTypeAppImpl.defaultSortType;
+    Event2SortOrder? sortOrder = Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: eventFilter.timeFilter);
+    return Map2Events2Filter._(
+      event2Filter: eventFilter,
+      sortType: Map2SortTypeImpl.fromEvent2SortType(sortType),
+      sortOrder: Map2SortOrderImpl.fromEvent2SortOrder(sortOrder),
+      searchText: searchText,
+    );
+  }
 
-  factory Map2Events2Filter.emptyFilter() => Map2Events2Filter._(
-    event2Filter: Event2FilterParam(
-      timeFilter: Event2TimeFilter.upcoming,
-    ),
-    sortType:  Map2SortType.dateTime,
-  );
+  factory Map2Events2Filter.emptyFilter() {
+    Event2FilterParam eventFilter = Event2FilterParam(timeFilter: Event2TimeFilter.upcoming,);
+    Event2SortType sortType = Event2SortType.dateTime;
+    Event2SortOrder? sortOrder = Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: eventFilter.timeFilter);
+    return Map2Events2Filter._(
+      event2Filter: eventFilter,
+      sortType: Map2SortTypeImpl.fromEvent2SortType(sortType),
+      sortOrder: Map2SortOrderImpl.fromEvent2SortOrder(sortOrder),
+    );
+  }
 
   @override
   bool get _hasFilter => true;
@@ -533,8 +543,8 @@ class Map2BusStopsFilter extends Map2Filter {
 }
 
 class Map2StoriedSitesFilter extends Map2Filter {
-  LinkedHashSet<String> tags = LinkedHashSet<String>();
-  bool onlyVisited = false;
+  LinkedHashSet<String> tags;
+  bool onlyVisited;
 
   Map2StoriedSitesFilter._({
     required this.tags,

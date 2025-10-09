@@ -205,7 +205,7 @@ extension Map2SortOrderImpl on Map2SortOrder {
     }
   }
 
-  static Map2SortOrder? fromEvent2SortType(Event2SortOrder? value) {
+  static Map2SortOrder? fromEvent2SortOrder(Event2SortOrder? value) {
     switch (value) {
       case Event2SortOrder.ascending: return Map2SortOrder.ascending;
       case Event2SortOrder.descending: return Map2SortOrder.descending;
@@ -213,7 +213,7 @@ extension Map2SortOrderImpl on Map2SortOrder {
     }
   }
 
-  Event2SortOrder toEvent2SortType() {
+  Event2SortOrder toEvent2SortOrder() {
     switch(this) {
       case Map2SortOrder.ascending: return Event2SortOrder.ascending;
       case Map2SortOrder.descending: return Event2SortOrder.descending;

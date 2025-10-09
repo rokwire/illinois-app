@@ -901,17 +901,17 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     Events2().loadEventsList(await _event2QueryParam());
 
   Future<Events2Query> _event2QueryParam() async {
-    Map2Events2Filter? filter = _events2Filter;
+    Map2Events2Filter filter = _events2FilterIfExists ?? Map2Events2Filter.defaultFilter();
     return Events2Query(
-      searchText: (filter?.searchText.isNotEmpty == true) ? filter?.searchText : null,
-      timeFilter: filter?.event2Filter.timeFilter ?? Event2TimeFilter.upcoming,
-      customStartTimeUtc: filter?.event2Filter.customStartTime?.toUtc(),
-      customEndTimeUtc: filter?.event2Filter.customEndTime?.toUtc(),
-      types: filter?.event2Filter.types,
+      searchText: (filter.searchText.isNotEmpty == true) ? filter.searchText : null,
+      timeFilter: filter.event2Filter.timeFilter ?? Event2TimeFilter.upcoming,
+      customStartTimeUtc: filter.event2Filter.customStartTime?.toUtc(),
+      customEndTimeUtc: filter.event2Filter.customEndTime?.toUtc(),
+      types: filter.event2Filter.types,
       groupings: Event2Grouping.individualEvents(),
-      attributes: filter?.event2Filter.attributes,
-      sortType: filter?.sortType?.toEvent2SortType(),
-      sortOrder: ((filter?.event2Filter.timeFilter == Event2TimeFilter.past) && (filter?.sortType?.toEvent2SortType() == Event2SortType.dateTime)) ? Event2SortOrder.descending : Event2SortOrder.ascending,
+      attributes: filter.event2Filter.attributes,
+      //sortType: filter.sortType?.toEvent2SortType(),
+      //sortOrder: filter.sortOrder?.toEvent2SortOrder(),
       location: _currentLocation,
     );
   }
@@ -1545,11 +1545,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   void _onFilters() {
     Analytics().logSelect(target: 'Filters');
 
-    Map2Events2Filter? filter = _events2Filter;
-    Event2HomePanel.presentFiltersV2(context, filter?.event2Filter ?? Event2FilterParam.fromStorage()).then((Event2FilterParam? filterResult) {
+    Event2FilterParam eventFilter = _events2FilterIfExists?.event2Filter ?? Event2FilterParam.fromStorage();
+    Event2HomePanel.presentFiltersV2(context, eventFilter).then((Event2FilterParam? filterResult) {
       if ((filterResult != null) && mounted) {
         setStateIfMounted(() {
-          filter?.event2Filter = filterResult;
+          _events2Filter?.event2Filter = filterResult;
         });
         filterResult.saveToStorage();
         _onFilterChanged();
@@ -1722,6 +1722,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   Map2DiningLocationsFilter? get _diningLocationsFilter => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: true));
   Map2DiningLocationsFilter? get _diningLocationsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: false));
   Map2Events2Filter?         get _events2Filter => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: true));
+  Map2Events2Filter?         get _events2FilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: false));
   Map2StoriedSitesFilter?    get _storiedSitesFilter => JsonUtils.cast(_getFilter(Map2ContentType.StoriedSites, ensure: true));
   Map2StoriedSitesFilter?    get _storiedSitesFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.StoriedSites, ensure: false));
 
