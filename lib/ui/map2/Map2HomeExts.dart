@@ -225,14 +225,14 @@ extension Map2SortOrderImpl on Map2SortOrder {
     }
   }
 
-  String get displayMnemo {
+  String get displayAbbr {
     switch (this) {
       case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending.mnemo', 'Asc');
       case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.descending.mnemo', 'Desc');
     }
   }
 
-  String get displayMarker {
+  String get displayMark {
     switch (this) {
       case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.descending.mark', '↑');
       case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.ascending.mark', '↓');
