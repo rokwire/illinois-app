@@ -30,14 +30,14 @@ class Map2Filter {
 
   String searchText = '';
   bool starred = false;
-  Map2SortType? sortType;
-  Map2SortOrder? sortOrder;
+  Map2SortType sortType;
+  Map2SortOrder sortOrder;
 
   Map2Filter._({
     this.searchText = '',
     this.starred = false,
-    this.sortType,
-    this.sortOrder,
+    this.sortType = defaultSortType,
+    this.sortOrder = defaultSortOrder,
   });
 
   LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores, bool canSort = false }) =>
@@ -84,6 +84,11 @@ class Map2Filter {
 
   // Sort
 
+  static const Map2SortType defaultSortType = Map2SortType.alphabetical;
+  static const Map2SortOrder defaultSortOrder = Map2SortOrder.ascending;
+
+  Map2SortOrder get expectedSortOrder => Map2Filter.defaultSortOrder;
+
   List<Explore> sort(Iterable<Explore> explores, { Position? position }) {
     List<Explore> sortedExplores = List<Explore>.from(explores);
     if (explores.isNotEmpty && _hasSort) {
@@ -92,14 +97,13 @@ class Map2Filter {
     return sortedExplores;
   }
 
-  bool get _hasSort => (sortType != null);
+  bool get _hasSort => true;
 
   void _sort(List<Explore> explores, { Position? position }) {
     switch (sortType) {
       case Map2SortType.dateTime: _sortByDateTime(explores); break;
       case Map2SortType.alphabetical: _sortAlphabeticaly(explores); break;
       case Map2SortType.proximity: _sortByProximity(explores, position: position); break;
-      default: break;
     }
   }
   void _sortAlphabeticaly(List<Explore> explores) =>
@@ -133,8 +137,8 @@ class Map2CampusBuildingsFilter extends Map2Filter {
 
     String searchText = '',
     bool starred = false,
-    Map2SortType? sortType,
-    Map2SortOrder? sortOrder,
+    Map2SortType sortType = Map2SortType.alphabetical,
+    Map2SortOrder sortOrder = Map2SortOrder.ascending,
   }) : super._(
     searchText: searchText,
     starred: starred,
@@ -186,15 +190,9 @@ class Map2CampusBuildingsFilter extends Map2Filter {
       String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
       descriptionMap[starredKey] = <String>[];
     }
-    if ((sortType != null) && canSort) {
+    if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = sortType?.displayTitle ?? '';
-      if (sortValue.isNotEmpty && (sortOrder != null)) {
-        String? sortOrderValue = sortOrder?.displayMnemo;
-        if ((sortOrderValue != null) && sortOrderValue.isNotEmpty) {
-          sortValue += " $sortOrderValue";
-        }
-      }
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMnemo}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
@@ -211,8 +209,8 @@ class Map2StudentCoursesFilter extends Map2Filter {
   Map2StudentCoursesFilter._({
     String searchText = '',
     bool starred = false,
-    Map2SortType? sortType,
-    Map2SortOrder? sortOrder,
+    Map2SortType sortType = Map2SortType.alphabetical,
+    Map2SortOrder sortOrder = Map2SortOrder.ascending,
   }) : super._(
     searchText: searchText,
     starred: starred,
@@ -250,8 +248,8 @@ class Map2DiningLocationsFilter extends Map2Filter {
 
     String searchText = '',
     bool starred = false,
-    Map2SortType? sortType,
-    Map2SortOrder? sortOrder,
+    Map2SortType sortType = Map2SortType.alphabetical,
+    Map2SortOrder sortOrder = Map2SortOrder.ascending,
   }) : super._(
     searchText: searchText,
     starred: starred,
@@ -304,15 +302,9 @@ class Map2DiningLocationsFilter extends Map2Filter {
       String onlyOpenedKey = Localization().getStringEx('panel.map2.filter.open_now.text', 'Open Now');
       descriptionMap[onlyOpenedKey] = <String>[];
     }
-    if ((sortType != null) && canSort) {
+    if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = sortType?.displayTitle ?? '';
-      if (sortValue.isNotEmpty && (sortOrder != null)) {
-        String? sortOrderValue = sortOrder?.displayMnemo;
-        if ((sortOrderValue != null) && sortOrderValue.isNotEmpty) {
-          sortValue += " $sortOrderValue";
-        }
-      }
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMnemo}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
@@ -332,8 +324,8 @@ class Map2Events2Filter extends Map2Filter {
 
     String searchText = '',
     bool starred = false,
-    Map2SortType? sortType,
-    Map2SortOrder? sortOrder,
+    required Map2SortType sortType,
+    required Map2SortOrder sortOrder,
   }) : super._(
     searchText: searchText,
     starred: starred,
@@ -343,8 +335,8 @@ class Map2Events2Filter extends Map2Filter {
 
   factory Map2Events2Filter.defaultFilter({ String searchText = '' }) {
     Event2FilterParam eventFilter = Event2FilterParam.fromStorage();
-    Event2SortType? sortType = Event2SortTypeAppImpl.fromStorage() ??  Event2SortTypeAppImpl.defaultSortType;
-    Event2SortOrder? sortOrder = Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: eventFilter.timeFilter);
+    Event2SortType sortType = Event2SortTypeAppImpl.fromStorage() ??  Event2SortTypeAppImpl.defaultSortType;
+    Event2SortOrder sortOrder = Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: eventFilter.timeFilter) ?? Event2SortOrderAppImpl.defaultSortOrder;
     return Map2Events2Filter._(
       event2Filter: eventFilter,
       sortType: Map2SortTypeImpl.fromEvent2SortType(sortType),
@@ -356,7 +348,7 @@ class Map2Events2Filter extends Map2Filter {
   factory Map2Events2Filter.emptyFilter() {
     Event2FilterParam eventFilter = Event2FilterParam(timeFilter: Event2TimeFilter.upcoming,);
     Event2SortType sortType = Event2SortType.dateTime;
-    Event2SortOrder? sortOrder = Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: eventFilter.timeFilter);
+    Event2SortOrder sortOrder = Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: eventFilter.timeFilter) ?? Event2SortOrderAppImpl.defaultSortOrder;
     return Map2Events2Filter._(
       event2Filter: eventFilter,
       sortType: Map2SortTypeImpl.fromEvent2SortType(sortType),
@@ -379,6 +371,10 @@ class Map2Events2Filter extends Map2Filter {
   }
 
   @override
+  Map2SortOrder get expectedSortOrder =>
+    Map2SortOrderImpl.fromEvent2SortOrder(Event2SortOrderImpl.defaultFrom(sortType: sortType.toEvent2SortType(), timeFilter: event2Filter.timeFilter) ?? Event2SortOrderAppImpl.defaultSortOrder);
+
+  @override
   LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores, bool canSort = false }) {
     LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
     if (searchText.isNotEmpty) {
@@ -392,9 +388,9 @@ class Map2Events2Filter extends Map2Filter {
       descriptionMap[filterKey] = filters;
     }
 
-    if ((sortType != null) && canSort) {
+    if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = sortType?.displayTitle ?? '';
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMnemo}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
 
@@ -405,6 +401,7 @@ class Map2Events2Filter extends Map2Filter {
     }
     return descriptionMap;
   }
+
 }
 
 class Map2LaundryRoomsFilter extends Map2Filter {
@@ -412,8 +409,8 @@ class Map2LaundryRoomsFilter extends Map2Filter {
   Map2LaundryRoomsFilter._({
     String searchText = '',
     bool starred = false,
-    Map2SortType? sortType,
-    Map2SortOrder? sortOrder,
+    Map2SortType sortType = Map2SortType.alphabetical,
+    Map2SortOrder sortOrder = Map2SortOrder.ascending,
   }) : super._(
     searchText: searchText,
     starred: starred,
@@ -453,15 +450,9 @@ class Map2LaundryRoomsFilter extends Map2Filter {
       String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
       descriptionMap[starredKey] = <String>[];
     }
-    if ((sortType != null) && canSort) {
+    if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = sortType?.displayTitle ?? '';
-      if (sortValue.isNotEmpty && (sortOrder != null)) {
-        String? sortOrderValue = sortOrder?.displayMnemo;
-        if ((sortOrderValue != null) && sortOrderValue.isNotEmpty) {
-          sortValue += " $sortOrderValue";
-        }
-      }
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMnemo}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
@@ -478,8 +469,8 @@ class Map2BusStopsFilter extends Map2Filter {
   Map2BusStopsFilter._({
     String searchText = '',
     bool starred = false,
-    Map2SortType? sortType,
-    Map2SortOrder? sortOrder,
+    Map2SortType sortType = Map2SortType.alphabetical,
+    Map2SortOrder sortOrder = Map2SortOrder.ascending,
   }) : super._(
     searchText: searchText,
     starred: starred,
@@ -522,15 +513,9 @@ class Map2BusStopsFilter extends Map2Filter {
       String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
       descriptionMap[starredKey] = <String>[];
     }
-    if ((sortType != null) && canSort) {
+    if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = sortType?.displayTitle ?? '';
-      if (sortValue.isNotEmpty && (sortOrder != null)) {
-        String? sortOrderValue = sortOrder?.displayMnemo;
-        if ((sortOrderValue != null) && sortOrderValue.isNotEmpty) {
-          sortValue += " $sortOrderValue";
-        }
-      }
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMnemo}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
@@ -553,8 +538,8 @@ class Map2StoriedSitesFilter extends Map2Filter {
 
     String searchText = '',
     bool starred = false,
-    Map2SortType? sortType,
-    Map2SortOrder? sortOrder,
+    Map2SortType sortType = Map2SortType.alphabetical,
+    Map2SortOrder sortOrder = Map2SortOrder.ascending,
   }) : super._(
     searchText: searchText,
     starred: starred,
@@ -610,15 +595,9 @@ class Map2StoriedSitesFilter extends Map2Filter {
       String visitedKey = Localization().getStringEx('panel.map2.filter.visited.text', 'Visited');
       descriptionMap[visitedKey] = <String>[];
     }
-    if ((sortType != null) && canSort) {
+    if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = sortType?.displayTitle ?? '';
-      if (sortValue.isNotEmpty && (sortOrder != null)) {
-        String? sortOrderValue = sortOrder?.displayMnemo;
-        if ((sortOrderValue != null) && sortOrderValue.isNotEmpty) {
-          sortValue += " $sortOrderValue";
-        }
-      }
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMnemo}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
@@ -635,8 +614,8 @@ class Map2MyLocationsFilter extends Map2Filter {
   Map2MyLocationsFilter._({
     String searchText = '',
     bool starred = false,
-    Map2SortType? sortType,
-    Map2SortOrder? sortOrder,
+    Map2SortType sortType = Map2SortType.alphabetical,
+    Map2SortOrder sortOrder = Map2SortOrder.ascending,
   }) : super._(
     searchText: searchText,
     starred: starred,
@@ -671,15 +650,9 @@ class Map2MyLocationsFilter extends Map2Filter {
       String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
       descriptionMap[searchKey] = <String>[searchText];
     }
-    if ((sortType != null) && canSort) {
+    if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = sortType?.displayTitle ?? '';
-      if (sortValue.isNotEmpty && (sortOrder != null)) {
-        String? sortOrderValue = sortOrder?.displayMnemo;
-        if ((sortOrderValue != null) && sortOrderValue.isNotEmpty) {
-          sortValue += " $sortOrderValue";
-        }
-      }
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMnemo}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {

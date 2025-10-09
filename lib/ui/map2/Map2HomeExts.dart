@@ -158,12 +158,11 @@ extension Map2SortTypeImpl on Map2SortType {
     }
   }
 
-  static Map2SortType? fromEvent2SortType(Event2SortType? value) {
+  static Map2SortType fromEvent2SortType(Event2SortType value) {
     switch (value) {
       case Event2SortType.dateTime: return Map2SortType.dateTime;
       case Event2SortType.alphabetical: return Map2SortType.alphabetical;
       case Event2SortType.proximity: return Map2SortType.proximity;
-      default: return null;
     }
   }
 
@@ -205,11 +204,10 @@ extension Map2SortOrderImpl on Map2SortOrder {
     }
   }
 
-  static Map2SortOrder? fromEvent2SortOrder(Event2SortOrder? value) {
+  static Map2SortOrder fromEvent2SortOrder(Event2SortOrder value) {
     switch (value) {
       case Event2SortOrder.ascending: return Map2SortOrder.ascending;
       case Event2SortOrder.descending: return Map2SortOrder.descending;
-      default: return null;
     }
   }
 

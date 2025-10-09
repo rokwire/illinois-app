@@ -960,7 +960,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     ((explores != null) ? _selectedFilterIfExists?.filter(explores) : explores) ?? explores;
 
   List<Explore>? _sortExplores(Iterable<Explore>? explores) => (explores != null) ?
-  (_selectedFilterIfExists?.sort(explores, position: _currentLocation) ?? List.from(explores)) : null;
+    ((_selectedFilterIfExists ?? _defaultFilter)?.sort(explores, position: _currentLocation) ?? List.from(explores)) : null;
 
   // Tray Explores
 
@@ -1617,7 +1617,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Widget get _sortFilterButton =>
     MergeSemantics(key: _sortButtonKey, child:
-      Semantics(value: _selectedSortType?.displayTitle, child:
+      Semantics(value: _selectedSortType.displayTitle, child:
         DropdownButtonHideUnderline(child:
           DropdownButton2<Map2SortType>(
             dropdownStyleData: DropdownStyleData(
@@ -1682,27 +1682,29 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   void _onSortType(Map2SortType? value) {
     Analytics().logSelect(target: 'Sort: ${value?.displayTitle}');
-    setStateIfMounted(() {
-      if (_selectedSortType != value) {
-        _selectedSortType = value;
-        _selectedSortOrder = Map2SortOrder.ascending;
-      }
-      else {
-        _selectedSortOrder = (_selectedSortOrder != Map2SortOrder.ascending) ? Map2SortOrder.ascending : Map2SortOrder.descending;
-      }
-    });
-    _onSortChanged();
-    Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
-      AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
-    );
-
+    if (value != null) {
+      setStateIfMounted(() {
+        if (_selectedSortType != value) {
+          _selectedSortType = value;
+          _selectedSortOrder = _expectedSortOrder;
+        }
+        else {
+          _selectedSortOrder = (_selectedSortOrder != Map2SortOrder.ascending) ? Map2SortOrder.ascending : Map2SortOrder.descending;
+        }
+      });
+      _onSortChanged();
+      Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
+        AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
+      );
+    }
   }
 
-  Map2SortType? get _selectedSortType => _selectedFilterIfExists?.sortType;
-  set _selectedSortType(Map2SortType? value) => _selectedFilter?.sortType = value;
+  Map2SortType get _selectedSortType => _selectedFilterIfExists?.sortType ?? _defaultFilter?.sortType ?? Map2Filter.defaultSortType;
+  set _selectedSortType(Map2SortType value) => _selectedFilter?.sortType = value;
 
-  Map2SortOrder get _selectedSortOrder => _selectedFilterIfExists?.sortOrder ?? Map2SortOrder.ascending;
+  Map2SortOrder get _selectedSortOrder => _selectedFilterIfExists?.sortOrder ?? _defaultFilter?.sortOrder ?? Map2Filter.defaultSortOrder;
   set _selectedSortOrder(Map2SortOrder value) => _selectedFilter?.sortOrder = value;
+  Map2SortOrder get _expectedSortOrder => _selectedFilterIfExists?.expectedSortOrder ?? _defaultFilter?.expectedSortOrder ?? Map2Filter.defaultSortOrder;
 
   TextStyle? get _dropdownEntryNormalTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
   TextStyle? get _dropdownEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
@@ -1714,6 +1716,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Map2Filter? get _selectedFilter => _getFilter(_selectedContentType, ensure: true);
   Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
+  Map2Filter? get _defaultFilter => (_selectedContentType != null) ? Map2Filter.defaultFromContentType(_selectedContentType) : null;
 
   Map2CampusBuildingsFilter? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
   Map2CampusBuildingsFilter? get _campusBuildingsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: false));

@@ -760,6 +760,10 @@ extension Event2SortTypeAppImpl on Event2SortType {
   static Event2SortType? fromStorage() => Event2SortTypeImpl.fromJson(Storage().events2SortType);
 }
 
+extension Event2SortOrderAppImpl on Event2SortOrder {
+  static const Event2SortOrder defaultSortOrder = Event2SortOrder.ascending;
+}
+
 class Event2Result<T>{
   String? error;
   T? data;
