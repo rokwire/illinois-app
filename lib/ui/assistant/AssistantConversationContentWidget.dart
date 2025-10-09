@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:illinois/model/Building.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -29,11 +30,13 @@ import 'package:illinois/ui/dining/FoodDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
+import 'package:illinois/ui/map2/Map2LocationCard.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Assistant.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
@@ -348,9 +351,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       Offset globalPosition = longPressDetails.globalPosition;
       final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
-      showMenu<String>(context: context, position: RelativeRect.fromRect(globalPosition & const Size(40, 40), Offset.zero & overlay.size), items: [
-        _buildPopupMenuItemWidget(value: copyItemValue, label: Localization().getStringEx('dialog.copy.title', 'Copy'))
-      ]).then((value) {
+      showMenu<String>(context: context,
+          position: RelativeRect.fromRect(globalPosition & const Size(40, 40), Offset.zero & overlay.size),
+          constraints: BoxConstraints(minWidth: 80, minHeight: 40),
+          items: [_buildPopupMenuItemWidget(value: copyItemValue, label: Localization().getStringEx('dialog.copy.title', 'Copy'))],
+          color: Styles().colors.white).then((value) {
         switch (value) {
           case copyItemValue:
             _copyToClipboard(textContent);
@@ -367,7 +372,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   PopupMenuItem<String> _buildPopupMenuItemWidget({required String value, required String label}) {
-    return PopupMenuItem(value: value, height: 32, child: DefaultTextStyle(style: TextStyle(color: CupertinoColors.label, fontSize: 16), child: Text(label)));
+    return PopupMenuItem(value: value, height: 32, padding: EdgeInsets.zero, child:
+      Container(alignment: Alignment.center,
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          child: DefaultTextStyle(style: TextStyle(color: CupertinoColors.label, fontSize: 16), child: Text(label))));
   }
 
   bool _canCopyMessage(Message message) {
@@ -511,6 +519,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         elementCard = _DiningProductItemCard(item: element, onTap: () => _onTapDiningProductItem(element));
       } else if (element is DiningNutritionItem) {
         elementCard = _DiningNutritionItemCard(item: element, onTap: () => _onTapDiningNutritionItem(element, elements));
+      } else if (element is Building) {
+        elementCard = Map2LocationCard(element, onTap: () => _onTapBuildingItem(element));
       }
 
       if (elementCard != null) {
@@ -563,6 +573,11 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if (productItem != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => FoodDetailPanel(productItem: productItem!)));
     }
+  }
+
+  void _onTapBuildingItem(Building building) {
+    Analytics().logSelect(target: 'Assistant: Building Item "${building.name}"');
+    building.exploreLaunchDetail(context);
   }
 
   Widget _buildNegativeFeedbackFormWidget(Message message) {
