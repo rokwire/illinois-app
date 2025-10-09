@@ -320,9 +320,9 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
             .then((value) {
               if(value.resultType == ImagesResultType.succeeded &&
                   value.imageUrl != null && _imageDescriptionData != null){
-                Content().uploadMetaData(
-                  key: value.imageUrl,
-                  metaData: _imageDescriptionData?.toMetaData.toJson()).then((metaDataResult){
+                Content().uploadImageMetaData(
+                  url: value.imageUrl,
+                  metaData: _imageDescriptionData?.toMetaData).then((metaDataResult){
                     if (mounted) {
                       setState(() {
                         _saving = false;
@@ -364,7 +364,8 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   }
 
   Future<ImageMetaData?> _loadImageMetaData(String? imageUrl) async => imageUrl != null ?
-    (await Content().loadMetaData(key: imageUrl)).metaData : null;
+    (await Content().loadImageMetaData(url: imageUrl)).imageMetaData :
+    null;
 
   //Utils: TBD move to Utils file if we keeps it
   // Reading bytes from a network image

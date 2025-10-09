@@ -35,6 +35,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/ImageDescriptionInput.dart';
 import 'package:illinois/ui/widgets/WebEmbed.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/model/content.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -618,13 +619,15 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
   Future<bool> _requestImageDescriptionChange(String? url) async {
     if(url != null) {
+      MetaDataResult existingDescriptionResult = await Content().loadImageMetaData(url: url);
+      ImageMetaData? existingMetaData = existingDescriptionResult.succeeded && existingDescriptionResult.metaData is ImageMetaData ? existingDescriptionResult.metaData : null;
+
       ImageDescriptionData? inputData = await ImageDescriptionInput.showAsDialog(context: context,
-          imageDescriptionData: ImageDescriptionDataExt.fromMetaData(
-              (await Content().loadMetaData(key: url)).metaData));
+          imageDescriptionData: ImageDescriptionDataExt.fromMetaData(existingMetaData));
 
       if (inputData != null) {
-        ImagesResult result = await Content().uploadMetaData(
-            key: url, metaData: inputData.toMetaData.toJson());
+        MetaDataResult result = await Content().uploadImageMetaData(
+            url: url, metaData: inputData.toMetaData);
         return result.succeeded;
       } else { //canceled
         return false;
