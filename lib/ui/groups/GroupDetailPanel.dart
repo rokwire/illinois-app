@@ -67,6 +67,7 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
@@ -617,10 +618,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
 
   // UI elements
   Widget _buildImageHeader(){
-    return StringUtils.isNotEmpty(_group?.imageURL) ? Semantics(label: "group image", hint: "Double tap to zoom", child:
+    return StringUtils.isNotEmpty(_group?.imageURL) ?
       Container(height: 200, color: Styles().colors.background, child:
         Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-            Positioned.fill(child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))),
+            Positioned.fill(child: ModalImageHolder(child: AccessibleImageHolder(emptySemanticsLabel: "Group image", prefixSemanticsLabel: "Group image", child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)))),
             CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
               Container(height: 53,),
             ),
@@ -629,7 +630,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
             ),
           ],
         ),
-      )
     ): Container();
   }
 

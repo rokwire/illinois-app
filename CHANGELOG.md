@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Map2: Fixes and cleanup [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+### Added
+- Add alt text field for image uploads [#4836](https://github.com/rokwire/illinois-app/issues/4836).
 
 ## [7.3.9] - 2025-10-08
 ### Fixed
