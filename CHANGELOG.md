@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- WEB: Fixed sliding bottom sheet in Map2 view.
+
 ## [7.3.9] - 2025-10-08
 ### Fixed
 - Assistant: fixed color and padding for "Copy" context button in iOS [#5391](https://github.com/rokwire/illinois-app/issues/5391).
