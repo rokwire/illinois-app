@@ -719,11 +719,14 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   final double _trayMinSize = _traySnapSizes.first;
   final double _trayMaxSize = _traySnapSizes.last;
 
+  static const _trayAnimationDuration = const Duration(milliseconds: 200);
+  static const _trayAnimationCurve = Curves.easeInOut;
+
   Widget get _traySheet =>
     DraggableScrollableSheet(
       controller: _traySheetController,
       snap: true, snapSizes: _traySnapSizes,
-      initialChildSize: _trayInitialSize,
+      initialChildSize: _trayMinSize,
       minChildSize: _trayMinSize,
       maxChildSize: _trayMaxSize,
 
@@ -970,9 +973,40 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   void _updateTrayExplores() {
     List<Explore>? trayExplores = _buildTrayExplores();
     if (mounted && !DeepCollectionEquality().equals(_trayExplores, trayExplores)) {
-      setState(() {
-        _trayExplores = trayExplores;
-      });
+      bool hadTray = _trayExplores?.isNotEmpty == true;
+      bool haveTray = trayExplores?.isNotEmpty == true;
+      if (haveTray == hadTray) {
+        // Just update thay content
+        setState(() {
+          _trayExplores = trayExplores;
+        });
+      }
+      else if (haveTray) {
+        // Animate tray appearance
+        setState(() {
+          _trayExplores = trayExplores;
+        });
+        WidgetsBinding.instance.addPostFrameCallback((_){
+          if (_traySheetController.isAttached) {
+            _traySheetController.animateTo(_trayInitialSize, duration: _trayAnimationDuration, curve: _trayAnimationCurve);
+          }
+        });
+      }
+      else {
+        // Animate tray disappearance
+        if (_traySheetController.isAttached) {
+          _traySheetController.animateTo(_trayMinSize, duration: _trayAnimationDuration, curve: _trayAnimationCurve).then((_){
+            setStateIfMounted(() {
+              _trayExplores = trayExplores;
+            });
+          });
+        }
+        else {
+          setState(() {
+            _trayExplores = trayExplores;
+          });
+        }
+      }
     }
   }
 
