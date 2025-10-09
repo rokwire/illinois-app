@@ -1341,20 +1341,17 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     );
 
   void _onAmenities() {
-    Map2CampusBuildingsFilter? filter = _campusBuildingsFilter;
-    if (filter != null) {
-      Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
-        amenities: JsonUtils.cast<List<Building>>(_explores)?.featureNames ?? <String, String>{},
-        selectedAmenityIds: filter.amenityIds,
-      ),)).then(((LinkedHashSet<String>? amenityIds) {
-        if (amenityIds != null) {
-          setStateIfMounted(() {
-            filter.amenityIds = amenityIds;
-          });
-          _onFilterChanged();
-        }
-      }));
-    }
+    Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
+      amenities: JsonUtils.cast<List<Building>>(_explores)?.featureNames ?? <String, String>{},
+      selectedAmenityIds: _campusBuildingsFilterIfExists?.amenityIds ?? LinkedHashSet<String>(),
+    ),)).then(((LinkedHashSet<String>? amenityIds) {
+      if (amenityIds != null) {
+        setStateIfMounted(() {
+          _campusBuildingsFilter?.amenityIds = amenityIds;
+        });
+        _onFilterChanged();
+      }
+    }));
   }
 
   // Terms Student Courses Button
@@ -1719,10 +1716,14 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
 
   Map2CampusBuildingsFilter? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
+  Map2CampusBuildingsFilter? get _campusBuildingsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: false));
+
   Map2DiningLocationsFilter? get _diningLocationsFilter => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: true));
   Map2DiningLocationsFilter? get _diningLocationsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: false));
+
   Map2Events2Filter?         get _events2Filter => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: true));
   Map2Events2Filter?         get _events2FilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: false));
+
   Map2StoriedSitesFilter?    get _storiedSitesFilter => JsonUtils.cast(_getFilter(Map2ContentType.StoriedSites, ensure: true));
   Map2StoriedSitesFilter?    get _storiedSitesFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.StoriedSites, ensure: false));
 
