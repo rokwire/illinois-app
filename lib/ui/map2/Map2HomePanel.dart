@@ -719,11 +719,14 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   final double _trayMinSize = _traySnapSizes.first;
   final double _trayMaxSize = _traySnapSizes.last;
 
+  static const _trayAnimationDuration = const Duration(milliseconds: 200);
+  static const _trayAnimationCurve = Curves.easeInOut;
+
   Widget get _traySheet =>
     DraggableScrollableSheet(
       controller: _traySheetController,
       snap: true, snapSizes: _traySnapSizes,
-      initialChildSize: _trayInitialSize,
+      initialChildSize: _trayMinSize,
       minChildSize: _trayMinSize,
       maxChildSize: _trayMaxSize,
 
@@ -901,17 +904,17 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     Events2().loadEventsList(await _event2QueryParam());
 
   Future<Events2Query> _event2QueryParam() async {
-    Map2Events2Filter? filter = _events2Filter;
+    Map2Events2Filter filter = _events2FilterIfExists ?? Map2Events2Filter.defaultFilter();
     return Events2Query(
-      searchText: (filter?.searchText.isNotEmpty == true) ? filter?.searchText : null,
-      timeFilter: filter?.event2Filter.timeFilter ?? Event2TimeFilter.upcoming,
-      customStartTimeUtc: filter?.event2Filter.customStartTime?.toUtc(),
-      customEndTimeUtc: filter?.event2Filter.customEndTime?.toUtc(),
-      types: filter?.event2Filter.types,
+      searchText: (filter.searchText.isNotEmpty == true) ? filter.searchText : null,
+      timeFilter: filter.event2Filter.timeFilter ?? Event2TimeFilter.upcoming,
+      customStartTimeUtc: filter.event2Filter.customStartTime?.toUtc(),
+      customEndTimeUtc: filter.event2Filter.customEndTime?.toUtc(),
+      types: filter.event2Filter.types,
       groupings: Event2Grouping.individualEvents(),
-      attributes: filter?.event2Filter.attributes,
-      sortType: filter?.sortType?.toEvent2SortType(),
-      sortOrder: ((filter?.event2Filter.timeFilter == Event2TimeFilter.past) && (filter?.sortType?.toEvent2SortType() == Event2SortType.dateTime)) ? Event2SortOrder.descending : Event2SortOrder.ascending,
+      attributes: filter.event2Filter.attributes,
+      //sortType: filter.sortType?.toEvent2SortType(),
+      //sortOrder: filter.sortOrder?.toEvent2SortOrder(),
       location: _currentLocation,
     );
   }
@@ -960,7 +963,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     ((explores != null) ? _selectedFilterIfExists?.filter(explores) : explores) ?? explores;
 
   List<Explore>? _sortExplores(Iterable<Explore>? explores) => (explores != null) ?
-  (_selectedFilterIfExists?.sort(explores, position: _currentLocation) ?? List.from(explores)) : null;
+    ((_selectedFilterIfExists ?? _defaultFilter)?.sort(explores, position: _currentLocation) ?? List.from(explores)) : null;
 
   // Tray Explores
 
@@ -970,9 +973,40 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   void _updateTrayExplores() {
     List<Explore>? trayExplores = _buildTrayExplores();
     if (mounted && !DeepCollectionEquality().equals(_trayExplores, trayExplores)) {
-      setState(() {
-        _trayExplores = trayExplores;
-      });
+      bool hadTray = _trayExplores?.isNotEmpty == true;
+      bool haveTray = trayExplores?.isNotEmpty == true;
+      if (haveTray == hadTray) {
+        // Just update thay content
+        setState(() {
+          _trayExplores = trayExplores;
+        });
+      }
+      else if (haveTray) {
+        // Animate tray appearance
+        setState(() {
+          _trayExplores = trayExplores;
+        });
+        WidgetsBinding.instance.addPostFrameCallback((_){
+          if (_traySheetController.isAttached) {
+            _traySheetController.animateTo(_trayInitialSize, duration: _trayAnimationDuration, curve: _trayAnimationCurve);
+          }
+        });
+      }
+      else {
+        // Animate tray disappearance
+        if (_traySheetController.isAttached) {
+          _traySheetController.animateTo(_trayMinSize, duration: _trayAnimationDuration, curve: _trayAnimationCurve).then((_){
+            setStateIfMounted(() {
+              _trayExplores = trayExplores;
+            });
+          });
+        }
+        else {
+          setState(() {
+            _trayExplores = trayExplores;
+          });
+        }
+      }
     }
   }
 
@@ -1341,20 +1375,17 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     );
 
   void _onAmenities() {
-    Map2CampusBuildingsFilter? filter = _campusBuildingsFilter;
-    if (filter != null) {
-      Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
-        amenities: JsonUtils.cast<List<Building>>(_explores)?.featureNames ?? <String, String>{},
-        selectedAmenityIds: filter.amenityIds,
-      ),)).then(((LinkedHashSet<String>? amenityIds) {
-        if (amenityIds != null) {
-          setStateIfMounted(() {
-            filter.amenityIds = amenityIds;
-          });
-          _onFilterChanged();
-        }
-      }));
-    }
+    Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
+      amenities: JsonUtils.cast<List<Building>>(_explores)?.featureNames ?? <String, String>{},
+      selectedAmenityIds: _campusBuildingsFilterIfExists?.amenityIds ?? LinkedHashSet<String>(),
+    ),)).then(((LinkedHashSet<String>? amenityIds) {
+      if (amenityIds != null) {
+        setStateIfMounted(() {
+          _campusBuildingsFilter?.amenityIds = amenityIds;
+        });
+        _onFilterChanged();
+      }
+    }));
   }
 
   // Terms Student Courses Button
@@ -1545,11 +1576,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   void _onFilters() {
     Analytics().logSelect(target: 'Filters');
 
-    Map2Events2Filter? filter = _events2Filter;
-    Event2HomePanel.presentFiltersV2(context, filter?.event2Filter ?? Event2FilterParam.fromStorage()).then((Event2FilterParam? filterResult) {
+    Event2FilterParam eventFilter = _events2FilterIfExists?.event2Filter ?? Event2FilterParam.fromStorage();
+    Event2HomePanel.presentFiltersV2(context, eventFilter).then((Event2FilterParam? filterResult) {
       if ((filterResult != null) && mounted) {
         setStateIfMounted(() {
-          filter?.event2Filter = filterResult;
+          _events2Filter?.event2Filter = filterResult;
         });
         filterResult.saveToStorage();
         _onFilterChanged();
@@ -1620,7 +1651,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Widget get _sortFilterButton =>
     MergeSemantics(key: _sortButtonKey, child:
-      Semantics(value: _selectedSortType?.displayTitle, child:
+      Semantics(value: _selectedSortType.displayTitle, child:
         DropdownButtonHideUnderline(child:
           DropdownButton2<Map2SortType>(
             dropdownStyleData: DropdownStyleData(
@@ -1648,7 +1679,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       if ((_selectedContentType?.supportsSortType(sortType) == true) &&
           ((sortType != Map2SortType.proximity) || locationAvailable)
       ) {
-        String itemMarker = (_selectedSortType == sortType) ? _selectedSortOrder.displayMarker : '';
+        String itemMarker = (_selectedSortType == sortType) ? _selectedSortOrder.displayMark : '';
         TextStyle? itemTextStyle = (_selectedSortType == sortType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
         items.add(AccessibleDropDownMenuItem<Map2SortType>(key: ObjectKey(sortType), value: sortType, child:
           Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true, child:
@@ -1670,7 +1701,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     for (Map2SortType sortType in Map2SortType.values) {
       final Size sizeFull = (TextPainter(
           text: TextSpan(
-            text: "${sortType.displayTitle} ${Map2SortOrder.ascending.displayMarker}" ,
+            text: "${sortType.displayTitle} ${Map2SortOrder.ascending.displayMark}" ,
             style: _dropdownEntrySelectedTextStyle,
           ),
           textScaler: MediaQuery.of(context).textScaler,
@@ -1685,27 +1716,29 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   void _onSortType(Map2SortType? value) {
     Analytics().logSelect(target: 'Sort: ${value?.displayTitle}');
-    setStateIfMounted(() {
-      if (_selectedSortType != value) {
-        _selectedSortType = value;
-        _selectedSortOrder = Map2SortOrder.ascending;
-      }
-      else {
-        _selectedSortOrder = (_selectedSortOrder != Map2SortOrder.ascending) ? Map2SortOrder.ascending : Map2SortOrder.descending;
-      }
-    });
-    _onSortChanged();
-    Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
-      AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
-    );
-
+    if (value != null) {
+      setStateIfMounted(() {
+        if (_selectedSortType != value) {
+          _selectedSortType = value;
+          _selectedSortOrder = _expectedSortOrder;
+        }
+        else {
+          _selectedSortOrder = (_selectedSortOrder != Map2SortOrder.ascending) ? Map2SortOrder.ascending : Map2SortOrder.descending;
+        }
+      });
+      _onSortChanged();
+      Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
+        AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
+      );
+    }
   }
 
-  Map2SortType? get _selectedSortType => _selectedFilterIfExists?.sortType;
-  set _selectedSortType(Map2SortType? value) => _selectedFilter?.sortType = value;
+  Map2SortType get _selectedSortType => _selectedFilterIfExists?.sortType ?? _defaultFilter?.sortType ?? Map2Filter.defaultSortType;
+  set _selectedSortType(Map2SortType value) => _selectedFilter?.sortType = value;
 
-  Map2SortOrder get _selectedSortOrder => _selectedFilterIfExists?.sortOrder ?? Map2SortOrder.ascending;
+  Map2SortOrder get _selectedSortOrder => _selectedFilterIfExists?.sortOrder ?? _defaultFilter?.sortOrder ?? Map2Filter.defaultSortOrder;
   set _selectedSortOrder(Map2SortOrder value) => _selectedFilter?.sortOrder = value;
+  Map2SortOrder get _expectedSortOrder => _selectedFilterIfExists?.expectedSortOrder ?? _defaultFilter?.expectedSortOrder ?? Map2Filter.defaultSortOrder;
 
   TextStyle? get _dropdownEntryNormalTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
   TextStyle? get _dropdownEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
@@ -1717,11 +1750,17 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Map2Filter? get _selectedFilter => _getFilter(_selectedContentType, ensure: true);
   Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
+  Map2Filter? get _defaultFilter => (_selectedContentType != null) ? Map2Filter.defaultFromContentType(_selectedContentType) : null;
 
   Map2CampusBuildingsFilter? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
+  Map2CampusBuildingsFilter? get _campusBuildingsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: false));
+
   Map2DiningLocationsFilter? get _diningLocationsFilter => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: true));
   Map2DiningLocationsFilter? get _diningLocationsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: false));
+
   Map2Events2Filter?         get _events2Filter => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: true));
+  Map2Events2Filter?         get _events2FilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.Events2, ensure: false));
+
   Map2StoriedSitesFilter?    get _storiedSitesFilter => JsonUtils.cast(_getFilter(Map2ContentType.StoriedSites, ensure: true));
   Map2StoriedSitesFilter?    get _storiedSitesFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.StoriedSites, ensure: false));
 

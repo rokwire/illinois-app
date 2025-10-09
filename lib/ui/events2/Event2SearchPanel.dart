@@ -115,7 +115,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> with Notification
 
     _types = LinkedHashSetUtils.from<Event2TypeFilter>(Event2TypeFilterListImpl.listFromJson(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
     _attributes = Storage().events2Attributes ?? <String, dynamic>{};
-    _sortType = event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
+    _sortType = Event2SortTypeAppImpl.fromStorage() ?? Event2SortTypeAppImpl.defaultSortType;
 
     _locationServicesStatus = widget.locationServicesStatus;
     _userLocation = widget.userLocation;
