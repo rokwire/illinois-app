@@ -1,4 +1,6 @@
 
+import 'dart:ui';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -67,7 +69,12 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
 
   @override
   Widget build(BuildContext context) =>
-    Container(key: _traySheetKey, decoration: _traySheetDecoration, child:
+      ScrollConfiguration(behavior: ScrollConfiguration.of(context).copyWith(dragDevices: {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.trackpad,
+      }), child:
+      Container(key: _traySheetKey, decoration: _traySheetDecoration, child:
       ClipRRect(borderRadius: _traySheetBorderRadius, child:
         CustomScrollView(controller: widget.scrollController, slivers: [
           SliverAppBar(
@@ -82,7 +89,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
           ),
         ],),
       ),
-    );
+    ));
 
   BoxDecoration get _traySheetDecoration => BoxDecoration(
     color: Styles().colors.background,
