@@ -329,16 +329,16 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   }
 
   void _onImageUploaded(ImagesResult result) {
-    if(value.resultType == ImagesResultType.succeeded &&
-        value.imageUrl != null && _imageDescriptionData != null){
+    if(result.resultType == ImagesResultType.succeeded &&
+        result.imageUrl != null && _imageDescriptionData != null){
       Content().uploadImageMetaData(
-          url: value.imageUrl,
+          url: result.imageUrl,
           metaData: _imageDescriptionData?.toMetaData).then((metaDataResult){
         if (mounted) {
           setState(() {
             _saving = false;
           });
-          Navigator.pop(this.context, value);
+          Navigator.pop(this.context, result);
         }
       });
     } else {
@@ -346,7 +346,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         setState(() {
           _saving = false;
         });
-        Navigator.pop(this.context, value);
+        Navigator.pop(this.context, result);
       }
     }
   }
