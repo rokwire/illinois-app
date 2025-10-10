@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Hide Laundry Rooms from Maps2 [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: Hide Laundry Rooms [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: Match the tray heading's background color to the tray content's [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 
 ## [7.3.10] - 2025-10-09
 ### Fixed
