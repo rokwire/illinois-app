@@ -159,7 +159,7 @@ class Map2CampusBuildingsFilter extends Map2Filter {
 
   @override
   List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
+    String? searchLowerCase = searchText.trim().toLowerCase();
     List<Explore> filtered = <Explore>[];
     for (Explore explore in explores) {
       if ((explore is Building) &&
@@ -265,7 +265,7 @@ class Map2DiningLocationsFilter extends Map2Filter {
 
   @override
   List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
+    String? searchLowerCase = searchText.trim().toLowerCase();
     List<Explore> filtered = <Explore>[];
     for (Explore explore in explores) {
       if ((explore is Dining) &&
@@ -426,7 +426,7 @@ class Map2LaundryRoomsFilter extends Map2Filter {
 
   @override
   List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
+    String? searchLowerCase = searchText.trim().toLowerCase();
     List<Explore> filtered = <Explore>[];
     for (Explore explore in explores) {
       if ((explore is LaundryRoom) &&
@@ -489,7 +489,7 @@ class Map2BusStopsFilter extends Map2Filter {
 
   @override
   List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
+    String? searchLowerCase = searchText.trim().toLowerCase();
     List<Explore> filtered = <Explore>[];
     for (Explore explore in explores) {
       if ((explore is MTDStop) &&
@@ -560,7 +560,7 @@ class Map2StoriedSitesFilter extends Map2Filter {
 
   @override
   List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
+    String? searchLowerCase = searchText.trim().toLowerCase();
     List<Explore> filtered = <Explore>[];
     for (Explore explore in explores) {
       if ((explore is Place) &&
@@ -631,7 +631,7 @@ class Map2MyLocationsFilter extends Map2Filter {
 
   @override
   List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
+    String? searchLowerCase = searchText.trim().toLowerCase();
     List<Explore> filtered = <Explore>[];
     for (Explore explore in explores) {
       if ((explore is ExplorePOI) &&
