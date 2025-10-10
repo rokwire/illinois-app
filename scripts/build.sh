@@ -1,10 +1,11 @@
 #!/bin/bash
+#Usage ./scripts/build.sh Illinois dev all alter-text-preview
 help() {
     echo ""
     echo "SETUP"
     echo "Install qrencode: brew install qrencode"
     echo ""
-    echo "Usage: ./scripts/build.sh {BRAND} {ENV} {PLATFORM}"
+    echo "Usage: ./scripts/build.sh {BRAND} {ENV} {PLATFORM} {TAG}"
     echo "{BRAND} brand name | Default: Illinois if the param is missing or empty"
     echo "{ENV} Environment name Values: dev|prod|test Default: dev"
     echo "{PLATFORM} Target platform. Values: all|ios|android Default: all"

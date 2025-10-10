@@ -27,6 +27,7 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -430,8 +431,8 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
         visible: _hasImage,
         child: Container(
           decoration: _imageHeadingDecoration,
-          child: WebNetworkImage(imageUrl: _event.imageUrl, width: imageWidth,
-                  fit: BoxFit.cover, excludeFromSemantics: true),
+          child: AccessibleImageHolder(child: WebNetworkImage(imageUrl: _event.imageUrl, width: imageWidth,
+                  fit: BoxFit.cover, excludeFromSemantics: true)),
         ));
   }
 

@@ -34,8 +34,10 @@ import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/ImageDescriptionInput.dart';
 import 'package:illinois/ui/widgets/WebEmbed.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/model/content.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -61,6 +63,7 @@ import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -534,7 +537,9 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                       Padding(
                           padding: EdgeInsets.all(10),
                           child: RoundedButton(
-                              label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from Device"),
+                              label: StringUtils.isNotEmpty(widget.url) ?
+                                  Localization().getStringEx("widget.add_image.button.edit_image.label","Edit Image") : //TBD localize
+                                  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from Device"),
                               textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                               borderColor: Styles().colors.fillColorSecondary,
                               backgroundColor: Styles().colors.background,
@@ -570,7 +575,12 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     if (isReadyUrl) {
       //ready
       AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-      Navigator.pop(context, ImagesResult.succeed(imageUrl: url));
+      setStateIfMounted(() => _showProgress = true);
+      _requestImageDescriptionChange(url).then((success){
+        setStateIfMounted(() => _showProgress = false);
+        Navigator.pop(context, ImagesResult.succeed(imageUrl: url));
+      });
+
     } else {
       //we need to process it
       setState(() {
@@ -586,6 +596,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 
 
         ImagesResultType? resultType = logicResult.resultType;
+
         switch (resultType) {
           case ImagesResultType.cancelled:
           //do nothing
@@ -595,17 +606,41 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
             break;
           case ImagesResultType.succeeded:
           //ready
+            setStateIfMounted(() => _showProgress = true);
             AppToast.showMessage(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-            Navigator.pop(context, logicResult);
+            _requestImageDescriptionChange(logicResult.imageUrl).then((success){
+              setStateIfMounted(() => _showProgress = false);
+              Navigator.pop(context, logicResult);
+            });
+
             break;
         }
       });
     }
   }
 
+  Future<bool> _requestImageDescriptionChange(String? url) async {
+    if(url != null) {
+      MetaDataResult existingDescriptionResult = await Content().loadImageMetaData(url: url);
+      ImageMetaData? existingMetaData = existingDescriptionResult.succeeded && existingDescriptionResult.metaData is ImageMetaData ? existingDescriptionResult.metaData : null;
+
+      ImageDescriptionData? inputData = await ImageDescriptionInput.showAsDialog(context: context,
+          imageDescriptionData: ImageDescriptionDataExt.fromMetaData(existingMetaData));
+
+      if (inputData != null) {
+        MetaDataResult result = await Content().uploadImageMetaData(
+            url: url, metaData: inputData.toMetaData);
+        return result.succeeded;
+      } else { //canceled
+        return false;
+      }
+    }
+
+    return false;
+  }
+
   void _onTapChooseFromDevice() {
     Analytics().logSelect(target: "Choose From Device");
-
     setState(() {
       _showProgress = true;
     });
@@ -1102,7 +1137,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
         : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
 
     return Stack(alignment: Alignment.topRight, children: [
-      Semantics(button:true,
+      Semantics(container: true, button:true,
         child:GestureDetector(
           onTap: widget.isClickable == true ? _onTapCard : (){},
           child: Container(
@@ -1213,7 +1248,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
   Widget get _imageWidget => (widget.isClickable != true) ? ModalImageHolder(child: _rawImageWidget) : _rawImageWidget;
-  Widget get _rawImageWidget => WebNetworkImage(imageUrl: widget.post?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, excludeFromSemantics: true);
+  Widget get _rawImageWidget => AccessibleImageHolder(child: WebNetworkImage(imageUrl: widget.post?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, excludeFromSemantics: true));
 
   //ReactionWidget //TBD move to GroupReaction when ready to hook BB
 
@@ -1426,7 +1461,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Visibility(visible: StringUtils.isNotEmpty(widget.reply?.imageUrl),
                 child: Container(
                       padding: EdgeInsets.only(top: 14),
-                      child: WebNetworkImage(imageUrl: widget.reply?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, excludeFromSemantics: true)
+                      child: AccessibleImageHolder(child: WebNetworkImage(imageUrl: widget.reply?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, excludeFromSemantics: true))
               )),
 
               WebEmbed(body: bodyText),
@@ -2378,7 +2413,9 @@ class _ImageChooserState extends State<ImageChooserWidget>{
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(imageUrl)
-              ? Positioned.fill(child: ModalImageHolder(child: WebNetworkImage(imageUrl: imageUrl ?? '', semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)))
+              ? Positioned.fill(child: ModalImageHolder(child:
+                  AccessibleImageHolder(emptySemanticsLabel: widget.imageSemanticsLabel ?? "", prefixSemanticsLabel: widget.imageSemanticsLabel ?? "", child:
+                    WebNetworkImage(imageUrl: imageUrl!,  fit: BoxFit.cover))))
               : Container(),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),
@@ -3953,11 +3990,11 @@ class _GroupReactionsState extends State<GroupReactionsLayout> with Notification
                   color: Styles().colors.background,
                   borderRadius: BorderRadius.all(Radius.circular(15)),
                   border: Border.all(color: Styles().colors.surfaceAccent)),
-                child: InkWell(
+                child: Semantics(label: "Add Reaction", button: true, child: InkWell(
                     onTap: () => ReactionKeyboard.showEmojiBottomSheet(context: context, onSelect: _reactWithEmoji),
                     child: Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         child:Styles().images.getImage('add_emoji', excludeFromSemantics: true, size: 18, color: Styles().colors.mediumGray2))
-                )))),
+                ))))),
         ]
     );
   }

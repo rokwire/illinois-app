@@ -42,6 +42,7 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -709,7 +710,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     return Container(height: 200, color: Styles().colors.background, child:
       Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           Positioned.fill(child: (_imageUrl != null) ?
-            WebNetworkImage(imageUrl: _imageUrl, excludeFromSemantics: true, fit: BoxFit.cover) : Container()
+            AccessibleImageHolder(child: WebNetworkImage(imageUrl: _imageUrl, excludeFromSemantics: true, fit: BoxFit.cover)) : Container()
           ),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child: Container(height: 30)),
