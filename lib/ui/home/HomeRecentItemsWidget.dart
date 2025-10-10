@@ -102,7 +102,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
               _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
               _pageViewKey = UniqueKey();
               // _pageController = null;
-              if (_recentItems?.isNotEmpty == true) {
+              if ((_recentItems?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
                 _pageController?.jumpToPage(0);
               }
             });

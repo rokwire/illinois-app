@@ -178,7 +178,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
         _promotedItems = promotedItems;
         _pageViewKey = UniqueKey();
         // _pageController = null;
-        if (_promotedItems?.isNotEmpty == true) {
+        if ((_promotedItems?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
           _pageController?.jumpToPage(0);
         }
         _contentKeys.clear();

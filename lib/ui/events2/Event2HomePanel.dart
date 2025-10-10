@@ -24,6 +24,7 @@ import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/map2/Map2HomeExts.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/events2/Event2SearchPanel.dart';
@@ -521,7 +522,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
     _types = widget.types ?? LinkedHashSetUtils.from<Event2TypeFilter>(Event2TypeFilterListImpl.listFromJson(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
     _attributes = widget.attributes ?? Storage().events2Attributes ?? <String, dynamic>{};
-    _sortType = widget.sortType ?? event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
+    _sortType = widget.sortType ?? Event2SortTypeAppImpl.fromStorage() ?? Event2SortTypeAppImpl.defaultSortType;
 
     _initLocationServicesStatus().then((_) {
       _ensureCurrentLocation();
@@ -1018,7 +1019,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       groupings: Event2Grouping.individualEvents(),
       attributes: _attributes,
       sortType: _sortType,
-      sortOrder: ((_timeFilter == Event2TimeFilter.past) && (_sortType == Event2SortType.dateTime)) ? Event2SortOrder.descending : Event2SortOrder.ascending,
+      sortOrder: Event2SortOrderImpl.defaultFrom(sortType: _sortType, timeFilter: _timeFilter),
       location: _currentLocation,
     );
   } 

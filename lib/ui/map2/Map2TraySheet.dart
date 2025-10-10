@@ -73,7 +73,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
           SliverAppBar(
             pinned: true,
             toolbarHeight: _traySheetDragHandleHeight + _traySheetPadding.height,
-            backgroundColor: Colors.transparent,
+            backgroundColor: _traySheetBackgroundColor,
             title: _traySheetHeading,
           ),
           //SliverPadding(padding: EdgeInsets.only(top: 42), sliver:
@@ -85,10 +85,11 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
     );
 
   BoxDecoration get _traySheetDecoration => BoxDecoration(
-    color: Styles().colors.background,
+    color: _traySheetBackgroundColor,
     borderRadius: _traySheetBorderRadius,
     boxShadow: [_traySheetBoxShadow],
   );
+  Color get _traySheetBackgroundColor => Styles().colors.background;
   BorderRadius get _traySheetBorderRadius => BorderRadius.vertical(top: Radius.circular(_traySheetTopRadius));
   BoxShadow get _traySheetBoxShadow => BoxShadow(color: Styles().colors.blackTransparent018 /* Colors.black26 */, blurRadius: 12.0,);
 

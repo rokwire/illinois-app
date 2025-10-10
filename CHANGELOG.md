@@ -5,11 +5,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Maps2: Hide Laundry Rooms [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: Match the tray heading's background color to the tray content's [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: Trim the search term [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+### Fixed
+- Check whether page controller is attached before attemptuing to jump on contenet update in Home/Favorites page widgets.
+
+## [7.3.10] - 2025-10-09
+### Fixed
+- Map2: Fixes and cleanup [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+### Added
+- Add alt text field for image uploads [#4836](https://github.com/rokwire/illinois-app/issues/4836).
+
+## [7.3.9] - 2025-10-08
 ### Fixed
 - Assistant: fixed color and padding for "Copy" context button in iOS [#5391](https://github.com/rokwire/illinois-app/issues/5391).
+- Map2: Fixes and cleanup [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 ### Added
 - Add file attachments to conversation messages [#5378](https://github.com/rokwire/illinois-app/issues/5378).=======
 - Map2: Added Storied Sites [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Map2: Added content messages [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Assistant: Show campus buildings as UI fragments [#5430](https://github.com/rokwire/illinois-app/issues/5430).
+### Changed
+- Do not pop to home panel when switching tabs to Assistant or Wallet [#5368](https://github.com/rokwire/illinois-app/issues/5368).
 
 ## [7.3.8] - 2025-10-06
 ### Added
