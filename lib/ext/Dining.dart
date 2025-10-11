@@ -42,4 +42,7 @@ extension DiningSchedulesFilter on Iterable<DiningSchedule> {
 
 extension PaymentTypeImpl on PaymentType {
   String get displayTitle => PaymentTypeHelper.paymentTypeToDisplayString(this) ?? '';
+
+  static PaymentType? fromJson(String? value) => PaymentTypeHelper.paymentTypeFromString(value);
+  String? toJson() => PaymentTypeHelper.paymentTypeToString(this);
 }
