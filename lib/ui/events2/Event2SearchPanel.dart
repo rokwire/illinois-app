@@ -25,6 +25,7 @@ import 'package:http/http.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
@@ -32,7 +33,6 @@ import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/map2/Map2HomeExts.dart';
-import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -584,7 +584,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> with Notification
       Navigator.of(context).pop((0 < (_totalEventsCount ?? 0)) ? _searchText : null);
     }
     else {
-      NotificationService().notify(Map2HomePanel.notifySelect, Map2FilterEvents2Param(_searchText ?? ''));
+      NotificationService().notify(Map2.notifySelect, Map2FilterEvents2Param(_searchText ?? ''));
     }
   }
 

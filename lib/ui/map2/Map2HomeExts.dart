@@ -3,11 +3,14 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/map2/Map2HomeFilters.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 extension Map2ContentTypeImpl on Map2ContentType {
 
@@ -52,6 +55,8 @@ extension Map2ContentTypeImpl on Map2ContentType {
   static Map2ContentType? selectParamType(dynamic param) {
     if (param is Map2ContentType) {
       return param;
+    } else if (param is Map2DeepLinkSelectParam) {
+      return param.contentType;
     } else if (param is Map2FilterEvents2Param) {
       return Map2ContentType.Events2;
     } else if (param is Map2FilterBusStopsParam) {
@@ -280,4 +285,14 @@ class Map2FilterBusStopsParam {
   final String searchText;
   final bool starred;
   Map2FilterBusStopsParam({this.searchText = '', this.starred = false});
+}
+
+extension Map2DeepLinkSelectUrlParam on Map2DeepLinkSelectParam {
+  Map2ContentType? get contentType => Map2ContentTypeImpl.fromJson(params['contentType']);
+  Map2Filter? get filter => Map2Filter.fromJson(JsonUtils.decodeMap(params['filter']), contentType: contentType);
+
+  static Map<String, String?> buildUrlParam({Map2ContentType? contentType, Map2Filter? filter}) => <String, String?>{
+    'contentType': contentType?.toJson(),
+    'filter': JsonUtils.encode(filter?.toJson()),
+  };
 }

@@ -29,6 +29,7 @@ import 'package:illinois/service/Auth2.dart' as uiuc;
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Gateway.dart';
+import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/service/Wellness.dart';
@@ -234,7 +235,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       HomePanel.notifySelect,
       HomeFavoritesPanel.notifySelect,
       BrowsePanel.notifySelect,
-      Map2HomePanel.notifySelect,
+      Map2.notifySelect,
       Auth2.notifyLogout,
 
       uiuc.TabBar.notifySelectionChanged,
@@ -593,7 +594,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == BrowsePanel.notifySelect) {
       _onSelectTab(RootTab.Browse);
     }
-    else if (name == Map2HomePanel.notifySelect) {
+    else if (name == Map2.notifySelect) {
       _onSelectMaps2(param);
     }
     else if (name == Auth2.notifyLogout) {
@@ -1168,7 +1169,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   void _onFirebaseMap2Notification(Map2ContentType mapType) {
-    NotificationService().notify(Map2HomePanel.notifySelect, mapType);
+    NotificationService().notify(Map2.notifySelect, mapType);
   }
 
   void _onFirebaseInboxNotification() {

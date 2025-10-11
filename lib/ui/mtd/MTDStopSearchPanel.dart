@@ -8,8 +8,8 @@ import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/MTD.dart';
+import 'package:illinois/service/Map2.dart';
 import 'package:illinois/ui/map2/Map2HomeExts.dart';
-import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
@@ -304,7 +304,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> with Notificati
       Navigator.of(context).pop((_searchText?.isNotEmpty == true) ? _searchText : _searchController.text);
     }
     else {
-      NotificationService().notify(Map2HomePanel.notifySelect, Map2FilterBusStopsParam(searchText: _searchText ?? '', starred: widget.scope.starred ));
+      NotificationService().notify(Map2.notifySelect, Map2FilterBusStopsParam(searchText: _searchText ?? '', starred: widget.scope.starred ));
     }
   }
 

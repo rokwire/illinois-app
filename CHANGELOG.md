@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Maps2: Deep Links support [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 ### Changed
 - Maps2: Hide Laundry Rooms [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 - Maps2: Match the tray heading's background color to the tray content's [#5344](https://github.com/rokwire/illinois-app/issues/5344).
