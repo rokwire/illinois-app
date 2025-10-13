@@ -1011,6 +1011,21 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     pinned: _pinnedExplore,
   );
 
+  int? get _trayTotalCount {
+    if (_pinnedExplore != null) {
+      return null;
+    }
+    else if (_selectedExploreGroup != null) {
+      return (_filteredExplores ?? _explores)?.length;
+    }
+    else if (_selectedContentType?.supportsManualFilters == true) {
+      return _explores?.length;
+    }
+    else {
+      return null;
+    }
+  }
+
   void _updateTrayExplores() {
     List<Explore>? trayExplores = _buildTrayExplores();
     if (mounted && !DeepCollectionEquality().equals(_trayExplores, trayExplores)) {
@@ -1045,18 +1060,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           }
         });
       }
-    }
-  }
-
-  int? get _trayTotalCount {
-    if (_pinnedExplore != null) {
-      return 1;
-    }
-    else if (_selectedContentType?.supportsManualFilters == true) {
-      return (_filteredExplores ?? _explores)?.length;
-    }
-    else {
-      return null;
     }
   }
 }
