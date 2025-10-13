@@ -259,7 +259,7 @@ class Map2CampusBuildingsFilter extends Map2Filter {
     }
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMark}";
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
@@ -393,7 +393,7 @@ class Map2DiningLocationsFilter extends Map2Filter {
     }
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMark}";
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
@@ -478,7 +478,7 @@ class Map2Events2Filter extends Map2Filter {
 
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMark}";
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
 
@@ -542,7 +542,7 @@ class Map2LaundryRoomsFilter extends Map2Filter {
     }
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMark}";
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
@@ -607,7 +607,7 @@ class Map2BusStopsFilter extends Map2Filter {
     }
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMark}";
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
@@ -704,7 +704,7 @@ class Map2StoriedSitesFilter extends Map2Filter {
     }
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMark}";
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
@@ -761,7 +761,7 @@ class Map2MyLocationsFilter extends Map2Filter {
     }
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMark}";
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {

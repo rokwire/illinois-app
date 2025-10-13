@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Maps2: Match the tray heading's background color to the tray content's [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 - Maps2: Trim the search term [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 - Maps2: updated tray content collection logic [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: updated sort order indicator [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 ### Fixed
 - Check whether page controller is attached before attempting to jump on content update in Home/Favorites page widgets.
 - Maps2: fixed POI card update title processing when POI is not a favorite [#5344](https://github.com/rokwire/illinois-app/issues/5344).

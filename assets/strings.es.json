@@ -485,10 +485,12 @@
     "model.map2.sort_type.proximity": "Proximity",
 
     "model.map2.sort_order.ascending": "Ascending",
-    "model.map2.sort_order.ascending.mnemo": "Asc",
-    "model.map2.sort_order.ascending.mark": "↓",
     "model.map2.sort_order.descending": "Descending",
-    "model.map2.sort_order.descending.mnemo": "Desc",
+    "model.map2.sort_order.ascending.abbr": "Asc",
+    "model.map2.sort_order.descending.abbr": "Desc",
+    "model.map2.sort_order.ascending.alphabetical.abbr": "A-Z",
+    "model.map2.sort_order.descending.alphabetical.abbr": "Z-A",
+    "model.map2.sort_order.ascending.mark": "↓",
     "model.map2.sort_order.descending.mark": "↑",
 
     "model.map2.terms.selection.mark": "✓",

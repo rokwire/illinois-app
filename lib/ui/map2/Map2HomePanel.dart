@@ -1725,15 +1725,14 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       if ((_selectedContentType?.supportsSortType(sortType) == true) &&
           ((sortType != Map2SortType.proximity) || locationAvailable)
       ) {
-        String itemMarker = (_selectedSortType == sortType) ? _selectedSortOrder.displayMark : '';
+        String itemText = (_selectedSortType == sortType) ? '${sortType.displayTitle} ${_selectedSortOrder.displayIndicator(sortType)}' : sortType.displayTitle;
         TextStyle? itemTextStyle = (_selectedSortType == sortType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
         items.add(AccessibleDropDownMenuItem<Map2SortType>(key: ObjectKey(sortType), value: sortType, child:
           Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true, child:
             Row(children: [
               Expanded(child:
-                Text(sortType.displayTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,)
+                Text(itemText, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,)
               ),
-              Text(itemMarker, semanticsLabel: '', style: itemTextStyle,)
             ],)
           )
         ));
@@ -1747,7 +1746,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     for (Map2SortType sortType in Map2SortType.values) {
       final Size sizeFull = (TextPainter(
           text: TextSpan(
-            text: "${sortType.displayTitle} ${Map2SortOrder.ascending.displayMark}" ,
+            text: "${sortType.displayTitle} ${Map2SortOrder.ascending.displayIndicator(sortType)}" ,
             style: _dropdownEntrySelectedTextStyle,
           ),
           textScaler: MediaQuery.of(context).textScaler,

@@ -222,6 +222,13 @@ extension Map2SortOrderImpl on Map2SortOrder {
     }
   }
 
+  String displayIndicator(Map2SortType sortType) {
+    switch(sortType) {
+      case Map2SortType.alphabetical: return displayAlphabeticalAbbr;
+      default: return displayAbbr;
+    }
+  }
+
   String get displayTitle {
     switch (this) {
       case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending', 'Ascending');
@@ -231,8 +238,15 @@ extension Map2SortOrderImpl on Map2SortOrder {
 
   String get displayAbbr {
     switch (this) {
-      case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending.mnemo', 'Asc');
-      case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.descending.mnemo', 'Desc');
+      case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending.abbr', 'Asc');
+      case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.descending.abbr', 'Desc');
+    }
+  }
+
+  String get displayAlphabeticalAbbr {
+    switch (this) {
+      case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending.alphabetical.abbr', 'A-Z');
+      case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.descending.alphabetical.abbr', 'Z-A');
     }
   }
 
