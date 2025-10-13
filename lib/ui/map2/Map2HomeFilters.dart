@@ -308,6 +308,28 @@ class Map2StudentCoursesFilter extends Map2Filter {
 
   @override
   bool get hasFilter => (termId?.isNotEmpty == true) || super.hasFilter;
+
+  /* No description bar for Student Courses
+  @override
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores, bool canSort = false }) {
+    LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
+    String? selectedTerm = termName;
+    if ((selectedTerm != null) && selectedTerm.isNotEmpty) {
+      String termKey = Localization().getStringEx('panel.map2.filter.term.text', 'Term');
+      descriptionMap[termKey] = <String>[selectedTerm];
+    }
+    if (canSort) {
+      String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
+      descriptionMap[sortKey] = <String>[sortValue];
+    }
+    if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.student_courses.text', 'Courses');
+      String buildingsValue = filteredExplores.length.toString();
+      descriptionMap[buildingsKey] = <String>[buildingsValue];
+    }
+    return descriptionMap;
+  }*/
 }
 
 class Map2DiningLocationsFilter extends Map2Filter {
