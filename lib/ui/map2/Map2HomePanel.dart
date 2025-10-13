@@ -39,6 +39,7 @@ import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
+import 'package:illinois/ui/map2/Map2ExplorePOICard.dart';
 import 'package:illinois/ui/map2/Map2FilterBuildingAmenitiesPanel.dart';
 import 'package:illinois/ui/map2/Map2HomeExts.dart';
 import 'package:illinois/ui/map2/Map2HomeFilters.dart';
@@ -171,6 +172,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2UserPrefs.notifyFavoriteReplaced,
+      Map2ExplorePOICard.notifyPOIUpdated,
       Map2.notifySelect,
       FlexUI.notifyChanged,
     ]);
@@ -222,6 +224,15 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       }
     }
     else if (name == Auth2UserPrefs.notifyFavoriteReplaced) {
+      if ((_selectedContentType == Map2ContentType.MyLocations) && (param is Pair) && mounted) {
+        Explore? oldExplore = JsonUtils.cast(param.left);
+        Explore? newExplore = JsonUtils.cast(param.right);
+        if ((oldExplore != null) && (newExplore != null)) {
+          _onExplorePOIUpdate(oldExplore, newExplore);
+        }
+      }
+    }
+    else if (name == Map2ExplorePOICard.notifyPOIUpdated) {
       if ((_selectedContentType == Map2ContentType.MyLocations) && (param is Pair) && mounted) {
         Explore? oldExplore = JsonUtils.cast(param.left);
         Explore? newExplore = JsonUtils.cast(param.right);
