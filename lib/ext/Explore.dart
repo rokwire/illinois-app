@@ -502,22 +502,6 @@ extension ExploreMap on Explore {
     return validExplores;
   }
 
-  static int? validCountFromList(List<Explore>? explores) {
-    if (explores != null) {
-      int validCount = 0;
-      for (Explore explore in explores) {
-        ExploreLocation? exploreLocation = explore.exploreLocation;
-        if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
-          validCount++;
-        }
-      }
-      return validCount;
-    }
-    else {
-      return null;
-    }
-  }
-
   static LatLngBounds? boundsOfList(List<Explore>? explores) {
     double? minLat, minLng, maxLat, maxLng;
     if (explores != null) {
@@ -609,6 +593,20 @@ extension ExploreMap on Explore {
 
 }
 
+extension ExploreListMap on Iterable<Explore> {
+
+  List<Explore> get validList {
+    List<Explore> result = <Explore>[];
+    for (Explore explore in this) {
+      if (explore.exploreLocation?.isLocationCoordinateValid == true) {
+        result.add(explore);
+      }
+    }
+    return result;
+  }
+
+}
+
 extension ExploreLocationExp on ExploreLocation {
 
   String? get displayName {
@@ -688,6 +686,7 @@ extension ExplorePOIFilter on ExplorePOI {
       (location?.matchSearchTextLowerCase(searchLowerCase) == true)
     ));
 }
+
 
 
 enum ExploreSelectLocationContext { card, detail }

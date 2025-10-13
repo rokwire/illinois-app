@@ -754,7 +754,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         explores: _trayExplores,
         scrollController: scrollController,
         currentLocation: _currentLocation,
-        totalCount: (_pinnedExplore != null) ? 1 : ExploreMap.validCountFromList(_filteredExplores ?? _explores),
+        totalCount: _trayTotalCount,
         analyticsFeature: widget.analyticsFeature,
       ),
     );
@@ -801,12 +801,13 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         List<Explore>? explores = await exploresTask;
 
         if (mounted && (exploresTask == _exploresTask)) {
-          List<Explore>? filteredExplores = _filterExplores(explores);
+          List<Explore>? validExplores = explores?.validList;
+          List<Explore>? filteredExplores = _filterExplores(validExplores);
           await _buildMapContentData(filteredExplores, updateCamera: true);
 
           if (mounted && (exploresTask == _exploresTask)) {
             setState(() {
-              _explores = explores;
+              _explores = validExplores;
               _filteredExplores = filteredExplores;
               _exploresTask = null;
               _exploresProgress = null;
@@ -858,13 +859,14 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
         // wait for explores load
         List<Explore>? explores = await exploresTask;
-        List<Explore>? filteredExplores = _filterExplores(explores);
+        List<Explore>? validExplores = explores?.validList;
+        List<Explore>? filteredExplores = _filterExplores(validExplores);
 
         if (mounted && (exploresTask == _exploresTask)) {
           if (!DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
 
             setState(() {
-              _explores = explores;
+              _explores = validExplores;
               _filteredExplores = filteredExplores;
 
               if ((_pinnedExplore != null) && (explores?.contains(_pinnedExplore) == true)) {
@@ -921,7 +923,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     Gateway().loadBuildings();
 
   Future<List<Explore>?> _loadStudentCourses() async {
-    String? termId = StudentCourses().displayTermId;
+    String? termId = _studentCoursesFilter?.termId; // Force filter creation for valid tray content
     return (termId != null) ? await StudentCourses().loadCourses(termId: termId) : null;
   }
 
@@ -932,7 +934,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     Events2().loadEventsList(await _event2QueryParam());
 
   Future<Events2Query> _event2QueryParam() async {
-    // Force filter creation as it is the only one whost default and empty value differs
+    // Force filter creation for valid tray content
     Map2Events2Filter? filter = _events2Filter; // _events2FilterIfExists  ?? Map2Events2Filter.defaultFilter()
     return Events2Query(
       searchText: (filter?.searchText.isNotEmpty == true) ? filter?.searchText : null,
@@ -1043,6 +1045,18 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           }
         });
       }
+    }
+  }
+
+  int? get _trayTotalCount {
+    if (_pinnedExplore != null) {
+      return 1;
+    }
+    else if (_selectedContentType?.supportsManualFilters == true) {
+      return (_filteredExplores ?? _explores)?.length;
+    }
+    else {
+      return null;
     }
   }
 }
@@ -1424,7 +1438,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Widget get _termsButton =>
     MergeSemantics(key: _termsButtonKey, child:
-      Semantics(value: StudentCourses().displayTerm?.name, child:
+      Semantics(value: _studentCoursesFilterIfExists?.termName, child:
         DropdownButtonHideUnderline(child:
           DropdownButton2<StudentCourseTerm>(
             dropdownStyleData: DropdownStyleData(
@@ -1432,7 +1446,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
               padding: EdgeInsets.zero
             ),
         customButton: Map2FilterTextButton(
-          title: StudentCourses().displayTerm?.name ?? Localization().getStringEx('panel.map2.button.terms.title', 'Terms'),
+          title: _studentCoursesFilterIfExists?.termName ?? Localization().getStringEx('panel.map2.button.terms.title', 'Terms'),
           hint: Localization().getStringEx('panel.map2.button.terms.hint', 'Tap to choose term'),
           rightIcon: Styles().images.getImage('chevron-down'),
           //onTap: _onTerm,
@@ -1446,7 +1460,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   List<DropdownMenuItem<StudentCourseTerm>> _buildTermsDropdownItems() {
     List<DropdownMenuItem<StudentCourseTerm>> items = <DropdownMenuItem<StudentCourseTerm>>[];
-    String? displayTermId = StudentCourses().displayTermId;
+    String? displayTermId = _studentCoursesFilterIfExists?.termId;
     List<StudentCourseTerm>? terms = StudentCourses().terms;
     if (terms != null) {
       for (StudentCourseTerm term in terms) {
@@ -1491,7 +1505,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   void _onTerm(StudentCourseTerm? value) {
     Analytics().logSelect(target: 'Term: ${value?.name}');
     setStateIfMounted((){
-      StudentCourses().selectedTermId = value?.id;
+      _studentCoursesFilter?.termId = value?.id;
     });
     _onFiltersChanged();
   }
@@ -1785,6 +1799,9 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Map2CampusBuildingsFilter? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
   Map2CampusBuildingsFilter? get _campusBuildingsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: false));
+
+  Map2StudentCoursesFilter? get _studentCoursesFilter => JsonUtils.cast(_getFilter(Map2ContentType.StudentCourses, ensure: true));
+  Map2StudentCoursesFilter? get _studentCoursesFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.StudentCourses, ensure: false));
 
   Map2DiningLocationsFilter? get _diningLocationsFilter => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: true));
   Map2DiningLocationsFilter? get _diningLocationsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: false));

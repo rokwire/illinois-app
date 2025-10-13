@@ -16,6 +16,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/map2/Map2HomeExts.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
@@ -272,6 +273,11 @@ class Map2CampusBuildingsFilter extends Map2Filter {
 
 class Map2StudentCoursesFilter extends Map2Filter {
 
+  String? get termName => StudentCourses().displayTerm?.name;
+
+  String? get termId => StudentCourses().displayTermId;
+  set termId(String? value) => StudentCourses().selectedTermId = value;
+
   Map2StudentCoursesFilter._({
     String searchText = '',
     bool starred = false,
@@ -287,21 +293,21 @@ class Map2StudentCoursesFilter extends Map2Filter {
   factory Map2StudentCoursesFilter.defaultFilter() => Map2StudentCoursesFilter._();
   factory Map2StudentCoursesFilter.emptyFilter() => Map2StudentCoursesFilter._();
 
-  Map2StudentCoursesFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json);
-
-  @override
-  bool get _needsFilter => true; // To ensure explore locations
-
-  @override
-  List<Explore> _filter(List<Explore> explores) {
-    List<Explore> filtered = <Explore>[];
-    for (Explore explore in explores) {
-      if (explore.exploreLocation?.isLocationCoordinateValid == true) {
-        filtered.add(explore);
-      }
+  Map2StudentCoursesFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json) {
+    String? termId = JsonUtils.stringValue(json['termId']);
+    if (termId != null) {
+      this.termId = termId;
     }
-    return filtered;
   }
+
+  @override
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'termId': termId,
+    ...super.toJson(),
+  };
+
+  @override
+  bool get hasFilter => (termId?.isNotEmpty == true) || super.hasFilter;
 }
 
 class Map2DiningLocationsFilter extends Map2Filter {
@@ -451,20 +457,6 @@ class Map2Events2Filter extends Map2Filter {
 
   @override
   bool get hasFilter => event2Filter.isNotEmpty || super.hasFilter;
-
-  @override
-  bool get _needsFilter => true; // To ensure explore locations
-
-  @override
-  List<Explore> _filter(List<Explore> explores) {
-    List<Explore> filtered = <Explore>[];
-    for (Explore explore in explores) {
-      if (explore.exploreLocation?.isLocationCoordinateValid == true) {
-        filtered.add(explore);
-      }
-    }
-    return filtered;
-  }
 
   @override
   Map2SortOrder get expectedSortOrder =>
