@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Maps2: Trim the search term [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 ### Fixed
 - Check whether page controller is attached before attempting to jump on content update in Home/Favorites page widgets.
+- WEB: showing group network images.
 
 ## [7.3.10] - 2025-10-09
 ### Fixed
