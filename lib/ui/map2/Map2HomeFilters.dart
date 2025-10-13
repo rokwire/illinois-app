@@ -419,7 +419,7 @@ class Map2DiningLocationsFilter extends Map2Filter {
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.dinings.text', 'Dining Locations');
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.dinings.text', 'Locations');
       String buildingsValue = filteredExplores.length.toString();
       descriptionMap[buildingsKey] = <String>[buildingsValue];
     }
@@ -568,7 +568,7 @@ class Map2LaundryRoomsFilter extends Map2Filter {
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.laundry_rooms.text', 'Laundry Rooms');
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.laundry_rooms.text', 'Laundries');
       String buildingsValue = filteredExplores.length.toString();
       descriptionMap[buildingsKey] = <String>[buildingsValue];
     }
@@ -633,7 +633,7 @@ class Map2BusStopsFilter extends Map2Filter {
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.bus_stops.text', 'Bus Stops');
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.bus_stops.text', 'Stops');
       String buildingsValue = filteredExplores.length.toString();
       descriptionMap[buildingsKey] = <String>[buildingsValue];
     }
@@ -730,7 +730,7 @@ class Map2StoriedSitesFilter extends Map2Filter {
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.storied_sites.text', 'Storied Sites');
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.storied_sites.text', 'Sites');
       String buildingsValue = filteredExplores.length.toString();
       descriptionMap[buildingsKey] = <String>[buildingsValue];
     }
@@ -787,7 +787,7 @@ class Map2MyLocationsFilter extends Map2Filter {
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.my_locations.text', 'My Locations');
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.my_locations.text', 'Locations');
       String buildingsValue = filteredExplores.length.toString();
       descriptionMap[buildingsKey] = <String>[buildingsValue];
     }
