@@ -230,7 +230,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> w
             _sportEvents = events;
             _pageViewKey = UniqueKey();
             // _pageController = null;
-            if (_sportEvents?.isNotEmpty == true) {
+            if ((_sportEvents?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
               _pageController?.jumpToPage(0);
             }
             _contentKeys.clear();

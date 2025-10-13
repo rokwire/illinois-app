@@ -40,9 +40,6 @@ class Map2Filter {
     this.sortOrder = defaultSortOrder,
   });
 
-  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores, bool canSort = false }) =>
-    LinkedHashMap<String, List<String>>();
-
   static Map2Filter? defaultFromContentType(Map2ContentType? contentType) {
     switch (contentType) {
       case Map2ContentType.CampusBuildings:      return Map2CampusBuildingsFilter.defaultFilter();
@@ -72,6 +69,40 @@ class Map2Filter {
       default: return null;
     }
   }
+
+
+  static Map2Filter? fromJson(Map<String, dynamic>? json, { Map2ContentType? contentType }) {
+    if ((json != null) & (contentType != null)) {
+      switch (contentType) {
+        case Map2ContentType.CampusBuildings:      return Map2CampusBuildingsFilter._fromJson(json!);
+        case Map2ContentType.StudentCourses:       return Map2StudentCoursesFilter._fromJson(json!);
+        case Map2ContentType.DiningLocations:      return Map2DiningLocationsFilter._fromJson(json!);
+        case Map2ContentType.Events2:              return Map2Events2Filter._fromJson(json!);
+        case Map2ContentType.LaundryRooms:         return Map2LaundryRoomsFilter._fromJson(json!);
+        case Map2ContentType.BusStops:             return Map2BusStopsFilter._fromJson(json!);
+        case Map2ContentType.Therapists:           return null;
+        case Map2ContentType.StoriedSites:         return Map2StoriedSitesFilter._fromJson(json!);
+        case Map2ContentType.MyLocations:          return Map2MyLocationsFilter._fromJson(json!);
+        default: return null;
+      }
+    }
+    else {
+      return null;
+    }
+  }
+
+  Map2Filter._fromJson(Map<String, dynamic> json) :
+    searchText = JsonUtils.stringValue(json['search']) ?? '',
+    starred = JsonUtils.boolValue(json['starred']) ?? false,
+    sortType = Map2SortTypeImpl.fromJson(json['sortType']) ?? defaultSortType,
+    sortOrder = Map2SortOrderImpl.fromJson(json['sortOrder']) ?? defaultSortOrder;
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'search': searchText,
+    'starred': starred,
+    'sortType': sortType.toJson(),
+    'sortOrder': sortOrder.toJson(),
+  };
 
   // Filter
 
@@ -127,6 +158,26 @@ class Map2Filter {
     explores.sort((Explore explore1, Explore explore2) =>
       SortUtils.compare(explore1.exploreDateTimeUtc, explore2.exploreDateTimeUtc, descending: (sortOrder == Map2SortOrder.descending))
     );
+
+  // Description
+
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores, bool canSort = false }) =>
+    LinkedHashMap<String, List<String>>();
+
+  String descriptionText({ List<Explore>? explores, bool canSort = false }) {
+    String result = "";
+    LinkedHashMap<String, List<String>> data = description(null, explores: explores, canSort: canSort);
+    for (String category in data.keys) {
+      List<String>? categoryList = data[category];
+      if ((categoryList != null) && categoryList.isEmpty) {
+        if (result.isNotEmpty) {
+          result += "; ";
+        }
+        result += "$category: ${categoryList.join(',')}";
+      }
+    }
+    return result;
+  }
 }
 
 class Map2CampusBuildingsFilter extends Map2Filter {
@@ -154,12 +205,22 @@ class Map2CampusBuildingsFilter extends Map2Filter {
     amenityIds: LinkedHashSet<String>(),
   );
 
+  Map2CampusBuildingsFilter._fromJson(Map<String, dynamic> json) :
+    amenityIds = LinkedHashSetUtils.from(JsonUtils.listStringsValue(json['amenityIds'])) ?? LinkedHashSet<String>(),
+    super._fromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'amenityIds': amenityIds.toList(growable: false),
+    ...super.toJson(),
+  };
+
   @override
   bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (amenityIds.isNotEmpty == true));
 
   @override
   List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
+    String? searchLowerCase = searchText.trim().toLowerCase();
     List<Explore> filtered = <Explore>[];
     for (Explore explore in explores) {
       if ((explore is Building) &&
@@ -221,6 +282,8 @@ class Map2StudentCoursesFilter extends Map2Filter {
   factory Map2StudentCoursesFilter.defaultFilter() => Map2StudentCoursesFilter._();
   factory Map2StudentCoursesFilter.emptyFilter() => Map2StudentCoursesFilter._();
 
+  Map2StudentCoursesFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json);
+
   @override
   bool get _hasFilter => true;
 
@@ -260,12 +323,24 @@ class Map2DiningLocationsFilter extends Map2Filter {
   factory Map2DiningLocationsFilter.defaultFilter() => Map2DiningLocationsFilter._();
   factory Map2DiningLocationsFilter.emptyFilter() => Map2DiningLocationsFilter._();
 
+  Map2DiningLocationsFilter._fromJson(Map<String, dynamic> json) :
+    onlyOpened = JsonUtils.boolValue(json['onlyOpened']) ?? false,
+    paymentType = PaymentTypeImpl.fromJson(JsonUtils.stringValue(json['paymentType'])),
+    super._fromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'onlyOpened': onlyOpened,
+    'paymentType': paymentType?.toJson(),
+    ...super.toJson(),
+  };
+
   @override
   bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (onlyOpened != false) || (paymentType != null));
 
   @override
   List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
+    String? searchLowerCase = searchText.trim().toLowerCase();
     List<Explore> filtered = <Explore>[];
     for (Explore explore in explores) {
       if ((explore is Dining) &&
@@ -346,7 +421,7 @@ class Map2Events2Filter extends Map2Filter {
   }
 
   factory Map2Events2Filter.emptyFilter() {
-    Event2FilterParam eventFilter = Event2FilterParam(timeFilter: Event2TimeFilter.upcoming,);
+    Event2FilterParam eventFilter = Event2FilterParam.defaultFilterParam;
     Event2SortType sortType = Event2SortType.dateTime;
     Event2SortOrder sortOrder = Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: eventFilter.timeFilter) ?? Event2SortOrderAppImpl.defaultSortOrder;
     return Map2Events2Filter._(
@@ -355,6 +430,16 @@ class Map2Events2Filter extends Map2Filter {
       sortOrder: Map2SortOrderImpl.fromEvent2SortOrder(sortOrder),
     );
   }
+
+  Map2Events2Filter._fromJson(Map<String, dynamic> json) :
+    event2Filter = Event2FilterParam.fromJson(JsonUtils.mapValue(json['event2Filter'])) ?? Event2FilterParam.defaultFilterParam,
+    super._fromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'event2Filter': event2Filter.toJson(),
+    ...super.toJson(),
+  };
 
   @override
   bool get _hasFilter => true;
@@ -421,12 +506,14 @@ class Map2LaundryRoomsFilter extends Map2Filter {
   factory Map2LaundryRoomsFilter.defaultFilter() => Map2LaundryRoomsFilter._();
   factory Map2LaundryRoomsFilter.emptyFilter() => Map2LaundryRoomsFilter._();
 
+  Map2LaundryRoomsFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json);
+
   @override
   bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true));
 
   @override
   List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
+    String? searchLowerCase = searchText.trim().toLowerCase();
     List<Explore> filtered = <Explore>[];
     for (Explore explore in explores) {
       if ((explore is LaundryRoom) &&
@@ -484,12 +571,14 @@ class Map2BusStopsFilter extends Map2Filter {
   );
   factory Map2BusStopsFilter.emptyFilter() => Map2BusStopsFilter._();
 
+  Map2BusStopsFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json);
+
   @override
   bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true));
 
   @override
   List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
+    String? searchLowerCase = searchText.trim().toLowerCase();
     List<Explore> filtered = <Explore>[];
     for (Explore explore in explores) {
       if ((explore is MTDStop) &&
@@ -555,12 +644,24 @@ class Map2StoriedSitesFilter extends Map2Filter {
     tags: LinkedHashSet<String>()
   );
 
+  Map2StoriedSitesFilter._fromJson(Map<String, dynamic> json) :
+    tags = LinkedHashSetUtils.from(JsonUtils.listStringsValue(json['tags'])) ?? LinkedHashSet<String>(),
+    onlyVisited = JsonUtils.boolValue(json['onlyVisited']) ?? false,
+    super._fromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'tags': tags.toList(growable: false),
+    'onlyVisited': onlyVisited,
+    ...super.toJson(),
+  };
+
   @override
   bool get _hasFilter => ((searchText.isNotEmpty == true) || (onlyVisited == true) || (tags.isNotEmpty == true));
 
   @override
   List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
+    String? searchLowerCase = searchText.trim().toLowerCase();
     List<Explore> filtered = <Explore>[];
     for (Explore explore in explores) {
       if ((explore is Place) &&
@@ -626,12 +727,14 @@ class Map2MyLocationsFilter extends Map2Filter {
   factory Map2MyLocationsFilter.defaultFilter() => Map2MyLocationsFilter._();
   factory Map2MyLocationsFilter.emptyFilter() => Map2MyLocationsFilter._();
 
+  Map2MyLocationsFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json);
+
   @override
   bool get _hasFilter => (searchText.isNotEmpty == true);
 
   @override
   List<Explore> _filter(List<Explore> explores) {
-    String? searchLowerCase = searchText.toLowerCase();
+    String? searchLowerCase = searchText.trim().toLowerCase();
     List<Explore> filtered = <Explore>[];
     for (Explore explore in explores) {
       if ((explore is ExplorePOI) &&

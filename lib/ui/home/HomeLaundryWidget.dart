@@ -221,7 +221,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
             _laundrySchool = laundrySchool;
             _pageViewKey = UniqueKey();
             // _pageController = null;
-            if (_laundrySchool?.rooms?.isNotEmpty == true) {
+            if ((_laundrySchool?.rooms?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
               _pageController?.jumpToPage(0);
             }
             _contentKeys.clear();

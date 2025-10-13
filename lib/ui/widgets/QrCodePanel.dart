@@ -11,10 +11,14 @@ import 'package:illinois/model/Building.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Gateway.dart';
+import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
+import 'package:illinois/ui/map2/Map2HomeExts.dart';
+import 'package:illinois/ui/map2/Map2HomeFilters.dart';
+import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
@@ -22,6 +26,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/places.dart' as places;
 import 'package:rokwire_plugin/service/events2.dart';
@@ -142,6 +147,19 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     }),
     saveFileName: 'SafeWalks ${DateTimeUtils.localDateTimeToString(DateTime.now())}',
     saveWatermarkText: Localization().getStringEx('model.safety.safewalks.title', 'SafeWalks'),
+    saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
+    description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
+  );
+
+  factory QrCodePanel.fromMap2Content({ Key? key, Map2ContentType? contentType, Map2Filter? filter, List<Explore>? explores, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
+    key: key,
+    deepLinkUrl: Map2.selectUrl(Map2DeepLinkSelectUrlParam.buildUrlParam(
+      contentType: contentType,
+      filter: filter
+    )),
+    saveFileName: 'Map2Filter - ${DateTimeUtils.localDateTimeToString(DateTime.now())}',
+    saveWatermarkText: ((contentType != null) ? "${contentType.displayTitle} " : '') + ("{ ${filter?.descriptionText(explores: explores) ?? ''} }"),
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
     description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),

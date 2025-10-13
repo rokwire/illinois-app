@@ -32,6 +32,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/MTD.dart';
+import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
@@ -45,6 +46,7 @@ import 'package:illinois/ui/map2/Map2TraySheet.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -73,7 +75,6 @@ typedef BuildMarkersTask = Future<Set<Marker>>;
 typedef MarkerIconsCache = Map<String, BitmapDescriptor>;
 
 class Map2HomePanel extends StatefulWidget with AnalyticsInfo {
-  static const String notifySelect = "edu.illinois.rokwire.map2.select";
   static const String selectParamKey = "select-param";
 
   final Map<String, dynamic> initParams = <String, dynamic>{};
@@ -91,7 +92,7 @@ class Map2HomePanel extends StatefulWidget with AnalyticsInfo {
   static bool get hasState => _state != null;
 
   static _Map2HomePanelState? get _state {
-    Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifySelect);
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(Map2.notifySelect);
     if (subscribers != null) {
       for (NotificationsListener subscriber in subscribers) {
         if ((subscriber is _Map2HomePanelState) && subscriber.mounted) {
@@ -170,7 +171,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2UserPrefs.notifyFavoriteReplaced,
-      Map2HomePanel.notifySelect,
+      Map2.notifySelect,
       FlexUI.notifyChanged,
     ]);
 
@@ -229,7 +230,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         }
       }
     }
-    else if (name == Map2HomePanel.notifySelect) {
+    else if (name == Map2.notifySelect) {
       _processSelectNotification(param);
     }
     else if (name == FlexUI.notifyChanged) {
@@ -565,6 +566,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   }
 
   void _initSelectNotificationFilters(dynamic param) {
+    if (param is Map2DeepLinkSelectParam) {
+      MapUtils.set(_filters, param.contentType, param.filter);
+    }
     if (param is Map2FilterEvents2Param) {
       _filters[Map2ContentType.Events2] = Map2Events2Filter.defaultFilter(
         searchText: param.searchText
@@ -1009,9 +1013,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       }
     }
   }
-
-  // API
-
 
 }
 
@@ -1824,7 +1825,13 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   //void _onFilterButtonsScroll() {}
 
   void _onShareFilter() {
-
+    Analytics().logSelect(target: "Share Filter");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromMap2Content(
+      contentType: _selectedContentType,
+      filter: _selectedFilterIfExists,
+      explores: _explores,
+      analyticsFeature: widget.analyticsFeature,
+    )));
   }
 
   void _onClearFilter() {

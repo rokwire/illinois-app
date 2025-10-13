@@ -18,6 +18,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -25,7 +26,6 @@ import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/map2/Map2HomeExts.dart';
-import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/events2/Event2SearchPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
@@ -1285,7 +1285,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   void _onMapView() {
     Analytics().logSelect(target: 'Map View');
-    NotificationService().notify(Map2HomePanel.notifySelect, Map2FilterEvents2Param());
+    NotificationService().notify(Map2.notifySelect, Map2FilterEvents2Param());
   }
 
   void _onEvent(Event2 event) {
@@ -1345,13 +1345,15 @@ const String eventTimeContentAttributeId = 'event-time';
 class Event2FilterParam {
   static const String notifyChanged = "edu.illinois.rokwire.event2.home.filters.changed";
 
+  static const Event2FilterParam defaultFilterParam = Event2FilterParam(timeFilter: Event2TimeFilter.upcoming,);
+
   final Event2TimeFilter? timeFilter;
   final TZDateTime? customStartTime;
   final TZDateTime? customEndTime;
   final LinkedHashSet<Event2TypeFilter>? types;
   final Map<String, dynamic>? attributes;
 
-  Event2FilterParam({
+  const Event2FilterParam({
     this.timeFilter, this.customStartTime, this.customEndTime,
     this.types, this.attributes,
   });
@@ -1375,6 +1377,22 @@ class Event2FilterParam {
     MapUtils.add(uriParams, 'attributes', JsonUtils.encode(attributes));
     return uriParams;
   }
+
+  static Event2FilterParam? fromJson(Map<String, dynamic>? json) => (json != null) ? Event2FilterParam(
+    timeFilter: Event2TimeFilterImpl.fromJson(JsonUtils.stringValue(json['time_filter'])),
+    customStartTime: TZDateTimeExt.fromJson(JsonUtils.mapValue(json['custom_start_time'])),
+    customEndTime: TZDateTimeExt.fromJson(JsonUtils.mapValue(json['custom_end_time'])),
+    types: LinkedHashSetUtils.from(Event2TypeFilterListImpl.listFromJson(JsonUtils.listStringsValue(json['types']))),
+    attributes: JsonUtils.mapValue(json['attributes']),
+  ) : null;
+
+  Map<String, dynamic> toJson() => {
+    'time_filter': timeFilter?.toJson(),
+    'custom_start_time': customStartTime?.toJson(),
+    'custom_end_time': customEndTime?.toJson(),
+    'types': types?.toJson(),
+    'attributes': attributes,
+  };
 
   factory Event2FilterParam.fromAttributesSelection(Map<String, dynamic> selection, { required ContentAttributes? contentAttributes }) {
     TZDateTime? customStartTime, customEndTime;

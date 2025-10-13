@@ -1145,7 +1145,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
 
       _pageViewKey = UniqueKey();
       // _pageController = null;
-      if (_displayCodes?.isNotEmpty == true) {
+      if ((_displayCodes?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
         _pageController?.jumpToPage(0);
       }
     }

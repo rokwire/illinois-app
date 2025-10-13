@@ -290,7 +290,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
     _pageViewKey = UniqueKey();
     // _pageController = null;
-    if (_favoriteCommands?.isNotEmpty == true) {
+    if ((_favoriteCommands?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
       _pageController?.jumpToPage(0);
     }
     _contentKeys.clear();
