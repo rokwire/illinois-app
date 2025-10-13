@@ -10,8 +10,11 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Map2ExplorePOICard extends StatefulWidget {
+  static const String notifyPOIUpdated = "edu.illinois.rokwire.explore.poi.updated";
+
   final ExplorePOI explorePOI;
 
   Map2ExplorePOICard(this.explorePOI, { super.key,});
@@ -305,6 +308,9 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
       });
       if (Auth2().canFavorite && Auth2().isFavorite(oldExplorePOI)) {
         Auth2().prefs?.replaceFavorite(oldExplorePOI, newExplorePOI);
+      }
+      else {
+        NotificationService().notify(Map2ExplorePOICard.notifyPOIUpdated, Pair(oldExplorePOI, newExplorePOI));
       }
     }
   }

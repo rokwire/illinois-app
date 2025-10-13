@@ -16,6 +16,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/map2/Map2HomeExts.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
@@ -106,10 +107,12 @@ class Map2Filter {
 
   // Filter
 
-  List<Explore> filter(List<Explore> explores) =>
-    (explores.isNotEmpty && _hasFilter) ? _filter(explores) : explores;
+  bool get hasFilter => searchText.isNotEmpty || (starred == true);
 
-  bool get _hasFilter => false;
+  List<Explore> filter(List<Explore> explores) =>
+    (explores.isNotEmpty && _needsFilter) ? _filter(explores) : explores;
+
+  bool get _needsFilter => false;
 
   List<Explore> _filter(List<Explore> explores) => explores;
 
@@ -122,13 +125,13 @@ class Map2Filter {
 
   List<Explore> sort(Iterable<Explore> explores, { Position? position }) {
     List<Explore> sortedExplores = List<Explore>.from(explores);
-    if (explores.isNotEmpty && _hasSort) {
+    if (explores.isNotEmpty && _needsSort) {
       _sort(sortedExplores, position: position);
     }
     return sortedExplores;
   }
 
-  bool get _hasSort => true;
+  bool get _needsSort => true;
 
   void _sort(List<Explore> explores, { Position? position }) {
     switch (sortType) {
@@ -216,7 +219,10 @@ class Map2CampusBuildingsFilter extends Map2Filter {
   };
 
   @override
-  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (amenityIds.isNotEmpty == true));
+  bool get hasFilter => amenityIds.isNotEmpty || super.hasFilter;
+
+  @override
+  bool get _needsFilter => hasFilter;
 
   @override
   List<Explore> _filter(List<Explore> explores) {
@@ -253,7 +259,7 @@ class Map2CampusBuildingsFilter extends Map2Filter {
     }
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMark}";
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
@@ -266,6 +272,11 @@ class Map2CampusBuildingsFilter extends Map2Filter {
 }
 
 class Map2StudentCoursesFilter extends Map2Filter {
+
+  String? get termName => StudentCourses().displayTerm?.name;
+
+  String? get termId => StudentCourses().displayTermId;
+  set termId(String? value) => StudentCourses().selectedTermId = value;
 
   Map2StudentCoursesFilter._({
     String searchText = '',
@@ -282,21 +293,43 @@ class Map2StudentCoursesFilter extends Map2Filter {
   factory Map2StudentCoursesFilter.defaultFilter() => Map2StudentCoursesFilter._();
   factory Map2StudentCoursesFilter.emptyFilter() => Map2StudentCoursesFilter._();
 
-  Map2StudentCoursesFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json);
-
-  @override
-  bool get _hasFilter => true;
-
-  @override
-  List<Explore> _filter(List<Explore> explores) {
-    List<Explore> filtered = <Explore>[];
-    for (Explore explore in explores) {
-      if (explore.exploreLocation?.isLocationCoordinateValid == true) {
-        filtered.add(explore);
-      }
+  Map2StudentCoursesFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json) {
+    String? termId = JsonUtils.stringValue(json['termId']);
+    if (termId != null) {
+      this.termId = termId;
     }
-    return filtered;
   }
+
+  @override
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'termId': termId,
+    ...super.toJson(),
+  };
+
+  @override
+  bool get hasFilter => (termId?.isNotEmpty == true) || super.hasFilter;
+
+  /* No description bar for Student Courses
+  @override
+  LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { List<Explore>? explores, bool canSort = false }) {
+    LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
+    String? selectedTerm = termName;
+    if ((selectedTerm != null) && selectedTerm.isNotEmpty) {
+      String termKey = Localization().getStringEx('panel.map2.filter.term.text', 'Term');
+      descriptionMap[termKey] = <String>[selectedTerm];
+    }
+    if (canSort) {
+      String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
+      descriptionMap[sortKey] = <String>[sortValue];
+    }
+    if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.student_courses.text', 'Courses');
+      String buildingsValue = filteredExplores.length.toString();
+      descriptionMap[buildingsKey] = <String>[buildingsValue];
+    }
+    return descriptionMap;
+  }*/
 }
 
 class Map2DiningLocationsFilter extends Map2Filter {
@@ -336,7 +369,10 @@ class Map2DiningLocationsFilter extends Map2Filter {
   };
 
   @override
-  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (onlyOpened != false) || (paymentType != null));
+  bool get hasFilter => (onlyOpened == true) || (paymentType != null) || super.hasFilter;
+
+  @override
+  bool get _needsFilter => hasFilter;
 
   @override
   List<Explore> _filter(List<Explore> explores) {
@@ -379,11 +415,11 @@ class Map2DiningLocationsFilter extends Map2Filter {
     }
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMark}";
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.dinings.text', 'Dining Locations');
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.dinings.text', 'Locations');
       String buildingsValue = filteredExplores.length.toString();
       descriptionMap[buildingsKey] = <String>[buildingsValue];
     }
@@ -414,9 +450,9 @@ class Map2Events2Filter extends Map2Filter {
     Event2SortOrder sortOrder = Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: eventFilter.timeFilter) ?? Event2SortOrderAppImpl.defaultSortOrder;
     return Map2Events2Filter._(
       event2Filter: eventFilter,
+      searchText: searchText,
       sortType: Map2SortTypeImpl.fromEvent2SortType(sortType),
       sortOrder: Map2SortOrderImpl.fromEvent2SortOrder(sortOrder),
-      searchText: searchText,
     );
   }
 
@@ -442,18 +478,7 @@ class Map2Events2Filter extends Map2Filter {
   };
 
   @override
-  bool get _hasFilter => true;
-
-  @override
-  List<Explore> _filter(List<Explore> explores) {
-    List<Explore> filtered = <Explore>[];
-    for (Explore explore in explores) {
-      if (explore.exploreLocation?.isLocationCoordinateValid == true) {
-        filtered.add(explore);
-      }
-    }
-    return filtered;
-  }
+  bool get hasFilter => event2Filter.isNotEmpty || super.hasFilter;
 
   @override
   Map2SortOrder get expectedSortOrder =>
@@ -475,7 +500,7 @@ class Map2Events2Filter extends Map2Filter {
 
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMark}";
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
 
@@ -509,7 +534,7 @@ class Map2LaundryRoomsFilter extends Map2Filter {
   Map2LaundryRoomsFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json);
 
   @override
-  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true));
+  bool get _needsFilter => hasFilter;
 
   @override
   List<Explore> _filter(List<Explore> explores) {
@@ -539,11 +564,11 @@ class Map2LaundryRoomsFilter extends Map2Filter {
     }
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMark}";
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.laundry_rooms.text', 'Laundry Rooms');
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.laundry_rooms.text', 'Laundries');
       String buildingsValue = filteredExplores.length.toString();
       descriptionMap[buildingsKey] = <String>[buildingsValue];
     }
@@ -574,7 +599,7 @@ class Map2BusStopsFilter extends Map2Filter {
   Map2BusStopsFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json);
 
   @override
-  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true));
+  bool get _needsFilter => hasFilter;
 
   @override
   List<Explore> _filter(List<Explore> explores) {
@@ -604,11 +629,11 @@ class Map2BusStopsFilter extends Map2Filter {
     }
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMark}";
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.bus_stops.text', 'Bus Stops');
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.bus_stops.text', 'Stops');
       String buildingsValue = filteredExplores.length.toString();
       descriptionMap[buildingsKey] = <String>[buildingsValue];
     }
@@ -657,7 +682,10 @@ class Map2StoriedSitesFilter extends Map2Filter {
   };
 
   @override
-  bool get _hasFilter => ((searchText.isNotEmpty == true) || (onlyVisited == true) || (tags.isNotEmpty == true));
+  bool get hasFilter => tags.isNotEmpty || (onlyVisited == true) || super.hasFilter;
+
+  @override
+  bool get _needsFilter => hasFilter;
 
   @override
   List<Explore> _filter(List<Explore> explores) {
@@ -698,11 +726,11 @@ class Map2StoriedSitesFilter extends Map2Filter {
     }
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMark}";
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.storied_sites.text', 'Storied Sites');
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.storied_sites.text', 'Sites');
       String buildingsValue = filteredExplores.length.toString();
       descriptionMap[buildingsKey] = <String>[buildingsValue];
     }
@@ -730,7 +758,7 @@ class Map2MyLocationsFilter extends Map2Filter {
   Map2MyLocationsFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json);
 
   @override
-  bool get _hasFilter => (searchText.isNotEmpty == true);
+  bool get _needsFilter => hasFilter;
 
   @override
   List<Explore> _filter(List<Explore> explores) {
@@ -755,11 +783,11 @@ class Map2MyLocationsFilter extends Map2Filter {
     }
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayMark}";
+      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
       descriptionMap[sortKey] = <String>[sortValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
-      String buildingsKey = Localization().getStringEx('panel.map2.filter.my_locations.text', 'My Locations');
+      String buildingsKey = Localization().getStringEx('panel.map2.filter.my_locations.text', 'Locations');
       String buildingsValue = filteredExplores.length.toString();
       descriptionMap[buildingsKey] = <String>[buildingsValue];
     }

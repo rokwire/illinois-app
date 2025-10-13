@@ -39,6 +39,7 @@ import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
+import 'package:illinois/ui/map2/Map2ExplorePOICard.dart';
 import 'package:illinois/ui/map2/Map2FilterBuildingAmenitiesPanel.dart';
 import 'package:illinois/ui/map2/Map2HomeExts.dart';
 import 'package:illinois/ui/map2/Map2HomeFilters.dart';
@@ -171,6 +172,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2UserPrefs.notifyFavoriteReplaced,
+      Map2ExplorePOICard.notifyPOIUpdated,
       Map2.notifySelect,
       FlexUI.notifyChanged,
     ]);
@@ -222,6 +224,15 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       }
     }
     else if (name == Auth2UserPrefs.notifyFavoriteReplaced) {
+      if ((_selectedContentType == Map2ContentType.MyLocations) && (param is Pair) && mounted) {
+        Explore? oldExplore = JsonUtils.cast(param.left);
+        Explore? newExplore = JsonUtils.cast(param.right);
+        if ((oldExplore != null) && (newExplore != null)) {
+          _onExplorePOIUpdate(oldExplore, newExplore);
+        }
+      }
+    }
+    else if (name == Map2ExplorePOICard.notifyPOIUpdated) {
       if ((_selectedContentType == Map2ContentType.MyLocations) && (param is Pair) && mounted) {
         Explore? oldExplore = JsonUtils.cast(param.left);
         Explore? newExplore = JsonUtils.cast(param.right);
@@ -301,7 +312,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           Column(children: [
             _contentHeadingBar,
             Expanded(child:
-              Visibility(visible: ((_exploresProgress == null) && ((_trayExplores?.isNotEmpty == true) || (_pinnedExplore != null))), child:
+              Visibility(visible: (_exploresProgress == null) && (_trayExplores?.isNotEmpty == true), child:
                 _traySheet,
               ),
             )
@@ -566,9 +577,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   }
 
   void _initSelectNotificationFilters(dynamic param) {
-    if (param is Map2DeepLinkSelectParam) {
-      MapUtils.set(_filters, param.contentType, param.filter);
-    }
     if (param is Map2FilterEvents2Param) {
       _filters[Map2ContentType.Events2] = Map2Events2Filter.defaultFilter(
         searchText: param.searchText
@@ -579,6 +587,12 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         searchText: param.searchText,
         starred: param.starred,
       );
+    }
+    else if (param is Map) {
+      Map2FilterDeepLinkParam? deepLinkParam = Map2FilterDeepLinkParam.fromUriParams(JsonUtils.mapCastValue<String, String?>(param));
+      if (deepLinkParam != null) {
+        MapUtils.set(_filters, deepLinkParam.contentType, deepLinkParam.filter);
+      }
     }
   }
 
@@ -591,9 +605,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       ] : <Widget>[
         _contentTitleBar,
         if ((_exploresProgress == null) || (_exploresProgress == _ExploreProgressType.update))
-          _contentFilterButtonsBar ?? Container(),
-        if ((_exploresProgress == null) || (_exploresProgress == _ExploreProgressType.update))
-          ...(_contentFilterButtonsExtraBars ?? []),
+          ...[_contentFilterButtonsBar ?? Container(),
+            ...(_contentFilterButtonsExtraBars ?? [])
+          ],
         if (_exploresProgress == null)
           _contentFilterDescriptionBar ?? Container(),
       ],),
@@ -625,7 +639,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   void _onUnselectContentType() {
     setState(() {
       Storage().storedMap2ContentType = _selectedContentType = null;
-      _explores = _filteredExplores = _selectedExploreGroup = _trayExplores = null;
+      _explores = _filteredExplores = null;
+      _selectedExploreGroup = null;
+      _trayExplores = null;
       _exploresTask = null;
       _exploresProgress = null;
 
@@ -657,6 +673,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       });
       _updatePinMarker();
       _updateMapMarkers();
+      _updateTrayExplores();
     }
   }
 
@@ -666,9 +683,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       _pinnedMarker = pinednMarker;
     });
   }
-
-  List<Explore>? get _pinnedVisibleExplores => (_pinnedExplore != null) ? <Explore>[_pinnedExplore!] : null;
-  int? get _pinnedExploresCount => (_pinnedExplore != null) ? 1 : null;
 
   void _onExplorePOIUpdate(Explore oldExplore, Explore newExplore) {
     if (_explores?.contains(oldExplore) == true) {
@@ -713,6 +727,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     if (_pinnedExplore == oldExplore) {
       _pinnedExplore = newExplore;
       _updatePinMarker();
+      _updateTrayExplores();
     }
   }
 
@@ -736,10 +751,10 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
       builder: (BuildContext context, ScrollController scrollController) => Map2TraySheet(
         key: _traySheetKey,
-        explores: _pinnedVisibleExplores ?? _trayExplores,
+        explores: _trayExplores,
         scrollController: scrollController,
         currentLocation: _currentLocation,
-        totalCount: _pinnedExploresCount ?? ExploreMap.validCountFromList(_filteredExplores ?? _explores),
+        totalCount: _trayTotalCount,
         analyticsFeature: widget.analyticsFeature,
       ),
     );
@@ -773,7 +788,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         setState(() {
           _exploresTask = exploresTask;
           _exploresProgress = progressType;
-          _explores = _filteredExplores = _selectedExploreGroup = _trayExplores = null;
+          _explores = _filteredExplores = _trayExplores = null;
+          _selectedExploreGroup = null;
           _storiedSitesTags = null;
           _expandedStoriedSitesTag = null;
           _pinnedExplore = null;
@@ -781,33 +797,39 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         });
 
         // wait for explores load
+        Map2ContentType? exploreContentType = _selectedContentType;
         List<Explore>? explores = await exploresTask;
-        List<Explore>? filteredExplores = _filterExplores(explores);
-        Map2ContentType? contentType = _selectedContentType;
 
         if (mounted && (exploresTask == _exploresTask)) {
+          List<Explore>? validExplores = explores?.validList;
+          List<Explore>? filteredExplores = _filterExplores(validExplores);
           await _buildMapContentData(filteredExplores, updateCamera: true);
+
           if (mounted && (exploresTask == _exploresTask)) {
             setState(() {
-              _explores = explores;
+              _explores = validExplores;
               _filteredExplores = filteredExplores;
               _exploresTask = null;
               _exploresProgress = null;
-              _storiedSitesTags = JsonUtils.cast<List<Place>>(explores)?.tags;
+              _storiedSitesTags = JsonUtils.cast<List<Place>>(validExplores)?.tags;
               _mapKey = UniqueKey(); // force map rebuild
-              if ((explores?.isNotEmpty != true) && (contentType?.supportsManualFilters == true)) {
-                _selectedContentType = null;
+
+              if ((exploreContentType?.supportsManualFilters == true) && (validExplores?.isNotEmpty != true)) {
+                _selectedContentType = null; // Unselect content type if there is nothing to show.
               }
             });
-            _showContentMessageIfNeeded(contentType, explores);
+            _updateTrayExplores();
+            _showContentMessageIfNeeded(exploreContentType, validExplores);
           }
         }
       }
       else {
         setState(() {
-          _explores = _filteredExplores = _selectedExploreGroup = _trayExplores = null;
+          _explores = _filteredExplores = _trayExplores = null;
+          _selectedExploreGroup = null;
           _exploresTask = null;
           _exploresProgress = null;
+
           _storiedSitesTags = null;
           _expandedStoriedSitesTag = null;
 
@@ -837,15 +859,17 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
         // wait for explores load
         List<Explore>? explores = await exploresTask;
-        List<Explore>? filteredExplores = _filterExplores(explores);
+        List<Explore>? validExplores = explores?.validList;
+        List<Explore>? filteredExplores = _filterExplores(validExplores);
 
         if (mounted && (exploresTask == _exploresTask)) {
           if (!DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
 
             setState(() {
-              _explores = explores;
+              _explores = validExplores;
               _filteredExplores = filteredExplores;
-              if ((_pinnedExplore != null) && (explores?.contains(_pinnedExplore) == true)) {
+
+              if ((_pinnedExplore != null) && (validExplores?.contains(_pinnedExplore) == true)) {
                 _selectedExploreGroup = <Explore>{_pinnedExplore!};
                 _pinnedExplore = null;
                 _pinnedMarker = null;
@@ -853,10 +877,12 @@ class _Map2HomePanelState extends State<Map2HomePanel>
               else {
                 _selectedExploreGroup = null;
               }
-              _trayExplores = _buildTrayExplores();
-              _storiedSitesTags = JsonUtils.cast<List<Place>>(explores)?.tags;
+
+              _storiedSitesTags = JsonUtils.cast<List<Place>>(validExplores)?.tags;
               _expandedStoriedSitesTag = null;
             });
+
+            _updateTrayExplores();
 
             await _buildMapContentData(filteredExplores, updateCamera: false, showProgress: true);
 
@@ -897,7 +923,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     Gateway().loadBuildings();
 
   Future<List<Explore>?> _loadStudentCourses() async {
-    String? termId = StudentCourses().displayTermId;
+    String? termId = _studentCoursesFilter?.termId; // Force filter creation for valid tray content
     return (termId != null) ? await StudentCourses().loadCourses(termId: termId) : null;
   }
 
@@ -908,15 +934,16 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     Events2().loadEventsList(await _event2QueryParam());
 
   Future<Events2Query> _event2QueryParam() async {
-    Map2Events2Filter filter = _events2FilterIfExists ?? Map2Events2Filter.defaultFilter();
+    // Force filter creation for valid tray content
+    Map2Events2Filter? filter = _events2Filter; // _events2FilterIfExists  ?? Map2Events2Filter.defaultFilter()
     return Events2Query(
-      searchText: (filter.searchText.isNotEmpty == true) ? filter.searchText : null,
-      timeFilter: filter.event2Filter.timeFilter ?? Event2TimeFilter.upcoming,
-      customStartTimeUtc: filter.event2Filter.customStartTime?.toUtc(),
-      customEndTimeUtc: filter.event2Filter.customEndTime?.toUtc(),
-      types: filter.event2Filter.types,
+      searchText: (filter?.searchText.isNotEmpty == true) ? filter?.searchText : null,
+      timeFilter: filter?.event2Filter.timeFilter ?? Event2TimeFilter.upcoming,
+      customStartTimeUtc: filter?.event2Filter.customStartTime?.toUtc(),
+      customEndTimeUtc: filter?.event2Filter.customEndTime?.toUtc(),
+      types: filter?.event2Filter.types,
       groupings: Event2Grouping.individualEvents(),
-      attributes: filter.event2Filter.attributes,
+      attributes: filter?.event2Filter.attributes,
       //sortType: filter.sortType?.toEvent2SortType(),
       //sortOrder: filter.sortOrder?.toEvent2SortOrder(),
       location: _currentLocation,
@@ -967,12 +994,37 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     ((explores != null) ? _selectedFilterIfExists?.filter(explores) : explores) ?? explores;
 
   List<Explore>? _sortExplores(Iterable<Explore>? explores) => (explores != null) ?
-    ((_selectedFilterIfExists ?? _defaultFilter)?.sort(explores, position: _currentLocation) ?? List.from(explores)) : null;
+    (_selectedFilterIfExists?.sort(explores, position: _currentLocation) ?? List.from(explores)) : null;
 
   // Tray Explores
 
-  List<Explore>? _buildTrayExplores() =>
-    _sortExplores(_selectedExploreGroup);
+  List<Explore>? _buildTrayExploresFromSource({
+    Iterable<Explore>? filtered,
+    Iterable<Explore>? selected,
+    Explore? pinned,
+  }) => (pinned != null) ? <Explore>[pinned] : _sortExplores(selected ?? filtered);
+
+
+  List<Explore>? _buildTrayExplores() => _buildTrayExploresFromSource(
+    filtered: (_selectedFilterIfExists?.hasFilter == true) ? _filteredExplores : null,
+    selected: _selectedExploreGroup,
+    pinned: _pinnedExplore,
+  );
+
+  int? get _trayTotalCount {
+    if (_pinnedExplore != null) {
+      return null;
+    }
+    else if (_selectedExploreGroup != null) {
+      return (_filteredExplores ?? _explores)?.length;
+    }
+    else if (_selectedContentType?.supportsManualFilters == true) {
+      return _explores?.length;
+    }
+    else {
+      return null;
+    }
+  }
 
   void _updateTrayExplores() {
     List<Explore>? trayExplores = _buildTrayExplores();
@@ -998,22 +1050,18 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       }
       else {
         // Animate tray disappearance
-        if (_traySheetController.isAttached) {
-          _traySheetController.animateTo(_trayMinSize, duration: _trayAnimationDuration, curve: _trayAnimationCurve).then((_){
-            setStateIfMounted(() {
-              _trayExplores = trayExplores;
+        WidgetsBinding.instance.addPostFrameCallback((_){
+          if (_traySheetController.isAttached) {
+            _traySheetController.animateTo(_trayMinSize, duration: _trayAnimationDuration, curve: _trayAnimationCurve).then((_){
+              setStateIfMounted(() {
+                _trayExplores = trayExplores;
+              });
             });
-          });
-        }
-        else {
-          setState(() {
-            _trayExplores = trayExplores;
-          });
-        }
+          }
+        });
       }
     }
   }
-
 }
 
 // Map2 Filters
@@ -1050,7 +1098,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     ) : null;
 
   Widget? get _contentFilterDescriptionBar {
-    LinkedHashMap<String, List<String>>? descriptionMap = _selectedFilter?.description(_filteredExplores, explores: _explores, canSort: _trayExplores?.isNotEmpty == true);
+    LinkedHashMap<String, List<String>>? descriptionMap = _selectedFilterIfExists?.description(_filteredExplores, explores: _explores, canSort: _trayExplores?.isNotEmpty == true);
     if ((descriptionMap != null) && descriptionMap.isNotEmpty)  {
       TextStyle? boldStyle = Styles().textStyles.getTextStyle('widget.card.title.tiny.fat');
       TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.card.detail.small.regular');
@@ -1333,7 +1381,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         _selectedFilter?.searchText = '';
         _searchOn = false;
       });
-      _onFilterChanged();
+      _onFiltersChanged();
     }
   }
 
@@ -1343,7 +1391,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       _searchTextController.text = '';
       _searchOn = false;
     });
-    _onFilterChanged();
+    _onFiltersChanged();
   }
 
   // Starred Filter Button
@@ -1361,7 +1409,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     setStateIfMounted((){
       _selectedFilter?.starred = (_selectedFilter?.starred != true);
     });
-    _onFilterChanged();
+    _onFiltersChanged();
   }
 
   // Amenities Buildings Filter Button
@@ -1384,7 +1432,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         setStateIfMounted(() {
           _campusBuildingsFilter?.amenityIds = amenityIds;
         });
-        _onFilterChanged();
+        _onFiltersChanged();
       }
     }));
   }
@@ -1393,7 +1441,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Widget get _termsButton =>
     MergeSemantics(key: _termsButtonKey, child:
-      Semantics(value: StudentCourses().displayTerm?.name, child:
+      Semantics(value: _studentCoursesFilterIfExists?.termName, child:
         DropdownButtonHideUnderline(child:
           DropdownButton2<StudentCourseTerm>(
             dropdownStyleData: DropdownStyleData(
@@ -1401,7 +1449,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
               padding: EdgeInsets.zero
             ),
         customButton: Map2FilterTextButton(
-          title: StudentCourses().displayTerm?.name ?? Localization().getStringEx('panel.map2.button.terms.title', 'Terms'),
+          title: _studentCoursesFilterIfExists?.termName ?? Localization().getStringEx('panel.map2.button.terms.title', 'Terms'),
           hint: Localization().getStringEx('panel.map2.button.terms.hint', 'Tap to choose term'),
           rightIcon: Styles().images.getImage('chevron-down'),
           //onTap: _onTerm,
@@ -1415,7 +1463,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   List<DropdownMenuItem<StudentCourseTerm>> _buildTermsDropdownItems() {
     List<DropdownMenuItem<StudentCourseTerm>> items = <DropdownMenuItem<StudentCourseTerm>>[];
-    String? displayTermId = StudentCourses().displayTermId;
+    String? displayTermId = _studentCoursesFilterIfExists?.termId;
     List<StudentCourseTerm>? terms = StudentCourses().terms;
     if (terms != null) {
       for (StudentCourseTerm term in terms) {
@@ -1460,9 +1508,9 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   void _onTerm(StudentCourseTerm? value) {
     Analytics().logSelect(target: 'Term: ${value?.name}');
     setStateIfMounted((){
-      StudentCourses().selectedTermId = value?.id;
+      _studentCoursesFilter?.termId = value?.id;
     });
-    _onFilterChanged();
+    _onFiltersChanged();
   }
 
   // Open Now Dining Locations Filter Button
@@ -1479,7 +1527,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     setStateIfMounted((){
       _diningLocationsFilter?.onlyOpened = (_diningLocationsFilterIfExists?.onlyOpened != true);
     });
-    _onFilterChanged();
+    _onFiltersChanged();
   }
 
   // Payment Types Dining Locations Filter Button
@@ -1553,7 +1601,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         _selectedPaymentType = null;
       }
     });
-    _onFilterChanged();
+    _onFiltersChanged();
     Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
       AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
     );
@@ -1584,7 +1632,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
           _events2Filter?.event2Filter = filterResult;
         });
         filterResult.saveToStorage();
-        _onFilterChanged();
+        _onFiltersChanged();
       }
     });
   }
@@ -1603,7 +1651,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     setStateIfMounted((){
       _storiedSitesFilter?.onlyVisited = (_storiedSitesFilterIfExists?.onlyVisited != true);
     });
-    _onFilterChanged();
+    _onFiltersChanged();
   }
 
   // Storied Sites Tag Buttons
@@ -1627,7 +1675,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         tags?.add(tag);
       }
     });
-    _onFilterChanged();
+    _onFiltersChanged();
   }
 
   Widget _storiedSiteCompoundTagButton(String tag, { String? title }) =>
@@ -1648,7 +1696,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   // Sort Filter Button
 
-  bool get _isSortAvailable => (_selectedExploreGroup?.isNotEmpty == true);
+  bool get _isSortAvailable => (_trayExplores?.isNotEmpty == true);
 
   Widget get _sortFilterButton =>
     MergeSemantics(key: _sortButtonKey, child:
@@ -1680,15 +1728,14 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       if ((_selectedContentType?.supportsSortType(sortType) == true) &&
           ((sortType != Map2SortType.proximity) || locationAvailable)
       ) {
-        String itemMarker = (_selectedSortType == sortType) ? _selectedSortOrder.displayMark : '';
+        String itemText = (_selectedSortType == sortType) ? '${sortType.displayTitle} ${_selectedSortOrder.displayIndicator(sortType)}' : sortType.displayTitle;
         TextStyle? itemTextStyle = (_selectedSortType == sortType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
         items.add(AccessibleDropDownMenuItem<Map2SortType>(key: ObjectKey(sortType), value: sortType, child:
           Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true, child:
             Row(children: [
               Expanded(child:
-                Text(sortType.displayTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,)
+                Text(itemText, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,)
               ),
-              Text(itemMarker, semanticsLabel: '', style: itemTextStyle,)
             ],)
           )
         ));
@@ -1702,7 +1749,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     for (Map2SortType sortType in Map2SortType.values) {
       final Size sizeFull = (TextPainter(
           text: TextSpan(
-            text: "${sortType.displayTitle} ${Map2SortOrder.ascending.displayMark}" ,
+            text: "${sortType.displayTitle} ${Map2SortOrder.ascending.displayIndicator(sortType)}" ,
             style: _dropdownEntrySelectedTextStyle,
           ),
           textScaler: MediaQuery.of(context).textScaler,
@@ -1734,12 +1781,12 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     }
   }
 
-  Map2SortType get _selectedSortType => _selectedFilterIfExists?.sortType ?? _defaultFilter?.sortType ?? Map2Filter.defaultSortType;
+  Map2SortType get _selectedSortType => _selectedFilterIfExists?.sortType ?? Map2Filter.defaultSortType;
   set _selectedSortType(Map2SortType value) => _selectedFilter?.sortType = value;
 
-  Map2SortOrder get _selectedSortOrder => _selectedFilterIfExists?.sortOrder ?? _defaultFilter?.sortOrder ?? Map2Filter.defaultSortOrder;
+  Map2SortOrder get _selectedSortOrder => _selectedFilterIfExists?.sortOrder ?? Map2Filter.defaultSortOrder;
   set _selectedSortOrder(Map2SortOrder value) => _selectedFilter?.sortOrder = value;
-  Map2SortOrder get _expectedSortOrder => _selectedFilterIfExists?.expectedSortOrder ?? _defaultFilter?.expectedSortOrder ?? Map2Filter.defaultSortOrder;
+  Map2SortOrder get _expectedSortOrder => _selectedFilterIfExists?.expectedSortOrder ?? Map2Filter.defaultSortOrder;
 
   TextStyle? get _dropdownEntryNormalTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
   TextStyle? get _dropdownEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
@@ -1751,10 +1798,12 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Map2Filter? get _selectedFilter => _getFilter(_selectedContentType, ensure: true);
   Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
-  Map2Filter? get _defaultFilter => (_selectedContentType != null) ? Map2Filter.defaultFromContentType(_selectedContentType) : null;
 
   Map2CampusBuildingsFilter? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
   Map2CampusBuildingsFilter? get _campusBuildingsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: false));
+
+  Map2StudentCoursesFilter? get _studentCoursesFilter => JsonUtils.cast(_getFilter(Map2ContentType.StudentCourses, ensure: true));
+  Map2StudentCoursesFilter? get _studentCoursesFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.StudentCourses, ensure: false));
 
   Map2DiningLocationsFilter? get _diningLocationsFilter => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: true));
   Map2DiningLocationsFilter? get _diningLocationsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.DiningLocations, ensure: false));
@@ -1826,12 +1875,17 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   void _onShareFilter() {
     Analytics().logSelect(target: "Share Filter");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromMap2Content(
-      contentType: _selectedContentType,
-      filter: _selectedFilterIfExists,
-      explores: _explores,
-      analyticsFeature: widget.analyticsFeature,
-    )));
+    Map2ContentType? contentType = _selectedContentType;
+    if (contentType != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromMap2DeepLinkParam(
+        param: Map2FilterDeepLinkParam(
+          contentType: contentType,
+          filter: _selectedFilterIfExists,
+        ),
+        explores: _explores,
+        analyticsFeature: widget.analyticsFeature,
+      )));
+    }
   }
 
   void _onClearFilter() {
@@ -1846,11 +1900,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
           _filters.remove(contentType);
         }
       });
-      _onFilterChanged();
+      _onFiltersChanged();
     }
   }
 
-  void _onFilterChanged() {
+  void _onFiltersChanged() {
     if (mounted) {
       if (_selectedContentType?.supportsManualFilters == true) {
         _updateFilteredExplores();
@@ -1868,9 +1922,10 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       if (mounted) {
         setStateIfMounted(() {
           _filteredExplores = filteredExplores;
-          _trayExplores = _selectedExploreGroup = null;
+          _selectedExploreGroup = null;
           _mapKey = UniqueKey(); // force map rebuild
         });
+        _updateTrayExplores();
       }
     }
   }
@@ -1972,7 +2027,7 @@ extension _Map2HomePanelContent on _Map2HomePanelState {
 
   Future<void> _buildMapContentData(List<Explore>? explores, { bool updateCamera = false, bool showProgress = false, double? zoom}) async {
     Size? mapSize = _scaffoldKey.renderBoxSize;
-    LatLngBounds? exploresRawBounds = ExploreMap.boundsOfList(explores);
+    LatLngBounds? exploresRawBounds = explores?.boundsRect;
     LatLngBounds? exploresBounds = (exploresRawBounds != null) ? _updateBoundsForSiblings(exploresRawBounds) : null;
     CameraUpdate? targetCameraUpdate = updateCamera ? _cameraUpdateForBounds(exploresBounds) : null;
     if ((exploresBounds != null) && (mapSize != null)) {
@@ -1996,7 +2051,7 @@ extension _Map2HomePanelContent on _Map2HomePanelState {
       }
       else {
         thresoldDistance = 0;
-        List<Explore>? validExplores = (explores != null) ? ExploreMap.validFromList(explores) : null;
+        List<Explore>? validExplores = (explores != null) ? explores.validList : null;
         if ((validExplores != null) && validExplores.isNotEmpty) {
           dynamic groupEntry = (validExplores.length == 1) ? validExplores.first : Set<Explore>.from(validExplores);
           exploreMapGroups = <dynamic>{ groupEntry };
@@ -2207,13 +2262,13 @@ extension _Map2HomePanelMarkers on _Map2HomePanelState {
   }
 
   Future<Marker?> _createExploreGroupMarker(Set<Explore>? exploreGroup, { required ImageConfiguration imageConfiguration }) async {
-    LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
+    LatLng? markerPosition = exploreGroup?.centerPoint;
     if ((exploreGroup != null) && (markerPosition != null)) {
-      Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
+      Explore? representativeExplore = exploreGroup.groupRepresentative;
       bool exploreDisabled = (_pinnedExplore != null) || ((_selectedExploreGroup != null) && (_selectedExploreGroup?.intersection(exploreGroup).isNotEmpty != true));
-      Color? markerColor = exploreDisabled ? ExploreMap.disabledMarkerColor : sameExplore?.mapMarkerColor;
-      Color? markerBorderColor = exploreDisabled ? ExploreMap.disabledGroupMarkerBorderColor : (sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor);
-      Color? markerTextColor = exploreDisabled ? ExploreMap.disabledMarkerTextColor : (sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor);
+      Color? markerColor = exploreDisabled ? ExploreMap.disabledMarkerColor : representativeExplore?.mapMarkerColor;
+      Color? markerBorderColor = exploreDisabled ? ExploreMap.disabledGroupMarkerBorderColor : (representativeExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor);
+      Color? markerTextColor = exploreDisabled ? ExploreMap.disabledMarkerTextColor : (representativeExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor);
       String markerKey = "group-${markerColor?.toARGB32() ?? 0}-${exploreGroup.length}";
       return Marker(
         markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
@@ -2229,7 +2284,7 @@ extension _Map2HomePanelMarkers on _Map2HomePanelState {
         consumeTapEvents: true,
         onTap: () => _onTapMarker(exploreGroup),
         infoWindow: InfoWindow(
-          title:  sameExplore?.getMapGroupMarkerTitle(exploreGroup.length),
+          title:  representativeExplore?.getMapGroupMarkerTitle(exploreGroup.length),
           anchor: _mapCircleMarkerAnchor
         )
       );
