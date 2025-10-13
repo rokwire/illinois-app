@@ -566,9 +566,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   }
 
   void _initSelectNotificationFilters(dynamic param) {
-    if (param is Map2DeepLinkSelectParam) {
-      MapUtils.set(_filters, param.contentType, param.filter);
-    }
     if (param is Map2FilterEvents2Param) {
       _filters[Map2ContentType.Events2] = Map2Events2Filter.defaultFilter(
         searchText: param.searchText
@@ -579,6 +576,12 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         searchText: param.searchText,
         starred: param.starred,
       );
+    }
+    else if (param is Map) {
+      Map2FilterDeepLinkParam? deepLinkParam = Map2FilterDeepLinkParam.fromUriParams(JsonUtils.mapCastValue<String, String?>(param));
+      if (deepLinkParam != null) {
+        MapUtils.set(_filters, deepLinkParam.contentType, deepLinkParam.filter);
+      }
     }
   }
 
@@ -1826,12 +1829,17 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   void _onShareFilter() {
     Analytics().logSelect(target: "Share Filter");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromMap2Content(
-      contentType: _selectedContentType,
-      filter: _selectedFilterIfExists,
-      explores: _explores,
-      analyticsFeature: widget.analyticsFeature,
-    )));
+    Map2ContentType? contentType = _selectedContentType;
+    if (contentType != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromMap2DeepLinkParam(
+        param: Map2FilterDeepLinkParam(
+          contentType: contentType,
+          filter: _selectedFilterIfExists,
+        ),
+        explores: _explores,
+        analyticsFeature: widget.analyticsFeature,
+      )));
+    }
   }
 
   void _onClearFilter() {

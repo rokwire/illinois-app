@@ -56,7 +56,7 @@ class Map2 with Service, NotificationsListener {
 
   void _onDeepLinkUri(Uri? uri) {
     if ((uri != null) && uri.matchDeepLinkUri(Uri.tryParse(_selectUrl))) {
-      try { NotificationService().notify(notifySelect, Map2DeepLinkSelectParam(uri.queryParameters)); }
+      try { NotificationService().notify(notifySelect, uri.queryParameters); }
       catch (e) { print(e.toString()); }
     }
   }
@@ -70,9 +70,4 @@ class Map2 with Service, NotificationsListener {
     }
   }
 
-}
-
-class Map2DeepLinkSelectParam {
-  final Map<String, String?> params;
-  Map2DeepLinkSelectParam(this.params);
 }
