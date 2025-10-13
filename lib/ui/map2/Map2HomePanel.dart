@@ -301,7 +301,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           Column(children: [
             _contentHeadingBar,
             Expanded(child:
-              Visibility(visible: ((_exploresProgress == null) && ((_trayExplores?.isNotEmpty == true) || (_pinnedExplore != null))), child:
+              Visibility(visible: (_exploresProgress == null) && (_trayExplores?.isNotEmpty == true), child:
                 _traySheet,
               ),
             )
@@ -594,9 +594,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       ] : <Widget>[
         _contentTitleBar,
         if ((_exploresProgress == null) || (_exploresProgress == _ExploreProgressType.update))
-          _contentFilterButtonsBar ?? Container(),
-        if ((_exploresProgress == null) || (_exploresProgress == _ExploreProgressType.update))
-          ...(_contentFilterButtonsExtraBars ?? []),
+          ...[_contentFilterButtonsBar ?? Container(),
+            ...(_contentFilterButtonsExtraBars ?? [])
+          ],
         if (_exploresProgress == null)
           _contentFilterDescriptionBar ?? Container(),
       ],),
@@ -628,7 +628,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   void _onUnselectContentType() {
     setState(() {
       Storage().storedMap2ContentType = _selectedContentType = null;
-      _explores = _filteredExplores = _selectedExploreGroup = _trayExplores = null;
+      _explores = _filteredExplores = null;
+      _selectedExploreGroup = null;
+      _trayExplores = null;
       _exploresTask = null;
       _exploresProgress = null;
 
@@ -660,6 +662,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       });
       _updatePinMarker();
       _updateMapMarkers();
+      _updateTrayExplores();
     }
   }
 
@@ -669,9 +672,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       _pinnedMarker = pinednMarker;
     });
   }
-
-  List<Explore>? get _pinnedVisibleExplores => (_pinnedExplore != null) ? <Explore>[_pinnedExplore!] : null;
-  int? get _pinnedExploresCount => (_pinnedExplore != null) ? 1 : null;
 
   void _onExplorePOIUpdate(Explore oldExplore, Explore newExplore) {
     if (_explores?.contains(oldExplore) == true) {
@@ -716,6 +716,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     if (_pinnedExplore == oldExplore) {
       _pinnedExplore = newExplore;
       _updatePinMarker();
+      _updateTrayExplores();
     }
   }
 
@@ -739,10 +740,10 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
       builder: (BuildContext context, ScrollController scrollController) => Map2TraySheet(
         key: _traySheetKey,
-        explores: _pinnedVisibleExplores ?? _trayExplores,
+        explores: _trayExplores,
         scrollController: scrollController,
         currentLocation: _currentLocation,
-        totalCount: _pinnedExploresCount ?? ExploreMap.validCountFromList(_filteredExplores ?? _explores),
+        totalCount: (_pinnedExplore != null) ? 1 : ExploreMap.validCountFromList(_filteredExplores ?? _explores),
         analyticsFeature: widget.analyticsFeature,
       ),
     );
@@ -776,7 +777,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         setState(() {
           _exploresTask = exploresTask;
           _exploresProgress = progressType;
-          _explores = _filteredExplores = _selectedExploreGroup = _trayExplores = null;
+          _explores = _filteredExplores = _trayExplores = null;
+          _selectedExploreGroup = null;
           _storiedSitesTags = null;
           _expandedStoriedSitesTag = null;
           _pinnedExplore = null;
@@ -784,12 +786,13 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         });
 
         // wait for explores load
+        Map2ContentType? exploreContentType = _selectedContentType;
         List<Explore>? explores = await exploresTask;
-        List<Explore>? filteredExplores = _filterExplores(explores);
-        Map2ContentType? contentType = _selectedContentType;
 
         if (mounted && (exploresTask == _exploresTask)) {
+          List<Explore>? filteredExplores = _filterExplores(explores);
           await _buildMapContentData(filteredExplores, updateCamera: true);
+
           if (mounted && (exploresTask == _exploresTask)) {
             setState(() {
               _explores = explores;
@@ -798,19 +801,23 @@ class _Map2HomePanelState extends State<Map2HomePanel>
               _exploresProgress = null;
               _storiedSitesTags = JsonUtils.cast<List<Place>>(explores)?.tags;
               _mapKey = UniqueKey(); // force map rebuild
-              if ((explores?.isNotEmpty != true) && (contentType?.supportsManualFilters == true)) {
-                _selectedContentType = null;
+
+              if ((exploreContentType?.supportsManualFilters == true) && (explores?.isNotEmpty != true)) {
+                _selectedContentType = null; // Unselect content type if there is nothing to show.
               }
             });
-            _showContentMessageIfNeeded(contentType, explores);
+            _updateTrayExplores();
+            _showContentMessageIfNeeded(exploreContentType, explores);
           }
         }
       }
       else {
         setState(() {
-          _explores = _filteredExplores = _selectedExploreGroup = _trayExplores = null;
+          _explores = _filteredExplores = _trayExplores = null;
+          _selectedExploreGroup = null;
           _exploresTask = null;
           _exploresProgress = null;
+
           _storiedSitesTags = null;
           _expandedStoriedSitesTag = null;
 
@@ -848,6 +855,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
             setState(() {
               _explores = explores;
               _filteredExplores = filteredExplores;
+
               if ((_pinnedExplore != null) && (explores?.contains(_pinnedExplore) == true)) {
                 _selectedExploreGroup = <Explore>{_pinnedExplore!};
                 _pinnedExplore = null;
@@ -856,10 +864,12 @@ class _Map2HomePanelState extends State<Map2HomePanel>
               else {
                 _selectedExploreGroup = null;
               }
-              _trayExplores = _buildTrayExplores();
+
               _storiedSitesTags = JsonUtils.cast<List<Place>>(explores)?.tags;
               _expandedStoriedSitesTag = null;
             });
+
+            _updateTrayExplores();
 
             await _buildMapContentData(filteredExplores, updateCamera: false, showProgress: true);
 
@@ -911,15 +921,16 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     Events2().loadEventsList(await _event2QueryParam());
 
   Future<Events2Query> _event2QueryParam() async {
-    Map2Events2Filter filter = _events2FilterIfExists ?? Map2Events2Filter.defaultFilter();
+    // Force filter creation as it is the only one whost default and empty value differs
+    Map2Events2Filter? filter = _events2Filter; // _events2FilterIfExists  ?? Map2Events2Filter.defaultFilter()
     return Events2Query(
-      searchText: (filter.searchText.isNotEmpty == true) ? filter.searchText : null,
-      timeFilter: filter.event2Filter.timeFilter ?? Event2TimeFilter.upcoming,
-      customStartTimeUtc: filter.event2Filter.customStartTime?.toUtc(),
-      customEndTimeUtc: filter.event2Filter.customEndTime?.toUtc(),
-      types: filter.event2Filter.types,
+      searchText: (filter?.searchText.isNotEmpty == true) ? filter?.searchText : null,
+      timeFilter: filter?.event2Filter.timeFilter ?? Event2TimeFilter.upcoming,
+      customStartTimeUtc: filter?.event2Filter.customStartTime?.toUtc(),
+      customEndTimeUtc: filter?.event2Filter.customEndTime?.toUtc(),
+      types: filter?.event2Filter.types,
       groupings: Event2Grouping.individualEvents(),
-      attributes: filter.event2Filter.attributes,
+      attributes: filter?.event2Filter.attributes,
       //sortType: filter.sortType?.toEvent2SortType(),
       //sortOrder: filter.sortOrder?.toEvent2SortOrder(),
       location: _currentLocation,
@@ -970,12 +981,22 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     ((explores != null) ? _selectedFilterIfExists?.filter(explores) : explores) ?? explores;
 
   List<Explore>? _sortExplores(Iterable<Explore>? explores) => (explores != null) ?
-    ((_selectedFilterIfExists ?? _defaultFilter)?.sort(explores, position: _currentLocation) ?? List.from(explores)) : null;
+    (_selectedFilterIfExists?.sort(explores, position: _currentLocation) ?? List.from(explores)) : null;
 
   // Tray Explores
 
-  List<Explore>? _buildTrayExplores() =>
-    _sortExplores(_selectedExploreGroup);
+  List<Explore>? _buildTrayExploresFromSource({
+    Iterable<Explore>? filtered,
+    Iterable<Explore>? selected,
+    Explore? pinned,
+  }) => (pinned != null) ? <Explore>[pinned] : _sortExplores(selected ?? filtered);
+
+
+  List<Explore>? _buildTrayExplores() => _buildTrayExploresFromSource(
+    filtered: (_selectedFilterIfExists?.hasFilter == true) ? _filteredExplores : null,
+    selected: _selectedExploreGroup,
+    pinned: _pinnedExplore,
+  );
 
   void _updateTrayExplores() {
     List<Explore>? trayExplores = _buildTrayExplores();
@@ -1001,22 +1022,18 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       }
       else {
         // Animate tray disappearance
-        if (_traySheetController.isAttached) {
-          _traySheetController.animateTo(_trayMinSize, duration: _trayAnimationDuration, curve: _trayAnimationCurve).then((_){
-            setStateIfMounted(() {
-              _trayExplores = trayExplores;
+        WidgetsBinding.instance.addPostFrameCallback((_){
+          if (_traySheetController.isAttached) {
+            _traySheetController.animateTo(_trayMinSize, duration: _trayAnimationDuration, curve: _trayAnimationCurve).then((_){
+              setStateIfMounted(() {
+                _trayExplores = trayExplores;
+              });
             });
-          });
-        }
-        else {
-          setState(() {
-            _trayExplores = trayExplores;
-          });
-        }
+          }
+        });
       }
     }
   }
-
 }
 
 // Map2 Filters
@@ -1053,7 +1070,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     ) : null;
 
   Widget? get _contentFilterDescriptionBar {
-    LinkedHashMap<String, List<String>>? descriptionMap = _selectedFilter?.description(_filteredExplores, explores: _explores, canSort: _trayExplores?.isNotEmpty == true);
+    LinkedHashMap<String, List<String>>? descriptionMap = _selectedFilterIfExists?.description(_filteredExplores, explores: _explores, canSort: _trayExplores?.isNotEmpty == true);
     if ((descriptionMap != null) && descriptionMap.isNotEmpty)  {
       TextStyle? boldStyle = Styles().textStyles.getTextStyle('widget.card.title.tiny.fat');
       TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.card.detail.small.regular');
@@ -1336,7 +1353,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         _selectedFilter?.searchText = '';
         _searchOn = false;
       });
-      _onFilterChanged();
+      _onFiltersChanged();
     }
   }
 
@@ -1346,7 +1363,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       _searchTextController.text = '';
       _searchOn = false;
     });
-    _onFilterChanged();
+    _onFiltersChanged();
   }
 
   // Starred Filter Button
@@ -1364,7 +1381,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     setStateIfMounted((){
       _selectedFilter?.starred = (_selectedFilter?.starred != true);
     });
-    _onFilterChanged();
+    _onFiltersChanged();
   }
 
   // Amenities Buildings Filter Button
@@ -1387,7 +1404,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         setStateIfMounted(() {
           _campusBuildingsFilter?.amenityIds = amenityIds;
         });
-        _onFilterChanged();
+        _onFiltersChanged();
       }
     }));
   }
@@ -1465,7 +1482,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     setStateIfMounted((){
       StudentCourses().selectedTermId = value?.id;
     });
-    _onFilterChanged();
+    _onFiltersChanged();
   }
 
   // Open Now Dining Locations Filter Button
@@ -1482,7 +1499,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     setStateIfMounted((){
       _diningLocationsFilter?.onlyOpened = (_diningLocationsFilterIfExists?.onlyOpened != true);
     });
-    _onFilterChanged();
+    _onFiltersChanged();
   }
 
   // Payment Types Dining Locations Filter Button
@@ -1556,7 +1573,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         _selectedPaymentType = null;
       }
     });
-    _onFilterChanged();
+    _onFiltersChanged();
     Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
       AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
     );
@@ -1587,7 +1604,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
           _events2Filter?.event2Filter = filterResult;
         });
         filterResult.saveToStorage();
-        _onFilterChanged();
+        _onFiltersChanged();
       }
     });
   }
@@ -1606,7 +1623,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     setStateIfMounted((){
       _storiedSitesFilter?.onlyVisited = (_storiedSitesFilterIfExists?.onlyVisited != true);
     });
-    _onFilterChanged();
+    _onFiltersChanged();
   }
 
   // Storied Sites Tag Buttons
@@ -1630,7 +1647,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         tags?.add(tag);
       }
     });
-    _onFilterChanged();
+    _onFiltersChanged();
   }
 
   Widget _storiedSiteCompoundTagButton(String tag, { String? title }) =>
@@ -1651,7 +1668,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   // Sort Filter Button
 
-  bool get _isSortAvailable => (_selectedExploreGroup?.isNotEmpty == true);
+  bool get _isSortAvailable => (_trayExplores?.isNotEmpty == true);
 
   Widget get _sortFilterButton =>
     MergeSemantics(key: _sortButtonKey, child:
@@ -1737,12 +1754,12 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     }
   }
 
-  Map2SortType get _selectedSortType => _selectedFilterIfExists?.sortType ?? _defaultFilter?.sortType ?? Map2Filter.defaultSortType;
+  Map2SortType get _selectedSortType => _selectedFilterIfExists?.sortType ?? Map2Filter.defaultSortType;
   set _selectedSortType(Map2SortType value) => _selectedFilter?.sortType = value;
 
-  Map2SortOrder get _selectedSortOrder => _selectedFilterIfExists?.sortOrder ?? _defaultFilter?.sortOrder ?? Map2Filter.defaultSortOrder;
+  Map2SortOrder get _selectedSortOrder => _selectedFilterIfExists?.sortOrder ?? Map2Filter.defaultSortOrder;
   set _selectedSortOrder(Map2SortOrder value) => _selectedFilter?.sortOrder = value;
-  Map2SortOrder get _expectedSortOrder => _selectedFilterIfExists?.expectedSortOrder ?? _defaultFilter?.expectedSortOrder ?? Map2Filter.defaultSortOrder;
+  Map2SortOrder get _expectedSortOrder => _selectedFilterIfExists?.expectedSortOrder ?? Map2Filter.defaultSortOrder;
 
   TextStyle? get _dropdownEntryNormalTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
   TextStyle? get _dropdownEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
@@ -1754,7 +1771,6 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Map2Filter? get _selectedFilter => _getFilter(_selectedContentType, ensure: true);
   Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
-  Map2Filter? get _defaultFilter => (_selectedContentType != null) ? Map2Filter.defaultFromContentType(_selectedContentType) : null;
 
   Map2CampusBuildingsFilter? get _campusBuildingsFilter => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: true));
   Map2CampusBuildingsFilter? get _campusBuildingsFilterIfExists => JsonUtils.cast(_getFilter(Map2ContentType.CampusBuildings, ensure: false));
@@ -1854,11 +1870,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
           _filters.remove(contentType);
         }
       });
-      _onFilterChanged();
+      _onFiltersChanged();
     }
   }
 
-  void _onFilterChanged() {
+  void _onFiltersChanged() {
     if (mounted) {
       if (_selectedContentType?.supportsManualFilters == true) {
         _updateFilteredExplores();
@@ -1876,9 +1892,10 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       if (mounted) {
         setStateIfMounted(() {
           _filteredExplores = filteredExplores;
-          _trayExplores = _selectedExploreGroup = null;
+          _selectedExploreGroup = null;
           _mapKey = UniqueKey(); // force map rebuild
         });
+        _updateTrayExplores();
       }
     }
   }

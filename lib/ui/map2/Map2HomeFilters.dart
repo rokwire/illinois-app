@@ -106,10 +106,12 @@ class Map2Filter {
 
   // Filter
 
-  List<Explore> filter(List<Explore> explores) =>
-    (explores.isNotEmpty && _hasFilter) ? _filter(explores) : explores;
+  bool get hasFilter => searchText.isNotEmpty || (starred == true);
 
-  bool get _hasFilter => false;
+  List<Explore> filter(List<Explore> explores) =>
+    (explores.isNotEmpty && _needsFilter) ? _filter(explores) : explores;
+
+  bool get _needsFilter => false;
 
   List<Explore> _filter(List<Explore> explores) => explores;
 
@@ -122,13 +124,13 @@ class Map2Filter {
 
   List<Explore> sort(Iterable<Explore> explores, { Position? position }) {
     List<Explore> sortedExplores = List<Explore>.from(explores);
-    if (explores.isNotEmpty && _hasSort) {
+    if (explores.isNotEmpty && _needsSort) {
       _sort(sortedExplores, position: position);
     }
     return sortedExplores;
   }
 
-  bool get _hasSort => true;
+  bool get _needsSort => true;
 
   void _sort(List<Explore> explores, { Position? position }) {
     switch (sortType) {
@@ -216,7 +218,10 @@ class Map2CampusBuildingsFilter extends Map2Filter {
   };
 
   @override
-  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (amenityIds.isNotEmpty == true));
+  bool get hasFilter => amenityIds.isNotEmpty || super.hasFilter;
+
+  @override
+  bool get _needsFilter => hasFilter;
 
   @override
   List<Explore> _filter(List<Explore> explores) {
@@ -285,7 +290,7 @@ class Map2StudentCoursesFilter extends Map2Filter {
   Map2StudentCoursesFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json);
 
   @override
-  bool get _hasFilter => true;
+  bool get _needsFilter => true; // To ensure explore locations
 
   @override
   List<Explore> _filter(List<Explore> explores) {
@@ -336,7 +341,10 @@ class Map2DiningLocationsFilter extends Map2Filter {
   };
 
   @override
-  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true) || (onlyOpened != false) || (paymentType != null));
+  bool get hasFilter => (onlyOpened == true) || (paymentType != null) || super.hasFilter;
+
+  @override
+  bool get _needsFilter => hasFilter;
 
   @override
   List<Explore> _filter(List<Explore> explores) {
@@ -414,9 +422,9 @@ class Map2Events2Filter extends Map2Filter {
     Event2SortOrder sortOrder = Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: eventFilter.timeFilter) ?? Event2SortOrderAppImpl.defaultSortOrder;
     return Map2Events2Filter._(
       event2Filter: eventFilter,
+      searchText: searchText,
       sortType: Map2SortTypeImpl.fromEvent2SortType(sortType),
       sortOrder: Map2SortOrderImpl.fromEvent2SortOrder(sortOrder),
-      searchText: searchText,
     );
   }
 
@@ -442,7 +450,10 @@ class Map2Events2Filter extends Map2Filter {
   };
 
   @override
-  bool get _hasFilter => true;
+  bool get hasFilter => event2Filter.isNotEmpty || super.hasFilter;
+
+  @override
+  bool get _needsFilter => true; // To ensure explore locations
 
   @override
   List<Explore> _filter(List<Explore> explores) {
@@ -509,7 +520,7 @@ class Map2LaundryRoomsFilter extends Map2Filter {
   Map2LaundryRoomsFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json);
 
   @override
-  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true));
+  bool get _needsFilter => hasFilter;
 
   @override
   List<Explore> _filter(List<Explore> explores) {
@@ -574,7 +585,7 @@ class Map2BusStopsFilter extends Map2Filter {
   Map2BusStopsFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json);
 
   @override
-  bool get _hasFilter => ((searchText.isNotEmpty == true) || (starred == true));
+  bool get _needsFilter => hasFilter;
 
   @override
   List<Explore> _filter(List<Explore> explores) {
@@ -657,7 +668,10 @@ class Map2StoriedSitesFilter extends Map2Filter {
   };
 
   @override
-  bool get _hasFilter => ((searchText.isNotEmpty == true) || (onlyVisited == true) || (tags.isNotEmpty == true));
+  bool get hasFilter => tags.isNotEmpty || (onlyVisited == true) || super.hasFilter;
+
+  @override
+  bool get _needsFilter => hasFilter;
 
   @override
   List<Explore> _filter(List<Explore> explores) {
@@ -730,7 +744,7 @@ class Map2MyLocationsFilter extends Map2Filter {
   Map2MyLocationsFilter._fromJson(Map<String, dynamic> json) : super._fromJson(json);
 
   @override
-  bool get _hasFilter => (searchText.isNotEmpty == true);
+  bool get _needsFilter => hasFilter;
 
   @override
   List<Explore> _filter(List<Explore> explores) {
