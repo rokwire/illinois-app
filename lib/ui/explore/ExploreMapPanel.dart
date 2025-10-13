@@ -705,7 +705,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (explore is Explore) {
       targetPosition = explore.exploreLocation?.exploreLocationMapCoordinate;
     } else if (explore is List<Explore> && explore.isNotEmpty) {
-      targetPosition = ExploreMap.centerOfList(explore);
+      targetPosition = explore.centerPoint;
     }
 
     if (targetPosition != null && _mapController != null) {
@@ -843,7 +843,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       launchTask = explore.launchDirections();
     }
     else if (explore is List<Explore>) {
-      launchTask = GeoMapUtils.launchDirections(destination: ExploreMap.centerOfList(explore), travelMode: GeoMapUtils.traveModeWalking);
+      launchTask = GeoMapUtils.launchDirections(destination: explore.centerPoint, travelMode: GeoMapUtils.traveModeWalking);
     }
 
     if ((launchTask != null) && !await launchTask) {
@@ -2218,7 +2218,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   // Map Content
 
   Future<void> _buildMapContentData(List<Explore>? explores, {Explore? pinnedExplore, bool updateCamera = false, bool showProgress = false, double? zoom}) async {
-    LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
+    LatLngBounds? exploresBounds = explores?.boundsRect;
 
     CameraUpdate? targetCameraUpdate;
     if (updateCamera) {
@@ -2251,7 +2251,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       }
       else {
         thresoldDistance = 0;
-        exploreMarkerGroups =  (explores != null) ? <dynamic>{ ExploreMap.validFromList(explores) } : null;
+        exploreMarkerGroups =  (explores != null) ? <dynamic>{ explores.validList } : null;
       }
 
       if (!DeepCollectionEquality().equals(_exploreMarkerGroups, exploreMarkerGroups)) {
@@ -2375,12 +2375,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   Future<Marker?> _createExploreGroupMarker(List<Explore>? exploreGroup, { required ImageConfiguration imageConfiguration }) async {
-    LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
+    LatLng? markerPosition = exploreGroup?.centerPoint;
     if ((exploreGroup != null) && (markerPosition != null)) {
-      Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
-      Color? markerColor = sameExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
-      Color? markerBorderColor = sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor;
-      Color? markerTextColor = sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor;
+      Explore? representativeExplore = exploreGroup.groupRepresentative;
+      Color? markerColor = representativeExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
+      Color? markerBorderColor = representativeExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor;
+      Color? markerTextColor = representativeExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor;
       String markerKey = "map-marker-group-${markerColor?.toARGB32() ?? 0}-${exploreGroup.length}";
       BitmapDescriptor markerIcon = _markerIconCache[markerKey] ??
           (_markerIconCache[markerKey] = await _groupMarkerIcon(
@@ -2400,7 +2400,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           consumeTapEvents: true,
           onTap: () => _onTapMarker(exploreGroup),
           infoWindow: InfoWindow(
-              title:  sameExplore?.getMapGroupMarkerTitle(exploreGroup.length),
+              title:  representativeExplore?.getMapGroupMarkerTitle(exploreGroup.length),
               anchor: markerAnchor)
       );
     }

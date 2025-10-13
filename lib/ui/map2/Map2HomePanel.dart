@@ -811,15 +811,15 @@ class _Map2HomePanelState extends State<Map2HomePanel>
               _filteredExplores = filteredExplores;
               _exploresTask = null;
               _exploresProgress = null;
-              _storiedSitesTags = JsonUtils.cast<List<Place>>(explores)?.tags;
+              _storiedSitesTags = JsonUtils.cast<List<Place>>(validExplores)?.tags;
               _mapKey = UniqueKey(); // force map rebuild
 
-              if ((exploreContentType?.supportsManualFilters == true) && (explores?.isNotEmpty != true)) {
+              if ((exploreContentType?.supportsManualFilters == true) && (validExplores?.isNotEmpty != true)) {
                 _selectedContentType = null; // Unselect content type if there is nothing to show.
               }
             });
             _updateTrayExplores();
-            _showContentMessageIfNeeded(exploreContentType, explores);
+            _showContentMessageIfNeeded(exploreContentType, validExplores);
           }
         }
       }
@@ -869,7 +869,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
               _explores = validExplores;
               _filteredExplores = filteredExplores;
 
-              if ((_pinnedExplore != null) && (explores?.contains(_pinnedExplore) == true)) {
+              if ((_pinnedExplore != null) && (validExplores?.contains(_pinnedExplore) == true)) {
                 _selectedExploreGroup = <Explore>{_pinnedExplore!};
                 _pinnedExplore = null;
                 _pinnedMarker = null;
@@ -878,7 +878,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
                 _selectedExploreGroup = null;
               }
 
-              _storiedSitesTags = JsonUtils.cast<List<Place>>(explores)?.tags;
+              _storiedSitesTags = JsonUtils.cast<List<Place>>(validExplores)?.tags;
               _expandedStoriedSitesTag = null;
             });
 
@@ -2025,7 +2025,7 @@ extension _Map2HomePanelContent on _Map2HomePanelState {
 
   Future<void> _buildMapContentData(List<Explore>? explores, { bool updateCamera = false, bool showProgress = false, double? zoom}) async {
     Size? mapSize = _scaffoldKey.renderBoxSize;
-    LatLngBounds? exploresRawBounds = ExploreMap.boundsOfList(explores);
+    LatLngBounds? exploresRawBounds = explores?.boundsRect;
     LatLngBounds? exploresBounds = (exploresRawBounds != null) ? _updateBoundsForSiblings(exploresRawBounds) : null;
     CameraUpdate? targetCameraUpdate = updateCamera ? _cameraUpdateForBounds(exploresBounds) : null;
     if ((exploresBounds != null) && (mapSize != null)) {
@@ -2049,7 +2049,7 @@ extension _Map2HomePanelContent on _Map2HomePanelState {
       }
       else {
         thresoldDistance = 0;
-        List<Explore>? validExplores = (explores != null) ? ExploreMap.validFromList(explores) : null;
+        List<Explore>? validExplores = (explores != null) ? explores.validList : null;
         if ((validExplores != null) && validExplores.isNotEmpty) {
           dynamic groupEntry = (validExplores.length == 1) ? validExplores.first : Set<Explore>.from(validExplores);
           exploreMapGroups = <dynamic>{ groupEntry };
@@ -2260,13 +2260,13 @@ extension _Map2HomePanelMarkers on _Map2HomePanelState {
   }
 
   Future<Marker?> _createExploreGroupMarker(Set<Explore>? exploreGroup, { required ImageConfiguration imageConfiguration }) async {
-    LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
+    LatLng? markerPosition = exploreGroup?.centerPoint;
     if ((exploreGroup != null) && (markerPosition != null)) {
-      Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
+      Explore? representativeExplore = exploreGroup.groupRepresentative;
       bool exploreDisabled = (_pinnedExplore != null) || ((_selectedExploreGroup != null) && (_selectedExploreGroup?.intersection(exploreGroup).isNotEmpty != true));
-      Color? markerColor = exploreDisabled ? ExploreMap.disabledMarkerColor : sameExplore?.mapMarkerColor;
-      Color? markerBorderColor = exploreDisabled ? ExploreMap.disabledGroupMarkerBorderColor : (sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor);
-      Color? markerTextColor = exploreDisabled ? ExploreMap.disabledMarkerTextColor : (sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor);
+      Color? markerColor = exploreDisabled ? ExploreMap.disabledMarkerColor : representativeExplore?.mapMarkerColor;
+      Color? markerBorderColor = exploreDisabled ? ExploreMap.disabledGroupMarkerBorderColor : (representativeExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor);
+      Color? markerTextColor = exploreDisabled ? ExploreMap.disabledMarkerTextColor : (representativeExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor);
       String markerKey = "group-${markerColor?.toARGB32() ?? 0}-${exploreGroup.length}";
       return Marker(
         markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
@@ -2282,7 +2282,7 @@ extension _Map2HomePanelMarkers on _Map2HomePanelState {
         consumeTapEvents: true,
         onTap: () => _onTapMarker(exploreGroup),
         infoWindow: InfoWindow(
-          title:  sameExplore?.getMapGroupMarkerTitle(exploreGroup.length),
+          title:  representativeExplore?.getMapGroupMarkerTitle(exploreGroup.length),
           anchor: _mapCircleMarkerAnchor
         )
       );
