@@ -223,6 +223,7 @@ class StudentCourses with Service, NotificationsListener {
   StudentCourseTerm? get _currentTerm => StudentCourseTerm.findInList(_terms, isCurrent: true);
   String? get _currentTermId => _currentTerm?.id;
 
+  StudentCourseTerm? getTerm(String? termId) => StudentCourseTerm.findInList(_terms, id: termId);
 
   void _updateSelectedTermId() {
     if ((_selectedTermId != null) && (StudentCourseTerm.findInList(_terms, id: _selectedTermId) == null)) {

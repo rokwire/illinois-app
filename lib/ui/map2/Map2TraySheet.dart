@@ -127,8 +127,19 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
     TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.message.tiny'); // widget.message.tiny
     return RichText(text: TextSpan(style: regularStyle, children: <InlineSpan>[
       TextSpan(text: Localization().getStringEx('panel.map2.tray.header.selected.label', 'Selected: '), style: boldStyle,),
-      TextSpan(text: '${widget.explores?.length}/${widget.totalCount}', style: regularStyle,),
+      TextSpan(text: _traySheetSelectionText, style: regularStyle,),
     ]));
+  }
+
+  String get _traySheetSelectionText {
+    int? displayCount = widget.explores?.length;
+    int? totalCount = widget.totalCount;
+    if (displayCount != null) {
+      return (totalCount != null) ? '$displayCount/$totalCount' : displayCount.toString();
+    }
+    else {
+      return '';
+    }
   }
 
   Widget get _traySheetDragHandle => Container(

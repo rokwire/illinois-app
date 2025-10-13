@@ -3,7 +3,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/map2/Map2HomeFilters.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
@@ -55,12 +54,12 @@ extension Map2ContentTypeImpl on Map2ContentType {
   static Map2ContentType? selectParamType(dynamic param) {
     if (param is Map2ContentType) {
       return param;
-    } else if (param is Map2DeepLinkSelectParam) {
-      return param.contentType;
     } else if (param is Map2FilterEvents2Param) {
       return Map2ContentType.Events2;
     } else if (param is Map2FilterBusStopsParam) {
       return Map2ContentType.BusStops;
+    } else if (param is Map) {
+      return Map2FilterDeepLinkParam.contentTypeFromUriParams(JsonUtils.mapCastValue<String, String?>(param));
     } else {
       return null;
     }
@@ -223,6 +222,13 @@ extension Map2SortOrderImpl on Map2SortOrder {
     }
   }
 
+  String displayIndicator(Map2SortType sortType) {
+    switch(sortType) {
+      case Map2SortType.alphabetical: return displayAlphabeticalAbbr;
+      default: return displayAbbr;
+    }
+  }
+
   String get displayTitle {
     switch (this) {
       case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending', 'Ascending');
@@ -232,8 +238,15 @@ extension Map2SortOrderImpl on Map2SortOrder {
 
   String get displayAbbr {
     switch (this) {
-      case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending.mnemo', 'Asc');
-      case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.descending.mnemo', 'Desc');
+      case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending.abbr', 'Asc');
+      case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.descending.abbr', 'Desc');
+    }
+  }
+
+  String get displayAlphabeticalAbbr {
+    switch (this) {
+      case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending.alphabetical.abbr', 'A-Z');
+      case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.descending.alphabetical.abbr', 'Z-A');
     }
   }
 
@@ -287,12 +300,38 @@ class Map2FilterBusStopsParam {
   Map2FilterBusStopsParam({this.searchText = '', this.starred = false});
 }
 
-extension Map2DeepLinkSelectUrlParam on Map2DeepLinkSelectParam {
-  Map2ContentType? get contentType => Map2ContentTypeImpl.fromJson(params['contentType']);
-  Map2Filter? get filter => Map2Filter.fromJson(JsonUtils.decodeMap(params['filter']), contentType: contentType);
+class Map2FilterDeepLinkParam {
+  Map2ContentType contentType;
+  Map2Filter? filter;
+
+  Map2FilterDeepLinkParam({required this.contentType, this.filter});
+
+  static Map2FilterDeepLinkParam? fromUriParams(Map<String, String?>? uriParams) {
+    Map2ContentType? contentType = contentTypeFromUriParams(uriParams);
+    return (contentType != null) ? Map2FilterDeepLinkParam(
+      contentType: contentType,
+      filter: Map2Filter.fromJson(JsonUtils.decodeMap(uriParams?['filter']), contentType: contentType),
+    ) : null;
+  }
+
+  static Map2ContentType? contentTypeFromUriParams(Map<String, String?>? uriParams) =>
+    Map2ContentTypeImpl.fromJson(JsonUtils.stringValue(uriParams?['contentType']));
+
+  Map<String, String?> toUriParams() => <String, String?> {
+    'contentType': contentType.toJson(),
+    'filter': JsonUtils.encode(filter?.toJson()),
+  };
+}
+
+/* class Map2FilterDeepLinkParam0 {
+  final Map<String, dynamic>? params;
+  Map2FilterDeepLinkParam(this.params);
+
+  Map2ContentType? get contentType => Map2ContentTypeImpl.fromJson(params?['contentType']);
+  Map2Filter? get filter => Map2Filter.fromJson(JsonUtils.decodeMap(params?['filter']), contentType: contentType);
 
   static Map<String, String?> buildUrlParam({Map2ContentType? contentType, Map2Filter? filter}) => <String, String?>{
     'contentType': contentType?.toJson(),
     'filter': JsonUtils.encode(filter?.toJson()),
   };
-}
+}*/

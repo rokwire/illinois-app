@@ -17,8 +17,6 @@ import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/map2/Map2HomeExts.dart';
-import 'package:illinois/ui/map2/Map2HomeFilters.dart';
-import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
@@ -152,14 +150,11 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
   );
 
-  factory QrCodePanel.fromMap2Content({ Key? key, Map2ContentType? contentType, Map2Filter? filter, List<Explore>? explores, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
+  factory QrCodePanel.fromMap2DeepLinkParam({ Key? key, required Map2FilterDeepLinkParam param, List<Explore>? explores, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
     key: key,
-    deepLinkUrl: Map2.selectUrl(Map2DeepLinkSelectUrlParam.buildUrlParam(
-      contentType: contentType,
-      filter: filter
-    )),
+    deepLinkUrl: Map2.selectUrl(param.toUriParams()),
     saveFileName: 'Map2Filter - ${DateTimeUtils.localDateTimeToString(DateTime.now())}',
-    saveWatermarkText: ((contentType != null) ? "${contentType.displayTitle} " : '') + ("{ ${filter?.descriptionText(explores: explores) ?? ''} }"),
+    saveWatermarkText: "${param.contentType.displayTitle} { ${param.filter?.descriptionText(explores: explores) ?? ''} }",
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
     description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
