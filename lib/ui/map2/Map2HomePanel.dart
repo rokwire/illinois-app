@@ -338,25 +338,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         ),
     ],);
 
-  EdgeInsets get _accessibilityWorkaroundMapPadding {//Workaround for the Maps Accessibility. Even when Map is at the bottom layer of the stack it takes the Tap gestures.
-    if(AppSemantics.isAccessibilityEnabled(context) == false)
-      return EdgeInsets.zero;
-
-    double sheetHeight = _selectedContentType != null &&
-        _trayExplores?.isNotEmpty == true &&
-        _traySheetController.isAttached ? _traySheetController.pixels : 0;
-
-    RenderObject? headingBar =  _contentHeadingBarKey.currentContext?.findRenderObject();
-    double headerBarHeight = headingBar is RenderBox ? headingBar.size.height : 0;
-
-    RenderObject? typesBar =  _contentTypesBarKey.currentContext?.findRenderObject();
-    double typesBarHeight = typesBar is RenderBox ? typesBar.size.height : 0;
-
-    double topPadding = _selectedContentType != null ? headerBarHeight : typesBarHeight; //If we have heading reduce the pam size at top
-    double bottomPadding = _selectedContentType != null && _trayExplores?.isNotEmpty == true ? sheetHeight : 0;//if we have sheet
-    return EdgeInsets.only(top: topPadding, bottom: bottomPadding);
-  }
-
   Widget get _mapView => Container(decoration: _mapViewDecoration, child:
     GoogleMap(
       key: _mapKey,
@@ -684,7 +665,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     });
     WidgetsBinding.instance.addPostFrameCallback((_){
       _updateContentTypesScrollPosition();
-      setStateIfMounted((){}); //Workaround Accessibility
+      if(_needAccessibilityWorkaround == true)
+        setStateIfMounted((){}); //Workaround Accessibility
     });
   }
 
@@ -784,8 +766,10 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       ),
     );
 
-  _onSheetDragChanged() =>
-      setStateIfMounted(); //Workaround: Update Map padding to workaround tap issue
+  _onSheetDragChanged() {
+    if (_needAccessibilityWorkaround == true)
+      setStateIfMounted();//Workaround: Update Map padding to workaround tap issue
+  }
 
   // Map Styles
 
@@ -811,6 +795,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   Future<void> _initExplores({_ExploreProgressType progressType = _ExploreProgressType.init}) async {
     if (mounted) {
       LoadExploresTask? exploresTask = _loadExplores();
+      if (_needAccessibilityWorkaround == true)
+        exploresTask?.whenComplete(()=>setStateDelayedIfMounted((){}, duration: Duration(milliseconds: 200)));
+
       if (exploresTask != null) {
         // start loading
         setState(() {
@@ -848,6 +835,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
             });
             _updateTrayExplores();
             _showContentMessageIfNeeded(exploreContentType, validExplores);
+          } else {
+            setStateIfMounted();
           }
         }
       }
@@ -878,6 +867,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   Future<void> _updateExplores() async {
     if (mounted) {
       LoadExploresTask? exploresTask = _loadExplores();
+      if (_needAccessibilityWorkaround == true)
+        exploresTask?.whenComplete(()=>setStateDelayedIfMounted((){}, duration: Duration(milliseconds: 200)));
+
       if (exploresTask != null) {
         // start loading
         setState(() {
@@ -1089,6 +1081,31 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         });
       }
     }
+  }
+}
+
+// Map2 Accessibility Workaround
+
+extension _Map2Accessibility on _Map2HomePanelState{
+  bool get _needAccessibilityWorkaround => AppSemantics.isAccessibilityEnabled(context) == true; //Additional functionality and UI changes that will improve the Maps accessibility
+
+  EdgeInsets get _accessibilityWorkaroundMapPadding {//Workaround for the Maps Accessibility. Even when Map is at the bottom layer of the stack it takes the Tap gestures.
+    if(_needAccessibilityWorkaround == false)
+      return EdgeInsets.zero;
+
+    double sheetHeight = _selectedContentType != null &&
+        _trayExplores?.isNotEmpty == true &&
+        _traySheetController.isAttached ? _traySheetController.pixels : 0;
+
+    RenderObject? headingBar =  _contentHeadingBarKey.currentContext?.findRenderObject();
+    double headerBarHeight = headingBar is RenderBox ? headingBar.size.height : 0;
+
+    RenderObject? typesBar =  _contentTypesBarKey.currentContext?.findRenderObject();
+    double typesBarHeight = typesBar is RenderBox ? typesBar.size.height : 0;
+
+    double topPadding = _selectedContentType != null ? headerBarHeight : typesBarHeight; //If we have heading reduce the pam size at top
+    double bottomPadding = _selectedContentType != null && _trayExplores?.isNotEmpty == true ? sheetHeight : 0;//if we have sheet
+    return EdgeInsets.only(top: topPadding, bottom: bottomPadding);
   }
 }
 
