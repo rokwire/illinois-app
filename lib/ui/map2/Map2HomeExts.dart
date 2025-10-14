@@ -1,5 +1,7 @@
 
 
+import 'dart:collection';
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -287,6 +289,19 @@ extension ExplorePOIImpl on ExplorePOI {
         longitude: coordinate.longitude
       )
     );
+}
+
+extension Map2BuildingAmenities on LinkedHashSet<String> {
+  LinkedHashMap<String, String> selectedFromBuildingAmenities(Map<String, String> buildingAmenities) {
+    LinkedHashMap<String, String> selectedAmenities = LinkedHashMap<String, String>();
+    for (String amenityId in this) {
+      String? amenuityName = buildingAmenities[amenityId];
+      if (amenuityName != null) {
+        selectedAmenities[amenityId] = amenuityName;
+      }
+    }
+    return selectedAmenities;
+  }
 }
 
 class Map2FilterEvents2Param {

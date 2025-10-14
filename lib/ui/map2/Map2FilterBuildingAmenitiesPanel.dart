@@ -9,7 +9,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class Map2FilterBuildingAmenitiesPanel extends StatefulWidget {
-  final Map<String, String?> amenities; // Map<Key, Name> of Building Amenities
+  final Map<String, String> amenities; // Map<Key, Name> of Building Amenities
   final LinkedHashSet<String> selectedAmenityIds;
 
   Map2FilterBuildingAmenitiesPanel({super.key, required this.amenities, required this.selectedAmenityIds });

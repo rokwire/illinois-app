@@ -1098,7 +1098,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     ) : null;
 
   Widget? get _contentFilterDescriptionBar {
-    LinkedHashMap<String, List<String>>? descriptionMap = _selectedFilterIfExists?.description(_filteredExplores, explores: _explores, canSort: _trayExplores?.isNotEmpty == true);
+    LinkedHashMap<String, List<String>>? descriptionMap = _selectedFilterIfExists?.description(_filteredExplores, canSort: _trayExplores?.isNotEmpty == true);
     if ((descriptionMap != null) && descriptionMap.isNotEmpty)  {
       TextStyle? boldStyle = Styles().textStyles.getTextStyle('widget.card.title.tiny.fat');
       TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.card.detail.small.regular');
@@ -1424,13 +1424,15 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     );
 
   void _onAmenities() {
+    List<Building>? buildings = JsonUtils.listCastValue<Building>(_explores);
+    Map<String, String> buildingsAmenities = buildings?.featureNames ?? <String, String>{};
     Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
-      amenities: JsonUtils.cast<List<Building>>(_explores)?.featureNames ?? <String, String>{},
-      selectedAmenityIds: _campusBuildingsFilterIfExists?.amenityIds ?? LinkedHashSet<String>(),
+      amenities: buildingsAmenities,
+      selectedAmenityIds: LinkedHashSet<String>.from(_campusBuildingsFilterIfExists?.amenities.keys ?? <String>[]),
     ),)).then(((LinkedHashSet<String>? amenityIds) {
       if (amenityIds != null) {
         setStateIfMounted(() {
-          _campusBuildingsFilter?.amenityIds = amenityIds;
+          _campusBuildingsFilter?.amenities = amenityIds.selectedFromBuildingAmenities(buildingsAmenities);
         });
         _onFiltersChanged();
       }
@@ -1882,7 +1884,6 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
           contentType: contentType,
           filter: _selectedFilterIfExists,
         ),
-        explores: _explores,
         analyticsFeature: widget.analyticsFeature,
       )));
     }
