@@ -621,20 +621,21 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     );
 
   Widget get _contentTitleBar =>
-    Row(children: [
-      Expanded(child:
-        Padding(padding: EdgeInsets.only(left: 16, top: 8, bottom: 8), child:
-          Text(_selectedContentType?.displayTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
-        ),
-      ),
-      Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
-        InkWell(onTap : _onUnselectContentType, child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
+    Semantics(header: true, container: true, child:
+      Row(children: [
+        Expanded(child:
+          Padding(padding: EdgeInsets.only(left: 16, top: 8, bottom: 8), child:
+            Text(_selectedContentType?.displayTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
           ),
         ),
-      ),
-    ],);
+        Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, container: true, child:
+          InkWell(onTap : _onUnselectContentType, child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+              Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
+            ),
+          ),
+        ),
+      ],));
 
   void _onUnselectContentType() {
     setState(() {
@@ -1116,26 +1117,33 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       });
       // descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
 
-      return Container(decoration: _contentFiltersBarDecoration, padding: _contentFilterDescriptionBarPadding, constraints: _contentFiltersBarConstraints, child:
-        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(top: 6, bottom: 6), child:
-              RichText(text: TextSpan(style: regularStyle, children: descriptionList)),
-            ),
-          ),
-          Map2PlainImageButton(imageKey: 'share-nodes',
-            label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
-            hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
-            padding: EdgeInsets.only(left: 16, right: (8 + 2), top: 12, bottom: 12),
-            onTap: _onShareFilter
-          ),
-          Map2PlainImageButton(imageKey: 'close',
-              label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
-              hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
-            padding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
-            onTap: _onClearFilter
-          ),
-        ]),
+      return Semantics(container: true, child:
+        Container(decoration: _contentFiltersBarDecoration, padding: _contentFilterDescriptionBarPadding, constraints: _contentFiltersBarConstraints, child:
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Expanded(child:
+              IndexedSemantics(index: 1, child: Semantics( container: true, child:
+                Padding(padding: EdgeInsets.only(top: 6, bottom: 6), child:
+                  RichText(text: TextSpan(style: regularStyle, children: descriptionList))),
+                ),
+              )),
+              IndexedSemantics(index: 2, child: Semantics(container: true, child:
+              Map2PlainImageButton(imageKey: 'share-nodes',
+                label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
+                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
+                padding: EdgeInsets.only(left: 16, right: (8 + 2), top: 12, bottom: 12),
+                onTap: _onShareFilter
+              )
+            )),
+            IndexedSemantics(index: 3, child: Semantics(container: true, child:
+              Map2PlainImageButton(imageKey: 'close',
+                  label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
+                  hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
+                padding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
+                onTap: _onClearFilter
+              )
+            )),
+          ]),
+        )
       );
     }
     return null;
