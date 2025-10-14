@@ -113,6 +113,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   final GlobalKey _scaffoldKey = GlobalKey();
   final GlobalKey _contentHeadingBarKey = GlobalKey();
+  final GlobalKey _contentTypesBarKey = GlobalKey();
   final GlobalKey _traySheetKey = GlobalKey();
   final GlobalKey _sortButtonKey = GlobalKey();
   final GlobalKey _termsButtonKey = GlobalKey();
@@ -184,7 +185,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     );
 
     _contentTypesScrollController.addListener(_onContentTypesScroll);
-
+    _traySheetController.addListener(_onSheetDragChanged);
     _initSelectNotificationFilters(widget._initialSelectParam);
     _updateLocationServicesStatus(init: true);
     _initMapStyles();
@@ -295,7 +296,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
       Positioned.fill(child:
         Visibility(visible: (_exploresProgress == null), child:
-          _mapView
+            Padding(padding: _accessibilityWorkaroundMapPadding, child:
+              _mapView
+            )
         ),
       ),
 
@@ -334,6 +337,25 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           ),
         ),
     ],);
+
+  EdgeInsets get _accessibilityWorkaroundMapPadding {//Workaround for the Maps Accessibility. Even when Map is at the bottom layer of the stack it takes the Tap gestures.
+    if(AppSemantics.isAccessibilityEnabled(context) == false)
+      return EdgeInsets.zero;
+
+    double sheetHeight = _selectedContentType != null &&
+        _trayExplores?.isNotEmpty == true &&
+        _traySheetController.isAttached ? _traySheetController.pixels : 0;
+
+    RenderObject? headingBar =  _contentHeadingBarKey.currentContext?.findRenderObject();
+    double headerBarHeight = headingBar is RenderBox ? headingBar.size.height : 0;
+
+    RenderObject? typesBar =  _contentTypesBarKey.currentContext?.findRenderObject();
+    double typesBarHeight = typesBar is RenderBox ? typesBar.size.height : 0;
+
+    double topPadding = _selectedContentType != null ? headerBarHeight : typesBarHeight; //If we have heading reduce the pam size at top
+    double bottomPadding = _selectedContentType != null && _trayExplores?.isNotEmpty == true ? sheetHeight : 0;//if we have sheet
+    return EdgeInsets.only(top: topPadding, bottom: bottomPadding);
+  }
 
   Widget get _mapView => Container(decoration: _mapViewDecoration, child:
     GoogleMap(
@@ -513,6 +535,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   Widget get _contentTypesBar => 
     SingleChildScrollView(
+      key: _contentTypesBarKey,
       scrollDirection: Axis.horizontal,
       padding: EdgeInsets.only(top: 16),
       controller: _contentTypesScrollController,
@@ -661,6 +684,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     });
     WidgetsBinding.instance.addPostFrameCallback((_){
       _updateContentTypesScrollPosition();
+      setStateIfMounted((){}); //Workaround Accessibility
     });
   }
 
@@ -759,6 +783,9 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         analyticsFeature: widget.analyticsFeature,
       ),
     );
+
+  _onSheetDragChanged() =>
+      setStateIfMounted(); //Workaround: Update Map padding to workaround tap issue
 
   // Map Styles
 
