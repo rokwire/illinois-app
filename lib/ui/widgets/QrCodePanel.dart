@@ -21,7 +21,6 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
-import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/places.dart' as places;
 import 'package:rokwire_plugin/service/events2.dart';
@@ -147,11 +146,11 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
   );
 
-  factory QrCodePanel.fromMap2DeepLinkParam({ Key? key, required Map2FilterDeepLinkParam param, List<Explore>? explores, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
+  factory QrCodePanel.fromMap2DeepLinkParam({ Key? key, required Map2FilterDeepLinkParam param, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
     key: key,
     deepLinkUrl: Map2.selectUrl(param.toUriParams()),
     saveFileName: 'Map2Filter - ${DateTimeUtils.localDateTimeToString(DateTime.now())}',
-    saveWatermarkText: "${param.contentType.displayTitle} { ${param.filter?.descriptionText(explores: explores) ?? ''} }",
+    saveWatermarkText: "${param.contentType.displayTitle} { ${param.filter?.descriptionText() ?? ''} }",
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
     description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
