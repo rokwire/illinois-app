@@ -86,8 +86,8 @@ class Map2HomePanel extends StatefulWidget with AnalyticsInfo {
   State<StatefulWidget> createState() => _Map2HomePanelState();
 
   AnalyticsFeature? get analyticsFeature =>
-    /*_state?._selectedMapType?.analyticsFeature ??
-    _selectedExploreType(exploreTypes: _buildExploreTypes())?.analyticsFeature ?? */
+    _state?._selectedContentType?.analyticsFeature ??
+    _initialContentType?.analyticsFeature ??
     AnalyticsFeature.Map;
 
   static bool get hasState => _state != null;
@@ -105,6 +105,15 @@ class Map2HomePanel extends StatefulWidget with AnalyticsInfo {
   }
 
   dynamic get _initialSelectParam => initParams[selectParamKey];
+
+  Map2ContentType? get _initialContentType => _evalInitialContentTypeEx(
+    availableTypes: Map2ContentTypeImpl.availableTypes
+  );
+
+  Map2ContentType? _evalInitialContentTypeEx({Set<Map2ContentType>? availableTypes}) => Map2ContentTypeImpl.initialType(
+    initialSelectParam: _initialSelectParam,
+    availableTypes: availableTypes
+  );
 }
 
 class _Map2HomePanelState extends State<Map2HomePanel>
@@ -178,10 +187,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     ]);
 
     _availableContentTypes = Map2ContentTypeImpl.availableTypes;
-    _selectedContentType = Map2ContentTypeImpl.initialType(
-      initialSelectParam: widget._initialSelectParam,
-      availableTypes: _availableContentTypes
-    );
+    _selectedContentType = widget._evalInitialContentTypeEx(availableTypes: _availableContentTypes);
 
     _contentTypesScrollController.addListener(_onContentTypesScroll);
 
@@ -412,6 +418,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   void _onTapMap(LatLng coordinate) {
     // debugPrint('Map2 tap' );
+    Analytics().logSelect(target: "Map Location: { ${coordinate.latitude.toStringAsFixed(6)}, ${coordinate.longitude.toStringAsFixed(6)} }");
     if (_selectedExploreGroup != null) {
       setState(() {
         _selectedExploreGroup = null;
@@ -434,6 +441,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   void _onTapMapPoi(PointOfInterest poi) {
     // debugPrint('Map2 POI tap' );
+    Analytics().logSelect(target: "Map POI: ${poi.name}");
     if (_selectedExploreGroup != null) {
       setState(() {
         _selectedExploreGroup = null;
@@ -452,6 +460,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   void _onTapMarker(dynamic origin) {
     // debugPrint('Map2 Marker tap' );
     if (origin is Explore) {
+      Analytics().logSelect(target: "MAP Marker: ${origin.exploreTitle}");
       bool isExplorePOI = origin is ExplorePOI;
       setState(() {
         _selectedExploreGroup = isExplorePOI ? <Explore>{origin} : null;
@@ -463,6 +472,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       }
     }
     else if (origin is Set<Explore>) {
+      Analytics().logSelect(target: "Marker: { ${origin.length} items }");
       setState(() {
         _selectedExploreGroup = DeepCollectionEquality().equals(_selectedExploreGroup, origin) ? null : origin;
       });
@@ -528,7 +538,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         entries.add(Padding(
           padding: EdgeInsets.only(left: entries.isNotEmpty ? 8 : 0),
           child: Map2ContentTypeButton(contentType.displayTitle,
-            onTap: () => _onContentTypeEntry(contentType),
+            onTap: () => _onTapContentTypeEntry(contentType),
           )
         ));
       }
@@ -549,6 +559,11 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         _initExplores();
       }
     }
+  }
+
+  void _onTapContentTypeEntry(Map2ContentType contentType) {
+    Analytics().logSelect(target: 'Content: ${contentType.displayTitleEx(language: 'en')}');
+    _onContentTypeEntry(contentType);
   }
 
   void _onContentTypeEntry(Map2ContentType contentType) {
@@ -628,7 +643,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         ),
       ),
       Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
-        InkWell(onTap : _onUnselectContentType, child:
+        InkWell(onTap : _onTapClearContentType, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
           ),
@@ -636,7 +651,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       ),
     ],);
 
-  void _onUnselectContentType() {
+  void _onTapClearContentType() {
+    Analytics().logSelect(target: 'Content: Clear');
     setState(() {
       Storage().storedMap2ContentType = _selectedContentType = null;
       _explores = _filteredExplores = null;
@@ -1127,13 +1143,13 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
             label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
             hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
             padding: EdgeInsets.only(left: 16, right: (8 + 2), top: 12, bottom: 12),
-            onTap: _onShareFilter
+            onTap: _onTapShareFilter
           ),
           Map2PlainImageButton(imageKey: 'close',
               label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
               hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
             padding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
-            onTap: _onClearFilter
+            onTap: _onTapClearFilter
           ),
         ]),
       );
@@ -1359,10 +1375,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       image: Styles().images.getImage('search'),
       label: Localization().getStringEx('panel.map2.button.search.title', 'Search'),
       hint: Localization().getStringEx('panel.map2.button.search.hint', 'Type a search locations'),
-      onTap: _onSearch,
+      onTap: _onTapSearch,
     );
 
-  void _onSearch() {
+  void _onTapSearch() {
+    Analytics().logSelect(target: 'Search');
     setStateIfMounted((){
       _searchOn = true;
       _searchTextController.text = _selectedFilterIfExists?.searchText ?? '';
@@ -1374,9 +1391,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   void _onTapCancelSearchText() {
     if (_searchTextController.text.isNotEmpty) {
+      Analytics().logSelect(target: 'Search: Clear');
       _searchTextController.text = '';
     }
     else {
+      Analytics().logSelect(target: 'Search: Cancel');
       setStateIfMounted((){
         _selectedFilter?.searchText = '';
         _searchOn = false;
@@ -1386,6 +1405,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   }
 
   void _onTapSearchText() {
+    Analytics().logSelect(target: 'Search: Do');
     setStateIfMounted((){
       _selectedFilter?.searchText = _searchTextController.text;
       _searchTextController.text = '';
@@ -1406,6 +1426,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     );
 
   void _onStarred() {
+    Analytics().logSelect(target: 'Starred');
     setStateIfMounted((){
       _selectedFilter?.starred = (_selectedFilter?.starred != true);
     });
@@ -1424,6 +1445,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     );
 
   void _onAmenities() {
+    Analytics().logSelect(target: 'Amenities');
     List<Building>? buildings = JsonUtils.listCastValue<Building>(_explores);
     Map<String, String> buildingsAmenities = buildings?.featureNames ?? <String, String>{};
     Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
@@ -1458,7 +1480,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         ),
         isExpanded: false,
         items: _buildTermsDropdownItems(),
-        onChanged: _onTerm,
+        onChanged: _onSelectTerm,
       )
     )),
   );
@@ -1507,7 +1529,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width / 2); // add horizontal padding
   }
 
-  void _onTerm(StudentCourseTerm? value) {
+  void _onSelectTerm(StudentCourseTerm? value) {
     Analytics().logSelect(target: 'Term: ${value?.name}');
     setStateIfMounted((){
       _studentCoursesFilter?.termId = value?.id;
@@ -1522,10 +1544,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       title: Localization().getStringEx('panel.map2.button.open_now.title', 'Open Now'),
       hint: Localization().getStringEx('panel.map2.button.open_now.hint', 'Tap to show only currently opened locations'),
       toggled: _diningLocationsFilterIfExists?.onlyOpened == true,
-      onTap: _onOpenNow,
+      onTap: _onTapOpenNow,
     );
 
-  void _onOpenNow() {
+  void _onTapOpenNow() {
+    Analytics().logSelect(target: 'Open Now');
     setStateIfMounted((){
       _diningLocationsFilter?.onlyOpened = (_diningLocationsFilterIfExists?.onlyOpened != true);
     });
@@ -1551,7 +1574,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         ),
         isExpanded: false,
         items: _buildPaymentTypesDropdownItems(),
-        onChanged: _onPaymentType,
+        onChanged: _onSelectPaymentType,
       )
     )),
   );
@@ -1593,7 +1616,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width / 2); // add horizontal padding
   }
 
-  void _onPaymentType(PaymentType? value) {
+  void _onSelectPaymentType(PaymentType? value) {
     Analytics().logSelect(target: 'Payment Type: ${value?.displayTitle}');
     setStateIfMounted(() {
       if (_selectedPaymentType != value) {
@@ -1621,10 +1644,10 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       hint: Localization().getStringEx('panel.map2.button.filters.hint', 'Tap to edit filters'),
       leftIcon: Styles().images.getImage('filters', size: 16),
       rightIcon: Styles().images.getImage('chevron-right'),
-      onTap: _onFilters,
+      onTap: _onTapFilters,
     );
 
-  void _onFilters() {
+  void _onTapFilters() {
     Analytics().logSelect(target: 'Filters');
 
     Event2FilterParam eventFilter = _events2FilterIfExists?.event2Filter ?? Event2FilterParam.fromStorage();
@@ -1646,10 +1669,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       title: Localization().getStringEx('panel.map2.button.visited.title', 'Visited'),
       hint: Localization().getStringEx('panel.map2.button.visited.hint', 'Tap to show only visited'),
       toggled: _storiedSitesFilterIfExists?.onlyVisited == true,
-      onTap: _onOnlyVisited,
+      onTap: _onTapOnlyVisited,
     );
 
-  void _onOnlyVisited() {
+  void _onTapOnlyVisited() {
+    Analytics().logSelect(target: 'Visited');
     setStateIfMounted((){
       _storiedSitesFilter?.onlyVisited = (_storiedSitesFilterIfExists?.onlyVisited != true);
     });
@@ -1663,11 +1687,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       title: title ?? tag,
       hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations'),
       toggled: _storiedSitesFilterIfExists?.tags.contains(tag) == true,
-      onTap: () => _onStoriedSiteSimpleTag(tag),
+      onTap: () => _onTapStoriedSiteSimpleTag(tag),
     );
 
-  void _onStoriedSiteSimpleTag(String tag) {
-    Analytics().logSelect(target: tag);
+  void _onTapStoriedSiteSimpleTag(String tag) {
+    Analytics().logSelect(target: 'Storied Site Tag: $tag');
     setStateIfMounted((){
       LinkedHashSet<String>? tags = _storiedSitesFilter?.tags;
       if (tags?.contains(tag) == true) {
@@ -1685,11 +1709,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       title: title ?? tag,
       hint: Localization().getStringEx('panel.map2.button.tags.hint', 'Tap to filter by tag'),
       rightIcon: (_expandedStoriedSitesTag?.startsWith(tag) == true) ? Styles().images.getImage('chevron-up') : Styles().images.getImage('chevron-down'),
-      onTap: () => _onStoriedSiteCompoundTag(tag),
+      onTap: () => _onTapStoriedSiteCompoundTag(tag),
     );
 
-  void _onStoriedSiteCompoundTag(String tag) {
-    Analytics().logSelect(target: tag);
+  void _onTapStoriedSiteCompoundTag(String tag) {
+    Analytics().logSelect(target: 'Storied Site Tag: $tag');
     setStateIfMounted((){
       _expandedStoriedSitesTag = (_expandedStoriedSitesTag?.startsWith(tag) == true) ?
         tag.tagHead : tag;
@@ -1718,7 +1742,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         ),
         isExpanded: false,
         items: _buildSortDropdownItems(),
-        onChanged: _onSortType,
+        onChanged: _onSelectSortType,
       )
     )),
   );
@@ -1764,7 +1788,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     return math.min(width + 2 * 18, MediaQuery.of(context).size.width / 2); // add horizontal padding
   }
 
-  void _onSortType(Map2SortType? value) {
+  void _onSelectSortType(Map2SortType? value) {
     Analytics().logSelect(target: 'Sort: ${value?.displayTitle}');
     if (value != null) {
       setStateIfMounted(() {
@@ -1875,8 +1899,8 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   //void _onFilterButtonsScroll() {}
 
-  void _onShareFilter() {
-    Analytics().logSelect(target: "Share Filter");
+  void _onTapShareFilter() {
+    Analytics().logSelect(target: "Filter: Share");
     Map2ContentType? contentType = _selectedContentType;
     if (contentType != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromMap2DeepLinkParam(
@@ -1889,7 +1913,8 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     }
   }
 
-  void _onClearFilter() {
+  void _onTapClearFilter() {
+    Analytics().logSelect(target: "Filter: Clear");
     Map2ContentType? contentType = _selectedContentType;
     if (contentType != null) {
       Map2Filter? emptyFilter = Map2Filter.emptyFromContentType(_selectedContentType);
