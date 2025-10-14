@@ -3,6 +3,7 @@
 import 'dart:collection';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
@@ -135,6 +136,20 @@ extension Map2ContentTypeImpl on Map2ContentType {
       case Map2ContentType.Therapists:           return Localization().getStringEx('panel.explore.state.failed.mental_health', 'Failed to load therapist locations.');
       case Map2ContentType.StoriedSites:         return Localization().getStringEx('panel.explore.state.failed.stored_sites', 'Failed to load storied sites.');
       case Map2ContentType.MyLocations:          return Localization().getStringEx('panel.explore.state.failed.my_locations', 'Failed to load saved locations.');
+    }
+  }
+
+  AnalyticsFeature get analyticsFeature {
+    switch (this) {
+      case Map2ContentType.CampusBuildings:      return AnalyticsFeature.MapBuildings;
+      case Map2ContentType.StudentCourses:       return AnalyticsFeature.MapStudentCourse;
+      case Map2ContentType.DiningLocations:      return AnalyticsFeature.MapDining;
+      case Map2ContentType.Events2:              return AnalyticsFeature.MapEvents;
+      case Map2ContentType.LaundryRooms:         return AnalyticsFeature.MapLaundry;
+      case Map2ContentType.BusStops:             return AnalyticsFeature.MapMTDStops;
+      case Map2ContentType.Therapists:           return AnalyticsFeature.MapMentalHealth;
+      case Map2ContentType.StoriedSites:         return AnalyticsFeature.StoriedSites;
+      case Map2ContentType.MyLocations:          return AnalyticsFeature.MapMyLocations;
     }
   }
 }
