@@ -811,7 +811,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
               _filteredExplores = filteredExplores;
               _exploresTask = null;
               _exploresProgress = null;
-              _storiedSitesTags = JsonUtils.cast<List<Place>>(validExplores)?.tags;
+              _storiedSitesTags = JsonUtils.listCastValue<Place>(validExplores)?.tags;
               _mapKey = UniqueKey(); // force map rebuild
 
               if ((exploreContentType?.supportsManualFilters == true) && (validExplores?.isNotEmpty != true)) {
@@ -878,7 +878,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
                 _selectedExploreGroup = null;
               }
 
-              _storiedSitesTags = JsonUtils.cast<List<Place>>(validExplores)?.tags;
+              _storiedSitesTags = JsonUtils.listCastValue<Place>(validExplores)?.tags;
               _expandedStoriedSitesTag = null;
             });
 
@@ -1425,7 +1425,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   void _onAmenities() {
     Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
-      amenities: JsonUtils.cast<List<Building>>(_explores)?.featureNames ?? <String, String>{},
+      amenities: JsonUtils.listCastValue<Building>(_explores)?.featureNames ?? <String, String>{},
       selectedAmenityIds: _campusBuildingsFilterIfExists?.amenityIds ?? LinkedHashSet<String>(),
     ),)).then(((LinkedHashSet<String>? amenityIds) {
       if (amenityIds != null) {
