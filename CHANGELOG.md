@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Maps2: added select location panel [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 ### Fixed
 - Handle tap action over the image in GroupCard for "All" and "Pending" groups.
+- Maps2: make sure not to show description bar for sorting option only [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 
 ## [7.3.11] - 2025-10-13
 ### Added
