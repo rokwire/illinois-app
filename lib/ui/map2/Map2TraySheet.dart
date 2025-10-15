@@ -72,6 +72,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
         CustomScrollView(controller: widget.scrollController, slivers: [
           SliverAppBar(
             pinned: true,
+            automaticallyImplyLeading: false,
             toolbarHeight: _traySheetDragHandleHeight + _traySheetPadding.height,
             backgroundColor: _traySheetBackgroundColor,
             title: _traySheetHeading,

@@ -41,6 +41,8 @@ class Map2Filter {
     this.sortOrder = defaultSortOrder,
   });
 
+  factory Map2Filter.empty() => Map2Filter._();
+
   static Map2Filter? defaultFromContentType(Map2ContentType? contentType) {
     switch (contentType) {
       case Map2ContentType.CampusBuildings:      return Map2CampusBuildingsFilter.defaultFilter();
