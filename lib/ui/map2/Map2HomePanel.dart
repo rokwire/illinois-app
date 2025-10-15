@@ -1674,7 +1674,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     MergeSemantics(key: _sortButtonKey, child:
       Semantics(value: _selectedSortType.displayTitle, child:
         DropdownButtonHideUnderline(child:
-          DropdownButton2<Map2SortType>(
+          DropdownButton2<Pair<Map2SortType, Map2SortOrder>>(
             dropdownStyleData: DropdownStyleData(
               width:  _sortDropdownWidth ??= _evaluateSortDropdownWidth(),
               padding: EdgeInsets.zero
@@ -1693,24 +1693,31 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     )),
   );
 
-  List<DropdownMenuItem<Map2SortType>> _buildSortDropdownItems() {
-    List<DropdownMenuItem<Map2SortType>> items = <DropdownMenuItem<Map2SortType>>[];
-    bool locationAvailable = ((locationServicesStatus == LocationServicesStatus.permissionAllowed) || (locationServicesStatus == LocationServicesStatus.permissionNotDetermined));
+  List<DropdownMenuItem<Pair<Map2SortType, Map2SortOrder>>> _buildSortDropdownItems() {
+    bool isProximityAvailable = ((locationServicesStatus == LocationServicesStatus.permissionAllowed) || (locationServicesStatus == LocationServicesStatus.permissionNotDetermined));
+    List<DropdownMenuItem<Pair<Map2SortType, Map2SortOrder>>> items = <DropdownMenuItem<Pair<Map2SortType, Map2SortOrder>>>[];
     for (Map2SortType sortType in Map2SortType.values) {
       if ((_selectedContentType?.supportsSortType(sortType) == true) &&
-          ((sortType != Map2SortType.proximity) || locationAvailable)
+          ((sortType != Map2SortType.proximity) || isProximityAvailable)
       ) {
-        String itemText = (_selectedSortType == sortType) ? '${sortType.displayTitle} ${_selectedSortOrder.displayIndicator(sortType)}' : sortType.displayTitle;
-        TextStyle? itemTextStyle = (_selectedSortType == sortType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
-        items.add(AccessibleDropDownMenuItem<Map2SortType>(key: ObjectKey(sortType), value: sortType, child:
-          Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true, child:
-            Row(children: [
-              Expanded(child:
-                Text(itemText, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,)
-              ),
-            ],)
-          )
-        ));
+        for (Map2SortOrder sortOrder in Map2SortOrder.values) {
+          if (sortType.isDropdownListEntry(sortOrder)) {
+            String? itemTitle = sortType.displayTitle;
+            String? itemSortOrder = sortType.dropdownSortOrderIndicator(sortOrder);
+            String itemText = (itemSortOrder != null) ? '$itemTitle $itemSortOrder' : itemTitle;
+            TextStyle? itemTextStyle = ((_selectedSortType == sortType) && (_selectedSortOrder == sortOrder)) ?
+              _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
+            items.add(AccessibleDropDownMenuItem<Pair<Map2SortType, Map2SortOrder>>(key: ObjectKey(Pair(sortType, sortOrder)), value: Pair(sortType, sortOrder), child:
+              Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true, child:
+                Row(children: [
+                  Expanded(child:
+                    Text(itemText, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,)
+                  ),
+                ],)
+              )
+            ));
+          }
+        }
       }
     }
     return items;
@@ -1734,17 +1741,12 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     return math.min(width + 2 * 18, MediaQuery.of(context).size.width / 2); // add horizontal padding
   }
 
-  void _onSelectSortType(Map2SortType? value) {
-    Analytics().logSelect(target: 'Sort: ${value?.displayTitle}');
+  void _onSelectSortType(Pair<Map2SortType, Map2SortOrder>? value) {
+    Analytics().logSelect(target: 'Sort: ${value?.left.displayTitle} ${value?.right.displayTitle}');
     if (value != null) {
       setStateIfMounted(() {
-        if (_selectedSortType != value) {
-          _selectedSortType = value;
-          _selectedSortOrder = _expectedSortOrder;
-        }
-        else {
-          _selectedSortOrder = (_selectedSortOrder != Map2SortOrder.ascending) ? Map2SortOrder.ascending : Map2SortOrder.descending;
-        }
+        _selectedSortType = value.left;
+        _selectedSortOrder = value.right;
       });
       _onSortChanged();
       Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
@@ -1758,7 +1760,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Map2SortOrder get _selectedSortOrder => _selectedFilterIfExists?.sortOrder ?? Map2Filter.defaultSortOrder;
   set _selectedSortOrder(Map2SortOrder value) => _selectedFilter?.sortOrder = value;
-  Map2SortOrder get _expectedSortOrder => _selectedFilterIfExists?.expectedSortOrder ?? Map2Filter.defaultSortOrder;
+  //Map2SortOrder get _expectedSortOrder => _selectedFilterIfExists?.expectedSortOrder ?? Map2Filter.defaultSortOrder;
 
   TextStyle? get _dropdownEntryNormalTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
   TextStyle? get _dropdownEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");

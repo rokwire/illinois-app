@@ -202,6 +202,20 @@ extension Map2SortTypeImpl on Map2SortType {
       case Map2SortType.proximity: return Localization().getStringEx('model.map2.sort_type.proximity', 'Proximity');
     }
   }
+
+  bool isDropdownListEntry(Map2SortOrder order) {
+    switch(this) {
+      case Map2SortType.alphabetical: return true;
+      default: return (order == Map2SortOrder.ascending);
+    }
+  }
+
+  String? dropdownSortOrderIndicator(Map2SortOrder order) {
+    switch(this) {
+      case Map2SortType.alphabetical: return order.displayAlphabeticalAbbr;
+      default: return null;
+    }
+  }
 }
 
 extension Map2SortOrderImpl on Map2SortOrder {
