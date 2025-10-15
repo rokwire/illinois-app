@@ -15,12 +15,12 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Map2LocationCard extends StatefulWidget {
+class Map2ExploreCard extends StatefulWidget {
   final Explore? explore;
   final Position? currentLocation;
   final void Function()? onTap;
 
-  Map2LocationCard(this.explore, { super.key,
+  Map2ExploreCard(this.explore, { super.key,
     this.currentLocation,
     this.onTap,
   });
@@ -33,10 +33,10 @@ class Map2LocationCard extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => _Map2LocationCardState();
+  State<StatefulWidget> createState() => _Map2ExploreCardState();
 }
 
-class _Map2LocationCardState extends State<Map2LocationCard> with NotificationsListener {
+class _Map2ExploreCardState extends State<Map2ExploreCard> with NotificationsListener {
 
   bool? _isFavorite;
 
