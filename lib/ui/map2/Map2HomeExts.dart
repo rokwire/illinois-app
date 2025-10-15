@@ -203,17 +203,22 @@ extension Map2SortTypeImpl on Map2SortType {
     }
   }
 
-  bool isDropdownListEntry(Map2SortOrder order) {
+  bool isDropdownListEntry(Map2SortOrder? sortOrder) {
     switch(this) {
-      case Map2SortType.alphabetical: return true;
-      default: return (order == Map2SortOrder.ascending);
+      case Map2SortType.alphabetical: return (sortOrder != null);
+      case Map2SortType.proximity: return (sortOrder == Map2SortOrder.ascending);
+      case Map2SortType.dateTime: return (sortOrder == null);
     }
   }
 
-  String? dropdownSortOrderIndicator(Map2SortOrder order) {
+  String? dropdownSortOrderIndicator(Map2SortOrder? sortOrder) => (this == Map2SortType.alphabetical) ?
+    sortOrder?.displayAlphabeticalAbbr : null;
+
+  bool? isDropdownListEntrySelected(Map2SortOrder? sortOrder) {
     switch(this) {
-      case Map2SortType.alphabetical: return order.displayAlphabeticalAbbr;
-      default: return null;
+      case Map2SortType.alphabetical: return null;
+      case Map2SortType.proximity: return (sortOrder == Map2SortOrder.ascending);
+      case Map2SortType.dateTime: return (sortOrder == null);
     }
   }
 }
@@ -253,10 +258,11 @@ extension Map2SortOrderImpl on Map2SortOrder {
     }
   }
 
-  String displayIndicator(Map2SortType sortType) {
+  String? displayIndicator(Map2SortType sortType) {
     switch(sortType) {
       case Map2SortType.alphabetical: return displayAlphabeticalAbbr;
-      default: return displayAbbr;
+      case Map2SortType.dateTime: return (this == Map2SortOrder.descending) ? displayAbbr : null;
+      case Map2SortType.proximity: return null;
     }
   }
 

@@ -1549,8 +1549,9 @@ extension Event2FilterParamUi on Event2FilterParam {
 // Event2SortOrderImpl
 
 extension Event2SortOrderImpl on Event2SortOrder {
-  static Event2SortOrder? defaultFrom({Event2SortType? sortType, Event2TimeFilter? timeFilter}) =>
-    (sortType != null) ? (((timeFilter == Event2TimeFilter.past) && (sortType == Event2SortType.dateTime)) ? Event2SortOrder.descending : Event2SortOrder.ascending) : null;
+
+  static Event2SortOrder defaultFrom({required Event2SortType sortType, Event2TimeFilter? timeFilter}) =>
+    (((sortType == Event2SortType.dateTime) && (timeFilter == Event2TimeFilter.past)) ? Event2SortOrder.descending : Event2SortOrder.ascending);
 }
 
 // Events2QueryImpl
@@ -1567,7 +1568,7 @@ extension Events2QueryImpl on Events2Query {
       groupings: groupings,
       attributes: filterParam.attributes,
       sortType: sortType,
-      sortOrder: Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: filterParam.timeFilter),
+      sortOrder: (sortType != null) ? Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: filterParam.timeFilter) : null,
       location: location,
     );
 }

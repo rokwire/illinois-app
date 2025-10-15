@@ -123,7 +123,7 @@ class Map2Filter {
   static const Map2SortType defaultSortType = Map2SortType.alphabetical;
   static const Map2SortOrder defaultSortOrder = Map2SortOrder.ascending;
 
-  Map2SortOrder get expectedSortOrder => Map2Filter.defaultSortOrder;
+  Map2SortOrder expectedSortOrder(Map2SortType sortType) => Map2Filter.defaultSortOrder;
 
   List<Explore> sort(Iterable<Explore> explores, { Position? position }) {
     List<Explore> sortedExplores = List<Explore>.from(explores);
@@ -182,6 +182,12 @@ class Map2Filter {
       }
     }
     return result;
+  }
+
+  String get _sortDescriptionValue {
+    String sortTypeTitle = sortType.displayTitle;
+    String? sortOrderIndicator = sortOrder.displayIndicator(sortType);
+    return (sortOrderIndicator != null) ? '$sortTypeTitle $sortOrderIndicator' : sortTypeTitle;
   }
 }
 
@@ -259,8 +265,7 @@ class Map2CampusBuildingsFilter extends Map2Filter {
     }
     if (canSort && descriptionMap.isNotEmpty) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
-      descriptionMap[sortKey] = <String>[sortValue];
+      descriptionMap[sortKey] = <String>[_sortDescriptionValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
       String buildingsKey = Localization().getStringEx('panel.map2.filter.buildings.text', 'Buildings');
@@ -320,8 +325,7 @@ class Map2StudentCoursesFilter extends Map2Filter {
     }
     if (canSort) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
-      descriptionMap[sortKey] = <String>[sortValue];
+      descriptionMap[sortKey] = <String>[_sortDescriptionValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
       String buildingsKey = Localization().getStringEx('panel.map2.filter.student_courses.text', 'Courses');
@@ -415,8 +419,7 @@ class Map2DiningLocationsFilter extends Map2Filter {
     }
     if (canSort && descriptionMap.isNotEmpty) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
-      descriptionMap[sortKey] = <String>[sortValue];
+      descriptionMap[sortKey] = <String>[_sortDescriptionValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
       String buildingsKey = Localization().getStringEx('panel.map2.filter.dinings.text', 'Locations');
@@ -447,7 +450,7 @@ class Map2Events2Filter extends Map2Filter {
   factory Map2Events2Filter.defaultFilter({ String searchText = '' }) {
     Event2FilterParam eventFilter = Event2FilterParam.fromStorage();
     Event2SortType sortType = Event2SortTypeAppImpl.fromStorage() ??  Event2SortTypeAppImpl.defaultSortType;
-    Event2SortOrder sortOrder = Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: eventFilter.timeFilter) ?? Event2SortOrderAppImpl.defaultSortOrder;
+    Event2SortOrder sortOrder = Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: eventFilter.timeFilter);
     return Map2Events2Filter._(
       event2Filter: eventFilter,
       searchText: searchText,
@@ -459,7 +462,7 @@ class Map2Events2Filter extends Map2Filter {
   factory Map2Events2Filter.emptyFilter() {
     Event2FilterParam eventFilter = Event2FilterParam.defaultFilterParam;
     Event2SortType sortType = Event2SortType.dateTime;
-    Event2SortOrder sortOrder = Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: eventFilter.timeFilter) ?? Event2SortOrderAppImpl.defaultSortOrder;
+    Event2SortOrder sortOrder = Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: eventFilter.timeFilter);
     return Map2Events2Filter._(
       event2Filter: eventFilter,
       sortType: Map2SortTypeImpl.fromEvent2SortType(sortType),
@@ -480,9 +483,16 @@ class Map2Events2Filter extends Map2Filter {
   @override
   bool get hasFilter => event2Filter.isNotEmpty || super.hasFilter;
 
+  void applyEvent2Filter(Event2FilterParam event2FilterParam) {
+    event2Filter = event2FilterParam;
+    if (sortType == Map2SortType.dateTime) {
+      sortOrder = expectedSortOrder(sortType);
+    }
+  }
+
   @override
-  Map2SortOrder get expectedSortOrder =>
-    Map2SortOrderImpl.fromEvent2SortOrder(Event2SortOrderImpl.defaultFrom(sortType: sortType.toEvent2SortType(), timeFilter: event2Filter.timeFilter) ?? Event2SortOrderAppImpl.defaultSortOrder);
+  Map2SortOrder expectedSortOrder(Map2SortType sortType) =>
+    Map2SortOrderImpl.fromEvent2SortOrder(Event2SortOrderImpl.defaultFrom(sortType: sortType.toEvent2SortType(), timeFilter: event2Filter.timeFilter));
 
   @override
   LinkedHashMap<String, List<String>> description(List<Explore>? filteredExplores, { bool canSort = false }) {
@@ -500,10 +510,8 @@ class Map2Events2Filter extends Map2Filter {
 
     if (canSort && descriptionMap.isNotEmpty) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
-      descriptionMap[sortKey] = <String>[sortValue];
+      descriptionMap[sortKey] = <String>[_sortDescriptionValue];
     }
-
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
       String eventsKey = Localization().getStringEx('panel.map2.filter.events.text', 'Events');
       String eventsValue = filteredExplores.length.toString();
@@ -564,8 +572,7 @@ class Map2LaundryRoomsFilter extends Map2Filter {
     }
     if (canSort && descriptionMap.isNotEmpty) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
-      descriptionMap[sortKey] = <String>[sortValue];
+      descriptionMap[sortKey] = <String>[_sortDescriptionValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
       String buildingsKey = Localization().getStringEx('panel.map2.filter.laundry_rooms.text', 'Laundries');
@@ -629,8 +636,7 @@ class Map2BusStopsFilter extends Map2Filter {
     }
     if (canSort && descriptionMap.isNotEmpty) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
-      descriptionMap[sortKey] = <String>[sortValue];
+      descriptionMap[sortKey] = <String>[_sortDescriptionValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
       String buildingsKey = Localization().getStringEx('panel.map2.filter.bus_stops.text', 'Stops');
@@ -726,8 +732,7 @@ class Map2StoriedSitesFilter extends Map2Filter {
     }
     if (canSort && descriptionMap.isNotEmpty) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
-      descriptionMap[sortKey] = <String>[sortValue];
+      descriptionMap[sortKey] = <String>[_sortDescriptionValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
       String buildingsKey = Localization().getStringEx('panel.map2.filter.storied_sites.text', 'Sites');
@@ -783,8 +788,7 @@ class Map2MyLocationsFilter extends Map2Filter {
     }
     if (canSort && descriptionMap.isNotEmpty) {
       String sortKey = Localization().getStringEx('panel.map2.filter.sort.text', 'Sort');
-      String sortValue = "${sortType.displayTitle} ${sortOrder.displayIndicator(sortType)}";
-      descriptionMap[sortKey] = <String>[sortValue];
+      descriptionMap[sortKey] = <String>[_sortDescriptionValue];
     }
     if ((filteredExplores != null) && descriptionMap.isNotEmpty)  {
       String buildingsKey = Localization().getStringEx('panel.map2.filter.my_locations.text', 'Locations');
