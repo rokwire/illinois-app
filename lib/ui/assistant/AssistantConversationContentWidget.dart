@@ -30,7 +30,7 @@ import 'package:illinois/ui/dining/FoodDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:illinois/ui/map2/Map2LocationCard.dart';
+import 'package:illinois/ui/map2/Map2ExploreCard.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:geolocator/geolocator.dart';
@@ -520,7 +520,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       } else if (element is DiningNutritionItem) {
         elementCard = _DiningNutritionItemCard(item: element, onTap: () => _onTapDiningNutritionItem(element, elements));
       } else if (element is Building) {
-        elementCard = Map2LocationCard(element, onTap: () => _onTapBuildingItem(element));
+        elementCard = Map2ExploreCard(element, onTap: () => _onTapBuildingItem(element));
       }
 
       if (elementCard != null) {
