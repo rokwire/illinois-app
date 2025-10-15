@@ -41,6 +41,8 @@ class _ImageDescriptionInputState extends State<ImageDescriptionInput> {
 
   @override
   Widget build(BuildContext context) {
+      String label = Localization().getStringEx('', 'Alt Text');
+      String hint = Localization().getStringEx('', 'Add a one to two sentence description of the image. Do not include \"Image of . . .\"');
       return Container(
           // padding: EdgeInsets.symmetric(horizontal: 12),
          // decoration: BoxDecoration(
@@ -50,42 +52,43 @@ class _ImageDescriptionInputState extends State<ImageDescriptionInput> {
          // ),
         child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min,
           children: [
-          Text(Localization().getStringEx('', 'Alt Text'), textAlign: TextAlign.left,
-            style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
-          Visibility(visible: _imageDescriptionData.decorative == false, child:
-            Column(
-              children: [
-                Container(height: 8,),
-                Container(
-                    padding: EdgeInsets.only(top: 8, bottom: 8),
-                    decoration: PostInputField.fieldDecoration,
-                    child: TextField(
-                      controller: _textController,
-                      onChanged: (value) {
-                        setStateIfMounted((){
-                          _imageDescriptionData.description = value;
-                          widget.onChanged?.call(widget.imageDescriptionData);
-                        });
-                      },
-                      minLines: 1,
-                      maxLines: 2,
-                      enabled: _imageDescriptionData.decorative == false,
-                      textAlign: TextAlign.start,
-                      decoration: InputDecoration(
-                        filled: _imageDescriptionData.decorative == false,
-                        fillColor: Styles().colors.white,
-                        hintText: Localization().getStringEx('', 'Add a brief one to two sentence text description of the image.'),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                      ),
-                      style: Styles().textStyles.getTextStyle(
-                          'widget.input_field.text.regular'),
-                    )
-                ),
-                Container(height: 8,),
-                Text(Localization().getStringEx('', 'Add a brief one to two sentence text description of the image.'),
-                  style: Styles().textStyles.getTextStyle("widget.description.regular"),),
-            ])),
+            Text(label, style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
+            Visibility(visible: _imageDescriptionData.decorative == false, child:
+                Column(
+                  children: [
+                    Container(height: 8,),
+                    Container(
+                        padding: EdgeInsets.only(top: 8, bottom: 8),
+                        decoration: PostInputField.fieldDecoration,
+                        child: Semantics(label: label, hint: hint, container: true,
+                          child:TextField(
+                            controller: _textController,
+                            onChanged: (value) {
+                              setStateIfMounted((){
+                                _imageDescriptionData.description = value;
+                                widget.onChanged?.call(widget.imageDescriptionData);
+                              });
+                            },
+                            minLines: 1,
+                            maxLines: 2,
+                            enabled: _imageDescriptionData.decorative == false,
+                            textAlign: TextAlign.start,
+                            decoration: InputDecoration(
+                              filled: _imageDescriptionData.decorative == false,
+                              fillColor: Styles().colors.white,
+                              // hintText: hint,
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                            ),
+                            style: Styles().textStyles.getTextStyle(
+                                'widget.input_field.text.regular'),
+                          )
+                        )
+                    ),
+                    Container(height: 8,),
+                    ExcludeSemantics(child:
+                      Text(hint, style: Styles().textStyles.getTextStyle("widget.description.regular"),)),
+              ])),
           Container(height: 8),
           _buildSwitch(
               title: Localization().getStringEx("",

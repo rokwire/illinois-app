@@ -19,7 +19,7 @@ import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/map2/Map2ExplorePOICard.dart';
-import 'package:illinois/ui/map2/Map2LocationCard.dart';
+import 'package:illinois/ui/map2/Map2ExploreCard.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/map2/Map2PlaceCard.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
@@ -30,14 +30,18 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+typedef CardBuilder = Widget Function(Explore explore);
+
 class Map2TraySheet extends StatefulWidget {
   final List<Explore>? explores;
   final int? totalCount;
   final Position? currentLocation;
   final ScrollController? scrollController;
   final AnalyticsFeature? analyticsFeature;
+  final CardBuilder? cardBuilder;
 
-  Map2TraySheet({super.key, this.explores, this.scrollController, this.currentLocation, this.totalCount, this.analyticsFeature});
+
+  Map2TraySheet({super.key, this.explores, this.scrollController, this.currentLocation, this.totalCount, this.analyticsFeature, this.cardBuilder });
 
   @override
   State<StatefulWidget> createState() => _Map2TraySheetState();
@@ -72,6 +76,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
         CustomScrollView(controller: widget.scrollController, slivers: [
           SliverAppBar(
             pinned: true,
+            automaticallyImplyLeading: false,
             toolbarHeight: _traySheetDragHandleHeight + _traySheetPadding.height,
             backgroundColor: _traySheetBackgroundColor,
             title: _traySheetHeading,
@@ -120,8 +125,19 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
     TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.message.tiny'); // widget.message.tiny
     return RichText(text: TextSpan(style: regularStyle, children: <InlineSpan>[
       TextSpan(text: Localization().getStringEx('panel.map2.tray.header.selected.label', 'Selected: '), style: boldStyle,),
-      TextSpan(text: '${widget.explores?.length}/${widget.totalCount}', style: regularStyle,),
+      TextSpan(text: _traySheetSelectionText, style: regularStyle,),
     ]));
+  }
+
+  String get _traySheetSelectionText {
+    int? displayCount = widget.explores?.length;
+    int? totalCount = widget.totalCount;
+    if (displayCount != null) {
+      return (totalCount != null) ? '$displayCount/$totalCount' : displayCount.toString();
+    }
+    else {
+      return '';
+    }
   }
 
   Widget get _traySheetDragHandle => Container(
@@ -138,13 +154,15 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
 
   List<Widget> get _traySheetListContent {
     List<Widget> items = <Widget>[];
-    if (widget.explores != null) {
-      for (Explore explore in widget.explores!) {
+    List<Explore>? explores = widget.explores;
+    CardBuilder cardBuilder = widget.cardBuilder ?? _traySheetListCard;
+    if (explores != null) {
+      for (Explore explore in explores) {
         if (items.isNotEmpty) {
           items.add(SizedBox(height: _traySheetListCardSpacing(explore),));
         }
         items.add(Padding(padding: EdgeInsets.symmetric(horizontal: _traySheetPadding.width), child:
-          _traySheetListCard(explore),
+          cardBuilder(explore),
         ));
       }
       items.add(SizedBox(height: _traySheetPadding.height / 2,));
@@ -200,7 +218,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
       );
     }
     else if ((explore is Building) || (explore is WellnessBuilding))  {
-      return Map2LocationCard(explore,
+      return Map2ExploreCard(explore,
         currentLocation: widget.currentLocation,
         onTap: () => _onTapListCard(explore),
       );

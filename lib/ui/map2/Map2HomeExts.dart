@@ -1,13 +1,18 @@
 
 
+import 'dart:collection';
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/map2/Map2HomeFilters.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 extension Map2ContentTypeImpl on Map2ContentType {
 
@@ -56,6 +61,8 @@ extension Map2ContentTypeImpl on Map2ContentType {
       return Map2ContentType.Events2;
     } else if (param is Map2FilterBusStopsParam) {
       return Map2ContentType.BusStops;
+    } else if (param is Map) {
+      return Map2FilterDeepLinkParam.contentTypeFromUriParams(JsonUtils.mapCastValue<String, String?>(param));
     } else {
       return null;
     }
@@ -129,6 +136,20 @@ extension Map2ContentTypeImpl on Map2ContentType {
       case Map2ContentType.Therapists:           return Localization().getStringEx('panel.explore.state.failed.mental_health', 'Failed to load therapist locations.');
       case Map2ContentType.StoriedSites:         return Localization().getStringEx('panel.explore.state.failed.stored_sites', 'Failed to load storied sites.');
       case Map2ContentType.MyLocations:          return Localization().getStringEx('panel.explore.state.failed.my_locations', 'Failed to load saved locations.');
+    }
+  }
+
+  AnalyticsFeature get analyticsFeature {
+    switch (this) {
+      case Map2ContentType.CampusBuildings:      return AnalyticsFeature.MapBuildings;
+      case Map2ContentType.StudentCourses:       return AnalyticsFeature.MapStudentCourse;
+      case Map2ContentType.DiningLocations:      return AnalyticsFeature.MapDining;
+      case Map2ContentType.Events2:              return AnalyticsFeature.MapEvents;
+      case Map2ContentType.LaundryRooms:         return AnalyticsFeature.MapLaundry;
+      case Map2ContentType.BusStops:             return AnalyticsFeature.MapMTDStops;
+      case Map2ContentType.Therapists:           return AnalyticsFeature.MapMentalHealth;
+      case Map2ContentType.StoriedSites:         return AnalyticsFeature.StoriedSites;
+      case Map2ContentType.MyLocations:          return AnalyticsFeature.MapMyLocations;
     }
   }
 }
@@ -218,6 +239,13 @@ extension Map2SortOrderImpl on Map2SortOrder {
     }
   }
 
+  String displayIndicator(Map2SortType sortType) {
+    switch(sortType) {
+      case Map2SortType.alphabetical: return displayAlphabeticalAbbr;
+      default: return displayAbbr;
+    }
+  }
+
   String get displayTitle {
     switch (this) {
       case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending', 'Ascending');
@@ -227,8 +255,15 @@ extension Map2SortOrderImpl on Map2SortOrder {
 
   String get displayAbbr {
     switch (this) {
-      case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending.mnemo', 'Asc');
-      case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.descending.mnemo', 'Desc');
+      case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending.abbr', 'Asc');
+      case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.descending.abbr', 'Desc');
+    }
+  }
+
+  String get displayAlphabeticalAbbr {
+    switch (this) {
+      case Map2SortOrder.ascending: return Localization().getStringEx('model.map2.sort_order.ascending.alphabetical.abbr', 'A-Z');
+      case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.descending.alphabetical.abbr', 'Z-A');
     }
   }
 
@@ -271,6 +306,19 @@ extension ExplorePOIImpl on ExplorePOI {
     );
 }
 
+extension Map2BuildingAmenities on LinkedHashSet<String> {
+  LinkedHashMap<String, String> selectedFromBuildingAmenities(Map<String, String> buildingAmenities) {
+    LinkedHashMap<String, String> selectedAmenities = LinkedHashMap<String, String>();
+    for (String amenityId in this) {
+      String? amenuityName = buildingAmenities[amenityId];
+      if (amenuityName != null) {
+        selectedAmenities[amenityId] = amenuityName;
+      }
+    }
+    return selectedAmenities;
+  }
+}
+
 class Map2FilterEvents2Param {
   final String searchText;
   Map2FilterEvents2Param([this.searchText = '']);
@@ -281,3 +329,39 @@ class Map2FilterBusStopsParam {
   final bool starred;
   Map2FilterBusStopsParam({this.searchText = '', this.starred = false});
 }
+
+class Map2FilterDeepLinkParam {
+  Map2ContentType contentType;
+  Map2Filter? filter;
+
+  Map2FilterDeepLinkParam({required this.contentType, this.filter});
+
+  static Map2FilterDeepLinkParam? fromUriParams(Map<String, String?>? uriParams) {
+    Map2ContentType? contentType = contentTypeFromUriParams(uriParams);
+    return (contentType != null) ? Map2FilterDeepLinkParam(
+      contentType: contentType,
+      filter: Map2Filter.fromJson(JsonUtils.decodeMap(uriParams?['filter']), contentType: contentType),
+    ) : null;
+  }
+
+  static Map2ContentType? contentTypeFromUriParams(Map<String, String?>? uriParams) =>
+    Map2ContentTypeImpl.fromJson(JsonUtils.stringValue(uriParams?['contentType']));
+
+  Map<String, String?> toUriParams() => <String, String?> {
+    'contentType': contentType.toJson(),
+    'filter': JsonUtils.encode(filter?.toJson()),
+  };
+}
+
+/* class Map2FilterDeepLinkParam0 {
+  final Map<String, dynamic>? params;
+  Map2FilterDeepLinkParam(this.params);
+
+  Map2ContentType? get contentType => Map2ContentTypeImpl.fromJson(params?['contentType']);
+  Map2Filter? get filter => Map2Filter.fromJson(JsonUtils.decodeMap(params?['filter']), contentType: contentType);
+
+  static Map<String, String?> buildUrlParam({Map2ContentType? contentType, Map2Filter? filter}) => <String, String?>{
+    'contentType': contentType?.toJson(),
+    'filter': JsonUtils.encode(filter?.toJson()),
+  };
+}*/

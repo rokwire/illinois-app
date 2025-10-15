@@ -10,8 +10,11 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Map2ExplorePOICard extends StatefulWidget {
+  static const String notifyPOIUpdated = "edu.illinois.rokwire.explore.poi.updated";
+
   final ExplorePOI explorePOI;
 
   Map2ExplorePOICard(this.explorePOI, { super.key,});
@@ -176,7 +179,7 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
     Widget? favoriteStarIcon = _explorePOI.favoriteStarIcon(selected: _isFavorite);
     String semanticLabel = _isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites');
     String semanticHint = _isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', '');
-    return InkWell(onTap: () => _onTapFavorite(), child:
+    return InkWell(onTap: _onTapFavorite, child:
       Semantics(container: true, label: semanticLabel, hint: semanticHint, button: true, excludeSemantics: true, child:
         Padding(padding: _favoriteButtonPadding, child:
           favoriteStarIcon
@@ -305,6 +308,9 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
       });
       if (Auth2().canFavorite && Auth2().isFavorite(oldExplorePOI)) {
         Auth2().prefs?.replaceFavorite(oldExplorePOI, newExplorePOI);
+      }
+      else {
+        NotificationService().notify(Map2ExplorePOICard.notifyPOIUpdated, Pair(oldExplorePOI, newExplorePOI));
       }
     }
   }

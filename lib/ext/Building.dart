@@ -19,17 +19,19 @@ extension BuildingFilter on Building {
       (floors?.firstWhereOrNull((String floor) => floor.toLowerCase().contains(searchLowerCase)) != null)
     ));
 
-  bool matchAmenityIds(Set<String> amenityIds) =>
-    (amenityIds.isNotEmpty && (
-      (features?.firstWhereOrNull((BuildingFeature feature) => feature.matchAmenityIds(amenityIds)) != null)
+  bool matchAmenities(Map<String, String> amenities) =>
+    (amenities.isNotEmpty && (
+      (features?.firstWhereOrNull((BuildingFeature feature) => feature.matchAmenities(amenities)) != null)
     ));
 
-  Map<String, String?> get featureNames {
-    Map<String, String?> featuresMap = <String, String?>{};
+  Map<String, String> get featureNames {
+    Map<String, String> featuresMap = <String, String>{};
     if (features != null) {
       for (BuildingFeature feature in features!) {
-        if (feature.key != null) {
-          featuresMap[feature.key!] = feature.value?.name;
+        String? featureKey = feature.key;
+        String? featureName = feature.value?.name;
+        if ((featureKey != null) && (featureName != null)) {
+          featuresMap[featureKey] = featureName;
         }
       }
     }
@@ -39,8 +41,8 @@ extension BuildingFilter on Building {
 
 extension BuildingsSearch on Iterable<Building>  {
 
-  Map<String, String?> get featureNames {
-    Map<String, String?> featuresMap = <String, String?>{};
+  Map<String, String> get featureNames {
+    Map<String, String> featuresMap = <String, String>{};
     for (Building building in this) {
       featuresMap.addAll(building.featureNames);
     }
@@ -55,7 +57,7 @@ extension BuildingEntranceSearch on BuildingEntrance {
 
 extension BuildingFeatureSearch on BuildingFeature {
   bool matchSearchTextLowerCase(String searchLowerCase) => value?.matchSearchTextLowerCase(searchLowerCase) == true;
-  bool matchAmenityIds(Set<String> amenityIds) => amenityIds.contains(key);
+  bool matchAmenities(Map<String, String> amenities) => amenities.containsKey(key);
 }
 
 extension BuildingFeatureValueSearch on BuildingFeatureValue {

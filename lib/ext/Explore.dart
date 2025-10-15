@@ -475,136 +475,87 @@ extension ExploreMap on Explore {
 
   String get _defaultTravelMode => ((this is MTDStop) || (this is ExplorePOI)) ?
     GeoMapUtils.traveModeTransit : GeoMapUtils.traveModeWalking;
+}
 
-  static Explore? mapGroupSameExploreForList(Iterable<Explore>? explores) {
-    Explore? sameExplore;
-    if (explores != null) {
-      for (Explore explore in explores) {
-        if (sameExplore == null) {
-          sameExplore = explore;
-        }
-        else if (sameExplore.runtimeType != explore.runtimeType) {
-          return null;
-        }
+extension ExploreListMap on Iterable<Explore> {
+
+  Explore? get groupRepresentative {
+    Explore? representativeExplore;
+    for (Explore explore in this) {
+      if (representativeExplore == null) {
+        representativeExplore = explore;
+      }
+      else if (representativeExplore.runtimeType != explore.runtimeType) {
+        return null;
       }
     }
-    return sameExplore;
+    return representativeExplore;
   }
 
-  static List<Explore> validFromList(List<Explore> explores) {
-    List<Explore> validExplores = <Explore>[];
-    for (Explore explore in explores) {
+  List<Explore> get validList =>
+    toList()..removeWhere((Explore explore) => (explore.exploreLocation?.isLocationCoordinateValid != true));
+
+  LatLngBounds? get boundsRect {
+    double? minLat, minLng, maxLat, maxLng;
+    for (Explore explore in this) {
       ExploreLocation? exploreLocation = explore.exploreLocation;
       if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
-        validExplores.add(explore);
-      }
-    }
-    return validExplores;
-  }
+        double exploreLat = exploreLocation.latitude?.toDouble() ?? 0;
+        double exploreLng = exploreLocation.longitude?.toDouble() ?? 0;
+        if ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) {
+          if (exploreLat < minLat)
+            minLat = exploreLat;
+          else if (maxLat < exploreLat)
+            maxLat = exploreLat;
 
-  static int? validCountFromList(List<Explore>? explores) {
-    if (explores != null) {
-      int validCount = 0;
-      for (Explore explore in explores) {
-        ExploreLocation? exploreLocation = explore.exploreLocation;
-        if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
-          validCount++;
+          if (exploreLng < minLng)
+            minLng = exploreLng;
+          else if (maxLng < exploreLng)
+            maxLng = exploreLng;
+        }
+        else {
+          minLat = maxLat = exploreLat;
+          minLng = maxLng = exploreLng;
         }
       }
-      return validCount;
+    }
+    return ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) ? LatLngBounds(southwest: LatLng(minLat, minLng), northeast: LatLng(maxLat, maxLng)) : null;
+  }
+
+  LatLng? get centerPoint {
+    int count = 0;
+    double x = 0, y = 0, z = 0;
+    double pi = 3.14159265358979323846264338327950288;
+    for (Explore explore in this) {
+      ExploreLocation? exploreLocation = explore.exploreLocation;
+      if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
+        double exploreLat = exploreLocation.latitude?.toDouble() ?? 0;
+        double exploreLng = exploreLocation.longitude?.toDouble() ?? 0;
+        
+        // https://stackoverflow.com/a/60163851/3759472
+        double latitude = exploreLat * pi / 180;
+        double longitude = exploreLng * pi / 180;
+        double c1 = math.cos(latitude);
+        x = x + c1 * math.cos(longitude);
+        y = y + c1 * math.sin(longitude);
+        z = z + math.sin(latitude);
+        count++;
+      }
+    }
+
+    if (0 < count) {
+      x = x / count.toDouble();
+      y = y / count.toDouble();
+      z = z / count.toDouble();
+
+      double centralLongitude = math.atan2(y, x);
+      double centralSquareRoot = math.sqrt(x * x + y * y);
+      double centralLatitude = math.atan2(z, centralSquareRoot);
+      return LatLng(centralLatitude * 180 / pi, centralLongitude * 180 / pi);
     }
     else {
       return null;
     }
-  }
-
-  static LatLngBounds? boundsOfList(List<Explore>? explores) {
-    double? minLat, minLng, maxLat, maxLng;
-    if (explores != null) {
-      for (Explore explore in explores) {
-        ExploreLocation? exploreLocation = explore.exploreLocation;
-        if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
-          double exploreLat = exploreLocation.latitude?.toDouble() ?? 0;
-          double exploreLng = exploreLocation.longitude?.toDouble() ?? 0;
-          if ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) {
-            if (exploreLat < minLat)
-              minLat = exploreLat;
-            else if (maxLat < exploreLat)
-              maxLat = exploreLat;
-
-            if (exploreLng < minLng)
-              minLng = exploreLng;
-            else if (maxLng < exploreLng)
-              maxLng = exploreLng;
-          }
-          else {
-            minLat = maxLat = exploreLat;
-            minLng = maxLng = exploreLng;
-          }
-        }
-      }
-    }
-    return ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) ? LatLngBounds(southwest: LatLng(minLat, minLng), northeast: LatLng(maxLat, maxLng)) : null;
-  }
-
-  static LatLngBounds? boundsOfSet(Iterable<LatLng> coordinates) {
-    double? minLat, minLng, maxLat, maxLng;
-    for (LatLng coordinate in coordinates) {
-      double coordinateLat = coordinate.latitude.toDouble();
-      double coordinateLng = coordinate.longitude.toDouble();
-      if ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) {
-        if (coordinateLat < minLat)
-          minLat = coordinateLat;
-        else if (maxLat < coordinateLat)
-          maxLat = coordinateLat;
-
-        if (coordinateLng < minLng)
-          minLng = coordinateLng;
-        else if (maxLng < coordinateLng)
-          maxLng = coordinateLng;
-      }
-      else {
-        minLat = maxLat = coordinateLat;
-        minLng = maxLng = coordinateLng;
-      }
-    }
-    return ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) ? LatLngBounds(southwest: LatLng(minLat, minLng), northeast: LatLng(maxLat, maxLng)) : null;
-  }
-
-  static LatLng? centerOfList(Iterable<Explore>? explores) {
-    if (explores != null) {
-      int count = 0;
-      double x = 0, y = 0, z = 0;
-      double pi = 3.14159265358979323846264338327950288;
-      for (Explore explore in explores) {
-        ExploreLocation? exploreLocation = explore.exploreLocation;
-        if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
-          double exploreLat = exploreLocation.latitude?.toDouble() ?? 0;
-          double exploreLng = exploreLocation.longitude?.toDouble() ?? 0;
-  	      
-          // https://stackoverflow.com/a/60163851/3759472
-          double latitude = exploreLat * pi / 180;
-          double longitude = exploreLng * pi / 180;
-          double c1 = math.cos(latitude);
-          x = x + c1 * math.cos(longitude);
-          y = y + c1 * math.sin(longitude);
-          z = z + math.sin(latitude);
-          count++;
-        }
-      }
-
-      if (0 < count) {
-        x = x / count.toDouble();
-        y = y / count.toDouble();
-        z = z / count.toDouble();
-
-        double centralLongitude = math.atan2(y, x);
-        double centralSquareRoot = math.sqrt(x * x + y * y);
-        double centralLatitude = math.atan2(z, centralSquareRoot);
-        return LatLng(centralLatitude * 180 / pi, centralLongitude * 180 / pi);
-      }
-    }
-    return null;
   }
 
 }
@@ -688,6 +639,7 @@ extension ExplorePOIFilter on ExplorePOI {
       (location?.matchSearchTextLowerCase(searchLowerCase) == true)
     ));
 }
+
 
 
 enum ExploreSelectLocationContext { card, detail }

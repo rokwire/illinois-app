@@ -35,6 +35,7 @@ import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/MTD.dart';
+import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
@@ -178,6 +179,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Gateway(),
       Places(),
       Safety(),
+      Map2(),
       Onboarding2(),
     ]);
 
