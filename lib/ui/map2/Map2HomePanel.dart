@@ -67,7 +67,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, LaundryRooms, BusStops, Therapists, StoriedSites, MyLocations, }
 enum Map2SortType { dateTime, alphabetical, proximity }
 enum Map2SortOrder { ascending, descending }
-enum _ExploreProgressType { init, update }
+enum ExploreProgressType { init, update }
 
 typedef LoadExploresTask = Future<List<Explore>?>;
 
@@ -143,7 +143,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   List<Explore>? _filteredExplores;
   List<Explore>? _trayExplores;
   LoadExploresTask? _exploresTask;
-  _ExploreProgressType? _exploresProgress;
+  ExploreProgressType? _exploresProgress;
 
   LinkedHashMap<String, dynamic>? _storiedSitesTags;
   String? _expandedStoriedSitesTag;
@@ -565,7 +565,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
         _contentFilterSearchBar,
       ] : <Widget>[
         _contentTitleBar,
-        if ((_exploresProgress == null) || (_exploresProgress == _ExploreProgressType.update))
+        if ((_exploresProgress == null) || (_exploresProgress == ExploreProgressType.update))
           ...[_contentFilterButtonsBar ?? Container(),
             ...(_contentFilterButtonsExtraBars ?? [])
           ],
@@ -742,7 +742,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   // Explores
 
-  Future<void> _initExplores({_ExploreProgressType progressType = _ExploreProgressType.init}) async {
+  Future<void> _initExplores({ExploreProgressType progressType = ExploreProgressType.init}) async {
     if (mounted) {
       LoadExploresTask? exploresTask = _loadExplores();
       if (exploresTask != null) {
@@ -958,7 +958,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   List<Explore>? _sortExplores(Iterable<Explore>? explores) => (explores != null) ?
     (_selectedFilterIfExists?.sort(explores, position: _currentLocation) ?? List.from(explores)) : null;
 
-  // Tray Explores
+  // Tray Content
 
   List<Explore>? _buildTrayExploresFromSource({
     Iterable<Explore>? filtered,
@@ -1882,7 +1882,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         _updateFilteredExplores();
       }
       else {
-        _initExplores(progressType: _ExploreProgressType.update);
+        _initExplores(progressType: ExploreProgressType.update);
       }
     }
   }
