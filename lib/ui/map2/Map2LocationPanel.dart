@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -26,10 +27,12 @@ import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/map2/Map2TraySheet.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -85,6 +88,7 @@ class _Map2LocationPanelState extends Map2BasePanelState<Map2LocationPanel>
   @override
   void initState() {
     _initMapStyles();
+    _initPinMarker();
     _initExplores();
     super.initState();
   }
@@ -153,11 +157,21 @@ class _Map2LocationPanelState extends Map2BasePanelState<Map2LocationPanel>
       builder: (BuildContext context, ScrollController scrollController) => Map2TraySheet(
         key: _traySheetKey,
         explores: _trayExplores,
+        cardBuilder: _traySheetListCard,
         scrollController: scrollController,
         totalCount: _trayTotalCount,
         analyticsFeature: widget.analyticsFeature,
       ),
     );
+
+  Widget _traySheetListCard(Explore explore) => _Map2ExploreLocationCard(explore,
+    onSelect: () => _didSelectExplore(explore),
+  );
+
+  void _didSelectExplore(Explore explore) {
+    Navigator.of(context).popUntil((Route route) => (route.settings.name == Map2LocationPanel.routeName));
+    Navigator.pop(context, explore);
+  }
 
   // Progress Indicators
 
@@ -286,6 +300,19 @@ class _Map2LocationPanelState extends Map2BasePanelState<Map2LocationPanel>
     });
   }
 
+  Future<void> _initPinMarker() async {
+    if (widget.selectedLocation != null) {
+      _pinnedExplore = widget.selectedLocation;
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        createPinMarker(widget.selectedLocation, imageConfiguration: createLocalImageConfiguration(context)).then((Marker? marker){
+          setStateIfMounted(() {
+            _pinnedMarker = marker;
+          });
+        });
+      });
+    }
+  }
+
   // Map Content
 
   Future<void> _initExplores({ExploreProgressType progressType = ExploreProgressType.init}) async {
@@ -329,9 +356,6 @@ class _Map2LocationPanelState extends Map2BasePanelState<Map2LocationPanel>
           buildMarkersTask = null;
           lastMapZoom = null;
           markersProgress = false;
-
-          _pinnedExplore = null;
-          _pinnedMarker = null;
         });
       }
     }
@@ -539,5 +563,212 @@ class _Map2LocationPanelState extends Map2BasePanelState<Map2LocationPanel>
       }
     }
   }
+}
 
+class _Map2ExploreLocationCard extends StatefulWidget {
+  final Explore explore;
+  final GestureTapCallback? onSelect;
+
+  // ignore: unused_element_parameter
+  _Map2ExploreLocationCard(this.explore, { super.key, this.onSelect });
+
+  @override
+  State<StatefulWidget> createState() => _Map2ExploreLocationCardState();
+}
+
+class _Map2ExploreLocationCardState extends State<_Map2ExploreLocationCard> with NotificationsListener {
+
+  late bool _isFavorite;
+
+  static Decoration get _cardDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    borderRadius: _cardBorderRadius,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
+  );
+
+  static const BorderRadiusGeometry _cardBorderRadius = BorderRadius.all(_cardRadius);
+  static const Radius _cardRadius = Radius.circular(8);
+
+  static EdgeInsetsGeometry _favoriteButtonPadding = EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16);
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+    ]);
+    _isFavorite = _isExploreFavorite();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      bool? isFavorite = _isExploreFavorite();
+      if ((_isFavorite != isFavorite) && mounted) {
+        setState((){
+          _isFavorite = isFavorite;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+    Semantics(label: _semanticsLabel, button: true, child:
+      InkWell(onTap: _onExploreDetail, child:
+        _cardWidget
+      )
+    );
+
+  Widget get _cardWidget =>
+    Container(decoration: _cardDecoration, child:
+      ClipRRect(borderRadius: _cardBorderRadius, child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          _titleWidget,
+          _detailsWidget,
+        ]),
+      ),
+    );
+
+  Widget get _titleWidget =>
+    Padding(padding: EdgeInsets.only(left: 16), child:
+      Row(children: [
+        Expanded(child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+            _titleTextWidget
+          )
+        ),
+        if (_exploreFavorite != null)
+          _favoriteButton,
+      ],),
+    );
+
+  Widget get _titleTextWidget => Text(_titleText, overflow: TextOverflow.ellipsis, maxLines: 2, style: _titleTextStyle);
+  TextStyle? get _titleTextStyle => Styles().textStyles.getTextStyle('widget.title.medium.fat');
+  String get _titleText => widget.explore.exploreTitle ?? '';
+
+  Widget get _favoriteButton {
+    Widget? favoriteStarIcon = _exploreFavorite?.favoriteStarIcon(selected: _isFavorite);
+    String semanticLabel = _isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites');
+    String semanticHint = _isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', '');
+    return InkWell(onTap: _onTapFavorite, child:
+      Semantics(container: true, label: semanticLabel, hint: semanticHint, button: true, excludeSemantics: true, child:
+        Padding(padding: _favoriteButtonPadding, child:
+          favoriteStarIcon
+        )
+      )
+    );
+  }
+
+  Widget get _detailsWidget =>
+    Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        _locationDetailWidget ?? Container(),
+        Padding(padding: EdgeInsets.only(top: 16), child:
+          _commandsWidget,
+        ),
+      ],)
+    );
+
+  Widget? get _locationDetailWidget =>
+    _buildDetailWidget('location', _locationDetailTexts.map<Widget>((String text) => _locationDetailTextWidget(text)), contentPadding: EdgeInsets.zero);
+
+  List<String> get _locationDetailTexts {
+    String? title = widget.explore.exploreTitle;
+    String? building = widget.explore.exploreLocation?.building;
+    String? fullAddress = widget.explore.exploreLocation?.fullAddress;
+    List<String> detailTexts = <String>[];
+
+    if ((building != null) && building.isNotEmpty &&
+        ((title == null) || title.isEmpty || (!building.contains(title) && title.contains(building))) &&
+        ((fullAddress == null) || fullAddress.isEmpty || (!fullAddress.contains(building) && !building.contains(fullAddress)))
+       )
+    {
+      detailTexts.add(building);
+    }
+
+    if ((fullAddress != null) && fullAddress.isNotEmpty) {
+      detailTexts.add(fullAddress);
+    }
+
+    String? dispayCoordinates = detailTexts.isEmpty ? widget.explore.exploreLocation?.displayCoordinates : null;
+    if ((dispayCoordinates != null) && dispayCoordinates.isNotEmpty) {
+      detailTexts.add(dispayCoordinates);
+    }
+
+    return detailTexts;
+  }
+
+  Widget? _buildDetailWidget(String iconKey, Iterable<Widget> contentWidgets, {
+    EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
+    EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
+  }) {
+    List<Widget> contentRows = <Widget>[];
+    Widget? iconWidget = Styles().images.getImage(iconKey, excludeFromSemantics: true);
+    for (Widget contentWidget in contentWidgets) {
+      contentRows.add(Row(children: <Widget>[
+        if (iconWidget != null)
+          Padding(padding: iconPadding, child:
+            Opacity(opacity: contentRows.isEmpty ? 1 : 0, child:
+              iconWidget,
+            )
+          ),
+        Expanded(child:
+          contentWidget
+        )
+      ]));
+    }
+    return contentRows.isNotEmpty ? Padding(padding: contentPadding, child:
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children:
+        contentRows
+      )
+    ) : null;
+  }
+
+  Widget _locationDetailTextWidget(String? text) =>
+    Text(text ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('common.body'),);
+
+  Widget get _commandsWidget => Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+    _selectButton,
+  ],);
+
+  Widget get _selectButton => InkWell(onTap: widget.onSelect, child:
+    Container(decoration: _selectButtonDecoration, padding: _selectButtonPadding, child:
+      Text(_selectButtonTitle, overflow: TextOverflow.ellipsis, style: _selectButtonTextStyle,)
+    )
+  );
+
+  BoxDecoration get _selectButtonDecoration => BoxDecoration(
+    border: Border.all(color: Styles().colors.fillColorSecondary, width: 2),
+    borderRadius: BorderRadius.all(Radius.circular(20)),
+  );
+  EdgeInsetsGeometry get _selectButtonPadding => EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+  String get _selectButtonTitle => Localization().getStringEx('panel.map.select.button.select.title', 'Select');
+  TextStyle? get _selectButtonTextStyle => Styles().textStyles.getTextStyle('widget.button.title.medium.fat');
+
+  bool _isExploreFavorite() => Auth2().canFavorite && Auth2().isFavorite(_exploreFavorite);
+  Favorite? get _exploreFavorite => (widget.explore is Favorite) ? (widget.explore as Favorite) : null;
+
+  void _onTapFavorite() {
+    Analytics().logSelect(target: "Favorite: ${widget.explore.exploreTitle}", source: '${runtimeType.toString()}(${_exploreFavorite?.favoriteKey})');
+    Auth2().prefs?.toggleFavorite(_exploreFavorite);
+  }
+
+  void _onExploreDetail() {
+    widget.explore.exploreLaunchDetail(context, selectLocationBuilder: _detailSelectBuilder);
+  }
+
+  Widget? _detailSelectBuilder(BuildContext context, ExploreSelectLocationContext selectContext, { Explore? explore } ) =>
+    _selectButton;
+
+  String get _semanticsLabel => '$_semanticsTitle, $_semanticsLocation';
+  String get _semanticsTitle => widget.explore.exploreTitle ?? '';
+  String get _semanticsLocation => ListUtils.last(_locationDetailTexts) ?? '';
 }

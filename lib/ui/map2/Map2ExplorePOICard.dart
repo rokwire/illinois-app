@@ -179,7 +179,7 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
     Widget? favoriteStarIcon = _explorePOI.favoriteStarIcon(selected: _isFavorite);
     String semanticLabel = _isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites');
     String semanticHint = _isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', '');
-    return InkWell(onTap: () => _onTapFavorite(), child:
+    return InkWell(onTap: _onTapFavorite, child:
       Semantics(container: true, label: semanticLabel, hint: semanticHint, button: true, excludeSemantics: true, child:
         Padding(padding: _favoriteButtonPadding, child:
           favoriteStarIcon
