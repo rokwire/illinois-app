@@ -7,7 +7,6 @@ import 'package:collection/collection.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:geolocator/geolocator.dart';
@@ -39,6 +38,7 @@ import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
+import 'package:illinois/ui/map2/Map2BasePanel.dart';
 import 'package:illinois/ui/map2/Map2ExplorePOICard.dart';
 import 'package:illinois/ui/map2/Map2FilterBuildingAmenitiesPanel.dart';
 import 'package:illinois/ui/map2/Map2HomeExts.dart';
@@ -50,7 +50,6 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -63,7 +62,6 @@ import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, LaundryRooms, BusStops, Therapists, StoriedSites, MyLocations, }
@@ -72,8 +70,6 @@ enum Map2SortOrder { ascending, descending }
 enum _ExploreProgressType { init, update }
 
 typedef LoadExploresTask = Future<List<Explore>?>;
-typedef BuildMarkersTask = Future<Set<Marker>>;
-typedef MarkerIconsCache = Map<String, BitmapDescriptor>;
 
 class Map2HomePanel extends StatefulWidget with AnalyticsInfo {
   static const String selectParamKey = "select-param";
@@ -86,8 +82,8 @@ class Map2HomePanel extends StatefulWidget with AnalyticsInfo {
   State<StatefulWidget> createState() => _Map2HomePanelState();
 
   AnalyticsFeature? get analyticsFeature =>
-    /*_state?._selectedMapType?.analyticsFeature ??
-    _selectedExploreType(exploreTypes: _buildExploreTypes())?.analyticsFeature ?? */
+    _state?._selectedContentType?.analyticsFeature ??
+    _initialContentType?.analyticsFeature ??
     AnalyticsFeature.Map;
 
   static bool get hasState => _state != null;
@@ -105,9 +101,18 @@ class Map2HomePanel extends StatefulWidget with AnalyticsInfo {
   }
 
   dynamic get _initialSelectParam => initParams[selectParamKey];
+
+  Map2ContentType? get _initialContentType => _evalInitialContentTypeEx(
+    availableTypes: Map2ContentTypeImpl.availableTypes
+  );
+
+  Map2ContentType? _evalInitialContentTypeEx({Set<Map2ContentType>? availableTypes}) => Map2ContentTypeImpl.initialType(
+    initialSelectParam: _initialSelectParam,
+    availableTypes: availableTypes
+  );
 }
 
-class _Map2HomePanelState extends State<Map2HomePanel>
+class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   with NotificationsListener, SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Map2HomePanel>
 {
 
@@ -119,11 +124,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   final GlobalKey _termsButtonKey = GlobalKey();
   final GlobalKey _paymentTypesButtonKey = GlobalKey();
 
-  UniqueKey _mapKey = UniqueKey();
-  GoogleMapController? _mapController;
-  CameraPosition? _lastCameraPosition;
-  CameraUpdate? _targetCameraUpdate;
-  double? _lastMapZoom;
 
   final ScrollController _contentTypesScrollController = ScrollController();
   final DraggableScrollableController _traySheetController = DraggableScrollableController();
@@ -149,12 +149,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   LinkedHashMap<String, dynamic>? _storiedSitesTags;
   String? _expandedStoriedSitesTag;
 
-  Set<Marker>? _mapMarkers;
-  Set<dynamic>? _exploreMapGroups;
-  BuildMarkersTask? _buildMarkersTask;
-  MarkerIconsCache _markerIconsCache = <String, BitmapDescriptor>{};
-  bool _markersProgress = false;
-
   Set<Explore>? _selectedExploreGroup;
 
   Explore? _pinnedExplore;
@@ -163,7 +157,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
   DateTime? _pausedDateTime;
   Position? _currentLocation;
   Map<String, dynamic>? _mapStyles;
-  LocationServicesStatus? _locationServicesStatus;
 
   @override
   void initState() {
@@ -179,15 +172,13 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     ]);
 
     _availableContentTypes = Map2ContentTypeImpl.availableTypes;
-    _selectedContentType = Map2ContentTypeImpl.initialType(
-      initialSelectParam: widget._initialSelectParam,
-      availableTypes: _availableContentTypes
-    );
+    _selectedContentType = widget._evalInitialContentTypeEx(availableTypes: _availableContentTypes);
 
     _contentTypesScrollController.addListener(_onContentTypesScroll);
     _traySheetController.addListener(_onSheetDragChanged);
+
+    //updateLocationServicesStatus(updateCamera: true);
     _initSelectNotificationFilters(widget._initialSelectParam);
-    _updateLocationServicesStatus(init: true);
     _initMapStyles();
     _initExplores();
 
@@ -217,7 +208,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       }
     }
     else if (name == LocationServices.notifyStatusChanged) {
-      _updateLocationServicesStatus(status: param);
+      updateLocationServicesStatus(status: param);
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       if ((_selectedContentType == Map2ContentType.MyLocations) && mounted) {
@@ -247,7 +238,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     }
     else if (name == FlexUI.notifyChanged) {
       _updateAvailableContentTypes();
-      _updateLocationServicesStatus();
+      updateLocationServicesStatus();
     }
   }
 
@@ -261,7 +252,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           if (mounted) {
-            _updateLocationServicesStatus();
+            updateLocationServicesStatus();
           }
         }
       }
@@ -270,8 +261,8 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
   Future<void> _onConnectivityStatusChanged() async {
     if (Connectivity().isNotOffline && mounted) {
-      if (_locationServicesStatus == null) {
-        await _updateLocationServicesStatus();
+      if (locationServicesStatus == null) {
+        await updateLocationServicesStatus();
       }
     }
   }
@@ -297,7 +288,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       Positioned.fill(child:
         Visibility(visible: (_exploresProgress == null), child:
             Padding(padding: _accessibilityWorkaroundMapPadding, child:
-              _mapView
+              mapView
             )
         ),
       ),
@@ -330,7 +321,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           ),
         ),
 
-      if (_markersProgress == true)
+      if (markersProgress == true)
         Positioned.fill(child:
           Center(child:
             _mapProgressIndicator,
@@ -338,34 +329,6 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         ),
     ],);
 
-  Widget get _mapView => Container(decoration: _mapViewDecoration, child:
-    GoogleMap(
-      key: _mapKey,
-      initialCameraPosition: _lastCameraPosition ?? _Map2HomePanelContent.defaultCameraPosition,
-      onMapCreated: _onMapCreated,
-      onCameraIdle: _onMapCameraIdle,
-      onCameraMove: _onMapCameraMove,
-      onTap: _onTapMap,
-      onPoiTap: _onTapMapPoi,
-      myLocationEnabled: _userLocationEnabled,
-      myLocationButtonEnabled: _userLocationEnabled,
-      mapToolbarEnabled: Storage().debugMapShowLevels == true,
-      markers: ((_pinnedMarker != null) ? _mapMarkers?.union(<Marker>{_pinnedMarker!}) : _mapMarkers) ?? <Marker>{},
-      style: _currentMapStyle,
-      indoorViewEnabled: true,
-      //trafficEnabled: true,
-      // This fixes #4306. The gestureRecognizers parameter is needed because of PopScopeFix wrapper in RootPanel,
-      // which uses BackGestureDetector in iOS, that disables scroll, pan and zoom of the map view.
-      gestureRecognizers: <Factory<OneSequenceGestureRecognizer>> {
-        Factory<OneSequenceGestureRecognizer>(
-          () => EagerGestureRecognizer(),
-        ),
-      },
-    ),
-  );
-
-  BoxDecoration get _mapViewDecoration =>
-    BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent, width: 1));
 
   Widget get _mapProgressIndicator =>
     SizedBox(width: 24, height: 24, child:
@@ -377,49 +340,52 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
     );
 
+  // Map Overrides
+
+  @override
+  Set<Marker>? get mapMarkers => (_pinnedMarker != null) ?
+    markers?.union(<Marker>{_pinnedMarker!}) : markers;
+
+  @override
+  String? get mapStyle => _currentMapStyle;
+
+  @override
+  Size? get mapSize => _scaffoldKey.renderBoxSize;
+
+  @override
+  double get mapPadding => 60;
+
+  @override
+  double? get mapTopSiblingsHeight => _contentHeadingBarKey.renderBoxSize?.height;
+
+  @override
+  List<Explore>? get mapExplores => _filteredExplores;
+
+  @override
+  bool isExploreGroupMarkerDisabled(Set<Explore> exploreGroup) =>
+    (_pinnedExplore != null) || ((_selectedExploreGroup != null) && (_selectedExploreGroup?.intersection(exploreGroup).isNotEmpty != true));
+
+  @override
+  bool isExploreMarkerDisabled(Explore explore) =>
+    (_pinnedExplore != null) || (_selectedExploreGroup != null) && (_selectedExploreGroup?.contains(explore) != true);
+
+  @override
+  set mapKey(UniqueKey value) => super.mapKey = value;
+
+  @override
+  Future<void> buildMapContentData(List<Explore>? explores, { bool updateCamera = false, bool showProgress = false, double? zoom}) =>
+    super.buildMapContentData(explores, updateCamera: updateCamera, showProgress: showProgress, zoom: zoom);
+
   // Map Events
 
-  void _onMapCreated(GoogleMapController controller) async {
-    // debugPrint('Map2 created' );
-    _mapController = controller;
-
-    if (_targetCameraUpdate != null) {
-      if (Platform.isAndroid) {
-        Future.delayed(Duration(milliseconds: 100), () {
-          _applyCameraUpdate();
-        });
-      }
-      else {
-        _applyCameraUpdate();
-      }
-    }
-  }
-
-  void _applyCameraUpdate() {
-    if (_targetCameraUpdate != null) {
-      _mapController?.moveCamera(_targetCameraUpdate!).then((_) {
-        _targetCameraUpdate = null;
-      });
-    }
-  }
-
-  void _onMapCameraMove(CameraPosition cameraPosition) {
-    // debugPrint('Map2 camera position: lat: ${cameraPosition.target.latitude} lng: ${cameraPosition.target.longitude} zoom: ${cameraPosition.zoom}' );
-    _lastCameraPosition = cameraPosition;
-  }
-
-  void _onMapCameraIdle() {
-    // debugPrint('Map2 camera idle' );
-    _updateMapContentForZoom();
-  }
-
-  void _onTapMap(LatLng coordinate) {
-    // debugPrint('Map2 tap' );
+  @override
+  void onTapMap(LatLng coordinate) {
+    Analytics().logSelect(target: "Map Location: { ${coordinate.latitude.toStringAsFixed(6)}, ${coordinate.longitude.toStringAsFixed(6)} }");
     if (_selectedExploreGroup != null) {
       setState(() {
         _selectedExploreGroup = null;
       });
-      _updateMapMarkers();
+      updateMapMarkers();
       _updateTrayExplores();
     }
     else if (_selectedContentType == Map2ContentType.MyLocations) {
@@ -435,13 +401,14 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     }
   }
 
-  void _onTapMapPoi(PointOfInterest poi) {
-    // debugPrint('Map2 POI tap' );
+  @override
+  void onTapMapPoi(PointOfInterest poi) {
+    Analytics().logSelect(target: "Map POI: ${poi.name}");
     if (_selectedExploreGroup != null) {
       setState(() {
         _selectedExploreGroup = null;
       });
-      _updateMapMarkers();
+      updateMapMarkers();
       _updateTrayExplores();
     }
     else if (_selectedContentType == Map2ContentType.MyLocations) {
@@ -452,46 +419,36 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     }
   }
 
-  void _onTapMarker(dynamic origin) {
-    // debugPrint('Map2 Marker tap' );
+  @override
+  void onTapMarker(dynamic origin) {
     if (origin is Explore) {
+      Analytics().logSelect(target: "MAP Marker: ${origin.exploreTitle}");
       bool isExplorePOI = origin is ExplorePOI;
       setState(() {
         _selectedExploreGroup = isExplorePOI ? <Explore>{origin} : null;
       });
-      _updateMapMarkers();
+      updateMapMarkers();
       _updateTrayExplores();
       if (!isExplorePOI) {
         origin.exploreLaunchDetail(context, analyticsFeature: widget.analyticsFeature);
       }
     }
     else if (origin is Set<Explore>) {
+      Analytics().logSelect(target: "Marker: { ${origin.length} items }");
       setState(() {
         _selectedExploreGroup = DeepCollectionEquality().equals(_selectedExploreGroup, origin) ? null : origin;
       });
-      _updateMapMarkers();
+      updateMapMarkers();
       _updateTrayExplores();
     }
   }
 
   // Locaction Services
 
-  bool get _userLocationEnabled =>
-    FlexUI().isLocationServicesAvailable && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
-
-  Future<void> _updateLocationServicesStatus({ LocationServicesStatus? status, bool init = false}) async {
-    status ??= FlexUI().isLocationServicesAvailable ? await LocationServices().status : LocationServicesStatus.serviceDisabled;
-    if ((status != null) && (status != _locationServicesStatus) && mounted) {
-      setState(() {
-        _locationServicesStatus = status;
-      });
-      
-      await _updateCurrentLocation(init: init);
-    }
-  }
-  
-  Future<void> _updateCurrentLocation({bool init = false}) async {
-    if (_locationServicesStatus == LocationServicesStatus.permissionAllowed) {
+  @override
+  Future<void> onLocationServicesStatusChanged({bool updateCamera = false}) async {
+    // Update current position, if possile
+    if (locationServicesStatus == LocationServicesStatus.permissionAllowed) {
       Position? currentLocation = await LocationServices().location;
       if ((currentLocation != null) && (currentLocation != _currentLocation) && mounted) {
 
@@ -499,13 +456,13 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           _currentLocation = currentLocation;
         });
 
-        if (init) {
-          CameraPosition cameraPosition = CameraPosition(target: currentLocation.gmsLatLng, zoom: _Map2HomePanelContent.defaultCameraZoom);
-          if (_mapController != null) {
-            _mapController?.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
+        if (updateCamera) {
+          CameraPosition cameraPosition = CameraPosition(target: currentLocation.gmsLatLng, zoom: Map2BasePanelState.defaultCameraZoom);
+          if (mapController != null) {
+            mapController?.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));
           }
           else {
-            _lastCameraPosition = cameraPosition;
+            lastCameraPosition = cameraPosition;
           }
         }
       }
@@ -532,7 +489,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         entries.add(Padding(
           padding: EdgeInsets.only(left: entries.isNotEmpty ? 8 : 0),
           child: Map2ContentTypeButton(contentType.displayTitle,
-            onTap: () => _onContentTypeEntry(contentType),
+            onTap: () => _onTapContentTypeEntry(contentType),
           )
         ));
       }
@@ -553,6 +510,11 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         _initExplores();
       }
     }
+  }
+
+  void _onTapContentTypeEntry(Map2ContentType contentType) {
+    Analytics().logSelect(target: 'Content: ${contentType.displayTitleEx(language: 'en')}');
+    _onContentTypeEntry(contentType);
   }
 
   void _onContentTypeEntry(Map2ContentType contentType) {
@@ -632,16 +594,17 @@ class _Map2HomePanelState extends State<Map2HomePanel>
             Text(_selectedContentType?.displayTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
           ),
         ),
-        Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, container: true, child:
-          InkWell(onTap : _onUnselectContentType, child:
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-              Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
-            ),
+      Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, container: true, child:
+        InkWell(onTap : _onTapClearContentType, child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+            Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
           ),
+        )
         ),
       ],));
 
-  void _onUnselectContentType() {
+  void _onTapClearContentType() {
+    Analytics().logSelect(target: 'Content: Clear');
     setState(() {
       Storage().storedMap2ContentType = _selectedContentType = null;
       _explores = _filteredExplores = null;
@@ -653,12 +616,12 @@ class _Map2HomePanelState extends State<Map2HomePanel>
       _storiedSitesTags = null;
       _expandedStoriedSitesTag = null;
 
-      _mapMarkers = null;
-      _exploreMapGroups = null;
-      _targetCameraUpdate = null;
-      _buildMarkersTask = null;
-      _lastMapZoom = null;
-      _markersProgress = false;
+      markers = null;
+      exploreMapGroups = null;
+      targetCameraUpdate = null;
+      buildMarkersTask = null;
+      lastMapZoom = null;
+      markersProgress = false;
 
       _pinnedExplore = null;
       _pinnedMarker = null;
@@ -679,13 +642,13 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         _pinnedExplore = pinnedExplore;
       });
       _updatePinMarker();
-      _updateMapMarkers();
+      updateMapMarkers();
       _updateTrayExplores();
     }
   }
 
   Future<void> _updatePinMarker() async {
-    Marker? pinednMarker = (_pinnedExplore != null) ? await _createPinMarker(_pinnedExplore, imageConfiguration: createLocalImageConfiguration(context)) : null;
+    Marker? pinednMarker = (_pinnedExplore != null) ? await createPinMarker(_pinnedExplore, imageConfiguration: createLocalImageConfiguration(context)) : null;
     setStateIfMounted((){
       _pinnedMarker = pinednMarker;
     });
@@ -703,14 +666,14 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     }
 
     bool groupsModified = false;
-    if (_exploreMapGroups != null) {
-      if (_exploreMapGroups?.contains(oldExplore) == true) {
-        _exploreMapGroups?.remove(oldExplore);
-        _exploreMapGroups?.add(newExplore);
+    if (exploreMapGroups != null) {
+      if (exploreMapGroups?.contains(oldExplore) == true) {
+        exploreMapGroups?.remove(oldExplore);
+        exploreMapGroups?.add(newExplore);
         groupsModified = true;
       }
       else {
-        for (dynamic exploreMapGroup in _exploreMapGroups!) {
+        for (dynamic exploreMapGroup in exploreMapGroups!) {
           if ((exploreMapGroup is Set<Explore>) && exploreMapGroup.contains(oldExplore)) {
             exploreMapGroup.remove(oldExplore);
             exploreMapGroup.add(newExplore);
@@ -727,7 +690,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
     }
 
     if (groupsModified) {
-      _updateMapMarkers();
+      updateMapMarkers();
       _updateTrayExplores();
     }
 
@@ -818,7 +781,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         if (mounted && (exploresTask == _exploresTask)) {
           List<Explore>? validExplores = explores?.validList;
           List<Explore>? filteredExplores = _filterExplores(validExplores);
-          await _buildMapContentData(filteredExplores, updateCamera: true);
+          await buildMapContentData(filteredExplores, updateCamera: true);
 
           if (mounted && (exploresTask == _exploresTask)) {
             setState(() {
@@ -827,7 +790,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
               _exploresTask = null;
               _exploresProgress = null;
               _storiedSitesTags = JsonUtils.cast<List<Place>>(validExplores)?.tags;
-              _mapKey = UniqueKey(); // force map rebuild
+              mapKey = UniqueKey(); // force map rebuild
 
               if ((exploreContentType?.supportsManualFilters == true) && (validExplores?.isNotEmpty != true)) {
                 _selectedContentType = null; // Unselect content type if there is nothing to show.
@@ -850,12 +813,12 @@ class _Map2HomePanelState extends State<Map2HomePanel>
           _storiedSitesTags = null;
           _expandedStoriedSitesTag = null;
 
-          _mapMarkers = null;
-          _exploreMapGroups = null;
-          _targetCameraUpdate = null;
-          _buildMarkersTask = null;
-          _lastMapZoom = null;
-          _markersProgress = false;
+          markers = null;
+          exploreMapGroups = null;
+          targetCameraUpdate = null;
+          buildMarkersTask = null;
+          lastMapZoom = null;
+          markersProgress = false;
 
           _pinnedExplore = null;
           _pinnedMarker = null;
@@ -874,7 +837,7 @@ class _Map2HomePanelState extends State<Map2HomePanel>
         // start loading
         setState(() {
           _exploresTask = exploresTask;
-          _markersProgress = true;
+          markersProgress = true;
         });
 
         // wait for explores load
@@ -904,19 +867,19 @@ class _Map2HomePanelState extends State<Map2HomePanel>
 
             _updateTrayExplores();
 
-            await _buildMapContentData(filteredExplores, updateCamera: false, showProgress: true);
+            await buildMapContentData(filteredExplores, updateCamera: false, showProgress: true);
 
             if (mounted && (exploresTask == _exploresTask)) {
               setState(() {
                 _exploresTask = null;
-                _markersProgress = false;
+                markersProgress = false;
               });
             }
           }
           else {
             setState(() {
               _exploresTask = null;
-              _markersProgress = false;
+              markersProgress = false;
             });
           }
         }
@@ -1161,6 +1124,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       });
       // descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
 
+/*<<<<<<< HEAD
       return Semantics(container: true, child:
         Container(decoration: _contentFiltersBarDecoration, padding: _contentFilterDescriptionBarPadding, constraints: _contentFiltersBarConstraints, child:
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -1186,6 +1150,35 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
                 onTap: _onClearFilter
               )
             )),
+          ]),
+        )
+=======*/
+      return Semantics(container: true, child:
+        Container(decoration: _contentFiltersBarDecoration, padding: _contentFilterDescriptionBarPadding, constraints: _contentFiltersBarConstraints, child:
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Expanded(child:
+              IndexedSemantics(index: 1, child: Semantics( container: true, child:
+                Padding(padding: EdgeInsets.only(top: 6, bottom: 6), child:
+                  RichText(text: TextSpan(style: regularStyle, children: descriptionList)),
+                ),
+              ))
+            ),
+            IndexedSemantics(index: 2, child: Semantics( container: true, child:
+              Map2PlainImageButton(imageKey: 'share-nodes',
+                label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
+                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
+                padding: EdgeInsets.only(left: 16, right: (8 + 2), top: 12, bottom: 12),
+                onTap: _onTapShareFilter
+              )
+            )),
+            IndexedSemantics(index: 1, child: Semantics( container: true, child:
+              Map2PlainImageButton(imageKey: 'close',
+                  label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
+                  hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
+                padding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
+                onTap: _onTapClearFilter
+              ),
+            ))
           ]),
         )
       );
@@ -1411,10 +1404,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       image: Styles().images.getImage('search'),
       label: Localization().getStringEx('panel.map2.button.search.title', 'Search'),
       hint: Localization().getStringEx('panel.map2.button.search.hint', 'Type a search locations'),
-      onTap: _onSearch,
+      onTap: _onTapSearch,
     );
 
-  void _onSearch() {
+  void _onTapSearch() {
+    Analytics().logSelect(target: 'Search');
     setStateIfMounted((){
       _searchOn = true;
       _searchTextController.text = _selectedFilterIfExists?.searchText ?? '';
@@ -1426,9 +1420,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   void _onTapCancelSearchText() {
     if (_searchTextController.text.isNotEmpty) {
+      Analytics().logSelect(target: 'Search: Clear');
       _searchTextController.text = '';
     }
     else {
+      Analytics().logSelect(target: 'Search: Cancel');
       setStateIfMounted((){
         _selectedFilter?.searchText = '';
         _searchOn = false;
@@ -1438,6 +1434,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   }
 
   void _onTapSearchText() {
+    Analytics().logSelect(target: 'Search: Do');
     setStateIfMounted((){
       _selectedFilter?.searchText = _searchTextController.text;
       _searchTextController.text = '';
@@ -1458,6 +1455,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     );
 
   void _onStarred() {
+    Analytics().logSelect(target: 'Starred');
     setStateIfMounted((){
       _selectedFilter?.starred = (_selectedFilter?.starred != true);
     });
@@ -1476,6 +1474,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     );
 
   void _onAmenities() {
+    Analytics().logSelect(target: 'Amenities');
     List<Building>? buildings = JsonUtils.listCastValue<Building>(_explores);
     Map<String, String> buildingsAmenities = buildings?.featureNames ?? <String, String>{};
     Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
@@ -1510,7 +1509,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         ),
         isExpanded: false,
         items: _buildTermsDropdownItems(),
-        onChanged: _onTerm,
+        onChanged: _onSelectTerm,
       )
     )),
   );
@@ -1559,7 +1558,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width / 2); // add horizontal padding
   }
 
-  void _onTerm(StudentCourseTerm? value) {
+  void _onSelectTerm(StudentCourseTerm? value) {
     Analytics().logSelect(target: 'Term: ${value?.name}');
     setStateIfMounted((){
       _studentCoursesFilter?.termId = value?.id;
@@ -1574,10 +1573,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       title: Localization().getStringEx('panel.map2.button.open_now.title', 'Open Now'),
       hint: Localization().getStringEx('panel.map2.button.open_now.hint', 'Tap to show only currently opened locations'),
       toggled: _diningLocationsFilterIfExists?.onlyOpened == true,
-      onTap: _onOpenNow,
+      onTap: _onTapOpenNow,
     );
 
-  void _onOpenNow() {
+  void _onTapOpenNow() {
+    Analytics().logSelect(target: 'Open Now');
     setStateIfMounted((){
       _diningLocationsFilter?.onlyOpened = (_diningLocationsFilterIfExists?.onlyOpened != true);
     });
@@ -1603,7 +1603,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         ),
         isExpanded: false,
         items: _buildPaymentTypesDropdownItems(),
-        onChanged: _onPaymentType,
+        onChanged: _onSelectPaymentType,
       )
     )),
   );
@@ -1645,7 +1645,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width / 2); // add horizontal padding
   }
 
-  void _onPaymentType(PaymentType? value) {
+  void _onSelectPaymentType(PaymentType? value) {
     Analytics().logSelect(target: 'Payment Type: ${value?.displayTitle}');
     setStateIfMounted(() {
       if (_selectedPaymentType != value) {
@@ -1673,10 +1673,10 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       hint: Localization().getStringEx('panel.map2.button.filters.hint', 'Tap to edit filters'),
       leftIcon: Styles().images.getImage('filters', size: 16),
       rightIcon: Styles().images.getImage('chevron-right'),
-      onTap: _onFilters,
+      onTap: _onTapFilters,
     );
 
-  void _onFilters() {
+  void _onTapFilters() {
     Analytics().logSelect(target: 'Filters');
 
     Event2FilterParam eventFilter = _events2FilterIfExists?.event2Filter ?? Event2FilterParam.fromStorage();
@@ -1698,10 +1698,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       title: Localization().getStringEx('panel.map2.button.visited.title', 'Visited'),
       hint: Localization().getStringEx('panel.map2.button.visited.hint', 'Tap to show only visited'),
       toggled: _storiedSitesFilterIfExists?.onlyVisited == true,
-      onTap: _onOnlyVisited,
+      onTap: _onTapOnlyVisited,
     );
 
-  void _onOnlyVisited() {
+  void _onTapOnlyVisited() {
+    Analytics().logSelect(target: 'Visited');
     setStateIfMounted((){
       _storiedSitesFilter?.onlyVisited = (_storiedSitesFilterIfExists?.onlyVisited != true);
     });
@@ -1715,11 +1716,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       title: title ?? tag,
       hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations'),
       toggled: _storiedSitesFilterIfExists?.tags.contains(tag) == true,
-      onTap: () => _onStoriedSiteSimpleTag(tag),
+      onTap: () => _onTapStoriedSiteSimpleTag(tag),
     );
 
-  void _onStoriedSiteSimpleTag(String tag) {
-    Analytics().logSelect(target: tag);
+  void _onTapStoriedSiteSimpleTag(String tag) {
+    Analytics().logSelect(target: 'Storied Site Tag: $tag');
     setStateIfMounted((){
       LinkedHashSet<String>? tags = _storiedSitesFilter?.tags;
       if (tags?.contains(tag) == true) {
@@ -1737,11 +1738,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       title: title ?? tag,
       hint: Localization().getStringEx('panel.map2.button.tags.hint', 'Tap to filter by tag'),
       rightIcon: (_expandedStoriedSitesTag?.startsWith(tag) == true) ? Styles().images.getImage('chevron-up') : Styles().images.getImage('chevron-down'),
-      onTap: () => _onStoriedSiteCompoundTag(tag),
+      onTap: () => _onTapStoriedSiteCompoundTag(tag),
     );
 
-  void _onStoriedSiteCompoundTag(String tag) {
-    Analytics().logSelect(target: tag);
+  void _onTapStoriedSiteCompoundTag(String tag) {
+    Analytics().logSelect(target: 'Storied Site Tag: $tag');
     setStateIfMounted((){
       _expandedStoriedSitesTag = (_expandedStoriedSitesTag?.startsWith(tag) == true) ?
         tag.tagHead : tag;
@@ -1770,14 +1771,14 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         ),
         isExpanded: false,
         items: _buildSortDropdownItems(),
-        onChanged: _onSortType,
+        onChanged: _onSelectSortType,
       )
     )),
   );
 
   List<DropdownMenuItem<Map2SortType>> _buildSortDropdownItems() {
     List<DropdownMenuItem<Map2SortType>> items = <DropdownMenuItem<Map2SortType>>[];
-    bool locationAvailable = ((_locationServicesStatus == LocationServicesStatus.permissionAllowed) || (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined));
+    bool locationAvailable = ((locationServicesStatus == LocationServicesStatus.permissionAllowed) || (locationServicesStatus == LocationServicesStatus.permissionNotDetermined));
     for (Map2SortType sortType in Map2SortType.values) {
       if ((_selectedContentType?.supportsSortType(sortType) == true) &&
           ((sortType != Map2SortType.proximity) || locationAvailable)
@@ -1816,7 +1817,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     return math.min(width + 2 * 18, MediaQuery.of(context).size.width / 2); // add horizontal padding
   }
 
-  void _onSortType(Map2SortType? value) {
+  void _onSelectSortType(Map2SortType? value) {
     Analytics().logSelect(target: 'Sort: ${value?.displayTitle}');
     if (value != null) {
       setStateIfMounted(() {
@@ -1927,8 +1928,8 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   //void _onFilterButtonsScroll() {}
 
-  void _onShareFilter() {
-    Analytics().logSelect(target: "Share Filter");
+  void _onTapShareFilter() {
+    Analytics().logSelect(target: "Filter: Share");
     Map2ContentType? contentType = _selectedContentType;
     if (contentType != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromMap2DeepLinkParam(
@@ -1941,7 +1942,8 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     }
   }
 
-  void _onClearFilter() {
+  void _onTapClearFilter() {
+    Analytics().logSelect(target: "Filter: Clear");
     Map2ContentType? contentType = _selectedContentType;
     if (contentType != null) {
       Map2Filter? emptyFilter = Map2Filter.emptyFromContentType(_selectedContentType);
@@ -1971,12 +1973,12 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   Future<void> _updateFilteredExplores() async {
     List<Explore>? filteredExplores = _filterExplores(_explores);
     if (mounted && !DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
-      await _buildMapContentData(filteredExplores, updateCamera: true, showProgress: true);
+      await buildMapContentData(filteredExplores, updateCamera: true, showProgress: true);
       if (mounted) {
         setStateIfMounted(() {
           _filteredExplores = filteredExplores;
           _selectedExploreGroup = null;
-          _mapKey = UniqueKey(); // force map rebuild
+          mapKey = UniqueKey(); // force map rebuild
         });
         _updateTrayExplores();
       }
@@ -2049,400 +2051,4 @@ extension _Map2HomePanelMessages on _Map2HomePanelState {
     }
   }
 
-}
-
-// Map2 Content
-
-extension _Map2HomePanelContent on _Map2HomePanelState {
-  static const CameraPosition defaultCameraPosition = CameraPosition(target: defaultCameraTarget, zoom: defaultCameraZoom);
-  static const LatLng defaultCameraTarget = LatLng(40.102116, -88.227129);
-  static const double defaultCameraZoom = 17;
-  static const double mapPadding = 60;
-  static const double groupMarkersUpdateThresoldDelta = 0.3;
-  static const List<double> thresoldDistanceByZoom = [
-		1000000, 800000, 600000, 200000, 100000, // zoom 0 - 4
-		 100000,  80000,  60000,  20000,  10000, // zoom 5 - 9
-		   5000,   2000,   1000,    500,    250, // zoom 10 - 14
-		    100,     50,      0                  // zoom 15 - 16
-  ];
-
-  Future<void> _updateMapContentForZoom() async {
-    double? mapZoom = await _mapController?.getZoomLevel();
-    if (mapZoom != null) {
-      if (_lastMapZoom == null) {
-        _lastMapZoom = mapZoom;
-      }
-      else if ((_lastMapZoom! - mapZoom).abs() > groupMarkersUpdateThresoldDelta) {
-        _buildMapContentData(_filteredExplores, updateCamera: false, showProgress: true, zoom: mapZoom,);
-      }
-    }
-  }
-
-  Future<void> _buildMapContentData(List<Explore>? explores, { bool updateCamera = false, bool showProgress = false, double? zoom}) async {
-    Size? mapSize = _scaffoldKey.renderBoxSize;
-    LatLngBounds? exploresRawBounds = explores?.boundsRect;
-    LatLngBounds? exploresBounds = (exploresRawBounds != null) ? _updateBoundsForSiblings(exploresRawBounds) : null;
-    CameraUpdate? targetCameraUpdate = updateCamera ? _cameraUpdateForBounds(exploresBounds) : null;
-    if ((exploresBounds != null) && (mapSize != null)) {
-
-      double thresoldDistance;
-      Set<dynamic>? exploreMapGroups;
-      if (exploresBounds.northeast != exploresBounds.southwest) {
-        double? debugThresoldDistance = Storage().debugMapThresholdDistance?.toDouble();
-        if (debugThresoldDistance != null) {
-          thresoldDistance = debugThresoldDistance;
-        }
-        else if (updateCamera) {
-          zoom ??= GeoMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * mapPadding, 0), math.max(mapSize.height - 2 * mapPadding, 0));
-          thresoldDistance = _thresoldDistanceForZoom(zoom);
-        }
-        else {
-          zoom ??= await _mapController?.getZoomLevel() ?? _lastMapZoom ?? defaultCameraZoom;
-          thresoldDistance = _thresoldDistanceForZoom(zoom);
-        }
-        exploreMapGroups = _buildExplorMapGroups(explores, thresoldDistance: thresoldDistance);
-      }
-      else {
-        thresoldDistance = 0;
-        List<Explore>? validExplores = (explores != null) ? explores.validList : null;
-        if ((validExplores != null) && validExplores.isNotEmpty) {
-          dynamic groupEntry = (validExplores.length == 1) ? validExplores.first : Set<Explore>.from(validExplores);
-          exploreMapGroups = <dynamic>{ groupEntry };
-        }
-      }
-
-      if (!DeepCollectionEquality().equals(_exploreMapGroups, exploreMapGroups)) {
-        BuildMarkersTask buildMarkersTask = _buildMarkers(context, exploreGroups: exploreMapGroups, );
-        _buildMarkersTask = buildMarkersTask;
-        if (showProgress && mounted) {
-          setStateIfMounted(() {
-            _markersProgress = true;
-          });
-        }
-
-        //debugPrint('Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance markersSource: ${exploreMapGroups?.length}');
-        Set<Marker> targetMarkers = await buildMarkersTask;
-        //debugPrint('Finished Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance => ${targetMarkers.length}');
-
-        if ((_buildMarkersTask == buildMarkersTask) && mounted) {
-          //debugPrint('Applying Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance => ${targetMarkers.length}');
-          setStateIfMounted(() {
-            _mapMarkers = targetMarkers;
-            _exploreMapGroups = exploreMapGroups;
-            _targetCameraUpdate = targetCameraUpdate;
-            _buildMarkersTask = null;
-            _lastMapZoom = null;
-            _markersProgress = false;
-          });
-        }
-      }
-    }
-    else if (mounted) {
-      setStateIfMounted(() {
-        _mapMarkers = null;
-        _exploreMapGroups = null;
-        _targetCameraUpdate = targetCameraUpdate;
-        _buildMarkersTask = null;
-        _lastMapZoom = null;
-        _markersProgress = false;
-      });
-    }
-  }
-
-  Future<void> _updateMapMarkers({ bool showProgress = false }) async {
-    BuildMarkersTask buildMarkersTask = _buildMarkers(context, exploreGroups: _exploreMapGroups, );
-    _buildMarkersTask = buildMarkersTask;
-    if (showProgress && mounted) {
-      setStateIfMounted(() {
-        _markersProgress = true;
-      });
-    }
-
-    //debugPrint('Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance markersSource: ${exploreMapGroups?.length}');
-    Set<Marker> targetMarkers = await buildMarkersTask;
-    //debugPrint('Finished Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance => ${targetMarkers.length}');
-
-    if ((_buildMarkersTask == buildMarkersTask) && mounted) {
-      //debugPrint('Applying Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance => ${targetMarkers.length}');
-      setStateIfMounted(() {
-        _mapMarkers = targetMarkers;
-        _buildMarkersTask = null;
-        _markersProgress = false;
-      });
-    }
-  }
-
-  static Set<dynamic>? _buildExplorMapGroups(List<Explore>? explores, { double thresoldDistance = 0 }) {
-    if (explores != null) {
-      // group by thresoldDistance
-      Set<Set<Explore>> exploreGroups = <Set<Explore>>{};
-
-      for (Explore explore in explores) {
-        ExploreLocation? exploreLocation = explore.exploreLocation;
-        if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
-          Set<Explore>? groupExploreSet = _lookupExploreGroup(exploreGroups, exploreLocation, thresoldDistance: thresoldDistance);
-          if (groupExploreSet != null) {
-            groupExploreSet.add(explore);
-          }
-          else {
-            exploreGroups.add(<Explore>{explore});
-          }
-        }
-      }
-
-      Set<dynamic> markerGroups = <dynamic>{};
-      for (Set<Explore> exploreGroup in exploreGroups) {
-        if (exploreGroup.length == 1) {
-          markerGroups.add(exploreGroup.first);
-        }
-        else if (exploreGroup.length > 1) {
-          markerGroups.add(exploreGroup);
-        }
-      }
-
-      return markerGroups;
-    }
-    else {
-      return null;
-    }
-  }
-
-  static Set<Explore>? _lookupExploreGroup(Set<Set<Explore>> exploreGroups, ExploreLocation exploreLocation, { double thresoldDistance = 0 }) {
-    for (Set<Explore> groupExploreSet in exploreGroups) {
-      for (Explore groupExplore in groupExploreSet) {
-        double distance = GeoMapUtils.getDistance(
-          exploreLocation.latitude?.toDouble() ?? 0,
-          exploreLocation.longitude?.toDouble() ?? 0,
-          groupExplore.exploreLocation?.latitude?.toDouble() ?? 0,
-          groupExplore.exploreLocation?.longitude?.toDouble() ?? 0
-        );
-        if (distance <= thresoldDistance) {
-          return groupExploreSet;
-        }
-      }
-    }
-    return null;
-  }
-
-  static double _thresoldDistanceForZoom(double zoom) {
-    int zoomIndex = zoom.round();
-    if ((0 <= zoomIndex) && (zoomIndex < thresoldDistanceByZoom.length)) {
-      double zoomDistance = thresoldDistanceByZoom[zoomIndex];
-      double nextZoomDistance = ((zoomIndex + 1) < thresoldDistanceByZoom.length) ? thresoldDistanceByZoom[zoomIndex + 1] : 0;
-      double thresoldDistance = zoomDistance - (zoom - zoomIndex.toDouble()) * (zoomDistance - nextZoomDistance);
-      return thresoldDistance;
-    }
-    return 0;
-  }
-
-
-  CameraUpdate _cameraUpdateForBounds(LatLngBounds? bounds) {
-    if (bounds == null) {
-      return CameraUpdate.newCameraPosition(defaultCameraPosition);
-    }
-    else if (bounds.northeast == bounds.southwest) {
-      return CameraUpdate.newCameraPosition(CameraPosition(target: bounds.northeast, zoom: defaultCameraZoom));
-    }
-    else {
-      return CameraUpdate.newLatLngBounds(bounds, mapPadding);
-    }
-  }
-
-  LatLngBounds _updateBoundsForSiblings(LatLngBounds bounds) => (bounds.northeast != bounds.southwest) ?
-    _enlargeBoundsForSiblings(bounds, topPadding: mapPadding, bottomPadding: mapPadding) : bounds;
-
-  LatLngBounds _enlargeBoundsForSiblings(LatLngBounds bounds, { double? topPadding, double? bottomPadding, }) {
-    double northLat = bounds.northeast.latitude;
-    double southLat = bounds.southwest.latitude;
-    double boundHeight = northLat - southLat;
-    double? mapHeight = _scaffoldKey.renderBoxSize?.height;
-    if ((southLat < northLat) && (mapHeight != null) && (mapHeight > 0)) {
-
-      double headingBarHeight = _contentHeadingBarKey.renderBoxSize?.height ?? 0.0;
-      if (0 < headingBarHeight) {
-        northLat += (headingBarHeight / mapHeight) * boundHeight;
-      }
-
-      if ((topPadding != null) && (0 < topPadding)) {
-        northLat += (topPadding / mapHeight) * boundHeight;
-      }
-
-      if ((bottomPadding != null) && (0 < bottomPadding)) {
-        southLat -= (bottomPadding / mapHeight) * boundHeight;
-      }
-
-      if (southLat < northLat) {
-        // debugPrint("[${northLat.toStringAsFixed(6)}, ${southLat.toStringAsFixed(6)}] => [${north2Lat.toStringAsFixed(6)}, ${south2Lat.toStringAsFixed(6)}]");
-        return LatLngBounds(
-          northeast: LatLng(northLat, bounds.northeast.longitude),
-          southwest: LatLng(southLat, bounds.southwest.longitude)
-        );
-      }
-    }
-    return bounds;
-  }
-}
-
-// Map2 Markers
-
-extension _Map2HomePanelMarkers on _Map2HomePanelState {
-
-  static const double _mapExploreMarkerSize = 18;
-  static const double _mapGroupMarkerSize = 24;
-  static const double _mapPinMarkerSize = 24;
-  static const Offset _mapPinMarkerAnchor = Offset(0.5, 1);
-  static const Offset _mapCircleMarkerAnchor = Offset(0.5, 0.5);
-
-  Future<Set<Marker>> _buildMarkers(BuildContext context, { Set<dynamic>? exploreGroups }) async {
-    Set<Marker> markers = <Marker>{};
-    ImageConfiguration imageConfiguration = createLocalImageConfiguration(context);
-    if (exploreGroups != null) {
-      for (dynamic entry in exploreGroups) {
-        Marker? marker;
-        if (entry is Set<Explore>) {
-          marker = await _createExploreGroupMarker(entry, imageConfiguration: imageConfiguration);
-        }
-        else if (entry is Explore) {
-          marker = await _createExploreMarker(entry, imageConfiguration: imageConfiguration);
-        }
-        if (marker != null) {
-          markers.add(marker);
-        }
-      }
-    }
-
-    return markers;
-  }
-
-  Future<Marker?> _createExploreGroupMarker(Set<Explore>? exploreGroup, { required ImageConfiguration imageConfiguration }) async {
-    LatLng? markerPosition = exploreGroup?.centerPoint;
-    if ((exploreGroup != null) && (markerPosition != null)) {
-      Explore? representativeExplore = exploreGroup.groupRepresentative;
-      bool exploreDisabled = (_pinnedExplore != null) || ((_selectedExploreGroup != null) && (_selectedExploreGroup?.intersection(exploreGroup).isNotEmpty != true));
-      Color? markerColor = exploreDisabled ? ExploreMap.disabledMarkerColor : representativeExplore?.mapMarkerColor;
-      Color? markerBorderColor = exploreDisabled ? ExploreMap.disabledGroupMarkerBorderColor : (representativeExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor);
-      Color? markerTextColor = exploreDisabled ? ExploreMap.disabledMarkerTextColor : (representativeExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor);
-      String markerKey = "group-${markerColor?.toARGB32() ?? 0}-${exploreGroup.length}";
-      return Marker(
-        markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
-        position: markerPosition,
-        icon: _markerIconsCache[markerKey] ??= await _markerIcon(context,
-          imageSize: _mapGroupMarkerSize,
-          backColor: markerColor,
-          borderColor: markerBorderColor,
-          textColor: markerTextColor,
-          text: exploreGroup.length.toString(),
-        ),
-        anchor: _mapCircleMarkerAnchor,
-        consumeTapEvents: true,
-        onTap: () => _onTapMarker(exploreGroup),
-        infoWindow: InfoWindow(
-          title:  representativeExplore?.getMapGroupMarkerTitle(exploreGroup.length),
-          anchor: _mapCircleMarkerAnchor
-        )
-      );
-    }
-    return null;
-  }
-
-  Future<Marker?> _createExploreMarker(Explore? explore, { required ImageConfiguration imageConfiguration }) async {
-    LatLng? markerPosition = explore?.exploreLocation?.exploreLocationMapCoordinate;
-    if (markerPosition != null) {
-      BitmapDescriptor? markerIcon;
-      Offset? markerAnchor;
-      if (explore is MTDStop) {
-        markerIcon = _markerIconsCache['mtd'] ??= await BitmapDescriptor.asset(imageConfiguration, 'images/map-marker-mtd-stop.png');
-        markerAnchor = _mapCircleMarkerAnchor;
-      }
-      else {
-        bool exploreDisabled = (_pinnedExplore != null) || (_selectedExploreGroup != null) && (_selectedExploreGroup?.contains(explore) != true);
-        Color? exploreColor = exploreDisabled ? ExploreMap.disabledMarkerColor : explore?.mapMarkerColor;
-        Color? borderColor = exploreDisabled ? ExploreMap.disabledExploreMarkerBorderColor : (explore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor);
-        String markerKey = "explore-${exploreColor?.toARGB32() ?? 0}";
-        markerIcon = _markerIconsCache[markerKey] ??= await _markerIcon(context,
-          imageSize: _mapExploreMarkerSize,
-          backColor: Styles().colors.white,
-          backColor2: exploreColor,
-          backColor2Offset: 8,
-          borderColor: borderColor,
-          borderWidth: 1,
-          borderOffset: 0,
-        );
-        markerAnchor = _mapPinMarkerAnchor;
-      }
-      return Marker(
-        markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.longitude.toStringAsFixed(6)}"),
-        position: markerPosition,
-        icon: markerIcon,
-        anchor: markerAnchor,
-        consumeTapEvents: true,
-        onTap: () => _onTapMarker(explore),
-        infoWindow: InfoWindow(
-          title: explore?.mapMarkerTitle,
-          snippet: explore?.mapMarkerSnippet,
-          anchor: markerAnchor)
-      );
-    }
-    return null;
-  }
-
-  Future<Marker?> _createPinMarker(Explore? explore, { required ImageConfiguration imageConfiguration }) async {
-    LatLng? markerPosition = explore?.exploreLocation?.exploreLocationMapCoordinate;
-    Offset markerAnchor = ((explore is ExplorePOI) && (explore.placeId?.isNotEmpty == true)) ? _mapPinMarkerAnchor : _mapCircleMarkerAnchor;
-    return (markerPosition != null) ? Marker(
-      markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.longitude.toStringAsFixed(6)}"),
-      position: markerPosition,
-      icon: _markerIconsCache['pin'] ??= await _markerIcon(context,
-          imageSize: _mapPinMarkerSize,
-          backColor: Styles().colors.accentColor3,
-          backColor2: Styles().colors.mtdColor,
-          borderColor: Styles().colors.white,
-          borderWidth: 2,
-          borderOffset: 3,
-          backColor2Offset: 5,
-        ),
-      anchor: markerAnchor,
-      consumeTapEvents: true,
-      onTap: () => _onTapMarker(explore),
-      infoWindow: InfoWindow(
-        title: explore?.mapMarkerTitle,
-        snippet: explore?.mapMarkerSnippet,
-        anchor: markerAnchor)
-    ) : null;
-  }
-
-  static Future<BitmapDescriptor> _markerIcon(BuildContext context, {required double imageSize,
-      Color? backColor,
-      Color? backColor2, double backColor2Offset = 1,
-      Color? borderColor, double borderWidth = 1, double borderOffset = 0,
-      Color? textColor, String? text
-  }) async {
-    Uint8List? markerImageBytes = await ImageUtils.mapMarkerImage(
-      imageSize: imageSize * MediaQuery.of(context).devicePixelRatio,
-      backColor: backColor,
-      backColor2: backColor2,
-      backColor2Offset: backColor2Offset,
-      strokeColor: borderColor,
-      strokeWidth: borderWidth * MediaQuery.of(context).devicePixelRatio,
-      strokeOffset: borderOffset  * MediaQuery.of(context).devicePixelRatio,
-      text: text,
-      textStyle: (text != null) ? Styles().textStyles.getTextStyle("widget.text.fat")?.copyWith(
-        fontSize: 12 * MediaQuery.of(context).devicePixelRatio,
-        color: textColor,
-        overflow: TextOverflow.visible //defined in code to be sure it is set
-      ) : null,
-    );
-    if (markerImageBytes != null) {
-      return BitmapDescriptor.bytes(markerImageBytes,
-        imagePixelRatio: MediaQuery.of(context).devicePixelRatio,
-        width: imageSize, height: imageSize,
-      );
-    }
-    else if (backColor != null) {
-      return BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(backColor).toDouble());
-    }
-    else {
-      return BitmapDescriptor.defaultMarker;
-    }
-  }
 }
