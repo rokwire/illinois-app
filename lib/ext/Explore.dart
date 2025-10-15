@@ -492,15 +492,8 @@ extension ExploreListMap on Iterable<Explore> {
     return representativeExplore;
   }
 
-  List<Explore> get validList {
-    List<Explore> result = <Explore>[];
-    for (Explore explore in this) {
-      if (explore.exploreLocation?.isLocationCoordinateValid == true) {
-        result.add(explore);
-      }
-    }
-    return result;
-  }
+  List<Explore> get validList =>
+    toList()..removeWhere((Explore explore) => (explore.exploreLocation?.isLocationCoordinateValid != true));
 
   LatLngBounds? get boundsRect {
     double? minLat, minLng, maxLat, maxLng;

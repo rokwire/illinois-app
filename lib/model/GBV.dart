@@ -17,7 +17,7 @@ class GBVData {
 
   static GBVData? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? GBVData(
-      directoryCategories: JsonUtils.listValue(json["directoryCategories"]) ?? [],
+      directoryCategories: JsonUtils.listCastValue<String>(json["directoryCategories"]) ?? [],
       resources: GBVResource.listFromJson(JsonUtils.listValue(json['resources'])),
       resourceListScreens: GBVResourceListScreens.fromJson(JsonUtils.mapValue(json['screens'])),
     ) : null;
@@ -52,7 +52,7 @@ class GBVResourceList {
   static GBVResourceList? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? GBVResourceList(
       title: JsonUtils.stringValue(json['title']) ?? "",
-      resourceIds: JsonUtils.listValue(json['resourceIds']) ?? []
+      resourceIds: JsonUtils.listCastValue<String>(json['resourceIds']) ?? []
     ) : null;
   }
 
@@ -122,7 +122,7 @@ class GBVResource {
     return (json != null) ? GBVResource(
       id: JsonUtils.stringValue(json['id']) ?? "",
       type: GBVResourceTypeImpl.fromJson(JsonUtils.stringValue(json['type'])) ?? GBVResourceType.directory,
-      categories: JsonUtils.listValue(json['categories']) ?? [],
+      categories: JsonUtils.listCastValue<String>(json['categories']) ?? [],
       title: JsonUtils.stringValue(json['title']) ?? "",
       directoryContent: GBVResourceDetail.listFromJson(JsonUtils.listValue(json['directoryContent'])),
       description: JsonUtils.stringValue(json['description']),
