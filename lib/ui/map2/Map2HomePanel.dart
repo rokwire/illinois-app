@@ -148,7 +148,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   LinkedHashMap<String, dynamic>? _storiedSitesTags;
   String? _expandedStoriedSitesTag;
 
-
   Set<Explore>? _selectedExploreGroup;
 
   Explore? _pinnedExplore;
