@@ -1053,6 +1053,15 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   }
 }
 
+extension _Map2Semantics on _Map2HomePanelState{
+  int? get displayCount => _filteredExplores?.length;
+  int? get totalCount => _explores?.length;
+
+  String get _filterButtonHint =>  "results in filtering  ${displayCount ?? 0} from ${totalCount ?? 0} Buildings";
+
+  String get _amenitiesSemanticsValue =>  LinkedHashSet<String>.from(_campusBuildingsFilterIfExists?.amenities.keys ?? <String>[]).toString();
+}
+
 // Map2 Accessibility Workaround
 
 extension _Map2Accessibility on _Map2HomePanelState{  //Additional functionality and UI changes that will improve the Maps accessibility. Execute it only if needed
@@ -1428,7 +1437,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   Widget get _starredFilterButton =>
     Map2FilterTextButton(
       title: Localization().getStringEx('panel.map2.button.starred.title', 'Starred'),
-      hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations'),
+      hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations') + " $_filterButtonHint",
       leftIcon: Styles().images.getImage('star-filled', size: 16),
       toggled: _selectedFilterIfExists?.starred == true,
       onTap: _onStarred,
@@ -1445,13 +1454,14 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   // Amenities Buildings Filter Button
 
   Widget get _amenitiesBuildingsFilterButton =>
-    Map2FilterTextButton(
-      title: Localization().getStringEx('panel.map2.button.amenities.title', 'Amenities'),
-      hint: Localization().getStringEx('panel.map2.button.amenities.hint', 'Tap to edit amenities for visible location'),
-      leftIcon: Styles().images.getImage('toilet', size: 16),
-      rightIcon: Styles().images.getImage('chevron-right'),
-      onTap: _onAmenities,
-    );
+    MergeSemantics(child: Semantics(label: _amenitiesSemanticsValue, child:
+      Map2FilterTextButton(
+        title: Localization().getStringEx('panel.map2.button.amenities.title', 'Amenities'),
+        hint: Localization().getStringEx('panel.map2.button.amenities.hint', 'Tap to edit amenities for visible location') + " $_filterButtonHint",
+        leftIcon: Styles().images.getImage('toilet', size: 16),
+        rightIcon: Styles().images.getImage('chevron-right'),
+        onTap: _onAmenities,
+    )));
 
   void _onAmenities() {
     Analytics().logSelect(target: 'Amenities');
@@ -1483,7 +1493,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
             ),
         customButton: Map2FilterTextButton(
           title: _studentCoursesFilterIfExists?.termName ?? Localization().getStringEx('panel.map2.button.terms.title', 'Terms'),
-          hint: Localization().getStringEx('panel.map2.button.terms.hint', 'Tap to choose term'),
+          hint: Localization().getStringEx('panel.map2.button.terms.hint', 'Tap to choose term') + " $_filterButtonHint",
           rightIcon: Styles().images.getImage('chevron-down'),
           //onTap: _onTerm,
         ),
@@ -1551,7 +1561,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   Widget get _openNowDiningLocationsFilterButton =>
     Map2FilterTextButton(
       title: Localization().getStringEx('panel.map2.button.open_now.title', 'Open Now'),
-      hint: Localization().getStringEx('panel.map2.button.open_now.hint', 'Tap to show only currently opened locations'),
+      hint: Localization().getStringEx('panel.map2.button.open_now.hint', 'Tap to show only currently opened locations') + " $_filterButtonHint",
       toggled: _diningLocationsFilterIfExists?.onlyOpened == true,
       onTap: _onTapOpenNow,
     );
@@ -1577,7 +1587,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
             ),
         customButton: Map2FilterTextButton(
           title: _selectedPaymentType?.displayTitle ?? Localization().getStringEx('panel.map2.button.payment_type.title', 'Payment Type'),
-          hint: Localization().getStringEx('panel.map2.button.payment_type.hint', 'Tap to select a payment type'),
+          hint: Localization().getStringEx('panel.map2.button.payment_type.hint', 'Tap to select a payment type') + " $_filterButtonHint",
           rightIcon: Styles().images.getImage('chevron-down'),
           //onTap: _onPaymentType,
         ),
@@ -1650,7 +1660,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   Widget get _filtersFilterButton =>
     Map2FilterTextButton(
       title: Localization().getStringEx('panel.map2.button.filters.title', 'Filters'),
-      hint: Localization().getStringEx('panel.map2.button.filters.hint', 'Tap to edit filters'),
+      hint: Localization().getStringEx('panel.map2.button.filters.hint', 'Tap to edit filters') + " $_filterButtonHint",
       leftIcon: Styles().images.getImage('filters', size: 16),
       rightIcon: Styles().images.getImage('chevron-right'),
       onTap: _onTapFilters,
@@ -1676,7 +1686,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   Widget get _visitedStoriedSitesFilterButton =>
     Map2FilterTextButton(
       title: Localization().getStringEx('panel.map2.button.visited.title', 'Visited'),
-      hint: Localization().getStringEx('panel.map2.button.visited.hint', 'Tap to show only visited'),
+      hint: Localization().getStringEx('panel.map2.button.visited.hint', 'Tap to show only visited') + " $_filterButtonHint",
       toggled: _storiedSitesFilterIfExists?.onlyVisited == true,
       onTap: _onTapOnlyVisited,
     );
@@ -1744,7 +1754,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
             ),
         customButton: Map2FilterTextButton(
           title: Localization().getStringEx('panel.map2.button.sort.title', 'Sort'),
-          hint: Localization().getStringEx('panel.map2.button.sort.hint', 'Tap to sort locations'),
+          hint: Localization().getStringEx('panel.map2.button.sort.hint', 'Tap to sort locations') + ". ${_filterButtonHint}",
           leftIcon: Styles().images.getImage('sort', size: 16),
           rightIcon: Styles().images.getImage('chevron-down'),
           //onTap: _onSort,
