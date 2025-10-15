@@ -120,6 +120,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   final GlobalKey _contentHeadingBarKey = GlobalKey();
   final GlobalKey _contentTypesBarKey = GlobalKey();
   final GlobalKey _traySheetKey = GlobalKey();
+  final GlobalKey _traySheetHeaderKey = GlobalKey();
   final GlobalKey _sortButtonKey = GlobalKey();
   final GlobalKey _termsButtonKey = GlobalKey();
   final GlobalKey _paymentTypesButtonKey = GlobalKey();
@@ -440,6 +441,8 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       });
       updateMapMarkers();
       _updateTrayExplores();
+      Future.delayed(Duration(milliseconds: (_traySheetController.isAttached && _traySheetController.pixels > 0 ? 0 : _trayAnimationDuration.inMilliseconds)  +  (Platform.isIOS ? 1 : 0)), () =>
+          AppSemantics.triggerAccessibilityFocus(_traySheetHeaderKey));
     }
   }
 
@@ -628,8 +631,9 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     });
     WidgetsBinding.instance.addPostFrameCallback((_){
       _updateContentTypesScrollPosition();
-      if(_needAccessibilityWorkaround == true)
-        setStateIfMounted((){}); //Workaround Accessibility
+     doAccessibilityWorkaround(()=>
+        setStateIfMounted()
+     ); //Workaround Accessibility
     });
   }
 
@@ -721,6 +725,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
       builder: (BuildContext context, ScrollController scrollController) => Map2TraySheet(
         key: _traySheetKey,
+        headerKey: _traySheetHeaderKey,
         explores: _trayExplores,
         scrollController: scrollController,
         currentLocation: _currentLocation,
@@ -730,8 +735,8 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     );
 
   _onSheetDragChanged() {
-    if (_needAccessibilityWorkaround == true)
-      setStateIfMounted();//Workaround: Update Map padding to workaround tap issue
+    doAccessibilityWorkaround(()=>
+      setStateIfMounted());
   }
 
   // Map Styles
@@ -758,8 +763,8 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   Future<void> _initExplores({_ExploreProgressType progressType = _ExploreProgressType.init}) async {
     if (mounted) {
       LoadExploresTask? exploresTask = _loadExplores();
-      if (_needAccessibilityWorkaround == true)
-        exploresTask?.whenComplete(()=>setStateDelayedIfMounted((){}, duration: Duration(milliseconds: 200)));
+      doAccessibilityWorkaround(()=>
+        exploresTask?.whenComplete(()=>setStateDelayedIfMounted((){}, duration: Duration(milliseconds: 200))));
 
       if (exploresTask != null) {
         // start loading
@@ -830,8 +835,9 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   Future<void> _updateExplores() async {
     if (mounted) {
       LoadExploresTask? exploresTask = _loadExplores();
-      if (_needAccessibilityWorkaround == true)
-        exploresTask?.whenComplete(()=>setStateDelayedIfMounted((){}, duration: Duration(milliseconds: 200)));
+      doAccessibilityWorkaround(()=>
+        exploresTask?.whenComplete(()=>
+            setStateDelayedIfMounted((){}, duration: Duration(milliseconds: 200))));
 
       if (exploresTask != null) {
         // start loading
@@ -1049,8 +1055,11 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
 // Map2 Accessibility Workaround
 
-extension _Map2Accessibility on _Map2HomePanelState{
-  bool get _needAccessibilityWorkaround => AppSemantics.isAccessibilityEnabled(context) == true; //Additional functionality and UI changes that will improve the Maps accessibility
+extension _Map2Accessibility on _Map2HomePanelState{  //Additional functionality and UI changes that will improve the Maps accessibility. Execute it only if needed
+  void doAccessibilityWorkaround(Function? fn) => (_needAccessibilityWorkaround && fn != null) ?
+          fn() : null;
+
+  bool get _needAccessibilityWorkaround => AppSemantics.isAccessibilityEnabled(context) == true;
 
   EdgeInsets get _accessibilityWorkaroundMapPadding {//Workaround for the Maps Accessibility. Even when Map is at the bottom layer of the stack it takes the Tap gestures.
     if(_needAccessibilityWorkaround == false)
@@ -1124,35 +1133,6 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       });
       // descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
 
-/*<<<<<<< HEAD
-      return Semantics(container: true, child:
-        Container(decoration: _contentFiltersBarDecoration, padding: _contentFilterDescriptionBarPadding, constraints: _contentFiltersBarConstraints, child:
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Expanded(child:
-              IndexedSemantics(index: 1, child: Semantics( container: true, child:
-                Padding(padding: EdgeInsets.only(top: 6, bottom: 6), child:
-                  RichText(text: TextSpan(style: regularStyle, children: descriptionList))),
-                ),
-              )),
-              IndexedSemantics(index: 2, child: Semantics(container: true, child:
-              Map2PlainImageButton(imageKey: 'share-nodes',
-                label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
-                padding: EdgeInsets.only(left: 16, right: (8 + 2), top: 12, bottom: 12),
-                onTap: _onShareFilter
-              )
-            )),
-            IndexedSemantics(index: 3, child: Semantics(container: true, child:
-              Map2PlainImageButton(imageKey: 'close',
-                  label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
-                  hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
-                padding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
-                onTap: _onClearFilter
-              )
-            )),
-          ]),
-        )
-=======*/
       return Semantics(container: true, child:
         Container(decoration: _contentFiltersBarDecoration, padding: _contentFilterDescriptionBarPadding, constraints: _contentFiltersBarConstraints, child:
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
