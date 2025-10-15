@@ -644,7 +644,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         accountId: senderId,
       );
 
-      Uint8List? imageData = result.imageData;
+      Uint8List? imageData = result?.imageData;
       _userPhotosCache[senderId] = imageData; // Cache result (null if none)
 
       if (imageData != null) {

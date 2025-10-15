@@ -316,7 +316,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
           _saving = true;
         });
         if (widget.isUserPic) {
-          Content().uploadUserPhoto(imageBytes: _imageBytes, mediaType: _contentType).then(_onImageUploaded);
+          Content().uploadUserPhoto(fileName: _imageName, imageBytes: _imageBytes, mediaType: _contentType).then(_onImageUploaded);
         } else {
           Content().uploadImage(imageBytes: _imageBytes, mediaType: _contentType, storagePath: widget.storagePath!, width: widget.width).then(_onImageUploaded);
         }
