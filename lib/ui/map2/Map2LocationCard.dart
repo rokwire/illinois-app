@@ -12,6 +12,7 @@ import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Map2LocationCard extends StatefulWidget {
@@ -94,7 +95,7 @@ class _Map2LocationCardState extends State<Map2LocationCard> with NotificationsL
     return ((imageUrl != null) && imageUrl.isNotEmpty) ?
       Container(decoration: _imageHeadingDecoration, child:
         AspectRatio(aspectRatio: 2.5, child:
-          Image.network(imageUrl, fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+          WebNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover, excludeFromSemantics: true)
         ),
       ) : null;
   }

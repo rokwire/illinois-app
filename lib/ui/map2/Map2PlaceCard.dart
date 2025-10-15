@@ -5,6 +5,7 @@ import 'package:illinois/ext/Places.dart';
 import 'package:illinois/ext/Position.dart';
 import 'package:rokwire_plugin/model/places.dart' as rokwire;
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Map2PlaceCard extends StatefulWidget {
@@ -45,7 +46,7 @@ class _Map2PlaceCardState extends State<Map2PlaceCard> {
 
   Widget get _imageSection =>
     SizedBox(width: _imageWidth, height: _imageWidth, child: (widget.place.images?.isNotEmpty == true) ?
-      Image.network(widget.place.images?.first.imageUrl ?? '', fit: BoxFit.cover, loadingBuilder: _imageProgressBuilder, errorBuilder: _imageErrorBuilder,) :
+      WebNetworkImage(imageUrl: widget.place.images?.first.imageUrl ?? '', fit: BoxFit.cover, loadingBuilder: _imageProgressBuilder, errorBuilder: _imageErrorBuilder,) :
       Styles().images.getImage('missing-building-photo', fit: BoxFit.cover)
     );
 
