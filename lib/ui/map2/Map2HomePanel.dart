@@ -175,8 +175,8 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
     _contentTypesScrollController.addListener(_onContentTypesScroll);
 
+    //updateLocationServicesStatus(updateCamera: true);
     _initSelectNotificationFilters(widget._initialSelectParam);
-    updateLocationServicesStatus(init: true);
     _initMapStyles();
     _initExplores();
 
@@ -442,7 +442,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   // Locaction Services
 
   @override
-  Future<void> onLocationServicesStatusChanged({bool init = false}) async {
+  Future<void> onLocationServicesStatusChanged({bool updateCamera = false}) async {
     // Update current position, if possile
     if (locationServicesStatus == LocationServicesStatus.permissionAllowed) {
       Position? currentLocation = await LocationServices().location;
@@ -452,7 +452,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
           _currentLocation = currentLocation;
         });
 
-        if (init) {
+        if (updateCamera) {
           CameraPosition cameraPosition = CameraPosition(target: currentLocation.gmsLatLng, zoom: Map2BasePanelState.defaultCameraZoom);
           if (mapController != null) {
             mapController?.moveCamera(CameraUpdate.newCameraPosition(cameraPosition));

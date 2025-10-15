@@ -58,6 +58,12 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
   static const double _mapPinMarkerSize = 24;
   static const Offset _mapPinMarkerAnchor = Offset(0.5, 1);
   static const Offset _mapCircleMarkerAnchor = Offset(0.5, 0.5);
+  
+  @override
+  void initState() {
+    updateLocationServicesStatus(updateCamera: true);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) =>
@@ -177,19 +183,19 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
     FlexUI().isLocationServicesAvailable && (locationServicesStatus == LocationServicesStatus.permissionAllowed);
 
   @protected
-  Future<void> updateLocationServicesStatus({ LocationServicesStatus? status, bool init = false}) async {
+  Future<void> updateLocationServicesStatus({ LocationServicesStatus? status, bool updateCamera = false}) async {
     status ??= FlexUI().isLocationServicesAvailable ? await LocationServices().status : LocationServicesStatus.serviceDisabled;
     if ((status != null) && (status != locationServicesStatus) && mounted) {
       setState(() {
         locationServicesStatus = status;
       });
 
-      await onLocationServicesStatusChanged(init: init);
+      await onLocationServicesStatusChanged(updateCamera: updateCamera);
     }
   }
 
   @protected
-  Future<void> onLocationServicesStatusChanged({bool init = false}) async {
+  Future<void> onLocationServicesStatusChanged({bool updateCamera = false}) async {
   }
 
   // Map Content
