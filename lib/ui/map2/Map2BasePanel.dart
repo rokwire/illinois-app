@@ -67,7 +67,7 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
 
   @override
   Widget build(BuildContext context) =>
-    mapView;
+    throw UnimplementedError();
 
   @protected
   Widget get mapView => Container(decoration: mapViewDecoration, child:
