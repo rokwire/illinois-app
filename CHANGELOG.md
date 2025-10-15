@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Maps2: added analytics events [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 ### Fixed
+- Handle tap action over the image in GroupCard for "All" and "Pending" groups.
 - WEB: Maps2 - Showing card images.
 
 ## [7.3.11] - 2025-10-13

@@ -492,6 +492,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
               group: group,
               displayType: GroupCardDisplayType.myGroup,
               key: _getGroupKey(group),
+              onImageTap: () { _onTapImage(group); },
             ),
           ));
         }
@@ -525,6 +526,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
               group: group,
               key: _getGroupKey(group),
               displayType: GroupCardDisplayType.allGroups,
+              onImageTap: () { _onTapImage(group); },
             ),
           ));
         }
