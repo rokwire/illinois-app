@@ -5,14 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [7.3.12] - 2025-10-15
 ### Changed
 - Maps2: Updated Amenities selection support [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: Updated Sort dropdown content [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 ### Added
 - Maps2: added analytics events [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 - Maps2: added select location panel [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 - Add file attachments to conversation messages [#5378](https://github.com/rokwire/illinois-app/issues/5378).
 ### Fixed
 - Handle tap action over the image in GroupCard for "All" and "Pending" groups.
+- Maps2: make sure not to show description bar for sorting option only [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: Fixed descripton bar availability [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 
 ## [7.3.11] - 2025-10-13
 ### Added

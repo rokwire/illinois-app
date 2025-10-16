@@ -1060,7 +1060,9 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     ) : null;
 
   Widget? get _contentFilterDescriptionBar {
-    LinkedHashMap<String, List<String>>? descriptionMap = _selectedFilterIfExists?.description(_filteredExplores, canSort: _trayExplores?.isNotEmpty == true);
+    Map2Filter? selectedFilter = _selectedFilterIfExists;
+    LinkedHashMap<String, List<String>>? descriptionMap = (selectedFilter?.hasFilter == true) ?
+      selectedFilter?.description(_filteredExplores, canSort: _trayExplores?.isNotEmpty == true) : null;
     if ((descriptionMap != null) && descriptionMap.isNotEmpty)  {
       TextStyle? boldStyle = Styles().textStyles.getTextStyle('widget.card.title.tiny.fat');
       TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.card.detail.small.regular');
@@ -1600,7 +1602,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     Event2HomePanel.presentFiltersV2(context, eventFilter).then((Event2FilterParam? filterResult) {
       if ((filterResult != null) && mounted) {
         setStateIfMounted(() {
-          _events2Filter?.event2Filter = filterResult;
+          _events2Filter?.applyEvent2Filter(filterResult);
         });
         filterResult.saveToStorage();
         _onFiltersChanged();
@@ -1674,7 +1676,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     MergeSemantics(key: _sortButtonKey, child:
       Semantics(value: _selectedSortType.displayTitle, child:
         DropdownButtonHideUnderline(child:
-          DropdownButton2<Map2SortType>(
+          DropdownButton2<Pair<Map2SortType, Map2SortOrder?>>(
             dropdownStyleData: DropdownStyleData(
               width:  _sortDropdownWidth ??= _evaluateSortDropdownWidth(),
               padding: EdgeInsets.zero
@@ -1693,24 +1695,32 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     )),
   );
 
-  List<DropdownMenuItem<Map2SortType>> _buildSortDropdownItems() {
-    List<DropdownMenuItem<Map2SortType>> items = <DropdownMenuItem<Map2SortType>>[];
-    bool locationAvailable = ((locationServicesStatus == LocationServicesStatus.permissionAllowed) || (locationServicesStatus == LocationServicesStatus.permissionNotDetermined));
+  List<DropdownMenuItem<Pair<Map2SortType, Map2SortOrder?>>> _buildSortDropdownItems() {
+    bool isProximityAvailable = ((locationServicesStatus == LocationServicesStatus.permissionAllowed) || (locationServicesStatus == LocationServicesStatus.permissionNotDetermined));
+    List<DropdownMenuItem<Pair<Map2SortType, Map2SortOrder?>>> items = <DropdownMenuItem<Pair<Map2SortType, Map2SortOrder?>>>[];
     for (Map2SortType sortType in Map2SortType.values) {
       if ((_selectedContentType?.supportsSortType(sortType) == true) &&
-          ((sortType != Map2SortType.proximity) || locationAvailable)
+          ((sortType != Map2SortType.proximity) || isProximityAvailable)
       ) {
-        String itemText = (_selectedSortType == sortType) ? '${sortType.displayTitle} ${_selectedSortOrder.displayIndicator(sortType)}' : sortType.displayTitle;
-        TextStyle? itemTextStyle = (_selectedSortType == sortType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
-        items.add(AccessibleDropDownMenuItem<Map2SortType>(key: ObjectKey(sortType), value: sortType, child:
-          Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true, child:
-            Row(children: [
-              Expanded(child:
-                Text(itemText, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,)
-              ),
-            ],)
-          )
-        ));
+        for (Map2SortOrder? sortOrder in _sortDropdownOrderItems) {
+          if (sortType.isDropdownListEntry(sortOrder)) {
+            String? itemTitle = sortType.displayTitle;
+            String? itemSortOrder = sortType.dropdownSortOrderIndicator(sortOrder);
+            String itemText = (itemSortOrder != null) ? '$itemTitle $itemSortOrder' : itemTitle;
+            bool isSortOrderSelected = sortType.isDropdownListEntrySelected(sortOrder) ?? (_selectedSortOrder == sortOrder);
+            TextStyle? itemTextStyle = ((_selectedSortType == sortType) && isSortOrderSelected) ?
+              _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
+            items.add(AccessibleDropDownMenuItem<Pair<Map2SortType, Map2SortOrder?>>(key: ObjectKey(Pair(sortType, sortOrder)), value: Pair(sortType, sortOrder), child:
+              Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true, child:
+                Row(children: [
+                  Expanded(child:
+                    Text(itemText, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,)
+                  ),
+                ],)
+              )
+            ));
+          }
+        }
       }
     }
     return items;
@@ -1719,32 +1729,37 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   double _evaluateSortDropdownWidth() {
     double width = 0;
     for (Map2SortType sortType in Map2SortType.values) {
-      final Size sizeFull = (TextPainter(
-          text: TextSpan(
-            text: "${sortType.displayTitle} ${Map2SortOrder.ascending.displayIndicator(sortType)}" ,
-            style: _dropdownEntrySelectedTextStyle,
-          ),
-          textScaler: MediaQuery.of(context).textScaler,
-          textDirection: TextDirection.ltr,
-        )..layout()).size;
-      if (width < sizeFull.width) {
-        width = sizeFull.width;
+      for (Map2SortOrder? sortOrder in _sortDropdownOrderItems) {
+        if (sortType.isDropdownListEntry(sortOrder)) {
+          String? itemTitle = sortType.displayTitle;
+          String? itemSortOrder = sortType.dropdownSortOrderIndicator(sortOrder);
+          String itemText = (itemSortOrder != null) ? '$itemTitle $itemSortOrder' : itemTitle;
+          final Size sizeFull = (TextPainter(
+              text: TextSpan(
+                text: itemText,
+                style: _dropdownEntrySelectedTextStyle,
+              ),
+              textScaler: MediaQuery.of(context).textScaler,
+              textDirection: TextDirection.ltr,
+            )..layout()).size;
+          if (width < sizeFull.width) {
+            width = sizeFull.width;
+          }
+        }
       }
     }
     return math.min(width + 2 * 18, MediaQuery.of(context).size.width / 2); // add horizontal padding
   }
 
-  void _onSelectSortType(Map2SortType? value) {
-    Analytics().logSelect(target: 'Sort: ${value?.displayTitle}');
+  List<Map2SortOrder?> get _sortDropdownOrderItems =>
+    <Map2SortOrder?>[null, ...Map2SortOrder.values, ];
+
+  void _onSelectSortType(Pair<Map2SortType, Map2SortOrder?>? value) {
+    Analytics().logSelect(target: 'Sort: ${value?.left.displayTitle} ${value?.right?.displayTitle}');
     if (value != null) {
       setStateIfMounted(() {
-        if (_selectedSortType != value) {
-          _selectedSortType = value;
-          _selectedSortOrder = _expectedSortOrder;
-        }
-        else {
-          _selectedSortOrder = (_selectedSortOrder != Map2SortOrder.ascending) ? Map2SortOrder.ascending : Map2SortOrder.descending;
-        }
+        _selectedSortType = value.left;
+        _selectedSortOrder = value.right ?? _expectedSortOrder(value.left);
       });
       _onSortChanged();
       Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
@@ -1758,7 +1773,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Map2SortOrder get _selectedSortOrder => _selectedFilterIfExists?.sortOrder ?? Map2Filter.defaultSortOrder;
   set _selectedSortOrder(Map2SortOrder value) => _selectedFilter?.sortOrder = value;
-  Map2SortOrder get _expectedSortOrder => _selectedFilterIfExists?.expectedSortOrder ?? Map2Filter.defaultSortOrder;
+  Map2SortOrder _expectedSortOrder(Map2SortType sortType) => Map2Filter.defaultFromContentType(_selectedContentType)?.expectedSortOrder(sortType) ?? Map2Filter.defaultSortOrder;
 
   TextStyle? get _dropdownEntryNormalTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
   TextStyle? get _dropdownEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
