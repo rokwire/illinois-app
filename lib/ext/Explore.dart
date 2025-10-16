@@ -644,3 +644,4 @@ extension ExplorePOIFilter on ExplorePOI {
 
 enum ExploreSelectLocationContext { card, detail }
 typedef ExploreSelectLocationBuilder = Widget? Function(BuildContext context, ExploreSelectLocationContext selectContext, { Explore? explore } );
+typedef ExploreSelectCardBuilder = Widget Function(BuildContext context, Explore explore);
