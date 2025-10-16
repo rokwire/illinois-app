@@ -63,6 +63,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, LaundryRooms, BusStops, Therapists, StoriedSites, MyLocations, }
 enum Map2SortType { dateTime, alphabetical, proximity }
@@ -118,10 +119,17 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   final GlobalKey _scaffoldKey = GlobalKey();
   final GlobalKey _contentHeadingBarKey = GlobalKey();
+  final GlobalKey _contentTypesBarKey = GlobalKey();
   final GlobalKey _traySheetKey = GlobalKey();
+  final GlobalKey _traySheetHeaderKey = GlobalKey();
   final GlobalKey _sortButtonKey = GlobalKey();
   final GlobalKey _termsButtonKey = GlobalKey();
+  final GlobalKey _starredButtonKey = GlobalKey();
+  final GlobalKey _amenitiesButtonKey = GlobalKey();
+  final GlobalKey _filterButtonKey = GlobalKey();
+  final GlobalKey _searchButtonKey = GlobalKey();
   final GlobalKey _paymentTypesButtonKey = GlobalKey();
+  final GlobalKey _openNowButtonKey = GlobalKey();
 
 
   final ScrollController _contentTypesScrollController = ScrollController();
@@ -135,6 +143,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   final Map<Map2ContentType, Map2Filter> _filters = <Map2ContentType, Map2Filter>{};
   bool _searchOn = false;
+  bool _mapDisabled = false;
   double? _sortDropdownWidth;
   double? _termsDropdownWidth;
   double? _paymentTypesDropdownWidth;
@@ -174,6 +183,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     _selectedContentType = widget._evalInitialContentTypeEx(availableTypes: _availableContentTypes);
 
     _contentTypesScrollController.addListener(_onContentTypesScroll);
+    _traySheetController.addListener(_onSheetDragChanged);
 
     //updateLocationServicesStatus(updateCamera: true);
     _initSelectNotificationFilters(widget._initialSelectParam);
@@ -284,9 +294,11 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     Stack(key: _scaffoldKey, children: [
 
       Positioned.fill(child:
-        Visibility(visible: (_exploresProgress == null), child:
-          mapView
-        ),
+        _accessibilityWorkaroundWrapMap(child:
+          Visibility(visible: (_exploresProgress == null), child:
+            mapView
+          )
+        )
       ),
 
       Positioned.fill(child:
@@ -462,6 +474,8 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       });
       updateMapMarkers();
       _updateTrayExplores();
+      Future.delayed(Duration(milliseconds: (_traySheetController.isAttached && _traySheetController.pixels > 0 ? 0 : _trayAnimationDuration.inMilliseconds)  +  (Platform.isIOS ? 1 : 0)), () =>
+          AppSemantics.triggerAccessibilityFocus(_traySheetHeaderKey));
     }
   }
 
@@ -495,6 +509,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   Widget get _contentTypesBar => 
     SingleChildScrollView(
+      key: _contentTypesBarKey,
       scrollDirection: Axis.horizontal,
       padding: EdgeInsets.only(top: 16),
       controller: _contentTypesScrollController,
@@ -608,20 +623,21 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     );
 
   Widget get _contentTitleBar =>
-    Row(children: [
-      Expanded(child:
-        Padding(padding: EdgeInsets.only(left: 16, top: 8, bottom: 8), child:
-          Text(_selectedContentType?.displayTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
+    Semantics(header: true, container: true, child:
+      Row(children: [
+        Expanded(child:
+          Padding(padding: EdgeInsets.only(left: 16, top: 8, bottom: 8), child:
+            Text(_selectedContentType?.displayTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
+          ),
         ),
-      ),
-      Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, child:
+      Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, container: true, child:
         InkWell(onTap : _onTapClearContentType, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
           ),
+        )
         ),
-      ),
-    ],);
+      ],));
 
   void _onTapClearContentType() {
     Analytics().logSelect(target: 'Content: Clear');
@@ -648,6 +664,9 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     });
     WidgetsBinding.instance.addPostFrameCallback((_){
       _updateContentTypesScrollPosition();
+     _doAccessibilityWorkaround(()=>
+        setStateIfMounted()
+     ); //Workaround Accessibility
     });
   }
 
@@ -739,6 +758,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
       builder: (BuildContext context, ScrollController scrollController) => Map2TraySheet(
         key: _traySheetKey,
+        headerKey: _traySheetHeaderKey,
         explores: _trayExplores,
         scrollController: scrollController,
         currentLocation: _currentLocation,
@@ -746,6 +766,11 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
         analyticsFeature: widget.analyticsFeature,
       ),
     );
+
+  _onSheetDragChanged() {
+    _doAccessibilityWorkaround(()=>
+      setStateIfMounted());
+  }
 
   // Map Styles
 
@@ -771,6 +796,9 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   Future<void> _initExplores({ExploreProgressType progressType = ExploreProgressType.init}) async {
     if (mounted) {
       LoadExploresTask? exploresTask = _loadExplores();
+      _doAccessibilityWorkaround(()=>
+        exploresTask?.whenComplete(()=>setStateDelayedIfMounted((){}, duration: Duration(milliseconds: 200))));
+
       if (exploresTask != null) {
         // start loading
         setState(() {
@@ -811,6 +839,8 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
             });
             _updateTrayExplores();
             _showContentMessageIfNeeded(exploreContentType, validExplores);
+          } else {
+            setStateIfMounted();
           }
         }
       }
@@ -841,6 +871,10 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   Future<void> _updateExplores() async {
     if (mounted) {
       LoadExploresTask? exploresTask = _loadExplores();
+      _doAccessibilityWorkaround(()=>
+        exploresTask?.whenComplete(()=>
+            setStateDelayedIfMounted((){}, duration: Duration(milliseconds: 200))));
+
       if (exploresTask != null) {
         // start loading
         setState(() {
@@ -1066,6 +1100,71 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   }
 }
 
+// Map2 Semantics
+
+extension _Map2Semantics on _Map2HomePanelState{
+  int? get displayCount => _filteredExplores?.length;
+  int? get totalCount => _explores?.length;
+
+  String get _filterButtonHint =>  ". Results in filtering  ${displayCount ?? 0} from ${totalCount ?? 0} Buildings";
+
+  String get _amenitiesSemanticsValue =>  LinkedHashSet<String>.from(_campusBuildingsFilterIfExists?.amenities.keys ?? <String>[]).toString();
+}
+
+// Map2 Accessibility Workaround
+
+extension _Map2AccessibilityWorkaround on _Map2HomePanelState{  //Additional functionality and UI changes that will improve the Maps accessibility. Execute it only if needed
+  bool get _needAccessibilityWorkaround => AppSemantics.isAccessibilityEnabled(context) == true;
+
+  Widget _accessibilityWorkaroundWrapMap({Widget? child}) => VisibilityDetector(key: const Key('map2_location_panel_detector'),
+      onVisibilityChanged: _onMapVisibilityChanged, child:
+        Padding(padding: _accessibilityWorkaroundMapPadding, child:
+          (_mapDisabled == true ? //Get disabled only if accessibility workaround is required
+            Container(child: Center(child: Text("Map is disabled"))) : //Workaround to make DropDownMenuItems clickable. They go over MapView and do not get tap actions
+            child))
+  );//Workaround to make sheet and heading tappable. We resize the map so they don't go over the map
+
+  EdgeInsets get _accessibilityWorkaroundMapPadding {//Workaround for the Maps Accessibility. Even when Map is at the bottom layer of the stack it takes the Tap gestures.
+    if(_needAccessibilityWorkaround == false)
+      return EdgeInsets.zero;
+
+    double sheetHeight = _traySheetController.isAttached ? _traySheetController.pixels : 0;
+    double headerBarHeight = _contentHeadingBarKey.renderBoxSize?.height ?? 0;
+    double typesBarHeight = _contentTypesBarKey.renderBoxSize?.height ?? 0;
+
+    double topPadding = _selectedContentType != null ? headerBarHeight : typesBarHeight; //If we have heading reduce the pam size at top
+    double bottomPadding = _selectedContentType != null && _trayExplores?.isNotEmpty == true ? sheetHeight : 0;//if we have sheet
+    return EdgeInsets.only(top: topPadding, bottom: bottomPadding);
+  }
+
+  void _onMenuVisibilityChanged(bool visible) => _needAccessibilityWorkaround ? setStateIfMounted(()=> _mapDisabled = visible) : null;
+
+  void _onMapVisibilityChanged(VisibilityInfo info){
+    if(info.visibleFraction == 0){
+      if(_mapDisabled == false)
+        _accessibilityDisableMap();
+    } else {
+      if(_mapDisabled == true)
+        _accessibilityEnableMap();
+    }
+  }
+
+  void _doAccessibilityWorkaround(Function? fn) => (_needAccessibilityWorkaround && fn != null) ?
+    fn() : null;
+
+  void _accessibilityDisableMap() {
+    _doAccessibilityWorkaround(
+            ()=> setStateIfMounted(()=>_mapDisabled = true));
+    // AppToast.showMessage("Disabled");
+  }
+
+  void _accessibilityEnableMap() {
+    _doAccessibilityWorkaround(
+            ()=> setStateIfMounted(()=>_mapDisabled = false));
+    // AppToast.showMessage("Enabled");
+  }
+}
+
 // Map2 Filters
 
 extension _Map2HomePanelFilters on _Map2HomePanelState {
@@ -1120,26 +1219,34 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       });
       // descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
 
-      return Container(decoration: _contentFiltersBarDecoration, padding: _contentFilterDescriptionBarPadding, constraints: _contentFiltersBarConstraints, child:
-        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(top: 6, bottom: 6), child:
-              RichText(text: TextSpan(style: regularStyle, children: descriptionList)),
+      return Semantics(container: true, child:
+        Container(decoration: _contentFiltersBarDecoration, padding: _contentFilterDescriptionBarPadding, constraints: _contentFiltersBarConstraints, child:
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Expanded(child:
+              IndexedSemantics(index: 1, child: Semantics( container: true, child:
+                Padding(padding: EdgeInsets.only(top: 6, bottom: 6), child:
+                  RichText(text: TextSpan(style: regularStyle, children: descriptionList)),
+                ),
+              ))
             ),
-          ),
-          Map2PlainImageButton(imageKey: 'share-nodes',
-            label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
-            hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
-            padding: EdgeInsets.only(left: 16, right: (8 + 2), top: 12, bottom: 12),
-            onTap: _onTapShareFilter
-          ),
-          Map2PlainImageButton(imageKey: 'close',
-              label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
-              hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
-            padding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
-            onTap: _onTapClearFilter
-          ),
-        ]),
+            IndexedSemantics(index: 2, child: Semantics( container: true, child:
+              Map2PlainImageButton(imageKey: 'share-nodes',
+                label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
+                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
+                padding: EdgeInsets.only(left: 16, right: (8 + 2), top: 12, bottom: 12),
+                onTap: _onTapShareFilter
+              )
+            )),
+            IndexedSemantics(index: 1, child: Semantics( container: true, child:
+              Map2PlainImageButton(imageKey: 'close',
+                  label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
+                  hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
+                padding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
+                onTap: _onTapClearFilter
+              ),
+            ))
+          ]),
+        )
       );
     }
     return null;
@@ -1365,6 +1472,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Widget get _searchFilterButton =>
     Map2FilterImageButton(
+      key: _searchButtonKey,
       image: Styles().images.getImage('search'),
       label: Localization().getStringEx('panel.map2.button.search.title', 'Search'),
       hint: Localization().getStringEx('panel.map2.button.search.hint', 'Type a search locations'),
@@ -1411,8 +1519,9 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Widget get _starredFilterButton =>
     Map2FilterTextButton(
+      key: _starredButtonKey,
       title: Localization().getStringEx('panel.map2.button.starred.title', 'Starred'),
-      hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations'),
+      hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations') + " $_filterButtonHint",
       leftIcon: Styles().images.getImage('star-filled', size: 16),
       toggled: _selectedFilterIfExists?.starred == true,
       onTap: _onStarred,
@@ -1429,27 +1538,35 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   // Amenities Buildings Filter Button
 
   Widget get _amenitiesBuildingsFilterButton =>
-    Map2FilterTextButton(
-      title: Localization().getStringEx('panel.map2.button.amenities.title', 'Amenities'),
-      hint: Localization().getStringEx('panel.map2.button.amenities.hint', 'Tap to edit amenities for visible location'),
-      leftIcon: Styles().images.getImage('toilet', size: 16),
-      rightIcon: Styles().images.getImage('chevron-right'),
-      onTap: _onAmenities,
-    );
+    MergeSemantics(key: _amenitiesButtonKey, child: Semantics(label: _amenitiesSemanticsValue, child:
+      Map2FilterTextButton(
+        title: Localization().getStringEx('panel.map2.button.amenities.title', 'Amenities'),
+        hint: Localization().getStringEx('panel.map2.button.amenities.hint', 'Tap to edit amenities for visible location') + " $_filterButtonHint",
+        leftIcon: Styles().images.getImage('toilet', size: 16),
+        rightIcon: Styles().images.getImage('chevron-right'),
+        onTap: _onAmenities,
+    )));
 
   void _onAmenities() {
     Analytics().logSelect(target: 'Amenities');
     List<Building>? buildings = JsonUtils.listCastValue<Building>(_explores);
     Map<String, String> buildingsAmenities = buildings?.featureNames ?? <String, String>{};
+    // _doAccessibilityWorkaround(
+    //         ()=> setStateIfMounted(()=>_mapDisabled = true));
     Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
       amenities: buildingsAmenities,
       selectedAmenityIds: LinkedHashSet<String>.from(_campusBuildingsFilterIfExists?.amenities.keys ?? <String>[]),
-    ),)).then(((LinkedHashSet<String>? amenityIds) {
+    ),
+    )).then(((LinkedHashSet<String>? amenityIds) {
+      // _doAccessibilityWorkaround(
+      //         ()=> setStateIfMounted(()=>_mapDisabled = false));
       if (amenityIds != null) {
         setStateIfMounted(() {
           _campusBuildingsFilter?.amenities = amenityIds.selectedFromBuildingAmenities(buildingsAmenities);
         });
         _onFiltersChanged();
+        Future.delayed(Duration(milliseconds: 200 + (Platform.isIOS ? 1000 : 0)), () =>
+            AppSemantics.triggerAccessibilityFocus(_amenitiesButtonKey));
       }
     }));
   }
@@ -1467,13 +1584,14 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
             ),
         customButton: Map2FilterTextButton(
           title: _studentCoursesFilterIfExists?.termName ?? Localization().getStringEx('panel.map2.button.terms.title', 'Terms'),
-          hint: Localization().getStringEx('panel.map2.button.terms.hint', 'Tap to choose term'),
+          hint: Localization().getStringEx('panel.map2.button.terms.hint', 'Tap to choose term') + " $_filterButtonHint",
           rightIcon: Styles().images.getImage('chevron-down'),
           //onTap: _onTerm,
         ),
         isExpanded: false,
         items: _buildTermsDropdownItems(),
         onChanged: _onSelectTerm,
+        onMenuStateChange: _onMenuVisibilityChanged,
       )
     )),
   );
@@ -1528,14 +1646,18 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       _studentCoursesFilter?.termId = value?.id;
     });
     _onFiltersChanged();
+    Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
+        AppSemantics.triggerAccessibilityFocus(_termsButtonKey)
+    );
   }
 
   // Open Now Dining Locations Filter Button
 
   Widget get _openNowDiningLocationsFilterButton =>
     Map2FilterTextButton(
+      key: _openNowButtonKey,
       title: Localization().getStringEx('panel.map2.button.open_now.title', 'Open Now'),
-      hint: Localization().getStringEx('panel.map2.button.open_now.hint', 'Tap to show only currently opened locations'),
+      hint: Localization().getStringEx('panel.map2.button.open_now.hint', 'Tap to show only currently opened locations') + " $_filterButtonHint",
       toggled: _diningLocationsFilterIfExists?.onlyOpened == true,
       onTap: _onTapOpenNow,
     );
@@ -1561,13 +1683,14 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
             ),
         customButton: Map2FilterTextButton(
           title: _selectedPaymentType?.displayTitle ?? Localization().getStringEx('panel.map2.button.payment_type.title', 'Payment Type'),
-          hint: Localization().getStringEx('panel.map2.button.payment_type.hint', 'Tap to select a payment type'),
+          hint: Localization().getStringEx('panel.map2.button.payment_type.hint', 'Tap to select a payment type') + " $_filterButtonHint",
           rightIcon: Styles().images.getImage('chevron-down'),
           //onTap: _onPaymentType,
         ),
         isExpanded: false,
         items: _buildPaymentTypesDropdownItems(),
         onChanged: _onSelectPaymentType,
+        onMenuStateChange: _onMenuVisibilityChanged,
       )
     )),
   );
@@ -1621,7 +1744,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     });
     _onFiltersChanged();
     Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
-      AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
+      AppSemantics.triggerAccessibilityFocus(_paymentTypesButtonKey)
     );
 
   }
@@ -1633,8 +1756,9 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Widget get _filtersFilterButton =>
     Map2FilterTextButton(
+      key: _filterButtonKey,
       title: Localization().getStringEx('panel.map2.button.filters.title', 'Filters'),
-      hint: Localization().getStringEx('panel.map2.button.filters.hint', 'Tap to edit filters'),
+      hint: Localization().getStringEx('panel.map2.button.filters.hint', 'Tap to edit filters') + " $_filterButtonHint",
       leftIcon: Styles().images.getImage('filters', size: 16),
       rightIcon: Styles().images.getImage('chevron-right'),
       onTap: _onTapFilters,
@@ -1660,7 +1784,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   Widget get _visitedStoriedSitesFilterButton =>
     Map2FilterTextButton(
       title: Localization().getStringEx('panel.map2.button.visited.title', 'Visited'),
-      hint: Localization().getStringEx('panel.map2.button.visited.hint', 'Tap to show only visited'),
+      hint: Localization().getStringEx('panel.map2.button.visited.hint', 'Tap to show only visited') + " $_filterButtonHint",
       toggled: _storiedSitesFilterIfExists?.onlyVisited == true,
       onTap: _onTapOnlyVisited,
     );
@@ -1728,7 +1852,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
             ),
         customButton: Map2FilterTextButton(
           title: Localization().getStringEx('panel.map2.button.sort.title', 'Sort'),
-          hint: Localization().getStringEx('panel.map2.button.sort.hint', 'Tap to sort locations'),
+          hint: Localization().getStringEx('panel.map2.button.sort.hint', 'Tap to sort locations') + " ${_filterButtonHint}",
           leftIcon: Styles().images.getImage('sort', size: 16),
           rightIcon: Styles().images.getImage('chevron-down'),
           //onTap: _onSort,
@@ -1736,6 +1860,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         isExpanded: false,
         items: _buildSortDropdownItems(),
         onChanged: _onSelectSortType,
+        onMenuStateChange: _onMenuVisibilityChanged,
       )
     )),
   );
