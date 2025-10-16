@@ -37,7 +37,7 @@ import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
-import 'package:illinois/ui/explore/ExploreMapPanel.dart';
+import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
 import 'package:illinois/ui/map2/Map2BasePanel.dart';
 import 'package:illinois/ui/map2/Map2ExplorePOICard.dart';
 import 'package:illinois/ui/map2/Map2FilterBuildingAmenitiesPanel.dart';
