@@ -1065,7 +1065,7 @@ extension _Map2Semantics on _Map2HomePanelState{
   int? get displayCount => _filteredExplores?.length;
   int? get totalCount => _explores?.length;
 
-  String get _filterButtonHint =>  "results in filtering  ${displayCount ?? 0} from ${totalCount ?? 0} Buildings";
+  String get _filterButtonHint =>  ". Results in filtering  ${displayCount ?? 0} from ${totalCount ?? 0} Buildings";
 
   String get _amenitiesSemanticsValue =>  LinkedHashSet<String>.from(_campusBuildingsFilterIfExists?.amenities.keys ?? <String>[]).toString();
 }
@@ -1761,7 +1761,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
             ),
         customButton: Map2FilterTextButton(
           title: Localization().getStringEx('panel.map2.button.sort.title', 'Sort'),
-          hint: Localization().getStringEx('panel.map2.button.sort.hint', 'Tap to sort locations') + ". ${_filterButtonHint}",
+          hint: Localization().getStringEx('panel.map2.button.sort.hint', 'Tap to sort locations') + " ${_filterButtonHint}",
           leftIcon: Styles().images.getImage('sort', size: 16),
           rightIcon: Styles().images.getImage('chevron-down'),
           //onTap: _onSort,
