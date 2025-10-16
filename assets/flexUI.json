@@ -1,7 +1,7 @@
 {
 	"": {
 		"content": {
-			"tabbar": ["home", "maps", "maps2", "wallet", "assistant"],
+			"tabbar": ["home", "map", "wallet", "assistant"],
 			"tabbar.default": "favorites",
 
 			"home": ["my_dining", "dinings", "my_laundry", "laundry",
@@ -71,7 +71,6 @@
 			"polls.features": ["authentication", "netid_login"],
 
 			"map.types":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "my_locations", "storied_sites"],
-			"map2.types":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health",                "mtd_stops", "my_locations", "storied_sites"],
 
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 	
@@ -220,10 +219,8 @@
 			},
 			"enable" : {
 				"emergency"                               : false,
-				"maps"                                    : false,
 				"map.types.laundry"                       : false,
-				"maps2"                                   : true,
-				"map2.types.laundry"                      : false,
+				"map.types.appointments"                  : false,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
 				"onboarding2.video_tutorial"              : [["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"], "AND", "${app.storage.onBoarding2ShowTutorial}"],
 				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],

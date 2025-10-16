@@ -20,6 +20,7 @@ import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
+import 'package:illinois/ui/explore/ExploreBuildingsSearchPanel.dart';
 import 'package:illinois/ui/map2/Map2BasePanel.dart';
 import 'package:illinois/ui/map2/Map2HomeExts.dart';
 import 'package:illinois/ui/map2/Map2HomeFilters.dart';
@@ -102,7 +103,7 @@ class _Map2LocationPanelState extends Map2BasePanelState<Map2LocationPanel>
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: HeaderBar(title: Localization().getStringEx("panel.map.select.header.title", "Select Location")),
+    appBar: HeaderBar(title: Localization().getStringEx("panel.map.select.header.title", "Select Location"), actions: _headerBarActions,),
     body: RefreshIndicator(onRefresh: _onRefresh, child: _scaffoldBody),
     backgroundColor: Styles().colors.background,
   );
@@ -165,10 +166,11 @@ class _Map2LocationPanelState extends Map2BasePanelState<Map2LocationPanel>
     );
 
   Widget _traySheetListCard(Explore explore) => _Map2ExploreLocationCard(explore,
-    onSelect: () => _didSelectExplore(explore),
+    onSelect: (explore.exploreLocation?.isLocationCoordinateValid == true) ? (() => _didSelectExplore(explore)) : null,
   );
 
   void _didSelectExplore(Explore explore) {
+    Analytics().logSelect(target: 'Select');
     Navigator.of(context).popUntil((Route route) => (route.settings.name == Map2LocationPanel.routeName));
     Navigator.pop(context, explore);
   }
@@ -192,6 +194,56 @@ class _Map2LocationPanelState extends Map2BasePanelState<Map2LocationPanel>
         CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
       ),
   );
+
+  // Header Bar
+
+  List<Widget>? get _headerBarActions => (widget.contentType == Map2ContentType.CampusBuildings) ? <Widget>[_searchBuildingsHeaderBarButton] : null;
+
+  Widget get _searchBuildingsHeaderBarButton => Semantics(
+    label: Localization().getStringEx('panel.manage_members.button.search.title', 'Search'),
+    hint: Localization().getStringEx('panel.manage_members.button.search.hint', ''),
+    button: true, excludeSemantics: true, child:
+      Padding(padding: EdgeInsets.all(12), child:
+        InkWell(onTap: _onTapSearchBuildings, child:
+          Styles().images.getImage('search', color: Styles().colors.white, excludeFromSemantics: true),
+        ),
+      ),
+    );
+
+  void _onTapSearchBuildings() {
+    Analytics().logSelect(target: 'Search Buildings');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreBuildingsSearchPanel(
+      cardBuilder: (context, explore) => _Map2ExploreLocationCard(explore,
+        onSelect: (explore.exploreLocation?.isLocationCoordinateValid == true) ? (() => _didSelectSearchExplore(explore)) : null,
+      )
+    )));
+  }
+
+  void _didSelectSearchExplore(Explore explore) {
+    Analytics().logSelect(target: 'Select');
+    Navigator.of(context).popUntil((Route route) => (route.settings.name == Map2LocationPanel.routeName));
+    _selectExplore(explore);
+  }
+
+  Future<void> _selectExplore(Explore explore) async {
+    LatLng? explorePosition = explore.exploreLocation?.exploreLocationMapCoordinate;
+    if (explorePosition != null) {
+      LatLngBounds exploreBounds = LatLngBounds(northeast: explorePosition, southwest: explorePosition);
+      CameraUpdate cameraUpdate = cameraUpdateForBounds(exploreBounds);
+      mapController?.moveCamera(cameraUpdate).then((_) {
+        Future.delayed(Duration(milliseconds: 100), () {
+          setStateIfMounted(() {
+            _selectedExploreGroup = <Explore>{explore};
+          });
+           updateMapMarkers();
+          _updateTrayExplores();
+        });
+      });
+    }
+    else {
+      Navigator.pop(context, explore);
+    }
+  }
 
   // Map Overrides
 
@@ -672,7 +724,9 @@ class _Map2ExploreLocationCardState extends State<_Map2ExploreLocationCard> with
       Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         _locationDetailWidget ?? Container(),
         Padding(padding: EdgeInsets.only(top: 16), child:
-          _commandsWidget,
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+            _selectButton
+          ]),
         ),
       ],)
     );
@@ -735,23 +789,22 @@ class _Map2ExploreLocationCardState extends State<_Map2ExploreLocationCard> with
   Widget _locationDetailTextWidget(String? text) =>
     Text(text ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('common.body'),);
 
-  Widget get _commandsWidget => Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-    _selectButton,
-  ],);
-
-  Widget get _selectButton => InkWell(onTap: widget.onSelect, child:
-    Container(decoration: _selectButtonDecoration, padding: _selectButtonPadding, child:
-      Text(_selectButtonTitle, overflow: TextOverflow.ellipsis, style: _selectButtonTextStyle,)
-    )
-  );
+  Widget get _selectButton =>
+    InkWell(onTap: widget.onSelect, child:
+      Container(decoration: _selectButtonDecoration, padding: _selectButtonPadding, child:
+        Text(_selectButtonTitle, overflow: TextOverflow.ellipsis, style: _selectButtonTextStyle,)
+      )
+    );
 
   BoxDecoration get _selectButtonDecoration => BoxDecoration(
-    border: Border.all(color: Styles().colors.fillColorSecondary, width: 2),
+    border: Border.all(color: _selectButtonBorderColor, width: 2),
     borderRadius: BorderRadius.all(Radius.circular(20)),
   );
-  EdgeInsetsGeometry get _selectButtonPadding => EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+  bool get _selectButtonEnabled => (widget.onSelect != null);
+  Color get _selectButtonBorderColor => _selectButtonEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent;
+  TextStyle? get _selectButtonTextStyle => Styles().textStyles.getTextStyle(_selectButtonEnabled ? 'widget.button.title.medium.fat' : 'widget.button.title.regular.variant3');
   String get _selectButtonTitle => Localization().getStringEx('panel.map.select.button.select.title', 'Select');
-  TextStyle? get _selectButtonTextStyle => Styles().textStyles.getTextStyle('widget.button.title.medium.fat');
+  EdgeInsetsGeometry get _selectButtonPadding => EdgeInsets.symmetric(horizontal: 16, vertical: 8);
 
   bool _isExploreFavorite() => Auth2().canFavorite && Auth2().isFavorite(_exploreFavorite);
   Favorite? get _exploreFavorite => (widget.explore is Favorite) ? (widget.explore as Favorite) : null;

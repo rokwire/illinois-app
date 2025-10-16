@@ -36,8 +36,11 @@ class Map2FilterImageButton extends StatelessWidget {
   final void Function()? onTap;
   final EdgeInsetsGeometry padding;
 
+  static const EdgeInsetsGeometry defaultPadding = const EdgeInsets.all(9);
+  static const double defaultHeight = 18 + 2 * 9;
+
   Map2FilterImageButton({super.key, this.image, this.imageKey, this.hint, this.label, this.onTap,
-    this.padding = const EdgeInsets.all(9)
+    this.padding = defaultPadding
   });
 
   @override
