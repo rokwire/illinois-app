@@ -137,6 +137,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   final Map<Map2ContentType, Map2Filter> _filters = <Map2ContentType, Map2Filter>{};
   bool _searchOn = false;
+  bool _mapDisabled = false;
   double? _sortDropdownWidth;
   double? _termsDropdownWidth;
   double? _paymentTypesDropdownWidth;
@@ -288,9 +289,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
       Positioned.fill(child:
         Visibility(visible: (_exploresProgress == null), child:
-            Padding(padding: _accessibilityWorkaroundMapPadding, child:
-              mapView
-            )
+            mapView
         ),
       ),
 
@@ -342,6 +341,13 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     );
 
   // Map Overrides
+
+  @override
+  Widget get mapView => _mapDisabled == true ? //Get disabled only if accessibility workaround is required
+    Container(child: Center(child: Text("Map is disabled"))) : //Workaround to make DropDownMenuItems clickable. They go over MapView and do not get tap actions
+    Padding(padding: _accessibilityWorkaroundMapPadding, child: //Workaround to make sheet and heading tappable. We resize the map so they don't go over the map
+       super.mapView
+    );
 
   @override
   Set<Marker>? get mapMarkers => (_pinnedMarker != null) ?
@@ -631,7 +637,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     });
     WidgetsBinding.instance.addPostFrameCallback((_){
       _updateContentTypesScrollPosition();
-     doAccessibilityWorkaround(()=>
+     _doAccessibilityWorkaround(()=>
         setStateIfMounted()
      ); //Workaround Accessibility
     });
@@ -735,7 +741,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     );
 
   _onSheetDragChanged() {
-    doAccessibilityWorkaround(()=>
+    _doAccessibilityWorkaround(()=>
       setStateIfMounted());
   }
 
@@ -763,7 +769,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   Future<void> _initExplores({_ExploreProgressType progressType = _ExploreProgressType.init}) async {
     if (mounted) {
       LoadExploresTask? exploresTask = _loadExplores();
-      doAccessibilityWorkaround(()=>
+      _doAccessibilityWorkaround(()=>
         exploresTask?.whenComplete(()=>setStateDelayedIfMounted((){}, duration: Duration(milliseconds: 200))));
 
       if (exploresTask != null) {
@@ -835,7 +841,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   Future<void> _updateExplores() async {
     if (mounted) {
       LoadExploresTask? exploresTask = _loadExplores();
-      doAccessibilityWorkaround(()=>
+      _doAccessibilityWorkaround(()=>
         exploresTask?.whenComplete(()=>
             setStateDelayedIfMounted((){}, duration: Duration(milliseconds: 200))));
 
@@ -1053,6 +1059,8 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   }
 }
 
+// Map2 Semantics
+
 extension _Map2Semantics on _Map2HomePanelState{
   int? get displayCount => _filteredExplores?.length;
   int? get totalCount => _explores?.length;
@@ -1064,9 +1072,12 @@ extension _Map2Semantics on _Map2HomePanelState{
 
 // Map2 Accessibility Workaround
 
-extension _Map2Accessibility on _Map2HomePanelState{  //Additional functionality and UI changes that will improve the Maps accessibility. Execute it only if needed
-  void doAccessibilityWorkaround(Function? fn) => (_needAccessibilityWorkaround && fn != null) ?
+extension _Map2AccessibilityWorkaround on _Map2HomePanelState{  //Additional functionality and UI changes that will improve the Maps accessibility. Execute it only if needed
+
+  void _doAccessibilityWorkaround(Function? fn) => (_needAccessibilityWorkaround && fn != null) ?
           fn() : null;
+
+  void _onMenuVisibilityChanged(bool visible) => _needAccessibilityWorkaround ? setStateIfMounted(()=> _mapDisabled = visible) : null;
 
   bool get _needAccessibilityWorkaround => AppSemantics.isAccessibilityEnabled(context) == true;
 
@@ -1074,15 +1085,9 @@ extension _Map2Accessibility on _Map2HomePanelState{  //Additional functionality
     if(_needAccessibilityWorkaround == false)
       return EdgeInsets.zero;
 
-    double sheetHeight = _selectedContentType != null &&
-        _trayExplores?.isNotEmpty == true &&
-        _traySheetController.isAttached ? _traySheetController.pixels : 0;
-
-    RenderObject? headingBar =  _contentHeadingBarKey.currentContext?.findRenderObject();
-    double headerBarHeight = headingBar is RenderBox ? headingBar.size.height : 0;
-
-    RenderObject? typesBar =  _contentTypesBarKey.currentContext?.findRenderObject();
-    double typesBarHeight = typesBar is RenderBox ? typesBar.size.height : 0;
+    double sheetHeight = _traySheetController.isAttached ? _traySheetController.pixels : 0;
+    double headerBarHeight = _contentHeadingBarKey.renderBoxSize?.height ?? 0;
+    double typesBarHeight = _contentTypesBarKey.renderBoxSize?.height ?? 0;
 
     double topPadding = _selectedContentType != null ? headerBarHeight : typesBarHeight; //If we have heading reduce the pam size at top
     double bottomPadding = _selectedContentType != null && _trayExplores?.isNotEmpty == true ? sheetHeight : 0;//if we have sheet
@@ -1500,6 +1505,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         isExpanded: false,
         items: _buildTermsDropdownItems(),
         onChanged: _onSelectTerm,
+        onMenuStateChange: _onMenuVisibilityChanged,
       )
     )),
   );
@@ -1594,6 +1600,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         isExpanded: false,
         items: _buildPaymentTypesDropdownItems(),
         onChanged: _onSelectPaymentType,
+        onMenuStateChange: _onMenuVisibilityChanged,
       )
     )),
   );
@@ -1762,6 +1769,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         isExpanded: false,
         items: _buildSortDropdownItems(),
         onChanged: _onSelectSortType,
+        onMenuStateChange: _onMenuVisibilityChanged,
       )
     )),
   );
