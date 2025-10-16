@@ -390,8 +390,8 @@ class Auth2 extends rokwire.Auth2 {
     Uint8List? profilePicture = _profilePicture;
     if (StringUtils.isNotEmpty(Auth2().account?.id) && StringUtils.isNotEmpty(Auth2().account?.profile?.photoUrl)) {
       ImagesResult? result = await Content().loadUserPhoto(type: UserProfileImageType.small);
-      if ((result != null) && (result.resultType == ImagesResultType.succeeded)) {
-        profilePicture = result.imageData;
+      if (result?.resultType == ImagesResultType.succeeded) {
+        profilePicture = result?.imageData;
       }
     }
     else {

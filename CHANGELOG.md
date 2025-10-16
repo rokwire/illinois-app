@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Add file attachments to conversation messages [#5378](https://github.com/rokwire/illinois-app/issues/5378).
+
 ## [7.3.12] - 2025-10-15
 ### Changed
 - Maps2: Updated Amenities selection support [#5344](https://github.com/rokwire/illinois-app/issues/5344).
