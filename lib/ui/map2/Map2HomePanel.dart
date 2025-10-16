@@ -349,10 +349,36 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   Size? get mapSize => _scaffoldKey.renderBoxSize;
 
   @override
-  double get mapPadding => 60;
+  double get mapPadding => ((_trayExplores?.isNotEmpty == true) || _shouldHaveTrayExplores()) ? 80 : 40;
 
   @override
-  double? get mapTopSiblingsHeight => _contentHeadingBarKey.renderBoxSize?.height;
+  double? get mapTopSiblingsHeight {
+    double? headerBarHeight = _contentHeadingBarKey.renderBoxSize?.height;
+    if (headerBarHeight != null) {
+      if (_exploresProgress == ExploreProgressType.init) {
+        headerBarHeight += _defaultContentFilterButtonsBarHeight;
+      }
+      if ((_exploresProgress != null) && (_selectedFilterIfExists?.hasFilter == true)) {
+        headerBarHeight += _defaultContentFilterDescriptionBarHeight;
+      }
+    }
+    return headerBarHeight;
+  }
+
+  @override
+  double? get mapBottomSiblingsHeight {
+    if (_trayExplores?.isNotEmpty == true) {
+      return _traySheetKey.renderBoxSize?.height;
+    }
+    else if (_shouldHaveTrayExplores()) {
+      double mapHeight = mapSize?.height ?? 0;
+      double headerBarHeight = mapTopSiblingsHeight ?? 0;
+      return (0 < mapHeight) ? (math.max(mapHeight - headerBarHeight, 0) * _trayInitialSize) : null;
+    }
+    else {
+      return null;
+    }
+  }
 
   @override
   List<Explore>? get mapExplores => _filteredExplores;
@@ -765,15 +791,18 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
         if (mounted && (exploresTask == _exploresTask)) {
           List<Explore>? validExplores = explores?.validList;
           List<Explore>? filteredExplores = _filterExplores(validExplores);
+          setState(() {
+            _explores = validExplores;
+            _filteredExplores = filteredExplores;
+            _storiedSitesTags = JsonUtils.cast<List<Place>>(validExplores)?.tags;
+          });
+
           await buildMapContentData(filteredExplores, updateCamera: true);
 
           if (mounted && (exploresTask == _exploresTask)) {
             setState(() {
-              _explores = validExplores;
-              _filteredExplores = filteredExplores;
               _exploresTask = null;
               _exploresProgress = null;
-              _storiedSitesTags = JsonUtils.cast<List<Place>>(validExplores)?.tags;
               mapKey = UniqueKey(); // force map rebuild
 
               if ((exploreContentType?.supportsManualFilters == true) && (validExplores?.isNotEmpty != true)) {
@@ -966,8 +995,19 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     Explore? pinned,
   }) => (pinned != null) ? <Explore>[pinned] : _sortExplores(selected ?? filtered);
 
-
   List<Explore>? _buildTrayExplores() => _buildTrayExploresFromSource(
+    filtered: (_selectedFilterIfExists?.hasFilter == true) ? _filteredExplores : null,
+    selected: _selectedExploreGroup,
+    pinned: _pinnedExplore,
+  );
+
+  bool _shouldHaveTrayExploresFromSource({
+    Iterable<Explore>? filtered,
+    Iterable<Explore>? selected,
+    Explore? pinned,
+  }) => (pinned != null) || ((selected ?? filtered)?.isNotEmpty == true);
+
+  bool _shouldHaveTrayExplores() => _shouldHaveTrayExploresFromSource(
     filtered: (_selectedFilterIfExists?.hasFilter == true) ? _filteredExplores : null,
     selected: _selectedExploreGroup,
     pinned: _pinnedExplore,
@@ -1105,14 +1145,19 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     return null;
   }
 
+  double get _defaultContentFilterDescriptionBarHeight =>
+    18 + 2 * 12; // image size + vertical button padding, no bar padding
+
   BoxConstraints get _contentFiltersBarConstraints => BoxConstraints(
-      minWidth: double.infinity
+    minWidth: double.infinity
   );
 
-  BoxDecoration get _contentFiltersBarDecoration =>
-    BoxDecoration(
-      border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1),),
-    );
+  BoxDecoration get _contentFiltersBarDecoration => BoxDecoration(
+    border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1),),
+  );
+
+  double get _defaultContentFilterButtonsBarHeight =>
+    Map2FilterImageButton.defaultHeight + 2 * 8;
 
   EdgeInsetsGeometry get _contentFilterButtonsBarPadding =>
     EdgeInsets.only(left: 16, top: 8, bottom: 8);
@@ -1905,11 +1950,15 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   Future<void> _updateFilteredExplores() async {
     List<Explore>? filteredExplores = _filterExplores(_explores);
     if (mounted && !DeepCollectionEquality().equals(_filteredExplores, filteredExplores)) {
+      setStateIfMounted(() {
+        _exploresProgress = ExploreProgressType.update;
+      });
       await buildMapContentData(filteredExplores, updateCamera: true, showProgress: true);
       if (mounted) {
         setStateIfMounted(() {
           _filteredExplores = filteredExplores;
           _selectedExploreGroup = null;
+          _exploresProgress = null;
           mapKey = UniqueKey(); // force map rebuild
         });
         _updateTrayExplores();

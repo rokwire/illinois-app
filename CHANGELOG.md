@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Add file attachments to conversation messages [#5378](https://github.com/rokwire/illinois-app/issues/5378).
+### Changed
+- Maps2: Improved camera positioning to ensure visibility of set of explores [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 
 ## [7.3.12] - 2025-10-15
 ### Changed
