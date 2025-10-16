@@ -27,7 +27,7 @@ import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/ui/debug/DebugGuideBrowsePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
-import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
+import 'package:illinois/ui/map2/Map2LocationPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -994,9 +994,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
 
   void _onTapSetAssistantLocation() {
     ExploreLocation? location = Storage().debugAssistantLocation?.toExploreLocation();
-    ExploreMapSelectLocationPanel.push(
-      context,
-      selectedExplore: (location != null) ? ExplorePOI(location: location) : null,
+    Map2LocationPanel.push(context,
+      selectedLocation: (location != null) ? ExplorePOI(location: location) : null,
     ).then((Explore? explore) {
       ExploreLocation? newLocation = explore?.exploreLocation;
       Storage().debugAssistantLocation = AssistantLocation.fromExploreLocation(newLocation);
