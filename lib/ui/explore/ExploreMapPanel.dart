@@ -2529,20 +2529,24 @@ class ExploreMessagePopup extends StatelessWidget {
             Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
               Styles().images.getImage('university-logo') ?? Container(),
               Padding(padding: EdgeInsets.only(top: 20), child:
-                // Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.detail.small")
-                HtmlWidget(message,
-                  onTapUrl: (url) => (onTapUrl != null) ? onTapUrl!(url) : false,
-                  textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
-                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+                // Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.detail.small")'
+                Semantics(focused: true, container: true, child:
+                  HtmlWidget(message,
+                    onTapUrl: (url) => (onTapUrl != null) ? onTapUrl!(url) : false,
+                    textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
+                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+                  )
                 )
               )
             ])
           ),
           Positioned.fill(child:
             Align(alignment: Alignment.topRight, child:
-              InkWell(onTap: () => _onClose(context, message), child:
-                Padding(padding: EdgeInsets.all(16), child:
-                  Styles().images.getImage("close-circle")
+              Semantics(container: true, child:
+                InkWell(onTap: () => _onClose(context, message), child:
+                  Padding(padding: EdgeInsets.all(16), child:
+                    Styles().images.getImage("close-circle")
+                  )
                 )
               )
             )
