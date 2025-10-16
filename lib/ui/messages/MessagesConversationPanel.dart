@@ -1603,9 +1603,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   }
 
   Future<bool> get _checkKeyboardVisible async {
-    final checkPosition = () => context.mounted ? MediaQuery.of(context).viewInsets.bottom : 0.0;
-    final double position = checkPosition();
-    final double secondPosition = await Future.delayed(Duration(milliseconds: 100), () => checkPosition());
+    final double position = _checkPosition();
+    final double secondPosition = await Future.delayed(Duration(milliseconds: 100), () => _checkPosition());
 
     if (position == secondPosition) {
       return position > 0;
@@ -1613,6 +1612,9 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       return _checkKeyboardVisible; // Check again
     }
   }
+
+  double _checkPosition() =>
+    (mounted && context.mounted) ? MediaQuery.of(context).viewInsets.bottom : 0.0;
 
   Map<String, FutureOr<Uint8List?>> get _attachedFileData {
     Map<String, FutureOr<Uint8List?>> fileData = {};
