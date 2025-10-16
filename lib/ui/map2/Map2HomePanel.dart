@@ -63,6 +63,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, LaundryRooms, BusStops, Therapists, StoriedSites, MyLocations, }
 enum Map2SortType { dateTime, alphabetical, proximity }
@@ -293,9 +294,11 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     Stack(key: _scaffoldKey, children: [
 
       Positioned.fill(child:
-        Visibility(visible: (_exploresProgress == null), child:
+        _accessibilityWorkaroundWrapMap(child:
+          Visibility(visible: (_exploresProgress == null), child:
             mapView
-        ),
+          )
+        )
       ),
 
       Positioned.fill(child:
@@ -346,13 +349,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     );
 
   // Map Overrides
-
-  @override
-  Widget get mapView => _mapDisabled == true ? //Get disabled only if accessibility workaround is required
-    Container(child: Center(child: Text("Map is disabled"))) : //Workaround to make DropDownMenuItems clickable. They go over MapView and do not get tap actions
-    Padding(padding: _accessibilityWorkaroundMapPadding, child: //Workaround to make sheet and heading tappable. We resize the map so they don't go over the map
-       super.mapView
-    );
 
   @override
   Set<Marker>? get mapMarkers => (_pinnedMarker != null) ?
@@ -1078,13 +1074,15 @@ extension _Map2Semantics on _Map2HomePanelState{
 // Map2 Accessibility Workaround
 
 extension _Map2AccessibilityWorkaround on _Map2HomePanelState{  //Additional functionality and UI changes that will improve the Maps accessibility. Execute it only if needed
-
-  void _doAccessibilityWorkaround(Function? fn) => (_needAccessibilityWorkaround && fn != null) ?
-          fn() : null;
-
-  void _onMenuVisibilityChanged(bool visible) => _needAccessibilityWorkaround ? setStateIfMounted(()=> _mapDisabled = visible) : null;
-
   bool get _needAccessibilityWorkaround => AppSemantics.isAccessibilityEnabled(context) == true;
+
+  Widget _accessibilityWorkaroundWrapMap({Widget? child}) => VisibilityDetector(key: const Key('map2_location_panel_detector'),
+      onVisibilityChanged: _onMapVisibilityChanged, child:
+        Padding(padding: _accessibilityWorkaroundMapPadding, child:
+          (_mapDisabled == true ? //Get disabled only if accessibility workaround is required
+            Container(child: Center(child: Text("Map is disabled"))) : //Workaround to make DropDownMenuItems clickable. They go over MapView and do not get tap actions
+            child))
+  );//Workaround to make sheet and heading tappable. We resize the map so they don't go over the map
 
   EdgeInsets get _accessibilityWorkaroundMapPadding {//Workaround for the Maps Accessibility. Even when Map is at the bottom layer of the stack it takes the Tap gestures.
     if(_needAccessibilityWorkaround == false)
@@ -1097,6 +1095,33 @@ extension _Map2AccessibilityWorkaround on _Map2HomePanelState{  //Additional fun
     double topPadding = _selectedContentType != null ? headerBarHeight : typesBarHeight; //If we have heading reduce the pam size at top
     double bottomPadding = _selectedContentType != null && _trayExplores?.isNotEmpty == true ? sheetHeight : 0;//if we have sheet
     return EdgeInsets.only(top: topPadding, bottom: bottomPadding);
+  }
+
+  void _onMenuVisibilityChanged(bool visible) => _needAccessibilityWorkaround ? setStateIfMounted(()=> _mapDisabled = visible) : null;
+
+  void _onMapVisibilityChanged(VisibilityInfo info){
+    if(info.visibleFraction == 0){
+      if(_mapDisabled == false)
+        _accessibilityDisableMap();
+    } else {
+      if(_mapDisabled == true)
+        _accessibilityEnableMap();
+    }
+  }
+
+  void _doAccessibilityWorkaround(Function? fn) => (_needAccessibilityWorkaround && fn != null) ?
+    fn() : null;
+
+  void _accessibilityDisableMap() {
+    _doAccessibilityWorkaround(
+            ()=> setStateIfMounted(()=>_mapDisabled = true));
+    // AppToast.showMessage("Disabled");
+  }
+
+  void _accessibilityEnableMap() {
+    _doAccessibilityWorkaround(
+            ()=> setStateIfMounted(()=>_mapDisabled = false));
+    // AppToast.showMessage("Enabled");
   }
 }
 
@@ -1481,10 +1506,15 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     Analytics().logSelect(target: 'Amenities');
     List<Building>? buildings = JsonUtils.listCastValue<Building>(_explores);
     Map<String, String> buildingsAmenities = buildings?.featureNames ?? <String, String>{};
+    // _doAccessibilityWorkaround(
+    //         ()=> setStateIfMounted(()=>_mapDisabled = true));
     Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
       amenities: buildingsAmenities,
       selectedAmenityIds: LinkedHashSet<String>.from(_campusBuildingsFilterIfExists?.amenities.keys ?? <String>[]),
-    ),)).then(((LinkedHashSet<String>? amenityIds) {
+    ),
+    )).then(((LinkedHashSet<String>? amenityIds) {
+      // _doAccessibilityWorkaround(
+      //         ()=> setStateIfMounted(()=>_mapDisabled = false));
       if (amenityIds != null) {
         setStateIfMounted(() {
           _campusBuildingsFilter?.amenities = amenityIds.selectedFromBuildingAmenities(buildingsAmenities);
