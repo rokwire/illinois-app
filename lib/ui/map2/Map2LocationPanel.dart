@@ -790,21 +790,21 @@ class _Map2ExploreLocationCardState extends State<_Map2ExploreLocationCard> with
     Text(text ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('common.body'),);
 
   Widget get _selectButton =>
-    Opacity(opacity: (widget.onSelect != null) ? 1 : 0, child:
-      InkWell(onTap: widget.onSelect, child:
-        Container(decoration: _selectButtonDecoration, padding: _selectButtonPadding, child:
-          Text(_selectButtonTitle, overflow: TextOverflow.ellipsis, style: _selectButtonTextStyle,)
-        )
-      ),
+    InkWell(onTap: widget.onSelect, child:
+      Container(decoration: _selectButtonDecoration, padding: _selectButtonPadding, child:
+        Text(_selectButtonTitle, overflow: TextOverflow.ellipsis, style: _selectButtonTextStyle,)
+      )
     );
 
   BoxDecoration get _selectButtonDecoration => BoxDecoration(
-    border: Border.all(color: Styles().colors.fillColorSecondary, width: 2),
+    border: Border.all(color: _selectButtonBorderColor, width: 2),
     borderRadius: BorderRadius.all(Radius.circular(20)),
   );
-  EdgeInsetsGeometry get _selectButtonPadding => EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+  bool get _selectButtonEnabled => (widget.onSelect != null);
+  Color get _selectButtonBorderColor => _selectButtonEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent;
+  TextStyle? get _selectButtonTextStyle => Styles().textStyles.getTextStyle(_selectButtonEnabled ? 'widget.button.title.medium.fat' : 'widget.button.title.regular.variant3');
   String get _selectButtonTitle => Localization().getStringEx('panel.map.select.button.select.title', 'Select');
-  TextStyle? get _selectButtonTextStyle => Styles().textStyles.getTextStyle('widget.button.title.medium.fat');
+  EdgeInsetsGeometry get _selectButtonPadding => EdgeInsets.symmetric(horizontal: 16, vertical: 8);
 
   bool _isExploreFavorite() => Auth2().canFavorite && Auth2().isFavorite(_exploreFavorite);
   Favorite? get _exploreFavorite => (widget.explore is Favorite) ? (widget.explore as Favorite) : null;
@@ -815,8 +815,7 @@ class _Map2ExploreLocationCardState extends State<_Map2ExploreLocationCard> with
   }
 
   void _onExploreDetail() {
-    widget.explore.exploreLaunchDetail(context,
-      selectLocationBuilder: (widget.onSelect != null) ? _detailSelectBuilder : null);
+    widget.explore.exploreLaunchDetail(context, selectLocationBuilder: _detailSelectBuilder);
   }
 
   Widget? _detailSelectBuilder(BuildContext context, ExploreSelectLocationContext selectContext, { Explore? explore } ) =>
