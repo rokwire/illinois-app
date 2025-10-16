@@ -69,7 +69,7 @@ extension Map2ContentTypeImpl on Map2ContentType {
   }
 
   static Set<Map2ContentType> get availableTypes {
-    List<dynamic>? codes = FlexUI()['map2.types'];
+    List<dynamic>? codes = FlexUI()['map.types'];
     Set<Map2ContentType> availableTypes = <Map2ContentType>{};
     if (codes != null) {
       for (dynamic code in codes) {

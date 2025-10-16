@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Maps2: Added search building capability in select location panel [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 ### Changed
 - Maps2: Improved camera positioning to ensure visibility of set of explores [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: Renamed to just Map "officially" [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 
 ## [7.3.12] - 2025-10-15
 ### Changed

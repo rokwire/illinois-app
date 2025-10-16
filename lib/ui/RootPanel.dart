@@ -99,7 +99,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:quick_actions/quick_actions.dart';
 
-enum RootTab { Home, Favorites, Browse, Maps, Maps2, Academics, Wellness, Wallet, Assistant }
+enum RootTab { Home, Favorites, Browse, Map0, Map, Academics, Wellness, Wallet, Assistant }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -342,7 +342,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       _onFirebaseTabNotification(RootTab.Browse);
     }
     else if (name == FirebaseMessaging.notifyMapNotification) {
-      _onFirebaseTabNotification(RootTab.Maps);
+      _onFirebaseTabNotification(RootTab.Map);
     }
     else if (name == FirebaseMessaging.notifyMapEventsNotification) {
       _onFirebaseMap2Notification(Map2ContentType.Events2);
@@ -645,7 +645,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if ((0 <= tabIndex) && (tabIndex < _tabs.length) && (tabIndex != _currentTabIndex)) {
       _tabBarController!.animateTo(tabIndex);
 
-      if (getRootTabByIndex(_currentTabIndex) == RootTab.Maps) {
+      if (getRootTabByIndex(_currentTabIndex) == RootTab.Map) {
         Analytics().logMapHide();
       }
 
@@ -661,7 +661,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       Widget? tabPanel = _getTabPanelAtIndex(tabIndex);
       Analytics().logPageWidget(tabPanel);
 
-      if (getRootTabByIndex(_currentTabIndex) == RootTab.Maps) {
+      if (getRootTabByIndex(_currentTabIndex) == RootTab.Map) {
         Analytics().logMapShow();
       }
 
@@ -719,11 +719,11 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (rootTab == RootTab.Browse) {
       return BrowsePanel();
     }
-    else if (rootTab == RootTab.Maps) {
-      return ExploreMapPanel();
-    }
-    else if (rootTab == RootTab.Maps2) {
+    else if (rootTab == RootTab.Map) {
       return Map2HomePanel();
+    }
+    else if (rootTab == RootTab.Map0) {
+      return ExploreMapPanel();
     }
     else if (rootTab == RootTab.Academics) {
       return AcademicsHomePanel(rootTabDisplay: true,);
@@ -1411,13 +1411,13 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   void _onSelectMaps2(dynamic param) {
-    int? mapsIndex = _getIndexByRootTab(RootTab.Maps2);
+    int? mapsIndex = _getIndexByRootTab(RootTab.Map);
     if (mounted && (mapsIndex != null)) {
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
       if (mapsIndex != _currentTabIndex) {
         _selectTab(mapsIndex);
         if ((param != null) && !Map2HomePanel.hasState) {
-          Map2HomePanel? maps2Panel = JsonUtils.cast(_panels[RootTab.Maps2]);
+          Map2HomePanel? maps2Panel = JsonUtils.cast(_panels[RootTab.Map]);
           maps2Panel?.initParams[Map2HomePanel.selectParamKey] = param;
         }
       }
@@ -1472,11 +1472,11 @@ RootTab? rootTabFromString(String? value) {
     else if (value == 'browse') {
       return RootTab.Browse;
     }
-    else if (value == 'maps') {
-      return RootTab.Maps;
+    else if (value == 'map') {
+      return RootTab.Map;
     }
-    else if (value == 'maps2') {
-      return RootTab.Maps2;
+    else if (value == 'map0') {
+      return RootTab.Map0;
     }
     else if (value == 'academics') {
       return RootTab.Academics;

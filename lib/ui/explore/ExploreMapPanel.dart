@@ -386,7 +386,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       }
     }
     else if (name == RootPanel.notifyTabChanged) {
-      if ((param == RootTab.Maps0) && (_exploreTask == null) && mounted &&
+      if ((param == RootTab.Map0) && (_exploreTask == null) && mounted &&
           (CollectionUtils.isEmpty(_exploreTypes) || CollectionUtils.isEmpty(_explores) || (_selectedMapType == ExploreMapType.Events2) || (_selectedMapType == ExploreMapType.Appointments)) // Do not refresh for other ExploreMapType types as they are rarely changed or fire notification for that
       ) {
         _refreshExplores();
@@ -441,7 +441,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx("panel.maps.header.title", "Map")),
+      appBar: RootHeaderBar(title: Localization().getStringEx("panel.map0.header.title", "Map0")),
       body: RefreshIndicator(onRefresh: _onRefresh, child: _buildScaffoldBody(),),
       backgroundColor: Styles().colors.background,
     );
