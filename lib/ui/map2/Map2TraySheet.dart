@@ -30,6 +30,8 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+typedef CardBuilder = Widget Function(Explore explore);
+
 class Map2TraySheet extends StatefulWidget {
   final List<Explore>? explores;
   final Key? headerKey;
@@ -37,8 +39,9 @@ class Map2TraySheet extends StatefulWidget {
   final Position? currentLocation;
   final ScrollController? scrollController;
   final AnalyticsFeature? analyticsFeature;
+  final CardBuilder? cardBuilder;
 
-  Map2TraySheet({super.key, this.explores, this.scrollController, this.currentLocation, this.totalCount, this.analyticsFeature, this.headerKey});
+  Map2TraySheet({super.key, this.explores, this.scrollController, this.currentLocation, this.totalCount, this.analyticsFeature, this.cardBuilder,  this.headerKey});
 
   @override
   State<StatefulWidget> createState() => _Map2TraySheetState();
@@ -73,6 +76,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
         CustomScrollView(controller: widget.scrollController, slivers: [
           SliverAppBar(
             pinned: true,
+            automaticallyImplyLeading: false,
             toolbarHeight: _traySheetDragHandleHeight + _traySheetPadding.height,
             backgroundColor: _traySheetBackgroundColor,
             title: _traySheetHeading,
@@ -162,13 +166,15 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
 
   List<Widget> get _traySheetListContent {
     List<Widget> items = <Widget>[];
-    if (widget.explores != null) {
-      for (Explore explore in widget.explores!) {
+    List<Explore>? explores = widget.explores;
+    CardBuilder cardBuilder = widget.cardBuilder ?? _traySheetListCard;
+    if (explores != null) {
+      for (Explore explore in explores) {
         if (items.isNotEmpty) {
           items.add(SizedBox(height: _traySheetListCardSpacing(explore),));
         }
         items.add(Padding(padding: EdgeInsets.symmetric(horizontal: _traySheetPadding.width), child:
-          _traySheetListCard(explore),
+          cardBuilder(explore),
         ));
       }
       items.add(SizedBox(height: _traySheetPadding.height / 2,));
