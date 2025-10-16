@@ -123,7 +123,12 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   final GlobalKey _traySheetHeaderKey = GlobalKey();
   final GlobalKey _sortButtonKey = GlobalKey();
   final GlobalKey _termsButtonKey = GlobalKey();
+  final GlobalKey _starredButtonKey = GlobalKey();
+  final GlobalKey _amenitiesButtonKey = GlobalKey();
+  final GlobalKey _filterButtonKey = GlobalKey();
+  final GlobalKey _searchButtonKey = GlobalKey();
   final GlobalKey _paymentTypesButtonKey = GlobalKey();
+  final GlobalKey _openNowButtonKey = GlobalKey();
 
 
   final ScrollController _contentTypesScrollController = ScrollController();
@@ -1397,6 +1402,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Widget get _searchFilterButton =>
     Map2FilterImageButton(
+      key: _searchButtonKey,
       image: Styles().images.getImage('search'),
       label: Localization().getStringEx('panel.map2.button.search.title', 'Search'),
       hint: Localization().getStringEx('panel.map2.button.search.hint', 'Type a search locations'),
@@ -1443,6 +1449,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Widget get _starredFilterButton =>
     Map2FilterTextButton(
+      key: _starredButtonKey,
       title: Localization().getStringEx('panel.map2.button.starred.title', 'Starred'),
       hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations') + " $_filterButtonHint",
       leftIcon: Styles().images.getImage('star-filled', size: 16),
@@ -1461,7 +1468,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   // Amenities Buildings Filter Button
 
   Widget get _amenitiesBuildingsFilterButton =>
-    MergeSemantics(child: Semantics(label: _amenitiesSemanticsValue, child:
+    MergeSemantics(key: _amenitiesButtonKey, child: Semantics(label: _amenitiesSemanticsValue, child:
       Map2FilterTextButton(
         title: Localization().getStringEx('panel.map2.button.amenities.title', 'Amenities'),
         hint: Localization().getStringEx('panel.map2.button.amenities.hint', 'Tap to edit amenities for visible location') + " $_filterButtonHint",
@@ -1483,6 +1490,8 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
           _campusBuildingsFilter?.amenities = amenityIds.selectedFromBuildingAmenities(buildingsAmenities);
         });
         _onFiltersChanged();
+        Future.delayed(Duration(milliseconds: 200 + (Platform.isIOS ? 1000 : 0)), () =>
+            AppSemantics.triggerAccessibilityFocus(_amenitiesButtonKey));
       }
     }));
   }
@@ -1562,12 +1571,16 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       _studentCoursesFilter?.termId = value?.id;
     });
     _onFiltersChanged();
+    Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
+        AppSemantics.triggerAccessibilityFocus(_termsButtonKey)
+    );
   }
 
   // Open Now Dining Locations Filter Button
 
   Widget get _openNowDiningLocationsFilterButton =>
     Map2FilterTextButton(
+      key: _openNowButtonKey,
       title: Localization().getStringEx('panel.map2.button.open_now.title', 'Open Now'),
       hint: Localization().getStringEx('panel.map2.button.open_now.hint', 'Tap to show only currently opened locations') + " $_filterButtonHint",
       toggled: _diningLocationsFilterIfExists?.onlyOpened == true,
@@ -1656,7 +1669,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     });
     _onFiltersChanged();
     Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
-      AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
+      AppSemantics.triggerAccessibilityFocus(_paymentTypesButtonKey)
     );
 
   }
@@ -1668,6 +1681,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Widget get _filtersFilterButton =>
     Map2FilterTextButton(
+      key: _filterButtonKey,
       title: Localization().getStringEx('panel.map2.button.filters.title', 'Filters'),
       hint: Localization().getStringEx('panel.map2.button.filters.hint', 'Tap to edit filters') + " $_filterButtonHint",
       leftIcon: Styles().images.getImage('filters', size: 16),
