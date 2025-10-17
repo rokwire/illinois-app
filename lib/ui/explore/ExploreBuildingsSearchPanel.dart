@@ -33,9 +33,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 class ExploreBuildingsSearchPanel extends StatefulWidget {
 
   final ExploreSelectLocationBuilder? selectLocationBuilder;
+  final ExploreSelectCardBuilder? cardBuilder;
   final Position? initialLocationData;
 
-  ExploreBuildingsSearchPanel({super.key, this.initialLocationData, this.selectLocationBuilder});
+  ExploreBuildingsSearchPanel({super.key, this.cardBuilder, this.selectLocationBuilder, this.initialLocationData});
 
   @override
   _ExploreBuildingsSearchPanelState createState() => _ExploreBuildingsSearchPanelState();
@@ -165,17 +166,20 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
     List<Widget> cardsList = <Widget>[];
     for (Building building in _buildings!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: 8), child:
-        ExploreCard(explore: building,
-          locationData: widget.initialLocationData,
-          selectLocationBuilder: widget.selectLocationBuilder,
-          onTap: () => _onTapBuilding(building)
-        ),
+        _buildListCard(building),
       ),);
     }
     return Padding(padding: EdgeInsets.all(8), child:
       Column(children:  cardsList,)
     );
   }
+
+  Widget _buildListCard(Building building) => widget.cardBuilder?.call(context, building) ??
+    ExploreCard(explore: building,
+      locationData: widget.initialLocationData,
+      selectLocationBuilder: widget.selectLocationBuilder,
+      onTap: () => _onTapBuilding(building)
+    );
 
   Widget _buildLoadingContent() => Padding(padding: EdgeInsets.only(left: 32, right: 32, top: _screenHeight / 4, bottom: 3 * _screenHeight / 4), child:
     Center(child:

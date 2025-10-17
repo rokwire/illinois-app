@@ -36,14 +36,14 @@ typedef CardBuilder = Widget Function(Explore explore);
 
 class Map2TraySheet extends StatefulWidget {
   final List<Explore>? explores;
+  final Key? headerKey;
   final int? totalCount;
   final Position? currentLocation;
   final ScrollController? scrollController;
   final AnalyticsFeature? analyticsFeature;
   final CardBuilder? cardBuilder;
 
-
-  Map2TraySheet({super.key, this.explores, this.scrollController, this.currentLocation, this.totalCount, this.analyticsFeature, this.cardBuilder });
+  Map2TraySheet({super.key, this.explores, this.scrollController, this.currentLocation, this.totalCount, this.analyticsFeature, this.cardBuilder,  this.headerKey});
 
   @override
   State<StatefulWidget> createState() => _Map2TraySheetState();
@@ -106,7 +106,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
   BoxShadow get _traySheetBoxShadow => BoxShadow(color: Styles().colors.blackTransparent018 /* Colors.black26 */, blurRadius: 12.0,);
 
   Widget get _traySheetHeading =>
-  Stack(children: [
+  Stack(key: widget.headerKey, children: [
     Row(children: [
       Expanded(child:
         Padding(padding: EdgeInsets.only(left: 6), child:
@@ -130,10 +130,22 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
   Widget get _traySheetHeadingInfo {
     TextStyle? boldStyle = Styles().textStyles.getTextStyle('widget.message.tiny.fat');
     TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.message.tiny'); // widget.message.tiny
-    return RichText(text: TextSpan(style: regularStyle, children: <InlineSpan>[
-      TextSpan(text: Localization().getStringEx('panel.map2.tray.header.selected.label', 'Selected: '), style: boldStyle,),
-      TextSpan(text: _traySheetSelectionText, style: regularStyle,),
-    ]));
+    return Semantics(label: _traySheetSelectionSemanticsLabel, excludeSemantics: true, child:
+      RichText(text: TextSpan(style: regularStyle, children: <InlineSpan>[
+        TextSpan(text: Localization().getStringEx('panel.map2.tray.header.selected.label', 'Selected: '), style: boldStyle,),
+        TextSpan(text: _traySheetSelectionText, style: regularStyle,),
+    ])));
+  }
+
+  String get _traySheetSelectionSemanticsLabel {
+    int? displayCount = widget.explores?.length;
+    int? totalCount = widget.totalCount;
+    if (displayCount != null) {
+      return "Showing selection of $displayCount ${(totalCount != null ? ', from $totalCount' : "")} buildings";
+    }
+    else {
+      return '';
+    }
   }
 
   String get _traySheetSelectionText {
