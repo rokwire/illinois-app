@@ -665,7 +665,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     WidgetsBinding.instance.addPostFrameCallback((_){
       _updateContentTypesScrollPosition();
      _doAccessibilityWorkaround(()=>
-        setStateIfMounted()
+        setStateIfMounted()  //Notify HeaderHeight changed. Update after the header was drown
      ); //Workaround Accessibility
     });
   }
@@ -769,7 +769,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   _onSheetDragChanged() {
     _doAccessibilityWorkaround(()=>
-      setStateIfMounted());
+        setStateIfMounted());
   }
 
   // Map Styles
@@ -796,8 +796,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   Future<void> _initExplores({ExploreProgressType progressType = ExploreProgressType.init}) async {
     if (mounted) {
       LoadExploresTask? exploresTask = _loadExplores();
-      _doAccessibilityWorkaround(()=>
-        exploresTask?.whenComplete(()=>setStateDelayedIfMounted((){}, duration: Duration(milliseconds: 200))));
 
       if (exploresTask != null) {
         // start loading
@@ -865,15 +863,16 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
           _pinnedMarker = null;
         });
       }
+      _doAccessibilityWorkaround(()=>
+          WidgetsBinding.instance.addPostFrameCallback((_) =>
+              setStateIfMounted() //Notify HeaderHeight changed. Update after the header was drown//Workaround Accessibility
+        ));
     }
   }
 
   Future<void> _updateExplores() async {
     if (mounted) {
       LoadExploresTask? exploresTask = _loadExplores();
-      _doAccessibilityWorkaround(()=>
-        exploresTask?.whenComplete(()=>
-            setStateDelayedIfMounted((){}, duration: Duration(milliseconds: 200))));
 
       if (exploresTask != null) {
         // start loading
@@ -926,6 +925,10 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
           }
         }
       }
+      _doAccessibilityWorkaround(()=>
+            WidgetsBinding.instance.addPostFrameCallback((_) =>
+                setStateIfMounted() //Notify HeaderHeight changed. Update after the header was drown//Workaround Accessibility
+            ));
     }
   }
 
@@ -1116,7 +1119,8 @@ extension _Map2Semantics on _Map2HomePanelState{
 extension _Map2AccessibilityWorkaround on _Map2HomePanelState{  //Additional functionality and UI changes that will improve the Maps accessibility. Execute it only if needed
   bool get _needAccessibilityWorkaround => AppSemantics.isAccessibilityEnabled(context) == true;
 
-  Widget _accessibilityWorkaroundWrapMap({Widget? child}) => VisibilityDetector(key: const Key('map2_location_panel_detector'),
+  Widget _accessibilityWorkaroundWrapMap({Widget? child}) => //child;
+    VisibilityDetector(key: const Key('map2_location_panel_detector'),
       onVisibilityChanged: _onMapVisibilityChanged, child:
         Padding(padding: _accessibilityWorkaroundMapPadding, child:
           (_mapDisabled == true ? //Get disabled only if accessibility workaround is required
@@ -1551,15 +1555,11 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     Analytics().logSelect(target: 'Amenities');
     List<Building>? buildings = JsonUtils.listCastValue<Building>(_explores);
     Map<String, String> buildingsAmenities = buildings?.featureNames ?? <String, String>{};
-    // _doAccessibilityWorkaround(
-    //         ()=> setStateIfMounted(()=>_mapDisabled = true));
     Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
       amenities: buildingsAmenities,
       selectedAmenityIds: LinkedHashSet<String>.from(_campusBuildingsFilterIfExists?.amenities.keys ?? <String>[]),
     ),
     )).then(((LinkedHashSet<String>? amenityIds) {
-      // _doAccessibilityWorkaround(
-      //         ()=> setStateIfMounted(()=>_mapDisabled = false));
       if (amenityIds != null) {
         setStateIfMounted(() {
           _campusBuildingsFilter?.amenities = amenityIds.selectedFromBuildingAmenities(buildingsAmenities);
