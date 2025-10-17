@@ -166,7 +166,7 @@ class _Event2ManageDataState extends State<Event2ManageDataPanel>{
     }
 
     String fileName = 'event_registrants_$_csvFormattedDateExported.csv';
-    AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
+    AppFile.exportCsv(context: context, rows: rows, fileName: fileName).then((_) {
       setStateIfMounted(() {
         _downloadingRegistrants = false;
       });
@@ -262,7 +262,7 @@ class _Event2ManageDataState extends State<Event2ManageDataPanel>{
     }
 
     String fileName = 'event_attendees_$_csvFormattedDateExported.csv';
-    AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
+    AppFile.exportCsv(context: context, rows: rows, fileName: fileName).then((_) {
       setStateIfMounted(() {
         _downloadingAttendees = false;
       });
@@ -408,7 +408,7 @@ class _Event2ManageDataState extends State<Event2ManageDataPanel>{
       rows.add(userRow);
     }
     String fileName = 'event_survey_results_$_csvFormattedDateExported.csv';
-    AppFile.exportCsv(rows: rows, fileName: fileName).then((_) {
+    AppFile.exportCsv(context: context, rows: rows, fileName: fileName).then((_) {
       setStateIfMounted(() {
         _downloadingSurveyResponses = false;
       });

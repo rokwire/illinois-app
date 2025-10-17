@@ -75,7 +75,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           // try refreshing token if last refresh was more than 30 minutes ago
           if (widget.useAuthHeaders) {
             if (_refreshTime == null || DateTime.now().isAfter(_refreshTime!.add(Duration(minutes: 30)))) {
-              Auth2().refreshToken(Auth2().networkAuthToken).then((token) {
+              Auth2().refreshToken(token: Auth2().networkAuthToken).then((token) {
                 if (token != null) {
                   _refreshTime = DateTime.now();
                   _initVideoPlayer();

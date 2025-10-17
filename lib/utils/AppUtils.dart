@@ -20,7 +20,6 @@ import 'package:flutter/foundation.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:universal_io/io.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -40,8 +39,6 @@ import 'package:universal_html/html.dart' as html;
 import 'package:url_launcher/url_launcher.dart' as launcher_plugin;
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:mime/mime.dart';
-import 'package:universal_io/io.dart';
-import 'package:universal_html/html.dart' as html;
 import 'package:http/http.dart' as http;
 
 class AppAlert {
@@ -624,9 +621,9 @@ class AppFile {
     }
   }
 
-  static Future<void> exportCsv({required List<List<dynamic>> rows, required String fileName, String? fieldDelimiter}) async {
+  static Future<void> exportCsv({required BuildContext context, required List<List<dynamic>> rows, required String fileName, String? fieldDelimiter}) async {
     String csvContent = const ListToCsvConverter().convert(rows, fieldDelimiter: fieldDelimiter);
     final fileBytesContent = utf8.encode(csvContent);
-    await downloadFile(fileBytes: fileBytesContent, fileName: fileName);
+    await downloadFile(context: context, fileBytes: fileBytesContent, fileName: fileName);
   }
 }

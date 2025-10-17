@@ -377,7 +377,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
     if (kIsWeb) {
       // Download the file on web - share option does not work
       Uint8List fileBytes = utf8.encode(contentToShare);
-      AppFile.downloadFile(fileBytes: fileBytes, fileName: fileName);
+      AppFile.downloadFile(context: context, fileBytes: fileBytes, fileName: fileName);
     } else {
       final String dir = (await getApplicationDocumentsDirectory()).path;
       final String fullPath = '$dir/$fileName';
