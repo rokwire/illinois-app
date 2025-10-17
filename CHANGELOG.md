@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Maps2: use improved algorithm for merging nearby POIs [#5344](https://github.com/rokwire/illinois-app/issues/5344).
 - Updated content of Settings / Accessibility [#5449](https://github.com/rokwire/illinois-app/issues/5449).
 
 ## [7.3.13] - 2025-10-16
