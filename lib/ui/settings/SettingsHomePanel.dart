@@ -391,7 +391,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case SettingsContentType.research: return Localization().getStringEx('panel.settings.home.settings.sections.research.label', 'My Participation in Research', language: language);
       case SettingsContentType.privacy: return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings', language: language);
       case SettingsContentType.notifications: return Localization().getStringEx('panel.settings.home.settings.sections.notifications.label', 'My Notification Preferences', language: language);
-      case SettingsContentType.accessibility: return Localization().getStringEx('panel.settings.home.settings.sections.accessibility.label', 'Accessibility Settings', language: language);
+      case SettingsContentType.accessibility: return Localization().getStringEx('panel.settings.home.settings.sections.accessibility.label', 'Accessibility', language: language);
     }
   }
 
