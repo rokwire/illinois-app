@@ -1114,7 +1114,7 @@ extension _Map2Semantics on _Map2HomePanelState{
 // Map2 Accessibility Workaround
 
 extension _Map2AccessibilityWorkaround on _Map2HomePanelState{  //Additional functionality and UI changes that will improve the Maps accessibility. Execute it only if needed
-  bool get _needAccessibilityWorkaround => AppSemantics.isAccessibilityEnabled(context) == true;
+  bool get _needAccessibilityWorkaround => (_scaffoldKey.currentContext?.mounted == true) && AppSemantics.isAccessibilityEnabled(context);
 
   Widget _accessibilityWorkaroundWrapMap({Widget? child}) => VisibilityDetector(key: const Key('map2_location_panel_detector'),
       onVisibilityChanged: _onMapVisibilityChanged, child:
