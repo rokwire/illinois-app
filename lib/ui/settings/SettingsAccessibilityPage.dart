@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -23,26 +25,66 @@ class SettingsAccessibilityPageState extends State<SettingsAccessibilityPage> wi
   }
 
   @override
-  Widget build(BuildContext context) =>
-      Container(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(height: 16),
-            Row(children: [
-              Expanded(
-                  child: Text(Localization().getStringEx('panel.settings.home.accessibility.description.label', 'Accessibility Settings'),
-                      style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")))
-            ]),
-            Container(height: 4),
-            ToggleRibbonButton(
-                label: Localization().getStringEx('panel.settings.home.accessibility.reduce_motion.label', 'Reduce Motion'),
-                toggled: Storage().accessibilityReduceMotion ?? false,
-                border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
-                borderRadius: BorderRadius.all(Radius.circular(4)),
-                onTap: _onTapMotionSetting)
-          ]));
+  Widget build(BuildContext context) => Container(padding: EdgeInsets.only(top: 16), child:
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      _favoritesSection,
+      Container(height: 25),
+      _adaSection,
+    ])
+  );
+
+  Widget get _favoritesSection =>
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
+        Expanded(child:
+          Text(Localization().getStringEx('panel.settings.home.favorites.description.label', 'Favorites'), style:
+            Styles().textStyles.getTextStyle("widget.detail.regular.fat")
+          )
+        )
+      ]),
+      Container(height: 4),
+      ToggleRibbonButton(
+        label: Localization().getStringEx('panel.settings.home.accessibility.reduce_motion.label', 'Reduce motion'),
+        toggled: Storage().accessibilityReduceMotion == true,
+        border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
+        borderRadius: BorderRadius.all(Radius.circular(4)),
+        onTap: _onTapMotionSetting
+      )
+    ]);
 
   void _onTapMotionSetting(){
-      Storage().accessibilityReduceMotion = !(Storage().accessibilityReduceMotion ?? false);
+    bool accessibilityReduceMotion = Storage().accessibilityReduceMotion != true;
+    Analytics().logSelect(target: 'Reduce Motion: ${accessibilityReduceMotion}');
+    setStateIfMounted(() {
+      Storage().accessibilityReduceMotion = accessibilityReduceMotion;
+    });
+  }
+
+  Widget get _adaSection =>
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children:<Widget>[
+      Row(children: [
+        Expanded(child:
+          Text(Localization().getStringEx('panel.settings.home.accessibility.map.label', 'Map'), style:
+            Styles().textStyles.getTextStyle("widget.detail.regular.fat")
+          ),
+        ),
+      ]),
+      Container(height: 4),
+       ToggleRibbonButton(
+        label: Localization().getStringEx('panel.settings.home.accessibility.ada_navigation.label', 'Navigate to ADA-accessible building entrances for My Courses'),
+        toggled: StudentCourses().requireAda == true,
+        border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
+        borderRadius: BorderRadius.all(Radius.circular(4)),
+        onTap: _onRequireAdaToggled
+      )
+    ]);
+
+  void _onRequireAdaToggled() {
+    bool requireAda = StudentCourses().requireAda != true;
+    Analytics().logSelect(target: 'Require ADA entrances: ${requireAda}');
+    setStateIfMounted(() {
+      StudentCourses().requireAda = requireAda;
+    });
   }
 
   // NotificationsListener
