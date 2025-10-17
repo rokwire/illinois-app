@@ -15,13 +15,12 @@
  */
 
 import 'dart:convert';
-
 import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:universal_io/io.dart';
-
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -39,6 +38,11 @@ import 'package:rokwire_plugin/service/tracking_services.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:url_launcher/url_launcher.dart' as launcher_plugin;
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
+import 'package:mime/mime.dart';
+import 'package:universal_io/io.dart';
+import 'package:universal_html/html.dart' as html;
+import 'package:http/http.dart' as http;
 
 class AppAlert {
   
@@ -556,16 +560,41 @@ class AppWebUtils {
 }
 
 class AppFile {
-  ///
-  /// returns fileName if succeeded and null - otherwise
-  ///
-  static String? downloadFile({required Uint8List fileBytes, required String fileName}) {
+  static Future<void> downloadFile({required BuildContext context,
+    String? fileContent, Uint8List? fileBytes, String? url, required String fileName,
+    String? mimeType}) async {
+    if (url != null) {
+      Uri? uri = Uri.tryParse(url);
+      if (uri != null) {
+        final response = await http.get(uri);
+        fileBytes = response.bodyBytes;
+      }
+    }
+    if (kIsWeb) {
+      if (fileContent != null) {
+        fileBytes ??= utf8.encode(fileContent);
+      }
+      if (fileBytes != null) {
+        _downloadInWeb(context: context, fileContent: fileBytes, fileName: fileName);
+      }
+    } else {
+      if (fileContent != null) {
+        fileBytes ??= Uint8List.fromList(fileContent.codeUnits);
+      }
+      if (fileBytes != null) {
+        await _downloadNative(context: context, fileContent: fileBytes, fileName: fileName, mimeType: mimeType);
+      }
+    }
+  }
+
+  static void _downloadInWeb({required BuildContext context, required Uint8List fileContent, required String fileName}) {
     if (!kIsWeb) {
-      return null;
+      return;
     }
 
     // prepare
-    final blob = html.Blob([fileBytes]);
+    final bytes = fileContent;
+    final blob = html.Blob([bytes]);
     final url = html.Url.createObjectUrlFromBlob(blob);
     final anchor = html.document.createElement('a') as html.AnchorElement
       ..href = url
@@ -579,7 +608,20 @@ class AppFile {
     // cleanup
     html.document.body?.children.remove(anchor);
     html.Url.revokeObjectUrl(url);
-    return fileName;
+  }
+
+  static Future<void> _downloadNative({required BuildContext context, required Uint8List fileContent, required String fileName, String? mimeType}) async {
+    if (!await FlutterFileDialog.isPickDirectorySupported()) {
+      return;
+    }
+    final pickedDirectory = await FlutterFileDialog.pickDirectory();
+    if (pickedDirectory != null) {
+      mimeType ??= lookupMimeType(fileName);
+      await FlutterFileDialog.saveFileToDirectory(
+          directory: pickedDirectory, mimeType: mimeType, data: fileContent, fileName: fileName, replace: true);
+    } else {
+      AppAlert.showDialogResult(context, 'Failed to save file - missing directory.');
+    }
   }
 
   static Future<void> exportCsv({required List<List<dynamic>> rows, required String fileName, String? fieldDelimiter}) async {

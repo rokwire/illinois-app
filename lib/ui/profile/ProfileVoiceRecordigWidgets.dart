@@ -214,7 +214,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
         if (mounted) {
           setState(() { _editActivity = false; });
           if (profileResult != true) {
-            AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
+            AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload audio. Please try again later."));
           }
         }
       }
@@ -227,7 +227,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
     if (mounted && (promptResult == true)) {
       setState(() => _deleteActivity = true);
       
-      AudioResult? audioResult = await Content().deleteUserNamePronunciation(); 
+      AudioResult? audioResult = await Content().deleteUserNamePronunciation();
       if (audioResult?.resultType == AudioResultType.succeeded) {
         Auth2UserProfile profile = Auth2UserProfile.fromOther(Auth2().profile,
           override: Auth2UserProfile(),
@@ -257,9 +257,10 @@ enum _RecorderMode {record, play}
 
 class ProfileSoundRecorderDialog extends StatefulWidget {
   final Uint8List? initialRecordBytes;
+  final Future<AudioResult> Function(Uint8List? audioFile, String? extension)? onSave;
 
   // ignore: unused_element
-  const ProfileSoundRecorderDialog({super.key, this.initialRecordBytes});
+  const ProfileSoundRecorderDialog({super.key, this.initialRecordBytes, this.onSave});
 
   @override
   _ProfileSoundRecorderDialogState createState() => _ProfileSoundRecorderDialogState();
@@ -421,16 +422,16 @@ class _ProfileSoundRecorderDialogState extends State<ProfileSoundRecorderDialog>
       Uint8List? audioBytes = _controller.record;
       if (audioBytes != null) {
         setStateIfMounted(() => _loading = true);
-        AudioResult result = await Content().uploadUserNamePronunciation(audioBytes);
-        if(result.resultType == AudioResultType.succeeded){
+        AudioResult result = await (widget.onSave?.call(audioBytes, _controller.extension) ?? Content().uploadUserNamePronunciation.call(audioBytes));
+        if (result.resultType == AudioResultType.succeeded) {
           setStateIfMounted(() => _loading = false);
           _closeModal(result: result);
         } else {
           Log.d(result.errorMessage ?? "");
-          AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
+          AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload audio. Please try again later."));
         }
       } else {
-        AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload pronunciation audio. Please try again later."));
+        AppAlert.showTextMessage(context, Localization().getStringEx("panel.profile_info.pronunciation.upload.failed.msg", "Failed to upload audio. Please try again later."));
       }
     }catch(e){
       Log.e(e.toString());
@@ -540,11 +541,11 @@ class _ProfileSoundRecorderController {
       Log.d("START RECODING");
       if (await _audioRecorder.hasPermission()) {
         notifyChanged(() => _recording = true);
-        String? filePath = await _constructFilePath;
-        if (filePath != null) {
-          await _audioRecorder.start(const RecordConfig(), path: filePath);
+        String? path = await _constructFilePath;
+        if (kIsWeb || path != null) {
+          await _audioRecorder.start(RecordConfig(), path: path ?? '');
+          _recording = await _audioRecorder.isRecording();
         }
-        _recording = await _audioRecorder.isRecording();
       }
     } catch (e, stackTrace) {
       Log.d("START RECODING: ${e} - ${stackTrace}");
@@ -655,10 +656,11 @@ class _ProfileSoundRecorderController {
 
   bool get _haveAudio => CollectionUtils.isNotEmpty(_audio);
 
+  String get extension => '.m4a'; //TODO: web platform will need to use .wav (Platform.isIOS ? '.m4a' : '.wav');
+
   Future<String?> get _constructFilePath async {
     Directory? dir = kIsWeb ? null : await getApplicationDocumentsDirectory();
-
-    return (dir?.existsSync() == true) ? Path.join(dir!.path, "tmp_audio.m4a") : null;
+    return (dir?.existsSync() == true) ? Path.join(dir!.path, "tmp_audio" + extension) : null;
   }
 
   Future<Uint8List?> getFileAsBytes(String? filePath) async{
