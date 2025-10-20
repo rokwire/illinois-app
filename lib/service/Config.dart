@@ -47,42 +47,45 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get secretParkhub => JsonUtils.mapValue(secretKeys['parkhub']) ?? {};
   Map<String, dynamic> get secretPadaapi => JsonUtils.mapValue(secretKeys['padaapi']) ?? {};
   Map<String, dynamic> get secretTwitter => JsonUtils.mapValue(secretKeys['twitter']) ?? {};
-  Map<String, dynamic> get secretCanvas => JsonUtils.mapValue(secretKeys['canvas']) ?? {};
+  Map<String, dynamic> get secretCanvas  => JsonUtils.mapValue(secretKeys['canvas']) ?? {};
 
-  Map<String, dynamic> get twitter => JsonUtils.mapValue(content['twitter']) ?? {};
+  Map<String, dynamic> get twitter        => JsonUtils.mapValue(content['twitter']) ?? {};
   Map<String, dynamic> get onboardingInfo => JsonUtils.mapValue(content['onboarding']) ?? {};
 
   // Getters: McKinley
-  Map<String, dynamic> get safer         => JsonUtils.mapValue(content['safer']) ?? {};
-  Map<String, dynamic> get saferMcKinley => JsonUtils.mapValue(safer['mckinley']) ?? {};
-  String? get saferMcKinleyUrl           => JsonUtils.stringValue(saferMcKinley['url']);
-  String? get saferMcKinleyUrlLabel      => JsonUtils.stringValue(saferMcKinley['url_label']);
-  String? get saferMcKinleyPhone         => JsonUtils.stringValue(saferMcKinley['phone']);
+  Map<String, dynamic> get safer          => JsonUtils.mapValue(content['safer']) ?? {};
+  Map<String, dynamic> get saferMcKinley  => JsonUtils.mapValue(safer['mckinley']) ?? {};
+  String? get saferMcKinleyUrl            => JsonUtils.stringValue(saferMcKinley['url']);
+  String? get saferMcKinleyUrlLabel       => JsonUtils.stringValue(saferMcKinley['url_label']);
+  String? get saferMcKinleyPhone          => JsonUtils.stringValue(saferMcKinley['phone']);
 
-  Map<String, dynamic> get safety        => JsonUtils.mapValue(content['safety']) ?? {};
+  Map<String, dynamic> get safety         => JsonUtils.mapValue(content['safety']) ?? {};
 
-  Map<String, dynamic> get safeRides     => JsonUtils.mapValue(safety['safeRides']) ?? {};
-  String? get safeRidesGuideId           => JsonUtils.stringValue(safeRides['guide_id']);
-  String? get safeRidesAboutUrl          => JsonUtils.stringValue(safeRides['about_url']);
+  Map<String, dynamic> get safeRides      => JsonUtils.mapValue(safety['safeRides']) ?? {};
+  String? get safeRidesGuideId            => JsonUtils.stringValue(safeRides['guide_id']);
+  String? get safeRidesAboutUrl           => JsonUtils.stringValue(safeRides['about_url']);
 
-  Map<String, dynamic> get safeWalk      => JsonUtils.mapValue(safety['safeWalk']) ?? {};
-  String? get safeWalkPhoneNumber        => JsonUtils.stringValue(safeWalk['phone_number']);
-  String? get safeWalkTextNumber         => JsonUtils.stringValue(safeWalk['text_number']);
-  String? get safeWalkStartTime          => JsonUtils.stringValue(safeWalk['start_time']);
-  int?    get safeWalkStartTimeInterval  => JsonUtils.intValue(safeWalk['start_time_interval']);
-  String? get safeWalkEndTime            => JsonUtils.stringValue(safeWalk['end_time']);
-  int?    get safeWalkEndTimeInterval    => JsonUtils.intValue(safeWalk['end_time_interval']);
-  String? get safeWalkOrderInterval      => JsonUtils.stringValue(safeWalk['order_interval']);
-  String? get safeWalkAboutUrl           => JsonUtils.stringValue(safeWalk['about_url']);
+  Map<String, dynamic> get safeWalk       => JsonUtils.mapValue(safety['safeWalk']) ?? {};
+  String? get safeWalkPhoneNumber         => JsonUtils.stringValue(safeWalk['phone_number']);
+  String? get safeWalkTextNumber          => JsonUtils.stringValue(safeWalk['text_number']);
+  String? get safeWalkStartTime           => JsonUtils.stringValue(safeWalk['start_time']);
+  int?    get safeWalkStartTimeInterval   => JsonUtils.intValue(safeWalk['start_time_interval']);
+  String? get safeWalkEndTime             => JsonUtils.stringValue(safeWalk['end_time']);
+  int?    get safeWalkEndTimeInterval     => JsonUtils.intValue(safeWalk['end_time_interval']);
+  String? get safeWalkOrderInterval       => JsonUtils.stringValue(safeWalk['order_interval']);
+  String? get safeWalkAboutUrl            => JsonUtils.stringValue(safeWalk['about_url']);
 
-  Map<String, dynamic> get gbv           => JsonUtils.mapValue(safety['gbv']) ?? {};
-  String? get gbvContentCategory         => JsonUtils.stringValue(gbv['content_category']);
-  String? get gbvSurveyId                => JsonUtils.stringValue(gbv['survey_id']);
+  Map<String, dynamic> get gbv            => JsonUtils.mapValue(safety['gbv']) ?? {};
+  String? get gbvContentCategory          => JsonUtils.stringValue(gbv['content_category']);
+  String? get gbvSurveyId                 => JsonUtils.stringValue(gbv['survey_id']);
 
-  Map<String, dynamic> get canvas => JsonUtils.mapValue(content['canvas']) ?? {};
+  Map<String, dynamic> get canvas         => JsonUtils.mapValue(content['canvas']) ?? {};
   Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
 
-  Map<String, dynamic> get wellness => JsonUtils.mapValue(content['wellness']) ?? {};
+  Map<String, dynamic> get wellness       => JsonUtils.mapValue(content['wellness']) ?? {};
+
+  Map<String, dynamic>? get dailyIllini   => JsonUtils.mapValue(content['dailyIllini']);
+  Map<String, String>?  get dailyIlliniUrlParams => JsonUtils.mapCastValue(dailyIllini?['url_params']);
 
   // Getters: Secret Keys
 

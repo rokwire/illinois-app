@@ -45,13 +45,7 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
   static const CameraPosition defaultCameraPosition = CameraPosition(target: defaultCameraTarget, zoom: defaultCameraZoom);
   static const LatLng defaultCameraTarget = LatLng(40.102116, -88.227129);
   static const double defaultCameraZoom = 17;
-  static const double groupMarkersUpdateThresoldDelta = 0.3;
-  static const List<double> thresoldDistanceByZoom = [
-		1000000, 800000, 600000, 200000, 100000, // zoom 0 - 4
-		 100000,  80000,  60000,  20000,  10000, // zoom 5 - 9
-		   5000,   2000,   1000,    500,    250, // zoom 10 - 14
-		    100,     50,      0                  // zoom 15 - 16
-  ];
+  static const double groupMarkersUpdateThresoldDelta = 0.1;
 
   // Markers Content Static Data
 
@@ -271,8 +265,8 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
             markers = targetMarkers;
             exploreMapGroups = exploreGroups;
             targetCameraUpdate = cameraUpdate;
+            lastMapZoom = zoom;
             buildMarkersTask = null;
-            lastMapZoom = null;
             markersProgress = false;
           });
         }
@@ -314,34 +308,11 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
     }
   }
 
-  static Set<dynamic>? buildExplorMapGroups(List<Explore>? explores, { double thresoldDistance = 0 }) {
+  static Set<dynamic>? buildExplorMapGroups(Iterable<Explore>? explores, { double thresoldDistance = 0 }) {
     if (explores != null) {
-      // group by thresoldDistance
-      Set<Set<Explore>> exploreGroups = <Set<Explore>>{};
-
-      for (Explore explore in explores) {
-        ExploreLocation? exploreLocation = explore.exploreLocation;
-        if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
-          Set<Explore>? groupExploreSet = lookupExploreGroup(exploreGroups, exploreLocation, thresoldDistance: thresoldDistance);
-          if (groupExploreSet != null) {
-            groupExploreSet.add(explore);
-          }
-          else {
-            exploreGroups.add(<Explore>{explore});
-          }
-        }
-      }
-
-      Set<dynamic> markerGroups = <dynamic>{};
-      for (Set<Explore> exploreGroup in exploreGroups) {
-        if (exploreGroup.length == 1) {
-          markerGroups.add(exploreGroup.first);
-        }
-        else if (exploreGroup.length > 1) {
-          markerGroups.add(exploreGroup);
-        }
-      }
-
+      Map<LatLng, Set<Explore>> exploreGroups = buildInitialExploreGroups(explores, thresoldDistance: thresoldDistance);
+      mergeInitialExploreGroups(exploreGroups, thresoldDistance: thresoldDistance);
+      Set<dynamic> markerGroups = buildMarkerGroups(exploreGroups);
       return markerGroups;
     }
     else {
@@ -349,32 +320,137 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
     }
   }
 
-  static Set<Explore>? lookupExploreGroup(Set<Set<Explore>> exploreGroups, ExploreLocation exploreLocation, { double thresoldDistance = 0 }) {
-    for (Set<Explore> groupExploreSet in exploreGroups) {
-      for (Explore groupExplore in groupExploreSet) {
-        double distance = GeoMapUtils.getDistance(
-          exploreLocation.latitude?.toDouble() ?? 0,
-          exploreLocation.longitude?.toDouble() ?? 0,
-          groupExplore.exploreLocation?.latitude?.toDouble() ?? 0,
-          groupExplore.exploreLocation?.longitude?.toDouble() ?? 0
+  /*static List<Explore> sortExploresForMapGroups(Iterable<Explore> explores) {
+    List<Explore> orderedExplores = List<Explore>.from(explores);
+    Map<LatLng, double> distances = evalExploresDistances(explores);
+    orderedExplores.sort((Explore e1, Explore e2) {
+      double d1 = distances[e1.exploreLocation?.exploreLocationMapCoordinate] ?? 0;
+      double d2 = distances[e2.exploreLocation?.exploreLocationMapCoordinate] ?? 0;
+      return d1.compareTo(d2);
+    });
+    return orderedExplores;
+  }
+
+  static Map<LatLng, double> evalExploresDistances(Iterable<Explore> explores, { LatLng startingPoint = const LatLng(0,0) }) {
+    Map<LatLng, double> distances = <LatLng, double>{};
+    for (Explore explore in explores) {
+      LatLng? exploreLatLng = explore.exploreLocation?.exploreLocationMapCoordinate;
+      if (exploreLatLng != null) {
+        distances[exploreLatLng] = GeoMapUtils.getDistance(
+          exploreLatLng.latitude, exploreLatLng.longitude,
+          startingPoint.latitude, startingPoint.longitude,
         );
-        if (distance <= thresoldDistance) {
-          return groupExploreSet;
+      }
+    }
+    return distances;
+  }*/
+
+  static Map<LatLng, Set<Explore>> buildInitialExploreGroups(Iterable<Explore> explores, { double thresoldDistance = 0 }) {
+    Map<LatLng, Set<Explore>> exploreGroups = <LatLng, Set<Explore>>{};
+
+    // List<Explore> orderedExplores = sortExploresForMapGroups(explores);
+    for (Explore explore in explores) {
+      LatLng? exploreLatLng = explore.exploreLocation?.exploreLocationMapCoordinate;
+      if (exploreLatLng != null) {
+        LatLng? existingGroupCenter = lookupForInsertInExploreGroup(exploreGroups.keys, exploreLatLng, thresoldDistance: thresoldDistance);
+        if (existingGroupCenter != null) {
+          Set<Explore> groupExplores = exploreGroups[existingGroupCenter] ?? <Explore>{};
+          groupExplores.add(explore);
+          LatLng updatedGroupCenter = groupExplores.centerPoint ?? exploreLatLng;
+          exploreGroups[updatedGroupCenter] = groupExplores;
+          exploreGroups.remove(existingGroupCenter);
         }
+        else {
+          exploreGroups[exploreLatLng] = <Explore>{explore};
+        }
+      }
+    }
+    return exploreGroups;
+  }
+
+  static LatLng? lookupForInsertInExploreGroup(Iterable<LatLng> groupCenters, LatLng exploreLatLng, { double thresoldDistance = 0 }) {
+    for (LatLng groupCenter in groupCenters) {
+      double distanceFromGroupCenter = GeoMapUtils.getDistance(
+        exploreLatLng.latitude, exploreLatLng.longitude,
+        groupCenter.latitude, groupCenter.longitude,
+      );
+      if (distanceFromGroupCenter <= thresoldDistance) {
+        return groupCenter;
       }
     }
     return null;
   }
 
-  static double thresoldDistanceForZoom(double zoom) {
-    int zoomIndex = zoom.round();
-    if ((0 <= zoomIndex) && (zoomIndex < thresoldDistanceByZoom.length)) {
-      double zoomDistance = thresoldDistanceByZoom[zoomIndex];
-      double nextZoomDistance = ((zoomIndex + 1) < thresoldDistanceByZoom.length) ? thresoldDistanceByZoom[zoomIndex + 1] : 0;
-      double thresoldDistance = zoomDistance - (zoom - zoomIndex.toDouble()) * (zoomDistance - nextZoomDistance);
-      return thresoldDistance;
+  static void mergeInitialExploreGroups(Map<LatLng, Set<Explore>> exploreGroups, { double thresoldDistance = 0 }) {
+    Pair<LatLng, LatLng>? nearbyGroups;
+    while((nearbyGroups = lookupMergeOfExploreGroups(exploreGroups.keys.toList(), thresoldDistance : thresoldDistance)) != null) {
+      Set<Explore>? leftExplores = exploreGroups[nearbyGroups?.left];
+      Set<Explore>? rightExplores = exploreGroups[nearbyGroups?.right];
+      if ((leftExplores != null) && (rightExplores != null)) {
+        Set<Explore> mergedGroupExplores = leftExplores.union(rightExplores);
+        LatLng? mergedGroupCenter = mergedGroupExplores.centerPoint;
+        if (mergedGroupCenter != null) {
+          exploreGroups[mergedGroupCenter] = mergedGroupExplores;
+          exploreGroups.remove(nearbyGroups?.left);
+          exploreGroups.remove(nearbyGroups?.right);
+        }
+        else {
+          return;
+        }
+      }
+      else {
+        return;
+      }
     }
-    return 0;
+  }
+
+  static Pair<LatLng, LatLng>? lookupMergeOfExploreGroups(List<LatLng> groupCenters, { double thresoldDistance = 0 }) {
+    double? minDistance;
+    Pair<LatLng, LatLng>? minPair;
+    for (int index1 = 0; index1 < groupCenters.length; index1++) {
+      for (int index2 = index1 + 1; index2 < groupCenters.length; index2++) {
+        LatLng groupCenter1 = groupCenters[index1];
+        LatLng groupCenter2 = groupCenters[index2];
+        double distanceBetweenGroupCenters = GeoMapUtils.getDistance(
+          groupCenter1.latitude, groupCenter1.longitude,
+          groupCenter2.latitude, groupCenter2.longitude,
+        );
+        if (distanceBetweenGroupCenters <= thresoldDistance) {
+          if ((minDistance == null) || (distanceBetweenGroupCenters < minDistance)) {
+            minPair = Pair(groupCenter1, groupCenter2);
+            minDistance = distanceBetweenGroupCenters;
+          }
+        }
+      }
+    }
+    return minPair;
+  }
+
+  static Set<dynamic> buildMarkerGroups(Map<LatLng, Set<Explore>> exploreGroups) {
+    Set<dynamic> markerGroups = <dynamic>{};
+    for (Set<Explore> exploreGroup in exploreGroups.values) {
+      if (exploreGroup.length == 1) {
+        markerGroups.add(exploreGroup.first);
+      }
+      else if (exploreGroup.length > 1) {
+        markerGroups.add(exploreGroup);
+      }
+    }
+    return markerGroups;
+  }
+
+  static double thresoldDistanceForZoom(double zoom) {
+    final double targetPixelSize = _mapGroupMarkerSize * 1.5;
+    final double metersPerPixel = (math.cos(defaultCameraTarget.latitude * math.pi/180) * 2 * math.pi * 6378137) / (256 * math.pow(2, zoom));
+    double thresoldDistance = targetPixelSize * metersPerPixel;
+    /* debugPrint("Distance for Zoom: ${zoom.toStringAsFixed(2)} => ${thresoldDistance.toStringAsFixed(2)}");
+    static const List<double> thresoldDistanceByZoom = [
+  		1000000, 800000, 600000, 200000, 100000, // zoom 0 - 4
+  		 100000,  80000,  60000,  20000,  10000, // zoom 5 - 9
+  		   5000,   2000,   1000,    500,    250, // zoom 10 - 14
+  		    100,     50,      0                  // zoom 15 - 16
+    ]; */
+    return thresoldDistance;
   }
 
   @protected
