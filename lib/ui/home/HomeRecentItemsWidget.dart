@@ -392,7 +392,7 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> with Notifi
   Widget get _clearAllButton => LinkButton(
     title: Localization().getStringEx('widget.home.recent_items.button.clear_all.title', 'Clear All'),
     hint: Localization().getStringEx('widget.home.recent_items.button.clear_all.hint', 'Tap to clear all items'),
-    textStyle: Styles().textStyles.getTextStyle('widget.home_tout.button.link'),
+    textStyle: Styles().textStyles.getTextStyle('widget.heading.regular.semi_fat.underline'),
     padding: const EdgeInsets.all(16),
     onTap: _onClearAll,
   );
