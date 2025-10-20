@@ -38,6 +38,7 @@ class HeaderBar extends rokwire.HeaderBar {
     Widget? leadingWidget,
     String? leadingLabel,
     String? leadingHint,
+    Widget? leadingIcon,
     String? leadingIconKey = defaultLeadingIconKey,
     void Function()? onLeading,
     
@@ -58,6 +59,7 @@ class HeaderBar extends rokwire.HeaderBar {
     leadingWidget: leadingWidget,
     leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
     leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
+    leadingIcon: leadingIcon,
     leadingIconKey: leadingIconKey,
     onLeading: onLeading,
 
