@@ -108,31 +108,28 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
         if (stepIconWidget != null)
           Padding(padding: EdgeInsets.only(right: 18), child:
-          stepIconWidget
+            stepIconWidget
           ),
         Expanded(child:
-        Text(question.moreInfo ?? '', style: Styles().textStyles.getTextStyle('widget.description.regular'))),
+          Text(question.moreInfo ?? '', style: Styles().textStyles.getTextStyle('widget.description.regular'))),
       ],),
     );
   }
 
   Widget _allowSkipButton(question) {
     String skipText = question.extras["skip_text"] ?? 'Skip this question';
-    return
-      Align(alignment: Alignment.centerRight, child:
+    return Align(alignment: Alignment.centerRight, child:
       TextButton(onPressed: () => _selectOption('__skipped__'), child:
-      Text(skipText, style: Styles().textStyles.getTextStyle('widget.detail.regular.underline'),
+        Text(skipText, style: Styles().textStyles.getTextStyle('widget.detail.regular.underline'),),
       ),
-      ),
-      );
+    );
   }
 
-  Widget get _loadingProgressIndicator =>
-      Center(child:
-      Padding(padding: const EdgeInsets.only(top: 24.0), child:
+  Widget get _loadingProgressIndicator => Center(child:
+    Padding(padding: const EdgeInsets.only(top: 24.0), child:
       CircularProgressIndicator(color: Styles().colors.fillColorSecondary)
-      )
-      );
+    ),
+  );
 
   Widget get _stepProgressIndicator => LinearProgressIndicator(
     value: (_stepHistory.length) / 5,
@@ -164,10 +161,10 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
   }
 
   Widget _buildIconContainer(String imageName, Color bgColor) {
-    return Container(width: 67, height: 67,
-      decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle,),
-      child: Center(
-          child: Styles().images.getImage(imageName, excludeFromSemantics: true, size: 36, fit: BoxFit.contain, color: Colors.white) ?? Container()),
+    return Container(width: 67, height: 67, decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle,), child:
+      Center(child:
+        Styles().images.getImage(imageName, excludeFromSemantics: true, size: 36, fit: BoxFit.contain, color: Colors.white) ?? Container()
+      ),
     );
   }
 
@@ -297,31 +294,29 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
   }
 
   String get _resourceListTitle =>
-      Localization().getStringEx('panel.sexual_misconduct.survey_result.title', 'Your Top Resources');
+    Localization().getStringEx('panel.sexual_misconduct.survey_result.title', 'Your Top Resources');
 
   String get _resourceListDescription => Localization().getStringEx(
-      'panel.sexual_misconduct.survey_result.description',
-      'Based on what you shared, here are some options that may help. '
-          'You’re in control of what happens next—take your time and explore what feels right. '
-          'You’re not alone, and support is available if you need it.'
+    'panel.sexual_misconduct.survey_result.description',
+    'Based on what you shared, here are some options that may help. '
+      'You’re in control of what happens next—take your time and explore what feels right. '
+      'You’re not alone, and support is available if you need it.'
   );
 
-  Widget get _errorContent =>
-      Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Text(
-            Localization().getStringEx('panel.sexual_misconduct.survey_result.error', 'Failed to load survey.'),
-            textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.medium.thin"),
-          ),
-        ),
-      );
+  Widget get _errorContent => Center(child:
+    Padding(padding: const EdgeInsets.symmetric(horizontal: 28), child:
+      Text(Localization().getStringEx('panel.sexual_misconduct.survey_result.error', 'Failed to load survey.'),
+        textAlign: TextAlign.center,
+        style: Styles().textStyles.getTextStyle("widget.message.medium.thin"),
+      ),
+    ),
+  );
 
-  Widget get _loadingContent =>
-      Column(
-        children: [
-          const Expanded(flex: 1, child: SizedBox()),
-          SizedBox(width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),),
-          const Expanded(flex: 2, child: SizedBox())],
-      );
+  Widget get _loadingContent => Column(children: [
+    const Expanded(flex: 1, child: SizedBox()),
+    SizedBox(width: 32, height: 32, child:
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+    ),
+    const Expanded(flex: 2, child: SizedBox())],
+  );
 }
