@@ -194,8 +194,9 @@ class AppSemantics {
       }
     }
 
-    static bool isAccessibilityEnabled(BuildContext context) =>
-        MediaQuery.of(context).accessibleNavigation;
+    static bool isAccessibilityEnabled(BuildContext context) => context.mounted == true ?
+        MediaQuery.of(context).accessibleNavigation :
+        false;
 
     static void announceMessage(BuildContext? context, String message) =>
         context?.findRenderObject()?.
@@ -218,6 +219,32 @@ class AppSemantics {
     static String getIosHintLongPress(String? hint) => Platform.isIOS ? "Double tap and hold to  $hint" : "";
 
     static String getIosHintDrag(String? hint) => Platform.isIOS ? "Double tap hold move to  $hint" : "";
+
+    static void triggerAccessibilityHardResetWorkaround(BuildContext? context){
+      if (context == null || !context.mounted) {
+        return;
+      }
+
+      final NavigatorState navigator = Navigator.of(context);
+      final PageRoute<void> transparentRoute = PageRouteBuilder(
+        // Make the route completely transparent.
+        opaque: false,
+        // Use an empty container for the page.
+        pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      );
+
+      // Push the invisible route. This is the action that forces the full UI re-scan.
+      navigator.push(transparentRoute);
+
+      // Immediately pop the route in the next frame. The user will not see a thing,
+      // but the accessibility engine has already been forced to update.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Check if the route is still active on the navigator before popping.
+        if (transparentRoute.isActive) {
+          navigator.pop();
+        }
+      });
+    }
 // final SemanticsNode? semanticsNode = renderObject.debugSemantics;
 // final SemanticsOwner? owner = renderObject.owner!.semanticsOwner;
 // Send a SemanticsActionEvent with the tap action

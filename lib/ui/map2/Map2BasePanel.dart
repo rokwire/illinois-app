@@ -7,6 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/MTD.dart';
@@ -56,6 +58,7 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
   @override
   void initState() {
     updateLocationServicesStatus(updateCamera: true);
+    initAccessibility();
     super.initState();
   }
 
@@ -132,6 +135,8 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
         applyCameraUpdate();
       }
     }
+
+    onAccessibilityMapCreated();
   }
 
   @protected
@@ -660,4 +665,26 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
       return BitmapDescriptor.defaultMarker;
     }
   }
+}
+
+extension _Map2Accessibility on Map2BasePanelState{
+  void initAccessibility(){
+    // Hybrid Composition mode (AndroidViewSurface) instead of the default Virtual Display.
+    // This is known to improve gesture and accessibility handling.
+    if (Platform.isAndroid) {
+      GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
+      if (mapsImplementation is GoogleMapsFlutterAndroid) {
+        mapsImplementation.useAndroidViewSurface = true;
+        //Setting that will reduce the need of the workaround (refreshAccessibility) Deprecated in version 2.7.0
+        // mapsImplementation.forceAccessibilityEnabled = true;
+      }
+    }
+  }
+
+  void onAccessibilityMapCreated() =>
+      //Setting that will reduce the need of the workaround (refreshAccessibility) Deprecated in version 2.7.0
+      // mapsImplementation.forceAccessibilityEnabled = true;
+      AppSemantics.isAccessibilityEnabled(context) ?
+        AppSemantics.triggerAccessibilityHardResetWorkaround(context) :
+        null;
 }
