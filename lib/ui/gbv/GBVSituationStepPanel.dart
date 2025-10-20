@@ -75,26 +75,26 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     final opts = (question is SurveyQuestionMultipleChoice) ? question.options : [];
 
     return SingleChildScrollView(padding: const EdgeInsets.all(20), child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        GBVQuickExitWidget(),
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      GBVQuickExitWidget(),
 
-        if ((question != null) && (question.moreInfo?.isNotEmpty == true))
-          _buildMoreInfo(question),
+      if ((question != null) && (question.moreInfo?.isNotEmpty == true))
+        _buildMoreInfo(question),
 
-        Text(question?.text ?? '', style: Styles().textStyles.getTextStyle('widget.description.regular'),),
+      Text(question?.text ?? '', style: Styles().textStyles.getTextStyle('widget.description.regular'),),
 
-        const SizedBox(height: 12),
-        _stepProgressIndicator,
-        const SizedBox(height: 24),
+      const SizedBox(height: 12),
+      _stepProgressIndicator,
+      const SizedBox(height: 24),
 
-        ...opts.map((o) => _buildOption(o.title)),
+      ...opts.map((o) => _buildOption(o.title)),
 
-        if (question?.allowSkip == true)
-          _allowSkipButton(question),
+      if (question?.allowSkip == true)
+        _allowSkipButton(question),
 
-        if (_loading)
-          _loadingProgressIndicator,
-      ],),
+      if (_loading)
+        _loadingProgressIndicator,
+    ],),
     );
   }
 
@@ -118,21 +118,18 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
 
   Widget _allowSkipButton(question) {
     String skipText = question.extras["skip_text"] ?? 'Skip this question';
-    return
-    Align(alignment: Alignment.centerRight, child:
-    TextButton(onPressed: () => _selectOption('__skipped__'), child:
-    Text(skipText, style: Styles().textStyles.getTextStyle('widget.detail.regular.underline'),
-    ),
-    ),
+    return Align(alignment: Alignment.centerRight, child:
+      TextButton(onPressed: () => _selectOption('__skipped__'), child:
+        Text(skipText, style: Styles().textStyles.getTextStyle('widget.detail.regular.underline'),),
+      ),
     );
   }
 
-  Widget get _loadingProgressIndicator =>
-    Center(child:
-      Padding(padding: const EdgeInsets.only(top: 24.0), child:
-        CircularProgressIndicator(color: Styles().colors.fillColorSecondary)
-      )
-    );
+  Widget get _loadingProgressIndicator => Center(child:
+    Padding(padding: const EdgeInsets.only(top: 24.0), child:
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary)
+    ),
+  );
 
   Widget get _stepProgressIndicator => LinearProgressIndicator(
     value: (_stepHistory.length) / 5,
@@ -164,10 +161,10 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
   }
 
   Widget _buildIconContainer(String imageName, Color bgColor) {
-    return Container(width: 67, height: 67,
-      decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle,),
-      child: Center(
-        child: Styles().images.getImage(imageName, excludeFromSemantics: true, size: 36, fit: BoxFit.contain, color: Colors.white) ?? Container()),
+    return Container(width: 67, height: 67, decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle,), child:
+      Center(child:
+        Styles().images.getImage(imageName, excludeFromSemantics: true, size: 36, fit: BoxFit.contain, color: Colors.white) ?? Container()
+      ),
     );
   }
 
@@ -193,7 +190,7 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
   }
 
   Future<void> _showResults() async {
-    await Surveys().evaluate(
+    dynamic results = await Surveys().evaluate(
       _survey,
       evalResultRules: true,
       summarizeResultRules: false,
@@ -209,6 +206,11 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
       final String? resp = stats?.responseData[lastStepKey] as String?;
       final String lookupKey = resp ?? (stats?.responseData['next'] as String? ?? '');
       final Map<String, dynamic>? entryMap = (_survey.data['gbv_resource_map'] as SurveyData).extras?[lookupKey] as Map<String, dynamic>?;
+
+      List<String> resourceIds = results.map<String>((r) => r.key as String).toList();
+      if (entryMap != null) {
+        entryMap['resource_ids'] = resourceIds;
+      }
 
       if (entryMap == null) {
         _onFileReport(widget.gbvData);
@@ -297,26 +299,24 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
   String get _resourceListDescription => Localization().getStringEx(
     'panel.sexual_misconduct.survey_result.description',
     'Based on what you shared, here are some options that may help. '
-        'You’re in control of what happens next—take your time and explore what feels right. '
-        'You’re not alone, and support is available if you need it.'
+      'You’re in control of what happens next—take your time and explore what feels right. '
+      'You’re not alone, and support is available if you need it.'
   );
 
-  Widget get _errorContent =>
-    Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: Text(
-          Localization().getStringEx('panel.sexual_misconduct.survey_result.error', 'Failed to load survey.'),
-          textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.medium.thin"),
-        ),
+  Widget get _errorContent => Center(child:
+    Padding(padding: const EdgeInsets.symmetric(horizontal: 28), child:
+      Text(Localization().getStringEx('panel.sexual_misconduct.survey_result.error', 'Failed to load survey.'),
+        textAlign: TextAlign.center,
+        style: Styles().textStyles.getTextStyle("widget.message.medium.thin"),
       ),
-    );
+    ),
+  );
 
-  Widget get _loadingContent =>
-    Column(
-      children: [
-        const Expanded(flex: 1, child: SizedBox()),
-        SizedBox(width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),),
-        const Expanded(flex: 2, child: SizedBox())],
-    );
+  Widget get _loadingContent => Column(children: [
+    const Expanded(flex: 1, child: SizedBox()),
+    SizedBox(width: 32, height: 32, child:
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+    ),
+    const Expanded(flex: 2, child: SizedBox())],
+  );
 }

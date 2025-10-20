@@ -24,7 +24,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:illinois/model/Building.dart';
 import 'package:illinois/model/Dining.dart';
-import 'package:illinois/service/Dinings.dart';
+import 'package:illinois/ui/assistant/AssistantWidgets.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/dining/FoodDetailPanel.dart';
@@ -340,7 +340,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                           )
                                     ])))))))
               ])),
-
+      _buildDeepLinksWidget(message),
       Visibility(visible: (message.structElements?.isNotEmpty == true), child: _buildStructElementsContainerWidget(message)),
       _buildFeedbackAndSourcesExpandedWidget(message)
     ]);
@@ -449,9 +449,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     final double feedbackIconSize = 24;
     bool feedbackControlsVisible = (message.acceptsFeedback && !message.isAnswerUnknown);
     bool additionalControlsVisible = !message.user && (_messages.indexOf(message) != 0);
-    bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sourceDatEntries) || CollectionUtils.isNotEmpty(message.links)));
+    bool areSourcesLabelsVisible = additionalControlsVisible && CollectionUtils.isNotEmpty(message.sourceDatEntries);
     bool areSourcesValuesVisible = (additionalControlsVisible && areSourcesLabelsVisible && (message.sourcesExpanded == true));
-    List<Link>? deepLinks = message.links;
     List<Widget> webLinkWidgets = _buildWebLinkWidgets(message.sourceDatEntries);
 
     return Visibility(
@@ -491,10 +490,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                 child: Padding(padding: EdgeInsets.only(top: (!message.acceptsFeedback ? 10 : 0), left: (!message.acceptsFeedback ? 5 : 0)),
                     child: Semantics(
                       child: InkWell(
-                        onTap: () => _onTapSourcesAndLinksLabel(message),
+                        onTap: () => _onTapLinksLabel(message),
                         splashColor: Colors.transparent,
                         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                          Text(Localization().getStringEx('panel.assistant.sources_links.label', 'Sources and Links'),
+                          Text(Localization().getStringEx('panel.assistant.links.label', 'Links'),
                               style: Styles().textStyles.getTextStyle('widget.message.small')),
                           Padding(
                               padding: EdgeInsets.only(left: 10),
@@ -511,22 +510,13 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                         visible: CollectionUtils.isNotEmpty(webLinkWidgets),
                         child: Padding(
                             padding: EdgeInsets.only(top: 15),
-                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: webLinkWidgets))),
-                    Visibility(
-                        visible: CollectionUtils.isNotEmpty(deepLinks),
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Padding(
-                              padding: EdgeInsets.only(top: 15, bottom: 5),
-                              child: Text(Localization().getStringEx('panel.assistant.related.label', 'Related:'),
-                                  style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'))),
-                          _buildDeepLinkWidgets(deepLinks)
-                        ]))
+                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: webLinkWidgets)))
                   ])))
         ]));
   }
 
-  void _onTapSourcesAndLinksLabel(Message message) {
-    Analytics().logSelect(target: 'Assistant: Sources and Links');
+  void _onTapLinksLabel(Message message) {
+    Analytics().logSelect(target: 'Assistant: Links');
     setStateIfMounted(() {
       message.sourcesExpanded = !(message.sourcesExpanded ?? false);
       int msgsLength = _messages.length;
@@ -566,9 +556,9 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       } else if (element is Dining) {
         elementCard = DiningCard(element, onTap: (_) => _onTapDiningLocation(element));
       } else if (element is DiningProductItem) {
-        elementCard = _DiningProductItemCard(item: element, onTap: () => _onTapDiningProductItem(element));
+        elementCard = AssistantDiningProductItemCard(item: element, onTap: () => _onTapDiningProductItem(element));
       } else if (element is DiningNutritionItem) {
-        elementCard = _DiningNutritionItemCard(item: element, onTap: () => _onTapDiningNutritionItem(element, elements));
+        elementCard = AssistantDiningNutritionItemCard(item: element, onTap: () => _onTapDiningNutritionItem(element, elements));
       } else if (element is Building) {
         elementCard = Map2ExploreCard(element, onTap: () => _onTapBuildingItem(element));
       }
@@ -775,6 +765,12 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                               overflow: TextOverflow.ellipsis,
                               style: Styles().textStyles.getTextStyle('widget.button.link.source.title.semi_fat')))
                     ])))));
+  }
+
+  Widget _buildDeepLinksWidget(Message message) {
+    List<Link>? deepLinks = message.links;
+    bool hasDeepLinks = CollectionUtils.isNotEmpty(deepLinks);
+    return Visibility(visible: hasDeepLinks, child: Padding(padding: EdgeInsets.only(top: 10), child: _buildDeepLinkWidgets(deepLinks)));
   }
 
   Widget _buildDeepLinkWidgets(List<Link>? links) {
@@ -1392,156 +1388,5 @@ class _AssistantMarkdownIconBuilder extends MarkdownElementBuilder {
   @override
   Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     return RichText(text: TextSpan(children: [WidgetSpan(child: Icon(icon, color: color, size: size), alignment: PlaceholderAlignment.middle)]));
-  }
-}
-
-class _DiningProductItemCard extends StatefulWidget {
-  final DiningProductItem item;
-  final GestureTapCallback? onTap;
-
-  _DiningProductItemCard({required this.item, this.onTap});
-
-  @override
-  State<_DiningProductItemCard> createState() => _DiningProductItemCardState();
-}
-
-class _DiningProductItemCardState extends State<_DiningProductItemCard> {
-
-  Dining? _dining;
-  bool _loadingDining = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadDining();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  void _loadDining() {
-    String? diningOptionId = widget.item.diningOptionId;
-    if ((diningOptionId != null) && diningOptionId.isNotEmpty) {
-      setStateIfMounted(() {
-        _loadingDining = true;
-      });
-      Dinings().loadDining(diningOptionId).then((result) {
-        setStateIfMounted(() {
-          _dining = result;
-          _loadingDining = false;
-        });
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: widget.onTap,
-      child: Container(
-          decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(8)), boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]),
-          margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(8)),
-            child: Container(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  _buildDiningWidget(),
-                  Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, children: [
-                    Text(widget.item.category ?? '', style: Styles().textStyles.getTextStyle('widget.card.title.tiny.fat'), overflow: TextOverflow.ellipsis, maxLines: 1),
-                    Visibility(visible: (widget.item.meal?.isNotEmpty == true), child: Text(' (${widget.item.meal ?? ''})', style: Styles().textStyles.getTextStyle('common.title.secondary'), overflow: TextOverflow.ellipsis, maxLines: 1)),
-                  ]),
-                  Padding(padding: EdgeInsets.only(top: 2, bottom: 14), child: Row(children: [Expanded(child: Text(widget.item.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), overflow: TextOverflow.ellipsis))])),
-                  Visibility(
-                      visible: widget.item.ingredients.isNotEmpty,
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text(Localization().getStringEx('panel.assistant.dining_product_item.ingredients.label', 'INGREDIENTS:'), style: Styles().textStyles.getTextStyle('widget.label.small.fat'), overflow: TextOverflow.ellipsis),
-                        Row(children: [Expanded(child: Text(widget.item.ingredients.join(', '), style: Styles().textStyles.getTextStyle('widget.detail.small'), overflow: TextOverflow.ellipsis))])
-                      ])),
-                  Visibility(
-                      visible: widget.item.dietaryPreferences.isNotEmpty,
-                      child: Padding(
-                          padding: EdgeInsets.only(top: (widget.item.ingredients.isNotEmpty ? 8 : 0)),
-                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Text(Localization().getStringEx('panel.assistant.dining_product_item.dietary_preferences.label', 'DIETARY PREFERENCES:'), style: Styles().textStyles.getTextStyle('widget.label.small.fat'), overflow: TextOverflow.ellipsis),
-                            Row(children: [Expanded(child: Text(widget.item.dietaryPreferences.join(', '), style: Styles().textStyles.getTextStyle('widget.detail.small'), overflow: TextOverflow.ellipsis))])
-                          ]))),
-                ],
-              ),
-            ),
-          )),
-    );
-  }
-
-  Widget _buildDiningWidget() {
-    late Widget diningContentWidget;
-    if (_loadingDining) {
-      diningContentWidget = Padding(padding: EdgeInsets.only(bottom: 8), child: SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2)));
-    } else if (_dining != null) {
-      diningContentWidget = Padding(padding: EdgeInsets.only(bottom: 8), child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, children: [Text(_dining?.title ?? '', style: Styles().textStyles.getTextStyle('widget.card.title.tiny.fat'), overflow: TextOverflow.ellipsis, maxLines: 1)]));
-    } else {
-      diningContentWidget = Container();
-    }
-    return diningContentWidget;
-  }
-}
-
-class _DiningNutritionItemCard extends StatelessWidget {
-  final DiningNutritionItem item;
-  final GestureTapCallback? onTap;
-
-  _DiningNutritionItemCard({required this.item, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      child: Container(
-          decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(8)), boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]),
-          margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(8)),
-            child: Container(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(padding: EdgeInsets.only(top: 2, bottom: 14), child: Row(children: [Expanded(child: Text(item.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), overflow: TextOverflow.ellipsis))])),
-                  Visibility(
-                    visible: (item.nutritionList?.isNotEmpty == true),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(Localization().getStringEx('panel.assistant.dining_nutrition_item.info.label', 'NUTRITION INFO:'), style: Styles().textStyles.getTextStyle('widget.label.small.fat'), overflow: TextOverflow.ellipsis),
-                      _buildNutritionInfoWidget(item.nutritionList),
-                    ]),
-                  ),
-                ],
-              ),
-            ),
-          )),
-    );
-  }
-
-  Widget _buildNutritionInfoWidget(List<NutritionNameValuePair>? nutritionList) {
-    if (nutritionList == null || nutritionList.isEmpty) {
-      return Container();
-    }
-    String nutritionInfo = '';
-    for (NutritionNameValuePair pair in nutritionList) {
-      if (nutritionInfo.isNotEmpty) {
-        nutritionInfo += ', ';
-      }
-      nutritionInfo += '${pair.name}: ${pair.value}';
-    }
-    return Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Expanded(
-        child: Text(nutritionInfo, style: Styles().textStyles.getTextStyle('widget.detail.small'), overflow: TextOverflow.ellipsis, maxLines: 5),
-      ),
-    ]);
   }
 }
