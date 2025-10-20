@@ -366,17 +366,17 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   @override
   double? get mapTopSiblingsHeight {
-    double? contentHeaderBarHeight = _headerBarKey.renderBoxSize?.height;
-    if (contentHeaderBarHeight != null) {
-      contentHeaderBarHeight += _contentHeadingBarKey.renderBoxSize?.height ?? 0;
+    double? headerBarHeight = _headerBarKey.renderBoxSize?.height;
+    if (headerBarHeight != null) {
+      headerBarHeight += _contentHeadingBarKey.renderBoxSize?.height ?? 0;
       if (_exploresProgress == ExploreProgressType.init) {
-        contentHeaderBarHeight += _defaultContentFilterButtonsBarHeight;
+        headerBarHeight += _defaultContentFilterButtonsBarHeight;
       }
       if ((_exploresProgress != null) && (_selectedFilterIfExists?.hasFilter == true)) {
-        contentHeaderBarHeight += _defaultContentFilterDescriptionBarHeight;
+        headerBarHeight += _defaultContentFilterDescriptionBarHeight;
       }
     }
-    return contentHeaderBarHeight;
+    return headerBarHeight;
   }
 
   @override
