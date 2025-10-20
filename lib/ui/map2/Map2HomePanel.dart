@@ -118,6 +118,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   with NotificationsListener, SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Map2HomePanel>
 {
 
+  final GlobalKey _headerBarKey = GlobalKey();
   final GlobalKey _scaffoldKey = GlobalKey();
   final GlobalKey _contentHeadingBarKey = GlobalKey();
   final GlobalKey _contentTypesBarKey = GlobalKey();
@@ -305,7 +306,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
       Positioned.fill(child:
         Column(children: [
-          RootHeaderBar(title: Localization().getStringEx("panel.map2.header.title", "Map2")),
+          RootHeaderBar(key: _headerBarKey, title: Localization().getStringEx("panel.map2.header.title", "Map2")),
           Visibility(visible: (_selectedContentType != null), child:
             _contentHeadingBar,
           ),
@@ -365,16 +366,17 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   @override
   double? get mapTopSiblingsHeight {
-    double? headerBarHeight = _contentHeadingBarKey.renderBoxSize?.height;
-    if (headerBarHeight != null) {
+    double? contentHeaderBarHeight = _headerBarKey.renderBoxSize?.height;
+    if (contentHeaderBarHeight != null) {
+      contentHeaderBarHeight += _contentHeadingBarKey.renderBoxSize?.height ?? 0;
       if (_exploresProgress == ExploreProgressType.init) {
-        headerBarHeight += _defaultContentFilterButtonsBarHeight;
+        contentHeaderBarHeight += _defaultContentFilterButtonsBarHeight;
       }
       if ((_exploresProgress != null) && (_selectedFilterIfExists?.hasFilter == true)) {
-        headerBarHeight += _defaultContentFilterDescriptionBarHeight;
+        contentHeaderBarHeight += _defaultContentFilterDescriptionBarHeight;
       }
     }
-    return headerBarHeight;
+    return contentHeaderBarHeight;
   }
 
   @override
@@ -2113,13 +2115,12 @@ extension _Map2AccessibilityWorkaround on _Map2HomePanelState{  //Additional fun
     if(_needAccessibilityWorkaround == false)
       return EdgeInsets.zero;
 
-    double sheetHeight = _traySheetController.isAttached ? _traySheetController.pixels : 0;
-    double headerBarHeight = _contentHeadingBarKey.renderBoxSize?.height ?? 0;
-    double typesBarHeight = _contentTypesBarKey.renderBoxSize?.height ?? 0;
+    double sheetHeight = mapBottomSiblingsHeight ?? 0;
 
-    double topPadding = _selectedContentType != null ? headerBarHeight : typesBarHeight; //If we have heading reduce the pam size at top
-    double bottomPadding = _selectedContentType != null && _trayExplores?.isNotEmpty == true ? sheetHeight : 0;//if we have sheet
-    return EdgeInsets.only(top: topPadding, bottom: bottomPadding);
+    double headerBarHeight =  mapTopSiblingsHeight ?? 0;
+    headerBarHeight += _selectedContentType == null ? _contentTypesBarKey.renderBoxSize?.height ?? 0 : 0;
+
+    return EdgeInsets.only(top: headerBarHeight, bottom: sheetHeight);
   }
 
   void _onSheetDragChanged() {
