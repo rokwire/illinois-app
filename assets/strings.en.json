@@ -1982,6 +1982,7 @@
     "panel.settings.home.settings.sections.research.label": "My Participation in Research",
     "panel.settings.home.settings.sections.privacy.label": "My App Privacy Settings",
     "panel.settings.home.settings.sections.notifications.label": "My Notification Preferences",
+    "panel.settings.home.settings.sections.accessibility.label": "Accessibility",
 
     "panel.settings.home.connect.not_logged_in.title":"Sign In to {{app_title}}",
     "panel.settings.home.connect.not_logged_in.netid.description": "Are you a {{university_student}} or {{employee}}? Sign in with your NetID to see {{app_title}} information specific to you, like your Illini ID and course schedule.",
@@ -2084,6 +2085,11 @@
     "panel.settings.home.language.en.title": "English",
     "panel.settings.home.language.es.title": "Spanish",
     "panel.settings.home.language.zh.title": "Chinese",
+
+    "panel.settings.home.accessibility.favorites.label": "Favorites",
+    "panel.settings.home.accessibility.reduce_motion.label": "Reduce motion",
+    "panel.settings.home.accessibility.map.label": "Map",
+    "panel.settings.home.accessibility.ada_navigation.label": "Navigate to ADA-accessible building entrances for My Courses",
 
     "panel.settings.privacy_center.label.title":"Privacy Center",
     "panel.settings.privacy_center.label.description":"Personalize your privacy and data preferences.",
