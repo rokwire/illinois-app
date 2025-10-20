@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - GBV: Added ordering to I'm Not Sure Yet - Support a Friend results [#5434](https://github.com/rokwire/illinois-app/issues/5434).
+- Added url params for Google analytics metrics in Daily Illini feed links [#5441](https://github.com/rokwire/illinois-app/issues/5441).
 ### Fixed
 - Fixed "Clear All" header bar button text style in Visited Recently panel [#5443](https://github.com/rokwire/illinois-app/issues/5443).
 ### Changed

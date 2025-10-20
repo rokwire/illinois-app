@@ -199,10 +199,15 @@ abstract class _StoryWidget extends StatelessWidget {
   _StoryWidget({this.illiniItem});
 
   void _onTap() {
-    String? url = illiniItem!.link;
+    String? url = illiniItem?.link;
     if (StringUtils.isNotEmpty(url)) {
       Uri? uri = Uri.tryParse(url!);
       if (uri != null) {
+        Map<String, String>? urlParams = Config().dailyIlliniUrlParams;
+        if ((urlParams != null) && urlParams.isNotEmpty) {
+          uri = UriExt.addQueryParameters(uri, urlParams);
+        }
+
         LaunchMode launchMode = Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault;
         launchUrl(uri, mode: launchMode);
       }
