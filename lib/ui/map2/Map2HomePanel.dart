@@ -46,7 +46,6 @@ import 'package:illinois/ui/map2/Map2HomeFilters.dart';
 import 'package:illinois/ui/map2/Map2TraySheet.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -64,6 +63,8 @@ import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+
+import '../widgets/HeaderBar.dart';
 
 enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, LaundryRooms, BusStops, Therapists, StoriedSites, MyLocations, }
 enum Map2SortType { dateTime, alphabetical, proximity }
@@ -143,7 +144,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   final Map<Map2ContentType, Map2Filter> _filters = <Map2ContentType, Map2Filter>{};
   bool _searchOn = false;
-  bool _mapDisabled = false;
+  bool _mapDisabled = false;// Accessibility workaround value
   double? _sortDropdownWidth;
   double? _termsDropdownWidth;
   double? _paymentTypesDropdownWidth;
@@ -284,7 +285,8 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx("panel.map2.header.title", "Map2")),
+      //Map should be expanded below HeaderBar (otherwise it shifts the tapable area)
+      // appBar: RootHeaderBar(title: Localization().getStringEx("panel.map2.header.title", "Map2")),
       backgroundColor: Styles().colors.background,
       body: _scaffoldBody,
     );
@@ -302,24 +304,22 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       ),
 
       Positioned.fill(child:
-        Visibility(visible: (_selectedContentType == null), child:
-          Align(alignment: Alignment.topCenter, child:
-            _contentTypesBar
-          ),
-        ),
-      ),
-
-      Positioned.fill(child:
-        Visibility(visible: (_selectedContentType != null), child:
-          Column(children: [
+        Column(children: [
+          RootHeaderBar(title: Localization().getStringEx("panel.map2.header.title", "Map2")),
+          Visibility(visible: (_selectedContentType != null), child:
             _contentHeadingBar,
-            Expanded(child:
-              Visibility(visible: (_exploresProgress == null) && (_trayExplores?.isNotEmpty == true), child:
-                _traySheet,
-              ),
-            )
-          ],),
-        ),
+          ),
+          Visibility(visible: (_selectedContentType == null), child:
+            Align(alignment: Alignment.topCenter, child:
+              _contentTypesBar
+            ),
+          ),
+          Expanded(child:
+            Visibility(visible: (_exploresProgress == null) && (_trayExplores?.isNotEmpty == true), child:
+              _traySheet,
+            ),
+          )
+        ],),
       ),
 
       if (_exploresProgress != null)
@@ -664,9 +664,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     });
     WidgetsBinding.instance.addPostFrameCallback((_){
       _updateContentTypesScrollPosition();
-     _doAccessibilityWorkaround(()=>
-        setStateIfMounted()  //Notify HeaderHeight changed. Update after the header was drown
-     ); //Workaround Accessibility
+     _onAccessibilityExploresUpdated();
     });
   }
 
@@ -767,11 +765,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       ),
     );
 
-  _onSheetDragChanged() {
-    _doAccessibilityWorkaround(()=>
-        setStateIfMounted());
-  }
-
   // Map Styles
 
   static const String _mapStylesAssetName = 'assets/map.styles.json';
@@ -863,10 +856,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
           _pinnedMarker = null;
         });
       }
-      _doAccessibilityWorkaround(()=>
-          WidgetsBinding.instance.addPostFrameCallback((_) =>
-              setStateIfMounted() //Notify HeaderHeight changed. Update after the header was drown//Workaround Accessibility
-        ));
+      _onAccessibilityExploresUpdated();
     }
   }
 
@@ -925,10 +915,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
           }
         }
       }
-      _doAccessibilityWorkaround(()=>
-            WidgetsBinding.instance.addPostFrameCallback((_) =>
-                setStateIfMounted() //Notify HeaderHeight changed. Update after the header was drown//Workaround Accessibility
-            ));
+      _onAccessibilityExploresUpdated();
     }
   }
 
@@ -1100,72 +1087,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
         });
       }
     }
-  }
-}
-
-// Map2 Semantics
-
-extension _Map2Semantics on _Map2HomePanelState{
-  int? get displayCount => _filteredExplores?.length;
-  int? get totalCount => _explores?.length;
-
-  String get _filterButtonHint =>  ". Results in filtering  ${displayCount ?? 0} from ${totalCount ?? 0} Buildings";
-
-  String get _amenitiesSemanticsValue =>  LinkedHashSet<String>.from(_campusBuildingsFilterIfExists?.amenities.keys ?? <String>[]).toString();
-}
-
-// Map2 Accessibility Workaround
-
-extension _Map2AccessibilityWorkaround on _Map2HomePanelState{  //Additional functionality and UI changes that will improve the Maps accessibility. Execute it only if needed
-  bool get _needAccessibilityWorkaround => AppSemantics.isAccessibilityEnabled(context) == true;
-
-  Widget _accessibilityWorkaroundWrapMap({Widget? child}) => //child;
-    VisibilityDetector(key: const Key('map2_location_panel_detector'),
-      onVisibilityChanged: _onMapVisibilityChanged, child:
-        Padding(padding: _accessibilityWorkaroundMapPadding, child:
-          (_mapDisabled == true ? //Get disabled only if accessibility workaround is required
-            Container(child: Center(child: Text("Map is disabled"))) : //Workaround to make DropDownMenuItems clickable. They go over MapView and do not get tap actions
-            child))
-  );//Workaround to make sheet and heading tappable. We resize the map so they don't go over the map
-
-  EdgeInsets get _accessibilityWorkaroundMapPadding {//Workaround for the Maps Accessibility. Even when Map is at the bottom layer of the stack it takes the Tap gestures.
-    if(_needAccessibilityWorkaround == false)
-      return EdgeInsets.zero;
-
-    double sheetHeight = _traySheetController.isAttached ? _traySheetController.pixels : 0;
-    double headerBarHeight = _contentHeadingBarKey.renderBoxSize?.height ?? 0;
-    double typesBarHeight = _contentTypesBarKey.renderBoxSize?.height ?? 0;
-
-    double topPadding = _selectedContentType != null ? headerBarHeight : typesBarHeight; //If we have heading reduce the pam size at top
-    double bottomPadding = _selectedContentType != null && _trayExplores?.isNotEmpty == true ? sheetHeight : 0;//if we have sheet
-    return EdgeInsets.only(top: topPadding, bottom: bottomPadding);
-  }
-
-  void _onMenuVisibilityChanged(bool visible) => _needAccessibilityWorkaround ? setStateIfMounted(()=> _mapDisabled = visible) : null;
-
-  void _onMapVisibilityChanged(VisibilityInfo info){
-    if(info.visibleFraction == 0){
-      if(_mapDisabled == false)
-        _accessibilityDisableMap();
-    } else {
-      if(_mapDisabled == true)
-        _accessibilityEnableMap();
-    }
-  }
-
-  void _doAccessibilityWorkaround(Function? fn) => (_needAccessibilityWorkaround && fn != null) ?
-    fn() : null;
-
-  void _accessibilityDisableMap() {
-    _doAccessibilityWorkaround(
-            ()=> setStateIfMounted(()=>_mapDisabled = true));
-    // AppToast.showMessage("Disabled");
-  }
-
-  void _accessibilityEnableMap() {
-    _doAccessibilityWorkaround(
-            ()=> setStateIfMounted(()=>_mapDisabled = false));
-    // AppToast.showMessage("Enabled");
   }
 }
 
@@ -2157,4 +2078,86 @@ extension _Map2HomePanelMessages on _Map2HomePanelState {
     }
   }
 
+}
+
+// Map2 Semantics
+
+extension _Map2Accessibility on _Map2HomePanelState{
+  int? get _displayCount => _filteredExplores?.length;
+  int? get _totalCount => _explores?.length;
+
+  String get _filterButtonHint =>  ". Results in filtering  ${_displayCount ?? 0} from ${_totalCount ?? 0} Buildings";
+
+  String get _amenitiesSemanticsValue =>  LinkedHashSet<String>.from(_campusBuildingsFilterIfExists?.amenities.keys ?? <String>[]).toString();
+}
+
+// Map2 Accessibility Workaround
+
+extension _Map2AccessibilityWorkaround on _Map2HomePanelState{  //Additional functionality and UI changes that will improve the Maps accessibility. Execute it only if needed
+  bool get _resizeWorkaroundEnabled => false;
+  bool get _visibilityWorkaroundEnabled => _resizeWorkaroundEnabled;
+
+  bool get _needAccessibilityWorkaround => (_scaffoldKey.currentContext?.mounted == true) &&
+      AppSemantics.isAccessibilityEnabled(context) == true;
+
+  Widget _accessibilityWorkaroundWrapMap({Widget? child}) => //child;
+  VisibilityDetector(key: const Key('map2_location_panel_detector'),
+      onVisibilityChanged: _onMapVisibilityChanged, child:
+      Padding(padding: _resizeWorkaroundEnabled ? _accessibilityWorkaroundMapPadding : EdgeInsets.zero, child:
+      (_mapDisabled == true ? //Get disabled only if accessibility workaround is required
+      Container(child: Center(child: Text("Map is disabled"))) : //Workaround to make DropDownMenuItems clickable. They go over MapView and do not get tap actions
+      child))
+  );//Workaround to make sheet and heading tappable. We resize the map so they don't go over the map
+
+  EdgeInsets get _accessibilityWorkaroundMapPadding {//Workaround for the Maps Accessibility. Even when Map is at the bottom layer of the stack it takes the Tap gestures.
+    if(_needAccessibilityWorkaround == false)
+      return EdgeInsets.zero;
+
+    double sheetHeight = _traySheetController.isAttached ? _traySheetController.pixels : 0;
+    double headerBarHeight = _contentHeadingBarKey.renderBoxSize?.height ?? 0;
+    double typesBarHeight = _contentTypesBarKey.renderBoxSize?.height ?? 0;
+
+    double topPadding = _selectedContentType != null ? headerBarHeight : typesBarHeight; //If we have heading reduce the pam size at top
+    double bottomPadding = _selectedContentType != null && _trayExplores?.isNotEmpty == true ? sheetHeight : 0;//if we have sheet
+    return EdgeInsets.only(top: topPadding, bottom: bottomPadding);
+  }
+
+  void _onSheetDragChanged() {
+    if(_resizeWorkaroundEnabled)
+      _doAccessibilityWorkaround(()=>
+          setStateIfMounted());
+  }
+
+  void _onMenuVisibilityChanged(bool visible) => _visibilityWorkaroundEnabled ?
+  _doAccessibilityWorkaround(() =>
+      setStateIfMounted((){
+        _mapDisabled= visible;
+      })) : null;
+
+  void _onMapVisibilityChanged(VisibilityInfo info){
+    if(_visibilityWorkaroundEnabled) {
+      if (info.visibleFraction == 0) {
+        if (_mapDisabled == false)
+          _doAccessibilityWorkaround(
+                  () => setStateIfMounted(() => _mapDisabled = true));
+      } else {
+        if (_mapDisabled == true)
+          _doAccessibilityWorkaround(
+                  () => setStateIfMounted(() => _mapDisabled = false));
+      }
+    }
+  }
+
+  void _onAccessibilityExploresUpdated(){
+    _doAccessibilityWorkaround(()=>
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_resizeWorkaroundEnabled)
+            setStateIfMounted();
+        }
+        )
+    );
+  }
+
+  void _doAccessibilityWorkaround(Function? fn) => (_needAccessibilityWorkaround && fn != null) ?
+  fn() : null;
 }
