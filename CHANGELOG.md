@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- GBV: Added ordering to I'm Not Sure Yet - Support a Friend results [#5434](https://github.com/rokwire/illinois-app/issues/5434).
+### Fixed
+- Fixed "Clear All" header bar button text style in Visited Recently panel [#5443](https://github.com/rokwire/illinois-app/issues/5443).
 ### Changed
 - Elevate deeplinks in Illinois Assistant Results [#5459](https://github.com/rokwire/illinois-app/issues/5459).
 
