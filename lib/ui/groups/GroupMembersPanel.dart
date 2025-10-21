@@ -79,6 +79,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
   String? _searchTextValue;
   late FocusNode _searchFocus;
 
+  GroupStats? _stats;
+
   @override
   void initState() {
     super.initState();
@@ -129,6 +131,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
       if (_selectedMemberFilter == GroupMemberStatus.pending) {
         _switchToAllIfNoPendingMembers = true;
       }
+      _loadGroupStats();
       _reloadMembers();
     }
   }
@@ -276,8 +279,11 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
     if (!_isAdmin) {
       return Container();
     }
+    int membersCount = _getMembersCount();
     bool showSynced = _group?.authManEnabled == true && StringUtils.isNotEmpty(_group?.displayManagedMembershipUpdateTime);
     bool showUpdated = StringUtils.isNotEmpty(_group?.displayMembershipUpdateTime);
+    bool showMembers = (membersCount > 0);
+    bool showUpdatedAndMembers = (showUpdated || showMembers);
 
     return Visibility(visible: showSynced || showUpdated,
       child: Container(child: Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -286,18 +292,23 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
             Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
               Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Synced:'), style: Styles().textStyles.getTextStyle('widget.detail.small.fat'))),
               Expanded(child:
-                Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('widget.detail.small'), overflow: TextOverflow.ellipsis)
+                Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('widget.info.small'), overflow: TextOverflow.ellipsis)
               )
         ]))),
-        Visibility(visible: showUpdated, child:
+        Visibility(visible: showUpdatedAndMembers, child:
           Semantics(container: true, child:
           Padding(padding: EdgeInsets.only(top: 5), child:
-            Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Updated:'), style: Styles().textStyles.getTextStyle('widget.detail.small.fat'))),
-              Expanded(child:
-                Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles.getTextStyle('widget.detail.small'), overflow: TextOverflow.ellipsis,)
-              )
-        ]))))
+              Wrap(spacing: 8, children: [
+                Visibility(visible: showUpdated, child: Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                  Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Updated:'), style: Styles().textStyles.getTextStyle('widget.detail.small.fat'))),
+                  Text((StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A') + (showMembers ? ';' : '')), style: Styles().textStyles.getTextStyle('widget.info.small'), overflow: TextOverflow.ellipsis)
+                ])),
+                Visibility(visible: showMembers, child: Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                  Padding(padding: EdgeInsets.only(right: 5), child: Text(_getMembersCountLabel(), style: Styles().textStyles.getTextStyle('widget.detail.small.fat'))),
+                  Text(membersCount.toString() + '.', style: Styles().textStyles.getTextStyle('widget.info.small'), overflow: TextOverflow.ellipsis)
+                ]))
+              ])
+            )))
     ]))));
   }
 
@@ -443,6 +454,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
 
   void _reloadGroupContent() {
     _loadGroup();
+    _loadGroupStats();
     _reloadMembers();
   }
 
@@ -506,6 +518,58 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
     _membersLimit = _defaultMembersLimit;
     _visibleMembers = null;
     _loadMembers();
+  }
+
+  void _loadGroupStats() {
+    _increaseProgress();
+    Groups().loadGroupStats(widget.groupId).then((stats) {
+      _stats = stats;
+      _decreaseProgress();
+    });
+  }
+
+  String _getMembersCountLabel() {
+    late String label;
+    switch (_selectedMemberFilter) {
+      case GroupMembersFilter.all:
+        label = Localization().getStringEx('panel.group_detail.membership.status.label.all', 'All:');
+        break;
+      case GroupMembersFilter.admin:
+        label = Localization().getStringEx('panel.group_detail.membership.status.label.admins', 'Admins:');
+        break;
+      case GroupMembersFilter.member:
+        label = Localization().getStringEx('panel.group_detail.membership.status.label.members', 'Members:');
+        break;
+      case GroupMembersFilter.pending:
+        label = Localization().getStringEx('panel.group_detail.membership.status.label.pending', 'Pending:');
+        break;
+      case GroupMembersFilter.rejected:
+        label = Localization().getStringEx('panel.group_detail.membership.status.label.rejected', 'Denied:');
+        break;
+    }
+    return label;
+  }
+
+  int _getMembersCount() {
+    int? count;
+    switch (_selectedMemberFilter) {
+      case GroupMembersFilter.all:
+        count = _stats?.totalCount;
+        break;
+      case GroupMembersFilter.admin:
+        count = _stats?.adminsCount;
+        break;
+      case GroupMembersFilter.member:
+        count = _stats?.membersCount;
+        break;
+      case GroupMembersFilter.pending:
+        count = _stats?.pendingCount;
+        break;
+      case GroupMembersFilter.rejected:
+        count = _stats?.rejectedCount;
+        break;
+    }
+    return count ?? 0;
   }
 
   String get _emptyStatusText =>
