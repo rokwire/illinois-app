@@ -17,30 +17,36 @@ class ExploreMessagePopup extends StatelessWidget {
   Widget build(BuildContext context) =>
     AlertDialog(contentPadding: EdgeInsets.zero, content:
       Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
-        Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
-          Padding(padding: EdgeInsets.all(30), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-              Styles().images.getImage('university-logo') ?? Container(),
-              Padding(padding: EdgeInsets.only(top: 20), child:
-                // Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.detail.small")
-                HtmlWidget(message,
-                  onTapUrl: (url) => (onTapUrl != null) ? onTapUrl!(url) : false,
-                  textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
-                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
-                )
+          Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
+            Semantics(container: true, child:
+              Padding(padding: EdgeInsets.all(30), child:
+                Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
+                  Styles().images.getImage('university-logo') ?? Container(),
+                  Semantics(label: message, focused: true, excludeSemantics: true, container: true, child:
+                    Padding(padding: EdgeInsets.only(top: 20), child:
+                      // Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.detail.small")
+                      HtmlWidget(message,
+                          onTapUrl: (url) => (onTapUrl != null) ? onTapUrl!(url) : false,
+                          textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
+                          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+                        )
+                      )
+                  )
+                ])
               )
-            ])
-          ),
-          Positioned.fill(child:
-            Align(alignment: Alignment.topRight, child:
-              InkWell(onTap: () => _onClose(context, message), child:
-                Padding(padding: EdgeInsets.all(16), child:
-                  Styles().images.getImage("close-circle")
+            ),
+            Positioned.fill(child:
+              Align(alignment: Alignment.topRight, child:
+                Semantics(label: "close", button: true, container: true, child:
+                  InkWell(onTap: () => _onClose(context, message), child:
+                    Padding(padding: EdgeInsets.all(16), child:
+                      Styles().images.getImage("close-circle", excludeFromSemantics: true)
+                    )
+                  )
                 )
               )
             )
-          )
-        ])
+          ])
       )
     );
 
