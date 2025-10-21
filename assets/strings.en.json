@@ -2908,6 +2908,11 @@
     "panel.group_detail.attendance.member.attended.msg.format": "Student with UIN \"%s\" already attended on \"%s\"",
     "panel.group_detail.date.updated.managed.membership.label": "Synced:",
     "panel.group_detail.date.updated.membership.label": "Updated:",
+    "panel.group_detail.membership.status.label.all": "All:",
+    "panel.group_detail.membership.status.label.admins": "Admins:",
+    "panel.group_detail.membership.status.label.members": "Members:",
+    "panel.group_detail.membership.status.label.pending": "Pending:",
+    "panel.group_detail.membership.status.label.rejected": "Denied:",
 
     "panel.group_member_notifications.header.title": "Group Notifications",
     "panel.group_member_notifications.save.button": "Save",
