@@ -326,17 +326,52 @@ extension ExplorePOIImpl on ExplorePOI {
     );
 }
 
-extension Map2BuildingAmenities on LinkedHashSet<String> {
-  LinkedHashMap<String, String> selectedFromBuildingAmenities(Map<String, String> buildingAmenities) {
+extension Map2BuildingDisplayAmenities on Map<String, String> {
+
+  Map<String, Set<String>> get amenitiesNameToIds {
+    Map<String, Set<String>> result = <String, Set<String>>{};
+    forEach((String amenityId, String amenityName) {
+      Set<String> amenityIds = result[amenityName] ??= <String>{};
+      amenityIds.add(amenityId);
+    });
+    return result;
+  }
+
+}
+
+
+extension Map2BuildingSelectedAmenities on LinkedHashSet<String> {
+
+  LinkedHashMap<String, String> selectedAmenitiesIdToName(Map<String, String> amenitiesIdToName) {
     LinkedHashMap<String, String> selectedAmenities = LinkedHashMap<String, String>();
     for (String amenityId in this) {
-      String? amenuityName = buildingAmenities[amenityId];
+      String? amenuityName = amenitiesIdToName[amenityId];
       if (amenuityName != null) {
         selectedAmenities[amenityId] = amenuityName;
       }
     }
     return selectedAmenities;
   }
+
+}
+
+extension Map2BuildingFilterAmenitiesFromJson on Map<String, dynamic> {
+
+  LinkedHashMap<String, Set<String>> toAmenityNameToIds() {
+    LinkedHashMap<String, Set<String>> nameToIds = LinkedHashMap<String, Set<String>>();
+    for (String amenityName in keys) {
+      Set<String>? amenityIds = SetUtils.from(JsonUtils.listStringsValue(this[amenityName]));
+      if (amenityIds != null) {
+        nameToIds[amenityName] = amenityIds;
+      }
+    }
+    return nameToIds;
+  }
+
+}
+
+extension Map2BuildingFilterAmenitiesToJson on LinkedHashMap<String, Set<String>> {
+  Map<String, dynamic> toJson() => map((String key, Set<String> value) => MapEntry(key, value.toList()));
 }
 
 class Map2FilterEvents2Param {
