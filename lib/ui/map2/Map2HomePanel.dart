@@ -1487,15 +1487,15 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   void _onAmenities() {
     Analytics().logSelect(target: 'Amenities');
     List<Building>? buildings = JsonUtils.listCastValue<Building>(_explores);
-    Map<String, String> buildingsAmenities = buildings?.featureNames ?? <String, String>{};
-    Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
-      amenities: buildingsAmenities,
-      selectedAmenityIds: LinkedHashSet<String>.from(_campusBuildingsFilterIfExists?.amenities.keys ?? <String>[]),
+    Map<String, Set<String>> amenitiesNameToIds = buildings?.amenitiesNameToIds ?? <String, Set<String>>{};
+    Navigator.push<LinkedHashMap<String, Set<String>>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
+      amenitiesNameToIds: amenitiesNameToIds,
+      selectedAmenitiesNameToIds: _campusBuildingsFilterIfExists?.amenitiesNameToIds ?? LinkedHashMap<String, Set<String>>(),
     ),
-    )).then(((LinkedHashSet<String>? amenityIds) {
-      if (amenityIds != null) {
+    )).then(((LinkedHashMap<String, Set<String>>? amenitiesNameToIds) {
+      if (amenitiesNameToIds != null) {
         setStateIfMounted(() {
-          _campusBuildingsFilter?.amenities = amenityIds.selectedFromBuildingAmenities(buildingsAmenities);
+          _campusBuildingsFilter?.amenitiesNameToIds = amenitiesNameToIds;
         });
         _onFiltersChanged();
         Future.delayed(Duration(milliseconds: 200 + (Platform.isIOS ? 1000 : 0)), () =>
@@ -2100,7 +2100,7 @@ extension _Map2Accessibility on _Map2HomePanelState{
 
   String get _filterButtonHint =>  ". Results in filtering  ${_displayCount ?? 0} from ${_totalCount ?? 0} Buildings";
 
-  String get _amenitiesSemanticsValue =>  LinkedHashSet<String>.from(_campusBuildingsFilterIfExists?.amenities.keys ?? <String>[]).toString();
+  String get _amenitiesSemanticsValue => _campusBuildingsFilterIfExists?.amenitiesNameToIds.keys.toString() ?? '';
 
   void _accessibilityFocusHeading() {
     AppSemantics.triggerAccessibilityFocus(_headerBarTitleKey); //When already on this tab

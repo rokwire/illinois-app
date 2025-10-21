@@ -9,10 +9,10 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class Map2FilterBuildingAmenitiesPanel extends StatefulWidget {
-  final Map<String, String> amenities; // Map<Key, Name> of Building Amenities
-  final LinkedHashSet<String> selectedAmenityIds;
+  final Map<String, Set<String>> amenitiesNameToIds; // Map<Key, Name> of Building Amenities
+  final LinkedHashMap<String, Set<String>> selectedAmenitiesNameToIds;
 
-  Map2FilterBuildingAmenitiesPanel({super.key, required this.amenities, required this.selectedAmenityIds });
+  Map2FilterBuildingAmenitiesPanel({super.key, required this.amenitiesNameToIds, required this.selectedAmenitiesNameToIds });
 
   @override
   State<StatefulWidget> createState() => _Map2FilterBuildingAmenitiesPanelState();
@@ -21,20 +21,15 @@ class Map2FilterBuildingAmenitiesPanel extends StatefulWidget {
 
 class _Map2FilterBuildingAmenitiesPanelState extends State<Map2FilterBuildingAmenitiesPanel> {
 
-  late List<String> _amenityIdsList;
-  late LinkedHashSet<String> _selectedAmenityIds;
+  late List<String> _displayAmenityNames;
+  late LinkedHashMap<String, Set<String>> _selectedAmenitiesNameToIds;
 
   @override
   void initState() {
+    _displayAmenityNames = List.from(widget.amenitiesNameToIds.keys);
+    _displayAmenityNames.sort();
 
-    _amenityIdsList = List.from(widget.amenities.keys);
-    _amenityIdsList.sort((String amenityId1, String amenityId2) {
-      String amenityName1 = widget.amenities[amenityId1] ?? '';
-      String amenityName2 = widget.amenities[amenityId2] ?? '';
-      return amenityName1.compareTo(amenityName2);
-    });
-
-    _selectedAmenityIds = LinkedHashSet<String>.from(widget.selectedAmenityIds);
+    _selectedAmenitiesNameToIds = LinkedHashMap.from(widget.selectedAmenitiesNameToIds);
 
     super.initState();
   }
@@ -73,7 +68,7 @@ class _Map2FilterBuildingAmenitiesPanelState extends State<Map2FilterBuildingAme
     Localization().getStringEx('panel.map2.filter.amenities.title', 'Amenities');
 
   List<Widget>? get _headerBarActions =>
-    (_selectedAmenityIds.isNotEmpty) ? <Widget>[
+    (_selectedAmenitiesNameToIds.isNotEmpty) ? <Widget>[
       HeaderBarActionTextButton(
         title:  Localization().getStringEx('panel.map2.filter.amenities.clear.title', 'Clear'),
         onTap: _onTapClear,
@@ -92,29 +87,28 @@ class _Map2FilterBuildingAmenitiesPanelState extends State<Map2FilterBuildingAme
 
   List<Widget> get _contentList {
     List<Widget> contentList = <Widget>[];
-    for (String amenityId in _amenityIdsList) {
+    for (String amenityName in _displayAmenityNames) {
       if (contentList.isNotEmpty) {
         contentList.add(_contentSplitter);
       }
-      contentList.add(_contentEntry(amenityId));
+      contentList.add(_contentEntry(amenityName));
     }
     return contentList;
   }
 
-  Widget _contentEntry(String anemityId) {
-    String title = _anemityTitle(anemityId);
-    bool isSelected = _selectedAmenityIds.contains(anemityId);
+  Widget _contentEntry(String anemityName) {
+    bool isSelected = _selectedAmenitiesNameToIds[anemityName]?.isNotEmpty == true;
     TextStyle? titleStyle = Styles().textStyles.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected");
     String? imageAsset = isSelected ? "check-box-filled" : "box-outline-gray";
     String? semanticsValue = isSelected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked");
 
     return Semantics(button: true, inMutuallyExclusiveGroup: false, value: semanticsValue,  child:
-      InkWell(onTap: () => _onTapAmenity(anemityId), child:
+      InkWell(onTap: () => _onTapAmenity(anemityName), child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
           Row(children: <Widget>[
             Expanded(child:
               Padding(padding: const EdgeInsets.only(right: 8), child:
-                Text(title, style: titleStyle,)
+                Text(anemityName, style: titleStyle,)
               )
             ),
 
@@ -124,35 +118,33 @@ class _Map2FilterBuildingAmenitiesPanelState extends State<Map2FilterBuildingAme
     ));
   }
 
-  String _anemityTitle(String anemityId) {
-    String? amenityName = widget.amenities[anemityId];
-    return (amenityName?.isNotEmpty == true) ? "$amenityName ($anemityId)" : "($anemityId)";
-  }
-
   Widget get _contentSplitter =>
     Container(color: _borderColor, margin: EdgeInsets.symmetric(horizontal: 16), height: 1,);
 
-  void _onTapAmenity(String anemityId) {
-    setState(() {
-      if (_selectedAmenityIds.contains(anemityId)) {
-        _selectedAmenityIds.remove(anemityId);
-      }
-      else {
-        _selectedAmenityIds.add(anemityId);
-      }
-    });
+  void _onTapAmenity(String anemityName) {
+    Set<String>? anemityIds = widget.amenitiesNameToIds[anemityName];
+    if (anemityIds != null) {
+      setState(() {
+        if (_selectedAmenitiesNameToIds[anemityName]?.isNotEmpty == true) {
+          _selectedAmenitiesNameToIds.remove(anemityName);
+        }
+        else {
+          _selectedAmenitiesNameToIds[anemityName] = anemityIds;
+        }
+      });
+    }
   }
 
 
   void _onTapClear() {
     Analytics().logSelect(target: 'Clear');
     setState(() {
-      _selectedAmenityIds.clear();
+      _selectedAmenitiesNameToIds.clear();
     });
   }
 
   void _onHeaderBack() {
     Analytics().logSelect(target: 'Back');
-    Navigator.of(context).pop(_selectedAmenityIds);
+    Navigator.of(context).pop(_selectedAmenitiesNameToIds);
   }
 }

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Maps2: Accessibility improvements heading focused when tab gets open [#5051](https://github.com/rokwire/illinois-app/issues/5051).
 - Maps2: Pop up message accessibility improvements[#5140](https://github.com/rokwire/illinois-app/issues/5140).
 - GBV: One extra word in two text fields per design team request.
+### Fixed
+- Maps2: Merge amenities with the same name [#5466](https://github.com/rokwire/illinois-app/issues/5466).
 
 ## [7.3.15] - 2025-10-20
 ### Added
