@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.3.16] - 2025-10-21
 ### Changed
 - Maps2: Accessibility improvements heading focused when tab gets open [#5051](https://github.com/rokwire/illinois-app/issues/5051).
 - Maps2: Pop up message accessibility improvements [#5140](https://github.com/rokwire/illinois-app/issues/5140).
