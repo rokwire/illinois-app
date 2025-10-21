@@ -1,5 +1,5 @@
 
-import 'dart:io';
+import 'package:universal_io/io.dart';
 import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
