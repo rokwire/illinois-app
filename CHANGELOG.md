@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Maps2: Pop up message accessibility improvements[#5140](https://github.com/rokwire/illinois-app/issues/5140) .
+- Maps2: Pop up message accessibility improvements[#5140](https://github.com/rokwire/illinois-app/issues/5140).
+- GBV: One extra word in two text fields per design team request.
 
 ## [7.3.15] - 2025-10-20
 ### Added
