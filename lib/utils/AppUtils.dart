@@ -208,10 +208,11 @@ class AppSemantics {
           sendSemanticsEvent(
             TapSemanticEvent());
 
-    static void triggerAccessibilityFocus(GlobalKey? groupKey) =>
+    static void triggerAccessibilityFocus(GlobalKey? groupKey) => groupKey?.currentContext?.mounted == true ?
       groupKey?.currentContext?.findRenderObject()?.
         sendSemanticsEvent(
-          FocusSemanticEvent());
+          FocusSemanticEvent()) :
+      null;
 
     static SemanticsNode? extractSemanticsNote(GlobalKey? groupKey) =>
         groupKey?.currentContext?.findRenderObject()?.debugSemantics;

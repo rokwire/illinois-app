@@ -82,6 +82,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
       ClipRRect(borderRadius: _traySheetBorderRadius, child:
         CustomScrollView(controller: widget.scrollController, slivers: [
           SliverAppBar(
+            primary: false,
             pinned: true,
             automaticallyImplyLeading: false,
             toolbarHeight: _traySheetDragHandleHeight + _traySheetPadding.height,

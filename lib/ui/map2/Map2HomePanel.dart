@@ -63,6 +63,7 @@ import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 import '../widgets/HeaderBar.dart';
 
@@ -119,6 +120,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 {
 
   final GlobalKey _headerBarKey = GlobalKey();
+  final GlobalKey _headerBarTitleKey = GlobalKey();
   final GlobalKey _scaffoldKey = GlobalKey();
   final GlobalKey _contentHeadingBarKey = GlobalKey();
   final GlobalKey _contentTypesBarKey = GlobalKey();
@@ -179,6 +181,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       Map2ExplorePOICard.notifyPOIUpdated,
       Map2.notifySelect,
       FlexUI.notifyChanged,
+      uiuc.TabBar.notifySelectionChanged,
     ]);
 
     _availableContentTypes = Map2ContentTypeImpl.availableTypes;
@@ -191,7 +194,9 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     _initSelectNotificationFilters(widget._initialSelectParam);
     _initMapStyles();
     _initExplores();
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _accessibilityFocusHeading();
+    });
     super.initState();
   }
 
@@ -250,6 +255,11 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       _updateAvailableContentTypes();
       updateLocationServicesStatus();
     }
+    else if (name == uiuc.TabBar.notifySelectionChanged){
+      int index = JsonUtils.intValue(param) ?? 0;
+      if(index == 1)  //Index to code ? or pass directly code
+        _accessibilityFocusHeading();
+    }
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
@@ -306,7 +316,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
       Positioned.fill(child:
         Column(children: [
-          RootHeaderBar(key: _headerBarKey, title: Localization().getStringEx("panel.map2.header.title", "Map2")),
+          RootHeaderBar(key: _headerBarKey, titleKey: _headerBarTitleKey, title: Localization().getStringEx("panel.map2.header.title", "Map2")),
           Visibility(visible: (_selectedContentType != null), child:
             _contentHeadingBar,
           ),
@@ -1477,15 +1487,15 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   void _onAmenities() {
     Analytics().logSelect(target: 'Amenities');
     List<Building>? buildings = JsonUtils.listCastValue<Building>(_explores);
-    Map<String, String> buildingsAmenities = buildings?.featureNames ?? <String, String>{};
-    Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
-      amenities: buildingsAmenities,
-      selectedAmenityIds: LinkedHashSet<String>.from(_campusBuildingsFilterIfExists?.amenities.keys ?? <String>[]),
+    Map<String, Set<String>> amenitiesNameToIds = buildings?.amenitiesNameToIds ?? <String, Set<String>>{};
+    Navigator.push<LinkedHashMap<String, Set<String>>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
+      amenitiesNameToIds: amenitiesNameToIds,
+      selectedAmenitiesNameToIds: _campusBuildingsFilterIfExists?.amenitiesNameToIds ?? LinkedHashMap<String, Set<String>>(),
     ),
-    )).then(((LinkedHashSet<String>? amenityIds) {
-      if (amenityIds != null) {
+    )).then(((LinkedHashMap<String, Set<String>>? amenitiesNameToIds) {
+      if (amenitiesNameToIds != null) {
         setStateIfMounted(() {
-          _campusBuildingsFilter?.amenities = amenityIds.selectedFromBuildingAmenities(buildingsAmenities);
+          _campusBuildingsFilter?.amenitiesNameToIds = amenitiesNameToIds;
         });
         _onFiltersChanged();
         Future.delayed(Duration(milliseconds: 200 + (Platform.isIOS ? 1000 : 0)), () =>
@@ -2090,7 +2100,13 @@ extension _Map2Accessibility on _Map2HomePanelState{
 
   String get _filterButtonHint =>  ". Results in filtering  ${_displayCount ?? 0} from ${_totalCount ?? 0} Buildings";
 
-  String get _amenitiesSemanticsValue =>  LinkedHashSet<String>.from(_campusBuildingsFilterIfExists?.amenities.keys ?? <String>[]).toString();
+  String get _amenitiesSemanticsValue => _campusBuildingsFilterIfExists?.amenitiesNameToIds.keys.toString() ?? '';
+
+  void _accessibilityFocusHeading() {
+    AppSemantics.triggerAccessibilityFocus(_headerBarTitleKey); //When already on this tab
+    WidgetsBinding.instance.addPostFrameCallback((_) => //When coming from other tab
+      AppSemantics.triggerAccessibilityFocus(_headerBarTitleKey));
+  }
 }
 
 // Map2 Accessibility Workaround
@@ -2103,13 +2119,13 @@ extension _Map2AccessibilityWorkaround on _Map2HomePanelState{  //Additional fun
       AppSemantics.isAccessibilityEnabled(context) == true;
 
   Widget _accessibilityWorkaroundWrapMap({Widget? child}) => //child;
-  VisibilityDetector(key: const Key('map2_location_panel_detector'),
-      onVisibilityChanged: _onMapVisibilityChanged, child:
-      Padding(padding: _resizeWorkaroundEnabled ? _accessibilityWorkaroundMapPadding : EdgeInsets.zero, child:
-      (_mapDisabled == true ? //Get disabled only if accessibility workaround is required
-      Container(child: Center(child: Text("Map is disabled"))) : //Workaround to make DropDownMenuItems clickable. They go over MapView and do not get tap actions
-      child))
-  );//Workaround to make sheet and heading tappable. We resize the map so they don't go over the map
+    VisibilityDetector(key: const Key('map2_location_panel_detector'),
+        onVisibilityChanged: _onMapVisibilityChanged, child:
+        Padding(padding: _resizeWorkaroundEnabled ? _accessibilityWorkaroundMapPadding : EdgeInsets.zero, child:
+         (_mapDisabled == true ? //Get disabled only if accessibility workaround is required
+            Container(child: Center(child: Text("Map is disabled"))) : //Workaround to make DropDownMenuItems clickable. They go over MapView and do not get tap actions
+              child))
+    );//Workaround to make sheet and heading tappable. We resize the map so they don't go over the map
 
   EdgeInsets get _accessibilityWorkaroundMapPadding {//Workaround for the Maps Accessibility. Even when Map is at the bottom layer of the stack it takes the Tap gestures.
     if(_needAccessibilityWorkaround == false)

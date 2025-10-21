@@ -2910,6 +2910,11 @@
 	"panel.group_detail.attendance.member.attended.msg.format": "UIN'%s'的学生已参加\"%s\"",
 	"panel.group_detail.date.updated.managed.membership.label": "Synced:",
 	"panel.group_detail.date.updated.membership.label": "Updated:",
+	"panel.group_detail.membership.status.label.all": "All:",
+	"panel.group_detail.membership.status.label.admins": "Admins:",
+	"panel.group_detail.membership.status.label.members": "Members:",
+	"panel.group_detail.membership.status.label.pending": "Pending:",
+	"panel.group_detail.membership.status.label.rejected": "Denied:",
 
 	"panel.group_member_notifications.header.title": "群组通知",
 	"panel.group_member_notifications.save.button": "储存",
@@ -3621,14 +3626,14 @@
 	"panel.sexual_misconduct.options.we_care": "We Care at Illinois website",
 	"panel.sexual_misconduct.options.resource_directory": "Resource Directory",
 	"panel.sexual_misconduct.quick_exit.privacy": "Privacy: ",
-	"panel.sexual_misconduct.quick_exit.app_activity": "your app activity is not shared with others. Use the quick exit icon to return Home.",
+	"panel.sexual_misconduct.quick_exit.app_activity": "your personal app activity is not shared with others. Use the quick exit icon to return Home.",
 	"panel.sexual_misconduct.resource_directory.view_additional": "View additional resources on the ",
 	"panel.sexual_misconduct.resource_directory.we_care": "Illinois We Care website.",
 	"panel.sexual_misconduct.resource_list.view_confidential": "View additional confidential resources on the ",
 	"panel.sexual_misconduct.resource_list.confidential_we_care": "Illinois We Care website.",
 
 	"widget.sexual_misconduct.quick_exit.privacy": "Privacy: ",
-	"widget.sexual_misconduct.quick_exit.app_activity": "your app activity is not shared with others.",
+	"widget.sexual_misconduct.quick_exit.app_activity": "your personal app activity is not shared with others.",
 	"widget.sexual_misconduct.quick_exit.dialog.description": "Use the quick exit icon at any time to be routed to the Illinois app home screen.",
 
 	"panel.home_canvas_course.header.title": "課程",

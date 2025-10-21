@@ -240,12 +240,13 @@ enum RootHeaderBarLeading { Home, Back }
 
 class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
 
+  final Key? titleKey;
   final String? title;
   final RootHeaderBarLeading leading;
   final void Function()? onSettings;
   final void Function()? onTapTitle;
 
-  RootHeaderBar({Key? key, this.title, this.leading = RootHeaderBarLeading.Home, this.onSettings, this.onTapTitle}) : super(key: key);
+  RootHeaderBar({Key? key, this.titleKey, this.title, this.leading = RootHeaderBarLeading.Home, this.onSettings, this.onTapTitle}) : super(key: key);
 
   @override
   State<RootHeaderBar> createState() => _RootHeaderBarState();
@@ -350,7 +351,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> with NotificationsListene
   }
 
   Widget _buildHeaderTitleText() {
-    return Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),);
+    return Text(widget.title ?? '', key: widget.titleKey, style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),);
   }
 
   Widget _buildHeaderRadioButton() {

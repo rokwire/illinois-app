@@ -192,10 +192,10 @@ class Map2Filter {
 }
 
 class Map2CampusBuildingsFilter extends Map2Filter {
-  LinkedHashMap<String, String> amenities;
+  LinkedHashMap<String, Set<String>> amenitiesNameToIds;
 
   Map2CampusBuildingsFilter._({
-    required this.amenities,
+    required this.amenitiesNameToIds,
 
     String searchText = '',
     bool starred = false,
@@ -209,25 +209,25 @@ class Map2CampusBuildingsFilter extends Map2Filter {
   );
 
   factory Map2CampusBuildingsFilter.defaultFilter() => Map2CampusBuildingsFilter._(
-    amenities: LinkedHashMap<String, String>(),
+    amenitiesNameToIds: LinkedHashMap<String, Set<String>>(),
   );
 
   factory Map2CampusBuildingsFilter.emptyFilter() => Map2CampusBuildingsFilter._(
-    amenities: LinkedHashMap<String, String>(),
+    amenitiesNameToIds: LinkedHashMap<String, Set<String>>(),
   );
 
   Map2CampusBuildingsFilter._fromJson(Map<String, dynamic> json) :
-    amenities = LinkedHashMapUtils.from<String, String>(JsonUtils.mapCastValue<String, String>(json['amenities']))?? LinkedHashMap<String, String>(),
+    amenitiesNameToIds = JsonUtils.mapValue(json['amenities'])?.toAmenityNameToIds() ?? LinkedHashMap<String, Set<String>>(),
     super._fromJson(json);
 
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'amenities': amenities,
+    'amenities': amenitiesNameToIds.toJson(),
     ...super.toJson(),
   };
 
   @override
-  bool get hasFilter => amenities.isNotEmpty || super.hasFilter;
+  bool get hasFilter => amenitiesNameToIds.isNotEmpty || super.hasFilter;
 
   @override
   bool get _needsFilter => hasFilter;
@@ -240,7 +240,7 @@ class Map2CampusBuildingsFilter extends Map2Filter {
       if ((explore is Building) &&
           ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchTextLowerCase(searchLowerCase))) &&
           ((starred != true) || (Auth2().prefs?.isFavorite(explore as Favorite) == true)) &&
-          ((amenities.isNotEmpty != true) || (explore.matchAmenities(amenities)))
+          ((amenitiesNameToIds.isNotEmpty != true) || (explore.matchAmenityIds(amenitiesNameToIds.values)))
         ) {
         filtered.add(explore);
       }
@@ -255,9 +255,9 @@ class Map2CampusBuildingsFilter extends Map2Filter {
       String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
       descriptionMap[searchKey] = <String>[searchText];
     }
-    if (amenities.isNotEmpty) {
+    if (amenitiesNameToIds.isNotEmpty) {
       String amenitiesKey = Localization().getStringEx('panel.map2.filter.amenities.text', 'Amenities');
-      descriptionMap[amenitiesKey] = List<String>.from(amenities.values);
+      descriptionMap[amenitiesKey] = List<String>.from(amenitiesNameToIds.keys);
     }
     if (starred) {
       String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');

@@ -185,7 +185,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
               TextSpan(children: [
                 TextSpan(text: Localization().getStringEx('panel.sexual_misconduct.quick_exit.privacy', 'Privacy: '),
                   style: Styles().textStyles.getTextStyle('widget.item.small.fat.highlight')),
-                TextSpan(text: Localization().getStringEx('panel.sexual_misconduct.quick_exit.app_activity', 'your app activity is not shared with others. Use the quick exit icon to return Home.'),
+                TextSpan(text: Localization().getStringEx('panel.sexual_misconduct.quick_exit.app_activity', 'your personal app activity is not shared with others. Use the quick exit icon to return Home.'),
                 style: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight')),
               ])
             )
