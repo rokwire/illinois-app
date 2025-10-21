@@ -231,6 +231,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     return _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
   }
 
+  bool get _canViewPendingMembers => _isAdmin;
+
   bool get _hasOptions =>
       _canReportAbuse || _canNotificationSettings || _canShareSettings || _canAboutSettings ||
           _canLeaveGroup || _canDeleteGroup || _canEditGroup;
@@ -735,8 +737,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     }
 
     if (StringUtils.isNotEmpty(pendingMembers)) {
-      contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-        Text(pendingMembers,  style: Styles().textStyles.getTextStyle('widget.title.small') ,)
+      contentList.add(GestureDetector(onTap: _canViewPendingMembers ? _onTapPendingMembers : null, child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+          Text(pendingMembers,  style: Styles().textStyles.getTextStyle('widget.title.small.underline'))
+        )
       ));
     }
 
@@ -1437,9 +1441,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     );
   }
 
-  void _onTapMembers(){
+  void _onTapMembers() {
     Analytics().logSelect(target: "Group Members", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group, filter: GroupMembersFilter.all)));
+  }
+
+  void _onTapPendingMembers() {
+    Analytics().logSelect(target: "Group Pending Members", attributes: _group?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group, filter: GroupMembersFilter.pending)));
   }
 
   void _onTapSettings(){

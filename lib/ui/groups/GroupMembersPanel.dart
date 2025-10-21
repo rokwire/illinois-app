@@ -44,10 +44,11 @@ enum GroupMembersFilter { all, admin, member, pending, rejected }
 
 class GroupMembersPanel extends StatefulWidget with AnalyticsInfo {
   final Group? group;
+  final GroupMembersFilter? filter;
 
   String? get groupId => group?.id;
 
-  GroupMembersPanel({required this.group});
+  GroupMembersPanel({required this.group, this.filter});
 
   @override
   _GroupMembersPanelState createState() => _GroupMembersPanelState();
@@ -97,15 +98,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
 
     _memberFilters = _buildMemberFilters();
 
-    // First try to load pending members if the user is admin.
-    if (widget.group?.currentUserIsAdmin == true) {
-      _selectedMemberFilter = GroupMembersFilter.pending;
-      _switchToAllIfNoPendingMembers = true;
-    }
-    else {
-      _selectedMemberFilter = _ensureMemberFilter(GroupMembersFilter.all, filters: _memberFilters) ??
+    _selectedMemberFilter = _ensureMemberFilter((widget.filter ?? GroupMembersFilter.all), filters: _memberFilters) ??
           _defaultMemberFilter(filters: _memberFilters);
-    }
     _reloadGroupContent();
   }
 
