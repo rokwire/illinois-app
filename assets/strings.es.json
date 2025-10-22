@@ -1309,7 +1309,7 @@
     "panel.events2.home.attributes.events.label.title": "Eventos: ",
     "panel.events2.home.attributes.launch.header.title": "Eventos",
     "panel.events2.home.attributes.launch.header.description": "Customize your event feed by setting the filters below.",
-    "panel.events2.home.attributes.launch.apply.title": "Crear Mi Canal de Eventos",
+    "panel.events2.home.attributes.launch.apply.title": "Create My Event Feed",
     "panel.events2.home.attributes.launch.continue.title": "Configurar Más Tarde",
     "panel.events2.home.attributes.footer.text": "How are events published in the {{app_title}} app?",
     "panel.events2.home.attributes.event_type.title": "Tipo de Evento",

@@ -1307,7 +1307,7 @@
 	"panel.events2.home.attributes.events.label.title": "活动： ",
 	"panel.events2.home.attributes.launch.header.title": "活动",
 	"panel.events2.home.attributes.launch.header.description": "Customize your event feed by setting the filters below.",
-	"panel.events2.home.attributes.launch.apply.title": "创建我的活动列表",
+	"panel.events2.home.attributes.launch.apply.title": "Create My Event Feed",
 	"panel.events2.home.attributes.launch.continue.title": "稍后设定",
 	"panel.events2.home.attributes.footer.text": "How are events published in the {{app_title}} app?",
 	"panel.events2.home.attributes.event_type.title": "活动种类",
