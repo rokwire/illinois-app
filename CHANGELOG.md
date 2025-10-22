@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Assistant: struct output type name from "dining_schedule" to "dining_hall_details" [#5477](https://github.com/rokwire/illinois-app/issues/5477).
+### Fixed
+- Maps2: Fixed loss of explores while building their markers [#5472](https://github.com/rokwire/illinois-app/issues/5472).
 
 ## [7.3.16] - 2025-10-21
 ### Changed
