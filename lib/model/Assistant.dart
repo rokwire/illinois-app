@@ -416,14 +416,14 @@ extension AssistantProviderImpl on AssistantProvider {
 ///
 /// AssistantStructOutputItemType
 ///
-enum AssistantStructOutputItemType { event, dining_schedule, menu_items, nutrition_info, campus_building }
+enum AssistantStructOutputItemType { event, dining_hall_details, menu_items, nutrition_info, campus_building }
 
 AssistantStructOutputItemType? assistantStructOutputItemTypeFromString(String? value) {
   switch (value) {
     case 'event':
       return AssistantStructOutputItemType.event;
-    case 'dining_schedule':
-      return AssistantStructOutputItemType.dining_schedule;
+    case 'dining_hall_details':
+      return AssistantStructOutputItemType.dining_hall_details;
     case 'menu_items':
       return AssistantStructOutputItemType.menu_items;
     case 'nutrition_info':

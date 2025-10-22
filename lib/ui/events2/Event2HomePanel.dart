@@ -224,7 +224,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
   static String get _onboardingApplyTitle => _onboardingApplyTitleEx();
 
   static String _onboardingApplyTitleEx({String? language}) =>
-    Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Create My Events Feed', language: language);
+    Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Create My Event Feed', language: language);
 
   static void _onTapOnboardingApply(void Function() applyHandler) {
     Analytics().logSelect(target: _onboardingApplyTitleEx(language: 'en'));
