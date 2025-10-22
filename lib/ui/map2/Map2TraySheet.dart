@@ -23,10 +23,13 @@ import 'package:illinois/ui/map2/Map2ExploreCard.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/map2/Map2PlaceCard.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/places.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -47,7 +50,7 @@ class Map2TraySheet extends StatefulWidget {
   State<StatefulWidget> createState() => _Map2TraySheetState();
 }
 
-class _Map2TraySheetState extends State<Map2TraySheet> {
+class _Map2TraySheetState extends State<Map2TraySheet> with NotificationsListener {
 
   final GlobalKey _traySheetKey = GlobalKey();
 
@@ -60,12 +63,34 @@ class _Map2TraySheetState extends State<Map2TraySheet> {
   Set<String> _expandedBusStops = <String>{};
 
   @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+    ]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
   void didUpdateWidget(Map2TraySheet oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (mounted && (!DeepCollectionEquality().equals(widget.explores, oldWidget.explores) || (widget.totalCount != oldWidget.totalCount)  )) {
       setState(() {
         _sliverListKey = UniqueKey();
       });
+    }
+  }
+
+
+  @override // NotificationsListener
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      setStateIfMounted();
     }
   }
 
