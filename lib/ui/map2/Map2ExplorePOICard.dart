@@ -28,6 +28,7 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
   late ExplorePOI _explorePOI;
   late bool _isFavorite;
 
+  bool _canEditTitle = false;
   bool _isEditingTitle = false;
   bool _canSubmitTitle = false;
   final TextEditingController _titleTextController = TextEditingController();
@@ -100,14 +101,16 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
         Expanded(child:
           _isEditingTitle ? _titleTextFieldWidget : _titleTextWidget
         ),
-        ... _titleActionButtons,
+        if (_canEditTitle)
+          ..._titleActionButtons,
         _favoriteButton,
       ],),
     );
 
-  Widget get _titleTextWidget => InkWell(onTap: _onEditTitle, child:
-    Text(_titleText, overflow: TextOverflow.ellipsis, style: _titleTextStyle),
-  );
+  Widget get _titleTextWidget => _canEditTitle ? InkWell(onTap: _onEditTitle, child:
+    _titleTextWidgetImpl,
+  ) : _titleTextWidgetImpl;
+  Widget get _titleTextWidgetImpl => Text(_titleText, overflow: TextOverflow.ellipsis, style: _titleTextStyle);
   TextStyle? get _titleTextStyle => Styles().textStyles.getTextStyle('widget.title.medium.fat');
   String get _titleText => _explorePOI.exploreTitle ?? '';
 
