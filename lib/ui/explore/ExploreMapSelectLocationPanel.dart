@@ -685,7 +685,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   // Map Content
 
   Future<void> _buildMapContentData(List<Explore>? explores, {Explore? pinnedExplore, bool updateCamera = false, bool showProgress = false, double? zoom}) async {
-    LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
+    LatLngBounds? exploresBounds = explores?.boundsRect;
 
     CameraUpdate? targetCameraUpdate;
     if (updateCamera) {
@@ -828,18 +828,18 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   }
 
   Future<Marker?> _createExploreGroupMarker(List<Explore>? exploreGroup, { required ImageConfiguration imageConfiguration }) async {
-    LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
+    LatLng? markerPosition = exploreGroup?.centerPoint;
     if ((exploreGroup != null) && (markerPosition != null)) {
-      Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
-      Color? markerColor = sameExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
+      Explore? representativeExplore = exploreGroup.groupRepresentative;
+      Color? markerColor = representativeExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
       String markerKey = "map-marker-group-${markerColor?.toARGB32() ?? 0}-${exploreGroup.length}";
       BitmapDescriptor markerIcon = _markerIconCache[markerKey] ??
         (_markerIconCache[markerKey] = await _groupMarkerIcon(
           context: context,
           imageSize: _mapGroupMarkerSize,
           backColor: markerColor,
-          borderColor: sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor,
-          textColor: sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor,
+          borderColor: representativeExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor,
+          textColor: representativeExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor,
           count: exploreGroup.length,
         ));
       Offset markerAnchor = Offset(0.5, 0.5);
@@ -851,7 +851,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
         consumeTapEvents: true,
         onTap: () => _onTapMarker(exploreGroup),
         infoWindow: InfoWindow(
-          title:  sameExplore?.getMapGroupMarkerTitle(exploreGroup.length),
+          title:  representativeExplore?.getMapGroupMarkerTitle(exploreGroup.length),
           anchor: markerAnchor)
       );
     }
@@ -859,7 +859,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   }
   
   static Future<BitmapDescriptor> _groupMarkerIcon({required BuildContext context, required double imageSize, Color? backColor, Color? borderColor, Color? textColor, int? count}) async {
-    Uint8List? markerImageBytes = await ImageUtils.mapGroupMarkerImage(
+    Uint8List? markerImageBytes = await ImageUtils.mapMarkerImage(
       imageSize: imageSize * MediaQuery.of(context).devicePixelRatio,
       backColor: backColor,
       strokeColor: borderColor,

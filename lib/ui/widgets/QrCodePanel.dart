@@ -5,14 +5,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/model/Analytics.dart';
-import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/model/Building.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Gateway.dart';
+import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
+import 'package:illinois/ui/map2/Map2HomeExts.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
@@ -139,6 +141,16 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     }),
     saveFileName: 'SafeWalks ${DateTimeUtils.localDateTimeToString(DateTime.now())}',
     saveWatermarkText: Localization().getStringEx('model.safety.safewalks.title', 'SafeWalks'),
+    saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
+    description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
+  );
+
+  factory QrCodePanel.fromMap2DeepLinkParam({ Key? key, required Map2FilterDeepLinkParam param, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
+    key: key,
+    deepLinkUrl: Map2.selectUrl(param.toUriParams()),
+    saveFileName: 'Map2Filter - ${DateTimeUtils.localDateTimeToString(DateTime.now())}',
+    saveWatermarkText: "${param.contentType.displayTitle} { ${param.filter?.descriptionText() ?? ''} }",
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
     description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),

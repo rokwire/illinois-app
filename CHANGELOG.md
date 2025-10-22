@@ -4,8 +4,141 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-
 ## Unreleased
+
+## [7.3.17] - 2025-10-22
+### Changed
+- Assistant: struct output type name from "dining_schedule" to "dining_hall_details" [#5477](https://github.com/rokwire/illinois-app/issues/5477).
+### Fixed
+- Maps2: Fixed loss of explores while building their markers [#5472](https://github.com/rokwire/illinois-app/issues/5472).
+- Maps2: Fixed refresh of bus stop cards in tray when favorite gets changed [#5473](https://github.com/rokwire/illinois-app/issues/5473).
+- Fixed typo in initial filters panel for events [#5475](https://github.com/rokwire/illinois-app/issues/5475).
+### Removed
+- Maps2: Removed ability for editing saved location titles [#5474](https://github.com/rokwire/illinois-app/issues/5474).
+- Removed "Members attended" label for a group [#5471](https://github.com/rokwire/illinois-app/issues/5471).
+
+## [7.3.16] - 2025-10-21
+### Changed
+- Maps2: Accessibility improvements heading focused when tab gets open [#5051](https://github.com/rokwire/illinois-app/issues/5051).
+- Maps2: Pop up message accessibility improvements [#5140](https://github.com/rokwire/illinois-app/issues/5140).
+- GBV: One extra word in two text fields per design team request.
+- Groups Member Count UI Updates [#5424](https://github.com/rokwire/illinois-app/issues/5424).
+### Fixed
+- Maps2: Merge amenities with the same name [#5466](https://github.com/rokwire/illinois-app/issues/5466).
+
+## [7.3.15] - 2025-10-20
+### Added
+- GBV: Added ordering to I'm Not Sure Yet - Support a Friend results [#5434](https://github.com/rokwire/illinois-app/issues/5434).
+- Added url params for Google analytics metrics in Daily Illini feed links [#5441](https://github.com/rokwire/illinois-app/issues/5441).
+### Fixed
+- Fixed "Clear All" header bar button text style in Visited Recently panel [#5443](https://github.com/rokwire/illinois-app/issues/5443).
+### Changed
+- Elevate deeplinks in Illinois Assistant Results [#5459](https://github.com/rokwire/illinois-app/issues/5459).
+- WebPanel: Added back button to the default header bar when panel is created from a survey [#5458](https://github.com/rokwire/illinois-app/issues/5458).
+- Maps2: Accessibility improvements [#5051](https://github.com/rokwire/illinois-app/issues/5051) .
+
+## [7.3.14] - 2025-10-17
+### Changed
+- Maps2: use improved algorithm for grouping nearby markers [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Updated content of Settings / Accessibility [#5449](https://github.com/rokwire/illinois-app/issues/5449).
+
+## [7.3.13] - 2025-10-16
+### Added
+- Add file attachments to conversation messages [#5378](https://github.com/rokwire/illinois-app/issues/5378).
+- Maps2: Added search building capability in select location panel [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+### Changed
+- Maps2: Improved camera positioning to ensure visibility of set of explores [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: Renamed to just Map "officially" [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: Accessibility improvements [#5051](https://github.com/rokwire/illinois-app/issues/5051) .
+
+## [7.3.12] - 2025-10-15
+### Changed
+- Maps2: Updated Amenities selection support [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: Updated Sort dropdown content [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+### Added
+- Maps2: added analytics events [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: added select location panel [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+### Fixed
+- Handle tap action over the image in GroupCard for "All" and "Pending" groups.
+- Maps2: make sure not to show description bar for sorting option only [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: Fixed descripton bar availability [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+
+## [7.3.11] - 2025-10-13
+### Added
+- Maps2: added Deep Links support [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+### Changed
+- Maps2: hide Laundry Rooms [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: match the tray heading's background color to the tray content's [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: trim the search term [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: updated tray content collection logic [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: updated sort order indicator [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+### Fixed
+- Check whether page controller is attached before attempting to jump on content update in Home/Favorites page widgets.
+- Maps2: fixed POI card update title processing when POI is not a favorite [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Maps2: fixed Student Courses tray content [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Fix alt text input field semantics [#4836](https://github.com/rokwire/illinois-app/issues/4836).
+
+## [7.3.10] - 2025-10-09
+### Fixed
+- Map2: Fixes and cleanup [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+### Added
+- Add alt text field for image uploads [#4836](https://github.com/rokwire/illinois-app/issues/4836).
+
+## [7.3.9] - 2025-10-08
+### Fixed
+- Assistant: fixed color and padding for "Copy" context button in iOS [#5391](https://github.com/rokwire/illinois-app/issues/5391).
+- Map2: Fixes and cleanup [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+### Added
+- Map2: Added Storied Sites [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Map2: Added content messages [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+- Assistant: Show campus buildings as UI fragments [#5430](https://github.com/rokwire/illinois-app/issues/5430).
+### Changed
+- Do not pop to home panel when switching tabs to Assistant or Wallet [#5368](https://github.com/rokwire/illinois-app/issues/5368).
+
+## [7.3.8] - 2025-10-06
+### Added
+- Laundry deep link [#5420](https://github.com/rokwire/illinois-app/issues/5420).
+- Assistant: Show dining title in each menu item [#5379](https://github.com/rokwire/illinois-app/issues/5379).
+- Published second draft of Map2 [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+### Changed
+- Assistant: show the next item in the horizontal scroll [#5422](https://github.com/rokwire/illinois-app/issues/5422).
+
+## [7.3.7] - 2025-10-02
+### Changed
+- Support 16KB page sizes for Android [#5362](https://github.com/rokwire/illinois-app/issues/5362).
+### Removed
+- Mobile Access and HID / Origo sdk [#5362](https://github.com/rokwire/illinois-app/issues/5362).
+
+## [7.3.6] - 2025-10-01
+### Added
+- Alert the user when the system logs him/her out [#5411](https://github.com/rokwire/illinois-app/issues/5411).
+
+## [7.3.5] - 2025-09-29
+### Added
+- Published first draft of Map2 [#5344](https://github.com/rokwire/illinois-app/issues/5344).
+
+## [7.3.4] - 2025-09-05
+### Fixed
+- Accessibility enhancements in HomeCustomizeFavoritesPanel [#1971](https://github.com/rokwire/illinois-app/issues/1971).
+### Added
+- Add assistant memory [#5365](https://github.com/rokwire/illinois-app/issues/5365)
+
+## [7.3.3] - 2025-08-21
+### Added
+- Show list items in Assistant response [#5334](https://github.com/rokwire/illinois-app/issues/5334).
+- Introduce AccessibleViewPage used to reduce resize animation of the ExpandableViewPage widget. Depends on Storage.accessibilityReduceMotionKey setting [#5259](https://github.com/rokwire/illinois-app/issues/5259).
+
+## [7.3.2] - 2025-08-13
+### Fixed
+- Android: Fix various compilation warnings [#5339](https://github.com/rokwire/illinois-app/issues/5339).
+
+## [7.3.1] - 2025-08-08
+
+## [7.3.0] - 2025-08-07
+
+## [7.2.26] - 2025-09-25
+### Fixed
+- Fixed bottom sheet overlap in GBVPathwaysPanel [#5402](https://github.com/rokwire/illinois-app/issues/5402).
 
 ## [7.2.25] - 2025-09-23
 ### Added

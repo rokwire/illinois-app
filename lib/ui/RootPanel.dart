@@ -25,9 +25,11 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
+import 'package:illinois/service/Auth2.dart' as uiuc;
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Gateway.dart';
+import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/service/Wellness.dart';
@@ -44,6 +46,8 @@ import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
+import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
+import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
@@ -59,6 +63,7 @@ import 'package:illinois/ui/widgets/PopScopeFix.dart';
 import 'package:rokwire_plugin/model/actions.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -94,7 +99,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:quick_actions/quick_actions.dart';
 
-enum RootTab { Home, Favorites, Browse, Maps, Academics, Wellness, Wallet, Assistant }
+enum RootTab { Home, Favorites, Browse, Map0, Map, Academics, Wellness, Wallet, Assistant }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -153,6 +158,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyMapMtdStopsNotification,
       FirebaseMessaging.notifyMapMyLocationsNotification,
       FirebaseMessaging.notifyMapMentalHealthNotification,
+      FirebaseMessaging.notifyMapLaundryNotification,
       FirebaseMessaging.notifyAcademicsNotification,
       FirebaseMessaging.notifyAcademicsAppointmentsNotification,
       FirebaseMessaging.notifyAcademicsCanvasCoursesNotification,
@@ -174,6 +180,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyWellnessResourcesNotification,
       FirebaseMessaging.notifyWellnessRingsNotification,
       FirebaseMessaging.notifyWellnessTodoListNotification,
+      FirebaseMessaging.notifyLaundryNotification,
       FirebaseMessaging.notifyWalletNotification,
       FirebaseMessaging.notifyWalletIlliniIdNotification,
       FirebaseMessaging.notifyWalletBusPassNotification,
@@ -225,11 +232,13 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FlexUI.notifyChanged,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
-      uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
       HomeFavoritesPanel.notifySelect,
       BrowsePanel.notifySelect,
-      ExploreMapPanel.notifySelect,
+      Map2.notifySelect,
+      Auth2.notifyLogout,
+
+      uiuc.TabBar.notifySelectionChanged,
     ]);
 
     _tabs = _getTabs();
@@ -333,34 +342,37 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       _onFirebaseTabNotification(RootTab.Browse);
     }
     else if (name == FirebaseMessaging.notifyMapNotification) {
-      _onFirebaseTabNotification(RootTab.Maps);
+      _onFirebaseTabNotification(RootTab.Map);
     }
     else if (name == FirebaseMessaging.notifyMapEventsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.Events2);
+      _onFirebaseMap2Notification(Map2ContentType.Events2);
     }
     else if (name == FirebaseMessaging.notifyMapDiningNotification) {
-      _onFirebaseMapNotification(ExploreMapType.Dining);
+      _onFirebaseMap2Notification(Map2ContentType.DiningLocations);
     }
     else if (name == FirebaseMessaging.notifyMapBuildingsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.Buildings);
+      _onFirebaseMap2Notification(Map2ContentType.CampusBuildings);
     }
     else if (name == FirebaseMessaging.notifyMapStudentCoursesNotification) {
-      _onFirebaseMapNotification(ExploreMapType.StudentCourse);
+      _onFirebaseMap2Notification(Map2ContentType.StudentCourses);
     }
     else if (name == FirebaseMessaging.notifyMapAppointmentsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.Appointments);
+      // Not supported in Maps2: _onFirebaseMap2Notification(Map2ContentType.Appointments);
     }
     else if (name == FirebaseMessaging.notifyMapMtdStopsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.MTDStops);
+      _onFirebaseMap2Notification(Map2ContentType.BusStops);
     }
     else if (name == FirebaseMessaging.notifyMapMyLocationsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.MyLocations);
+      _onFirebaseMap2Notification(Map2ContentType.MyLocations);
     }
     else if (name == FirebaseMessaging.notifyMapMentalHealthNotification) {
-      _onFirebaseMapNotification(ExploreMapType.MentalHealth);
+      _onFirebaseMap2Notification(Map2ContentType.Therapists);
+    }
+    else if (name == FirebaseMessaging.notifyMapLaundryNotification) {
+      _onFirebaseMap2Notification(Map2ContentType.LaundryRooms);
     }
     else if (name == FirebaseMessaging.notifyMapStoriedSitesNotification) {
-      _onFirebaseMapNotification(ExploreMapType.StoriedSites);
+      // Map2 TBD: _onFirebaseMap2Notification(Map2ContentType.StoriedSites);
     }
     else if (name == FirebaseMessaging.notifyAcademicsNotification) {
       _onFirebaseTabNotification(RootTab.Academics);
@@ -425,21 +437,23 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == FirebaseMessaging.notifyWellnessTodoListNotification) {
       _onFirebaseWellnessNotification(WellnessContentType.todo);
     }
-
+    else if (name == FirebaseMessaging.notifyLaundryNotification) {
+      _onFirebaseLaundryNotification();
+    }
     else if (name == FirebaseMessaging.notifyWalletNotification) {
       _onFirebaseTabNotification(RootTab.Wallet);
     }
     else if (name == FirebaseMessaging.notifyWalletIlliniIdNotification) {
-      _onFirebaseWaletNotification(WalletContentType.illiniId);
+      _onFirebaseWalletNotification(WalletContentType.illiniId);
     }
     else if (name == FirebaseMessaging.notifyWalletBusPassNotification) {
-      _onFirebaseWaletNotification(WalletContentType.busPass);
+      _onFirebaseWalletNotification(WalletContentType.busPass);
     }
     else if (name == FirebaseMessaging.notifyWalletMealPlanNotification) {
-      _onFirebaseWaletNotification(WalletContentType.mealPlan);
+      _onFirebaseWalletNotification(WalletContentType.mealPlan);
     }
     else if (name == FirebaseMessaging.notifyWalletAddIlliniCashNotification) {
-      _onFirebaseWaletNotification(WalletContentType.addIlliniCash);
+      _onFirebaseWalletNotification(WalletContentType.addIlliniCash);
     }
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
@@ -580,13 +594,16 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == BrowsePanel.notifySelect) {
       _onSelectTab(RootTab.Browse);
     }
-    else if (name == ExploreMapPanel.notifySelect) {
-      _onSelectMaps(param);
+    else if (name == Map2.notifySelect) {
+      _onSelectMaps2(param);
     }
+    else if (name == Auth2.notifyLogout) {
+      _alertLogout(JsonUtils.cast(param));
+    }
+
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
     }
-
   }
 
 
@@ -628,7 +645,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if ((0 <= tabIndex) && (tabIndex < _tabs.length) && (tabIndex != _currentTabIndex)) {
       _tabBarController!.animateTo(tabIndex);
 
-      if (getRootTabByIndex(_currentTabIndex) == RootTab.Maps) {
+      if (getRootTabByIndex(_currentTabIndex) == RootTab.Map) {
         Analytics().logMapHide();
       }
 
@@ -644,7 +661,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       Widget? tabPanel = _getTabPanelAtIndex(tabIndex);
       Analytics().logPageWidget(tabPanel);
 
-      if (getRootTabByIndex(_currentTabIndex) == RootTab.Maps) {
+      if (getRootTabByIndex(_currentTabIndex) == RootTab.Map) {
         Analytics().logMapShow();
       }
 
@@ -702,7 +719,10 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (rootTab == RootTab.Browse) {
       return BrowsePanel();
     }
-    else if (rootTab == RootTab.Maps) {
+    else if (rootTab == RootTab.Map) {
+      return Map2HomePanel();
+    }
+    else if (rootTab == RootTab.Map0) {
       return ExploreMapPanel();
     }
     else if (rootTab == RootTab.Academics) {
@@ -763,7 +783,11 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   void _onTabSelectionChanged(int tabIndex) {
     if (mounted) {
-      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      RootTab? tab = getRootTabByIndex(tabIndex);
+      // Do not pop to first when the tabs are bottom sheets
+      if ((tab != RootTab.Assistant) && (tab != RootTab.Wallet)) {
+        Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      }
       _selectTab(tabIndex);
     }
   }
@@ -914,11 +938,15 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   void _presentPollVote(String? pollId) {
-    Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubblePromptPanel(pollId: pollId)));
+    if (context.mounted) {
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubblePromptPanel(pollId: pollId)));
+    }
   }
 
   void _presentPollResult(String? pollId) {
-    Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubbleResultPanel(pollId: pollId)));
+    if (context.mounted) {
+      Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => PollBubbleResultPanel(pollId: pollId)));
+    }
   }
 
   // ActionBuilder
@@ -951,7 +979,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   void _onFirebaseForegroundMessage(Map<String, dynamic> content) {
     String? body = content["body"];
     void Function()? completion = content["onComplete"];
-    if (body != null) {
+    if ((body != null) && context.mounted) {
       FToast toast = FToast();
       AppToast.show(context,
         toast: toast,
@@ -977,11 +1005,13 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   void _onFirebasePopupMessage(Map<String, dynamic> content) {
-    PopupMessage.show(context: context,
-      title: Localization().getStringEx("app.title", "Illinois"),
-      message: JsonUtils.stringValue(content["display_text"]),
-      buttonTitle: JsonUtils.stringValue(content["positive_button_text"]) ?? Localization().getStringEx("dialog.ok.title", "OK")
-    );
+    if (context.mounted) {
+      PopupMessage.show(context: context,
+        title: Localization().getStringEx("app.title", "Illinois"),
+        message: JsonUtils.stringValue(content["display_text"]),
+        buttonTitle: JsonUtils.stringValue(content["positive_button_text"]) ?? Localization().getStringEx("dialog.ok.title", "OK")
+      );
+    }
   }
 
   Future<void> _onFirebaseEvents(Map<String, dynamic>? content) async {
@@ -992,14 +1022,14 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     LinkedHashSet<Event2TypeFilter>? typeFilters = types != null ? LinkedHashSetUtils.from<Event2TypeFilter>(Event2TypeFilterListImpl.listFromJson(types)) : null;
     Event2TimeFilter? timeFilter = time != null ? Event2TimeFilterImpl.fromJson(time) : null;
 
-    if (attributes != null) {
+    if ((attributes != null) && context.mounted) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2HomePanel(attributes: attributes, types: typeFilters, timeFilter: timeFilter,)));
     }
   }
 
   Future<void> _onFirebaseEventDetail(Map<String, dynamic>? content) async {
     String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
-    if (StringUtils.isNotEmpty(eventId)) {
+    if (StringUtils.isNotEmpty(eventId) && context.mounted) {
       //ExplorePanel.presentDetailPanel(context, eventId: eventId);
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId,)));
     }
@@ -1007,14 +1037,14 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   Future<void> _onFirebaseEventsQuery(Map<String, dynamic>? content) async {
     Event2FilterParam? eventFilterParam = (content != null) ? Event2FilterParam.fromUriParams(content.cast()) : null;
-    if (eventFilterParam != null) {
+    if ((eventFilterParam != null) && context.mounted) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2HomePanel.withFilter(eventFilterParam)));
     }
   }
 
   Future<void> _onFirebaseEventSelfCheckIn(Map<String, dynamic>? content) async {
     String? eventId = (content != null) ? (JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])) : null;
-    if (StringUtils.isNotEmpty(eventId)) {
+    if (StringUtils.isNotEmpty(eventId) && context.mounted) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId, onInitialized: (Event2DetailPanelState state) {
         if ((eventId != null) && eventId.isNotEmpty) {
           state.selfCheckIn(eventId, secret: JsonUtils.stringValue(content?['secret']));
@@ -1025,7 +1055,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   void _onFirebaseEventAttendeeSurveyInvitation(Map<String, dynamic>? content) {
     String? eventId = (content != null) ? JsonUtils.stringValue(content['entity_id']) : null;
-    if (StringUtils.isNotEmpty(eventId)) {
+    if (StringUtils.isNotEmpty(eventId) && context.mounted) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId)));
     }
   }
@@ -1033,7 +1063,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   Future<void> _onFirebaseGameDetail(Map<String, dynamic>? content) async {
     String? gameId = (content != null) ? JsonUtils.stringValue(content['game_id']) : null;
     String? sport = (content != null) ? JsonUtils.stringValue(content['sport']) : null;
-    if (StringUtils.isNotEmpty(gameId) && StringUtils.isNotEmpty(sport)) {
+    if (StringUtils.isNotEmpty(gameId) && StringUtils.isNotEmpty(sport) && context.mounted) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sport, gameId: gameId,)));
     }
   }
@@ -1072,10 +1102,12 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   void _presentGroupDetailPanel({String? groupId, String? groupPostId, String? commentId, String? eventId}) {
-    if (StringUtils.isNotEmpty(groupId)) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId, groupPostCommentId: commentId, groupEventId: eventId)));
-    } else {
-      AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
+    if (context.mounted) {
+      if (StringUtils.isNotEmpty(groupId)) {
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId, groupPostCommentId: commentId, groupEventId: eventId)));
+      } else {
+        AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
+      }
     }
   }
 
@@ -1090,21 +1122,23 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   void _presentSocialMessagePanel({String? conversationId, String? messageId, String? messageGlobalId}) {
-    if (StringUtils.isNotEmpty(conversationId)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(
-        conversationId: conversationId,
-        targetMessageId: messageId,
-        targetMessageGlobalId: messageGlobalId,
-      )));
-    } else {
-      AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
+    if (context.mounted) {
+      if (StringUtils.isNotEmpty(conversationId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(
+          conversationId: conversationId,
+          targetMessageId: messageId,
+          targetMessageGlobalId: messageGlobalId,
+        )));
+      } else {
+        AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
+      }
     }
   }
 
   void _onFirebaseAthleticsNewsNotification(param) {
     if (param is Map<String, dynamic>) {
       String? newsId = param["news_id"];
-      if (StringUtils.isNotEmpty(newsId)) {
+      if (StringUtils.isNotEmpty(newsId) && context.mounted) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(articleId: newsId)));
       }
     }
@@ -1113,7 +1147,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   void _onFirebaseAthleticsTeamNotification(param) {
     if (param is Map<String, dynamic>) {
       String? sportName = JsonUtils.stringValue(param["sport"]);
-      if (StringUtils.isNotEmpty(sportName)) {
+      if (StringUtils.isNotEmpty(sportName) && context.mounted) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(Sports().getSportByShortName(sportName))));
       }
     }
@@ -1121,7 +1155,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   void _onFirebaseAthleticsTeamRosterNotification(param) {
     if (param is Map<String, dynamic>) {
       String? sportName = JsonUtils.stringValue(param["sport"]);
-      if (StringUtils.isNotEmpty(sportName)) {
+      if (StringUtils.isNotEmpty(sportName) && context.mounted) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsRosterListPanel(Sports().getSportByShortName(sportName), null)));
       }
     }
@@ -1134,18 +1168,20 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     NotificationService().notify(HomePanel.notifySelect, homeType);
   }
 
-  void _onFirebaseMapNotification(ExploreMapType mapType) {
-    NotificationService().notify(ExploreMapPanel.notifySelect, mapType);
+  void _onFirebaseMap2Notification(Map2ContentType mapType) {
+    NotificationService().notify(Map2.notifySelect, mapType);
   }
 
   void _onFirebaseInboxNotification() {
-    NotificationsHomePanel.present(context);
+    if (context.mounted) {
+      NotificationsHomePanel.present(context);
+    }
   }
 
   void _onFirebasePollNotification(dynamic param) {
     if (param is Map<String, dynamic>) {
       String? pollId = JsonUtils.stringValue(param['entity_id']);
-      if (StringUtils.isNotEmpty(pollId)) {
+      if (StringUtils.isNotEmpty(pollId) && context.mounted) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => PollDetailPanel(pollId: pollId)));
       }
     }
@@ -1161,10 +1197,12 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   void _onFirebaseAppointmentNotification(dynamic param) {
     if (param is Map<String, dynamic>) {
       String? appointmentId = JsonUtils.stringValue(param['appointment_id']);
-      if (StringUtils.isNotEmpty(appointmentId)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
-      } else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.appointments)));
+      if (context.mounted) {
+        if (StringUtils.isNotEmpty(appointmentId)) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
+        } else {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.appointments)));
+        }
       }
     }
   }
@@ -1172,10 +1210,12 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   void _onFirebaseWellnessToDoItemNotification(dynamic param) {
     if (param is Map<String, dynamic>) {
       String? todoItemId = JsonUtils.stringValue(param['entity_id']);
-      if (StringUtils.isNotEmpty(todoItemId)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(itemId: todoItemId, optionalFieldsExpanded: true)));
-      } else {
-        _onFirebaseAcademicsNotification(AcademicsContentType.todo_list);
+      if (context.mounted) {
+        if (StringUtils.isNotEmpty(todoItemId)) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(itemId: todoItemId, optionalFieldsExpanded: true)));
+        } else {
+          _onFirebaseAcademicsNotification(AcademicsContentType.todo_list);
+        }
       }
     }
   }
@@ -1185,34 +1225,50 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   void _onFirebaseProfileNotification({required ProfileContentType profileContent}) {
-    ProfileHomePanel.present(context, contentType: profileContent);
-  }
-
-  void _onFirebaseSettingsNotification({required SettingsContentType settingsContent}) {
-    if (settingsContent == SettingsContentType.favorites) {
-      HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
-    } else {
-      SettingsHomePanel.present(context, content: settingsContent);
+    if (context.mounted) {
+      ProfileHomePanel.present(context, contentType: profileContent);
     }
   }
 
-  void _onFirebaseWaletNotification(WalletContentType contentType) {
-    WalletHomePanel.present(context, contentType: contentType);
+  void _onFirebaseSettingsNotification({required SettingsContentType settingsContent}) {
+    if (context.mounted) {
+      if (settingsContent == SettingsContentType.favorites) {
+        HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
+      } else {
+        SettingsHomePanel.present(context, content: settingsContent);
+      }
+    }
+  }
+
+  void _onFirebaseWalletNotification(WalletContentType contentType) {
+    if (context.mounted) {
+      WalletHomePanel.present(context, contentType: contentType);
+    }
+  }
+
+  void _onFirebaseLaundryNotification() {
+    if (context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
+    }
   }
 
   void _onFirebaseAcademicsNotification(AcademicsContentType content) {
-    if (AcademicsHomePanel.hasState) {
-      NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
-    } else {
-      AcademicsHomePanel.push(context, content);
+    if (context.mounted) {
+      if (AcademicsHomePanel.hasState) {
+        NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
+      } else {
+        AcademicsHomePanel.push(context, content);
+      }
     }
   }
 
   void _onFirebaseWellnessNotification(WellnessContentType content) {
-    if (WellnessHomePanel.hasState) {
-      NotificationService().notify(WellnessHomePanel.notifySelectContent, content);
-    } else {
-      WellnessHomePanel.push(context, content);
+    if (context.mounted) {
+      if (WellnessHomePanel.hasState) {
+        NotificationService().notify(WellnessHomePanel.notifySelectContent, content);
+      } else {
+        WellnessHomePanel.push(context, content);
+      }
     }
   }
 
@@ -1235,32 +1291,30 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   Future<void> _onAppointmentDetail(Map<String, dynamic>? content) async {
     String? appointmentId = (content != null) ? JsonUtils.stringValue(content['appointment_id']) ?? JsonUtils.stringValue(content['entity_id']) : null;
-    if (StringUtils.isNotEmpty(appointmentId)) {
+    if (StringUtils.isNotEmpty(appointmentId) && context.mounted) {
       Navigator.of(context).push(CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
     }
   }
 
   Future<void> _onGuide() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
-      Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
-          CampusGuidePanel()));
-    });
-    if (mounted) {
-      setState(() {}); // Force the postFrameCallback invokation.
-    }
+    setStateIfMounted(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
+        Navigator.of(context).push(CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
+      });
+    }); // Force the postFrameCallback invokation.
   }
 
   Future<void> _onGuideDetail(Map<String, dynamic>? content) async {
     if (content != null) {
       String? guideId = JsonUtils.stringValue(content['guide_id']) ?? JsonUtils.stringValue(content['entity_id']);
       if (StringUtils.isNotEmpty(guideId)){
-        WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
-          Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
-            GuideDetailPanel(guideEntryId: guideId, analyticsFeature: AnalyticsFeature.fromName(JsonUtils.stringValue(content['analytics_feature'])),)));
-        });
-        if (mounted) {
-          setState(() {}); // Force the postFrameCallback invokation.
-        }
+        setStateIfMounted(() {
+          WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
+            Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
+              GuideDetailPanel(guideEntryId: guideId, analyticsFeature: AnalyticsFeature.fromName(JsonUtils.stringValue(content['analytics_feature'])),)
+            ));
+          });
+        }); // Force the postFrameCallback invokation.
       }
     }
   }
@@ -1271,13 +1325,13 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       String? section = JsonUtils.stringValue(content['section']);
       String? category = JsonUtils.stringValue(content['category']);
       if ((guide != null) || (section != null) || (category != null)){
-        WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
-          Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
-            GuideListPanel(guide: guide, category: category, section: GuideSection(name: section),)));
-        });
-        if (mounted) {
-          setState(() {}); // Force the postFrameCallback invokation.
-        }
+        setStateIfMounted(() {
+          WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
+            Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
+              GuideListPanel(guide: guide, category: category, section: GuideSection(name: section),)
+            ));
+          });
+        }); // Force the postFrameCallback invokation.
       }
     }
   }
@@ -1294,7 +1348,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
     if (StringUtils.isNotEmpty(eventId)) {
       int? eventIdValue = int.tryParse(eventId!);
-      if (eventIdValue != null) {
+      if ((eventIdValue != null) && context.mounted) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(eventId: eventIdValue)));
       }
     }
@@ -1302,7 +1356,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   Future<void> _onGatewayBuildingDetail(Map<String, dynamic>? content) async {
     String? buildingNumber = (content != null) ? JsonUtils.stringValue(content['building_number']) : null;
-    if (StringUtils.isNotEmpty(buildingNumber)) {
+    if (StringUtils.isNotEmpty(buildingNumber) && context.mounted) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
         ExploreBuildingDetailPanel(buildingNumber: buildingNumber)
       ));
@@ -1310,39 +1364,35 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   Future<void> _onSafetySafeWalkDetail(Map<String, dynamic>? content) async {
-    if (FlexUI().isSafeWalkAvailable) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+    if (context.mounted) {
+      if (FlexUI().isSafeWalkAvailable) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
           SafetyHomePanel(
             contentType: SafetyContentType.safeWalkRequest,
             safeWalkRequestOrigin: (content != null) ? JsonUtils.decodeMap(content['origin']) : null,
             safeWalkRequestDestination: (content != null) ? JsonUtils.decodeMap(content['destination']) : null,
           )
-      ));
-    }
-    else {
-      AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safewalks.not_available.text", "Failed to load group data."));
+        ));
+      }
+      else {
+        AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safewalks.not_available.text", "Failed to load group data."));
+      }
     }
   }
 
   Future<void> _onPlaceDetail(Map<String, dynamic>? content) async {
     String? placeId = (content != null) ? JsonUtils.stringValue(content['place_id']) : null;
-    if (StringUtils.isNotEmpty(placeId)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-        ExplorePlaceDetailPanel(placeId: placeId)
-      ));
+    if (StringUtils.isNotEmpty(placeId) && context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePlaceDetailPanel(placeId: placeId)));
     }
   }
 
   void _onAthleticsGameDetail(Map<String, dynamic>? athleticsGameDetails) {
-    if (athleticsGameDetails == null) {
-      return;
+    String? sportShortName = athleticsGameDetails?["Path"];
+    String? gameId = athleticsGameDetails?["GameId"];
+    if (StringUtils.isNotEmpty(sportShortName) && StringUtils.isNotEmpty(gameId) && context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sportShortName, gameId: gameId,)));
     }
-    String? sportShortName = athleticsGameDetails["Path"];
-    String? gameId = athleticsGameDetails["GameId"];
-    if (StringUtils.isEmpty(sportShortName) || StringUtils.isEmpty(gameId)) {
-      return;
-    }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sportShortName, gameId: gameId,)));
   }
   
   void _onSelectHome(dynamic param) {
@@ -1360,21 +1410,55 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
-  void _onSelectMaps(dynamic param) {
-    int? mapsIndex = _getIndexByRootTab(RootTab.Maps);
+  void _onSelectMaps2(dynamic param) {
+    int? mapsIndex = _getIndexByRootTab(RootTab.Map);
     if (mounted && (mapsIndex != null)) {
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
       if (mapsIndex != _currentTabIndex) {
         _selectTab(mapsIndex);
-        if ((param != null) && !ExploreMapPanel.hasState) {
-          Widget? mapsWidget = _panels[RootTab.Maps];
-          ExploreMapPanel? mapsPanel = (mapsWidget is ExploreMapPanel) ? mapsWidget : null;
-          mapsPanel?.params[ExploreMapPanel.selectParamKey] = param;
+        if ((param != null) && !Map2HomePanel.hasState) {
+          Map2HomePanel? maps2Panel = JsonUtils.cast(_panels[RootTab.Map]);
+          maps2Panel?.initParams[Map2HomePanel.selectParamKey] = param;
         }
       }
     }
   }
 
+  void _alertLogout(String? reason) {
+    String? message, messageEn;
+    if (reason == Auth2.logoutReasonToken) {
+      message = Localization().getStringEx('common.message.logout.description.token', 'You were signed out due to the inability to renew your access token');
+      messageEn = Localization().getStringEx('common.message.logout.description.token', 'You were signed out due to the inability to renew your access token', language: 'en');
+    }
+    else if (reason == uiuc.Auth2.logoutReasonAuthorization) {
+      message = Localization().getStringEx('common.message.logout.description.authorization', 'You were signed out because authorization is not available. Usually the reason for this is a low value of privacy level.');
+      messageEn = Localization().getStringEx('common.message.logout.description.authorization', 'You were signed out because authorization is not available. Usually the reason for this is a low value of privacy level.', language: 'en');
+    }
+    if ((message != null) && context.mounted) {
+      showDialog(context: context, builder: (context) => Dialog(child:
+        Padding(padding: EdgeInsets.all(18), child:
+          Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+            Text(Localization().getStringEx("common.message.logout.title", "Signed Out"),
+              style: Styles().textStyles.getTextStyle("widget.message.dark.extra_large"),
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: 26), child:
+              Text(message ?? '', textAlign: TextAlign.left,
+                style: Styles().textStyles.getTextStyle("widget.message.dark.medium")
+              ),
+            ),
+            Align(alignment: Alignment.centerRight, child:
+              TextButton(onPressed: () {
+                Analytics().logAlert(text: messageEn ?? message, selection: "OK");
+                Navigator.of(context).pop();
+              }, child:
+                Text(Localization().getStringEx("dialog.ok.title", "OK"))
+              ),
+            )
+          ],),
+        ),
+      ));
+    }
+  }
 }
 
 RootTab? rootTabFromString(String? value) {
@@ -1388,8 +1472,11 @@ RootTab? rootTabFromString(String? value) {
     else if (value == 'browse') {
       return RootTab.Browse;
     }
-    else if (value == 'maps') {
-      return RootTab.Maps;
+    else if (value == 'map') {
+      return RootTab.Map;
+    }
+    else if (value == 'map0') {
+      return RootTab.Map0;
     }
     else if (value == 'academics') {
       return RootTab.Academics;

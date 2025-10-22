@@ -18,7 +18,6 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:collection/collection.dart';
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -27,6 +26,7 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -102,7 +102,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
               _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
               _pageViewKey = UniqueKey();
               // _pageController = null;
-              if (_recentItems?.isNotEmpty == true) {
+              if ((_recentItems?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
                 _pageController?.jumpToPage(0);
               }
             });
@@ -194,7 +194,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> with Noti
       }
 
       contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
+        AccessiblePageView(
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,
@@ -392,7 +392,7 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> with Notifi
   Widget get _clearAllButton => LinkButton(
     title: Localization().getStringEx('widget.home.recent_items.button.clear_all.title', 'Clear All'),
     hint: Localization().getStringEx('widget.home.recent_items.button.clear_all.hint', 'Tap to clear all items'),
-    textStyle: Styles().textStyles.getTextStyle('widget.home_tout.button.link'),
+    textStyle: Styles().textStyles.getTextStyle('widget.heading.regular.semi_fat.underline'),
     padding: const EdgeInsets.all(16),
     onTap: _onClearAll,
   );

@@ -17,6 +17,7 @@ Map<String, String> deeplinkNameMap = {
   'map.mtd_stops': 'Bus Stops',
   'map.my_locations': 'My Locations',
   'map.mental_health': 'Find a Therapist',
+  'map.laundry': 'Laundry',
   'academics': 'Academics',
   'academics.gies_checklist': 'iDegrees New Student Checklist',
   'academics.uiuc_checklist': 'New Student Checklist',
@@ -39,6 +40,7 @@ Map<String, String> deeplinkNameMap = {
   'wellness.podcast': 'Healthy Illini Podcast',
   'wellness.resources': 'Wellness Resources',
   'wellness.mental_health': 'Mental Health Resources',
+  'laundry': 'Laundry',
   'inbox': 'Inbox Panel',
   'appointment': 'Appointment',
   'profile.my': 'My Profile',
@@ -77,6 +79,7 @@ class Message {
   final AssistantStructOutput? structOutput;
   final bool acceptsFeedback;
   final int? queryLimit;
+  final String? modelResponseId;
   MessageFeedback? feedback;
   String? feedbackExplanation;
 
@@ -87,7 +90,7 @@ class Message {
   bool? isNegativeFeedbackMessage;
 
   Message({this.id = '', required this.content, required this.user, this.example = false, this.acceptsFeedback = false,
-    this.links, this.sourceDatEntries, this.structOutput, this.queryLimit, this.feedback,  this.feedbackExplanation, this.provider,
+    this.modelResponseId, this.links, this.sourceDatEntries, this.structOutput, this.queryLimit, this.feedback,  this.feedbackExplanation, this.provider,
     this.sourcesExpanded, this.feedbackResponseType, this.isNegativeFeedbackMessage});
 
   factory Message.fromAnswerJson(Map<String, dynamic> json) {
@@ -96,6 +99,7 @@ class Message {
 
     List<Link>? deeplinks = Link.listFromJson(answerJson?['deeplinks']);
     String? deeplink = JsonUtils.stringValue(answerJson?['deeplink'])?.trim();
+
     if (deeplink != null) {
       if (deeplinks == null) {
         deeplinks = [];
@@ -108,6 +112,7 @@ class Message {
       content: JsonUtils.stringValue(answerJson?['answer'])?.trim() ?? '',
       user: JsonUtils.boolValue(answerJson?['user']) ?? false,
       example: JsonUtils.boolValue(answerJson?['example']) ?? false,
+      modelResponseId: JsonUtils.stringValue(answerJson?['model_response_id'])?.trim() ?? '',
       queryLimit: JsonUtils.intValue(answerJson?['query_limit']),
       acceptsFeedback: JsonUtils.boolValue(answerJson?['accepts_feedback']) ?? true,
       links: deeplinks,
@@ -411,18 +416,20 @@ extension AssistantProviderImpl on AssistantProvider {
 ///
 /// AssistantStructOutputItemType
 ///
-enum AssistantStructOutputItemType { event, dining_schedule, menu_items, nutrition_info }
+enum AssistantStructOutputItemType { event, dining_hall_details, menu_items, nutrition_info, campus_building }
 
 AssistantStructOutputItemType? assistantStructOutputItemTypeFromString(String? value) {
   switch (value) {
     case 'event':
       return AssistantStructOutputItemType.event;
-    case 'dining_schedule':
-      return AssistantStructOutputItemType.dining_schedule;
+    case 'dining_hall_details':
+      return AssistantStructOutputItemType.dining_hall_details;
     case 'menu_items':
       return AssistantStructOutputItemType.menu_items;
     case 'nutrition_info':
       return AssistantStructOutputItemType.nutrition_info;
+    case 'campus_building':
+      return AssistantStructOutputItemType.campus_building;
     default:
       return null;
   }

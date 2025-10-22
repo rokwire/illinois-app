@@ -18,7 +18,6 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
 
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -28,6 +27,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
@@ -333,7 +333,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
       }
 
       contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
+        AccessiblePageView(
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,
@@ -512,7 +512,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> with NotificationsL
     attributes ?? Storage().events2Attributes;
 
   Event2SortType? get _querySortType =>
-    sortType ?? event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
+    sortType ?? Event2SortTypeAppImpl.fromStorage() ?? Event2SortTypeAppImpl.defaultSortType;
 
   Future<void> _reloadIfVisible({ int limit = _eventsPageLength }) async {
     if (_visible) {

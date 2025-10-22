@@ -234,7 +234,6 @@ abstract class SemanticsPageAdapter<T> {
     SemanticsPageMapper<T>  get _defaultMapper => (key) => key is T  ? key : null;
 }
 
-
 class AccessibleDropDownMenuItem <T> extends DropdownMenuItem <T>{
   AccessibleDropDownMenuItem({super.key, required super.child, super.value});
 

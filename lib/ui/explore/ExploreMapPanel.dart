@@ -9,7 +9,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -44,6 +43,7 @@ import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreBuildingsSearchPanel.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/dining/DiningHomePanel.dart';
+import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
 import 'package:illinois/ui/mtd/MTDStopSearchPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
@@ -110,7 +110,7 @@ class ExploreMapPanel extends StatefulWidget with AnalyticsInfo {
 
   List<ExploreMapType> _buildExploreTypes() {
     List<ExploreMapType> exploreTypes = <ExploreMapType>[];
-    List<dynamic>? codes = FlexUI()['explore.map'];
+    List<dynamic>? codes = FlexUI()['map.types'];
     if (codes != null) {
       for (dynamic code in codes) {
         ExploreMapType? codeType = ExploreMapTypeImpl.fromCode(code);
@@ -386,7 +386,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       }
     }
     else if (name == RootPanel.notifyTabChanged) {
-      if ((param == RootTab.Maps) && (_exploreTask == null) && mounted &&
+      if ((param == RootTab.Map0) && (_exploreTask == null) && mounted &&
           (CollectionUtils.isEmpty(_exploreTypes) || CollectionUtils.isEmpty(_explores) || (_selectedMapType == ExploreMapType.Events2) || (_selectedMapType == ExploreMapType.Appointments)) // Do not refresh for other ExploreMapType types as they are rarely changed or fire notification for that
       ) {
         _refreshExplores();
@@ -441,7 +441,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx("panel.maps.header.title", "Map")),
+      appBar: RootHeaderBar(title: Localization().getStringEx("panel.map0.header.title", "Map0")),
       body: RefreshIndicator(onRefresh: _onRefresh, child: _buildScaffoldBody(),),
       backgroundColor: Styles().colors.background,
     );
@@ -705,7 +705,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (explore is Explore) {
       targetPosition = explore.exploreLocation?.exploreLocationMapCoordinate;
     } else if (explore is List<Explore> && explore.isNotEmpty) {
-      targetPosition = ExploreMap.centerOfList(explore);
+      targetPosition = explore.centerPoint;
     }
 
     if (targetPosition != null && _mapController != null) {
@@ -843,7 +843,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       launchTask = explore.launchDirections();
     }
     else if (explore is List<Explore>) {
-      launchTask = GeoMapUtils.launchDirections(destination: ExploreMap.centerOfList(explore), travelMode: GeoMapUtils.traveModeWalking);
+      launchTask = GeoMapUtils.launchDirections(destination: explore.centerPoint, travelMode: GeoMapUtils.traveModeWalking);
     }
 
     if ((launchTask != null) && !await launchTask) {
@@ -2218,7 +2218,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   // Map Content
 
   Future<void> _buildMapContentData(List<Explore>? explores, {Explore? pinnedExplore, bool updateCamera = false, bool showProgress = false, double? zoom}) async {
-    LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
+    LatLngBounds? exploresBounds = explores?.boundsRect;
 
     CameraUpdate? targetCameraUpdate;
     if (updateCamera) {
@@ -2251,7 +2251,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       }
       else {
         thresoldDistance = 0;
-        exploreMarkerGroups =  (explores != null) ? <dynamic>{ ExploreMap.validFromList(explores) } : null;
+        exploreMarkerGroups =  (explores != null) ? <dynamic>{ explores.validList } : null;
       }
 
       if (!DeepCollectionEquality().equals(_exploreMarkerGroups, exploreMarkerGroups)) {
@@ -2375,12 +2375,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   Future<Marker?> _createExploreGroupMarker(List<Explore>? exploreGroup, { required ImageConfiguration imageConfiguration }) async {
-    LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
+    LatLng? markerPosition = exploreGroup?.centerPoint;
     if ((exploreGroup != null) && (markerPosition != null)) {
-      Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
-      Color? markerColor = sameExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
-      Color? markerBorderColor = sameExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor;
-      Color? markerTextColor = sameExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor;
+      Explore? representativeExplore = exploreGroup.groupRepresentative;
+      Color? markerColor = representativeExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
+      Color? markerBorderColor = representativeExplore?.mapMarkerBorderColor ?? ExploreMap.defaultMarkerBorderColor;
+      Color? markerTextColor = representativeExplore?.mapMarkerTextColor ?? ExploreMap.defaultMarkerTextColor;
       String markerKey = "map-marker-group-${markerColor?.toARGB32() ?? 0}-${exploreGroup.length}";
       BitmapDescriptor markerIcon = _markerIconCache[markerKey] ??
           (_markerIconCache[markerKey] = await _groupMarkerIcon(
@@ -2400,7 +2400,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           consumeTapEvents: true,
           onTap: () => _onTapMarker(exploreGroup),
           infoWindow: InfoWindow(
-              title:  sameExplore?.getMapGroupMarkerTitle(exploreGroup.length),
+              title:  representativeExplore?.getMapGroupMarkerTitle(exploreGroup.length),
               anchor: markerAnchor)
       );
     }
@@ -2408,7 +2408,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
   
   static Future<BitmapDescriptor> _groupMarkerIcon({required BuildContext context, required double imageSize, Color? backColor, Color? borderColor, Color? textColor, int? count}) async {
-    Uint8List? markerImageBytes = await ImageUtils.mapGroupMarkerImage(
+    Uint8List? markerImageBytes = await ImageUtils.mapMarkerImage(
       imageSize: imageSize * MediaQuery.of(context).devicePixelRatio,
       backColor: backColor,
       strokeColor: borderColor,
@@ -2506,54 +2506,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       print(e.toString());
       return null;
     }
-  }
-}
-
-/////////////////////////////////
-// ExploreMessagePopup
-
-class ExploreMessagePopup extends StatelessWidget {
-  final String message;
-  final bool Function(String url)? onTapUrl;
-  ExploreMessagePopup({super.key, required this.message, this.onTapUrl});
-
-  static Future<void> show(BuildContext context, String message, { bool Function(String url)? onTapUrl}) =>
-    showDialog(context: context, builder: (context) => ExploreMessagePopup(message: message, onTapUrl: onTapUrl));
-
-  @override
-  Widget build(BuildContext context) =>
-    AlertDialog(contentPadding: EdgeInsets.zero, content:
-      Container(decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)), child:
-        Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
-          Padding(padding: EdgeInsets.all(30), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-              Styles().images.getImage('university-logo') ?? Container(),
-              Padding(padding: EdgeInsets.only(top: 20), child:
-                // Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.detail.small")
-                HtmlWidget(message,
-                  onTapUrl: (url) => (onTapUrl != null) ? onTapUrl!(url) : false,
-                  textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
-                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
-                )
-              )
-            ])
-          ),
-          Positioned.fill(child:
-            Align(alignment: Alignment.topRight, child:
-              InkWell(onTap: () => _onClose(context, message), child:
-                Padding(padding: EdgeInsets.all(16), child:
-                  Styles().images.getImage("close-circle")
-                )
-              )
-            )
-          )
-        ])
-      )
-    );
-
-  void _onClose(BuildContext context, String message) {
-    Analytics().logAlert(text: message, selection: 'Close');
-    Navigator.of(context).pop();
   }
 }
 

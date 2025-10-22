@@ -23,6 +23,7 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -421,7 +422,9 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   Widget get _imageHeadingWidget => Visibility(visible: _hasImage, child:
     Container(decoration: _imageHeadingDecoration, child:
       AspectRatio(aspectRatio: 2.5, child:
-        Image.network(_event.imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+        AccessibleImageHolder(child:
+          Image.network(_event.imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+        )
       ),
     )
   );
@@ -531,6 +534,20 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
     ] : null;
   }
 
+  List<Widget>? get _groupingDetailWidget {
+    if (_event.hasLinkedEvents) {
+      List<Widget> details = <Widget>[];
+      if (_event.isSuperEvent) {
+        details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.super_event.label', 'Multi-Event'), 'event',));
+      }
+      if (_event.isRecurring) {
+        details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.recurring.label', 'Repeats'), 'recurrence',));
+      }
+      return details.isNotEmpty ? details : null;
+    }
+    return null;
+  }
+
   List<Widget>? get _locationDetailWidget {
     if (_event.isInPerson) {
 
@@ -559,20 +576,6 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
       }
 
       return details;
-    }
-    return null;
-  }
-
-  List<Widget>? get _groupingDetailWidget {
-    if (_event.hasLinkedEvents) {
-      List<Widget> details = <Widget>[];
-      if (_event.isSuperEvent) {
-        details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.super_event.label', 'Multi-Event'), 'event',));
-      }
-      if (_event.isRecurring) {
-        details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.recurring.label', 'Repeats'), 'recurrence',));
-      }
-      return details.isNotEmpty ? details : null;
     }
     return null;
   }

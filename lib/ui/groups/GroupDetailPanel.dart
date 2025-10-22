@@ -67,6 +67,7 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
@@ -229,6 +230,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   bool get _canViewMembers {
     return _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
   }
+
+  bool get _canViewPendingMembers => _isAdmin;
 
   bool get _hasOptions =>
       _canReportAbuse || _canNotificationSettings || _canShareSettings || _canAboutSettings ||
@@ -617,10 +620,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
 
   // UI elements
   Widget _buildImageHeader(){
-    return StringUtils.isNotEmpty(_group?.imageURL) ? Semantics(label: "group image", hint: "Double tap to zoom", child:
+    return StringUtils.isNotEmpty(_group?.imageURL) ?
       Container(height: 200, color: Styles().colors.background, child:
         Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-            Positioned.fill(child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))),
+            Positioned.fill(child: ModalImageHolder(child: AccessibleImageHolder(emptySemanticsLabel: "Group image", prefixSemanticsLabel: "Group image", child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)))),
             CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
               Container(height: 53,),
             ),
@@ -629,7 +632,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
             ),
           ],
         ),
-      )
     ): Container();
   }
 
@@ -674,18 +676,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     }
     else {
       pendingMembers = "";
-    }
-
-    int attendedCount = _groupStats?.attendedCount ?? 0;
-    String? attendedMembers;
-    if (_isAdmin && (_group!.attendanceGroup == true)) {
-      if (attendedCount == 0) {
-        attendedMembers = Localization().getStringEx("panel.group_detail.attended_members.count.empty", "No Members Attended");
-      } else if (attendedCount == 1) {
-        attendedMembers = Localization().getStringEx("panel.group_detail.attended_members.count.one", "1 Member Attended");
-      } else {
-        attendedMembers = sprintf(Localization().getStringEx("panel.group_detail.attended_members.count.format", "%s Members Attended"), [attendedCount]);
-      }
     }
 
     List<Widget> commands = [];
@@ -735,14 +725,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     }
 
     if (StringUtils.isNotEmpty(pendingMembers)) {
-      contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-        Text(pendingMembers,  style: Styles().textStyles.getTextStyle('widget.title.small') ,)
-      ));
-    }
-
-    if (StringUtils.isNotEmpty(attendedMembers)) {
-      contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-        Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().textStyles.getTextStyle('widget.title.small'),)
+      contentList.add(GestureDetector(onTap: _canViewPendingMembers ? _onTapPendingMembers : null, child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+          Text(pendingMembers,  style: Styles().textStyles.getTextStyle('widget.title.small.underline'))
+        )
       ));
     }
 
@@ -1437,9 +1423,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     );
   }
 
-  void _onTapMembers(){
+  void _onTapMembers() {
     Analytics().logSelect(target: "Group Members", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group, filter: GroupMembersFilter.all)));
+  }
+
+  void _onTapPendingMembers() {
+    Analytics().logSelect(target: "Group Pending Members", attributes: _group?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group, filter: GroupMembersFilter.pending)));
   }
 
   void _onTapSettings(){

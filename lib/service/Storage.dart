@@ -481,6 +481,11 @@ class Storage extends rokwire.Storage with NotificationsListener {
   String? get selectedMapExploreType => getStringWithName(selectedMapExploreTypeKey);
   set selectedMapExploreType(String? value) => setStringWithName(selectedMapExploreTypeKey, value);
 
+  // Map2
+  String get selectedMap2ContentTypeKey => 'edu.illinois.rokwire.map2.selected.contnet.type';
+  String? get selectedMap2ContentType => getStringWithName(selectedMap2ContentTypeKey);
+  set selectedMap2ContentType(String? value) => setStringWithName(selectedMap2ContentTypeKey, value);
+
   // Appointments
   String get appointmentsDisplayEnabledKey => 'edu.illinois.rokwire.appointments.display_enabled';
   bool? get appointmentsCanDisplay => getBoolWithName(appointmentsDisplayEnabledKey, defaultValue: true);
@@ -503,19 +508,6 @@ class Storage extends rokwire.Storage with NotificationsListener {
   static const String participateInResearchPromptedKey  = 'participate_in_research_prompted';
   bool? get participateInResearchPrompted => getBoolWithName(participateInResearchPromptedKey);
   set participateInResearchPrompted(bool? value) => setBoolWithName(participateInResearchPromptedKey, value);
-
-  // Mobile Access
-  static const String mobileAccessBleRssiSensitivityKey = 'mobile_access_ble_rssi_sensitivity';
-  String? get mobileAccessBleRssiSensitivity => getStringWithName(mobileAccessBleRssiSensitivityKey);
-  set mobileAccessBleRssiSensitivity(String? value) => setStringWithName(mobileAccessBleRssiSensitivityKey, value);
-
-  static const String mobileAccessOpenTypeKey = 'mobile_access_open_type';
-  String? get mobileAccessOpenType => getStringWithName(mobileAccessOpenTypeKey);
-  set mobileAccessOpenType(String? value) => setStringWithName(mobileAccessOpenTypeKey, value);
-
-  static const String mobileAccessDeleteTimeoutInMillisKey = 'mobile_access_delete_timeout_millis';
-  int? get mobileAccessDeleteTimeoutUtcInMillis => getIntWithName(mobileAccessDeleteTimeoutInMillisKey);
-  set mobileAccessDeleteTimeoutUtcInMillis(int? value) => setIntWithName(mobileAccessDeleteTimeoutInMillisKey, value);
 
   // Events2
   static const String events2AttributesKey = 'events2_attributes';
@@ -590,6 +582,10 @@ class Storage extends rokwire.Storage with NotificationsListener {
   String? get assistantContentType => getStringWithName(assistantContentTypeKey);
   set assistantContentType(String? value) => setStringWithName(assistantContentTypeKey, value);
 
+  static const String assistantSessionIDKey = 'edu.illinois.rokwire.assistant.sessions';
+  String? get assistantSessionID => getStringWithName(assistantSessionIDKey);
+  set assistantSessionID(String? value) => setStringWithName(assistantSessionIDKey, value);
+
   static const String _assistantEventsPromptHiddenKey = 'edu.illinois.rokwire.assistant.events.prompt.hidden';
   bool? get assistantEventsPromptHidden => getBoolWithName(_assistantEventsPromptHiddenKey);
   set assistantEventsPromptHidden(bool? value) => setBoolWithName(_assistantEventsPromptHiddenKey, value);
@@ -598,6 +594,11 @@ class Storage extends rokwire.Storage with NotificationsListener {
   static const String illiniRadioStationKey = 'edu.illinois.rokwire.illini_radio.station';
   String? get illiniRadioStation => getStringWithName(illiniRadioStationKey);
   set illiniRadioStation(String? value) => setStringWithName(illiniRadioStationKey, value);
+
+  // Accessibility
+  static const String accessibilityReduceMotionKey = 'edu.illinois.rokwire.setting.accessibility.motion';
+  bool? get accessibilityReduceMotion => getBoolWithName(accessibilityReduceMotionKey);
+  set accessibilityReduceMotion(bool? value) => setBoolWithName(accessibilityReduceMotionKey, value);
 
   // GBV
   static const String _gbvQuickExitPromptedKey = 'edu.illinois.rokwire.gbv.quick_exit_prompted';

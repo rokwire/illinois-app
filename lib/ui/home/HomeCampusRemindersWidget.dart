@@ -17,9 +17,9 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
@@ -140,7 +140,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
       }
 
       contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
+        AccessiblePageView(
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,
@@ -174,7 +174,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
         _reminderItems = List<Map<String, dynamic>>.from(reminderItems);
         _pageViewKey = UniqueKey();
         // _pageController = null;
-        if (_reminderItems?.isNotEmpty == true) {
+        if ((_reminderItems?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
           _pageController?.jumpToPage(0);
         }
         _contentKeys.clear();

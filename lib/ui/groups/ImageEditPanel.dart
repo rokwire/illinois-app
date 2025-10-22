@@ -24,8 +24,11 @@ SOFTWARE.*/
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/widgets/ImageDescriptionInput.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:path/path.dart';
+import 'package:rokwire_plugin/model/content.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -52,6 +55,8 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   String? _contentType;
   bool _loading = false;
   bool _saving = false;
+
+  ImageDescriptionData? _imageDescriptionData;
 
   @override
   void initState() {
@@ -117,11 +122,29 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                       showImagePickerDialog();
                     },),
               Container(height: 10,),
+              ImageDescriptionInput(
+                  imageDescriptionData: _imageDescriptionData,
+                  onChanged: (data)=> setStateIfMounted(
+                      () => _imageDescriptionData = data ?? _imageDescriptionData
+                  )
+              ),
+              Container(height: 10,),
+                _imageName!=null?
+                RoundedButton(label: "Edit Image", onTap: _onEdit)
+                    : Container(),
+              Container(height: 10,),
+              RoundedButton(label: _imageName!=null? "Upload New Image" : "Choose Image", onTap: showImagePickerDialog),
+              Container(height: 10),
               Row(
                 children: [
                   Expanded(
                   child:
-                    RoundedButton(label: "Ok", onTap: _onFinish, progress: _saving, progressSize: 24,),
+                    RoundedButton(label: "Ok",
+                      onTap: _onFinish,
+                      progress: _saving,
+                      progressSize: 24,)
+                      // enabled: _imageDescriptionData?.isValidated == true,
+                      // borderColor: _imageDescriptionData?.isValidated == true? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,),
                   ),
                   Container(width: 16,),
                   Expanded(
@@ -130,12 +153,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                   )
                 ],
               ),
-              Container(height: 8,),
-              RoundedButton(label: "Choose Image", onTap: showImagePickerDialog),
               Container(height: 10,),
-              _imageName!=null?
-                RoundedButton(label: "Edit", onTap: _onEdit)
-              : Container()
         ],)))])),
           _loading ?
           Positioned.fill(child:
@@ -244,6 +262,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         onImageStartLoading: _showLoader,
         onImageEndLoading: _hideLoader,
         visibleOtherAspectRatios: true,
+        useInitialFullCrop: true,
         squareBorderWidth: 2,
         squareCircleColor: Styles().colors.fillColorPrimary,
         defaultTextColor: Styles().colors.fillColorPrimary,
@@ -296,15 +315,11 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         setState(() {
           _saving = true;
         });
-        Content().uploadImage(imageBytes: _imageBytes, fileName: _imageName, mediaType: _contentType, storagePath: widget.storagePath, width: widget.width, isUserPic: widget.isUserPic)
-            .then((value) {
-              if (mounted) {
-                setState(() {
-                  _saving = false;
-                });
-                Navigator.pop(this.context, value);
-              }
-        });
+        if (widget.isUserPic) {
+          Content().uploadUserPhoto(fileName: _imageName, imageBytes: _imageBytes, mediaType: _contentType).then(_onImageUploaded);
+        } else {
+          Content().uploadImage(imageBytes: _imageBytes, mediaType: _contentType, storagePath: widget.storagePath!, width: widget.width).then(_onImageUploaded);
+        }
       }
     } else {
       _hideLoader();
@@ -313,10 +328,36 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
     }
   }
 
+  void _onImageUploaded(ImagesResult result) {
+    if(result.resultType == ImagesResultType.succeeded &&
+        result.imageUrl != null && _imageDescriptionData != null){
+      Content().uploadImageMetaData(
+          url: result.imageUrl,
+          metaData: _imageDescriptionData?.toMetaData).then((metaDataResult){
+        if (mounted) {
+          setState(() {
+            _saving = false;
+          });
+          Navigator.pop(this.context, result);
+        }
+      });
+    } else {
+      if (mounted) {
+        setState(() {
+          _saving = false;
+        });
+        Navigator.pop(this.context, result);
+      }
+    }
+  }
+
   Future<void> _preloadImageFromUrl() async {
     _showLoader();
     if(widget.preloadImageUrl != null){
       _imageBytes = await readNetworkImage(widget.preloadImageUrl!);
+      ImageMetaData? metaData = await _loadImageMetaData(widget.preloadImageUrl!);
+      _imageDescriptionData = metaData != null ? ImageDescriptionDataExt.fromMetaData(metaData) : ImageDescriptionData();
+
       if(_imageBytes != null) {
         _imageName = basename(widget.preloadImageUrl!);
         _contentType = mime(_imageName);
@@ -324,6 +365,10 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
     }
     _hideLoader();
   }
+
+  Future<ImageMetaData?> _loadImageMetaData(String? imageUrl) async => imageUrl != null ?
+    (await Content().loadImageMetaData(url: imageUrl)).imageMetaData :
+    null;
 
   //Utils: TBD move to Utils file if we keeps it
   // Reading bytes from a network image
@@ -337,6 +382,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
       return null;
     }
   }
+
 }
 
 /// class for dialog button

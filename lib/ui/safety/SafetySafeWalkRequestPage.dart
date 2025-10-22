@@ -13,9 +13,9 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/SavedPanel.dart';
-import 'package:illinois/ui/explore/ExploreMapPanel.dart';
-import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
+import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
+import 'package:illinois/ui/map2/Map2LocationPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
@@ -511,10 +511,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   }
 
   Future<dynamic> _provideMapLocation(dynamic location, { void Function(bool)? updateProgress }) async =>
-    ExploreMapSelectLocationPanel.push(context,
-      mapType: ExploreMapType.Buildings,
-      /*selectedExplore: _locationExplore(location),*/
-    );
+    Map2LocationPanel.push(context);
 
   Future<dynamic> _provideSavedLocation() async =>
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel(

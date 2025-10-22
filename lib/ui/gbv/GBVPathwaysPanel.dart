@@ -185,7 +185,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
               TextSpan(children: [
                 TextSpan(text: Localization().getStringEx('panel.sexual_misconduct.quick_exit.privacy', 'Privacy: '),
                   style: Styles().textStyles.getTextStyle('widget.item.small.fat.highlight')),
-                TextSpan(text: Localization().getStringEx('panel.sexual_misconduct.quick_exit.app_activity', 'your app activity is not shared with others. Use the quick exit icon to return Home.'),
+                TextSpan(text: Localization().getStringEx('panel.sexual_misconduct.quick_exit.app_activity', 'your personal app activity is not shared with others. Use the quick exit icon to return Home.'),
                 style: Styles().textStyles.getTextStyle('widget.item.small.thin.highlight')),
               ])
             )
@@ -306,13 +306,14 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
   }
 
   void _onTapOptions(BuildContext context) {
+    final double bottomPadding = MediaQuery.of(context).viewPadding.bottom;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
       isScrollControlled: true,
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-      builder: (context) => Container(padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16), child:
+      builder: (context) => Container(padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16 + bottomPadding), child:
       Column(mainAxisSize: MainAxisSize.min, children: [
         RibbonButton(label: Localization().getStringEx('panel.sexual_misconduct.options.we_care', 'We Care at Illinois website'), rightIconKey: 'external-link', onTap: () => _onTapWeCare(context)),
         RibbonButton(label: Localization().getStringEx('panel.sexual_misconduct.options.resource_directory', 'Resource Directory'), onTap: () => _onResourceDirectory(context, _gbv!))

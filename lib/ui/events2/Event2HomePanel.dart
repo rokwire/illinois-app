@@ -18,17 +18,18 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/map2/Map2HomeExts.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/events2/Event2SearchPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
-import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
@@ -223,7 +224,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
   static String get _onboardingApplyTitle => _onboardingApplyTitleEx();
 
   static String _onboardingApplyTitleEx({String? language}) =>
-    Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Create My Events Feed', language: language);
+    Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Create My Event Feed', language: language);
 
   static void _onTapOnboardingApply(void Function() applyHandler) {
     Analytics().logSelect(target: _onboardingApplyTitleEx(language: 'en'));
@@ -521,7 +522,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
     _types = widget.types ?? LinkedHashSetUtils.from<Event2TypeFilter>(Event2TypeFilterListImpl.listFromJson(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
     _attributes = widget.attributes ?? Storage().events2Attributes ?? <String, dynamic>{};
-    _sortType = widget.sortType ?? event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
+    _sortType = widget.sortType ?? Event2SortTypeAppImpl.fromStorage() ?? Event2SortTypeAppImpl.defaultSortType;
 
     _initLocationServicesStatus().then((_) {
       _ensureCurrentLocation();
@@ -738,7 +739,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
   Widget _buildContentDescription() {
     TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
     TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
-    List<InlineSpan> descriptionList = _currentFilterParam.buildDescription(boldStyle: boldStyle, regularStyle: regularStyle);
+    List<InlineSpan> descriptionList = _currentFilterParam.buildDescription(textStyle: regularStyle);
 
     if (descriptionList.isNotEmpty) {
       descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
@@ -1018,7 +1019,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       groupings: Event2Grouping.individualEvents(),
       attributes: _attributes,
       sortType: _sortType,
-      sortOrder: ((_timeFilter == Event2TimeFilter.past) && (_sortType == Event2SortType.dateTime)) ? Event2SortOrder.descending : Event2SortOrder.ascending,
+      sortOrder: Event2SortOrderImpl.defaultFrom(sortType: _sortType, timeFilter: _timeFilter),
       location: _currentLocation,
     );
   } 
@@ -1284,7 +1285,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   void _onMapView() {
     Analytics().logSelect(target: 'Map View');
-    NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapSearchEventsParam(''));
+    NotificationService().notify(Map2.notifySelect, Map2FilterEvents2Param());
   }
 
   void _onEvent(Event2 event) {
@@ -1344,13 +1345,15 @@ const String eventTimeContentAttributeId = 'event-time';
 class Event2FilterParam {
   static const String notifyChanged = "edu.illinois.rokwire.event2.home.filters.changed";
 
+  static const Event2FilterParam defaultFilterParam = Event2FilterParam(timeFilter: Event2TimeFilter.upcoming,);
+
   final Event2TimeFilter? timeFilter;
   final TZDateTime? customStartTime;
   final TZDateTime? customEndTime;
   final LinkedHashSet<Event2TypeFilter>? types;
   final Map<String, dynamic>? attributes;
 
-  Event2FilterParam({
+  const Event2FilterParam({
     this.timeFilter, this.customStartTime, this.customEndTime,
     this.types, this.attributes,
   });
@@ -1374,6 +1377,22 @@ class Event2FilterParam {
     MapUtils.add(uriParams, 'attributes', JsonUtils.encode(attributes));
     return uriParams;
   }
+
+  static Event2FilterParam? fromJson(Map<String, dynamic>? json) => (json != null) ? Event2FilterParam(
+    timeFilter: Event2TimeFilterImpl.fromJson(JsonUtils.stringValue(json['time_filter'])),
+    customStartTime: TZDateTimeExt.fromJson(JsonUtils.mapValue(json['custom_start_time'])),
+    customEndTime: TZDateTimeExt.fromJson(JsonUtils.mapValue(json['custom_end_time'])),
+    types: LinkedHashSetUtils.from(Event2TypeFilterListImpl.listFromJson(JsonUtils.listStringsValue(json['types']))),
+    attributes: JsonUtils.mapValue(json['attributes']),
+  ) : null;
+
+  Map<String, dynamic> toJson() => {
+    'time_filter': timeFilter?.toJson(),
+    'custom_start_time': customStartTime?.toJson(),
+    'custom_end_time': customEndTime?.toJson(),
+    'types': types?.toJson(),
+    'attributes': attributes,
+  };
 
   factory Event2FilterParam.fromAttributesSelection(Map<String, dynamic> selection, { required ContentAttributes? contentAttributes }) {
     TZDateTime? customStartTime, customEndTime;
@@ -1403,6 +1422,24 @@ class Event2FilterParam {
     );
   }
 
+  factory Event2FilterParam.fromStorage() => Event2FilterParam(
+    timeFilter: Event2TimeFilterImpl.fromJson(Storage().events2Time) ?? Event2TimeFilter.upcoming,
+    customStartTime: TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime)),
+    customEndTime: TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime)),
+    types: LinkedHashSetUtils.from<Event2TypeFilter>(Event2TypeFilterListImpl.listFromJson(Storage().events2Types)),
+    attributes: Storage().events2Attributes
+  );
+
+  void saveToStorage() {
+    Storage().events2Time = timeFilter?.toJson();
+    Storage().events2CustomStartTime = JsonUtils.encode(customStartTime?.toJson());
+    Storage().events2CustomEndTime = JsonUtils.encode(customEndTime?.toJson());
+    Storage().events2Types = types?.toJson();
+    Storage().events2Attributes = attributes;
+  }
+
+  bool get isNotEmpty => ((timeFilter != null) && (timeFilter != Event2TimeFilter.upcoming)) || (types?.isNotEmpty == true) || (attributes?.isNotEmpty == true);
+
   static void notifySubscribersChanged({NotificationsListener? except}) {
     Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifyChanged);
     if (subscribers != null) {
@@ -1418,28 +1455,36 @@ class Event2FilterParam {
 // Event2FilterParamUi
 
 extension Event2FilterParamUi on Event2FilterParam {
-  List<InlineSpan> buildDescription({ TextStyle? boldStyle, TextStyle? regularStyle}) {
+
+  List<InlineSpan> buildDescription({ TextStyle? textStyle}) {
+    textStyle ??= Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    boldStyle ??= Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
-    regularStyle ??= Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+    for (String entry in rawDescription) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: ", " , style: textStyle,));
+      }
+      descriptionList.add(TextSpan(text: entry, style: textStyle,),);
+    }
+    return descriptionList;
+  }
+
+  List<String> get rawDescription {
+    List<String> descriptionList = <String>[];
 
     String? timeDescription = (timeFilter != Event2TimeFilter.customRange) ?
       event2TimeFilterToDisplayString(timeFilter) :
       event2TimeFilterDisplayInfo(Event2TimeFilter.customRange, customStartTime: customStartTime, customEndTime: customEndTime);
 
     if (timeDescription != null) {
-      if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
-      }
-      descriptionList.add(TextSpan(text: timeDescription, style: regularStyle,),);
+      descriptionList.add(timeDescription);
     }
 
     if (types != null) {
       for (Event2TypeFilter type in types!) {
-        if (descriptionList.isNotEmpty) {
-          descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+        String? typeDisplayString = event2TypeFilterToDisplayString(type);
+        if (typeDisplayString != null) {
+          descriptionList.add(typeDisplayString);
         }
-        descriptionList.add(TextSpan(text: event2TypeFilterToDisplayString(type), style: regularStyle,),);
       }
     }
 
@@ -1450,10 +1495,7 @@ extension Event2FilterParamUi on Event2FilterParam {
         List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(attributes, complete: true);
         if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
           for (String attributeValue in displayAttributeValues) {
-            if (descriptionList.isNotEmpty) {
-              descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
-            }
-            descriptionList.add(TextSpan(text: attributeValue, style: regularStyle,),);
+            descriptionList.add(attributeValue);
           }
         }
       }
@@ -1507,8 +1549,9 @@ extension Event2FilterParamUi on Event2FilterParam {
 // Event2SortOrderImpl
 
 extension Event2SortOrderImpl on Event2SortOrder {
-  static Event2SortOrder? defaultFrom({Event2SortType? sortType, Event2TimeFilter? timeFilter}) =>
-    (sortType != null) ? (((timeFilter == Event2TimeFilter.past) && (sortType == Event2SortType.dateTime)) ? Event2SortOrder.descending : Event2SortOrder.ascending) : null;
+
+  static Event2SortOrder defaultFrom({required Event2SortType sortType, Event2TimeFilter? timeFilter}) =>
+    (((sortType == Event2SortType.dateTime) && (timeFilter == Event2TimeFilter.past)) ? Event2SortOrder.descending : Event2SortOrder.ascending);
 }
 
 // Events2QueryImpl
@@ -1525,7 +1568,7 @@ extension Events2QueryImpl on Events2Query {
       groupings: groupings,
       attributes: filterParam.attributes,
       sortType: sortType,
-      sortOrder: Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: filterParam.timeFilter),
+      sortOrder: (sortType != null) ? Event2SortOrderImpl.defaultFrom(sortType: sortType, timeFilter: filterParam.timeFilter) : null,
       location: location,
     );
 }

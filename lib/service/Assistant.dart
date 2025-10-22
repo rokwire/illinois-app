@@ -23,6 +23,7 @@ class Assistant with Service, NotificationsListener implements ContentItemCatego
 
   static const String _promoContentCategory = "assistant_promo";
 
+  String? _sessionID;
   AssistantUser? _user;
   AssistantSettings? _settings;
   Map<String, dynamic>? _promoContent;
@@ -68,7 +69,7 @@ class Assistant with Service, NotificationsListener implements ContentItemCatego
 
   @override
   Future<void> initService() async {
-
+    _sessionID = Storage().assistantSessionID;
     List<Future<String?>> initFutures = <Future<String?>>[];
 
     int? futuresSettingsIndex;
@@ -305,8 +306,14 @@ class Assistant with Service, NotificationsListener implements ContentItemCatego
     }
   }
 
+  Future<void> resetSession() async {
+    Storage().assistantSessionID = _sessionID = null;
+  }
+
   Future<bool> removeAllMessages() async {
     bool succeeded = false;
+    // remove session id here
+    resetSession();
     if (_isEnabled) {
       String url = '${Config().aiProxyUrl}/messages';
       Response? response = await Network().delete(url, auth: Auth2());
@@ -376,6 +383,10 @@ class Assistant with Service, NotificationsListener implements ContentItemCatego
       };
     }
 
+    if (_sessionID != null) {
+      body['session_id'] = _sessionID;
+    }
+
     try {
       String? json = JsonUtils.encode(body);
       Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json);
@@ -384,7 +395,13 @@ class Assistant with Service, NotificationsListener implements ContentItemCatego
       if (responseCode == 200) {
         Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
         if (responseJson != null) {
-          return Message.fromAnswerJson(responseJson);
+          //get and update session id
+          Message message = Message.fromAnswerJson(responseJson);
+
+          if (message.modelResponseId != null) {
+            Storage().assistantSessionID = _sessionID = message.modelResponseId;
+          }
+          return message;
         }
         return null;
       } else {

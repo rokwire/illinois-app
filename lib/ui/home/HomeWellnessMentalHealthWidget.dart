@@ -16,7 +16,6 @@
 
 import 'dart:async';
 import 'package:collection/collection.dart';
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -33,6 +32,8 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../accessibility/AccessiblePageView.dart';
 
 class HomeWellnessMentalHealthWidget extends StatefulWidget {
 
@@ -150,7 +151,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
       }
 
       contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
+        AccessiblePageView(
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,
@@ -211,7 +212,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
         _resourceItems = resourceItems;
         _pageViewKey = UniqueKey();
         // _pageController = null;
-        if (_resourceItems?.isNotEmpty == true) {
+        if ((_resourceItems?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
           _pageController?.jumpToPage(0);
         }
         _contentKeys.clear();

@@ -2,12 +2,12 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Questionnaire.dart';
+import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -120,7 +120,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> with Noti
           _researchProjectsCardKeys.clear();
           _pageViewKey = UniqueKey();
           // _pageController = null;
-          if (_researchProjects?.isNotEmpty == true) {
+          if ((_researchProjects?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
             _pageController?.jumpToPage(0);
           }
         });
@@ -181,7 +181,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> with Noti
       }
 
       contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
+        AccessiblePageView(
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,

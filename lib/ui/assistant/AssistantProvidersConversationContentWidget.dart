@@ -15,11 +15,17 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Assistant.dart';
+import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Assistant.dart';
+import 'package:illinois/model/Building.dart';
+import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -28,9 +34,19 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/assistant/AssistantWidgets.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/dining/DiningCard.dart';
+import 'package:illinois/ui/dining/FoodDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
+import 'package:illinois/ui/map2/Map2ExploreCard.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -77,6 +93,8 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
   LocationServicesStatus? _locationStatus;
   AssistantLocation? _currentLocation;
 
+  Map<String, PageController>? _structsPageControllers;
+
   bool _loading = false;
 
   @override
@@ -114,6 +132,9 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     _scrollController.dispose();
     _inputController.dispose();
     _inputFieldFocus.dispose();
+    _structsPageControllers?.values.forEach((controller) {
+      controller.dispose();
+    });
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -259,15 +280,16 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                                           ])),
                                     ]))))))
               ])),
+      _buildDeepLinksWidget(message),
+      Visibility(visible: (message.structElements?.isNotEmpty == true), child: _buildStructElementsContainerWidget(message)),
       _buildSourcesExpandedWidget(message)
     ]);
   }
 
   Widget _buildSourcesExpandedWidget(Message message) {
     bool additionalControlsVisible = !message.user && (_messages.indexOf(message) != 0);
-    bool areSourcesLabelsVisible = additionalControlsVisible && ((CollectionUtils.isNotEmpty(message.sourceDatEntries) || CollectionUtils.isNotEmpty(message.links)));
+    bool areSourcesLabelsVisible = additionalControlsVisible && CollectionUtils.isNotEmpty(message.sourceDatEntries);
     bool areSourcesValuesVisible = (additionalControlsVisible && areSourcesLabelsVisible && (message.sourcesExpanded == true));
-    List<Link>? deepLinks = message.links;
     List<Widget> webLinkWidgets = _buildWebLinkWidgets(message.sourceDatEntries);
 
     return Visibility(
@@ -279,10 +301,10 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                 child: Padding(padding: EdgeInsets.only(top: 10, left: 5),
                     child: Semantics(
                         child: InkWell(
-                            onTap: () => _onTapSourcesAndLinksLabel(message),
+                            onTap: () => _onTapLinksLabel(message),
                             splashColor: Colors.transparent,
                             child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                              Text(Localization().getStringEx('panel.assistant.sources_links.label', 'Sources and Links'),
+                              Text(Localization().getStringEx('panel.assistant.links.label', 'Links'),
                                   style: Styles().textStyles.getTextStyle('widget.message.small')),
                               Padding(
                                   padding: EdgeInsets.only(left: 10),
@@ -299,22 +321,13 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                         visible: CollectionUtils.isNotEmpty(webLinkWidgets),
                         child: Padding(
                             padding: EdgeInsets.only(top: 15),
-                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: webLinkWidgets))),
-                    Visibility(
-                        visible: CollectionUtils.isNotEmpty(deepLinks),
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Padding(
-                              padding: EdgeInsets.only(top: 15, bottom: 5),
-                              child: Text(Localization().getStringEx('panel.assistant.related.label', 'Related:'),
-                                  style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'))),
-                          _buildDeepLinkWidgets(deepLinks)
-                        ]))
+                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: webLinkWidgets)))
                   ])))
         ]));
   }
 
-  void _onTapSourcesAndLinksLabel(Message message) {
-    Analytics().logSelect(target: 'Assistant: Sources and Links');
+  void _onTapLinksLabel(Message message) {
+    Analytics().logSelect(target: 'Assistant: Links');
     setStateIfMounted(() {
       message.sourcesExpanded = !(message.sourcesExpanded ?? false);
       int msgsLength = _messages.length;
@@ -324,6 +337,98 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
         _shouldScrollToBottom = true;
       }
     });
+  }
+
+  Widget _buildStructElementsContainerWidget(Message? message) {
+    List<dynamic>? elements = message?.structElements;
+
+    if ((elements == null) || (elements.isNotEmpty != true)) {
+      return Container();
+    }
+    String messageId = message?.id ?? '';
+    if (_structsPageControllers == null) {
+      _structsPageControllers = <String, PageController>{};
+    }
+    PageController? currentController = _structsPageControllers![messageId];
+    if (currentController == null) {
+      const int pageSpacing = 8;
+      double screenWidth = MediaQuery.of(context).size.width - (2 * pageSpacing);
+      double pageViewport = (screenWidth - 2 * pageSpacing) / screenWidth;
+      currentController = PageController(viewportFraction: pageViewport);
+      _structsPageControllers![messageId] = currentController;
+    }
+    int elementsCount = elements.length;
+    List<Widget> pages = <Widget>[];
+    for (int index = 0; index < elementsCount; index++) {
+      dynamic element = elements[index];
+      Widget? elementCard;
+      if (element is Event2) {
+        elementCard = Event2Card(element, displayMode: Event2CardDisplayMode.list, onTap: () => _onTapEvent(element));
+      } else if (element is Dining) {
+        elementCard = DiningCard(element, onTap: (_) => _onTapDiningLocation(element));
+      } else if (element is DiningProductItem) {
+        elementCard = AssistantDiningProductItemCard(item: element, onTap: () => _onTapDiningProductItem(element));
+      } else if (element is DiningNutritionItem) {
+        elementCard = AssistantDiningNutritionItemCard(item: element, onTap: () => _onTapDiningNutritionItem(element, elements));
+      } else if (element is Building) {
+        elementCard = Map2ExploreCard(element, onTap: () => _onTapBuildingItem(element));
+      }
+
+      if (elementCard != null) {
+        pages.add(Padding(padding: EdgeInsets.only(right: 18, bottom: 8), child: elementCard));
+      }
+    }
+    return Container(
+        padding: EdgeInsets.only(top: 10),
+        child: Column(children: <Widget>[
+          ExpandablePageView(allowImplicitScrolling: true, controller: currentController, children: pages, padEnds: false,),
+          AccessibleViewPagerNavigationButtons(controller: currentController, pagesCount: () => elementsCount),
+        ]));
+  }
+
+  void _onTapEvent(Event2 event) {
+    Analytics().logSelect(target: 'Assistant: Event "${event.name}"');
+    if (event.hasGame) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game)));
+    } else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event)));
+    }
+  }
+
+  void _onTapDiningLocation(Dining dining) {
+    Analytics().logSelect(target: 'Assistant: Dining Location "${dining.title}"');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: dining)));
+  }
+
+  void _onTapDiningProductItem(DiningProductItem item) {
+    Analytics().logSelect(target: 'Assistant: Dining Product Item "${item.name}"');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => FoodDetailPanel(productItem: item)));
+  }
+
+  void _onTapDiningNutritionItem(DiningNutritionItem item, List<dynamic>? elements) {
+    Analytics().logSelect(target: 'Assistant: Dining Nutrition Item "${item.name}"');
+    String? itemId = item.itemID;
+    DiningProductItem? productItem;
+    if (itemId != null) {
+      if ((elements != null) && elements.isNotEmpty) {
+        for (dynamic e in elements) {
+          if (e is DiningProductItem) {
+            if (e.itemID == itemId) {
+              productItem = e;
+              break;
+            }
+          }
+        }
+      }
+    }
+    if (productItem != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => FoodDetailPanel(productItem: productItem!)));
+    }
+  }
+
+  void _onTapBuildingItem(Building building) {
+    Analytics().logSelect(target: 'Assistant: Building Item "${building.name}"');
+    building.exploreLaunchDetail(context);
   }
 
   Widget _buildTypingChatBubble() {
@@ -377,6 +482,12 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                               overflow: TextOverflow.ellipsis,
                               style: Styles().textStyles.getTextStyle('widget.button.link.source.title.semi_fat')))
                     ])))));
+  }
+
+  Widget _buildDeepLinksWidget(Message message) {
+    List<Link>? deepLinks = message.links;
+    bool hasDeepLinks = CollectionUtils.isNotEmpty(deepLinks);
+    return Visibility(visible: hasDeepLinks, child: Padding(padding: EdgeInsets.only(top: 10), child: _buildDeepLinkWidgets(deepLinks)));
   }
 
   Widget _buildDeepLinkWidgets(List<Link>? links) {

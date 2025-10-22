@@ -1,7 +1,6 @@
 
 import 'dart:async';
 
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -10,6 +9,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Laundries.dart';
+import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
@@ -171,7 +171,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
       }
 
       contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
+        AccessiblePageView(
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,
@@ -221,7 +221,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
             _laundrySchool = laundrySchool;
             _pageViewKey = UniqueKey();
             // _pageController = null;
-            if (_laundrySchool?.rooms?.isNotEmpty == true) {
+            if ((_laundrySchool?.rooms?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
               _pageController?.jumpToPage(0);
             }
             _contentKeys.clear();

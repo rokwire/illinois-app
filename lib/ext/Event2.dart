@@ -2,9 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Game.dart';
+import 'package:illinois/ext/Position.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -289,21 +291,8 @@ extension Event2Ext on Event2 {
     }
   }
 
-  String? getDisplayDistance(Position? userLocation) {
-    double? latitude = location?.latitude;
-    double? longitude = location?.longitude;
-    if ((latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0) && (userLocation != null)) {
-      double distanceInMeters = Geolocator.distanceBetween(latitude, longitude, userLocation.latitude, userLocation.longitude);
-      double distanceInMiles = distanceInMeters / 1609.344;
-      //int whole = (((distanceInMiles * 10) + 0.5).toInt() % 10);
-      int displayPrecision = ((distanceInMiles < 10) && ((((distanceInMiles * 10) + 0.5).toInt() % 10) != 0)) ? 1 : 0;
-      return Localization().getStringEx('model.explore.distance.format', '{{distance}} mi away').
-        replaceAll('{{distance}}', distanceInMiles.toStringAsFixed(displayPrecision));
-    }
-    else {
-      return null;
-    }
-  }
+  String? getDisplayDistance(Position? userLocation) =>
+    userLocation?.displayDistance(location);
 
   bool get isSurveyAvailable {
     int? hours = surveyDetails?.hoursAfterEvent ?? 0;
@@ -764,6 +753,15 @@ extension Events2Ext on Events2 {
       return Event2Result.fail("Unable to duplicate main event");
     });
   }
+}
+
+extension Event2SortTypeAppImpl on Event2SortType {
+  static const Event2SortType defaultSortType = Event2SortType.dateTime;
+  static Event2SortType? fromStorage() => Event2SortTypeImpl.fromJson(Storage().events2SortType);
+}
+
+extension Event2SortOrderAppImpl on Event2SortOrder {
+  static const Event2SortOrder defaultSortOrder = Event2SortOrder.ascending;
 }
 
 class Event2Result<T>{

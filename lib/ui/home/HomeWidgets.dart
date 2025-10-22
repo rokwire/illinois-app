@@ -5,7 +5,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -13,6 +12,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -121,16 +121,10 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> with NotificationsL
         // As a workaround we use the Container below with a background color until the Flutter fix gets available.
         child: widget.childBuilder?.call(context) ?? Container(color: Styles().colors.background, child:
           Row(crossAxisAlignment: widget.crossAxisAlignment, children: <Widget>[
-
-            Semantics(label: 'Drag Handle', button: true, /* TBD: Localization */
-              hint: AppSemantics.getIosHintLongPress("start drag"),
-              onLongPressHint: "start drag",
-              onLongPress: () => Future.delayed(Duration(seconds: 1), ()=>AppSemantics.announceMessage(context, "Started dragging")), child:
-              Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-                Styles().images.getImage('drag-white', excludeFromSemantics: true),
-              ),
+            Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+              Styles().images.getImage('drag-white', excludeFromSemantics: true),
             ),
-
+  
             Expanded(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
                 Semantics(label: widget.title, header: true, excludeSemantics: true, child:
@@ -139,8 +133,9 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> with NotificationsL
               )
             ),
 
-
-            HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.Handle, prompt: true),
+            Semantics(container: true,
+              child: HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.Handle, prompt: true),
+            )
           ],),
         ),
       )),
@@ -1013,7 +1008,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
       return
         Column(children: [
           Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-            ExpandablePageView(
+            AccessiblePageView(
               key: _pageViewKey,
               controller: _pageController,
               estimatedPageSize: _pageHeight,
@@ -1117,7 +1112,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
 
       _pageViewKey = UniqueKey();
       // _pageController = null;
-      if (_displayCodes?.isNotEmpty == true) {
+      if ((_displayCodes?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
         _pageController?.jumpToPage(0);
       }
     }

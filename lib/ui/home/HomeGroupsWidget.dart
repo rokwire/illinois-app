@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -139,7 +139,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
           _pageViewKey = UniqueKey();
           _groupCardKeys.clear();
           // _pageController = null;
-          if (_groups?.isNotEmpty == true) {
+          if ((_groups?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
             _pageController?.jumpToPage(0);
           }
         });
@@ -193,7 +193,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> with NotificationsL
       }
 
       contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
+        AccessiblePageView(
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,
