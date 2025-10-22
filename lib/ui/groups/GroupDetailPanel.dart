@@ -678,18 +678,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       pendingMembers = "";
     }
 
-    int attendedCount = _groupStats?.attendedCount ?? 0;
-    String? attendedMembers;
-    if (_isAdmin && (_group!.attendanceGroup == true)) {
-      if (attendedCount == 0) {
-        attendedMembers = Localization().getStringEx("panel.group_detail.attended_members.count.empty", "No Members Attended");
-      } else if (attendedCount == 1) {
-        attendedMembers = Localization().getStringEx("panel.group_detail.attended_members.count.one", "1 Member Attended");
-      } else {
-        attendedMembers = sprintf(Localization().getStringEx("panel.group_detail.attended_members.count.format", "%s Members Attended"), [attendedCount]);
-      }
-    }
-
     List<Widget> commands = [];
     if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
       commands.add(_infoSplitter);
@@ -741,12 +729,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
           Text(pendingMembers,  style: Styles().textStyles.getTextStyle('widget.title.small.underline'))
         )
-      ));
-    }
-
-    if (StringUtils.isNotEmpty(attendedMembers)) {
-      contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-        Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().textStyles.getTextStyle('widget.title.small'),)
       ));
     }
 
