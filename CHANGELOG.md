@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Maps2: Fixed loss of explores while building their markers [#5472](https://github.com/rokwire/illinois-app/issues/5472).
 - Maps2: Fixed refresh of bus stop cards in tray when favorite gets changed [#5473](https://github.com/rokwire/illinois-app/issues/5473).
 - Removed "Members attended" label for a group [#5471](https://github.com/rokwire/illinois-app/issues/5471).
+### Removed
+- Maps2: Removed ability for editing saved location titles [#5474](https://github.com/rokwire/illinois-app/issues/5474).
 
 ## [7.3.16] - 2025-10-21
 ### Changed
