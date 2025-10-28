@@ -202,7 +202,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifySettingsCalendarNotification,
       FirebaseMessaging.notifySettingsAppointmentsNotification,
       FirebaseMessaging.notifySettingsMapsNotification,
-      FirebaseMessaging.notifySettingsContactsNotification,
+      FirebaseMessaging.notifySettingsAboutNotification,
       FirebaseMessaging.notifySettingsResearchNotification,
       FirebaseMessaging.notifySettingsPrivacyNotification,
       FirebaseMessaging.notifySettingsNotificationsNotification,
@@ -503,8 +503,8 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == FirebaseMessaging.notifySettingsMapsNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContentType.maps);
     }
-    else if (name == FirebaseMessaging.notifySettingsContactsNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.contact);
+    else if (name == FirebaseMessaging.notifySettingsAboutNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.about);
     }
     else if (name == FirebaseMessaging.notifySettingsResearchNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContentType.research);
