@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -82,13 +81,6 @@ class _SettingsAssessmentsPageState extends State<SettingsAssessmentsPage> with 
         contentList.addAll(_buildAssessmentSettings('health_screener', 'health_screener'));
       }
     }
-    //TMP:
-    contentList.addAll([
-      Container(height: 300, color: Colors.amber,),
-      Container(height: 300, color: Colors.red,),
-      Container(height: 300, color: Colors.green,),
-      Container(height: 300, color: Colors.blue,),
-    ]);
     return contentList;
   }
 
