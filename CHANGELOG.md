@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Show Food Filter in Settings [#5490](https://github.com/rokwire/illinois-app/issues/5490).
 - WEB: change the loading video and make it fullscreen [#4871](https://github.com/rokwire/illinois-app/issues/4871).
+- WEB: set web page language [#5183](https://github.com/rokwire/illinois-app/issues/5183).
 
 ## [7.3.17] - 2025-10-22
 ### Changed
