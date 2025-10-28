@@ -54,13 +54,25 @@
   <!-- cropperjs -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+
+  <!-- styles -->
+  <style>
+    video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
+    }
+  </style>
+
 </head>
 <body>
-  <div class="center">
-    <video preload="auto" width="100%" height="auto" autoplay muted>
+    <video preload="auto" autoplay muted loop playsinline>
       <source src="assets/media/intro-web.webm" type='video/webm'>
     </video>
-  </div>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
