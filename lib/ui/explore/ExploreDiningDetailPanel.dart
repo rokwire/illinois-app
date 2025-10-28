@@ -25,6 +25,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersPage.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -1031,7 +1032,10 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
   void _onFoodFilersTapped() {
     Analytics().logSelect(target: "Food filters");
     //#5206: SettingsHomePanel.present(context, content: SettingsContentType.food_filters);
-    SettingsFoodFiltersBottomSheet.present(context).then((_) {
+    //#5490: SettingsFoodFiltersBottomSheet.present(context).then((_) {
+    //  setStateIfMounted();
+    //});
+    SettingsHomePanel.present(context, content: SettingsContentType.food_filters).then((_){
       setStateIfMounted();
     });
   }
