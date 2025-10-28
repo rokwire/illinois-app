@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
@@ -27,7 +28,7 @@ import 'package:illinois/ui/settings/SettingsAccessibilityPage.dart';
 import 'package:illinois/ui/settings/SettingsAppointmentsPage.dart';
 import 'package:illinois/ui/settings/SettingsAssessmentsPage.dart';
 import 'package:illinois/ui/settings/SettingsCalendarPage.dart';
-import 'package:illinois/ui/settings/SettingsContactsPage.dart';
+import 'package:illinois/ui/settings/SettingsAboutPage.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersPage.dart';
 import 'package:illinois/ui/settings/SettingsLanguagePage.dart';
 import 'package:illinois/ui/settings/SettingsMapsPage.dart';
@@ -44,28 +45,14 @@ import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
-enum SettingsContentType { food_filters, sports, favorites, assessments, calendar, recent_items, appointments, language, contact, maps, research, privacy, notifications, accessibility}
+enum SettingsContentType { food_filters, sports, favorites, assessments, calendar, recent_items, appointments, language, about, maps, research, privacy, notifications, accessibility }
 
 class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'settings_home_content_panel';
 
-  static final Set<SettingsContentType> _dropdownContentTypes = <SettingsContentType>{
-    //SettingsContent visible in the dropdown. Some can be accessed only from outside. Example: SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
-    SettingsContentType.contact,
-    SettingsContentType.maps,
-    SettingsContentType.appointments,
-    SettingsContentType.assessments,
-    SettingsContentType.research,
-    SettingsContentType.calendar,
-    SettingsContentType.recent_items,
-    SettingsContentType.language,
-    SettingsContentType.privacy,
-    SettingsContentType.notifications,
-    SettingsContentType.accessibility,
-  };
-
-  static final SettingsContentType _defaultContentType = SettingsContentType.contact;
+  static final SettingsContentType _defaultContentType = SettingsContentType.about;
 
   final SettingsContentType? contentType;
 
@@ -77,11 +64,11 @@ class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
   @override
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Settings;
 
-  static void present(BuildContext context, { SettingsContentType? content}) {
+  static Future<void> present(BuildContext context, { SettingsContentType? content}) async {
     if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
-      showModalBottomSheet(
+      return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         isDismissible: true,
@@ -115,8 +102,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
     super.initState();
     NotificationService().subscribe(this, [
       Localization.notifyLocaleChanged,
+      FlexUI.notifyChanged,
     ]);
-    _contentTypes = _SettingsContentTypeList.fromAvailableContentTypes(SettingsHomePanel._dropdownContentTypes);
+    _contentTypes = _SettingsContentTypeList.fromFlexUi();
 
     _selectedContentType = widget.contentType ?? // Some content types are not available in dropdown list.
       Storage()._settingsContentType?._ensure(availableTypes: _contentTypes) ??
@@ -128,6 +116,16 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
   void dispose() {
     NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Localization.notifyLocaleChanged) {
+      setStateIfMounted(() {});
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateContentTypesIfNeeded();
+    }
   }
 
   @override
@@ -224,9 +222,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
   }
 
   Widget _buildContentValuesContainer() {
-    return Visibility(
-      visible: _contentValuesVisible,
-      child: Container /* Positioned.fill*/ (child:
+    return Visibility(visible: _contentValuesVisible, child:
+      Container /* Positioned.fill*/ (child:
         Stack(children: <Widget>[
           _dropdownDismissLayer,
           _dropdownList
@@ -300,13 +297,22 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
       case SettingsContentType.favorites: return null;
       case SettingsContentType.assessments: return SettingsAssessmentsPage();
       case SettingsContentType.language: return SettingsLanguagePage();
-      case SettingsContentType.contact: return SettingsContactsPage();
+      case SettingsContentType.about: return SettingsAboutPage();
       case SettingsContentType.maps: return SettingsMapsPage();
       case SettingsContentType.research: return SettingsResearchPage(parentRouteName: SettingsHomePanel.routeName);
       case SettingsContentType.privacy: return SettingsPrivacyCenterPage();
       case SettingsContentType.notifications: return SettingsNotificationPreferencesPage();
       case SettingsContentType.accessibility: return SettingsAccessibilityPage();
       default: return null;
+    }
+  }
+
+  void _updateContentTypesIfNeeded() {
+    List<SettingsContentType> contentTypes = _SettingsContentTypeList.fromFlexUi();
+    if (_contentTypes != contentTypes) {
+      setStateIfMounted(() {
+        _contentTypes = contentTypes;
+      });
     }
   }
 
@@ -322,14 +328,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
     Navigator.of(context).pop();
   }
 
-  // NotificationsListener
-  
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == Localization.notifyLocaleChanged) {
-      setStateIfMounted(() {});
-    }
-  }
 }
 
 // _DebugContainer
@@ -386,7 +384,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case SettingsContentType.favorites: return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'Customize Favorites', language: language);
       case SettingsContentType.assessments: return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments', language: language);
       case SettingsContentType.language: return Localization().getStringEx('panel.settings.home.settings.sections.language.label', 'My Language', language: language);
-      case SettingsContentType.contact: return Localization().getStringEx('panel.settings.home.settings.sections.contact.label', 'About the App', language: language);
+      case SettingsContentType.about: return Localization().getStringEx('panel.settings.home.settings.sections.about.label', 'About the App', language: language);
       case SettingsContentType.maps: return Localization().getStringEx('panel.settings.home.settings.sections.maps.label', 'Maps & Wayfinding', language: language);
       case SettingsContentType.research: return Localization().getStringEx('panel.settings.home.settings.sections.research.label', 'My Participation in Research', language: language);
       case SettingsContentType.privacy: return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings', language: language);
@@ -405,7 +403,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case SettingsContentType.favorites: return 'favorites';
       case SettingsContentType.assessments: return 'assessments';
       case SettingsContentType.language: return 'language';
-      case SettingsContentType.contact: return 'contact';
+      case SettingsContentType.about: return 'about';
       case SettingsContentType.maps: return 'maps';
       case SettingsContentType.research: return 'research';
       case SettingsContentType.privacy: return 'privacy';
@@ -424,7 +422,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case 'favorites': return SettingsContentType.favorites;
       case 'assessments': return SettingsContentType.assessments;
       case 'language': return SettingsContentType.language;
-      case 'contact': return SettingsContentType.contact;
+      case 'about': return SettingsContentType.about;
       case 'maps': return SettingsContentType.maps;
       case 'research': return SettingsContentType.research;
       case 'privacy': return SettingsContentType.privacy;
@@ -441,15 +439,26 @@ extension SettingsContentTypeImpl on SettingsContentType {
 extension _SettingsContentTypeList on List<SettingsContentType> {
   void sortAlphabetical() => sort((SettingsContentType t1, SettingsContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
 
-  static List<SettingsContentType> fromAvailableContentTypes(Iterable<SettingsContentType> contentTypes) {
-    List<SettingsContentType> contentTypesList = List<SettingsContentType>.from(contentTypes);
-    contentTypesList.sortAlphabetical();
+  static List<SettingsContentType> fromFlexUi() {
+    List<SettingsContentType> contentTypesList = <SettingsContentType>[];
+    List<String>? codes = JsonUtils.listStringsValue(FlexUI()['settings']);
+    if (codes != null) {
+      for (String code in codes) {
+        SettingsContentType? contentType = SettingsContentTypeImpl.fromJsonString(code);
+        if (contentType != null) {
+          contentTypesList.add(contentType);
+        }
+      }
+      if (1 < contentTypesList.length) {
+        contentTypesList.sortAlphabetical();
+      }
+    }
     return contentTypesList;
   }
 }
 
 extension _StorageSettingsExt on Storage {
-  SettingsContentType? get _settingsContentType => SettingsContentTypeImpl.fromJsonString(walletContentType);
-  set _settingsContentType(SettingsContentType? value) => walletContentType = value?.jsonString;
+  SettingsContentType? get _settingsContentType => SettingsContentTypeImpl.fromJsonString(settingsContentType);
+  set _settingsContentType(SettingsContentType? value) => settingsContentType = value?.jsonString;
 }
 
