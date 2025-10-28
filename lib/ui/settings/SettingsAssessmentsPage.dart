@@ -63,25 +63,16 @@ class _SettingsAssessmentsPageState extends State<SettingsAssessmentsPage> with 
   }
 
   Widget _buildContent() {
-    List<Widget> contentList = [];
-    List<dynamic> codes = FlexUI()['assessments'] ?? [];
-    for (String code in codes) {
-      if (code == 'settings') {
-        contentList.addAll(_buildAssessmentsSettings());
-      }
-    }
-
-    if (contentList.isNotEmpty) {
-      contentList.insert(0, Container(height: 8));
-      contentList.add(Container(height: 16));
-    }
-
-    return Container(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList));
+    return Padding(padding: EdgeInsets.only(top: 8, bottom: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+        _buildAssessmentsSettings(),
+      )
+    );
   }
 
   List<Widget> _buildAssessmentsSettings() {
     List<Widget> contentList = [];
-    List<dynamic> codes = FlexUI()['assessments.settings'] ?? [];
+    List<dynamic> codes = FlexUI()['settings.assessments'] ?? [];
     for (String code in codes) {
       if (code == 'skills_self_evaluation') {
         contentList.add(_buildTitleWidget(Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.title', 'Skills Self-Evaluation & Career Explorer')));
@@ -91,6 +82,13 @@ class _SettingsAssessmentsPageState extends State<SettingsAssessmentsPage> with 
         contentList.addAll(_buildAssessmentSettings('health_screener', 'health_screener'));
       }
     }
+    //TMP:
+    contentList.addAll([
+      Container(height: 300, color: Colors.amber,),
+      Container(height: 300, color: Colors.red,),
+      Container(height: 300, color: Colors.green,),
+      Container(height: 300, color: Colors.blue,),
+    ]);
     return contentList;
   }
 
@@ -103,7 +101,7 @@ class _SettingsAssessmentsPageState extends State<SettingsAssessmentsPage> with 
   }
 
   List<Widget> _buildAssessmentSettings(String assessment, String name) {
-    List<dynamic> codes = FlexUI()['assessments.settings.$assessment'] ?? [];
+    List<dynamic> codes = FlexUI()['settings.assessments.$assessment'] ?? [];
     List<Widget> contentList = [];
     for (String code in codes) {
       if (code == 'save') {
