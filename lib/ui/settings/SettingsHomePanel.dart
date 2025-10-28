@@ -64,11 +64,11 @@ class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
   @override
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Settings;
 
-  static void present(BuildContext context, { SettingsContentType? content}) {
+  static Future<void> present(BuildContext context, { SettingsContentType? content}) async {
     if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
-      showModalBottomSheet(
+      return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         isDismissible: true,
