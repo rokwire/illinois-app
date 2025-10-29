@@ -74,10 +74,10 @@
 
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 	
-			"assessments": ["settings"],
-			"assessments.settings": ["skills_self_evaluation", "health_screener"],
-			"assessments.settings.skills_self_evaluation": ["save"],
-			"assessments.settings.health_screener": ["save"],
+			"settings": ["food_filters", "sports", "favorites", "assessments", "calendar", "recent_items", "appointments", "language", "about", "maps", "research", "privacy", "notifications", "accessibility"],
+			"settings.assessments": ["skills_self_evaluation", "health_screener"],
+			"settings.assessments.skills_self_evaluation": ["save"],
+			"settings.assessments.health_screener": ["save"],
 
 			"calendar": ["settings"],
 			"calendar.settings": ["prompt"],
@@ -221,6 +221,8 @@
 				"emergency"                               : false,
 				"map.types.laundry"                       : false,
 				"map.types.appointments"                  : false,
+				"settings.sports"                         : false,
+				"settings.favorites"                      : false,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
 				"onboarding2.video_tutorial"              : [["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"], "AND", "${app.storage.onBoarding2ShowTutorial}"],
 				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
