@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.3.18] - 2025-10-29
 ### Changed
 - Show Food Filter in Settings [#5490](https://github.com/rokwire/illinois-app/issues/5490).
 - Assistant: increase request timeout to 120 secs for the /query api [#5493](https://github.com/rokwire/illinois-app/issues/5493).
