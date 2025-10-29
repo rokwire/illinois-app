@@ -389,7 +389,7 @@ class Assistant with Service, NotificationsListener implements ContentItemCatego
 
     try {
       String? json = JsonUtils.encode(body);
-      Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json);
+      Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json, timeout: 120);
       int? responseCode = response?.statusCode;
       String? responseString = response?.body;
       if (responseCode == 200) {
