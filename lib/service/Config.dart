@@ -253,6 +253,9 @@ class Config extends rokwire.Config {
 
   int get inAppNotificationToastTimeout   => JsonUtils.intValue(settings['inAppNotificationToastTimeout']) ?? 6;
 
+  Map<String, dynamic> get assistantSettings      => JsonUtils.mapValue(settings['assistant']) ?? {};
+  int? get assistantQueryRequestTimeout           => JsonUtils.intValue(assistantSettings['queryRequestTimeout']);
+
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;
 
