@@ -1021,8 +1021,8 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     Places().getAllPlaces();
 
   List<Explore>? _loadMyLocations() {
-    List<ExplorePOI>? locations = ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
-    return (locations != null) ? List.from(locations.reversed) : null;
+    List<ExplorePOI> locations = ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName)) ?? <ExplorePOI>[];
+    return List.from(locations.reversed);
   }
 
   List<Explore>? _filterExplores(List<Explore>? explores) =>

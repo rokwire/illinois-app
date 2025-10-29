@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show Food Filter in Settings [#5490](https://github.com/rokwire/illinois-app/issues/5490).
 - Assistant: increase request timeout to 120 secs for the /query api [#5493](https://github.com/rokwire/illinois-app/issues/5493).
 - Map2: minor cleanup and rearrange after accessibility updates.
+### Fixed
+- Map2: fixed empty content processing of My Locations.
 ### Removed
 - Maps Accessibility resize workaround is removed [#5051](https://github.com/rokwire/illinois-app/issues/5051).
 
