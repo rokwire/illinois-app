@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Show Food Filter in Settings [#5490](https://github.com/rokwire/illinois-app/issues/5490).
+- Assistant: increase request timeout to 120 secs for the /query api [#5493](https://github.com/rokwire/illinois-app/issues/5493).
 
 ## [7.3.17] - 2025-10-22
 ### Changed
