@@ -118,8 +118,8 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   with NotificationsListener, SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Map2HomePanel>
 {
 
-  final GlobalKey _headerBarKey = GlobalKey();
-  final GlobalKey _headerBarTitleKey = GlobalKey();
+  final GlobalKey _rootHeaderBarKey = GlobalKey();
+  final GlobalKey _rootHeaderBarTitleKey = GlobalKey();
   final GlobalKey _scaffoldKey = GlobalKey();
   final GlobalKey _contentHeadingBarKey = GlobalKey();
   final GlobalKey _contentTypesBarKey = GlobalKey();
@@ -311,15 +311,16 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
       Positioned.fill(child:
         Column(children: [
-          RootHeaderBar(key: _headerBarKey, titleKey: _headerBarTitleKey, title: Localization().getStringEx("panel.map2.header.title", "Map2")),
+          _scaffoldHeaderBar,
+
+          Visibility(visible: (_selectedContentType == null), child:
+            _contentTypesBar
+          ),
+
           Visibility(visible: (_selectedContentType != null), child:
             _contentHeadingBar,
           ),
-          Visibility(visible: (_selectedContentType == null), child:
-            Align(alignment: Alignment.topCenter, child:
-              _contentTypesBar
-            ),
-          ),
+
           Expanded(child:
             Visibility(visible: (_exploresProgress == null) && (_trayExplores?.isNotEmpty == true), child:
               _traySheet,
@@ -343,6 +344,12 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
         ),
     ],);
 
+
+  Widget get _scaffoldHeaderBar => RootHeaderBar(
+    key: _rootHeaderBarKey,
+    titleKey: _rootHeaderBarTitleKey,
+    title: Localization().getStringEx("panel.map2.header.title", "Map2"),
+  );
 
   Widget get _mapProgressIndicator =>
     SizedBox(width: 24, height: 24, child:
@@ -371,17 +378,26 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   @override
   double? get mapTopSiblingsHeight {
-    double? headerBarHeight = _headerBarKey.renderBoxSize?.height;
-    if (headerBarHeight != null) {
-      headerBarHeight += _contentHeadingBarKey.renderBoxSize?.height ?? 0;
+    double? topSiblingsHeight;
+
+    double? rootHeaderBarHeight = _rootHeaderBarKey.renderBoxSize?.height;
+    if (rootHeaderBarHeight != null) {
+      topSiblingsHeight = (topSiblingsHeight ?? 0) + rootHeaderBarHeight;
+    }
+
+    double? contentHeadingBarHeight = _contentHeadingBarKey.renderBoxSize?.height;
+    if (contentHeadingBarHeight != null) {
+      topSiblingsHeight = (topSiblingsHeight ?? 0) + contentHeadingBarHeight;
+
       if (_exploresProgress == ExploreProgressType.init) {
-        headerBarHeight += _defaultContentFilterButtonsBarHeight;
+        topSiblingsHeight += _defaultContentFilterButtonsBarHeight;
       }
       if ((_exploresProgress != null) && (_selectedFilterIfExists?.hasFilter == true)) {
-        headerBarHeight += _defaultContentFilterDescriptionBarHeight;
+        topSiblingsHeight += _defaultContentFilterDescriptionBarHeight;
       }
     }
-    return headerBarHeight;
+
+    return topSiblingsHeight;
   }
 
   @override
@@ -2092,8 +2108,8 @@ extension _Map2Accessibility on _Map2HomePanelState{
   String get _amenitiesSemanticsValue => _campusBuildingsFilterIfExists?.amenitiesNameToIds.keys.toString() ?? '';
 
   void _accessibilityFocusHeading() {
-    AppSemantics.triggerAccessibilityFocus(_headerBarTitleKey); //When already on this tab
+    AppSemantics.triggerAccessibilityFocus(_rootHeaderBarTitleKey); //When already on this tab
     WidgetsBinding.instance.addPostFrameCallback((_) => //When coming from other tab
-      AppSemantics.triggerAccessibilityFocus(_headerBarTitleKey));
+      AppSemantics.triggerAccessibilityFocus(_rootHeaderBarTitleKey));
   }
 }
