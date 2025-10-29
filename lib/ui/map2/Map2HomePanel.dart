@@ -62,7 +62,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 import '../widgets/HeaderBar.dart';
@@ -119,8 +118,8 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   with NotificationsListener, SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Map2HomePanel>
 {
 
-  final GlobalKey _headerBarKey = GlobalKey();
-  final GlobalKey _headerBarTitleKey = GlobalKey();
+  final GlobalKey _rootHeaderBarKey = GlobalKey();
+  final GlobalKey _rootHeaderBarTitleKey = GlobalKey();
   final GlobalKey _scaffoldKey = GlobalKey();
   final GlobalKey _contentHeadingBarKey = GlobalKey();
   final GlobalKey _contentTypesBarKey = GlobalKey();
@@ -147,7 +146,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   final Map<Map2ContentType, Map2Filter> _filters = <Map2ContentType, Map2Filter>{};
   bool _searchOn = false;
-  bool _mapDisabled = false;// Accessibility workaround value
   double? _sortDropdownWidth;
   double? _termsDropdownWidth;
   double? _paymentTypesDropdownWidth;
@@ -188,7 +186,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     _selectedContentType = widget._evalInitialContentTypeEx(availableTypes: _availableContentTypes);
 
     _contentTypesScrollController.addListener(_onContentTypesScroll);
-    _traySheetController.addListener(_onSheetDragChanged);
 
     //updateLocationServicesStatus(updateCamera: true);
     _initSelectNotificationFilters(widget._initialSelectParam);
@@ -307,24 +304,23 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     Stack(key: _scaffoldKey, children: [
 
       Positioned.fill(child:
-        _accessibilityWorkaroundWrapMap(child:
-          Visibility(visible: (_exploresProgress == null), child:
-            mapView
-          )
+        Visibility(visible: (_exploresProgress == null), child:
+          mapView
         )
       ),
 
       Positioned.fill(child:
         Column(children: [
-          RootHeaderBar(key: _headerBarKey, titleKey: _headerBarTitleKey, title: Localization().getStringEx("panel.map2.header.title", "Map2")),
+          _scaffoldHeaderBar,
+
+          Visibility(visible: (_selectedContentType == null), child:
+            _contentTypesBar
+          ),
+
           Visibility(visible: (_selectedContentType != null), child:
             _contentHeadingBar,
           ),
-          Visibility(visible: (_selectedContentType == null), child:
-            Align(alignment: Alignment.topCenter, child:
-              _contentTypesBar
-            ),
-          ),
+
           Expanded(child:
             Visibility(visible: (_exploresProgress == null) && (_trayExplores?.isNotEmpty == true), child:
               _traySheet,
@@ -348,6 +344,12 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
         ),
     ],);
 
+
+  Widget get _scaffoldHeaderBar => RootHeaderBar(
+    key: _rootHeaderBarKey,
+    titleKey: _rootHeaderBarTitleKey,
+    title: Localization().getStringEx("panel.map2.header.title", "Map2"),
+  );
 
   Widget get _mapProgressIndicator =>
     SizedBox(width: 24, height: 24, child:
@@ -376,17 +378,26 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   @override
   double? get mapTopSiblingsHeight {
-    double? headerBarHeight = _headerBarKey.renderBoxSize?.height;
-    if (headerBarHeight != null) {
-      headerBarHeight += _contentHeadingBarKey.renderBoxSize?.height ?? 0;
+    double? topSiblingsHeight;
+
+    double? rootHeaderBarHeight = _rootHeaderBarKey.renderBoxSize?.height;
+    if (rootHeaderBarHeight != null) {
+      topSiblingsHeight = (topSiblingsHeight ?? 0) + rootHeaderBarHeight;
+    }
+
+    double? contentHeadingBarHeight = _contentHeadingBarKey.renderBoxSize?.height;
+    if (contentHeadingBarHeight != null) {
+      topSiblingsHeight = (topSiblingsHeight ?? 0) + contentHeadingBarHeight;
+
       if (_exploresProgress == ExploreProgressType.init) {
-        headerBarHeight += _defaultContentFilterButtonsBarHeight;
+        topSiblingsHeight += _defaultContentFilterButtonsBarHeight;
       }
       if ((_exploresProgress != null) && (_selectedFilterIfExists?.hasFilter == true)) {
-        headerBarHeight += _defaultContentFilterDescriptionBarHeight;
+        topSiblingsHeight += _defaultContentFilterDescriptionBarHeight;
       }
     }
-    return headerBarHeight;
+
+    return topSiblingsHeight;
   }
 
   @override
@@ -676,7 +687,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     });
     WidgetsBinding.instance.addPostFrameCallback((_){
       _updateContentTypesScrollPosition();
-     _onAccessibilityExploresUpdated();
     });
   }
 
@@ -868,7 +878,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
           _pinnedMarker = null;
         });
       }
-      _onAccessibilityExploresUpdated();
     }
   }
 
@@ -927,7 +936,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
           }
         }
       }
-      _onAccessibilityExploresUpdated();
     }
   }
 
@@ -1524,7 +1532,6 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         isExpanded: false,
         items: _buildTermsDropdownItems(),
         onChanged: _onSelectTerm,
-        onMenuStateChange: _onMenuVisibilityChanged,
       )
     )),
   );
@@ -1623,7 +1630,6 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         isExpanded: false,
         items: _buildPaymentTypesDropdownItems(),
         onChanged: _onSelectPaymentType,
-        onMenuStateChange: _onMenuVisibilityChanged,
       )
     )),
   );
@@ -1793,7 +1799,6 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         isExpanded: false,
         items: _buildSortDropdownItems(),
         onChanged: _onSelectSortType,
-        onMenuStateChange: _onMenuVisibilityChanged,
       )
     )),
   );
@@ -2103,78 +2108,8 @@ extension _Map2Accessibility on _Map2HomePanelState{
   String get _amenitiesSemanticsValue => _campusBuildingsFilterIfExists?.amenitiesNameToIds.keys.toString() ?? '';
 
   void _accessibilityFocusHeading() {
-    AppSemantics.triggerAccessibilityFocus(_headerBarTitleKey); //When already on this tab
+    AppSemantics.triggerAccessibilityFocus(_rootHeaderBarTitleKey); //When already on this tab
     WidgetsBinding.instance.addPostFrameCallback((_) => //When coming from other tab
-      AppSemantics.triggerAccessibilityFocus(_headerBarTitleKey));
+      AppSemantics.triggerAccessibilityFocus(_rootHeaderBarTitleKey));
   }
-}
-
-// Map2 Accessibility Workaround
-
-extension _Map2AccessibilityWorkaround on _Map2HomePanelState{  //Additional functionality and UI changes that will improve the Maps accessibility. Execute it only if needed
-  bool get _resizeWorkaroundEnabled => false;
-  bool get _visibilityWorkaroundEnabled => _resizeWorkaroundEnabled;
-
-  bool get _needAccessibilityWorkaround => (_scaffoldKey.currentContext?.mounted == true) &&
-      AppSemantics.isAccessibilityEnabled(context) == true;
-
-  Widget _accessibilityWorkaroundWrapMap({Widget? child}) => //child;
-    VisibilityDetector(key: const Key('map2_location_panel_detector'),
-        onVisibilityChanged: _onMapVisibilityChanged, child:
-        Padding(padding: _resizeWorkaroundEnabled ? _accessibilityWorkaroundMapPadding : EdgeInsets.zero, child:
-         (_mapDisabled == true ? //Get disabled only if accessibility workaround is required
-            Container(child: Center(child: Text("Map is disabled"))) : //Workaround to make DropDownMenuItems clickable. They go over MapView and do not get tap actions
-              child))
-    );//Workaround to make sheet and heading tappable. We resize the map so they don't go over the map
-
-  EdgeInsets get _accessibilityWorkaroundMapPadding {//Workaround for the Maps Accessibility. Even when Map is at the bottom layer of the stack it takes the Tap gestures.
-    if(_needAccessibilityWorkaround == false)
-      return EdgeInsets.zero;
-
-    double sheetHeight = mapBottomSiblingsHeight ?? 0;
-
-    double headerBarHeight =  mapTopSiblingsHeight ?? 0;
-    headerBarHeight += _selectedContentType == null ? _contentTypesBarKey.renderBoxSize?.height ?? 0 : 0;
-
-    return EdgeInsets.only(top: headerBarHeight, bottom: sheetHeight);
-  }
-
-  void _onSheetDragChanged() {
-    if(_resizeWorkaroundEnabled)
-      _doAccessibilityWorkaround(()=>
-          setStateIfMounted());
-  }
-
-  void _onMenuVisibilityChanged(bool visible) => _visibilityWorkaroundEnabled ?
-  _doAccessibilityWorkaround(() =>
-      setStateIfMounted((){
-        _mapDisabled= visible;
-      })) : null;
-
-  void _onMapVisibilityChanged(VisibilityInfo info){
-    if(_visibilityWorkaroundEnabled) {
-      if (info.visibleFraction == 0) {
-        if (_mapDisabled == false)
-          _doAccessibilityWorkaround(
-                  () => setStateIfMounted(() => _mapDisabled = true));
-      } else {
-        if (_mapDisabled == true)
-          _doAccessibilityWorkaround(
-                  () => setStateIfMounted(() => _mapDisabled = false));
-      }
-    }
-  }
-
-  void _onAccessibilityExploresUpdated(){
-    _doAccessibilityWorkaround(()=>
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_resizeWorkaroundEnabled)
-            setStateIfMounted();
-        }
-        )
-    );
-  }
-
-  void _doAccessibilityWorkaround(Function? fn) => (_needAccessibilityWorkaround && fn != null) ?
-  fn() : null;
 }

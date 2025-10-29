@@ -10,8 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WEB: change the loading video and make it fullscreen [#4871](https://github.com/rokwire/illinois-app/issues/4871).
 - WEB: set web page language [#5183](https://github.com/rokwire/illinois-app/issues/5183).
 - Assistant: increase request timeout to 120 secs for the /query api [#5493](https://github.com/rokwire/illinois-app/issues/5493).
+- Map2: minor cleanup and rearrange after accessibility updates.
 ### Fixed
 - Map2: fixed empty content processing of My Locations.
+### Removed
+- Maps Accessibility resize workaround is removed [#5051](https://github.com/rokwire/illinois-app/issues/5051).
 
 ## [7.3.17] - 2025-10-22
 ### Changed
