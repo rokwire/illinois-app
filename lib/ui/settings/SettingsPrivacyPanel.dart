@@ -637,7 +637,8 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
               label: Localization().getString(category.titleKey, defaults: category.title),
               hint: Localization().getStringEx("panel.settings.privacy.label.hint","Double tap to ") + (expanded ? "Hide" : "Show") + " information",
               value: expanded ? Localization().getStringEx("model.accessability.expandable.expanded.value", "Expanded")  : Localization().getStringEx("model.accessability.expandable.collapsed.value", "Collapsed"),
-              //excludeSemantics: true,
+              //UPD: excludeSemantics: true,
+              excludeSemantics: true,
               child: Container(child:
                 Text(Localization().getString(category.titleKey, defaults:category.title) ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.fat"))
               )
@@ -734,7 +735,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
     if ((data != null) && (title != null) && (iconKey != null) && (iconKeyOff != null) && (minLevel != null) && (hidden != true)) {
       bool isEnabled = widget.currentPrivacyLevel!>=minLevel;
 
-      return Semantics(/*container: true,*/ explicitChildNodes: true, child:
+      return Semantics(/*UPD: container: true,*/ explicitChildNodes: true, child:
         Container(padding: EdgeInsets.only(top: 14, bottom: 19, left: 14, right: 24), color: Styles().colors.white, child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Container(padding: EdgeInsets.only(top: 4), child:
@@ -744,10 +745,12 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
             Expanded(child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Padding(padding: EdgeInsets.only(right: 20), child:
-                  Text(title, style: isEnabled ? Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.title.enabled") : Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.title.disabled"),)
+                  Semantics(/*label: title, */ explicitChildNodes: true, child:
+                    Text(title, style: isEnabled ? Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.title.enabled") : Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.title.disabled"),)
+                  ),
                 ),
                 Container(height: 2,),
-                Semantics( explicitChildNodes: true, child: _buildInfo(
+                Semantics( /*UPD:*/ explicitChildNodes: true, child: _buildInfo(
                   section: title,
                   description: data.displayDescription,
                   dataUsageInfo: data.displayDataUsageInfo,
@@ -755,7 +758,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                   additionalInfo: false
                  )),
                 Container(height: (data.displayAdditionalDescription?.isNotEmpty ?? false) ? 26: 0),
-                Semantics( explicitChildNodes: false, child: _buildInfo(
+                Semantics( /*UPD:*/ explicitChildNodes: true, child: _buildInfo(
                   section: title,
                   description: data.displayAdditionalDescription,
                   dataUsageInfo: data.displayAdditionalDataUsageInfo,
@@ -799,7 +802,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
         Text(description ?? '', style: isEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled"))
       ),
 
-      Semantics(label: dataUsageLabel, hint: dataUsageHint, value: dataUsageValue, excludeSemantics: true, child:
+      Semantics( /*UPD:*/ label: dataUsageLabel, hint: dataUsageHint, value: dataUsageValue, excludeSemantics: true, child:
         GestureDetector(behavior: HitTestBehavior.translucent, onTap: () => _onTapInfo(additionalInfo), child:
           Container(padding: EdgeInsets.only(top: 8, bottom: 6), child:
             Row(children: <Widget>[
@@ -820,16 +823,13 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
       ),
 
       if (infoExpanded)
-        Semantics(
-          explicitChildNodes: true,
-          child: Container(padding: EdgeInsets.only(bottom: 8, right: 20), child:
+        Semantics( /*UPD:*/ explicitChildNodes: true, child:
+          Container(padding: EdgeInsets.only(bottom: 8, right: 20), child:
             Container(
               alignment: Alignment.centerLeft,
               padding: EdgeInsets.only(left: 8),
               decoration: BoxDecoration(border: Border(left: BorderSide(width: 1, color: Styles().colors.fillColorSecondary))),
-              child: Text(dataUsageInfo ?? '', style:
-                isEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")
-              ),
+              child: Text(dataUsageInfo ?? '', style: isEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")),
             ),
           )
         )
