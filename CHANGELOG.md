@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Check for actual content change when processing FlexUI.notifyChanged notification [#5502](https://github.com/rokwire/illinois-app/issues/5502).
+- Only show resources footer on confidential resources screen [#5400](https://github.com/rokwire/illinois-app/issues/5400).
 ### Fixed
 - Fixed Food Filters validation in Food Filters settings page [#5502](https://github.com/rokwire/illinois-app/issues/5502).
 - Browse Panel does not modify FlexUI's content any more [#5502](https://github.com/rokwire/illinois-app/issues/5502).
