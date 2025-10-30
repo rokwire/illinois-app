@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -309,8 +310,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
 
   void _updateContentTypesIfNeeded() {
     List<SettingsContentType> contentTypes = _SettingsContentTypeList.fromFlexUi();
-    if (_contentTypes != contentTypes) {
-      setStateIfMounted(() {
+    if (!DeepCollectionEquality().equals(_contentTypes, contentTypes) && mounted) {
+      setState(() {
         _contentTypes = contentTypes;
       });
     }
