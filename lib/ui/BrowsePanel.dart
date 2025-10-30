@@ -166,9 +166,6 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> with Notifica
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
       _updateContentCodes();
-      if (mounted) {
-        setState(() { });
-      }
     }
     else if((name == Auth2UserPrefs.notifyFavoritesChanged) ||
       (name == Localization.notifyStringsUpdated) ||
@@ -203,16 +200,11 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> with Notifica
   }
 
   void _updateContentCodes() {
-    List<String>?  contentCodes = buildContentCodes();
-    if ((contentCodes != null) && !DeepCollectionEquality().equals(_contentCodes, contentCodes)) {
-      if (mounted) {
-        setState(() {
-          _contentCodes = contentCodes;
-        });
-      }
-      else {
+    List<String>? contentCodes = buildContentCodes();
+    if ((contentCodes != null) && !DeepCollectionEquality().equals(_contentCodes, contentCodes) && mounted) {
+      setState(() {
         _contentCodes = contentCodes;
-      }
+      });
     }
   }
 
