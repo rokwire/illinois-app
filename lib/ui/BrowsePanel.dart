@@ -236,7 +236,7 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> with Notifica
   }
 
   static List<String>? buildContentCodes() {
-    List<String>? codes = JsonUtils.listStringsValue(FlexUI()['browse']);
+    List<String>? codes = ListUtils.from(JsonUtils.listStringsValue(FlexUI()['browse']));
     codes?.sort((String code1, String code2) {
       String title1 = _BrowseSection.title(sectionId: code1);
       String title2 = _BrowseSection.title(sectionId: code2);
@@ -266,7 +266,7 @@ class _BrowseSection extends StatelessWidget {
     super(key: key);
 
   static List<String>? buildBrowseEntryCodes({required String sectionId}) {
-    List<String>? codes = JsonUtils.listStringsValue(FlexUI()['browse.$sectionId']);
+    List<String>? codes = ListUtils.from(JsonUtils.listStringsValue(FlexUI()['browse.$sectionId']));
     codes?.sort((String code1, String code2) {
       String title1 = _BrowseEntry.title(sectionId: sectionId, entryId: code1);
       String title2 = _BrowseEntry.title(sectionId: sectionId, entryId: code2);
