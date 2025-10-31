@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed 
 - Accessibility: Make sure slider do not announce values below Min and above Max slider value [#5109](https://github.com/rokwire/illinois-app/issues/5109).
+- WEB: Place loading video in to a landmark [#5171](https://github.com/rokwire/illinois-app/issues/5171).
 
 ## [7.3.19] - 2025-10-20
 ### Changed
