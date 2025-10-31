@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -15,6 +17,10 @@ class PrivacyLevelSlider extends StatefulWidget {
 }
 
 class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
+  static const privacyLevelMinValue = 1;
+  static const privacyLevelMaxValue = 5;
+  static const privacyLevelDivisions = 4;
+
   double? _discreteValue;
   Color? _mainColor = Styles().colors.white;
   Color? _trackColor = Styles().colors.fillColorPrimaryVariant;
@@ -63,41 +69,42 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                             inactiveTickMarkColor: _inactiveTrackColor,
                             showValueIndicator: ShowValueIndicator.never,
                             valueIndicatorTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")),
-                        child: MergeSemantics(
-                            child: Semantics(
+                            child: MergeSemantics(child:
+                              Semantics(slider: true,
                                 label: Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.slider.hint", "Privacy Level"),
-                                enabled: true,
-                                increasedValue: Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.slider.increase", "increased to") +
-                                    (roundedValue + 1).toString(),
-                                decreasedValue: Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.slider.decrease", "decreased to") +
-                                    (roundedValue - 1).toString(),
-                                child:
-                                Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2), //Fix cut off circle
-                                    child:
-                                    Slider(
-                                      value: _discreteValue!,
-                                      min: 1.0,
-                                      max: 5.0,
-                                      divisions: 4,
-                                      semanticFormatterCallback: (double value) => value.round().toString(),
-                                      label: "$roundedValue",
-                                      onChanged: (double value) {
-                                        if (!widget.readOnly) {
-                                          setState(() {
-                                          _discreteValue = value;
-                                          if (value > 3.3 && value < 4) {
-                                            // remove the second 3rd division caused by {max == division}
-                                            _discreteValue = value = 4;
+                                enabled: widget.readOnly == false,
+                                value: "$roundedValue",
+                                increasedValue: widget.readOnly || (roundedValue >= privacyLevelMaxValue) ? null :
+                                  Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.slider.increase", "increased to") +
+                                      min(roundedValue + 1, privacyLevelMaxValue).toString(),
+                                decreasedValue:  widget.readOnly || (roundedValue <= privacyLevelMinValue) ? null :
+                                  Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.slider.decrease", "decreased to") +
+                                      max(roundedValue - 1,  privacyLevelMinValue).toString(),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2), //Fix cut off circle
+                                  child: ExcludeSemantics( excluding: widget.readOnly,
+                                      child: Slider(
+                                        value: _discreteValue!,
+                                        min: privacyLevelMinValue.toDouble(),
+                                        max: privacyLevelMaxValue.toDouble(),
+                                        divisions: privacyLevelDivisions,
+                                        semanticFormatterCallback: (double value) => value.round().toString(),
+                                        label: "$roundedValue",
+                                        onChanged: (double value) {
+                                          if (!widget.readOnly) {
+                                            setState(() {
+                                            _discreteValue = value;
+                                            if (value > 3.3 && value < 4) {
+                                              // remove the second 3rd division caused by {max == division}
+                                              _discreteValue = value = 4;
+                                            }
+                                            if (widget.onValueChanged != null) {
+                                              widget.onValueChanged!(value);
+                                            }
+                                            });
                                           }
-                                          if (widget.onValueChanged != null) {
-                                            widget.onValueChanged!(value);
-                                          }
-                                          });
-                                        }
-                                      },
-                                    )
-                                ))))
+                                        },
+                                      ))))))
                   ]),
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 18, vertical: 11),
