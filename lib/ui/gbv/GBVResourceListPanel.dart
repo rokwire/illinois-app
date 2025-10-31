@@ -171,7 +171,7 @@ class GBVResourceListPanel extends StatelessWidget {
     } else {
       // Original Illinois We Care URL logic
       String? url = Config().gbvWeCareResourcesUrl;
-      return (url != null) ?
+      return (resourceListScreen == gbvData.resourceListScreens?.confidentialResources && url != null) ?
       Padding(
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           child: RichText(
