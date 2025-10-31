@@ -2873,6 +2873,7 @@
     "panel.group_detail.label.posts": "Posts",
     "panel.group_detail.label.messages": "Direct Messages",
     "panel.group_detail.label.about_us":  "Quiénes Somos",
+    "panel.group_detail.label.read_mpre.about_us":  "Read more about us",
     "panel.group_detail.label.title.public":  "Este es un Grupo Público",
     "panel.group_detail.label.description.public":  "\u2022 Solo los administradores pueden ver a los miembros.\n\u2022 Solo los miembros pueden ver las publicaciones.\n\u2022 Todos los usuarios pueden ver los eventos del grupo, a menos que estén marcados como privados.\n\u2022 Todos los usuarios pueden ver a los administradores.",
     "panel.group_detail.label.title.private":  "Este es un Grupo Privado",

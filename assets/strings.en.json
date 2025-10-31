@@ -2867,6 +2867,7 @@
     "panel.group_detail.label.posts": "Posts",
     "panel.group_detail.label.messages": "Direct Messages",
     "panel.group_detail.label.about_us":  "About us",
+    "panel.group_detail.label.read_mpre.about_us":  "Read more about us",
     "panel.group_detail.label.title.public":  "This is a public group",
     "panel.group_detail.label.description.public":  "\u2022 Only admins can see members.\n\u2022 Only members can see posts.\n\u2022 All users can see group events, unless they are marked private.\n\u2022 All users can see admins.",
     "panel.group_detail.label.title.private":  "This is a private group",

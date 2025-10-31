@@ -19,41 +19,25 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/ui/widgets/expandable_text.dart' as rokwire;
 
 class ExpandableText extends rokwire.ExpandableText {
+  final String? readMoreLabel;
   const ExpandableText(String text, {
-    Key? key,
-    TextStyle? textStyle,
+    super.key,
+    super.textStyle,
+    super.trimLinesCount = 3,
 
-    int trimLinesCount = 3,
+    super.splitterColor,
+    super.splitterHeight = 1.0,
+    super.splitterMargin = const EdgeInsets.symmetric(vertical: 5),
 
-    Color? splitterColor,
-    double splitterHeight = 1.0,
-    EdgeInsetsGeometry splitterMargin = const EdgeInsets.symmetric(vertical: 5),
+    super.readMoreStyle,
+    this.readMoreLabel,
 
-    TextStyle? readMoreStyle,
+    super.readMoreIcon,
+    super.readMoreIconKey,
+    super.readMoreIconPadding = const EdgeInsets.only(left: 7),
 
-    Widget? readMoreIcon,
-    String? readMoreIconKey,
-    EdgeInsetsGeometry readMoreIconPadding = const EdgeInsets.only(left: 7),
-
-    Widget? footerWidget,
-  }) : super(text,
-    key: key,
-    textStyle: textStyle,
-
-    trimLinesCount: trimLinesCount,
-
-    splitterColor: splitterColor,
-    splitterHeight: splitterHeight,
-    splitterMargin: splitterMargin,
-
-    readMoreStyle: readMoreStyle,
-    
-    readMoreIcon: readMoreIcon,
-    readMoreIconKey: readMoreIconKey,
-    readMoreIconPadding: readMoreIconPadding,
-
-    footerWidget: footerWidget,
-  );
+    super.footerWidget,
+  }) : super(text,);
 
   @override
   String get trimSuffix => '...';

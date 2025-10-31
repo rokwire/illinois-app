@@ -83,8 +83,9 @@ class _GroupAboutContentState extends State<GroupAboutContentWidget> {
       contentList.add(ExpandableText(_group?.description ?? '',
         textStyle: Styles().textStyles.getTextStyle('panel.group.detail.regular'),
         trimLinesCount: 4,
-        readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),),
-      );
+        readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
+        readMoreLabel: Localization().getStringEx("panel.group_detail.label.read_mpre.about_us",  'Read more about us'),
+      ),);
     }
 
     /*if (StringUtils.isNotEmpty(_group?.researchConsentDetails)) {
