@@ -197,26 +197,32 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
 
 
   Widget get _directoryVisibilityDisabledButton =>
-    Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 12), child:
-      Styles().images.getImage('toggle-off',
-        color: Styles().colors.fillColorPrimaryTransparent03,
-        colorBlendMode: BlendMode.dstIn,
+    Semantics(label: _directoryVisibilityToggleLabel, hint: _directoryVisibilityToggleHint, enabled: _directoryVisibilityEnabled, button: true, excludeSemantics: true, child:
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 12), child:
+        Styles().images.getImage('toggle-off',
+          color: Styles().colors.fillColorPrimaryTransparent03,
+          colorBlendMode: BlendMode.dstIn,
+        )
       )
     );
 
   Widget get _directoryVisibilityToggleButton =>
-    InkWell(onTap: _onToggleDirectoryVisibility, child:
-      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 12), child:
-        Styles().images.getImage(directoryVisibility ? 'toggle-on' : 'toggle-off')
+    Semantics(label: _directoryVisibilityToggleLabel, hint: _directoryVisibilityToggleHint, value: _directoryVisibilityToggleValue, toggled: directoryVisibility, enabled: _directoryVisibilityEnabled, button: true, excludeSemantics: true, child:
+      InkWell(onTap: _onToggleDirectoryVisibility, child:
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 12), child:
+          Styles().images.getImage(directoryVisibility ? 'toggle-on' : 'toggle-off')
+        )
       )
     );
 
   Widget get _directoryVisibilityProgress =>
-    Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 12), child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2), child:
-          SizedBox(width: 24, height: 24, child:
-            CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
-          )
+    Semantics(label: _directoryVisibilityProgressLabel, hint: _directoryVisibilityProgressHint, container: true, child:
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 12), child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2), child:
+            SizedBox(width: 24, height: 24, child:
+              CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
+            )
+        )
       )
     );
 
@@ -226,6 +232,33 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
         Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.enabled') :
         Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.disabled')
     );
+
+  String get _directoryVisibilityTitleText =>
+    Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility');
+
+  String get _directoryVisibilityToggleLabel => _directoryVisibilityTitleText;
+
+  String? get _directoryVisibilityToggleValue => directoryVisibility ?
+    Localization().getStringEx('model.accessability.switch.on.value', 'Switched On') :
+    Localization().getStringEx('model.accessability.switch.off.value', 'Switched Off');
+
+  static const String _subjectMacro = '{{subject}}';
+  String get _directoryVisibilityToggleHint => _directoryVisibilityEnabled ?
+    _directoryVisibilityToggleHintSrc.replaceAll(_subjectMacro, _directoryVisibilityTitleText) :
+    _directoryVisibilityEnabledHintSrc.replaceAll(_subjectMacro, _directoryVisibilityTitleText);
+
+  String get _directoryVisibilityToggleHintSrc => directoryVisibility ?
+    Localization().getStringEx('model.accessability.switch.on.hint', 'Double tap to switch $_subjectMacro off') :
+    Localization().getStringEx('model.accessability.switch.off.hint', 'Double tap to switch $_subjectMacro on');
+
+  String get _directoryVisibilityEnabledHintSrc => _directoryVisibilityEnabled ?
+    Localization().getStringEx('model.accessability.enabled.hint', '$_subjectMacro enabled') :
+    Localization().getStringEx('model.accessability.disabled.hint', '$_subjectMacro disabled');
+
+  String get _directoryVisibilityProgressLabel => _directoryVisibilityTitleText;
+  String get _directoryVisibilityProgressHint =>
+    Localization().getStringEx('model.accessability.progress.updating.label', 'Updating $_subjectMacro').
+      replaceAll(_subjectMacro, _directoryVisibilityTitleText);
 
   Widget get _directoryVisibilityDescription {
 

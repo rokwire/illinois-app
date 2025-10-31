@@ -4464,6 +4464,13 @@
 	"model.accessability.expandable.collapsed.hint": "双击以展开",
 	"model.accessability.widget.enabled.value": "启用",
 	"model.accessability.widget.disabled.value": "禁用",
+	"model.accessability.switch.on.value": "Switched On",
+	"model.accessability.switch.on.hint": "Double tap to switch {{subject}} off",
+	"model.accessability.switch.off.value": "Switched Off",
+	"model.accessability.switch.off.hint": "Double tap to switch {{subject}} on",
+	"model.accessability.enabled.hint": "{{subject}} enabled",
+	"model.accessability.disabled.hint": "{{subject}} disabled",
+	"model.accessability.progress.updating.label": "Updating {{subject}}",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",

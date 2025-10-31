@@ -4495,6 +4495,13 @@
     "model.accessability.expandable.collapsed.hint": "Double tap to expand",
     "model.accessability.widget.enabled.value": "Enabled",
     "model.accessability.widget.disabled.value": "Disabled",
+    "model.accessability.switch.on.value": "Switched On",
+    "model.accessability.switch.on.hint": "Double tap to switch {{subject}} off",
+    "model.accessability.switch.off.value": "Switched Off",
+    "model.accessability.switch.off.hint": "Double tap to switch {{subject}} on",
+    "model.accessability.enabled.hint": "{{subject}} enabled",
+    "model.accessability.disabled.hint": "{{subject}} disabled",
+    "model.accessability.progress.updating.label": "Updating {{subject}}",
 
     "logic.date_time.greeting.morning": "Good morning",
     "logic.date_time.greeting.afternoon": "Good afternoon",
