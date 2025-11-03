@@ -332,6 +332,13 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
   static const String   LogEventsAssistantPromptEventName  = "events_assistant_promo";
   static const String   LogEventsAssistantPromptAction     = "action";
 
+  // Assistant Response
+  // { "event" : { "name":"assistant_query_response", "result":"success | fail", "http_response_code":"...", } }
+  static const String   LogAssistantQueryResponseEventName = "assistant_query_response";
+  static const String   LogAssistantResultName             = "result";
+  static const String   LogAssistantResultSuccessValue     = "success";
+  static const String   LogAssistantResultFailValue        = "fail";
+
   // Attributes
   static const String   LogAttributeUrl                    = "url";
   static const String   LogAttributeSource                 = "source";
@@ -1229,6 +1236,17 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
       LogEventName                        : LogEventsAssistantPromptEventName,
       LogEventsAssistantPromptAction      : action,
     });
+  }
+
+  void logAssistantQueryResponse({required bool succeeded, int? httpResponseCode}) {
+    Map<String, dynamic> event = {
+      LogEventName                        : LogAssistantQueryResponseEventName,
+      LogAssistantResultName              : succeeded ? LogAssistantResultSuccessValue : LogAssistantResultFailValue
+    };
+    if (httpResponseCode != null) {
+      event[LogHttpResponseCodeName] = httpResponseCode;
+    }
+    logEvent(event);
   }
 }
 
