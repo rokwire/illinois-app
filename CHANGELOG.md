@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added semantic label for Read More link in group's About us section [#4874](https://github.com/rokwire/illinois-app/issues/4874).
 
+## [7.3.20] - 2025-10-31
+### Fixed 
+- Accessibility: Make sure slider do not announce values below Min and above Max slider value [#5109](https://github.com/rokwire/illinois-app/issues/5109).
+
 ## [7.3.19] - 2025-10-20
 ### Changed
 - Check for actual content change when processing FlexUI.notifyChanged notification [#5502](https://github.com/rokwire/illinois-app/issues/5502).
