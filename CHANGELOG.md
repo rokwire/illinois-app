@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Assistant: log analytics event on query response [#5508](https://github.com/rokwire/illinois-app/issues/5508).
+- Add AccessibleImageHolder to ModalPhotoImagePanel [#5439](https://github.com/rokwire/illinois-app/issues/5439).
 
 ## [7.3.20] - 2025-10-31
 ### Fixed 
