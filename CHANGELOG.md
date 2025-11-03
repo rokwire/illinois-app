@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added semantic label for Read More link in group's About us section [#4874](https://github.com/rokwire/illinois-app/issues/4874).
+- Assistant: log analytics event on query response [#5508](https://github.com/rokwire/illinois-app/issues/5508).
 
 ## [7.3.20] - 2025-10-31
 ### Fixed 
