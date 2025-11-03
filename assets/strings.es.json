@@ -2811,6 +2811,7 @@
     "panel.groups_create.button.hide.hint": "",
     "panel.groups_create.authman.section.title": "Membresía gestionada por la universidad",
     "panel.groups_create.authman.enabled.label": "¿Este es un grupo de membresía gestionada?",
+    "panel.groups_create.authman.enabled.subject": "Managed Membership Group",
     "panel.groups_create.authman.group.name.label": "Nombre de la membresía",
     "panel.groups_create.prompt.msg.title": "La {{app_university}} se enorgullece de sus esfuerzos para apoyar la libertad de expresión y fomentar la inclusión y el respeto mutuo. Los usuarios pueden informar a los administradores del grupo sobre el contenido obsceno, amenazante o acosador. Los usuarios también pueden optar por denunciar contenido que viole el Código de Estudiantes a la Oficina del Decano de Estudiantes.",
     "panel.groups_create.attendance_group.label": "Activar la verificación de asistencia",
@@ -2824,7 +2825,9 @@
     "panel.groups.common.privacy.description.long.private": "Cualquier persona que utilice la aplicación puede encontrar este grupo si busca y coincide con el nombre completo. Solo los administradores pueden ver los miembros del grupo.",
     "panel.groups.common.privacy.description.long.public":  "Cualquier persona que utilice la aplicación verá este grupo. Solo los administradores pueden ver los miembros del grupo.",
     "panel.groups.common.administrative.switch.label": "¿Es este un grupo administrativo?",
+    "panel.groups.common.administrative.switch.subject": "Administrative Group",
     "panel.groups.common.private.search.hidden.label": "Ocultar el Grupo",
+    "panel.groups.common.private.search.hidden.subject": "Hidden Group",
     "panel.groups.common.private.search.hidden.description": "Un grupo oculto no es visible en las búsquedas.",
 
     "panel.group_detail.header.project.title": "Research Project Details",

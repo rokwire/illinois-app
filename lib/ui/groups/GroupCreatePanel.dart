@@ -738,6 +738,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               Container(
                   child: _buildSwitch(
                       title: Localization().getStringEx("panel.groups.common.private.search.hidden.label", "Make Group Hidden"),
+                      subject: Localization().getStringEx("panel.groups.common.private.search.hidden.subject", "Hidden Group"),
                       value: _group?.hiddenForSearch,
                       onTap: _onTapHiddenForSearch)),
               Semantics(
@@ -760,8 +761,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   Widget _buildAdministrative() {
     return Padding(padding: EdgeInsets.all(16), child: Container(child:
-      _buildSwitch(title: Localization().getStringEx('panel.groups.common.administrative.switch.label', 'Is this an administrative group?'),
-          value: _group?.administrative, onTap: _onTapAdministrative)));
+      _buildSwitch(
+        title: Localization().getStringEx('panel.groups.common.administrative.switch.label', 'Is this an administrative group?'),
+        subject: Localization().getStringEx('panel.groups.common.administrative.switch.subject', 'Administrative Group'),
+        value: _group?.administrative,
+        onTap: _onTapAdministrative
+      )));
   }
 
   void _onTapAdministrative() {
@@ -919,7 +924,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Padding(
         padding: EdgeInsets.only(left: 16, top: 12, right: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _buildSwitch(title: Localization().getStringEx("panel.groups_create.authman.enabled.label", "Is this a managed membership group?"),
+          _buildSwitch(
+              title: Localization().getStringEx("panel.groups_create.authman.enabled.label", "Is this a managed membership group?"),
+              subject: Localization().getStringEx("panel.groups_create.authman.enabled.subject", "Managed Membership Group"),
               value: _isAuthManGroup,
               onTap: _onTapAuthMan
           ),
@@ -1275,9 +1282,14 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     );
   }
 
-  Widget _buildSwitch({String? title, bool? value, void Function()? onTap}){
-    String semanticsValue = (value == true) ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked");
-    return Semantics(label: title, value: semanticsValue, button: true, child:
+  Widget _buildSwitch({required String title, String? subject, bool? value, void Function()? onTap}){
+    bool toggled = (value == true);
+    String semanticsValue = AppSemantics.toggleValue(toggled);
+    String semanticsHint = AppSemantics.toggleHint(toggled,
+      subject: subject ?? title,
+    );
+
+    return Semantics(label: title, hint: semanticsHint, value: semanticsValue, button: true, child:
       Container(
         decoration: BoxDecoration(
             color: Styles().colors.white,
@@ -1288,7 +1300,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Expanded(child:
-              Text(title ?? "", semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))
+              Text(title, semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))
             ),
             GestureDetector(
               onTap: ((onTap != null)) ?() {

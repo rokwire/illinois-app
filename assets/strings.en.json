@@ -2805,6 +2805,7 @@
     "panel.groups_create.button.hide.hint": "",
     "panel.groups_create.authman.section.title": "University-managed membership",
     "panel.groups_create.authman.enabled.label": "Is this a managed membership group?",
+    "panel.groups_create.authman.enabled.subject": "Managed Membership Group",
     "panel.groups_create.authman.group.name.label": "Membership name",
     "panel.groups_create.prompt.msg.title": "The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of the Student Code to the Office of the Dean of Students.",
     "panel.groups_create.attendance_group.label": "Enable attendance checking",
@@ -2818,7 +2819,9 @@
     "panel.groups.common.privacy.description.long.private": "Anyone who uses the app can find this group if they search and match the full name. Only admins can see who is in the group.",
     "panel.groups.common.privacy.description.long.public":  "Anyone who uses the app will see this group. Only admins can see who is in the group.",
     "panel.groups.common.administrative.switch.label": "Is this an administrative group?",
+    "panel.groups.common.administrative.switch.subject": "Administrative Group",
     "panel.groups.common.private.search.hidden.label": "Make Group Hidden",
+    "panel.groups.common.private.search.hidden.subject": "Hidden Group",
     "panel.groups.common.private.search.hidden.description": "A hidden group is unsearchable.",
 
     "panel.group_detail.header.project.title": "Research Project Details",
