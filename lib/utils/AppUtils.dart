@@ -245,6 +245,32 @@ class AppSemantics {
         }
       });
     }
+
+    static String toggleValue(bool value) => value ?
+      Localization().getStringEx('model.accessability.switch.on.value', 'Switched On') :
+      Localization().getStringEx('model.accessability.switch.off.value', 'Switched Off');
+
+    static String toggleHint(bool value, {bool enabled = true, String subject = '' }) => enabled ?
+      _toggleValueHintSrc(value).replaceAll(_subjectMacro, subject) :
+      _toggleEnabledHintSrc(enabled).replaceAll(_subjectMacro, subject);
+
+    static String progressHint({String subject = '' }) =>
+      _progressHintSrc.replaceAll(_subjectMacro, subject);
+
+    static const String _subjectMacro = '{{subject}}';
+
+    static String _toggleValueHintSrc(bool value) => value ?
+      Localization().getStringEx('model.accessability.switch.on.hint', 'Double tap to switch $_subjectMacro off') :
+      Localization().getStringEx('model.accessability.switch.off.hint', 'Double tap to switch $_subjectMacro on');
+
+    static String _toggleEnabledHintSrc(bool enabled) => enabled ?
+      Localization().getStringEx('model.accessability.enabled.hint', '$_subjectMacro enabled') :
+      Localization().getStringEx('model.accessability.disabled.hint', '$_subjectMacro disabled');
+
+    static String get _progressHintSrc =>
+      Localization().getStringEx('model.accessability.progress.updating.label', 'Updating $_subjectMacro');
+
+
 // final SemanticsNode? semanticsNode = renderObject.debugSemantics;
 // final SemanticsOwner? owner = renderObject.owner!.semanticsOwner;
 // Send a SemanticsActionEvent with the tap action

@@ -238,27 +238,15 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
 
   String get _directoryVisibilityToggleLabel => _directoryVisibilityTitleText;
 
-  String? get _directoryVisibilityToggleValue => directoryVisibility ?
-    Localization().getStringEx('model.accessability.switch.on.value', 'Switched On') :
-    Localization().getStringEx('model.accessability.switch.off.value', 'Switched Off');
+  String get _directoryVisibilityToggleValue => AppSemantics.toggleValue(directoryVisibility);
 
-  static const String _subjectMacro = '{{subject}}';
-  String get _directoryVisibilityToggleHint => _directoryVisibilityEnabled ?
-    _directoryVisibilityToggleHintSrc.replaceAll(_subjectMacro, _directoryVisibilityTitleText) :
-    _directoryVisibilityEnabledHintSrc.replaceAll(_subjectMacro, _directoryVisibilityTitleText);
-
-  String get _directoryVisibilityToggleHintSrc => directoryVisibility ?
-    Localization().getStringEx('model.accessability.switch.on.hint', 'Double tap to switch $_subjectMacro off') :
-    Localization().getStringEx('model.accessability.switch.off.hint', 'Double tap to switch $_subjectMacro on');
-
-  String get _directoryVisibilityEnabledHintSrc => _directoryVisibilityEnabled ?
-    Localization().getStringEx('model.accessability.enabled.hint', '$_subjectMacro enabled') :
-    Localization().getStringEx('model.accessability.disabled.hint', '$_subjectMacro disabled');
+  String get _directoryVisibilityToggleHint => AppSemantics.toggleHint(directoryVisibility,
+    enabled: _directoryVisibilityEnabled,
+    subject: _directoryVisibilityTitleText
+  );
 
   String get _directoryVisibilityProgressLabel => _directoryVisibilityTitleText;
-  String get _directoryVisibilityProgressHint =>
-    Localization().getStringEx('model.accessability.progress.updating.label', 'Updating $_subjectMacro').
-      replaceAll(_subjectMacro, _directoryVisibilityTitleText);
+  String get _directoryVisibilityProgressHint => AppSemantics.progressHint(subject: _directoryVisibilityTitleText);
 
   Widget get _directoryVisibilityDescription {
 
