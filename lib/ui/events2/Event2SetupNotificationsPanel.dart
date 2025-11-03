@@ -231,19 +231,28 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
 
   Widget _buildToggleWidget({required String label, bool? value, bool enabled = true, void Function()? onTap}) {
     bool toggled = (value == true);
-    return InkWell(
-        splashColor: Colors.transparent,
-        onTap: onTap,
-        child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 6),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Container(child:
-                Styles().images.getImage((enabled == true && toggled == true) ? 'toggle-on' : 'toggle-off')),
-              Expanded(
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 10, right: 16),
-                      child: Text(label, style: enabled ? _enabledButtonTextStyle : _disabledButtonTextStyle)))
-            ])));
+    String hint = AppSemantics.toggleHint(toggled,
+      enabled: enabled,
+      subject: label
+    );
+
+    return Semantics(label: label, hint: hint, button: true, enabled: enabled, toggled: enabled ? toggled : null, excludeSemantics: true, child:
+      InkWell(splashColor: Colors.transparent, onTap: onTap, child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Container(child: enabled == true ?
+              Styles().images.getImage((toggled == true) ? 'toggle-on' : 'toggle-off') :
+              Styles().images.getImage('toggle-off', color: Styles().colors.fillColorPrimaryTransparent03, colorBlendMode: BlendMode.dstIn,)
+            ),
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(left: 10, right: 16), child:
+                Text(label, style: enabled ? _enabledButtonTextStyle : _disabledButtonTextStyle)
+              )
+            )
+          ])
+        )
+      )
+    );
   }
 
   Widget _buildEventDateTimeContent(int index) {
