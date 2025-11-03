@@ -245,6 +245,9 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
     subject: _directoryVisibilityTitleText
   );
 
+  String get _directoryVisibilityAnnouncement => AppSemantics.toggleAnnouncement(directoryVisibility, subject: _directoryVisibilityTitleText);
+  String get _directoryVisibilityFailedAnnouncement => AppSemantics.toggleFailedAnnouncement(directoryVisibility, subject: _directoryVisibilityTitleText);
+
   String get _directoryVisibilityProgressLabel => _directoryVisibilityTitleText;
   String get _directoryVisibilityProgressHint => AppSemantics.progressHint(subject: _directoryVisibilityTitleText);
 
@@ -290,11 +293,13 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
             _editing = false;
             _privacy = privacy;
           });
+          AppSemantics.announceMessage(context, _directoryVisibilityAnnouncement);
         }
         else {
           setState(() {
             _updatingDirectoryVisibility = false;
           });
+          AppSemantics.announceMessage(context, _directoryVisibilityFailedAnnouncement);
           AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.directory_visibility.toggle.failed.text', 'Failed to update directory visibility.'));
         }
       }

@@ -149,20 +149,20 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
       Padding(
           padding: bottom10Padding,
           child: _buildToggleWidget(
-              label: 'App users who have starred this event',
+              label: _toggleFavoritedEventTitle,
               value: favoritedValue,
               onTap: () => _onTapFavoritedEvent(index: notificationIndex))),
       Padding(
           padding: bottom10Padding,
           child: _buildToggleWidget(
-              label: 'App users who have registered via the Illinois app for this event',
+              label: _toggleRegisteredEventTitle,
               value: registeredValue,
               enabled: _allowRegisteredUser,
               onTap: () => _onTapRegisteredEvent(index: notificationIndex))),
       Padding(
           padding: defaultBottomPadding,
           child: _buildToggleWidget(
-              label: 'Members of Illinois app groups in which this event is published',
+              label: _togglePublishedGroupEventTitle,
               value: groupsValue,
               enabled: _allowGroupMembers,
               onTap: () => _onTapPublishedGroupEvent(index: notificationIndex))),
@@ -396,54 +396,59 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
 
   Widget _buildHorizontalDividerWidget() => Container(height: 1, color: Styles().colors.dividerLine);
 
+  String get _toggleFavoritedEventTitle => 'App users who have starred this event';
+
   void _onTapFavoritedEvent({required int index}) {
-    if (_processing) {
-      return;
+    if (!_processing) {
+      Event2NotificationSetting? notification = _notificationSettings[index];
+      Event2NotificationSetting updatedNotification = (notification == null) ?
+        Event2NotificationSetting(sendToFavorited: true) :
+        Event2NotificationSetting.fromOther(notification, sendToFavorited: !notification.sendToFavorited);
+      setStateIfMounted(() {
+        _notificationSettings[index] = updatedNotification;
+      });
+      AppSemantics.announceMessage(context, AppSemantics.toggleAnnouncement(updatedNotification.sendToFavorited, subject: _toggleFavoritedEventTitle));
     }
-    Event2NotificationSetting? notification = _notificationSettings[index];
-    setStateIfMounted(() {
-      if (notification == null) {
-        _notificationSettings[index] = Event2NotificationSetting(sendToFavorited: true);
-      } else {
-        _notificationSettings[index] = Event2NotificationSetting.fromOther(notification, sendToFavorited: !notification.sendToFavorited);
-      }
-    });
   }
+
+  String get _toggleRegisteredEventTitle => 'App users who have registered via the Illinois app for this event';
 
   void _onTapRegisteredEvent({required int index}) {
-    if (_processing) {
-      return;
-    }
-    if (!_allowRegisteredUser) {
-      AppAlert.showDialogResult(context, 'Please, set Event Registration as "Via the App" in order to allow this option.');
-      return;
-    }
-    Event2NotificationSetting? notification = _notificationSettings[index];
-    setStateIfMounted(() {
-      if (notification == null) {
-        _notificationSettings[index] = Event2NotificationSetting(sendToRegistered: true);
-      } else {
-        _notificationSettings[index] = Event2NotificationSetting.fromOther(notification, sendToRegistered: !notification.sendToRegistered);
+    if (!_processing) {
+      if (!_allowRegisteredUser) {
+        Event2NotificationSetting? notification = _notificationSettings[index];
+        Event2NotificationSetting updatedNotification = (notification == null) ?
+          Event2NotificationSetting(sendToRegistered: true) :
+          Event2NotificationSetting.fromOther(notification, sendToRegistered: !notification.sendToRegistered);
+        setStateIfMounted(() {
+          _notificationSettings[index] = updatedNotification;
+        });
+        AppSemantics.announceMessage(context, AppSemantics.toggleAnnouncement(updatedNotification.sendToRegistered, subject: _toggleRegisteredEventTitle));
       }
-    });
+      else {
+        AppAlert.showDialogResult(context, 'Please, set Event Registration as "Via the App" in order to allow this option.');
+      }
+    }
   }
 
+  String get _togglePublishedGroupEventTitle => 'Members of Illinois app groups in which this event is published';
+
   void _onTapPublishedGroupEvent({required int index}) {
-    if (_processing) {
-      return;
-    }
-    if (!_allowGroupMembers) {
-      AppAlert.showDialogResult(context, 'Please, select at least one Event Group in order to allow this option.');
-      return;
-    }
-    Event2NotificationSetting? notification = _notificationSettings[index];
-    setStateIfMounted(() {
-      if (notification == null) {
-        _notificationSettings[index] = Event2NotificationSetting(sendToPublishedInGroups: true);
-      } else {
-        _notificationSettings[index] = Event2NotificationSetting.fromOther(notification, sendToPublishedInGroups: !notification.sendToPublishedInGroups);
+    if (!_processing) {
+      if (_allowGroupMembers) {
+        Event2NotificationSetting? notification = _notificationSettings[index];
+        Event2NotificationSetting updatedNotification = (notification == null) ?
+          Event2NotificationSetting(sendToPublishedInGroups: true) :
+          Event2NotificationSetting.fromOther(notification, sendToPublishedInGroups: !notification.sendToPublishedInGroups);
+        setStateIfMounted(() {
+          _notificationSettings[index] = updatedNotification;
+        });
+        AppSemantics.announceMessage(context, AppSemantics.toggleAnnouncement(updatedNotification.sendToPublishedInGroups, subject: _togglePublishedGroupEventTitle));
       }
-    });
+      else {
+        AppAlert.showDialogResult(context, 'Please, select at least one Event Group in order to allow this option.');
+      }
+    }
   }
 
   void _onTapSave() {

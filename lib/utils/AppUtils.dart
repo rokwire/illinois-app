@@ -254,6 +254,12 @@ class AppSemantics {
       _toggleValueHintSrc(value).replaceAll(_subjectMacro, subject) :
       _toggleEnabledHintSrc(enabled).replaceAll(_subjectMacro, subject);
 
+    static String toggleAnnouncement(bool value, { String subject = '' }) =>
+      _toggleAnnouncementSrc(value).replaceAll(_subjectMacro, subject);
+
+    static String toggleFailedAnnouncement(bool value, { String subject = '' }) =>
+        _toggleFailedAnnouncementSrc(value).replaceAll(_subjectMacro, subject);
+
     static String progressHint({String subject = '' }) =>
       _progressHintSrc.replaceAll(_subjectMacro, subject);
 
@@ -262,6 +268,14 @@ class AppSemantics {
     static String _toggleValueHintSrc(bool value) => value ?
       Localization().getStringEx('model.accessability.switch.on.hint', 'Double tap to switch $_subjectMacro off') :
       Localization().getStringEx('model.accessability.switch.off.hint', 'Double tap to switch $_subjectMacro on');
+
+    static String _toggleAnnouncementSrc(bool value) => value ?
+      Localization().getStringEx('model.accessability.switch.on.announcement', '$_subjectMacro switched on') :
+      Localization().getStringEx('model.accessability.switch.off.announcement', '$_subjectMacro switched off');
+
+    static String _toggleFailedAnnouncementSrc(bool value) => value ?
+      Localization().getStringEx('model.accessability.switch.on.failed.announcement', 'Failed to switch $_subjectMacro off') :
+      Localization().getStringEx('model.accessability.switch.off.failed.announcement', 'Failed to switch $_subjectMacro on');
 
     static String _toggleEnabledHintSrc(bool enabled) => enabled ?
       Localization().getStringEx('model.accessability.enabled.hint', '$_subjectMacro enabled') :
