@@ -229,24 +229,25 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
     ]);
   }
 
-  Widget _buildToggleWidget({required String label, bool? value, bool enabled = true, void Function()? onTap}) {
+  Widget _buildToggleWidget({required String label, bool? value, bool? enabled, void Function()? onTap}) {
     bool toggled = (value == true);
-    String hint = AppSemantics.toggleHint(toggled,
-      enabled: enabled,
+    String semanticsValue = AppSemantics.toggleValue(toggled);
+    String semanticsHint = AppSemantics.toggleHint(toggled,
+      enabled: enabled != false,
       subject: label
     );
 
-    return Semantics(label: label, hint: hint, button: true, enabled: enabled, toggled: enabled ? toggled : null, excludeSemantics: true, child:
+    return Semantics(label: label, hint: semanticsHint, value: semanticsValue, button: true, enabled: enabled, excludeSemantics: true, child:
       InkWell(splashColor: Colors.transparent, onTap: onTap, child:
         Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Container(child: enabled == true ?
+            Container(child: (enabled != false) ?
               Styles().images.getImage((toggled == true) ? 'toggle-on' : 'toggle-off') :
               Styles().images.getImage('toggle-off', color: Styles().colors.fillColorPrimaryTransparent03, colorBlendMode: BlendMode.dstIn,)
             ),
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 10, right: 16), child:
-                Text(label, style: enabled ? _enabledButtonTextStyle : _disabledButtonTextStyle)
+                Text(label, style: (enabled != false) ? _enabledButtonTextStyle : _disabledButtonTextStyle)
               )
             )
           ])
