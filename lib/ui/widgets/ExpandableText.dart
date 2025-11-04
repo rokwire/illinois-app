@@ -19,7 +19,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/ui/widgets/expandable_text.dart' as rokwire;
 
 class ExpandableText extends rokwire.ExpandableText {
-  final String? readMoreLabel;
+  final String? readMoreLabel; // This overrides rokwire.ExpandableText.readMoreLabel getter
   const ExpandableText(String text, {
     super.key,
     super.textStyle,
