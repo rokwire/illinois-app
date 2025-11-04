@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -111,11 +112,10 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
   Widget _buildCanAutoJoinLayout(){
     return Container( color: Styles().colors.background,
       padding: EdgeInsets.symmetric(horizontal: 16),
-      child: EnabledToggleButton(
-          label:_isResearchProject? Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants') : Localization().getStringEx("panel.groups_settings.auto_join.enabled.label", "Group can be joined automatically?"),
+      child: ToggleRibbonButton(
+          title:_isResearchProject ? Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants') : Localization().getStringEx("panel.groups_settings.auto_join.enabled.label", "Group can be joined automatically?"),
           borderRadius: BorderRadius.circular(4),
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-          enabled: true,
           toggled: _settingCanJoinAutomatically,
           onTap: () {
             if(mounted){
@@ -132,11 +132,10 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
     return Container(
       color: Styles().colors.background,
       padding: EdgeInsets.symmetric(horizontal: 16),
-      child: EnabledToggleButton(
-          label: Localization().getStringEx("panel.groups_settings.only_admins_create_polls.enabled.label", "Only admins can create Polls"),
+      child: ToggleRibbonButton(
+          title: Localization().getStringEx("panel.groups_settings.only_admins_create_polls.enabled.label", "Only admins can create Polls"),
           borderRadius: BorderRadius.circular(4),
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-          enabled: true,
           toggled: _settingOnlyAdminCanCreatePolls,
           onTap: () {
             if(mounted){

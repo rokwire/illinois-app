@@ -149,7 +149,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
-        label: (_selectedProvider != null) ? (_getDropDownProviderName(_selectedProvider) ?? '') : Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
+        title: (_selectedProvider != null) ? (_getDropDownProviderName(_selectedProvider) ?? '') : Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
         onTap: _onProvidersDropdown
       )
     );
@@ -188,7 +188,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedProvider == null) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedProvider == null) ? 'check-accent' : null,
-        label: Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
+        title: Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
         onTap: () => _onTapProvider(null)
       ));
 
@@ -198,7 +198,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           textStyle: Styles().textStyles.getTextStyle(((provider.id != null) && (_selectedProvider?.id == provider.id)) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
           rightIconKey: ((provider.id != null) && (_selectedProvider?.id == provider.id)) ? 'check-accent' : null,
-          label: _getDropDownProviderName(provider),
+          title: _getDropDownProviderName(provider),
           onTap: () => _onTapProvider(provider)
         ));
       }

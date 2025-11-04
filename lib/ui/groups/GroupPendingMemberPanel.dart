@@ -167,7 +167,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
         ToggleRibbonButton(
           borderRadius: BorderRadius.circular(4),
           border: Border.all(color: Styles().colors.fillColorPrimary),
-          label: Localization().getStringEx("panel.pending_member_detail.button.approve.text", "Approve "),
+          title: Localization().getStringEx("panel.pending_member_detail.button.approve.text", "Approve "),
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           toggled: _approved,
           onTap: () {
@@ -182,7 +182,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
         Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.fillColorPrimary),), child:
           Column(children: [
             ToggleRibbonButton(
-              label: Localization().getStringEx("panel.pending_member_detail.button.deny.text", "Deny"),
+              title: Localization().getStringEx("panel.pending_member_detail.button.deny.text", "Deny"),
               borderRadius: BorderRadius.circular(4),
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               toggled: _denied,

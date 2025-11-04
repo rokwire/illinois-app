@@ -282,8 +282,8 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
           builder: (context) => Container(padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
-              RibbonButton(label: Localization().getStringEx('panel.profile.info.command.button.photo.edit.text', 'Edit Photo'), rightIconKey: 'edit', onTap: () { Navigator.of(context).pop(); _onEditPhoto(); }),
-              RibbonButton(label: Localization().getStringEx('panel.profile.info.command.button.photo.clear.text', 'Clear Photo'), rightIconKey: 'clear', onTap: () { Navigator.of(context).pop(); _onClearPhoto(); }),
+              RibbonButton(title: Localization().getStringEx('panel.profile.info.command.button.photo.edit.text', 'Edit Photo'), rightIconKey: 'edit', onTap: () { Navigator.of(context).pop(); _onEditPhoto(); }),
+              RibbonButton(title: Localization().getStringEx('panel.profile.info.command.button.photo.clear.text', 'Clear Photo'), rightIconKey: 'clear', onTap: () { Navigator.of(context).pop(); _onClearPhoto(); }),
             ])
           ),
         );

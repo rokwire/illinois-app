@@ -992,8 +992,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child:  RibbonButton(
-          label: Localization().getStringEx('panel.groups_settings.button.advanced_settings.title', 'Advanced Settings'), //Localize
-          hint: Localization().getStringEx('panel.groups_settings.button.advanced_settings.hint', ''),
+          title: Localization().getStringEx('panel.groups_settings.button.advanced_settings.title', 'Advanced Settings'), //Localize
+          semanticsHint: Localization().getStringEx('panel.groups_settings.button.advanced_settings.hint', ''),
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.circular(4),
           onTap: (){
@@ -1011,11 +1011,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //ProjectSettings
 /*  Widget _buildProjectSettingsLayout() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-      EnabledToggleButton(
+      ToggleRibbonButton(
         label: Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants'),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        enabled: true,
         toggled: _group?.canJoinAutomatically == true,
         onTap: _onTapJoinAutomatically
       )

@@ -113,7 +113,7 @@ class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
     if (foodTypes != null) {
       for (String foodType in foodTypes) {
         list.add(ToggleRibbonButton(
-          label: Dinings().getLocalizedString(foodType),
+          title: Dinings().getLocalizedString(foodType),
           toggled: _includedFoodTypes.contains(foodType),
           onTap: () => _onFoodTypePrefTapped(foodType),
         ));
@@ -129,7 +129,7 @@ class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
     if (foodIngredients != null) {
       for(String foodIngredient in foodIngredients) {
         list.add(ToggleRibbonButton(
-          label: Dinings().getLocalizedString(foodIngredient),
+          title: Dinings().getLocalizedString(foodIngredient),
           toggled: _excludedFoodIngredients.contains(foodIngredient),
           onTap: () => _onFoodIngredientPrefTapped(foodIngredient),
         ));

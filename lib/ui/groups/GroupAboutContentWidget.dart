@@ -174,7 +174,7 @@ class _GroupAboutContentState extends State<GroupAboutContentWidget> {
 
   Widget _buildWebsiteLinkButton() {
     return RibbonButton(
-        label: Localization().getStringEx("panel.group_detail.button.more_info.title", 'More Info'),
+        title: Localization().getStringEx("panel.group_detail.button.more_info.title", 'More Info'),
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
         rightIconKey: 'external-link',
         padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),

@@ -44,7 +44,7 @@ class SettingsAccessibilityPageState extends State<SettingsAccessibilityPage> wi
       ]),
       Container(height: 4),
       ToggleRibbonButton(
-        label: Localization().getStringEx('panel.settings.home.accessibility.reduce_motion.label', 'Reduce motion'),
+        title: Localization().getStringEx('panel.settings.home.accessibility.reduce_motion.label', 'Reduce motion'),
         toggled: Storage().accessibilityReduceMotion == true,
         border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
         borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -71,7 +71,7 @@ class SettingsAccessibilityPageState extends State<SettingsAccessibilityPage> wi
       ]),
       Container(height: 4),
        ToggleRibbonButton(
-        label: Localization().getStringEx('panel.settings.home.accessibility.ada_navigation.label', 'Navigate to ADA-accessible building entrances for My Courses'),
+        title: Localization().getStringEx('panel.settings.home.accessibility.ada_navigation.label', 'Navigate to ADA-accessible building entrances for My Courses'),
         toggled: StudentCourses().requireAda == true,
         border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
         borderRadius: BorderRadius.all(Radius.circular(4)),

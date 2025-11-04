@@ -323,7 +323,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     List<Widget> widgets =  [];
 
     widgets.add(ToggleRibbonButton(
-        label: Localization().getStringEx("panel.create_poll.setting.multy_choice", "Allow selecting more than one choice"),
+        title: Localization().getStringEx("panel.create_poll.setting.multy_choice", "Allow selecting more than one choice"),
         toggled: _selectedMultichoice,
         borderRadius: rounding,
         textStyle: _textStyle,
@@ -353,7 +353,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
       height: 16,
     ));
     widgets.add(ToggleRibbonButton(
-        label: Localization().getStringEx("panel.create_poll.setting.hide_result", "Hide results until poll ends"),
+        title: Localization().getStringEx("panel.create_poll.setting.hide_result", "Hide results until poll ends"),
         toggled: _selectedHideResult,
         borderRadius: rounding,
         textStyle: _textStyle,

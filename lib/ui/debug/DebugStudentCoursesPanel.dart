@@ -53,7 +53,7 @@ class _DebugStudentCoursesPanelState extends State<DebugStudentCoursesPanel> {
       backgroundColor: Styles().colors.surface,
       body: SafeArea(child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          ToggleRibbonButton(label: 'Use JSON Contnet:', toggled: _useDebugContent, onTap: _onToggleUseDebugContent),
+          ToggleRibbonButton(title: 'Use JSON Contnet:', toggled: _useDebugContent, onTap: _onToggleUseDebugContent),
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
               Stack(children: [

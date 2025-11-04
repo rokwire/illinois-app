@@ -527,7 +527,7 @@ class _CustomToggleButton extends ToggleRibbonButton {
     this.enabled,
     super.progress,
   }) : super(
-    label: label,
+    title: label,
     toggled: (toggled == true),
     onTap: onTap,
     border: border,
