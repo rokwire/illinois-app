@@ -66,12 +66,24 @@
       object-fit: cover;
       z-index: -1;
     }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
   </style>
 
 </head>
 <body>
     <header role="banner">
-      <h1>Illinois</h1>
+      <h1 class="visually-hidden">Illinois</h1>
     </header>
     <main>
       <video preload="auto" autoplay muted loop playsinline>
