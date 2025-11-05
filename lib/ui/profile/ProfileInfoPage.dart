@@ -163,25 +163,25 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
   );
 
   Widget get _directoryVisibilityContent =>
-    DirectoryProfileCard(child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-        Row(children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 16, top: 12), child:
-              _directoryVisibilityTitle
+    Semantics(container: true, onTap: _onToggleDirectoryVisibility, child:
+      DirectoryProfileCard(child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+          Row(children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(left: 16, top: 12), child:
+                _directoryVisibilityTitle
+              ),
             ),
+            _directoryVisibilityControl,
+          ],),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16,), child:
+            Container(height: 1, color: Styles().colors.surfaceAccent,),
           ),
-          _directoryVisibilityControl,
-        ],),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16,), child:
-          Container(height: 1, color: Styles().colors.surfaceAccent,),
-        ),
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child:
-          _directoryVisibilityDescription,
-        )
-      ],)
-
-    );
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child:
+            _directoryVisibilityDescription,
+          )
+        ],)
+    ));
 
   Widget get _directoryVisibilityControl {
     if (_updatingDirectoryVisibility) {
@@ -227,11 +227,12 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
     );
 
   Widget get _directoryVisibilityTitle =>
-    Text(Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility'),
-      style: _directoryVisibilityEnabled ?
-        Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.enabled') :
-        Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.disabled')
-    );
+    ExcludeSemantics(child:
+      Text(Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility'),
+        style: _directoryVisibilityEnabled ?
+          Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.enabled') :
+          Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.disabled')
+    ));
 
   String get _directoryVisibilityTitleText =>
     Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility');
