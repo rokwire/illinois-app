@@ -139,7 +139,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
               hint: Localization().getStringEx("panel.food_details.button.view_full_list_of_ingredients.title", ""),
               button: true,
               child: RibbonButton(
-                label: Localization().getStringEx("panel.food_details.button.view_full_list_of_ingredients.title", "View full list of ingredients"),
+                title: Localization().getStringEx("panel.food_details.button.view_full_list_of_ingredients.title", "View full list of ingredients"),
                 borderRadius: BorderRadius.all(Radius.circular(4)),
                 border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                 onTap: (){_onEatSmartTapped(context);},

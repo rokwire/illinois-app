@@ -176,7 +176,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     return <Widget>[
       RibbonButton(
         leftIconKey: "info",
-        label: saveEnabled ? Localization().getStringEx("panel.wellness.sections.health_screener.body.save.description", "Your results will be saved for you to revisit or compare to future results.") :
+        title: saveEnabled ? Localization().getStringEx("panel.wellness.sections.health_screener.body.save.description", "Your results will be saved for you to revisit or compare to future results.") :
         Localization().getStringEx("panel.wellness.sections.health_screener.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
         textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title'),
         backgroundColor: Colors.transparent,
@@ -184,7 +184,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
       ),
       RibbonButton(
         leftIconKey: "settings",
-        label: saveEnabled ? Localization().getStringEx("panel.wellness.sections.health_screener.body.dont_save.label", "Don't Save My Results") :
+        title: saveEnabled ? Localization().getStringEx("panel.wellness.sections.health_screener.body.dont_save.label", "Don't Save My Results") :
         Localization().getStringEx("panel.wellness.sections.health_screener.body.save.label", "Save My Results"),
         textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
         backgroundColor: Colors.transparent,

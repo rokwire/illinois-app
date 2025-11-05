@@ -70,7 +70,7 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIcon: Styles().images.getImage('external-link', size: 20),
           borderRadius: borderRadius,
-          label: label,
+          title: label,
           onTap: () => onTap?.call()
       );
 

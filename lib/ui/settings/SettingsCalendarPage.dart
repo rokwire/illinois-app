@@ -82,7 +82,7 @@ class _SettingsCalendarPageState extends State<SettingsCalendarPage> with Notifi
       if (code == 'prompt') {
         contentList.add(Container(height: 4));
         contentList.add(ToggleRibbonButton(
-            label: Localization().getStringEx('panel.settings.home.calendar.settings.prompt.label', 'Prompt when saving events to calendar'),
+            title: Localization().getStringEx('panel.settings.home.calendar.settings.prompt.label', 'Prompt when saving events to calendar'),
             border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4)),
             textStyle: Styles().textStyles.getTextStyle("widget.message.regular.fat"),

@@ -299,13 +299,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
                                 Visibility(visible: _isPost && _canPinPost,
                                     child: Container(
                                       padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
-                                      child: EnabledToggleButton(
-                                          label: "Pin post to top of all posts (Only one pinned post per group is allowed. Pinning this post will automatically unpin any past admin posts.)",
+                                      child: ToggleRibbonButton(
+                                          title: "Pin post to top of all posts (Only one pinned post per group is allowed. Pinning this post will automatically unpin any past admin posts.)",
                                           borderRadius: BorderRadius.circular(4),
                                           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                                           toggled: _mainPostUpdateData?.pinned == true,
                                           textStyle: Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"),
-                                          enabled: true,
                                           onTap: () {
                                             if(mounted){
                                               setState(() {
@@ -596,12 +595,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
             children: <Widget>[
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconKey: "report",
-                label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                title: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), entityId: widget.post!.id!, entityType: SocialEntityType.post),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconKey: "report",
-                label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
+                title: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), entityId: widget.post!.id!, entityType: SocialEntityType.post),
               )),
             ],
@@ -627,7 +626,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
               // Do not reply to reply
               Visibility(visible: false, child: RibbonButton(
                 leftIconKey: 'reply',
-                label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
+                title: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
                 onTap: () {
                   Navigator.of(context).pop();
                   _onTapPostReply(reply: reply);
@@ -635,7 +634,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
               )),
               Visibility(visible: _isEditVisible(reply.creatorId), child: RibbonButton(
                 leftIconKey: "edit",
-                label: Localization().getStringEx("panel.group.detail.post.reply.edit.label", "Edit"),
+                title: Localization().getStringEx("panel.group.detail.post.reply.edit.label", "Edit"),
                 onTap: () {
                   Navigator.of(context).pop();
                   _onTapEditReply(reply: reply);
@@ -643,7 +642,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
               )),
               Visibility(visible: _isDeleteReplyVisible(reply.creatorId), child: RibbonButton(
                 leftIconKey: "trash",
-                label: Localization().getStringEx("panel.group.detail.post.reply.delete.label", "Delete"),
+                title: Localization().getStringEx("panel.group.detail.post.reply.delete.label", "Delete"),
                 onTap: () {
                 Navigator.of(context).pop();
                 _onTapDeleteReply(reply);
@@ -651,12 +650,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconKey: "feedback",
-                label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                title: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents: true), entityId: reply.id!, entityType: SocialEntityType.comment),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconKey: "feedback",
-                label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
+                title: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), entityId: reply.id!, entityType: SocialEntityType.comment),
               )),
             ],
