@@ -3867,6 +3867,8 @@
 	"widget.home.public_surveys.button.all.title":"View All",
 	"widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
 
+	"widget.home.events2.label.header.title":"Events",
+
 	"widget.home.event2_feed.label.header.title":"All Events",
 	"widget.home.event2_feed.text.empty.description": "There are no events available.",
  	"widget.home.event2_feed.text.offline.description": "Events are not available while offline.",

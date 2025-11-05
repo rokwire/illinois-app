@@ -156,7 +156,16 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeCampusRemindersWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == 'event_feed') {
+    else if (code == 'events') {
+      if (title) {
+        return HomeEvents2Widget.title;
+      } else if (handle) {
+        return HomeEvents2Widget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeEvents2Widget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    /*else if (code == 'event_feed') {
       if (title) {
         return HomeEvent2FeedWidget.title;
       } else if (handle) {
@@ -173,7 +182,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
       } else {
         return HomeMyEvents2Widget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController);
       }
-    }
+    }*/
     else if (code == 'recent_items') {
       if (title) {
         return HomeRecentItemsWidget.title;
