@@ -951,7 +951,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   DropdownMenuItem<Auth2FieldVisibility> _visibilityDropdownItem(Auth2FieldVisibility visibility, { bool selected = false}) =>
     DropdownMenuItem<Auth2FieldVisibility>(
       value: visibility,
-      child: Semantics(label: visibility.semanticLabel, container: true, button: true, selected: selected, child:
+      child: Semantics(label: visibility.semanticLabel, container: true, button: true, checked: selected, inMutuallyExclusiveGroup: true, child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisSize: MainAxisSize.max, children: [
             Padding(padding: EdgeInsets.only(right: _dropdownItemInnerIconPaddingX), child:
