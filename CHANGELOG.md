@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - WEB: add play/pause button to the loading video [#4864](https://github.com/rokwire/illinois-app/issues/4864).
+### Changed
+- WEB: change the loading video [#4871](https://github.com/rokwire/illinois-app/issues/4871).
 
 ## [7.3.21] - 2025-11-03
 ### Added
