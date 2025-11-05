@@ -143,7 +143,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> with Notification
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
-        label: _selectedScope?.displayTitle,
+        title: _selectedScope?.displayTitle,
         onTap: _onTapContentTypeDropdownButton
       )
     );
@@ -169,7 +169,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> with Notification
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           textStyle: Styles().textStyles.getTextStyle((_selectedScope == scope) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
           rightIconKey: (_selectedScope == scope) ? 'check-accent' : null,
-          label: scope.displayTitle,
+          title: scope.displayTitle,
           onTap: () => _onTapContentTypeDropdownItem(scope)
         ));
       }

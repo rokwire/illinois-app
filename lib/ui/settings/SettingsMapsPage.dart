@@ -181,7 +181,7 @@ class _SettingsMapsPageState extends State<SettingsMapsPage> with NotificationsL
         ]),
         Container(height: 4),
         ToggleRibbonButton(
-            label: Localization().getStringEx('panel.settings.home.calendar.ada.toggle.title', 'Display ADA accessible building entrances for My Courses'),
+            title: Localization().getStringEx('panel.settings.home.calendar.ada.toggle.title', 'Display ADA accessible building entrances for My Courses'),
             border: Border.all(color: Styles().colors.surfaceAccent),
             borderRadius: BorderRadius.all(Radius.circular(4)),
             toggled: StudentCourses().requireAda,

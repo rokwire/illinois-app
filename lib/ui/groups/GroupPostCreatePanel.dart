@@ -4,6 +4,7 @@ import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -131,8 +132,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                   Visibility(visible: _isPost && _canPinPost,
                     child: Container(
                       padding: EdgeInsets.symmetric(vertical: 6),
-                      child: EnabledToggleButton(
-                          label: "Pin post to top of all posts (Only one pinned post per group is allowed. Pinning this post will automatically unpin any past admin posts.)",
+                      child: ToggleRibbonButton(
+                          title: "Pin post to top of all posts (Only one pinned post per group is allowed. Pinning this post will automatically unpin any past admin posts.)",
                           borderRadius: BorderRadius.circular(4),
                           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                           enabled: CollectionUtils.isEmpty(_selectedMembers),
@@ -151,8 +152,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                   Visibility(visible: _isPost,
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 6),
-                        child: EnabledToggleButton(
-                            label: "Also post to additional groups...",
+                        child: ToggleRibbonButton(
+                            title: "Also post to additional groups...",
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                             enabled: CollectionUtils.isEmpty(_selectedMembers),

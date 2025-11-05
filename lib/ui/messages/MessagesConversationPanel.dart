@@ -798,27 +798,27 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                 padding: EdgeInsets.all(16.0),
                 child: Column(children: [
                   RibbonButton(
-                      label: Localization().getStringEx('panel.messages.conversation.select.image_video.button.label', 'Upload an image or video'),
+                      title: Localization().getStringEx('panel.messages.conversation.select.image_video.button.label', 'Upload an image or video'),
                       leftIconKey: 'image',
                       onTap: _onTapUploadImageOrVideo),
                   SizedBox(height: 4),
                   RibbonButton(
-                      label: Localization().getStringEx('panel.messages.conversation.select.image.button.label', 'Take a photo'),
+                      title: Localization().getStringEx('panel.messages.conversation.select.image.button.label', 'Take a photo'),
                       leftIconKey: 'camera',
                       onTap: _onTapCamera),
                   SizedBox(height: 4),
                   RibbonButton(
-                      label: Localization().getStringEx('panel.messages.conversation.select.video.button.label', 'Record a video'),
+                      title: Localization().getStringEx('panel.messages.conversation.select.video.button.label', 'Record a video'),
                       leftIconKey: 'video-camera',
                       onTap: () => _onTapCamera(isVideo: true)),
                   SizedBox(height: 4),
                   RibbonButton(
-                      label: Localization().getStringEx('panel.messages.conversation.select.audio.button.label', 'Record an audio clip'),
+                      title: Localization().getStringEx('panel.messages.conversation.select.audio.button.label', 'Record an audio clip'),
                       leftIconKey: 'microphone',
                       onTap: _onTapRecordAudio),
                   SizedBox(height: 4),
                   RibbonButton(
-                      label: Localization().getStringEx('panel.messages.conversation.select.file.button.label', 'Upload a file'),
+                      title: Localization().getStringEx('panel.messages.conversation.select.file.button.label', 'Upload a file'),
                       leftIconKey: 'file',
                       onTap: _onTapAttachFile)
                 ])
