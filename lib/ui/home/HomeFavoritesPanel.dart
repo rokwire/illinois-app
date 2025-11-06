@@ -140,6 +140,7 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
 
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
+      Auth2.notifyLoginChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
     ]);
 
@@ -162,6 +163,9 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
       _updateContentCodes();
+    }
+    else if (name == Auth2.notifyLoginChanged) {
+      _updateFavoriteCodes(checkUpdate: true);
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       _updateFavoriteCodes();
@@ -257,7 +261,7 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     }
   }
 
-  List<String>? _buildFavoriteCodes({ bool checkUpdate = false}) {
+  List<String>? _buildFavoriteCodes({bool checkUpdate = false}) {
     LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
     if (homeFavorites == null) {
       homeFavorites = _initDefaultFavorites();
@@ -268,15 +272,13 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     return (homeFavorites != null) ? List.from(homeFavorites) : null;
   }
 
-  void _updateFavoriteCodes() {
-    if (mounted) {
-      List<String>? favoriteCodes = _buildFavoriteCodes();
-      if ((favoriteCodes != null) && !DeepCollectionEquality().equals(_favoriteCodes, favoriteCodes)) {
+  void _updateFavoriteCodes({bool checkUpdate = false}) {
+      List<String>? favoriteCodes = _buildFavoriteCodes(checkUpdate: checkUpdate);
+      if ((favoriteCodes != null) && !DeepCollectionEquality().equals(_favoriteCodes, favoriteCodes) && mounted) {
         setState(() {
           _favoriteCodes = favoriteCodes;
         });
       }
-    }
   }
 
   static LinkedHashSet<String>? _initDefaultFavorites() {
