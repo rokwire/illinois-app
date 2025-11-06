@@ -178,6 +178,13 @@
 
       window.addEventListener('flutter-first-frame', () => {
         container.classList.add('hidden');
+
+        if (document.activeElement === button) {
+          button.blur();
+        }
+        button.setAttribute('tabindex', '-1');
+        button.setAttribute('aria-hidden', 'true');
+        button.disabled = true;
       });
   </script>
 </body>
