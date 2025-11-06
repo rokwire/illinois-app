@@ -597,8 +597,7 @@ class _BrowseEntry extends StatelessWidget {
       case "music_and_news.illini_radio":    _onTapIlliniRadio(context); break;
       case "music_and_news.daily_illini":    _onTapDailyIllini(context); break;
 
-      case "groups.all_groups":              _onTapAllGroups(context); break;
-      case "groups.my_groups":               _onTapMyGroups(context); break;
+      case "groups.groups":                  _onTapGroups(context); break;
 
       case "research_projects.open_research_projects": _onTapOpenResearchProjects(context); break;
       case "research_projects.my_research_projects": _onTapMyResearchProjects(context); break;
@@ -765,14 +764,9 @@ class _BrowseEntry extends StatelessWidget {
     RadioPopupWidget.show(context);
   }
 
-  static void _onTapAllGroups(BuildContext context) {
-    Analytics().logSelect(target: "All Groups");
-    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel(contentType: GroupsContentType.all,)));
-  }
-
-  static void _onTapMyGroups(BuildContext context) {
-    Analytics().logSelect(target: "My Groups");
-    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel(contentType: GroupsContentType.my)));
+  static void _onTapGroups(BuildContext context) {
+    Analytics().logSelect(target: "Groups");
+    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel()));
   }
 
   static void _onTapOpenResearchProjects(BuildContext context) {

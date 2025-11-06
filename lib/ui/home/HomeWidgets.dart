@@ -25,7 +25,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum CardDisplayMode { home, browse, }
-enum FavoritesContentType { my, all }
+enum FavoriteContentType { my, all }
+enum FavoriteContentStatus { none, refresh, reload }
 
 ////////////////////////////
 // HomeHandleWidget
@@ -1209,28 +1210,28 @@ extension HomeFavTabBarBtnPosImpl on HomeFavTabBarBtnPos {
   }
 }
 
-extension FavoritesContentTypeImpl on FavoritesContentType {
+extension FavoritesContentTypeImpl on FavoriteContentType {
 
-  static FavoritesContentType? fromJson(dynamic value) {
+  static FavoriteContentType? fromJson(dynamic value) {
     switch (value) {
-      case 'my': return FavoritesContentType.my;
-      case 'all': return FavoritesContentType.all;
+      case 'my': return FavoriteContentType.my;
+      case 'all': return FavoriteContentType.all;
     }
     return null;
   }
 
   toJson() {
     switch (this) {
-      case FavoritesContentType.my: return 'my';
-      case FavoritesContentType.all: return 'all';
+      case FavoriteContentType.my: return 'my';
+      case FavoriteContentType.all: return 'all';
     }
   }
 
   HomeFavTabBarBtnPos get position {
-    if (this == FavoritesContentType.values.first) {
+    if (this == FavoriteContentType.values.first) {
       return HomeFavTabBarBtnPos.first;
     }
-    else if (this == FavoritesContentType.values.last) {
+    else if (this == FavoriteContentType.values.last) {
       return HomeFavTabBarBtnPos.last;
     }
     else {

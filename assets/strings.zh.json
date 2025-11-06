@@ -319,8 +319,7 @@
 	"panel.browse.entry.music_and_news.wpgufm_radio.title": "WPGU 107.1 調頻",
 	"panel.browse.entry.music_and_news.daily_illini.title": "The Daily Illini",
 
-	"panel.browse.entry.groups.all_groups.title": "所有組",
-	"panel.browse.entry.groups.my_groups.title": "我的群組",
+	"panel.browse.entry.groups.groups.title": "Groups",
 
 	"panel.browse.entry.research_projects.open_research_projects.title": "開放研究項目",
 	"panel.browse.entry.research_projects.my_research_projects.title": "My Research Projects",
@@ -3873,6 +3872,7 @@
 	"widget.home.my_events2.label.header.title":"My Events",
 	"widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events Feed</b></a> for quick access here.  (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
+	"widget.home.groups.label.header.title":"群組",
 	"widget.home.groups.my.label.header.title":"我的群組",
 	"widget.home.groups.all.label.header.title":"所有群組",
 	"widget.home.groups.my.text.empty.description": "您還沒有創建任何組。",
@@ -4518,6 +4518,7 @@
 	"common.label.county": "County",
 	"common.label.read_more": "Read more",
 	"common.label.failed": "Failed",
+	"common.label.empty": "Empty",
 
 	"common.message.offline":"你还没联网。",
 	"common.message.logged_out":"您未登入。",

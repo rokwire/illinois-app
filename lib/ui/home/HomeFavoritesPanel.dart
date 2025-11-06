@@ -317,6 +317,8 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
   static Map<String, String> _favoritesReplacements = <String, String> {
     'event_feed': 'events',
     'my_events': 'events',
+    'all_groups': 'groups',
+    'my_groups': 'groups',
   };
 
   static LinkedHashSet<String> _updateLastFavorites(LinkedHashSet<String> favorites) {

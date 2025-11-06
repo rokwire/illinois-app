@@ -70,11 +70,11 @@ class HomeEvents2Widget extends StatefulWidget {
 }
 
 class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
-  late FavoritesContentType _contentType;
+  late FavoriteContentType _contentType;
 
   @override
   void initState() {
-    _contentType = FavoritesContentTypeImpl.fromJson(Storage().getHomeFavoriteSelectedContent(widget.favoriteId)) ?? FavoritesContentType.all;
+    _contentType = FavoritesContentTypeImpl.fromJson(Storage().getHomeFavoriteSelectedContent(widget.favoriteId)) ?? FavoriteContentType.all;
     super.initState();
   }
 
@@ -91,20 +91,20 @@ class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
     ..._contentTypeWidgets,
   ],);
   
-  Iterable<Widget> get _contentTypeWidgets => FavoritesContentType.values.map((FavoritesContentType contentType) =>
+  Iterable<Widget> get _contentTypeWidgets => FavoriteContentType.values.map((FavoriteContentType contentType) =>
     Visibility(visible: (_contentType == contentType), maintainState: true, child:
       _buildContentTypeWidget(contentType),
     ));
   
-  Widget _buildContentTypeWidget(FavoritesContentType contentType) => _HomeEvents2ImplWidget(
+  Widget _buildContentTypeWidget(FavoriteContentType contentType) => _HomeEvents2ImplWidget(
     updateController: widget.updateController,
-    emptyContentBuilder: (contentType == FavoritesContentType.my) ? _myEmptyContentBuilder : _allEmptyContentBuilder,
-    filter: (contentType == FavoritesContentType.my) ? Event2FilterParam(
+    emptyContentBuilder: (contentType == FavoriteContentType.my) ? _myEmptyContentBuilder : _allEmptyContentBuilder,
+    filter: (contentType == FavoriteContentType.my) ? Event2FilterParam(
       timeFilter: Event2TimeFilter.upcoming, customStartTime: null, customEndTime: null,
       types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]),
       attributes: <String, dynamic>{},
     ) : null,
-    sortType: (contentType == FavoritesContentType.my) ? Event2SortType.dateTime : null,
+    sortType: (contentType == FavoriteContentType.my) ? Event2SortType.dateTime : null,
   );
   
   static const String localScheme = 'local';
@@ -137,8 +137,8 @@ class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
   );
 
   Widget get _contentTypeBar => Row(children:List<Widget>.from(
-    FavoritesContentType.values.map((FavoritesContentType contentType) => Expanded(child:
-      HomeFavTabBarBtn(contentType.title.toUpperCase(),
+    FavoriteContentType.values.map((FavoriteContentType contentType) => Expanded(child:
+      HomeFavTabBarBtn(contentType.eventsTitle.toUpperCase(),
         position: contentType.position,
         selected: _contentType == contentType,
         onTap: () => _onContentType(contentType),
@@ -146,7 +146,7 @@ class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
     )),
   ));
 
-  void _onContentType(FavoritesContentType contentType) {
+  void _onContentType(FavoriteContentType contentType) {
     if ((_contentType != contentType) && mounted) {
       setState(() {
         _contentType = contentType;
@@ -190,12 +190,12 @@ class _HomeEvents2ImplWidgetState extends State<_HomeEvents2ImplWidget> with Not
   bool _loadingLocationServicesStatus = false;
   Position? _currentLocation;
 
-  DateTime? _pausedDateTime;
   bool _visible = false;
-  _Staled _stalled = _Staled.none;
+  Key _visibilityDetectorKey = UniqueKey();
+  DateTime? _pausedDateTime;
+  FavoriteContentStatus _contentStatus = FavoriteContentStatus.none;
 
   PageController? _pageController;
-  Key _visibilityDetectorKey = UniqueKey();
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
 
@@ -217,7 +217,7 @@ class _HomeEvents2ImplWidgetState extends State<_HomeEvents2ImplWidget> with Not
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
-          _refresh();
+          _reloadIfVisible();
         }
       });
     }
@@ -289,13 +289,13 @@ class _HomeEvents2ImplWidgetState extends State<_HomeEvents2ImplWidget> with Not
   }
 
   @override
-  Widget build(BuildContext context) {
-    return VisibilityDetector(key: _visibilityDetectorKey, onVisibilityChanged: _onVisibilityChanged, child:
-        _buildContent(),
-    );
-  }
+  Widget build(BuildContext context) => VisibilityDetector(
+    key: _visibilityDetectorKey,
+    onVisibilityChanged: _onVisibilityChanged,
+    child: _contentWidget,
+  );
 
-  Widget _buildContent() {
+  Widget get _contentWidget {
     if (Connectivity().isOffline) {
       return HomeMessageCard(
         title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
@@ -433,10 +433,10 @@ class _HomeEvents2ImplWidgetState extends State<_HomeEvents2ImplWidget> with Not
 
   void _onInternalVisibilityChanged() {
     if (_visible) {
-      switch(_stalled) {
-        case _Staled.none: break;
-        case _Staled.refresh: _refresh(); break;
-        case _Staled.reload: _reload(); break;
+      switch(_contentStatus) {
+        case FavoriteContentStatus.none: break;
+        case FavoriteContentStatus.refresh: _refresh(); break;
+        case FavoriteContentStatus.reload: _reload(); break;
       }
     }
   }
@@ -537,8 +537,8 @@ class _HomeEvents2ImplWidgetState extends State<_HomeEvents2ImplWidget> with Not
     if (_visible) {
       return _reload(limit: limit);
     }
-    else if (_stalled.index < _Staled.reload.index) {
-      _stalled = _Staled.reload;
+    else if (_contentStatus.index < FavoriteContentStatus.reload.index) {
+      _contentStatus = FavoriteContentStatus.reload;
     }
   }
 
@@ -560,7 +560,7 @@ class _HomeEvents2ImplWidgetState extends State<_HomeEvents2ImplWidget> with Not
         _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
         _eventsErrorText = errorTextResult;
         _loadingEvents = false;
-        _stalled = _Staled.none;
+        _contentStatus = FavoriteContentStatus.none;
         _pageViewKey = UniqueKey();
         _contentKeys.clear();
       });
@@ -571,8 +571,8 @@ class _HomeEvents2ImplWidgetState extends State<_HomeEvents2ImplWidget> with Not
     if (_visible) {
       return _refresh();
     }
-    else if (_stalled.index < _Staled.refresh.index) {
-      _stalled = _Staled.refresh;
+    else if (_contentStatus.index < FavoriteContentStatus.refresh.index) {
+      _contentStatus = FavoriteContentStatus.refresh;
     }
   }
 
@@ -605,7 +605,7 @@ class _HomeEvents2ImplWidgetState extends State<_HomeEvents2ImplWidget> with Not
           _totalEventsCount = totalCount;
         }
         _refreshingEvents = false;
-        _stalled = _Staled.none;
+        _contentStatus = FavoriteContentStatus.none;
         _pageViewKey = UniqueKey();
         _contentKeys.clear();
       });
@@ -637,22 +637,18 @@ class _HomeEvents2ImplWidgetState extends State<_HomeEvents2ImplWidget> with Not
             _totalEventsCount = totalCount;
           }
           _extendingEvents = false;
-          _stalled = _Staled.none;
+          _contentStatus = FavoriteContentStatus.none;
         });
       }
     }
   }
 }
 
-enum _Staled { none, refresh, reload }
-//typedef WidgetBuilder = Widget Function(BuildContext context);
-
-
-extension FavoriteEventsContentType on FavoritesContentType {
-  String get title {
+extension FavoriteEventsContentType on FavoriteContentType {
+  String get eventsTitle {
     switch (this) {
-      case FavoritesContentType.all: return Localization().getStringEx('widget.home.event2_feed.label.header.title', 'All Events');
-      case FavoritesContentType.my: return Localization().getStringEx('widget.home.my_events2.label.header.title', 'My Events');
+      case FavoriteContentType.my: return Localization().getStringEx('widget.home.my_events2.label.header.title', 'My Events');
+      case FavoriteContentType.all: return Localization().getStringEx('widget.home.event2_feed.label.header.title', 'All Events');
     }
   }
 }

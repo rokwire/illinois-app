@@ -319,8 +319,7 @@
     "panel.browse.entry.music_and_news.wpgufm_radio.title": "WPGU 107.1 FM",
     "panel.browse.entry.music_and_news.daily_illini.title": "The Daily Illini",
 
-    "panel.browse.entry.groups.all_groups.title": "Todos los grupos",
-    "panel.browse.entry.groups.my_groups.title": "Mis grupos",
+    "panel.browse.entry.groups.groups.title": "Grupos",
 
     "panel.browse.entry.research_projects.open_research_projects.title": "Proyectos de Investigación Abierta",
     "panel.browse.entry.research_projects.my_research_projects.title": "My Research Projects",
@@ -3898,6 +3897,7 @@
     "widget.home.my_events2.label.header.title":"My Events",
     "widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events Feed</b></a> for quick access here.  (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
+    "widget.home.groups.label.header.title":"Grupos",
     "widget.home.groups.my.label.header.title":"Mis grupos",
     "widget.home.groups.all.label.header.title":"Todos los grupos",
     "widget.home.groups.my.text.empty.description": "Aún no has creado ningún grupo.",
@@ -4545,6 +4545,7 @@
     "common.label.county": "Condado",
     "common.label.read_more": "Leer mas",
     "common.label.failed": "Failed",
+    "common.label.empty": "Empty",
 
     "common.message.offline":"Parece que estás desconectado",
     "common.message.logged_out":"No has iniciado sesión",

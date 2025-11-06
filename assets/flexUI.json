@@ -11,7 +11,7 @@
 				"campus_highlights", "campus_reminders", "my_campus_guide",
 				"dinings", "my_dining",
 				"events",
-				"all_groups", "my_groups",
+				"groups",
 				"open_research_projects", "my_research_projects",
 				"create_poll", "recent_polls",
 				"daily_illini", "illini_radio",
@@ -33,7 +33,7 @@
 			"browse.dinings": ["dinings_all", "dinings_open", "my_dining"],
 			"browse.directory": ["user_directory"],
 			"browse.events": ["events"],
-			"browse.groups": ["all_groups", "my_groups"],
+			"browse.groups": ["groups"],
 			"browse.research_projects": ["open_research_projects", "my_research_projects"],
 			"browse.messages": ["messages"],
 			"browse.mtd": ["all_mtd_stops", "my_mtd_stops", "my_locations"],
@@ -254,7 +254,7 @@
 	"defaults": {
 		"favorites": {
 			"content": {
-				"home": ["events", "my_groups"]
+				"home": ["events", "groups"]
 			},
 			"rules": {
 			}
