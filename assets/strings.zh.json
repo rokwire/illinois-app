@@ -251,8 +251,6 @@
 	"panel.browse.section.directory.description": "Find {{university_name}} student and employee contact information.",
 	"panel.browse.section.events.title": "活動",
 	"panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
-	"panel.browse.section.feeds.title": "Illini News",
-	"panel.browse.section.feeds.description": "Catch the latest from {{app_title}} social media and The Daily Illini.",
 	"panel.browse.section.groups.title": "團體",
 	"panel.browse.section.groups.description": "Discover a new group or start your own.",
 	"panel.browse.section.research_projects.title": "Research Participation",
@@ -314,8 +312,6 @@
 	"panel.browse.entry.directory.user_directory.title": "Directory of Users",
 
 	"panel.browse.entry.events.events.title": "Events",
-
-	"panel.browse.entry.feeds.twitter.title": "推特",
 
 	"panel.browse.entry.music_and_news.will_radio.title": "WILL News & Talk (NPR)",
 	"panel.browse.entry.music_and_news.willfm_radio.title": "WILL Classical & More",
