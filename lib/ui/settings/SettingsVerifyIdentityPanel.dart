@@ -75,7 +75,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           Container(height: 12,),
           Container(padding: EdgeInsets.symmetric(horizontal: 16),
               child:RibbonButton(
-                  label: Localization().getStringEx("panel.settings.verify_identity.button.connect_net_id.title", "Connect Your NetID"),
+                  title: Localization().getStringEx("panel.settings.verify_identity.button.connect_net_id.title", "Connect Your NetID"),
                   borderRadius: BorderRadius.circular(4),
                   onTap: _onTapConnectNetId
               )),
@@ -95,7 +95,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           Container(height: 12,),
           Container(padding: EdgeInsets.symmetric(horizontal: 16),
               child:RibbonButton(
-                  label: Localization().getStringEx("panel.settings.verify_identity.button.phone_or_phone.title", "Proceed"),
+                  title: Localization().getStringEx("panel.settings.verify_identity.button.phone_or_phone.title", "Proceed"),
                   borderRadius: BorderRadius.circular(4),
                   onTap: _onTapProceed
               )),

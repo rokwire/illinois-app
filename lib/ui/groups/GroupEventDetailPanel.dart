@@ -530,8 +530,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
             RibbonButton(
-              label: Localization().getStringEx('panel.groups_event_detail.button.edit.title',  'Edit') ,
-              hint: Localization().getStringEx('panel.groups_event_detail.button.edit.hint', '') ,
+              title: Localization().getStringEx('panel.groups_event_detail.button.edit.title',  'Edit') ,
+              semanticsHint: Localization().getStringEx('panel.groups_event_detail.button.edit.hint', '') ,
               leftIconKey: "edit",
               onTap: _onTapEdit,
             ),
@@ -546,8 +546,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           height: 14,
         ),
         RibbonButton(
-          label: Localization().getStringEx('panel.groups_event_detail.button.delete.title', "Delete Event"),
-          hint:  Localization().getStringEx('panel.groups_event_detail.button.delete.hint', ""),
+          title: Localization().getStringEx('panel.groups_event_detail.button.delete.title', "Delete Event"),
+          semanticsHint:  Localization().getStringEx('panel.groups_event_detail.button.delete.hint', ""),
           leftIconKey: "trash",
           onTap: _onTapDelete,
         )

@@ -2845,7 +2845,7 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
 
     if (widget.pollCard._canStart) {
       options.add(RibbonButton(
-        label: Localization().getStringEx("panel.polls_home.card.button.title.start_poll", "Start Poll"),
+        title: Localization().getStringEx("panel.polls_home.card.button.title.start_poll", "Start Poll"),
         leftIconKey: "settings",
         progress: _isStarting,
         onTap: _onStartPollTapped
@@ -2853,7 +2853,7 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
     }
     if (widget.pollCard._canEnd) {
       options.add(RibbonButton(
-        label: Localization().getStringEx("panel.polls_home.card.button.title.end_poll", "End Poll"),
+        title: Localization().getStringEx("panel.polls_home.card.button.title.end_poll", "End Poll"),
         leftIconKey: "settings",
         progress: _isEnding,
         onTap: _onEndPollTapped
@@ -2862,7 +2862,7 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
 
     if (widget.pollCard._canDelete) {
       options.add(RibbonButton(
-        label: Localization().getStringEx("panel.polls_home.card.button.title.delete_poll", "Delete Poll"),
+        title: Localization().getStringEx("panel.polls_home.card.button.title.delete_poll", "Delete Poll"),
         leftIconKey: "trash",
         progress: _isDeleting,
         onTap: _onDeletePollTapped
@@ -3347,7 +3347,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
       if (group.id != null) {
         groupWidgetList.add(ToggleRibbonButton(
             borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-            label: group.title,
+            title: group.title,
             toggled: _selectedGroupIds.contains(group.id),
             onTap: () => _onTapGroup(group.id!),
             textStyle:  Styles().textStyles.getTextStyle("widget.button.title.medium.fat")
@@ -3417,26 +3417,6 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
   }
 }
 
-class EnabledToggleButton extends ToggleRibbonButton {
-  final bool? enabled;
-
-  EnabledToggleButton(
-      {String? label,
-        bool? toggled,
-        void Function()? onTap,
-        BoxBorder? border,
-        BorderRadius? borderRadius,
-        TextStyle? textStyle,
-        this.enabled})
-      : super(label: label, toggled: (toggled == true), onTap: onTap, border: border, borderRadius: borderRadius, textStyle: textStyle);
-
-  @override
-  bool get toggled => (enabled == true) && super.toggled;
-
-  @override
-  Widget? get rightIconImage => Styles().images.getImage(toggled ? 'toggle-on' : 'toggle-off');  //Workaround for blurry images
-}
-
 class GroupMemberSettingsLayout extends StatelessWidget{
   final GroupSettings? settings;
   final Function? onChanged;
@@ -3467,10 +3447,9 @@ class GroupMemberSettingsLayout extends StatelessWidget{
           decoration:  BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
           child: Column(
             children: [
-              EnabledToggleButton(
-                  enabled: true,
+              ToggleRibbonButton(
                   borderRadius: BorderRadius.zero,
-                  label: Localization().getStringEx("panel.groups_create.settings.enable_member_info.label", "View Other Members"),
+                  title: Localization().getStringEx("panel.groups_create.settings.enable_member_info.label", "View Other Members"),
                   toggled: isGroupInfoAllowed,
                   onTap: (){_onSettingsTap(
                       changeSetting: (){ settings?.memberInfoPreferences?.allowMemberInfo =  !(settings?.memberInfoPreferences?.allowMemberInfo ?? true);}
@@ -3486,7 +3465,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [
                               //Since the setting "view email address" does work, we do not need the option to view a member's NetID.
-                              /* EnabledToggleButton(
+                              /* ToggleRibbonButton(
                                   enabled: isGroupInfoAllowed,
                                   borderRadius: BorderRadius.zero,
                                   label: Localization().getStringEx("panel.groups_create.settings.allow_info_net_id.label", "View University ID (NetID)"), //TBD localize section
@@ -3498,7 +3477,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),*/
                              //Hide View Name. We will always want to show the name, so just keep it as true and just hide it so it cannot be changed.
-                              /*EnabledToggleButton(
+                              /*ToggleRibbonButton(
                                   enabled: isGroupInfoAllowed,
                                   borderRadius: BorderRadius.zero,
                                   label: Localization().getStringEx("panel.groups_create.settings.allow_view_name.label", "View Name"),
@@ -3510,10 +3489,10 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                   textStyle: isGroupInfoAllowed
                                       ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),*/
-                              EnabledToggleButton(
+                              ToggleRibbonButton(
                                   enabled: isGroupInfoAllowed,
                                   borderRadius: BorderRadius.zero,
-                                  label: Localization().getStringEx("panel.groups_create.settings.allow_view_email.label", "View Email Address"),
+                                  title: Localization().getStringEx("panel.groups_create.settings.allow_view_email.label", "View Email Address"),
                                   toggled: (settings?.memberInfoPreferences?.viewMemberEmail ?? false),
                                   onTap: (){_onSettingsTap(
                                       changeSetting: (){  if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberEmail =  !(settings?.memberInfoPreferences?.viewMemberEmail ?? false);}}
@@ -3522,7 +3501,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                       ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                               //Hide Phone for now
-                              // EnabledToggleButton(
+                              // ToggleRibbonButton(
                               //     enabled: isGroupInfoAllowed,
                               //     borderRadius: BorderRadius.zero,
                               //     label: Localization().getStringEx("panel.groups_create.settings.allow_view_phone.label", "View Phone"),
@@ -3546,10 +3525,9 @@ class GroupMemberSettingsLayout extends StatelessWidget{
         decoration:  BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
         child: Column(
             children: [
-              EnabledToggleButton(
-                  enabled: true,
+              ToggleRibbonButton(
                   borderRadius: BorderRadius.zero,
-                  label: Localization().getStringEx("panel.groups_create.settings.enable_post.label", "Member Posts and Messages"),
+                  title: Localization().getStringEx("panel.groups_create.settings.enable_post.label", "Member Posts and Messages"),
                   toggled: isGroupPostAllowed,
                   onTap: (){_onSettingsTap(
                       changeSetting: (){settings?.memberPostPreferences?.allowSendPost =  !(settings?.memberPostPreferences?.allowSendPost ?? true);}
@@ -3564,10 +3542,10 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                         child: Padding(
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [
-                              EnabledToggleButton(
+                              ToggleRibbonButton(
                                   enabled: (isGroupPostAllowed == true && isGroupInfoAllowed == true),
                                   borderRadius: BorderRadius.zero,
-                                  label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Send messages to specific members"), //TBD localize section
+                                  title: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Send messages to specific members"), //TBD localize section
                                   toggled: (settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false),
                                   onTap: (){_onSettingsTap(
                                       changeSetting: (){ if(isGroupPostAllowed == true && isGroupInfoAllowed == true) {settings?.memberPostPreferences?.sendPostToSpecificMembers =  !(settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false);}}
@@ -3575,10 +3553,10 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                   textStyle: (isGroupPostAllowed == true && isGroupInfoAllowed == true)
                                       ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                              EnabledToggleButton(
+                              ToggleRibbonButton(
                                   enabled: isGroupPostAllowed,
                                   borderRadius: BorderRadius.zero,
-                                  label: Localization().getStringEx("panel.groups_create.posts_to_admins.label", "Send messages to admins"),
+                                  title: Localization().getStringEx("panel.groups_create.posts_to_admins.label", "Send messages to admins"),
                                   toggled: (settings?.memberPostPreferences?.sendPostToAdmins ?? false),
                                   onTap: (){_onSettingsTap(
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAdmins =  !(settings?.memberPostPreferences?.sendPostToAdmins ?? false);}}
@@ -3586,10 +3564,10 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                   textStyle: isGroupPostAllowed
                                       ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                              EnabledToggleButton(
+                              ToggleRibbonButton(
                                   enabled: isGroupPostAllowed,
                                   borderRadius: BorderRadius.zero,
-                                  label: Localization().getStringEx("panel.groups_create.posts_to_all.label", "Send posts to all members"),
+                                  title: Localization().getStringEx("panel.groups_create.posts_to_all.label", "Send posts to all members"),
                                   toggled: (settings?.memberPostPreferences?.sendPostToAll ?? false),
                                   onTap: (){_onSettingsTap(
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAll =  !(settings?.memberPostPreferences?.sendPostToAll ?? false);}}
@@ -3597,10 +3575,10 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                   textStyle: isGroupPostAllowed
                                       ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                              EnabledToggleButton(
+                              ToggleRibbonButton(
                                   enabled: isGroupPostAllowed,
                                   borderRadius: BorderRadius.zero,
-                                  label: Localization().getStringEx("panel.groups_create.send_replies.label", "Send replies"),
+                                  title: Localization().getStringEx("panel.groups_create.send_replies.label", "Send replies"),
                                   toggled: (settings?.memberPostPreferences?.sendPostReplies ?? false),
                                   onTap: (){_onSettingsTap(
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReplies =  !(settings?.memberPostPreferences?.sendPostReplies ?? false);}}
@@ -3608,10 +3586,10 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                   textStyle: isGroupPostAllowed
                                       ? Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                                       : Styles().textStyles.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                              EnabledToggleButton(
+                              ToggleRibbonButton(
                                   enabled: isGroupPostAllowed,
                                   borderRadius: BorderRadius.zero,
-                                  label: Localization().getStringEx("panel.groups_create.reactions_to_post.label", "Reactions (emojis) to posts"),
+                                  title: Localization().getStringEx("panel.groups_create.reactions_to_post.label", "Reactions (emojis) to posts"),
                                   toggled: (settings?.memberPostPreferences?.sendPostReactions ?? false),
                                   onTap: (){_onSettingsTap(
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReactions =  !(settings?.memberPostPreferences?.sendPostReactions ?? false);}}

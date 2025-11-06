@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WEB: add play/pause button to the loading video [#4864](https://github.com/rokwire/illinois-app/issues/4864).
 ### Changed
 - WEB: change the loading video [#4871](https://github.com/rokwire/illinois-app/issues/4871).
+### Changed
+- ToggleRibbonButton handles semantic hints properly, some cleanup applied as well [#4874](https://github.com/rokwire/illinois-app/issues/4874).
 
 ## [7.3.21] - 2025-11-03
 ### Added
+- Added semantic label for Read More link in group's About us section [#4874](https://github.com/rokwire/illinois-app/issues/4874).
 - Assistant: log analytics event on query response [#5508](https://github.com/rokwire/illinois-app/issues/5508).
 - Add AccessibleImageHolder to ModalPhotoImagePanel [#5439](https://github.com/rokwire/illinois-app/issues/5439).
 ### Fixed

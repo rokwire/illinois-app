@@ -170,7 +170,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> with Notifi
     return <Widget>[
       RibbonButton(
         leftIconKey: "info",
-        label: saveEnabled ?
+        title: saveEnabled ?
           Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.description", "Your results will be saved for you to compare with future results.") :
           Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
         textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
@@ -179,7 +179,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> with Notifi
       ),
       RibbonButton(
         leftIconKey: "settings",
-        label: saveEnabled ?
+        title: saveEnabled ?
           Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.label", "Don't Save My Results") :
           Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.label", "Save My Results"),
         textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
@@ -188,7 +188,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> with Notifi
       ),
       RibbonButton(
         leftIconKey: 'share-nodes',
-        label: Localization().getStringEx('panel.skills_self_evaluation.get_started.body.share.label', 'Share this feature'),
+        title: Localization().getStringEx('panel.skills_self_evaluation.get_started.body.share.label', 'Share this feature'),
         textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
         backgroundColor: Colors.transparent,
         onTap: _onTapShare,
@@ -228,31 +228,31 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> with Notifi
               SizedBox(height: 16),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
-                label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label", "View past results"),
+                title: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label", "View past results"),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: _onTapResults,
               ),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
-                label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label", "Where do my results go?"),
+                title: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label", "Where do my results go?"),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: () => _onTapShowInfo("where_results_go"),
               ),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
-                label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.how_results_determined.label", "How are my results determined?"),
+                title: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.how_results_determined.label", "How are my results determined?"),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: () => _onTapShowInfo("how_results_determined"),
               ),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
-                label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.why_skills_matter.label", "Why do these skills matter?"),
+                title: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.why_skills_matter.label", "Why do these skills matter?"),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: () => _onTapShowInfo("why_skills_matter"),
               ),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
-                label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.who_created_assessment.label", "Who created this assessment?"),
+                title: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.who_created_assessment.label", "Who created this assessment?"),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: () => _onTapShowInfo("who_created_assessment"),
               ),

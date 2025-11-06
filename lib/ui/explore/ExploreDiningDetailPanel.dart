@@ -1124,11 +1124,11 @@ class _StationItemState extends State<_StationItem>{
       Semantics(
         label: widget.title,
         hint: expanded
-            ? Localization().getStringEx("widget.food_detail.button.dining_station.expanded.hint","Double tap to collaps")
-            : Localization().getStringEx("widget.food_detail.button.dining_station.collapsed.hint","Double tap to expand"),
+            ? Localization().getStringEx("model.accessability.expandable.expanded.hint", "Double tap to collaps")
+            : Localization().getStringEx("model.accessability.expandable.collapsed.hint", "Double tap to expand"),
         value: expanded
-            ? Localization().getStringEx("widget.food_detail.button.dining_station.value.expanded","Expanded")
-            : Localization().getStringEx("widget.food_detail.button.dining_station.value.collapsed","Collapsed"),
+            ? Localization().getStringEx("model.accessability.expandable.expanded.value", "Expanded")
+            : Localization().getStringEx("model.accessability.expandable.collapsed.value", "Collapsed"),
         button: true,
         excludeSemantics: true,
         child: GestureDetector(onTap: onTap, child:

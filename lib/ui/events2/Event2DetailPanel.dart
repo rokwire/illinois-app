@@ -951,7 +951,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
   Widget _buildSettingButton({required String title, VoidCallback? onTap}) =>
     Padding(padding: EdgeInsets.only(bottom: 6),
       child: RibbonButton(
-        label: title,
+        title: title,
         onTap: () {
           Navigator.of(context).pop();
           onTap?.call();

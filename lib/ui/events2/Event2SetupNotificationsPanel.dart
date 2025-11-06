@@ -149,20 +149,20 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
       Padding(
           padding: bottom10Padding,
           child: _buildToggleWidget(
-              label: 'App users who have starred this event',
+              label: _toggleFavoritedEventTitle,
               value: favoritedValue,
               onTap: () => _onTapFavoritedEvent(index: notificationIndex))),
       Padding(
           padding: bottom10Padding,
           child: _buildToggleWidget(
-              label: 'App users who have registered via the Illinois app for this event',
+              label: _toggleRegisteredEventTitle,
               value: registeredValue,
               enabled: _allowRegisteredUser,
               onTap: () => _onTapRegisteredEvent(index: notificationIndex))),
       Padding(
           padding: defaultBottomPadding,
           child: _buildToggleWidget(
-              label: 'Members of Illinois app groups in which this event is published',
+              label: _togglePublishedGroupEventTitle,
               value: groupsValue,
               enabled: _allowGroupMembers,
               onTap: () => _onTapPublishedGroupEvent(index: notificationIndex))),
@@ -229,21 +229,31 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
     ]);
   }
 
-  Widget _buildToggleWidget({required String label, bool? value, bool enabled = true, void Function()? onTap}) {
+  Widget _buildToggleWidget({required String label, bool? value, bool? enabled, void Function()? onTap}) {
     bool toggled = (value == true);
-    return InkWell(
-        splashColor: Colors.transparent,
-        onTap: onTap,
-        child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 6),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Container(child:
-                Styles().images.getImage((enabled == true && toggled == true) ? 'toggle-on' : 'toggle-off')),
-              Expanded(
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 10, right: 16),
-                      child: Text(label, style: enabled ? _enabledButtonTextStyle : _disabledButtonTextStyle)))
-            ])));
+    String semanticsValue = AppSemantics.toggleValue(toggled);
+    String semanticsHint = AppSemantics.toggleHint(toggled,
+      enabled: enabled != false,
+      subject: label
+    );
+
+    return Semantics(label: label, hint: semanticsHint, value: semanticsValue, button: true, enabled: enabled, excludeSemantics: true, child:
+      InkWell(splashColor: Colors.transparent, onTap: onTap, child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Container(child: (enabled != false) ?
+              Styles().images.getImage((toggled == true) ? 'toggle-on' : 'toggle-off') :
+              Styles().images.getImage('toggle-off', color: Styles().colors.fillColorPrimaryTransparent03, colorBlendMode: BlendMode.dstIn,)
+            ),
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(left: 10, right: 16), child:
+                Text(label, style: (enabled != false) ? _enabledButtonTextStyle : _disabledButtonTextStyle)
+              )
+            )
+          ])
+        )
+      )
+    );
   }
 
   Widget _buildEventDateTimeContent(int index) {
@@ -387,54 +397,59 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
 
   Widget _buildHorizontalDividerWidget() => Container(height: 1, color: Styles().colors.dividerLine);
 
+  String get _toggleFavoritedEventTitle => 'App users who have starred this event';
+
   void _onTapFavoritedEvent({required int index}) {
-    if (_processing) {
-      return;
+    if (!_processing) {
+      Event2NotificationSetting? notification = _notificationSettings[index];
+      Event2NotificationSetting updatedNotification = (notification == null) ?
+        Event2NotificationSetting(sendToFavorited: true) :
+        Event2NotificationSetting.fromOther(notification, sendToFavorited: !notification.sendToFavorited);
+      setStateIfMounted(() {
+        _notificationSettings[index] = updatedNotification;
+      });
+      AppSemantics.announceMessage(context, AppSemantics.toggleAnnouncement(updatedNotification.sendToFavorited, subject: _toggleFavoritedEventTitle));
     }
-    Event2NotificationSetting? notification = _notificationSettings[index];
-    setStateIfMounted(() {
-      if (notification == null) {
-        _notificationSettings[index] = Event2NotificationSetting(sendToFavorited: true);
-      } else {
-        _notificationSettings[index] = Event2NotificationSetting.fromOther(notification, sendToFavorited: !notification.sendToFavorited);
-      }
-    });
   }
+
+  String get _toggleRegisteredEventTitle => 'App users who have registered via the Illinois app for this event';
 
   void _onTapRegisteredEvent({required int index}) {
-    if (_processing) {
-      return;
-    }
-    if (!_allowRegisteredUser) {
-      AppAlert.showDialogResult(context, 'Please, set Event Registration as "Via the App" in order to allow this option.');
-      return;
-    }
-    Event2NotificationSetting? notification = _notificationSettings[index];
-    setStateIfMounted(() {
-      if (notification == null) {
-        _notificationSettings[index] = Event2NotificationSetting(sendToRegistered: true);
-      } else {
-        _notificationSettings[index] = Event2NotificationSetting.fromOther(notification, sendToRegistered: !notification.sendToRegistered);
+    if (!_processing) {
+      if (!_allowRegisteredUser) {
+        Event2NotificationSetting? notification = _notificationSettings[index];
+        Event2NotificationSetting updatedNotification = (notification == null) ?
+          Event2NotificationSetting(sendToRegistered: true) :
+          Event2NotificationSetting.fromOther(notification, sendToRegistered: !notification.sendToRegistered);
+        setStateIfMounted(() {
+          _notificationSettings[index] = updatedNotification;
+        });
+        AppSemantics.announceMessage(context, AppSemantics.toggleAnnouncement(updatedNotification.sendToRegistered, subject: _toggleRegisteredEventTitle));
       }
-    });
+      else {
+        AppAlert.showDialogResult(context, 'Please, set Event Registration as "Via the App" in order to allow this option.');
+      }
+    }
   }
 
+  String get _togglePublishedGroupEventTitle => 'Members of Illinois app groups in which this event is published';
+
   void _onTapPublishedGroupEvent({required int index}) {
-    if (_processing) {
-      return;
-    }
-    if (!_allowGroupMembers) {
-      AppAlert.showDialogResult(context, 'Please, select at least one Event Group in order to allow this option.');
-      return;
-    }
-    Event2NotificationSetting? notification = _notificationSettings[index];
-    setStateIfMounted(() {
-      if (notification == null) {
-        _notificationSettings[index] = Event2NotificationSetting(sendToPublishedInGroups: true);
-      } else {
-        _notificationSettings[index] = Event2NotificationSetting.fromOther(notification, sendToPublishedInGroups: !notification.sendToPublishedInGroups);
+    if (!_processing) {
+      if (_allowGroupMembers) {
+        Event2NotificationSetting? notification = _notificationSettings[index];
+        Event2NotificationSetting updatedNotification = (notification == null) ?
+          Event2NotificationSetting(sendToPublishedInGroups: true) :
+          Event2NotificationSetting.fromOther(notification, sendToPublishedInGroups: !notification.sendToPublishedInGroups);
+        setStateIfMounted(() {
+          _notificationSettings[index] = updatedNotification;
+        });
+        AppSemantics.announceMessage(context, AppSemantics.toggleAnnouncement(updatedNotification.sendToPublishedInGroups, subject: _togglePublishedGroupEventTitle));
       }
-    });
+      else {
+        AppAlert.showDialogResult(context, 'Please, select at least one Event Group in order to allow this option.');
+      }
+    }
   }
 
   void _onTapSave() {

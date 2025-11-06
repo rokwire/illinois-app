@@ -65,7 +65,7 @@ class _SafetyHomePanelState extends State<SafetyHomePanel>  {
             borderRadius: BorderRadius.all(Radius.circular(5)),
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-            label: _safetyContentTypeToDisplayString(_selectedContentType) ?? '',
+            title: _safetyContentTypeToDisplayString(_selectedContentType) ?? '',
             onTap: _onTapContentSwitch
           ),
         ),
@@ -120,7 +120,7 @@ class _SafetyHomePanelState extends State<SafetyHomePanel>  {
           backgroundColor: Styles().colors.white,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: null,
-          label: _safetyContentTypeToDisplayString(contentType),
+          title: _safetyContentTypeToDisplayString(contentType),
           onTap: () => _onTapDropdownItem(contentType)
         ));
       }

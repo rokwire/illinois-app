@@ -240,7 +240,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
           rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
-          label: contentType.displayTitle,
+          title: contentType.displayTitle,
           onTap: () => _onTapContentTypeDropdownItem(contentType)
         ));
       }
@@ -255,7 +255,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',
-      label: _selectedContentType?.displayTitle ?? '',
+      title: _selectedContentType?.displayTitle ?? '',
       onTap: _changeContentTypesVisibility
     ));
   }
@@ -655,7 +655,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
                     visible: _canSyncAuthmanGroups,
                     child: RibbonButton(
                         leftIconKey: "info",
-                        label: Localization().getStringEx("", "Sync Authman Groups"),//TBD localize
+                        title: Localization().getStringEx("", "Sync Authman Groups"),//TBD localize
                         onTap: () {
                           _syncAuthmanGroups();
                           Navigator.pop(context);

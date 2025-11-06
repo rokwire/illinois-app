@@ -1104,17 +1104,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   // ignore: unused_element
-  Widget _buildAllDayToggle() => Semantics(toggled: _allDay, excludeSemantics: true, 
-    label:Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
-    hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""),
-    child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
+  Widget _buildAllDayToggle() => ToggleRibbonButton(
+      title: Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
       padding: _togglePadding,
       toggled: _allDay,
       onTap: _onTapAllDay,
       border: _toggleBorder,
       borderRadius: _toggleBorderRadius,
-    ));
+    );
 
   EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
   BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
@@ -1930,17 +1927,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _buildCostInnerSection(),
   ]);
     
-  Widget _buildFreeToggle() => Semantics(toggled: _free, excludeSemantics: true, 
-    label: Localization().getStringEx("panel.event2.create.free.toggle.title", "List event as free"),
-    hint: Localization().getStringEx("panel.event2.create.free.toggle.hint", ""),
-    child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.create.free.toggle.title", "List event as free"),
+  Widget _buildFreeToggle() => ToggleRibbonButton(
+      title: Localization().getStringEx("panel.event2.create.free.toggle.title", "List event as free"),
       padding: _togglePadding,
       toggled: _free,
       onTap: _onTapFree,
       border: _toggleBorder,
       borderRadius: _toggleBorderRadius,
-    ));
+    );
 
   Widget _buildCostInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: _buildCostInnerSectionHeadingWidget(),
@@ -2429,17 +2423,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   Widget _buildPublishedSection() => Padding(padding: Event2CreatePanel.sectionPadding, child: _buildPublishedToggle());
 
-  Widget _buildPublishedToggle() => Semantics(toggled: _published, excludeSemantics: true,
-    label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish this event"),
-    hint: Localization().getStringEx("panel.event2.create.published.toggle.hint", ""),
-    child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish this event"),
+  Widget _buildPublishedToggle() => ToggleRibbonButton(
+      title: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish this event"),
       padding: _togglePadding,
       toggled: _published,
       onTap: _onTapPublished,
       border: _toggleBorder,
       borderRadius: _toggleBorderRadius,
-    ));
+    );
 
 
   void _onTapPublished() {
@@ -2454,18 +2445,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   Widget _buildSuperEventSection() =>  Visibility(visible: widget.event?.isSuperEvent == true, child:
     Padding(padding: Event2CreatePanel.sectionPadding, child: _buildPublishSubEventsToggle()));
 
-  Widget _buildPublishSubEventsToggle() => Semantics(toggled: _publishSubEvents, excludeSemantics: true,
-      label: Localization().getStringEx("panel.event2.create.publish_sub_events.toggle", "Publish All Linked Sub-Events"),
-      hint: Localization().getStringEx("panel.event2.create.publish_sub_events.toggle.hint", ""),
-      child: ToggleRibbonButton(
-        label: Localization().getStringEx("panel.event2.create.publish_sub_events.toggle", "Publish All Linked Sub-Events"),
+  Widget _buildPublishSubEventsToggle() => ToggleRibbonButton(
+        title: Localization().getStringEx("panel.event2.create.publish_sub_events.toggle", "Publish All Linked Sub-Events"),
         textStyle: _publishSubEventsEnabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
         padding: _togglePadding,
         toggled: _publishSubEvents && _publishSubEventsEnabled,// show as untoggled when disabled ,
         onTap: _publishSubEventsEnabled ? _onTapPublishSubEvents : (){},
         border: _toggleBorder,
         borderRadius: _toggleBorderRadius,
-      ));
+      );
 
   void _onTapPublishSubEvents(){
     Analytics().logSelect(target: "Toggle publish sub events");

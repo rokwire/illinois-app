@@ -190,18 +190,15 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       _buildScanToggle(),
     );
 
-  Widget _buildScanToggle() => Semantics(toggled: _scanningEnabled, excludeSemantics: true, 
-    label: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.title", "Scan Illini ID"),
-    hint: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.hint", ""),
-    child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.title", "Scan Illini ID"),
+  Widget _buildScanToggle() => ToggleRibbonButton(
+      title: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.title", "Scan Illini ID"),
       toggled: _scanningEnabled,
       onTap: _onTapScan,
       padding: EdgeInsets.zero,
       progress: _scanningProgress,
       //border: _toggleBorder,
       //borderRadius: _toggleBorderRadius,
-    ));
+    );
 
   void _onTapScan() {
     Analytics().logSelect(target: "Toggle Scan Illini ID");
@@ -233,18 +230,15 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       _buildManualToggle(),
     );
 
-  Widget _buildManualToggle() => Semantics(toggled: _manualCheckEnabled, excludeSemantics: true, 
-    label: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.title", "Allow manual attendance taking"),
-    hint: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.hint", ""),
-    child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.title", "Allow manual attendance taking"),
+  Widget _buildManualToggle() => ToggleRibbonButton(
+      title: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.title", "Allow manual attendance taking"),
       toggled: _manualCheckEnabled,
       onTap: _onTapManual,
       padding: EdgeInsets.zero,
       progress: _manualCheckProgress,
       //border: _toggleBorder,
       //borderRadius: _toggleBorderRadius,
-    ));
+    );
 
   void _onTapManual() {
     Analytics().logSelect(target: "Toggle Manual Check");
@@ -286,18 +280,15 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
         ],)
     );
 
-  Widget _buildSelfCheckToggle() => Semantics(toggled: _selfCheckEnabled, excludeSemantics: true,
-    label: Localization().getStringEx("panel.event2.setup.attendance.self_check.toggle.title", "Enable self check-in by scanning a printed event QR code"),
-    hint: Localization().getStringEx("panel.event2.setup.attendance.self_check.toggle.hint", ""),
-    child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.setup.attendance.self_check.toggle.title", "Enable self check-in by scanning a printed event QR code"),
+  Widget _buildSelfCheckToggle() => ToggleRibbonButton(
+      title: Localization().getStringEx("panel.event2.setup.attendance.self_check.toggle.title", "Enable self check-in by scanning a printed event QR code"),
       toggled: _selfCheckEnabled,
       onTap: _onTapSelfCheck,
       padding: EdgeInsets.zero,
       progress: _selfCheckProgress,
       //border: _toggleBorder,
       //borderRadius: _toggleBorderRadius,
-    ));
+    );
 
   void _onTapSelfCheck() {
     Analytics().logSelect(target: "Toggle Self Check");
@@ -323,20 +314,17 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     }
   }
 
-  Widget _buildSelfCheckLimitedToRegisteredOnlyToggle() => Semantics(enabled: _selfCheckEnabled, toggled: _selfCheckLimitedToRegisteredOnly, excludeSemantics: true,
-    label: Localization().getStringEx("panel.event2.setup.attendance.self_check_limited_to_registered_only.toggle.title", "Limit self check-in to those who have registered for the event"),
-    hint: Localization().getStringEx("panel.event2.setup.attendance.self_check_limited_to_registered_only.toggle.hint", ""),
-    child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.setup.attendance.self_check_limited_to_registered_only.toggle.title", "Limit self check-in to those who have registered for the event"),
+  Widget _buildSelfCheckLimitedToRegisteredOnlyToggle() => ToggleRibbonButton(
+      title: Localization().getStringEx("panel.event2.setup.attendance.self_check_limited_to_registered_only.toggle.title", "Limit self check-in to those who have registered for the event"),
       toggled: _selfCheckLimitedToRegisteredOnly,
+      enabled: _selfCheckEnabled,
       textStyle: _selfCheckEnabled ? Styles().textStyles.getTextStyle('widget.button.title.medium.thin') : Styles().textStyles.getTextStyle('widget.button.title.medium.thin.variant3'),
-      rightIconKeys: _selfCheckEnabled ? ToggleRibbonButton.defaultRightIconKeys : ToggleRibbonButton.disabledRightIconKeys,
       onTap: _selfCheckEnabled ? _onTapSelfCheckLimitedToRegisteredOnly : null,
       padding: EdgeInsets.only(left: 24),
       progress: _selfCheckLimitedToRegisteredOnlyProgress,
       //border: _toggleBorder,
       //borderRadius: _toggleBorderRadius,
-    ));
+    );
 
   void _onTapSelfCheckLimitedToRegisteredOnly() {
     Analytics().logSelect(target: "Toggle Self Check Limited To Registered Only");

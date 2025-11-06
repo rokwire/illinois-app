@@ -145,7 +145,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
-        label: _selectedContentType?.displayTitle ?? '',
+        title: _selectedContentType?.displayTitle ?? '',
         onTap: _onTapContentTypeDropdownButton
       )
     );
@@ -173,7 +173,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
           rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
-          label: contentType.displayTitle,
+          title: contentType.displayTitle,
           onTap: () => _onTapContentTypeDropdownItem(contentType)
         ));
       }

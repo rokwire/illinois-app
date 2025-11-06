@@ -159,7 +159,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
             borderRadius: BorderRadius.all(Radius.circular(5)),
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-            label: _selectedContentType.displayTitle,
+            title: _selectedContentType.displayTitle,
             onTap: _onTapRibbonButton
           ),
         ),
@@ -204,7 +204,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: null, //(_selectedContentType == contentType) ? 'check-accent' : null,
         rightIcon: _dropdownItemIcon(contentType),
-        label: contentType.displayTitle,
+        title: contentType.displayTitle,
         onTap: () => _onTapContentItem(contentType)
       ));
     }

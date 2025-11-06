@@ -59,7 +59,7 @@ class _SettingsRecentItemsPageState extends State<SettingsRecentItemsPage> with 
           ]),
           Container(height: 4), */
           ToggleRibbonButton(
-              label: Localization().getStringEx('panel.settings.home.recent_items.enable.toggle.title', 'Display recently viewed app content'),
+              title: Localization().getStringEx('panel.settings.home.recent_items.enable.toggle.title', 'Display recently viewed app content'),
               border: Border.all(color: Styles().colors.surfaceAccent),
               borderRadius: BorderRadius.all(Radius.circular(4)),
               toggled: RecentItems().recentItemsEnabled,

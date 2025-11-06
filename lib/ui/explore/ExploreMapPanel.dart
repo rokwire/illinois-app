@@ -1374,8 +1374,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: (_itemsDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
-      label: _selectedMapType?.displayTitle,
-      hint: _selectedMapType?._displayHint,
+      title: _selectedMapType?.displayTitle,
+      semanticsHint: _selectedMapType?._displayHint,
       onTap: _onExploreTypesDropdown
     );
   }
@@ -1437,7 +1437,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         backgroundColor: Styles().colors.white,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
-        label: _eventsDisplayTypeName(displayType),
+        title: _eventsDisplayTypeName(displayType),
         onTap: () => _onEventsDisplayType(displayType));
   }
 
@@ -1493,7 +1493,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedMapType == exploreItem) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedMapType == exploreItem) ? 'check-accent' : null,
-        label: exploreItem.displayTitle,
+        title: exploreItem.displayTitle,
         onTap: () => _onTapExploreType(exploreItem)
       ));
     }

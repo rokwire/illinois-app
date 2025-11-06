@@ -229,7 +229,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                   children: [
                     ToggleRibbonButton(
                         borderRadius: BorderRadius.circular(4),
-                        label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
+                        title: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
                         toggled: _isAdmin,
                         onTap: _updateMemberStatus
                     ),

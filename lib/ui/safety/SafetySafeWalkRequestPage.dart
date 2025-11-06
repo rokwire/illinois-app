@@ -213,9 +213,9 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (context) => Container(padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16), child:
         Column(mainAxisSize: MainAxisSize.min, children: [
-          RibbonButton(label: Localization().getStringEx('panel.safewalks_request.command.about.text', 'About SafeWalks'), rightIconKey: 'external-link', onTap: () => _onTapAboutSafeWalks(context)),
-          RibbonButton(label: Localization().getStringEx('panel.safewalks_request.command.share.text', 'Share SafeWalks'), onTap: () => _onTapShareSafeWalks(context)),
-          RibbonButton(label: Localization().getStringEx('panel.safewalks_request.command.safety_resources.text', 'Safety Resources'), onTap: () => _onTapCampusResources(context))
+          RibbonButton(title: Localization().getStringEx('panel.safewalks_request.command.about.text', 'About SafeWalks'), rightIconKey: 'external-link', onTap: () => _onTapAboutSafeWalks(context)),
+          RibbonButton(title: Localization().getStringEx('panel.safewalks_request.command.share.text', 'Share SafeWalks'), onTap: () => _onTapShareSafeWalks(context)),
+          RibbonButton(title: Localization().getStringEx('panel.safewalks_request.command.safety_resources.text', 'Safety Resources'), onTap: () => _onTapCampusResources(context))
         ])
       ),
     );

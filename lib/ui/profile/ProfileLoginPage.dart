@@ -135,7 +135,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
           contentList.add(RibbonButton(
             border: _allBorder,
             borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Sign in with your NetID"),
+            title: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Sign in with your NetID"),
             progress: _connectingNetId == true,
             onTap: _onConnectNetIdClicked
           ),);
@@ -156,7 +156,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
           contentList.add(RibbonButton(
             borderRadius: _allRounding,
             border: _allBorder,
-            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Sign in with mobile phone or email"),
+            title: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Sign in with mobile phone or email"),
             onTap: _onPhoneOrEmailLoginClicked
           ),);
       }
@@ -335,7 +335,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
         contentList.add(RibbonButton(
             border: _allBorder,
             borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Mobile Phone Number"),
+            title: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Mobile Phone Number"),
             onTap: _onPhoneOrEmailLoginClicked));
       }
       else if (code == 'disconnect') {
@@ -381,7 +381,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
         contentList.add(RibbonButton(
           border: _allBorder,
           borderRadius: _allRounding,
-          label: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
+          title: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
           onTap: _onPhoneOrEmailLoginClicked
         ));
       }
@@ -581,7 +581,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
             backgroundColor: Styles().colors.white,
             border: _allBorder,
             borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
+            title: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
             progress: (_connectingNetId == true),
             onTap: _onLinkNetIdClicked),
         ));
@@ -592,7 +592,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
             backgroundColor: Styles().colors.white,
             border: _allBorder,
             borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
+            title: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
             onTap: () => _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.phone)),
         ),);
       }
@@ -602,7 +602,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
             backgroundColor: Styles().colors.white,
             border: _allBorder,
             borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
+            title: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
             onTap: () => _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.email)),
         ),);
       }
@@ -758,7 +758,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
     RibbonButton(
       border: _allBorder,
       borderRadius: _allRounding,
-      label: Localization().getStringEx("panel.profile_info.button.debug.title", "Debug"),
+      title: Localization().getStringEx("panel.profile_info.button.debug.title", "Debug"),
       onTap: _onDebugClicked)
     );
 

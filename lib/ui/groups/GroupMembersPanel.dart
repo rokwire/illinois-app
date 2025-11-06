@@ -202,7 +202,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
             borderRadius: BorderRadius.all(Radius.circular(5)),
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             rightIconKey: _statusValuesVisible ? 'chevron-up' : 'chevron-down',
-            label: _selectedMemberStatusFilterTitle,
+            title: _selectedMemberStatusFilterTitle,
             onTap: _onTapRibbonButton))),
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           Row(
@@ -389,7 +389,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedMemberFilter == statusFilter) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedMemberFilter == statusFilter) ? 'check-accent' : null,
-        label: _memberStatusFilterTitle(statusFilter),
+        title: _memberStatusFilterTitle(statusFilter),
         onTap: () => _onTapStatusFilter(statusFilter)
       ));
     }

@@ -650,7 +650,7 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
 
     if (_canEditGroupEvent) {
       options.add(RibbonButton(
-        label: Localization().getStringEx('widget.event2.card.detail.group.edit_event.label', 'Edit Event'),
+        title: Localization().getStringEx('widget.event2.card.detail.group.edit_event.label', 'Edit Event'),
         leftIconKey: 'edit',
         onTap: _onEditGroupEvent
       ));
@@ -658,7 +658,7 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
 
     if (_canDeleteGroupEvent) {
       options.add(RibbonButton(
-        label: Localization().getStringEx('widget.event2.card.detail.group.delete_event.label', 'Remove group event'),
+        title: Localization().getStringEx('widget.event2.card.detail.group.delete_event.label', 'Remove group event'),
         leftIconKey: 'trash',
         onTap: _onDeleteGroupEvent
       ));
@@ -1118,7 +1118,7 @@ class Event2SettingsButton extends StatelessWidget{
 
 Widget _buildWidget() => Event2CreatePanel.buildButtonSectionWidget(
   heading: RibbonButton(
-        label: title?? "",
+        title: title?? "",
         description: subTitle,
         progress: progress,
         onTap: () => onTap?.call(),
