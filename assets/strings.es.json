@@ -322,9 +322,7 @@
 
     "panel.browse.entry.groups.groups.title": "Grupos",
     "panel.browse.entry.research_projects.title": "Research Participation",
-
     "panel.browse.entry.laundry.laundry.title": "Ropa sucia",
-    "panel.browse.entry.laundry.my_laundry.title": "Mi colada",
 
     "panel.browse.entry.messages.messages.title": "Conversaciones",
 
@@ -4026,7 +4024,10 @@
     "widget.home.inbox.button.all.hint": "Toca para ver todas las notificaciones",
 
     "widget.home.laundry.text.title": "Ropa sucia",
-    "widget.home.laundry.text.empty.description": "No hay lavanderías disponibles en este momento.",
+    "widget.home.laundry.all.text.title": "All Laundry",
+    "widget.home.laundry.my.text.title": "My Laundry",
+    "widget.home.laundry.all.text.empty.description": "No hay lavanderías disponibles en este momento.",
+    "widget.home.laundry.my.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry</b></a> for quick access here.  (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.laundry.text.offline": "Las lavanderías no están disponibles sin conexión.",
     "widget.home.laundry.button.all.title": "Ver todo",
     "widget.home.laundry.button.all.hint": "Toca para ver todas las lavanderías",

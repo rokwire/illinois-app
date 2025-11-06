@@ -353,7 +353,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
       List<Group>? groups = ListUtils.from(groupsList);
       _sortGroups(groups);
 
-      if (mounted && _updatingGroups && !DeepCollectionEquality().equals(_groups, groups)) {
+      if (mounted && _updatingGroups && (groups != null) && !DeepCollectionEquality().equals(_groups, groups)) {
         setState(() {
           _groups = groups;
           _contentStatus = FavoriteContentStatus.none;
@@ -411,6 +411,8 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
     }
     return visibleGroups;
   }
+
+  // Event Handlers
 
   void _onSeeAll() {
     Analytics().logSelect(target: "View All", source: '${widget.runtimeType}(${widget.contentType})' );

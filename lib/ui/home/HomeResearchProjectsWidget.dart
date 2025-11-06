@@ -121,8 +121,6 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
 
   @override
   void initState() {
-    super.initState();
-
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
       Auth2.notifyLoginChanged,
@@ -137,6 +135,8 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
     }
 
     _loadResearchProjects();
+
+    super.initState();
   }
 
   @override
@@ -166,7 +166,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _updateResearchProjects();
+          _updateResearchProjectsIfVisible();
         }
       }
     }
@@ -367,7 +367,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
     List<Group>? researchProjects = await Groups().loadResearchProjects(contentType: widget.contentType);
     _sortResearchProjects(researchProjects);
 
-    if (mounted && _updatingResearchProjects && !DeepCollectionEquality().equals(_researchProjects, researchProjects)) {
+    if (mounted && _updatingResearchProjects && (researchProjects != null) && !DeepCollectionEquality().equals(_researchProjects, researchProjects)) {
       setState(() {
         _researchProjects = researchProjects;
         _contentStatus = FavoriteContentStatus.none;
@@ -411,6 +411,8 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
     }
     return visibleResearchProjects;
   }
+
+  // Event Handlers
 
   void _onMessageLink(String? url) {
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;

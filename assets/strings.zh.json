@@ -322,9 +322,7 @@
 
 	"panel.browse.entry.groups.groups.title": "Groups",
 	"panel.browse.entry.research_projects.title": "Research Participation",
-
 	"panel.browse.entry.laundry.laundry.title": "洗衣房",
-	"panel.browse.entry.laundry.my_laundry.title": "我的洗衣房",
 
 	"panel.browse.entry.messages.messages.title": "對話",
 
@@ -4001,7 +3999,10 @@
 	"widget.home.inbox.button.all.hint": "點按即可查看所有通知",
 
 	"widget.home.laundry.text.title": "洗衣房",
-	"widget.home.laundry.text.empty.description": "目前沒有洗衣房可用。",
+	"widget.home.laundry.all.text.title": "All Laundry",
+	"widget.home.laundry.my.text.title": "My Laundry",
+	"widget.home.laundry.all.text.empty.description": "目前沒有洗衣房可用。",
+	"widget.home.laundry.my.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry</b></a> for quick access here.  (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 	"widget.home.laundry.text.offline": "离线时不提供查看洗衣房的服务。",
 	"widget.home.laundry.button.all.title": "查看全部",
 	"widget.home.laundry.button.all.hint": "點擊查看所有洗衣房",

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
@@ -573,7 +572,6 @@ class _BrowseEntry extends StatelessWidget {
       case "athletics.my_news":              _onTapMyNews(context); break;
 
       case "laundry.laundry":                _onTapLaundry(context); break;
-      case "laundry.my_laundry":             _onTapMyLaundry(context); break;
 
       case "messages.messages":              _onTapMessages(context); break;
 
@@ -790,11 +788,6 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapMyNews(BuildContext context) {
     Analytics().logSelect(target: "My News");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.my_news)));
-  }
-
-  static void _onTapMyLaundry(BuildContext context) {
-    Analytics().logSelect(target: "My Laundry");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [LaundryRoom.favoriteKeyName]); } ));
   }
 
   static void _onTapMyMTDStops(BuildContext context) {

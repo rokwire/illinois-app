@@ -7,7 +7,7 @@
 			"home": [
 				"gies_checklist", "new_student_checklist", "student_courses", "canvas_courses",
 				"sport_events", "sport_news", "my_athletics", "my_game_day", "my_news",
-				"laundry", "my_laundry",
+				"laundry",
 				"campus_highlights", "campus_reminders", "my_campus_guide",
 				"dinings", "my_dining",
 				"events",
@@ -28,7 +28,7 @@
 			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "appointments", "my_illini"],
 			"browse.appointments": ["appointments"],
 			"browse.athletics": ["my_athletics", "my_game_day", "my_news", "sport_events", "sport_news", "sport_teams"],
-			"browse.laundry": ["laundry", "my_laundry"],
+			"browse.laundry": ["laundry"],
 			"browse.campus_guide": ["campus_highlights", "campus_guide", "my_campus_guide"],
 			"browse.dinings": ["dinings_all", "dinings_open", "my_dining"],
 			"browse.directory": ["user_directory"],
@@ -217,7 +217,6 @@
 			},
 			"illini_cash": {
 				"laundry"                                 : { "housingResidenceStatus": true },
-				"my_laundry"                              : { "housingResidenceStatus": true },
 				"new_student"                             : { "firstYearStudent": true },
 				"new_student_checklist"                   : { "firstYearStudent": true }
 			},
