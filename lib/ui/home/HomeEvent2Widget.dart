@@ -644,7 +644,7 @@ class _HomeEvents2ImplWidgetState extends State<_HomeEvents2ImplWidget> with Not
   }
 }
 
-extension FavoriteEventsContentType on FavoriteContentType {
+extension _FavoriteEventsContentType on FavoriteContentType {
   String get eventsTitle {
     switch (this) {
       case FavoriteContentType.my: return Localization().getStringEx('widget.home.my_events2.label.header.title', 'My Events');

@@ -9,10 +9,12 @@ import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -125,8 +127,10 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
       Groups.notifyGroupUpdated,
       Groups.notifyGroupDeleted,
       Groups.notifyUserGroupsUpdated,
+      Connectivity.notifyStatusChanged,
       Auth2.notifyLoginChanged,
-      AppLivecycle.notifyStateChanged,]);
+      AppLivecycle.notifyStateChanged,
+    ]);
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
@@ -155,8 +159,9 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
       (name == Groups.notifyGroupUpdated) ||
       (name == Groups.notifyGroupDeleted) ||
       (name == Groups.notifyUserMembershipUpdated) ||
-      (name == Auth2.notifyLoginChanged))
-    {
+      (name == Connectivity.notifyStatusChanged) ||
+      (name == Auth2.notifyLoginChanged)
+    ) {
       _loadGroupsIfVisible();
     }
     else if (name == Groups.notifyUserGroupsUpdated) {
@@ -182,10 +187,31 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
   Widget build(BuildContext context) => VisibilityDetector(
     key: _visibilityDetectorKey,
     onVisibilityChanged: _onVisibilityChanged,
-    child: _loadingGroups ? HomeProgressWidget() : _contentWidget,
+    child: _contentWidget,
   );
 
   Widget get _contentWidget {
+    if (Connectivity().isOffline) {
+      return HomeMessageCard(
+        title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
+        message: Localization().getStringEx('widget.home.groups.message.offline', 'Groups are not available while offline.'),
+      );
+    }
+    else if (!Auth2().isLoggedIn) {
+      return HomeMessageCard(
+        title: Localization().getStringEx("common.message.logged_out", "You are not logged in"),
+        message: AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.groups', 'Groups'), verbose: true),
+      );
+    }
+    else if (_loadingGroups) {
+      return HomeProgressWidget();
+    }
+    else {
+      return _groupsContentWidget;
+    }
+  }
+
+  Widget get _groupsContentWidget {
     Widget? contentWidget;
     List<Group>? visibleGroups = _visibleGroups(_groups);
     int visibleCount = visibleGroups?.length ?? 0;
@@ -277,7 +303,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
     }
   }
 
-  // Content
+  // Content Data
 
   Future<void> _loadGroupsIfVisible() async {
     if (_visible) {
@@ -299,14 +325,12 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
       List<Group>? groups = ListUtils.from(groupsList);
       _sortGroups(groups);
 
-      if (mounted) {
-        setState(() {
-          _groups = groups;
-          _contentStatus = FavoriteContentStatus.none;
-          _loadingGroups = false;
-          _groupCardKeys.clear();
-        });
-      }
+      setStateIfMounted(() {
+        _groups = groups;
+        _contentStatus = FavoriteContentStatus.none;
+        _loadingGroups = false;
+        _groupCardKeys.clear();
+      });
     }
   }
 
@@ -395,7 +419,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
 
 }
 
-extension FavoriteGroupsContentType on FavoriteContentType {
+extension _FavoriteGroupsContentType on FavoriteContentType {
   String get groupsTitle {
     switch (this) {
       case FavoriteContentType.my: return Localization().getStringEx('widget.home.groups.my.label.header.title', 'My Groups');

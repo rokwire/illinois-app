@@ -273,22 +273,13 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeGroupsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == 'my_research_projects') {
+    else if (code == 'research_projects') {
       if (title) {
-        return HomeResearchProjectsWidget.title(contentType: ResearchProjectsContentType.my);
+        return HomeResearchProjectsWidget.title;
       } else if (handle) {
-        return HomeResearchProjectsWidget.handle(contentType: ResearchProjectsContentType.my, favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeResearchProjectsWidget.handle(favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeResearchProjectsWidget(key: _globalKey(globalKeys, code), contentType: ResearchProjectsContentType.my, favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'open_research_projects') {
-      if (title) {
-        return HomeResearchProjectsWidget.titleForContentType(ResearchProjectsContentType.open);
-      } else if (handle) {
-        return HomeResearchProjectsWidget.handle(contentType: ResearchProjectsContentType.open, favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeResearchProjectsWidget(key: _globalKey(globalKeys, code), contentType: ResearchProjectsContentType.open, favoriteId: code, updateController: updateController,);
+        return HomeResearchProjectsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'my_appointments') {

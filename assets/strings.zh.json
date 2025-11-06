@@ -126,6 +126,7 @@
 	"generic.app.feature.illini_id": "Illini ID",
 	"generic.app.feature.stadium_polls": "Stadium Polls",
 	"generic.app.feature.polls": "Polls",
+	"generic.app.feature.groups": "Groups",
 	"generic.app.feature.notifications": "Notifications",
 	"generic.app.feature.research_projects": "Research Projects",
 	"generic.app.feature.student_courses": "My Courses",
@@ -320,9 +321,7 @@
 	"panel.browse.entry.music_and_news.daily_illini.title": "The Daily Illini",
 
 	"panel.browse.entry.groups.groups.title": "Groups",
-
-	"panel.browse.entry.research_projects.open_research_projects.title": "開放研究項目",
-	"panel.browse.entry.research_projects.my_research_projects.title": "My Research Projects",
+	"panel.browse.entry.research_projects.title": "Research Participation",
 
 	"panel.browse.entry.laundry.laundry.title": "洗衣房",
 	"panel.browse.entry.laundry.my_laundry.title": "我的洗衣房",
@@ -3880,12 +3879,14 @@
 	"widget.home.groups.button.all.title":"查看全部",
 	"widget.home.groups.button.all.hint":"點按即可查看所有群組",
 
-	"widget.home.research_projects.my.label.header.title":"我的研究項目",
-	"widget.home.research_projects.open.label.header.title":"開放研究項目",
+	"widget.home.research_projects.label.header.title":"Research Participation",
+	"widget.home.research_projects.my.label.header.title":"My Projects",
+	"widget.home.research_projects.open.label.header.title":"Open Projects",
 	"widget.home.research_projects.my.text.empty.admin.description": "您尚未創建任何研究項目。",
 	"widget.home.research_projects.my.html.empty.user.description": "您目前沒有參與任何研究項目。 <a href='{{open_projects_url}}'>查看與您的<a href='{{questionnaire_url}}'>研究興趣表</a>匹配的當前研究</a>以選擇加入並成為研究的一部分招聘池。",
 	"widget.home.research_projects.all.text.empty.description": "目前沒有開放的研究項目。",
 	"widget.home.research_projects.message.offline":"研究項目在離線時不可用。",
+	"widget.home.groups.message.offline":"Groups are not available while offline.",
 	"widget.home.research_projects.button.all.title": "查看全部",
 	"widget.home.research_projects.button.all.hint": "點擊查看所有研究項目",
 

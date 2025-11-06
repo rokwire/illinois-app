@@ -50,7 +50,6 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/content.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -599,8 +598,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "groups.groups":                  _onTapGroups(context); break;
 
-      case "research_projects.open_research_projects": _onTapOpenResearchProjects(context); break;
-      case "research_projects.my_research_projects": _onTapMyResearchProjects(context); break;
+      case "research_projects.research_projects": _onTapResearchProjects(context); break;
 
       case "polls.create_poll":              _onTapCreatePoll(context); break;
       case "polls.recent_polls":             _onTapViewPolls(context); break;
@@ -769,14 +767,9 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel()));
   }
 
-  static void _onTapOpenResearchProjects(BuildContext context) {
-    Analytics().logSelect(target: "Open Research Projects");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResearchProjectsHomePanel(contentType: ResearchProjectsContentType.open,)));
-  }
-
-  static void _onTapMyResearchProjects(BuildContext context) {
-    Analytics().logSelect(target: "My Research Projects");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResearchProjectsHomePanel(contentType: ResearchProjectsContentType.my)));
+  static void _onTapResearchProjects(BuildContext context) {
+    Analytics().logSelect(target: "Research Projects");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResearchProjectsHomePanel()));
   }
 
   static void _onTapMyGameDay(BuildContext context) {

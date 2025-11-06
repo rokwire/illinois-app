@@ -127,6 +127,7 @@
     "generic.app.feature.illini_id": "Illini ID",
     "generic.app.feature.stadium_polls": "Stadium Polls",
     "generic.app.feature.polls": "Polls",
+    "generic.app.feature.groups": "Groups",
     "generic.app.feature.notifications": "Notifications",
     "generic.app.feature.research_projects": "Research Projects",
     "generic.app.feature.student_courses": "My Courses",
@@ -321,9 +322,7 @@
     "panel.browse.entry.music_and_news.daily_illini.title": "The Daily Illini",
 
     "panel.browse.entry.groups.groups.title": "Groups",
-
-    "panel.browse.entry.research_projects.open_research_projects.title": "Open Research Projects",
-    "panel.browse.entry.research_projects.my_research_projects.title": "My Research Projects",
+    "panel.browse.entry.research_projects.title": "Research Participation",
 
     "panel.browse.entry.laundry.laundry.title": "Laundry",
     "panel.browse.entry.laundry.my_laundry.title": "My Laundry",
@@ -3904,11 +3903,13 @@
     "widget.home.groups.all.label.header.title":"All Groups",
     "widget.home.groups.my.text.empty.description": "You have not created any groups yet.",
     "widget.home.groups.all.text.empty.description": "Failed to load groups.",
+    "widget.home.groups.message.offline":"Groups are not available while offline.",
     "widget.home.groups.button.all.title":"View All",
     "widget.home.groups.button.all.hint":"Tap to view all groups",
 
-    "widget.home.research_projects.my.label.header.title":"My Research Projects",
-    "widget.home.research_projects.open.label.header.title":"Open Research Projects",
+    "widget.home.research_projects.label.header.title":"Research Participation",
+    "widget.home.research_projects.my.label.header.title":"My Projects",
+    "widget.home.research_projects.open.label.header.title":"Open Projects",
     "widget.home.research_projects.my.text.empty.admin.description": "You have not created any research projects yet.",
     "widget.home.research_projects.my.html.empty.user.description": "You are currently not participating in any research projects. <a href='{{open_projects_url}}'>View current studies</a> that match your <a href='{{questionnaire_url}}'>Research Interest Form</a> to opt in and become part of the study’s recruitment pool.",
     "widget.home.research_projects.all.text.empty.description": "There are no open research projects at the moment.",
