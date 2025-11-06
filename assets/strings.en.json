@@ -314,8 +314,7 @@
 
     "panel.browse.entry.directory.user_directory.title": "Directory of Users",
 
-    "panel.browse.entry.events.event_feed.title": "All Events",
-    "panel.browse.entry.events.my_events.title": "My Events",
+    "panel.browse.entry.events.events.title": "Events",
 
     "panel.browse.entry.feeds.twitter.title": "X/Twitter",
 
