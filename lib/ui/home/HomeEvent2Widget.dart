@@ -70,8 +70,13 @@ class HomeEvents2Widget extends StatefulWidget {
 }
 
 class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
-  FavoritesContentType _contentType = FavoritesContentType.all;
-  Map<FavoritesContentType, GlobalKey> _contentTypeKeys = <FavoritesContentType, GlobalKey>{};  
+  late FavoritesContentType _contentType;
+
+  @override
+  void initState() {
+    _contentType = FavoritesContentTypeImpl.fromJson(Storage().getHomeFavoriteSelectedContent(widget.favoriteId)) ?? FavoritesContentType.all;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) =>
@@ -92,7 +97,6 @@ class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
     ));
   
   Widget _buildContentTypeWidget(FavoritesContentType contentType) => _HomeEvents2ImplWidget(
-    key: _contentTypeKeys[contentType] ??= GlobalKey(),
     updateController: widget.updateController,
     emptyContentBuilder: (contentType == FavoritesContentType.my) ? _myEmptyContentBuilder : _allEmptyContentBuilder,
     filter: (contentType == FavoritesContentType.my) ? Event2FilterParam(
@@ -146,6 +150,7 @@ class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
     if ((_contentType != contentType) && mounted) {
       setState(() {
         _contentType = contentType;
+        Storage().setHomeFavoriteSelectedContent(widget.favoriteId, contentType.toJson());
       });
     }
   }
@@ -159,6 +164,7 @@ class _HomeEvents2ImplWidget extends StatefulWidget {
   final Event2FilterParam? filter;
   final Event2SortType? sortType;
 
+  // ignore: unused_element_parameter
   _HomeEvents2ImplWidget({super.key,
     this.updateController, this.emptyContentBuilder,
     this.filter, this.sortType
