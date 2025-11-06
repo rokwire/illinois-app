@@ -187,9 +187,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(65),
             child: Container(width: 65, height: 65, child:
-              Semantics(label: "user image", hint: "Double tap to zoom", child:
                 GroupMemberProfileImage(userId: _member?.userId))
-            ),
           ),
         ),
         Container(width: 16,),
