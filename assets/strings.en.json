@@ -4514,6 +4514,7 @@
     "model.accessability.enabled.hint": "{{subject}} enabled",
     "model.accessability.disabled.hint": "{{subject}} disabled",
     "model.accessability.progress.updating.label": "Updating {{subject}}",
+    "model.accessability.button.select.hint": "Double tap to select {{subject}}",
 
     "logic.date_time.greeting.morning": "Good morning",
     "logic.date_time.greeting.afternoon": "Good afternoon",

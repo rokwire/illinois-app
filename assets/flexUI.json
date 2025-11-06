@@ -10,7 +10,7 @@
 				"laundry", "my_laundry",
 				"campus_highlights", "campus_reminders", "my_campus_guide",
 				"dinings", "my_dining",
-				"events", "event_feed", "my_events",
+				"events",
 				"all_groups", "my_groups",
 				"open_research_projects", "my_research_projects",
 				"create_poll", "recent_polls",
@@ -32,7 +32,7 @@
 			"browse.campus_guide": ["campus_highlights", "campus_guide", "my_campus_guide"],
 			"browse.dinings": ["dinings_all", "dinings_open", "my_dining"],
 			"browse.directory": ["user_directory"],
-			"browse.events": ["event_feed", "my_events"],
+			"browse.events": ["events"],
 			"browse.groups": ["all_groups", "my_groups"],
 			"browse.research_projects": ["open_research_projects", "my_research_projects"],
 			"browse.messages": ["messages"],
@@ -254,7 +254,7 @@
 	"defaults": {
 		"favorites": {
 			"content": {
-				"home": ["event_feed", "my_groups"]
+				"home": ["events", "my_groups"]
 			},
 			"rules": {
 			}

@@ -132,16 +132,16 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
   @override
   void initState() {
 
-    NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
-      Auth2UserPrefs.notifyFavoritesChanged,
-    ]);
-
     // Build Favorite codes before start listening for Auth2UserPrefs.notifyFavoritesChanged
     // because _buildFavoriteCodes may fire such.
     _systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
     _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
-    _favoriteCodes = _buildFavoriteCodes();
+    _favoriteCodes = _buildFavoriteCodes(checkUpdate: true);
+
+    NotificationService().subscribe(this, [
+      FlexUI.notifyChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
+    ]);
 
     WidgetsBinding.instance.addPostFrameCallback((_) =>
       _updateWidgetVisibilities()
@@ -257,10 +257,13 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     }
   }
 
-  List<String>? _buildFavoriteCodes() {
+  List<String>? _buildFavoriteCodes({ bool checkUpdate = false}) {
     LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
     if (homeFavorites == null) {
       homeFavorites = _initDefaultFavorites();
+    }
+    else if (checkUpdate) {
+      homeFavorites = _updateLastFavorites(homeFavorites);
     }
     return (homeFavorites != null) ? List.from(homeFavorites) : null;
   }
@@ -309,6 +312,22 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
       }
     }
     return null;
+  }
+
+  static Map<String, String> _favoritesReplacements = <String, String> {
+    'event_feed': 'events',
+    'my_events': 'events',
+  };
+
+  static LinkedHashSet<String> _updateLastFavorites(LinkedHashSet<String> favorites) {
+    if (_favoritesReplacements.keys.firstWhereOrNull((String code) => favorites.contains(code)) != null) {
+      LinkedHashSet<String> updatedFavorites = LinkedHashSet<String>.from(favorites.map((String code) => _favoritesReplacements[code] ?? code));
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), updatedFavorites);
+      return updatedFavorites;
+    }
+    else {
+      return favorites;
+    }
   }
 
   GlobalKey _widgetKey(String code) => _widgetKeys[code] ??= GlobalKey();

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,7 +48,6 @@ import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -594,8 +592,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "directory.user_directory":       _onTapUserDirectory(context); break;
 
-      case "events.event_feed":              _onTapEventFeed(context); break;
-      case "events.my_events":               _onTapMyEvents(context); break;
+      case "events.events":                  _onTapEvents(context); break;
 
       case "music_and_news.illini_radio":    _onTapIlliniRadio(context); break;
       case "music_and_news.daily_illini":    _onTapDailyIllini(context); break;
@@ -751,18 +748,10 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
   }
 
-  static void _onTapEventFeed(BuildContext context) {
-    Analytics().logSelect(target: "Events Feed");
+  static void _onTapEvents(BuildContext context) {
+    Analytics().logSelect(target: "Events");
     Event2HomePanel.present(context,
-      analyticsFeature: AnalyticsFeature.EventsAll,
-    );
-  }
-
-  static void _onTapMyEvents(BuildContext context) {
-    Analytics().logSelect(target: "My Events");
-    Event2HomePanel.present(context,
-      types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]),
-      analyticsFeature: AnalyticsFeature.EventsMy,
+      analyticsFeature: AnalyticsFeature.Events,
     );
   }
 

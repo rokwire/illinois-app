@@ -50,93 +50,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-/*class HomeEvent2FeedWidget extends _HomeEvent2Widget {
-
-  HomeEvent2FeedWidget({super.key, super.favoriteId, super.updateController});
-
-  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: title,
-    );
-
-  static String get title => Localization().getStringEx('widget.home.event2_feed.label.header.title', 'All Events');
-
-  @override
-  String get _title => title;
-
-  @override
-  Widget _emptyContentWidget(BuildContext context) => HomeMessageCard(
-    message: Localization().getStringEx('widget.home.event2_feed.text.empty.description', 'There are no events available.')
-  );
-
-  @override
-  State<StatefulWidget> createState() => _HomeEvent2WidgetState();
-}
-
-class HomeMyEvents2Widget extends _HomeEvent2Widget {
-
-  static const String localScheme = 'local';
-  static const String localEventFeedHost = 'event2_feed';
-  static const String localUrlMacro = '{{local_url}}';
-  static const String privacyScheme = 'privacy';
-  static const String privacyLevelHost = 'level';
-  static const String privacyUrlMacro = '{{privacy_url}}';
-
-  HomeMyEvents2Widget({super.key, super.favoriteId, super.updateController});
-
-  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: title,
-    );
-
-  static String get title => Localization().getStringEx('widget.home.my_events2.label.header.title', 'My Events');
-
-  @override
-  String get _title => title;
-
-  @override
-  Widget _emptyContentWidget(BuildContext context) => HomeMessageHtmlCard(
-    message: Localization().getStringEx("widget.home.my_events2.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events Feed</b></a> for quick access here.  (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
-      .replaceAll(localUrlMacro, '$localScheme://$localEventFeedHost')
-      .replaceAll(privacyUrlMacro, '$privacyScheme://$privacyLevelHost'),
-    linkColor: Styles().colors.eventColor,
-    onTapLink : (url) {
-      Uri? uri = (url != null) ? Uri.tryParse(url) : null;
-      if ((uri?.scheme == localScheme) && (uri?.host == localEventFeedHost)) {
-        Analytics().logSelect(target: 'Events Feed', source: runtimeType.toString());
-        Event2HomePanel.present(context, analyticsFeature: AnalyticsFeature.EventsAll);
-      }
-      else if ((uri?.scheme == privacyScheme) && (uri?.host == privacyLevelHost)) {
-        Analytics().logSelect(target: 'Privacy Level', source: runtimeType.toString());
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
-      }
-    },
-  );
-
-  @override
-  State<StatefulWidget> createState() => _HomeEvent2WidgetState(
-    timeFilter: Event2TimeFilter.upcoming, customStartTime: null, customEndTime: null,
-    types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]),
-    attributes: <String, dynamic>{},
-    sortType: Event2SortType.dateTime,
-  );
-}
-
-abstract class _HomeEvent2Widget extends StatefulWidget {
-
-  final String? favoriteId;
-  final StreamController<String>? updateController;
-
-  _HomeEvent2Widget({super.key, this.favoriteId, this.updateController});
-
-  String get _title;
-
-  Widget _emptyContentWidget(BuildContext context);
-
-  //@override
-  //State<StatefulWidget> createState() => _HomeEvent2WidgetState();
-}*/
-
 class HomeEvents2Widget extends StatefulWidget {
 
   final String? favoriteId;
@@ -149,8 +62,8 @@ class HomeEvents2Widget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.events2.label.header.title', 'Events');
   String get _title => title;
+  static String get title => Localization().getStringEx('widget.home.events2.label.header.title', 'Events');
 
   @override
   State<StatefulWidget> createState() => _HomeEvents2WidgetState();
@@ -167,7 +80,7 @@ class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
     );
 
   Widget get _contentWidget => Column(mainAxisSize: MainAxisSize.min, children: [
-    Padding(padding: EdgeInsets.only(bottom: 9), child:
+    Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 8), child:
       _contentTypeBar,
     ),
     ..._contentTypeWidgets,
@@ -177,10 +90,6 @@ class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
     Visibility(visible: (_contentType == contentType), maintainState: true, child:
       _buildContentTypeWidget(contentType),
     ));
-  
-  Widget get _contentTypeBar => Container(
-    //TBD
-  );
   
   Widget _buildContentTypeWidget(FavoritesContentType contentType) => _HomeEvents2ImplWidget(
     key: _contentTypeKeys[contentType] ??= GlobalKey(),
@@ -222,6 +131,25 @@ class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
   Widget _allEmptyContentBuilder(BuildContext context) => HomeMessageCard(
     message: Localization().getStringEx('widget.home.event2_feed.text.empty.description', 'There are no events available.')
   );
+
+  Widget get _contentTypeBar => Row(children:List<Widget>.from(
+    FavoritesContentType.values.map((FavoritesContentType contentType) => Expanded(child:
+      HomeFavTabBarBtn(contentType.title.toUpperCase(),
+        position: contentType.position,
+        selected: _contentType == contentType,
+        onTap: () => _onContentType(contentType),
+      )
+    )),
+  ));
+
+  void _onContentType(FavoritesContentType contentType) {
+    if ((_contentType != contentType) && mounted) {
+      setState(() {
+        _contentType = contentType;
+      });
+    }
+  }
+
 }
 
 class _HomeEvents2ImplWidget extends StatefulWidget {
@@ -712,3 +640,13 @@ class _HomeEvents2ImplWidgetState extends State<_HomeEvents2ImplWidget> with Not
 
 enum _Staled { none, refresh, reload }
 //typedef WidgetBuilder = Widget Function(BuildContext context);
+
+
+extension FavoriteEventsContentType on FavoritesContentType {
+  String get title {
+    switch (this) {
+      case FavoritesContentType.all: return Localization().getStringEx('widget.home.event2_feed.label.header.title', 'All Events');
+      case FavoritesContentType.my: return Localization().getStringEx('widget.home.my_events2.label.header.title', 'My Events');
+    }
+  }
+}

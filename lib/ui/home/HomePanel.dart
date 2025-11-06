@@ -165,24 +165,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeEvents2Widget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    /*else if (code == 'event_feed') {
-      if (title) {
-        return HomeEvent2FeedWidget.title;
-      } else if (handle) {
-        return HomeEvent2FeedWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeEvent2FeedWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'my_events') {
-      if (title) {
-        return HomeMyEvents2Widget.title;
-      } else if (handle) {
-        return HomeMyEvents2Widget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeMyEvents2Widget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController);
-      }
-    }*/
     else if (code == 'recent_items') {
       if (title) {
         return HomeRecentItemsWidget.title;
