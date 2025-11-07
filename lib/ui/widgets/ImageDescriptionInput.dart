@@ -66,7 +66,7 @@ class _ImageDescriptionInputState extends State<ImageDescriptionInput> {
                             onChanged: (value) {
                               setStateIfMounted((){
                                 _imageDescriptionData.description = value;
-                                widget.onChanged?.call(widget.imageDescriptionData);
+                                widget.onChanged?.call(_imageDescriptionData);
                               });
                             },
                             minLines: 1,

@@ -665,8 +665,10 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
 
   @override
   Widget build(BuildContext context) =>
-    InkWell(onTap: _onPronunciation, child:
-      _pronunciationButtonContent
+    Semantics(label: "Pronounce", hint: "Play the pronouncement", button: true, child:
+      InkWell(onTap: _onPronunciation, child:
+        _pronunciationButtonContent
+      )
     );
 
     Widget? get _pronunciationButtonContent =>

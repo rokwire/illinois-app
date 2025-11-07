@@ -663,8 +663,8 @@ class GroupMemberCard extends StatelessWidget {
           children: <Widget>[
             ClipRRect(
                 borderRadius: BorderRadius.circular(65),
-                child: Semantics(label: "user image", hint: "Double tap to zoom", child:
-                  Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: member?.userId)))),
+                  child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: member?.userId))
+            ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 11),
