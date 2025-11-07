@@ -22,7 +22,6 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
-import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -326,15 +325,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
       }
     }
 
-    else if (code == 'my_athletics') {
-      if (title) {
-        return HomeFavoritesWidget.titleFromKey(favoriteKey: Game.favoriteKeyName);
-      } else if (handle) {
-        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: Game.favoriteKeyName);
-      } else {
-        return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: Game.favoriteKeyName,);
-      }
-    }
     else if (code == 'my_news') {
       if (title) {
         return HomeFavoritesWidget.titleFromKey(favoriteKey: News.favoriteKeyName);

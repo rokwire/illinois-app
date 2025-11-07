@@ -91,51 +91,6 @@ class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
     ..._contentTypeWidgets,
   ],);
   
-  Iterable<Widget> get _contentTypeWidgets => FavoriteContentType.values.map((FavoriteContentType contentType) =>
-    Visibility(visible: (_contentType == contentType), maintainState: true, child:
-      _buildContentTypeWidget(contentType),
-    ));
-  
-  Widget _buildContentTypeWidget(FavoriteContentType contentType) => _HomeEvents2ImplWidget(
-    updateController: widget.updateController,
-    emptyContentBuilder: (contentType == FavoriteContentType.my) ? _myEmptyContentBuilder : _allEmptyContentBuilder,
-    filter: (contentType == FavoriteContentType.my) ? Event2FilterParam(
-      timeFilter: Event2TimeFilter.upcoming, customStartTime: null, customEndTime: null,
-      types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]),
-      attributes: <String, dynamic>{},
-    ) : null,
-    sortType: (contentType == FavoriteContentType.my) ? Event2SortType.dateTime : null,
-  );
-  
-  static const String localScheme = 'local';
-  static const String localEventFeedHost = 'event2_feed';
-  static const String localUrlMacro = '{{local_url}}';
-  static const String privacyScheme = 'privacy';
-  static const String privacyLevelHost = 'level';
-  static const String privacyUrlMacro = '{{privacy_url}}';
-
-  Widget _myEmptyContentBuilder(BuildContext context) => HomeMessageHtmlCard(
-    message: Localization().getStringEx("widget.home.my_events2.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events Feed</b></a> for quick access here.  (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
-      .replaceAll(localUrlMacro, '$localScheme://$localEventFeedHost')
-      .replaceAll(privacyUrlMacro, '$privacyScheme://$privacyLevelHost'),
-    linkColor: Styles().colors.eventColor,
-    onTapLink : (url) {
-      Uri? uri = (url != null) ? Uri.tryParse(url) : null;
-      if ((uri?.scheme == localScheme) && (uri?.host == localEventFeedHost)) {
-        Analytics().logSelect(target: 'Events Feed', source: runtimeType.toString());
-        Event2HomePanel.present(context, analyticsFeature: AnalyticsFeature.EventsAll);
-      }
-      else if ((uri?.scheme == privacyScheme) && (uri?.host == privacyLevelHost)) {
-        Analytics().logSelect(target: 'Privacy Level', source: runtimeType.toString());
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
-      }
-    },
-  );
-  
-  Widget _allEmptyContentBuilder(BuildContext context) => HomeMessageCard(
-    message: Localization().getStringEx('widget.home.event2_feed.text.empty.description', 'There are no events available.')
-  );
-
   Widget get _contentTypeBar => Row(children:List<Widget>.from(
     FavoriteContentType.values.map((FavoriteContentType contentType) => Expanded(child:
       HomeFavTabBarBtn(contentType.eventsTitle.toUpperCase(),
@@ -155,18 +110,82 @@ class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
     }
   }
 
+  Iterable<Widget> get _contentTypeWidgets => FavoriteContentType.values.map((FavoriteContentType contentType) =>
+    Visibility(visible: (_contentType == contentType), maintainState: true, child:
+      HomeEvents2ImplWidget(
+        updateController: widget.updateController,
+        analyticsFeature: _analyticsFeature(contentType),
+        emptyContentBuilder: _emptyContentBuilder(contentType),
+        filter: _eventFilter(contentType),
+        sortType: Event2SortType.dateTime,
+      ),
+    ));
+
+  // Event2 Filter
+  Event2FilterParam _eventFilter(FavoriteContentType contentType) => Event2FilterParam(
+    timeFilter: Event2TimeFilter.upcoming, customStartTime: null, customEndTime: null,
+    types: LinkedHashSet<Event2TypeFilter>.from((contentType == FavoriteContentType.my) ? [Event2TypeFilter.favorite] : []),
+    attributes: <String, dynamic>{},
+  );
+
+  // Analytics Feature
+  AnalyticsFeature _analyticsFeature(FavoriteContentType contentType) {
+    switch (contentType) {
+      case FavoriteContentType.my: return AnalyticsFeature.EventsMy;
+      case FavoriteContentType.all: return AnalyticsFeature.EventsAll;
+    }
+  }
+
+  // Empty Content Builder
+  WidgetBuilder _emptyContentBuilder(FavoriteContentType contentType) {
+    switch (contentType) {
+      case FavoriteContentType.my: return _myEmptyContentBuilder;
+      case FavoriteContentType.all: return _allEmptyContentBuilder;
+    }
+  }
+  
+  Widget _allEmptyContentBuilder(BuildContext context) => HomeMessageCard(
+    message: Localization().getStringEx('widget.home.event2_feed.text.empty.description', 'There are no events available.')
+  );
+
+  static const String localScheme = 'local';
+  static const String localEventFeedHost = 'event2_feed';
+  static const String localUrlMacro = '{{local_url}}';
+  static const String privacyScheme = 'privacy';
+  static const String privacyLevelHost = 'level';
+  static const String privacyUrlMacro = '{{privacy_url}}';
+
+  Widget _myEmptyContentBuilder(BuildContext context) => HomeMessageHtmlCard(
+    message: Localization().getStringEx("widget.home.my_events2.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events Feed</b></a> for quick access here.  (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
+      .replaceAll(localUrlMacro, '$localScheme://$localEventFeedHost')
+      .replaceAll(privacyUrlMacro, '$privacyScheme://$privacyLevelHost'),
+    linkColor: Styles().colors.eventColor,
+    onTapLink : (url) {
+      Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+      if ((uri?.scheme == localScheme) && (uri?.host == localEventFeedHost)) {
+        Analytics().logSelect(target: 'Events Feed', source: runtimeType.toString());
+        Event2HomePanel.present(context);
+      }
+      else if ((uri?.scheme == privacyScheme) && (uri?.host == privacyLevelHost)) {
+        Analytics().logSelect(target: 'Privacy Level', source: runtimeType.toString());
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
+      }
+    },
+  );
+
 }
 
-class _HomeEvents2ImplWidget extends StatefulWidget {
+class HomeEvents2ImplWidget extends StatefulWidget {
   final StreamController<String>? updateController;
+  final AnalyticsFeature? analyticsFeature;
   final WidgetBuilder? emptyContentBuilder;
 
   final Event2FilterParam? filter;
   final Event2SortType? sortType;
 
   // ignore: unused_element_parameter
-  _HomeEvents2ImplWidget({super.key,
-    this.updateController, this.emptyContentBuilder,
+  HomeEvents2ImplWidget({super.key,
+    this.updateController, this.analyticsFeature, this.emptyContentBuilder,
     this.filter, this.sortType
   });
 
@@ -174,7 +193,7 @@ class _HomeEvents2ImplWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeEvents2ImplWidgetState();
 }
 
-class _HomeEvents2ImplWidgetState extends State<_HomeEvents2ImplWidget> with NotificationsListener {
+class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with NotificationsListener {
 
   List<Event2>? _events;
   bool? _lastPageLoadedAll;
@@ -418,7 +437,7 @@ class _HomeEvents2ImplWidgetState extends State<_HomeEvents2ImplWidget> with Not
     Event2HomePanel.present(context,
       timeFilter: widget.filter?.timeFilter, customStartTime: widget.filter?.customEndTime, customEndTime: widget.filter?.customEndTime,
       types: widget.filter?.types, attributes: widget.filter?.attributes, sortType: widget.sortType,
-      analyticsFeature: AnalyticsFeature.EventsAll
+      analyticsFeature: widget.analyticsFeature,
     );
   }
 

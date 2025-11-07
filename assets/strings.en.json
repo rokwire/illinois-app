@@ -296,10 +296,9 @@
 
     "panel.browse.entry.appointments.appointments.title": "Appointments",
 
-    "panel.browse.entry.athletics.sport_events.title": "Events",
+    "panel.browse.entry.athletics.sport_events.title": "Big 10 Events",
     "panel.browse.entry.athletics.sport_news.title": "News",
     "panel.browse.entry.athletics.sport_teams.title": "Teams",
-    "panel.browse.entry.athletics.my_athletics.title": "My Big 10 Events",
     "panel.browse.entry.athletics.my_news.title": "My News",
     "panel.browse.entry.athletics.my_game_day.title": "It's Game Day!",
 
@@ -4000,8 +3999,11 @@
     "widget.home.athletics_news.button.all.title": "View All",
     "widget.home.athletics_news.button.all.hint": "Tap to view all news",
 
-    "widget.home.athletics_events.text.title": "Big 10 Events",
-    "widget.home.athletics_events.text.empty.description": "No Athletics Events are available right now.",
+    "widget.home.athletics_events.title": "Big 10 Events",
+    "widget.home.athletics_events.my.button.title": "My Big 10 Events",
+    "widget.home.athletics_events.all.button.title": "All Big 10 Events",
+    "widget.home.athletics_events.my.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Big 10 Events</b></a> for quick access here.  (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.athletics_events.all.empty.description": "No Athletics Events are available right now.",
     "widget.home.athletics_events.text.offline": "Athletics Events are not available while offline.",
     "widget.home.athletics_events.button.all.title": "View All",
     "widget.home.athletics_events.button.all.hint": "Tap to view all events",

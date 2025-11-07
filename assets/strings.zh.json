@@ -295,10 +295,9 @@
 
 	"panel.browse.entry.appointments.appointments.title": "約會",
 
-	"panel.browse.entry.athletics.sport_events.title": "活動",
+	"panel.browse.entry.athletics.sport_events.title": "十大活動",
 	"panel.browse.entry.athletics.sport_news.title": "消息",
 	"panel.browse.entry.athletics.sport_teams.title": "團隊",
-	"panel.browse.entry.athletics.my_athletics.title": "My Big 10 Events",
 	"panel.browse.entry.athletics.my_news.title": "我的消息",
 	"panel.browse.entry.athletics.my_game_day.title": "今天是比賽日！",
 
@@ -3973,8 +3972,11 @@
 	"widget.home.athletics_news.button.all.title": "查看全部",
 	"widget.home.athletics_news.button.all.hint": "點擊查看所有新聞",
 
-	"widget.home.athletics_events.text.title": "十大活動",
-	"widget.home.athletics_events.text.empty.description": "目前沒有田徑賽事可用。",
+	"widget.home.athletics_events.title": "十大活動",
+	"widget.home.athletics_events.my.button.title": "My Big 10 Events",
+	"widget.home.athletics_events.all.button.title": "All Big 10 Events",
+	"widget.home.athletics_events.my.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Big 10 Events</b></a> for quick access here.  (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+	"widget.home.athletics_events.all.empty.description": "目前沒有田徑賽事可用。",
 	"widget.home.athletics_events.text.offline": "田徑賽事在離線時不可用。",
 	"widget.home.athletics_events.button.all.title": "查看全部",
 	"widget.home.athletics_events.button.all.hint": "點按即可查看所有活動",
