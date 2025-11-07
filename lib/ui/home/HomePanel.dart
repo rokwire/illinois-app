@@ -19,12 +19,8 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
-import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
-import 'package:illinois/model/News.dart';
-import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -156,22 +152,13 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeCampusRemindersWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == 'event_feed') {
+    else if (code == 'events') {
       if (title) {
-        return HomeEvent2FeedWidget.title;
+        return HomeEvents2Widget.title;
       } else if (handle) {
-        return HomeEvent2FeedWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeEvents2Widget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeEvent2FeedWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'my_events') {
-      if (title) {
-        return HomeMyEvents2Widget.title;
-      } else if (handle) {
-        return HomeMyEvents2Widget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeMyEvents2Widget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController);
+        return HomeEvents2Widget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'recent_items') {
@@ -273,40 +260,22 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeLaundryWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == 'my_groups') {
+    else if (code == 'groups') {
       if (title) {
-        return HomeGroupsWidget.title(contentType: GroupsContentType.my);
+        return HomeGroupsWidget.title;
       } else if (handle) {
-        return HomeGroupsWidget.handle(key: ValueKey(GroupsContentType.my), contentType: GroupsContentType.my, favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeGroupsWidget.handle(key: ValueKey(GroupsContentType.my), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeGroupsWidget(key: _globalKey(globalKeys, code), contentType: GroupsContentType.my, favoriteId: code, updateController: updateController,);
+        return HomeGroupsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == 'all_groups') {
+    else if (code == 'research_projects') {
       if (title) {
-        return HomeGroupsWidget.titleForContentType(GroupsContentType.all);
+        return HomeResearchProjectsWidget.title;
       } else if (handle) {
-        return HomeGroupsWidget.handle(key: ValueKey(GroupsContentType.all), contentType: GroupsContentType.all, favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeResearchProjectsWidget.handle(favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeGroupsWidget(key: _globalKey(globalKeys, code), contentType: GroupsContentType.all, favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'my_research_projects') {
-      if (title) {
-        return HomeResearchProjectsWidget.title(contentType: ResearchProjectsContentType.my);
-      } else if (handle) {
-        return HomeResearchProjectsWidget.handle(contentType: ResearchProjectsContentType.my, favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeResearchProjectsWidget(key: _globalKey(globalKeys, code), contentType: ResearchProjectsContentType.my, favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'open_research_projects') {
-      if (title) {
-        return HomeResearchProjectsWidget.titleForContentType(ResearchProjectsContentType.open);
-      } else if (handle) {
-        return HomeResearchProjectsWidget.handle(contentType: ResearchProjectsContentType.open, favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeResearchProjectsWidget(key: _globalKey(globalKeys, code), contentType: ResearchProjectsContentType.open, favoriteId: code, updateController: updateController,);
+        return HomeResearchProjectsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'my_appointments') {
@@ -336,7 +305,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: ExplorePOI.favoriteKeyName);
       }
     }
-    else if (code == 'dinings') {
+    else if (code == 'dining') {
       if (title) {
         return HomeDiningWidget.title;
       } else if (handle) {
@@ -355,42 +324,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
       }
     }
 
-    else if (code == 'my_dining') {
-      if (title) {
-        return HomeFavoritesWidget.titleFromKey(favoriteKey: Dining.favoriteKeyName);
-      } else if (handle) {
-        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: Dining.favoriteKeyName, );
-      } else {
-        return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: Dining.favoriteKeyName,);
-      }
-    }
-    else if (code == 'my_athletics') {
-      if (title) {
-        return HomeFavoritesWidget.titleFromKey(favoriteKey: Game.favoriteKeyName);
-      } else if (handle) {
-        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: Game.favoriteKeyName);
-      } else {
-        return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: Game.favoriteKeyName,);
-      }
-    }
-    else if (code == 'my_news') {
-      if (title) {
-        return HomeFavoritesWidget.titleFromKey(favoriteKey: News.favoriteKeyName);
-      } else if (handle) {
-        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: News.favoriteKeyName,);
-      } else {
-        return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: News.favoriteKeyName, );
-      }
-    }
-    else if (code == 'my_laundry') {
-      if (title) {
-        return HomeFavoritesWidget.titleFromKey(favoriteKey: LaundryRoom.favoriteKeyName);
-      } else if (handle) {
-        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: LaundryRoom.favoriteKeyName);
-      } else {
-        return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: LaundryRoom.favoriteKeyName, );
-      }
-    }
     else if (code == 'my_campus_guide') {
       if (title) {
         return HomeFavoritesWidget.titleFromKey(favoriteKey: GuideFavorite.favoriteKeyName);

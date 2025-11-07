@@ -264,6 +264,9 @@ class AppSemantics {
     static String progressHint({String subject = '' }) =>
       _progressHintSrc.replaceAll(_subjectMacro, subject);
 
+    static String selectHint({ String subject = '' }) =>
+      _selectHintSrc.replaceAll(_subjectMacro, subject);
+
     static const String _subjectMacro = '{{subject}}';
 
     static String _toggleValueHintSrc(bool value) => value ?
@@ -284,6 +287,9 @@ class AppSemantics {
 
     static String get _progressHintSrc =>
       Localization().getStringEx('model.accessability.progress.updating.label', 'Updating $_subjectMacro');
+
+    static String get _selectHintSrc =>
+      Localization().getStringEx('model.accessability.button.select.hint', 'Double tap to select $_subjectMacro');
 
 
 // final SemanticsNode? semanticsNode = renderObject.debugSemantics;

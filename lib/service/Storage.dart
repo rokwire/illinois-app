@@ -30,8 +30,10 @@ class Storage extends rokwire.Storage with NotificationsListener {
 
   static String get notifySettingChanged => rokwire.Storage.notifySettingChanged;
   static String get notifyHomeFavoriteExpandedChanged => 'edu.illinois.rokwire.storage.home.favorite.expanded.changed';
+  static String get notifyHomeFavoriteSelectedContent => 'edu.illinois.rokwire.storage.home.favorite.selected.content.changed';
 
   late Map<String, bool> _homeFavoriteExpandedStates;
+  late Map<String, String> _homeFavoriteSelectedContents;
 
   // Singletone Factory
 
@@ -58,6 +60,7 @@ class Storage extends rokwire.Storage with NotificationsListener {
   Future<void> initService() async {
     await super.initService();
     _homeFavoriteExpandedStates = _loadHomeFavoriteExpandedStates() ?? <String, bool>{};
+    _homeFavoriteSelectedContents = _loadHomeFavoriteSelectedContents() ?? <String, String>{};
   }
 
   // NotificationsListener Overrides
@@ -412,6 +415,7 @@ class Storage extends rokwire.Storage with NotificationsListener {
   String? get homeContentType => getStringWithName(homeContentTypeKey);
   set homeContentType(String? value) => setStringWithName(homeContentTypeKey, value);
 
+  // Home: Expanded States
   String get _homeFavoriteExpandedStatesMapKey => 'edu.illinois.rokwire.home.favorite.expanded.state';
   Map<String, bool>? _loadHomeFavoriteExpandedStates() => JsonUtils.mapCastValue(JsonUtils.decode(getStringWithName(_homeFavoriteExpandedStatesMapKey)));
   void _saveHomeFavoriteExpandedStatesMap(Map<String, bool>? value) => setStringWithName(_homeFavoriteExpandedStatesMapKey, JsonUtils.encode(value));
@@ -436,6 +440,24 @@ class Storage extends rokwire.Storage with NotificationsListener {
     }
   }
 
+  // Home: FavoritesContentType selections
+  String get _homeFavoriteSelectedContentsMapKey => 'edu.illinois.rokwire.home.favorite.selected.content';
+  Map<String, String>? _loadHomeFavoriteSelectedContents() => JsonUtils.mapCastValue(JsonUtils.decode(getStringWithName(_homeFavoriteSelectedContentsMapKey)));
+  void _saveHomeFavoriteSelectedContents(Map<String, String>? value) => setStringWithName(_homeFavoriteSelectedContentsMapKey, JsonUtils.encode(value));
+
+  String? getHomeFavoriteSelectedContent(String? key) => _homeFavoriteSelectedContents[key];
+  void setHomeFavoriteSelectedContent(String? key, String? value) {
+    if ((key != null) && (value != getHomeFavoriteSelectedContent(key))) {
+      if (value != null) {
+        _homeFavoriteSelectedContents[key] = value;
+      }
+      else {
+        _homeFavoriteSelectedContents.remove(key);
+      }
+      _saveHomeFavoriteSelectedContents(_homeFavoriteSelectedContents);
+      NotificationService().notify(notifyHomeFavoriteSelectedContent, key);
+    }
+  }
 
   // Browse Tout
   String get browseToutImageUrlKey => 'edu.illinois.rokwire.browse.tout.image.url';
