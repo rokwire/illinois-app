@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
-import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -583,9 +582,7 @@ class _BrowseEntry extends StatelessWidget {
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
       case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
 
-      case "dinings.dinings_all":            _onTapDiningsAll(context); break;
-      case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
-      case "dinings.my_dining":              _onTapMyDinings(context); break;
+      case "dining.dining":                  _onTapDining(context); break;
 
       case "directory.user_directory":       _onTapUserDirectory(context); break;
 
@@ -703,18 +700,10 @@ class _BrowseEntry extends StatelessWidget {
     }
   }
 
-  static void _onTapDiningsAll(BuildContext context) {
-    Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining");
+  static void _onTapDining(BuildContext context) {
+    Analytics().logSelect(target: "Residence Hall Dining");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel(
       analyticsFeature: AnalyticsFeature.DiningAll
-    )));
-  }
-
-  static void _onTapDiningsOpen(BuildContext context) {
-    Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining Open Now");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel(
-      initialFilter: DiningFilter(type: DiningFilterType.work_time, selectedIndexes: {1}),
-      analyticsFeature: AnalyticsFeature.DiningOpen,
     )));
   }
 
@@ -773,11 +762,6 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapMyGameDay(BuildContext context) {
     Analytics().logSelect(target: "It's Game Day");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.game_day)));
-  }
-
-  static void _onTapMyDinings(BuildContext context) {
-    Analytics().logSelect(target: "My Dinings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Dining.favoriteKeyName]); } ));
   }
 
   static void _onTapMyAthletics(BuildContext context) {

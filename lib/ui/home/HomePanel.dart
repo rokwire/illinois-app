@@ -19,7 +19,6 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
-import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
@@ -308,7 +307,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: ExplorePOI.favoriteKeyName);
       }
     }
-    else if (code == 'dinings') {
+    else if (code == 'dining') {
       if (title) {
         return HomeDiningWidget.title;
       } else if (handle) {
@@ -327,15 +326,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
       }
     }
 
-    else if (code == 'my_dining') {
-      if (title) {
-        return HomeFavoritesWidget.titleFromKey(favoriteKey: Dining.favoriteKeyName);
-      } else if (handle) {
-        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: Dining.favoriteKeyName, );
-      } else {
-        return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: Dining.favoriteKeyName,);
-      }
-    }
     else if (code == 'my_athletics') {
       if (title) {
         return HomeFavoritesWidget.titleFromKey(favoriteKey: Game.favoriteKeyName);

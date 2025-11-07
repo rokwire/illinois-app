@@ -246,8 +246,8 @@
     "panel.browse.section.athletics.description": "Stay up-to-date with your favorite {{app_title}} teams.",
     "panel.browse.section.campus_guide.title": "Guía del Campus",
     "panel.browse.section.campus_guide.description": "Obtenga más información sobre la vida en el campus.",
-    "panel.browse.section.dinings.title": "Comida",
-    "panel.browse.section.dinings.description": "Los estudiantes, profesores, empleados, y visitantes son bienvenidos a comer en cualquier comedor en las residencias.",
+    "panel.browse.section.dining.title": "Comida",
+    "panel.browse.section.dining.description": "Los estudiantes, profesores, empleados, y visitantes son bienvenidos a comer en cualquier comedor en las residencias.",
     "panel.browse.section.directory.title": "Directory of Users",
     "panel.browse.section.directory.description": "Find {{university_name}} student and employee contact information.",
     "panel.browse.section.events.title": "Eventos",
@@ -306,9 +306,7 @@
     "panel.browse.entry.campus_guide.campus_guide.title": "Guía Completa del Campus",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "Guía de mi campus",
 
-    "panel.browse.entry.dinings.dinings_all.title": "Comedor de la residencia",
-    "panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Abierto ahora",
-    "panel.browse.entry.dinings.my_dining.title": "Mis lugares para comer",
+    "panel.browse.entry.dining.dining.title": "Comedor de la residencia",
 
     "panel.browse.entry.directory.user_directory.title": "Directory of Users",
 
@@ -4281,11 +4279,13 @@
     "widget.checklist.uiuc.logged_out": "Debe iniciar sesión con su NetID para acceder a la lista de verificación de nuevos estudiantes. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
 
     "widget.home.dinings.header.title": "Comida",
-    "widget.home.dinings.text.empty.description": "Toque \u2606 en los elementos de Dinings para que pueda encontrarlos rápidamente aquí. (Su nivel de privacidad debe ser al menos 2.)",
-    "widget.home.dinings.all.button.title": "Comedor de la residencia",
-    "widget.home.dinings.all.button.description": "Los estudiantes, profesores, personal y visitantes son bienvenidos a comer en cualquier comedor en las residencias.",
-    "widget.home.dinings.open.button.title": "Residence Hall Dining Abierto ahora",
-    "widget.home.dinings.open.button.description": "Acceso rápido a cualquier ubicación que esté actualmente abierta.",
+    "widget.home.dinings.text.offline.description": "No dining locations available while offline.",
+    "widget.home.dinings.my.button.title": "My Locations",
+    "widget.home.dinings.my.empty.description": "Tap the \u2606  on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.dinings.all.button.title": "All Locations",
+    "widget.home.dinings.all.empty.description": "No dining locations are available right now.",
+    "widget.home.dinings.open.button.title": "Open Now",
+    "widget.home.dinings.open.empty.description": "No dining locations are currently opened.",
 
     "widget.appointment.card.cancelled.label": "Cancelado",
 

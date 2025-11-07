@@ -1164,9 +1164,9 @@ class HomeFavTabBarBtn extends StatelessWidget {
     InkWell(onTap: onTap, child:
       Container(
         decoration: BoxDecoration(color: _frameColor, border: _frameBorder, borderRadius: _frameBorderRadius,),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         child: Center(child:
-          Text(title, style: _textStyle, textAlign: TextAlign.center,)
+          Text(title, style: _textStyle, textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis,)
         ),
       )
     )

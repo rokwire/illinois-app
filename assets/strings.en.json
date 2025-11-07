@@ -247,8 +247,8 @@
     "panel.browse.section.athletics.description": "Stay up-to-date with your favorite {{app_title}} teams.",
     "panel.browse.section.campus_guide.title": "Campus Guide",
     "panel.browse.section.campus_guide.description": "Learn more about life on campus.",
-    "panel.browse.section.dinings.title": "Dining",
-    "panel.browse.section.dinings.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
+    "panel.browse.section.dining.title": "Dining",
+    "panel.browse.section.dining.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
     "panel.browse.section.directory.title": "Directory of Users",
     "panel.browse.section.directory.description": "Find {{university_name}} student and employee contact information.",
     "panel.browse.section.events.title": "Events",
@@ -307,9 +307,7 @@
     "panel.browse.entry.campus_guide.campus_guide.title": "Complete Campus Guide",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "My Campus Guide",
 
-    "panel.browse.entry.dinings.dinings_all.title": "Residence Hall Dining",
-    "panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Open Now",
-    "panel.browse.entry.dinings.my_dining.title": "My Dining Locations",
+    "panel.browse.entry.dining.dining.title": "Residence Hall Dining",
 
     "panel.browse.entry.directory.user_directory.title": "Directory of Users",
 
@@ -4285,11 +4283,13 @@
     "widget.checklist.uiuc.logged_out": "You need to be signed in with your NetID to access the New Student Checklist. Set your privacy level to 4 or 5 under Settings. Then find the sign-in prompt under Profile.",
 
     "widget.home.dinings.header.title": "Dining",
-    "widget.home.dinings.text.empty.description": "Tap the \u2606 on items in Dining for quick access here. (Your privacy level must be at least 2.)",
-    "widget.home.dinings.all.button.title": "Residence Hall Dining",
-    "widget.home.dinings.all.button.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
-    "widget.home.dinings.open.button.title": "Residence Hall Dining Open Now",
-    "widget.home.dinings.open.button.description": "Quick access to any locations that are currently open.",
+    "widget.home.dinings.text.offline.description": "No dining locations available while offline.",
+    "widget.home.dinings.my.button.title": "My Locations",
+    "widget.home.dinings.my.empty.description": "Tap the \u2606  on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.dinings.all.button.title": "All Locations",
+    "widget.home.dinings.all.empty.description": "No dining locations are available right now.",
+    "widget.home.dinings.open.button.title": "Open Now",
+    "widget.home.dinings.open.empty.description": "No dining locations are currently opened.",
 
     "widget.appointment.card.cancelled.label": "Cancelled",
 
