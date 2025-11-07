@@ -564,10 +564,9 @@ class _BrowseEntry extends StatelessWidget {
       case "appointments.appointments":       _onTapAppointments(context, analyticsFeature: AnalyticsFeature.Appointments); break;
 
       case "athletics.sport_events":         _onTapSportEvents(context); break;
-      case "athletics.my_game_day":          _onTapMyGameDay(context); break;
       case "athletics.sport_news":           _onTapSportNews(context); break;
       case "athletics.sport_teams":          _onTapSportTeams(context); break;
-      case "athletics.my_news":              _onTapMyNews(context); break;
+      case "athletics.my_game_day":          _onTapMyGameDay(context); break;
 
       case "laundry.laundry":                _onTapLaundry(context); break;
 
@@ -761,11 +760,6 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapMyGameDay(BuildContext context) {
     Analytics().logSelect(target: "It's Game Day");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.game_day)));
-  }
-
-  static void _onTapMyNews(BuildContext context) {
-    Analytics().logSelect(target: "My News");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.my_news)));
   }
 
   static void _onTapMyMTDStops(BuildContext context) {

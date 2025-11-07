@@ -327,6 +327,7 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     'my_dining': 'dining',
     'dinings': 'dining',
     'my_athletics': 'sport_events',
+    'my_news': 'sport_news',
   };
 
   static LinkedHashSet<String> _updateLastFavorites(LinkedHashSet<String> favorites) {

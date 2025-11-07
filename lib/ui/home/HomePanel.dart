@@ -21,7 +21,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/MTD.dart';
-import 'package:illinois/model/News.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -325,15 +324,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
       }
     }
 
-    else if (code == 'my_news') {
-      if (title) {
-        return HomeFavoritesWidget.titleFromKey(favoriteKey: News.favoriteKeyName);
-      } else if (handle) {
-        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: News.favoriteKeyName,);
-      } else {
-        return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: News.favoriteKeyName, );
-      }
-    }
     else if (code == 'my_campus_guide') {
       if (title) {
         return HomeFavoritesWidget.titleFromKey(favoriteKey: GuideFavorite.favoriteKeyName);
