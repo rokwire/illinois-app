@@ -127,6 +127,7 @@
     "generic.app.feature.illini_id": "Illini ID",
     "generic.app.feature.stadium_polls": "Stadium Polls",
     "generic.app.feature.polls": "Polls",
+    "generic.app.feature.groups": "Groups",
     "generic.app.feature.notifications": "Notifications",
     "generic.app.feature.research_projects": "Research Projects",
     "generic.app.feature.student_courses": "My Courses",
@@ -246,14 +247,12 @@
     "panel.browse.section.athletics.description": "Stay up-to-date with your favorite {{app_title}} teams.",
     "panel.browse.section.campus_guide.title": "Campus Guide",
     "panel.browse.section.campus_guide.description": "Learn more about life on campus.",
-    "panel.browse.section.dinings.title": "Dining",
-    "panel.browse.section.dinings.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
+    "panel.browse.section.dining.title": "Dining",
+    "panel.browse.section.dining.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
     "panel.browse.section.directory.title": "Directory of Users",
     "panel.browse.section.directory.description": "Find {{university_name}} student and employee contact information.",
     "panel.browse.section.events.title": "Events",
     "panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
-    "panel.browse.section.feeds.title": "Illini News",
-    "panel.browse.section.feeds.description": "Catch the latest from {{app_title}} social media and The Daily Illini.",
     "panel.browse.section.groups.title": "Groups",
     "panel.browse.section.groups.description": "Discover a new group or start your own.",
     "panel.browse.section.research_projects.title": "Research Participation",
@@ -300,24 +299,17 @@
     "panel.browse.entry.athletics.sport_events.title": "Events",
     "panel.browse.entry.athletics.sport_news.title": "News",
     "panel.browse.entry.athletics.sport_teams.title": "Teams",
-    "panel.browse.entry.athletics.my_athletics.title": "My Big 10 Events",
-    "panel.browse.entry.athletics.my_news.title": "My News",
     "panel.browse.entry.athletics.my_game_day.title": "It's Game Day!",
 
     "panel.browse.entry.campus_guide.campus_highlights.title": "Campus Guide Highlights",
     "panel.browse.entry.campus_guide.campus_guide.title": "Complete Campus Guide",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "My Campus Guide",
 
-    "panel.browse.entry.dinings.dinings_all.title": "Residence Hall Dining",
-    "panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Open Now",
-    "panel.browse.entry.dinings.my_dining.title": "My Dining Locations",
+    "panel.browse.entry.dining.dining.title": "Residence Hall Dining",
 
     "panel.browse.entry.directory.user_directory.title": "Directory of Users",
 
-    "panel.browse.entry.events.event_feed.title": "All Events",
-    "panel.browse.entry.events.my_events.title": "My Events",
-
-    "panel.browse.entry.feeds.twitter.title": "X/Twitter",
+    "panel.browse.entry.events.events.title": "Events",
 
     "panel.browse.entry.music_and_news.will_radio.title": "WILL News & Talk (NPR)",
     "panel.browse.entry.music_and_news.willfm_radio.title": "WILL Classical & More",
@@ -325,14 +317,9 @@
     "panel.browse.entry.music_and_news.wpgufm_radio.title": "WPGU 107.1 FM",
     "panel.browse.entry.music_and_news.daily_illini.title": "The Daily Illini",
 
-    "panel.browse.entry.groups.all_groups.title": "All Groups",
-    "panel.browse.entry.groups.my_groups.title": "My Groups",
-
-    "panel.browse.entry.research_projects.open_research_projects.title": "Open Research Projects",
-    "panel.browse.entry.research_projects.my_research_projects.title": "My Research Projects",
-
+    "panel.browse.entry.groups.groups.title": "Groups",
+    "panel.browse.entry.research_projects.title": "Research Participation",
     "panel.browse.entry.laundry.laundry.title": "Laundry",
-    "panel.browse.entry.laundry.my_laundry.title": "My Laundry",
 
     "panel.browse.entry.messages.messages.title": "Conversations",
 
@@ -3876,6 +3863,8 @@
     "widget.home.suggested_events.button.all.title":"View All",
     "widget.home.suggested_events.button.all.hint":"Tap to view all events",
 
+    "widget.home.events2.label.header.title":"Events",
+
     "widget.home.event2_feed.label.header.title":"All Events",
     "widget.home.event2_feed.text.empty.description": "There are no events available.",
     "widget.home.event2_feed.text.offline.description": "Events are not available while offline.",
@@ -3903,15 +3892,18 @@
     "widget.home.public_surveys.button.all.title":"View All",
     "widget.home.public_surveys.button.all.hint":"Tap to view all surveys",
 
+    "widget.home.groups.label.header.title":"Groups",
     "widget.home.groups.my.label.header.title":"My Groups",
     "widget.home.groups.all.label.header.title":"All Groups",
     "widget.home.groups.my.text.empty.description": "You have not created any groups yet.",
     "widget.home.groups.all.text.empty.description": "Failed to load groups.",
+    "widget.home.groups.message.offline":"Groups are not available while offline.",
     "widget.home.groups.button.all.title":"View All",
     "widget.home.groups.button.all.hint":"Tap to view all groups",
 
-    "widget.home.research_projects.my.label.header.title":"My Research Projects",
-    "widget.home.research_projects.open.label.header.title":"Open Research Projects",
+    "widget.home.research_projects.label.header.title":"Research Participation",
+    "widget.home.research_projects.my.label.header.title":"My Projects",
+    "widget.home.research_projects.open.label.header.title":"Open Projects",
     "widget.home.research_projects.my.text.empty.admin.description": "You have not created any research projects yet.",
     "widget.home.research_projects.my.html.empty.user.description": "You are currently not participating in any research projects. <a href='{{open_projects_url}}'>View current studies</a> that match your <a href='{{questionnaire_url}}'>Research Interest Form</a> to opt in and become part of the study’s recruitment pool.",
     "widget.home.research_projects.all.text.empty.description": "There are no open research projects at the moment.",
@@ -4000,14 +3992,20 @@
     "widget.home.welcome_message.title.text": "Tailor Your App Experience",
     "widget.home.favorites.instructions.message.text": "Tap the \u2606s in <a href='{{browse_local_url}}'>Sections</a> or <a href='{{customize_favorites_local_url}}'>Customize</a> to add shortcuts to Favorites. Note that some features require specific <a href='{{privacy_settings_local_url}}'>privacy settings</a> and <a href='{{sign_in_local_url}}'>signing in</a> with your NetID, phone number, or email address.",
 
-    "widget.home.athletics_news.text.title": "Big 10 News",
-    "widget.home.athletics_news.text.empty.description": "Big 10 News is not available right now.",
+    "widget.home.athletics_news.header.title": "Big 10 News",
+    "widget.home.athletics_news.my.button.title": "My Big 10 News",
+    "widget.home.athletics_news.all.button.title": "All Big 10 News",
+    "widget.home.athletics_news.my.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Big 10 News</b></a> for quick access here.  (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.athletics_news.all.empty.description": "Big 10 News is not available right now.",
     "widget.home.athletics_news.text.offline": "Big 10 News is not available while offline.",
     "widget.home.athletics_news.button.all.title": "View All",
     "widget.home.athletics_news.button.all.hint": "Tap to view all news",
 
-    "widget.home.athletics_events.text.title": "Big 10 Events",
-    "widget.home.athletics_events.text.empty.description": "No Athletics Events are available right now.",
+    "widget.home.athletics_events.title": "Big 10 Events",
+    "widget.home.athletics_events.my.button.title": "My Big 10 Events",
+    "widget.home.athletics_events.all.button.title": "All Big 10 Events",
+    "widget.home.athletics_events.my.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Big 10 Events</b></a> for quick access here.  (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.athletics_events.all.empty.description": "No Athletics Events are available right now.",
     "widget.home.athletics_events.text.offline": "Athletics Events are not available while offline.",
     "widget.home.athletics_events.button.all.title": "View All",
     "widget.home.athletics_events.button.all.hint": "Tap to view all events",
@@ -4030,7 +4028,10 @@
     "widget.home.inbox.button.all.hint": "Tap to view all notifications",
 
     "widget.home.laundry.text.title": "Laundry",
-    "widget.home.laundry.text.empty.description": "No Laundry information is available right now.",
+    "widget.home.laundry.all.text.title": "All Laundry",
+    "widget.home.laundry.my.text.title": "My Laundry",
+    "widget.home.laundry.all.text.empty.description": "No Laundry information is available right now.",
+    "widget.home.laundry.my.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry</b></a> for quick access here.  (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.laundry.text.offline": "Laundry is not available while offline.",
     "widget.home.laundry.button.all.title": "View All",
     "widget.home.laundry.button.all.hint": "Tap to view all Laundry information",
@@ -4286,11 +4287,13 @@
     "widget.checklist.uiuc.logged_out": "You need to be signed in with your NetID to access the New Student Checklist. Set your privacy level to 4 or 5 under Settings. Then find the sign-in prompt under Profile.",
 
     "widget.home.dinings.header.title": "Dining",
-    "widget.home.dinings.text.empty.description": "Tap the \u2606 on items in Dining for quick access here. (Your privacy level must be at least 2.)",
-    "widget.home.dinings.all.button.title": "Residence Hall Dining",
-    "widget.home.dinings.all.button.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
-    "widget.home.dinings.open.button.title": "Residence Hall Dining Open Now",
-    "widget.home.dinings.open.button.description": "Quick access to any locations that are currently open.",
+    "widget.home.dinings.text.offline.description": "No dining locations available while offline.",
+    "widget.home.dinings.my.button.title": "My Locations",
+    "widget.home.dinings.my.empty.description": "Tap the \u2606  on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.dinings.all.button.title": "All Locations",
+    "widget.home.dinings.all.empty.description": "No dining locations are available right now.",
+    "widget.home.dinings.open.button.title": "Open Now",
+    "widget.home.dinings.open.empty.description": "No dining locations are currently opened.",
 
     "widget.appointment.card.cancelled.label": "Cancelled",
 
@@ -4512,6 +4515,7 @@
     "model.accessability.enabled.hint": "{{subject}} enabled",
     "model.accessability.disabled.hint": "{{subject}} disabled",
     "model.accessability.progress.updating.label": "Updating {{subject}}",
+    "model.accessability.button.select.hint": "Double tap to select {{subject}}",
 
     "logic.date_time.greeting.morning": "Good morning",
     "logic.date_time.greeting.afternoon": "Good afternoon",
@@ -4551,6 +4555,7 @@
     "common.label.county": "County",
     "common.label.read_more": "Read more",
     "common.label.failed": "Failed",
+    "common.label.empty": "Empty",
 
     "common.message.offline":"You appear to be offline",
     "common.message.logged_out":"You are not signed in",

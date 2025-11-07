@@ -1,14 +1,11 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
-import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
@@ -49,10 +46,8 @@ import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/content.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -568,15 +563,12 @@ class _BrowseEntry extends StatelessWidget {
 
       case "appointments.appointments":       _onTapAppointments(context, analyticsFeature: AnalyticsFeature.Appointments); break;
 
-      case "athletics.my_game_day":          _onTapMyGameDay(context); break;
       case "athletics.sport_events":         _onTapSportEvents(context); break;
-      case "athletics.my_athletics":         _onTapMyAthletics(context); break;
       case "athletics.sport_news":           _onTapSportNews(context); break;
       case "athletics.sport_teams":          _onTapSportTeams(context); break;
-      case "athletics.my_news":              _onTapMyNews(context); break;
+      case "athletics.my_game_day":          _onTapMyGameDay(context); break;
 
       case "laundry.laundry":                _onTapLaundry(context); break;
-      case "laundry.my_laundry":             _onTapMyLaundry(context); break;
 
       case "messages.messages":              _onTapMessages(context); break;
 
@@ -588,23 +580,18 @@ class _BrowseEntry extends StatelessWidget {
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
       case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
 
-      case "dinings.dinings_all":            _onTapDiningsAll(context); break;
-      case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
-      case "dinings.my_dining":              _onTapMyDinings(context); break;
+      case "dining.dining":                  _onTapDining(context); break;
 
       case "directory.user_directory":       _onTapUserDirectory(context); break;
 
-      case "events.event_feed":              _onTapEventFeed(context); break;
-      case "events.my_events":               _onTapMyEvents(context); break;
+      case "events.events":                  _onTapEvents(context); break;
 
       case "music_and_news.illini_radio":    _onTapIlliniRadio(context); break;
       case "music_and_news.daily_illini":    _onTapDailyIllini(context); break;
 
-      case "groups.all_groups":              _onTapAllGroups(context); break;
-      case "groups.my_groups":               _onTapMyGroups(context); break;
+      case "groups.groups":                  _onTapGroups(context); break;
 
-      case "research_projects.open_research_projects": _onTapOpenResearchProjects(context); break;
-      case "research_projects.my_research_projects": _onTapMyResearchProjects(context); break;
+      case "research_projects.research_projects": _onTapResearchProjects(context); break;
 
       case "polls.create_poll":              _onTapCreatePoll(context); break;
       case "polls.recent_polls":             _onTapViewPolls(context); break;
@@ -711,18 +698,10 @@ class _BrowseEntry extends StatelessWidget {
     }
   }
 
-  static void _onTapDiningsAll(BuildContext context) {
-    Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining");
+  static void _onTapDining(BuildContext context) {
+    Analytics().logSelect(target: "Residence Hall Dining");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel(
       analyticsFeature: AnalyticsFeature.DiningAll
-    )));
-  }
-
-  static void _onTapDiningsOpen(BuildContext context) {
-    Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining Open Now");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel(
-      initialFilter: DiningFilter(type: DiningFilterType.work_time, selectedIndexes: {1}),
-      analyticsFeature: AnalyticsFeature.DiningOpen,
     )));
   }
 
@@ -751,18 +730,10 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
   }
 
-  static void _onTapEventFeed(BuildContext context) {
-    Analytics().logSelect(target: "Events Feed");
+  static void _onTapEvents(BuildContext context) {
+    Analytics().logSelect(target: "Events");
     Event2HomePanel.present(context,
-      analyticsFeature: AnalyticsFeature.EventsAll,
-    );
-  }
-
-  static void _onTapMyEvents(BuildContext context) {
-    Analytics().logSelect(target: "My Events");
-    Event2HomePanel.present(context,
-      types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]),
-      analyticsFeature: AnalyticsFeature.EventsMy,
+      analyticsFeature: AnalyticsFeature.Events,
     );
   }
 
@@ -776,49 +747,19 @@ class _BrowseEntry extends StatelessWidget {
     RadioPopupWidget.show(context);
   }
 
-  static void _onTapAllGroups(BuildContext context) {
-    Analytics().logSelect(target: "All Groups");
-    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel(contentType: GroupsContentType.all,)));
+  static void _onTapGroups(BuildContext context) {
+    Analytics().logSelect(target: "Groups");
+    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel()));
   }
 
-  static void _onTapMyGroups(BuildContext context) {
-    Analytics().logSelect(target: "My Groups");
-    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel(contentType: GroupsContentType.my)));
-  }
-
-  static void _onTapOpenResearchProjects(BuildContext context) {
-    Analytics().logSelect(target: "Open Research Projects");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResearchProjectsHomePanel(contentType: ResearchProjectsContentType.open,)));
-  }
-
-  static void _onTapMyResearchProjects(BuildContext context) {
-    Analytics().logSelect(target: "My Research Projects");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResearchProjectsHomePanel(contentType: ResearchProjectsContentType.my)));
+  static void _onTapResearchProjects(BuildContext context) {
+    Analytics().logSelect(target: "Research Projects");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResearchProjectsHomePanel()));
   }
 
   static void _onTapMyGameDay(BuildContext context) {
     Analytics().logSelect(target: "It's Game Day");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.game_day)));
-  }
-
-  static void _onTapMyDinings(BuildContext context) {
-    Analytics().logSelect(target: "My Dinings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Dining.favoriteKeyName]); } ));
-  }
-
-  static void _onTapMyAthletics(BuildContext context) {
-    Analytics().logSelect(target: "My Big 10 Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.my_events)));
-  }
-
-  static void _onTapMyNews(BuildContext context) {
-    Analytics().logSelect(target: "My News");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.my_news)));
-  }
-
-  static void _onTapMyLaundry(BuildContext context) {
-    Analytics().logSelect(target: "My Laundry");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [LaundryRoom.favoriteKeyName]); } ));
   }
 
   static void _onTapMyMTDStops(BuildContext context) {

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - ToggleRibbonButton handles semantic hints properly, some cleanup applied as well [#4874](https://github.com/rokwire/illinois-app/issues/4874).
 - Improved semantics for profile photos [#5180](https://github.com/rokwire/illinois-app/issues/5180).
+- UI Clean Up: Merge Favorite Widgets [#5352](https://github.com/rokwire/illinois-app/issues/5352).
 
 ## [7.3.21] - 2025-11-03
 ### Added
