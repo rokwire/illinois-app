@@ -3070,6 +3070,7 @@ class GroupMemberProfileImage extends StatefulWidget {
 
 class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> with NotificationsListener {
   Uint8List? _imageBytes;
+  ImageMetaData? _metaData;
   bool _loading = false;
 
   @override
@@ -3087,25 +3088,30 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> with 
 
   @override
   Widget build(BuildContext context) {
-    bool hasProfilePhoto = (_imageBytes != null);
-    Widget? profileImage = hasProfilePhoto
-        ? Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: (hasProfilePhoto ? BoxFit.cover : BoxFit.contain), image: Image.memory(_imageBytes!).image)))
-        : Styles().images.getImage('profile-placeholder', excludeFromSemantics: true);
+    Widget? profileImage = _hasProfilePhoto ?
+        Semantics(container: true, label: "Profile image", hint: "Double tap to zoom",child: AccessibleImageHolder(metaData: _metaData, child:
+            Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: (_hasProfilePhoto ? BoxFit.cover : BoxFit.contain), image: Image.memory(_imageBytes!).image))))
+        ) :
+        ExcludeSemantics(child: Styles().images.getImage('profile-placeholder', excludeFromSemantics: true));
 
-    return GestureDetector(
+    return Semantics(excludeSemantics: _hasProfilePhoto == false, child:
+      GestureDetector(
         onTap: widget.onTap ?? _onImageTap,
         child: Stack(alignment: Alignment.center, children: [
-          if (profileImage != null) profileImage,
+          profileImage,
           Visibility(
               visible: _loading,
               child: SizedBox(
                   width: 20, height: 20, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2)))
-        ]));
+        ])));
   }
 
   void _loadImage() {
     if (StringUtils.isNotEmpty(widget.userId)) {
       _setImageLoading(true);
+      Content().loadImageMetaData(url: Content().getUserPhotoUrl(accountId: widget.userId)).then((MetaDataResult? result) {
+        _metaData = result?.imageMetaData;
+      });
       Content().loadUserPhoto(accountId: widget.userId, type: UserProfileImageType.small).then((ImagesResult? imageResult) {
         _imageBytes = imageResult?.imageData;
         _setImageLoading(false);
@@ -3118,7 +3124,7 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> with 
     if (_imageBytes != null) {
       String? imageUrl = Content().getUserPhotoUrl(accountId: widget.userId, type: UserProfileImageType.defaultType);
       if (StringUtils.isNotEmpty(imageUrl)) {
-        Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => ModalPhotoImagePanel(imageUrl: imageUrl!, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Group Member Image"))));
+        Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => ModalPhotoImagePanel(imageUrl: imageUrl!, imageMetadata: _metaData, networkImageHeaders: Auth2().networkAuthHeaders, onCloseAnalytics: () => Analytics().logSelect(target: "Close Group Member Image"))));
       }
     }
   }
@@ -3143,6 +3149,8 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> with 
       }
     }
   }
+
+  bool get _hasProfilePhoto => (_imageBytes != null);
 }
 
 class GroupProfilePronouncementWidget extends StatefulWidget {

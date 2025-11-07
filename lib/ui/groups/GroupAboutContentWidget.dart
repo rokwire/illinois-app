@@ -213,14 +213,15 @@ class _OfficerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 128,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: groupMember?.userId)),
-        Padding(padding: EdgeInsets.only(top: 4),
-          child: Text(groupMember?.name ?? "", style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),),),
-        Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles.getTextStyle('widget.card.detail.regular')),
-      ],),
-    );
+    return Semantics(container: true, child:
+      Container(
+        width: 128,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: groupMember?.userId)),
+          Padding(padding: EdgeInsets.only(top: 4),
+            child: Text(groupMember?.name ?? "", style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),),),
+          Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles.getTextStyle('widget.card.detail.regular')),
+        ],),
+    ));
   }
 }

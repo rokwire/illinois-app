@@ -31,6 +31,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:path/path.dart';
 import 'package:rokwire_plugin/model/content.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -126,8 +127,9 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
               Container(height: 10,),
               ImageDescriptionInput(
                   imageDescriptionData: _imageDescriptionData,
-                  onChanged: (data)=> setStateIfMounted(
-                      () => _imageDescriptionData = data ?? _imageDescriptionData
+                  onChanged: (data)=>
+                      setStateIfMounted(() =>
+                        _imageDescriptionData = data ?? _imageDescriptionData
                   )
               ),
               Container(height: 10,),
@@ -365,10 +367,12 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   }
 
   void _onImageUploaded(ImagesResult result) {
-    if(result.resultType == ImagesResultType.succeeded &&
-        result.imageUrl != null && _imageDescriptionData != null){
+    if(result.resultType == ImagesResultType.succeeded
+        &&  (result.imageUrl != null || widget.isUserPic)
+        && _imageDescriptionData != null){
+      String? url = result.imageUrl ?? (widget.isUserPic ? Content().getUserPhotoUrl(accountId: Auth2().accountId) : null);
       Content().uploadImageMetaData(
-          url: result.imageUrl,
+          url: url,
           metaData: _imageDescriptionData?.toMetaData).then((metaDataResult){
         if (mounted) {
           setState(() {
@@ -398,6 +402,9 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         _imageName = basename(widget.preloadImageUrl!);
         _contentType = mime(_imageName);
       }
+    } else if(widget.isUserPic){
+      ImageMetaData? metaData = await _loadImageMetaData(Content().getUserPhotoUrl(accountId: Auth2().accountId));
+      _imageDescriptionData = metaData != null ? ImageDescriptionDataExt.fromMetaData(metaData) : ImageDescriptionData();
     }
     _hideLoader();
   }
