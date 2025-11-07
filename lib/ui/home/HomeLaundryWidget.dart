@@ -26,6 +26,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class HomeLaundryWidget extends StatefulWidget {
@@ -204,7 +205,7 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
 
   Widget get _laundryContentWidget {
       Widget? contentWidget;
-      List<LaundryRoom>? displayLaundryRooms = _displayLaundryRooms;
+      List<LaundryRoom>? displayLaundryRooms = _buildDisplayLaundryRooms();
       int visibleCount = displayLaundryRooms?.length ?? 0;
 
       if (1 < visibleCount) {
@@ -386,14 +387,14 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
     }
   }
 
-  List<LaundryRoom>? get _displayLaundryRooms {
+  List<LaundryRoom>? _buildDisplayLaundryRooms() {
     switch (widget.contentType) {
-      case FavoriteContentType.my: return _favoriteLaundryRooms;
+      case FavoriteContentType.my: return _buildFavoriteLaundryRooms();
       case FavoriteContentType.all: return _laundrySchool?.rooms;
     }
   }
 
-  List<LaundryRoom>? get _favoriteLaundryRooms {
+  List<LaundryRoom>? _buildFavoriteLaundryRooms() {
     List<LaundryRoom>? laundryRooms = _laundrySchool?.rooms;
     LinkedHashSet<String>? favoriteRoomIds = Auth2().prefs?.getFavorites(LaundryRoom.favoriteKeyName);
     if ((laundryRooms != null) && (favoriteRoomIds != null)) {
@@ -409,10 +410,7 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
       List<Favorite>? result = <Favorite>[];
       if (favorites.isNotEmpty) {
         for (String favoriteId in favoriteRoomIds) {
-          LaundryRoom? laundryRoom = favorites[favoriteId];
-          if (laundryRoom != null) {
-            result.add(laundryRoom);
-          }
+          ListUtils.add(result, favorites[favoriteId]);
         }
       }
 
@@ -545,5 +543,4 @@ extension _FavoriteLaundryContentType on FavoriteContentType {
       case FavoriteContentType.all: return Localization().getStringEx('widget.home.laundry.all.text.title', 'All Laundry');
     }
   }
-
 }
