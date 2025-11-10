@@ -1302,6 +1302,7 @@
 	"panel.events2.home.attributes.event_type.hint.empty": "选择一种活动种类",
 	"panel.events2.home.attributes.event_type.hint.semantics": "点击两下显示活动选项。",
 	"panel.events2.home.attributes.event_details.title": "Event Details",
+	"panel.events2.home.attributes.event_details.header.description": "Choose from the below options and tap the back button.",
 	"panel.events2.home.attributes.event_details.hint": "Choose the event details your events can be filtered by.",
 	"panel.events2.home.attributes.event_details.hint.empty": "Select event details",
 	"panel.events2.home.attributes.event_details.hint.semantics": "Double tap to show event details.",
