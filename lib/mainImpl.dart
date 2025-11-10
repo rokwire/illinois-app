@@ -16,8 +16,10 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
@@ -205,6 +207,10 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     await WebCacheImageService().init();
 
     runApp(App(initializeError: serviceError));
+
+    if (kIsWeb) {
+      SemanticsBinding.instance.ensureSemantics();
+    }
   }, FirebaseCrashlytics().handleZoneError);
 }
 
