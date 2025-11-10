@@ -389,7 +389,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
 
       dynamic result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
         title: Localization().getStringEx('panel.events2.home.attributes.filters.header.title', 'Event Filters'),
-        description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
+        description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose at least one attribute to filter the events and tap Apply to save.'),
         footerBuilder: _buildFiltersFooter,
 
         contentAttributes: contentAttributes,
