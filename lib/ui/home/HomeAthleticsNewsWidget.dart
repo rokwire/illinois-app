@@ -436,7 +436,7 @@ class _HomeAthliticsNewsImplWidgetState extends State<_HomeAthliticsNewsImplWidg
 
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: widget.contentType.athleticsContentType)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news, starred: widget.contentType == FavoriteContentType.my)));
   }
 }
 
@@ -448,10 +448,4 @@ extension _FavoriteAthleticsNewsContentType on FavoriteContentType {
     }
   }
 
-  AthleticsContentType get athleticsContentType {
-    switch (this) {
-      case FavoriteContentType.my: return AthleticsContentType.my_news;
-      case FavoriteContentType.all: return AthleticsContentType.news;
-    }
-  }
 }
