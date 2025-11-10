@@ -950,6 +950,8 @@
 
     "star-filled": {"src": "images/icon-star-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "star-partially-filled": {"src": "0xf5c0", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 19},
+    "star-filled-white": {"src": "0xf005", "type": "fa.icon", "weight": "solid", "color": "white", "size": 18},
+    "star-filled-orange": {"src": "0xf005", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "thumbs-up-filled": {"src": "images/icon-thumbs-up-solid.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "campus-tools-filled": {"src": "images/tab-browse-selected.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "remove if not used"},
     "browse-filled": {"src": "0xf0c9", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18, "todo": "size"},
@@ -963,6 +965,9 @@
     "list-outline": {"src": "images/icon-list-view.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "size issue"},
 
     "star-outline-gray": {"src": "0xf005", "type": "fa.icon", "weight": "regular", "color": "mediumGray", "size": 18},
+    "star-outline-white": {"src": "0xf005", "type": "fa.icon", "weight": "regular", "color": "white", "size": 18},
+    "star-outline-orange": {"src": "0xf005", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
+    "star-outline-blue": {"src": "0xf005", "type": "fa.icon", "weight": "regular", "color": "fillColorPrimary", "size": 18},
     "thumbs-up-outline-gray": {"src": "images/icon-thumbs-up-outline.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
     "check-circle-outline-gray": {"src": "0xf111", "type": "fa.icon", "weight": "thin", "color": "mediumGray", "size": 20},
     "check-circle-outline-gray-2": {"src": "images/deselected.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},

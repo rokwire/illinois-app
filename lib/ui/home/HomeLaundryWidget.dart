@@ -10,7 +10,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -293,7 +292,8 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;
     if (uri?.scheme == localScheme) {
       if (uri?.host.toLowerCase() == localLaundryHost.toLowerCase()) {
-        _launchLaundry();
+        Analytics().logSelect(target: "Laundry", source: widget.runtimeType.toString());
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel(laundrySchool: _laundrySchool)));
       }
       else if ((uri?.scheme == privacyScheme) && (uri?.host == privacyLevelHost)) {
         Analytics().logSelect(target: 'Privacy Level', source: runtimeType.toString());
@@ -431,18 +431,7 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
 
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    switch (widget.contentType) {
-      case FavoriteContentType.my: _launchFavoriteLaundry(); break;
-      case FavoriteContentType.all: _launchLaundry(); break;
-    }
-  }
-
-  void _launchLaundry() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel(laundrySchool: _laundrySchool,)));
-  }
-
-  void _launchFavoriteLaundry() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [LaundryRoom.favoriteKeyName]); } ));;
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel(laundrySchool: _laundrySchool, starred: widget.contentType == FavoriteContentType.my,)));
   }
 }
 

@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated description for Event and Amenities filters [#5499](https://github.com/rokwire/illinois-app/issues/5499).
 ### Fixed 
 - Fixed Athletics home panel dropdown content [#5352](https://github.com/rokwire/illinois-app/issues/5352).
+### Added
 - Added starred filter to Events and News Athletics pages, merge all/my events and all/my news pages into one [#5352](https://github.com/rokwire/illinois-app/issues/5352).
+- Added starred filter to Laundry Panel, connect it to Home / Favorites / Laundry / My Laundry / View All [#5352](https://github.com/rokwire/illinois-app/issues/5352).
 
 ## [7.3.22] - 2025-11-07
 ### Changed
