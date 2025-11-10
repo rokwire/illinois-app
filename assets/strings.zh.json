@@ -486,7 +486,7 @@
 	"model.map2.terms.selection.mark": "✓",
 
 	"panel.map2.filter.amenities.title":"Amenities",
-	"panel.map2.filter.amenities.info":"Choose from the below amenities to view buildings with one or more of these amenities.",
+	"panel.map2.filter.amenities.info":"To view buildings with specific amenities, choose one or more of the options below and tap the back button.",
 	"panel.map2.filter.amenities.clear.title":"Clear",
 
 	"panel.map2.tray.header.selected.label": "Selected: ",
