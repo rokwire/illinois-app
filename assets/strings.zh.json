@@ -486,7 +486,7 @@
 	"model.map2.terms.selection.mark": "✓",
 
 	"panel.map2.filter.amenities.title":"Amenities",
-	"panel.map2.filter.amenities.info":"Choose from the below amenities to view buildings with one or more of these amenities.",
+	"panel.map2.filter.amenities.info":"To view buildings with specific amenities, choose one or more of the options below and tap the back button.",
 	"panel.map2.filter.amenities.clear.title":"Clear",
 
 	"panel.map2.tray.header.selected.label": "Selected: ",
@@ -1288,7 +1288,7 @@
 	"panel.events2.home.bar.button.share.title": "Share Event Set",
  "panel.events2.home.bar.button.share.hint": "Tap to share current event set",
 	"panel.events2.home.attributes.filters.header.title": "活动筛选器",
-	"panel.events2.home.attributes.filters.header.description": "选择一个或多个属性来筛选事件",
+	"panel.events2.home.attributes.filters.header.description": "Choose at least one attribute to filter the events and tap Apply to save.",
 	"panel.events2.home.attributes.filter.label.title": "筛选器： ",
 	"panel.events2.home.attributes.sort.label.title": "排序： ",
 	"panel.events2.home.attributes.events.label.title": "活动： ",
@@ -1302,6 +1302,7 @@
 	"panel.events2.home.attributes.event_type.hint.empty": "选择一种活动种类",
 	"panel.events2.home.attributes.event_type.hint.semantics": "点击两下显示活动选项。",
 	"panel.events2.home.attributes.event_details.title": "Event Details",
+	"panel.events2.home.attributes.event_details.header.description": "Choose from the below options and tap the back button.",
 	"panel.events2.home.attributes.event_details.hint": "Choose the event details your events can be filtered by.",
 	"panel.events2.home.attributes.event_details.hint.empty": "Select event details",
 	"panel.events2.home.attributes.event_details.hint.semantics": "Double tap to show event details.",
