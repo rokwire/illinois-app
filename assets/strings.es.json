@@ -654,6 +654,7 @@
 
     "panel.athletics.content.home.title.label": "Atletismo",
     "panel.athletics.content.common.filter.teams.label": "Equipos",
+    "panel.athletics.content.common.filter.starred.label": "Starred",
     "panel.athletics.content.common.filter.label": "Filtrar:",
     "panel.athletics.content.common.filter.value.none.label": "Ninguno",
     "panel.athletics.content.common.filter.value.starred.label": "Sembrado de estrellas",

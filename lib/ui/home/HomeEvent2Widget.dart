@@ -179,13 +179,16 @@ class HomeEvents2ImplWidget extends StatefulWidget {
   final StreamController<String>? updateController;
   final AnalyticsFeature? analyticsFeature;
   final WidgetBuilder? emptyContentBuilder;
+  final TapHandler? onViewAll;
+
 
   final Event2FilterParam? filter;
   final Event2SortType? sortType;
 
   // ignore: unused_element_parameter
   HomeEvents2ImplWidget({super.key,
-    this.updateController, this.analyticsFeature, this.emptyContentBuilder,
+    this.updateController, this.analyticsFeature,
+    this.emptyContentBuilder, this.onViewAll,
     this.filter, this.sortType
   });
 
@@ -393,7 +396,7 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
        HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.event2_feed.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.event2_feed.button.all.hint', 'Tap to view all events'),
-          onTap: _onTapViewAll,
+          onTap: widget.onViewAll ?? _onTapViewAll,
         ),
       ),
     ]);
