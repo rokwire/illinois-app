@@ -179,6 +179,9 @@
       window.addEventListener('flutter-first-frame', () => {
         container.classList.add('hidden');
 
+        container.setAttribute('aria-hidden', 'true');
+        document.querySelector('main').setAttribute('aria-hidden', 'true');
+
         if (document.activeElement === button) {
           button.blur();
         }
