@@ -333,7 +333,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
   }
 
   Widget _buildMaterialApp() {
-    return MaterialApp(
+    return Semantics(container: false, explicitChildNodes: true, child: MaterialApp(
       key: _key,
       navigatorKey: widget.navigatorKey,
       localizationsDelegates: [
@@ -349,7 +349,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       title: Localization().getStringEx('app.title', 'Illinois'),
       theme: _appTheme,
       home: _homePanel,
-    );
+    ));
   }
 
   Widget get _homePanel {
