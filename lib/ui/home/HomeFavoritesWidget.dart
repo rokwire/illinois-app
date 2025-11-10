@@ -543,9 +543,9 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
     if (widget.favoriteKey == MTDStop.favoriteKeyName) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(scope: MTDStopsScope.my)));
     } else if(widget.favoriteKey == Game.favoriteKeyName) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.my_events)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events, starred: true,)));
     } else if(widget.favoriteKey == News.favoriteKeyName) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.my_news)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news, starred: true,)));
     } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
     }

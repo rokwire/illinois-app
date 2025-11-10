@@ -655,6 +655,7 @@
 
     "panel.athletics.content.home.title.label": "Athletics",
     "panel.athletics.content.common.filter.teams.label": "Teams",
+    "panel.athletics.content.common.filter.starred.label": "Starred",
     "panel.athletics.content.common.filter.label": "Filter:",
     "panel.athletics.content.common.filter.value.none.label": "None",
     "panel.athletics.content.common.filter.value.starred.label": "Starred",
