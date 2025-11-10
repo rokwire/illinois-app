@@ -202,16 +202,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   static List<AthleticsContentType> _buildContentTypes() {
-    List<AthleticsContentType>? contentTypes = <AthleticsContentType>[];
-    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['browse.athletics']);
-    if (contentCodes != null) {
-      for (String code in contentCodes) {
-        AthleticsContentType? value = AthleticsContentTypeImpl.fromJsonString(code);
-        if (value != null) {
-          contentTypes.add(value);
-        }
-      }
-    }
+    List<AthleticsContentType>? contentTypes = List<AthleticsContentType>.from(AthleticsContentType.values);
     contentTypes.sortAlphabetical();
     return contentTypes;
   }

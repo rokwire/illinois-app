@@ -134,7 +134,10 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     Scaffold(
       appBar: HeaderBar(title: widget.attribute.displayTitle, onLeading: _onHeaderBack, actions: _headerBarActions,),
       backgroundColor: Styles().colors.background,
-      body: Column(children: [
+      body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 24, bottom: 8), child:
+          Text(Localization().getStringEx('panel.events2.home.attributes.event_details.header.description', 'Choose from the below options and tap the back button.'), style: Styles().textStyles.getTextStyle("widget.description.regular")),
+        ),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
             ListView.builder(
