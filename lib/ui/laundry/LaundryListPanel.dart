@@ -16,10 +16,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -33,16 +37,29 @@ class LaundryListPanel extends StatefulWidget {
   _LaundryListPanelState createState() => _LaundryListPanelState();
 }
 
-class _LaundryListPanelState extends State<LaundryListPanel>  {
+class _LaundryListPanelState extends State<LaundryListPanel> with NotificationsListener {
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+    ]);
     super.initState();
   }
   
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      setStateIfMounted();
+    }
   }
 
   @override
@@ -85,6 +102,7 @@ class _LaundryListPanelState extends State<LaundryListPanel>  {
     LaundryRoom? laundryRoom = (widget.rooms != null) ? widget.rooms![index] : null;
     return (laundryRoom != null) ? LaundryRoomRibbonButton(
       label: laundryRoom.name,
+      starred: (Auth2().prefs?.isFavorite(laundryRoom) == true),
       onTap: () => _onRoomTap(laundryRoom),
     ) : Container();
   }
@@ -101,6 +119,7 @@ class _LaundryListPanelState extends State<LaundryListPanel>  {
 
 class LaundryRoomRibbonButton extends StatelessWidget {
   final String? label;
+  final bool starred;
   final GestureTapCallback? onTap;
   final BorderRadius borderRadius;
   final String? labelFontFamily;
@@ -108,6 +127,7 @@ class LaundryRoomRibbonButton extends StatelessWidget {
 
   LaundryRoomRibbonButton(
       {required this.label,
+        this.starred = false,
         this.onTap,
         this.borderRadius = BorderRadius.zero,
         this.labelFontFamily,
@@ -120,8 +140,11 @@ class LaundryRoomRibbonButton extends StatelessWidget {
         Container(decoration: BoxDecoration(color: backgroundColor, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: borderRadius), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14), child:
             Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+              Styles().images.getImage(starred ? 'star-filled-orange' : 'star-outline-blue', excludeFromSemantics: true) ?? Container(),
               Expanded(child:
-                Text(label ?? '', style:  Styles().textStyles.getTextStyle("widget.button.title.medium")?.copyWith(fontFamily: labelFontFamily)),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 6), child:
+                  Text(label ?? '', style:  Styles().textStyles.getTextStyle("widget.button.title.medium")?.copyWith(fontFamily: labelFontFamily)),
+                )
               ),
               Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
             ],),
