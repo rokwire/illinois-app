@@ -650,6 +650,7 @@
 
 	"panel.athletics.content.home.title.label": "競技",
 	"panel.athletics.content.common.filter.teams.label": "團隊",
+	"panel.athletics.content.common.filter.starred.label": "Starred",
 	"panel.athletics.content.common.filter.label": "篩選：",
 	"panel.athletics.content.common.filter.value.none.label": "沒有任何",
 	"panel.athletics.content.common.filter.value.starred.label": "已加星標",

@@ -56,7 +56,7 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
     return Container(
         color: Styles().colors.white,
         child: Column(children: [
-          AthleticsTeamsFilterWidget(hideFilterDescription: true),
+          AthleticsTeamsFilterWidget(showFilterDescription: false),
           Expanded(child: _buildContent())
         ]));
   }

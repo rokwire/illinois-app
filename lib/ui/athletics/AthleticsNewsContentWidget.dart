@@ -39,9 +39,9 @@ import 'AthleticsNewsArticlePanel.dart';
 
 class AthleticsNewsContentWidget extends StatefulWidget {
 
-  final bool? showFavorites;
+  final bool? starred;
 
-  AthleticsNewsContentWidget({this.showFavorites});
+  AthleticsNewsContentWidget({this.starred});
 
   @override
   _AthleticsNewsContentWidgetState createState() => _AthleticsNewsContentWidgetState();
@@ -52,6 +52,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   List<News>? _displayNews;
 
   bool _loading = false;
+  late bool _starred;
 
   static const String _privacyUrl = 'privacy://level';
   static const String _privacyUrlMacro = '{{privacy_url}}';
@@ -60,6 +61,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [Auth2UserPrefs.notifyInterestsChanged, Auth2UserPrefs.notifyFavoritesChanged]);
+    _starred = (widget.starred == true);
     _loadNews();
   }
 
@@ -70,23 +72,15 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   }
 
   @override
-  void didUpdateWidget(AthleticsNewsContentWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.showFavorites != oldWidget.showFavorites) {
-      setStateIfMounted(() {
-        _displayNews = _buildDisplayNews();
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Container(
-        color: Styles().colors.white,
-        child: Column(children: [
-          AthleticsTeamsFilterWidget(favoritesMode: _favoritesMode),
-          Expanded(child: _buildContent())
-        ]));
+    return Container(color: Styles().colors.white, child:
+      Column(children: [
+        AthleticsTeamsFilterWidget(starred: _starred, onStarred: _onTapStarred,),
+        Expanded(child:
+          _buildContent()
+        )
+      ])
+    );
   }
 
   void _loadNews() {
@@ -103,20 +97,19 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   }
 
   List<News>? _buildDisplayNews() {
-    Set<String>? favoriteSports = Auth2().prefs?.sportsInterests;
-    if (CollectionUtils.isEmpty(favoriteSports)) {
-      return <News>[];
-    } else if (_news == null) {
-      return null;
-    } else {
+    if (_news != null) {
       List<News> displayNews = <News>[];
+      Set<String>? favoriteSports = Auth2().prefs?.sportsInterests;
       LinkedHashSet<String>? favoriteIds = Auth2().account?.prefs?.getFavorites(News.favoriteKeyName);
       for (News article in _news!) {
-        if ((favoriteSports?.contains(article.sportKey) == true) && (!_favoritesMode || (favoriteIds?.contains(article.id) == true))) {
+        if (((favoriteSports?.isNotEmpty != true) || (favoriteSports?.contains(article.sportKey) == true)) &&
+            ((_starred == false) || (favoriteIds?.contains(article.id) == true))) {
           displayNews.add(article);
         }
       }
       return displayNews;
+    } else {
+      return null;
     }
   }
 
@@ -193,6 +186,14 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
     return SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child: Column(children: articleWidgets));
   }
 
+  void _onTapStarred() {
+    Analytics().logSelect(target: 'Starred');
+    setState(() {
+      _starred = !_starred;
+      _displayNews = _buildDisplayNews();
+    });
+  }
+
   Widget _buildAthleticsNewsCard(News news) {
     return Padding(
         padding: EdgeInsets.only(top: 16, left: 16, right: 16), child: AthleticsNewsCard(news: news, onTap: () => _onTapArticle(news)));
@@ -203,10 +204,8 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: article)));
   }
 
-  bool get _favoritesMode => (widget.showFavorites == true);
-
   String get _emptyMessageHtml {
-    return _favoritesMode ?
+    return (_starred == true) ?
       Localization().getStringEx('panel.athletics.content.news.my.empty.message', "There is no starred news for the selected teams. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)").replaceAll(_privacyUrlMacro, _privacyUrl) :
       Localization().getStringEx('panel.athletics.content.news.empty.message', 'There is no news for the selected teams.');
   }
@@ -220,7 +219,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
         _displayNews = _buildDisplayNews();
       });
     } else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      if (_favoritesMode) {
+      if (_starred == true) {
         setStateIfMounted((){
           _displayNews = _buildDisplayNews();
         });
