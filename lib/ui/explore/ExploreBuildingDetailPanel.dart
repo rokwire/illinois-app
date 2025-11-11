@@ -92,9 +92,7 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
         ),
         SliverList(delegate:
           SliverChildListDelegate([
-            Padding(padding: EdgeInsets.all(16), child:
-              _buildPanelContent()
-            ),
+            _buildPanelContent()
           ], addSemanticIndexes:false)
         ),
       ]),
@@ -116,25 +114,28 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
   Widget _buildBuildingContent() =>
     Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
       _buildTitle(),
-      _buildLocation(),
-      _buildShare(),
-      if (_building?.floors?.isNotEmpty == true)
-        _buildFloorPlansAndAmenities(),
-      _buildSelectLocation(),
-      if (_building?.features?.isNotEmpty == true)
-        _buildFeatureList(),
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          _buildLocation(),
+          _buildShare(),
+          if (_building?.floors?.isNotEmpty == true)
+            _buildFloorPlansAndAmenities(),
+          _buildSelectLocation(),
+          if (_building?.features?.isNotEmpty == true)
+            _buildFeatureList(),
+        ]),
+      ),
     ]);
 
   Widget _buildTitle() =>
-    Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-      Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Expanded(child:
-          Text(_building?.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.large.fat")),
+          Padding(padding: EdgeInsets.only(left: 16, top: 12, bottom: 12), child:
+            Text(_building?.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.large.fat")),
+          ),
         ),
-        if (Auth2().canFavorite)
-          _favoriteButton,
-      ],),
-    );
+        Auth2().canFavorite ? _favoriteButton : _rightTitleSpacing,
+      ],);
 
   Widget get _favoriteButton {
     bool isFavorite = Auth2().isFavorite(_building);
@@ -142,12 +143,14 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
     String semanticsHint = isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', '');
     return Semantics(button: true, label: semanticsLabel, hint: semanticsHint, child:
       InkWell(onTap: _onTapFavorite, child:
-        Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
+        Padding(padding: EdgeInsets.all(16), child:
           Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
         ),
       ),
     );
   }
+
+  Widget get _rightTitleSpacing => Padding(padding: EdgeInsets.only(right: 16));
 
   void _onTapFavorite() {
     Analytics().logSelect(target: "Favorite: ${_building?.name}");
@@ -225,7 +228,7 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
   }
 
   Widget _buildLoadingContent() => Center(child:
-    Padding(padding: EdgeInsets.zero, child:
+    Padding(padding: EdgeInsets.all(32), child:
       SizedBox(width: 32, height: 32, child: _loadingBuilding ?
         CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3, ) : null
       )
@@ -233,8 +236,8 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
   );
 
   Widget _buildErrorContent() => Center(child:
-    Padding(padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 64), child:
-        Text(Localization().getStringEx('panel.explore_building_detail.message.failed', 'Failed to load location details'), style: Styles().textStyles.getTextStyle("widget.message.large"), textAlign: TextAlign.center,)
+    Padding(padding: const EdgeInsets.symmetric(vertical: 96, horizontal: 64), child:
+      Text(Localization().getStringEx('panel.explore_building_detail.message.failed', 'Failed to load location details'), style: Styles().textStyles.getTextStyle("widget.message.large"), textAlign: TextAlign.center,)
     ),
   );
 
