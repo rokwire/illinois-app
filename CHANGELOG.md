@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added favorite button in ExploreBuildingDetailPanel [#5517](https://github.com/rokwire/illinois-app/issues/5517).
+### Changed
+- Added favorite button in LaundryRoomRibbonButton [#5352](https://github.com/rokwire/illinois-app/issues/5352).
 
 ## [7.3.23] - 2025-11-10
 ### Changed

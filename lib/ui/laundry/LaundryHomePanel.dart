@@ -88,7 +88,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with NotificationsL
     return Scaffold(
       appBar: HeaderBar(
         title: Localization().getStringEx('panel.laundry_home.heading.laundry', 'Laundry'),
-        actions: _canFavorite ? [ _starredButton ] : null,
+        actions: _canFavorite ? [ _starredFilterButton ] : null,
       ),
       body: _loading ? Center(child: CircularProgressIndicator(),) : _buildContentWidget(),
       backgroundColor: Styles().colors.background,
@@ -134,6 +134,20 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with NotificationsL
     ],);
   }
 
+  Widget _buildListItem(BuildContext context, int index) {
+    LaundryRoom? laundryRoom = ListUtils.entry(_displayRooms, index);
+    return (laundryRoom != null) ? LaundryRoomRibbonButton(
+      label: laundryRoom.name,
+      onTap: () => _onTapRoom(laundryRoom),
+      starred: Auth2().canFavorite ? (Auth2().prefs?.isFavorite(laundryRoom) == true) : null,
+      onTapStarred: () => _onTapRoomFavorite(laundryRoom),
+    ) : Container();
+  }
+
+  Widget _buildListSeparator(BuildContext context, int index) {
+    return Container();
+  }
+
   Widget _buildEmptyContentWidget() {
     return Center(child:
       Padding(padding: EdgeInsets.all(32), child:
@@ -148,27 +162,14 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with NotificationsL
     );
   }
 
-  Widget _buildListItem(BuildContext context, int index) {
-    LaundryRoom? laundryRoom = ListUtils.entry(_displayRooms, index);
-    return (laundryRoom != null) ? LaundryRoomRibbonButton(
-      label: laundryRoom.name,
-      starred: (Auth2().prefs?.isFavorite(laundryRoom) == true),
-      onTap: () => _onRoomTap(laundryRoom),
-    ) : Container();
-  }
-
-  Widget _buildListSeparator(BuildContext context, int index) {
-    return Container();
-  }
-
-  Widget get _starredButton =>
-    InkWell(onTap: _onTapStarred, child:
+  Widget get _starredFilterButton =>
+    InkWell(onTap: _onTapStarredFilter, child:
       Padding(padding: EdgeInsets.all(12), child:
         Styles().images.getImage(_starred ? 'star-filled-orange' : 'star-outline-white')
       )
     );
 
-  void _onTapStarred() {
+  void _onTapStarredFilter() {
     Analytics().logSelect(target: 'Starred');
     setState(() {
       _starred = !_starred;
@@ -176,6 +177,10 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with NotificationsL
     });
   }
 
+  void _onTapRoomFavorite(LaundryRoom room) {
+    Analytics().logSelect(target: 'Starred: ${room.name}');
+    Auth2().prefs?.toggleFavorite(room);
+  }
 
   Future<void> _loadSchool() async {
     setState(() { _loading = true; });
@@ -204,7 +209,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with NotificationsL
     }
   }*/
 
-  void _onRoomTap(LaundryRoom room) {
+  void _onTapRoom(LaundryRoom room) {
     Analytics().logSelect(target: "Room Tap: " + room.id!);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: room,)));
   }
