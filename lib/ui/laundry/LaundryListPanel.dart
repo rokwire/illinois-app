@@ -102,8 +102,9 @@ class _LaundryListPanelState extends State<LaundryListPanel> with NotificationsL
     LaundryRoom? laundryRoom = (widget.rooms != null) ? widget.rooms![index] : null;
     return (laundryRoom != null) ? LaundryRoomRibbonButton(
       label: laundryRoom.name,
-      starred: (Auth2().prefs?.isFavorite(laundryRoom) == true),
-      onTap: () => _onRoomTap(laundryRoom),
+      onTap: () => _onTapRoom(laundryRoom),
+      starred: Auth2().canFavorite ? (Auth2().prefs?.isFavorite(laundryRoom) == true) : null,
+      onTapStarred: () => _onTapRoomFavorite(laundryRoom),
     ) : Container();
   }
 
@@ -111,23 +112,30 @@ class _LaundryListPanelState extends State<LaundryListPanel> with NotificationsL
     return Container();
   }
 
-  void _onRoomTap(LaundryRoom room) {
+  void _onTapRoom(LaundryRoom room) {
     Analytics().logSelect(target: "Room" + room.name!);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: room,)));
+  }
+
+  void _onTapRoomFavorite(LaundryRoom room) {
+    Analytics().logSelect(target: 'Starred: ${room.name}');
+    Auth2().prefs?.toggleFavorite(room);
   }
 }
 
 class LaundryRoomRibbonButton extends StatelessWidget {
   final String? label;
-  final bool starred;
   final GestureTapCallback? onTap;
+  final bool? starred;
+  final GestureTapCallback? onTapStarred;
   final BorderRadius borderRadius;
   final String? labelFontFamily;
   final Color backgroundColor;
 
   LaundryRoomRibbonButton(
       {required this.label,
-        this.starred = false,
+        this.starred,
+        this.onTapStarred,
         this.onTap,
         this.borderRadius = BorderRadius.zero,
         this.labelFontFamily,
@@ -138,19 +146,34 @@ class LaundryRoomRibbonButton extends StatelessWidget {
     return GestureDetector(onTap: onTap, child:
       Semantics(label: label, hint: Localization().getStringEx('panel.laundry_list.button.item.hint', ''), button: true, excludeSemantics: true, child:
         Container(decoration: BoxDecoration(color: backgroundColor, border: Border.all(color: Styles().colors.surfaceAccent, width: 1), borderRadius: borderRadius), child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14), child:
-            Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-              Styles().images.getImage(starred ? 'star-filled-orange' : 'star-outline-blue', excludeFromSemantics: true) ?? Container(),
-              Expanded(child:
-                Padding(padding: EdgeInsets.symmetric(horizontal: 6), child:
-                  Text(label ?? '', style:  Styles().textStyles.getTextStyle("widget.button.title.medium")?.copyWith(fontFamily: labelFontFamily)),
-                )
-              ),
-              Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
-            ],),
-          ),
+          Row(children: <Widget>[
+            (starred != null) ? _starredButton : _leftSpacing,
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(right: 8, top: 14, bottom: 14), child:
+                Text(label ?? '', style:  Styles().textStyles.getTextStyle("widget.button.title.medium")?.copyWith(fontFamily: labelFontFamily)),
+              )
+            ),
+            Padding(padding: EdgeInsets.only(right: 16, top: 14, bottom: 14), child:
+              Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true),
+            ),
+          ],),
         ),
       )
     );
   }
+
+  Widget get _starredButton {
+    bool isStarred = (starred == true);
+    String semanticsLabel = isStarred ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites');
+    String semanticsHint = isStarred ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', '');
+    return Semantics(button: true, label: semanticsLabel, hint: semanticsHint, child:
+      InkWell(onTap: onTapStarred, child:
+        Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 14, bottom: 14), child:
+          Styles().images.getImage(isStarred ? 'star-filled-orange' : 'star-outline-blue', excludeFromSemantics: true)
+        ),
+      ),
+    );
+  }
+
+  Widget get _leftSpacing => Padding(padding: EdgeInsets.only(left: 16));
 }
