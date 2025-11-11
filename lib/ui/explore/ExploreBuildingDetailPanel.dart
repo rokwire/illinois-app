@@ -5,10 +5,14 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Building.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -26,13 +30,17 @@ class ExploreBuildingDetailPanel extends StatefulWidget with AnalyticsInfo {
   State<StatefulWidget> createState() => _ExploreBuildingDetailPanelState();
 }
 
-class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel> {
+class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel> with NotificationsListener {
 
   Building? _building;
   bool _loadingBuilding = false;
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+    ]);
+
     if (widget.building != null) {
       _building = widget.building;
     }
@@ -48,6 +56,21 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
       });
     }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      setStateIfMounted();
+    }
   }
 
   @override
@@ -108,8 +131,28 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
         Expanded(child:
           Text(_building?.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.large.fat")),
         ),
+        if (Auth2().canFavorite)
+          _favoriteButton,
       ],),
     );
+
+  Widget get _favoriteButton {
+    bool isFavorite = Auth2().isFavorite(_building);
+    String semanticsLabel = isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites');
+    String semanticsHint = isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', '');
+    return Semantics(button: true, label: semanticsLabel, hint: semanticsHint, child:
+      InkWell(onTap: _onTapFavorite, child:
+        Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
+          Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
+        ),
+      ),
+    );
+  }
+
+  void _onTapFavorite() {
+    Analytics().logSelect(target: "Favorite: ${_building?.name}");
+    Auth2().prefs?.toggleFavorite(_building);
+  }
 
   Widget _buildLocation() =>
     Visibility(visible: _canLocation(), child:
