@@ -449,6 +449,7 @@
     "panel.map2.button.tags.hint":"Tap to filter by tag",
     "panel.map2.button.visited.title":"Visited",
    	"panel.map2.button.visited.hint":"Tap to show only visited",
+    "panel.map2.button.close.hint": "Double tap to clear ",
 
     "panel.map2.filter.buildings.text":"Buildings",
     "panel.map2.filter.student_courses.text":"Courses",
