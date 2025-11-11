@@ -11,6 +11,7 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/MTD.dart';
@@ -1714,7 +1715,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       Localization().getStringEx('panel.explore.filter.payment_types.all', 'All Payment Types')  
     ];
     for (PaymentType paymentType in PaymentType.values) {
-      _filterPaymentTypeValues!.add(PaymentTypeHelper.paymentTypeToDisplayString(paymentType) ?? '');
+      _filterPaymentTypeValues!.add(paymentType.displayTitle);
     }
 
     _filterWorkTimeValues = [
@@ -2024,7 +2025,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     String? workTime = _getSelectedWorkTime(selectedFilterList);
     PaymentType? paymentType = _getSelectedPaymentType(selectedFilterList);
     bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
-    return await Dinings().loadBackendDinings(onlyOpened, paymentType, null);
+    return await Dinings().loadFilteredDinings(onlyOpened: onlyOpened, paymentType: paymentType);
   }
 
   Future<List<Explore>?> _loadLaundry() async {

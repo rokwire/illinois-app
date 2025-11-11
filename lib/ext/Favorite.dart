@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ext/Dining.dart';
 
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';

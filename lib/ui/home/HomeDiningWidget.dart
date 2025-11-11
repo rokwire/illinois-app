@@ -19,6 +19,7 @@ import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -406,7 +407,7 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
         _refreshingDinings = false;
       });
 
-      List<Dining>? dinings = await Dinings().loadBackendDinings(false, null, null);
+      List<Dining>? dinings = await Dinings().loadFilteredDinings();
 
       setStateIfMounted(() {
         _dinings = dinings;
@@ -432,7 +433,7 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
         _refreshingDinings = true;
       });
 
-      List<Dining>? dinings = await Dinings().loadBackendDinings(false, null, null);
+      List<Dining>? dinings = await Dinings().loadFilteredDinings();
 
       if (mounted && _refreshingDinings && (dinings != null) && !DeepCollectionEquality().equals(dinings, _dinings)) {
         setState(() {

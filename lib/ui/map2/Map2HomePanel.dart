@@ -963,7 +963,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   }
 
   Future<List<Explore>?> _loadDiningLocations() async =>
-    Dinings().loadBackendDinings(false, null, null);
+    Dinings().loadDinings();
 
   Future<List<Explore>?> _loadEvents2() async =>
     Events2().loadEventsList(await _event2QueryParam());

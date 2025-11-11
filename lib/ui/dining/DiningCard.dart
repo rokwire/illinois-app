@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -105,7 +106,7 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
   }
 
   Widget get _buildImage {
-    String? imageUrl = widget.dining?.imageURL;
+    String? imageUrl = widget.dining?.imageUrl;
     return Visibility(visible: StringUtils.isNotEmpty(imageUrl), child:
       Container(decoration: _imageHeadingDecoration, child:
         AspectRatio(aspectRatio: 2.5, child:
@@ -216,8 +217,8 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
     List<PaymentType>? paymentTypes = dining?.paymentTypes;
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
       details = [];
-      for (PaymentType? paymentType in paymentTypes) {
-        Widget? image = PaymentTypeHelper.paymentTypeIcon(paymentType);
+      for (PaymentType paymentType in paymentTypes) {
+        Widget? image = paymentType.iconWidget;
         if (image != null) {
           details.add(Padding(padding: EdgeInsets.only(right: 6), child:image) );
         }

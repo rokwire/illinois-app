@@ -16,6 +16,7 @@
 
 import 'package:flutter/semantics.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/MTD.dart';
@@ -148,7 +149,7 @@ class _DiningHomePanelState extends State<DiningHomePanel> with NotificationsLis
       Localization().getStringEx('panel.explore.filter.payment_types.all', 'All Payment Types')  
     ];
     for (PaymentType paymentType in PaymentType.values) {
-      _filterPaymentTypeValues!.add(PaymentTypeHelper.paymentTypeToDisplayString(paymentType) ?? '');
+      _filterPaymentTypeValues!.add(paymentType.displayTitle);
     }
 
     _filterWorkTimeValues = [
@@ -203,7 +204,7 @@ class _DiningHomePanelState extends State<DiningHomePanel> with NotificationsLis
     bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
 
     _diningSpecials = await Dinings().loadDiningSpecials();
-    return Dinings().loadBackendDinings(onlyOpened, paymentType, null);
+    return Dinings().loadFilteredDinings(onlyOpened: onlyOpened, paymentType: paymentType);
   }
 
   String? _getSelectedWorkTime(List<DiningFilter>? selectedFilterList) {
