@@ -24,7 +24,7 @@ import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
-import 'package:illinois/ui/dining/DiningHomePanel.dart';
+import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
@@ -700,9 +700,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapDining(BuildContext context) {
     Analytics().logSelect(target: "Residence Hall Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel(
-      analyticsFeature: AnalyticsFeature.DiningAll
-    )));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Dining2HomePanel()));
   }
 
   static void _onTapUserDirectory(BuildContext context) {

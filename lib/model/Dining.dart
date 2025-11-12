@@ -57,6 +57,8 @@ class Dining with Explore implements Favorite {
     description: JsonUtils.stringValue(json['MoreInfo']),
     imageUrl: JsonUtils.stringValue(json['ImageUrl']),
     address: JsonUtils.stringValue(json['Address']),
+    latitude: JsonUtils.doubleValue(json['Lat']),
+    longitude: JsonUtils.doubleValue(json['Long']),
     onlineOrder: JsonUtils.mapValue(json['OnLineOrder']),
     paymentTypes: PaymentTypeImpl.listFromJson(JsonUtils.listValue(json['PaymentTypes'])),
     diningSchedules: DiningSchedule.listFromJson(JsonUtils.listValue(json['DiningSchedules'])),
@@ -160,7 +162,7 @@ enum PaymentType { ClassicMeal, DiningDollars, IlliniCash, CreditCard, Cash, Goo
 extension PaymentTypeImpl on PaymentType {
 
   // Json Serialization
-  static PaymentType? fromJsonString(String? value) {
+  static PaymentType? fromJson(dynamic value) {
     switch (value) {
       case 'ClassicMeal':    return  PaymentType.ClassicMeal;
       case 'Dining Dollars': return  PaymentType.DiningDollars;
@@ -173,7 +175,7 @@ extension PaymentTypeImpl on PaymentType {
     }
   }
 
-  String toJsonString() {
+  toJson() {
     switch(this) {
       case PaymentType.ClassicMeal:   return 'ClassicMeal';
       case PaymentType.DiningDollars: return 'Dining Dollars';
@@ -192,7 +194,7 @@ extension PaymentTypeImpl on PaymentType {
     if (jsonList != null) {
       values = <PaymentType>[];
       for (dynamic jsonEntry in jsonList) {
-        ListUtils.add(values, fromJsonString(JsonUtils.stringValue(jsonEntry)));
+        ListUtils.add(values, fromJson(JsonUtils.stringValue(jsonEntry)));
       }
     }
     return values;
@@ -203,7 +205,7 @@ extension PaymentTypeImpl on PaymentType {
     if (values != null) {
       jsonList = <dynamic>[];
       for (PaymentType value in values) {
-        ListUtils.add(jsonList, value.toJsonString());
+        ListUtils.add(jsonList, value.toJson());
       }
     }
     return jsonList;

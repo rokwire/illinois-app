@@ -310,15 +310,18 @@ class _DiningHomePanelState extends State<DiningHomePanel> with NotificationsLis
   }
 
   Widget _buildDiningEntry(BuildContext context, int index){
-    if(_hasDiningSpecials) {
+    if (_hasDiningSpecials) {
       if (index == 0) {
-        return HorizontalDiningSpecials(specials: _diningSpecials,);
+        return Padding(padding: cardPadding, child:
+          HorizontalDiningSpecials(specials: _diningSpecials,)
+        );
+      }
+      else {
+        index -= 1;
       }
     }
 
-    int realIndex = _hasDiningSpecials ? index - 1 : index;
-    Dining? dining = _dinings![realIndex];
-
+    Dining? dining = ListUtils.entry(_dinings, index);
     return Padding(padding: cardPadding, child:
       DiningCard(dining, onTap: (_) => _onTapDining(dining))
     );
@@ -444,8 +447,8 @@ class _DiningHomePanelState extends State<DiningHomePanel> with NotificationsLis
 
   //Click listeners
 
-  void _onTapDining(Dining dining) {
-    Analytics().logSelect(target: dining.title);
+  void _onTapDining(Dining? dining) {
+    Analytics().logSelect(target: dining?.title);
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>
       ExploreDiningDetailPanel(dining: dining, analyticsFeature: widget.analyticsFeature,)
     ));

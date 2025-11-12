@@ -103,6 +103,7 @@ class Storage extends rokwire.Storage with NotificationsListener {
   }
 
   // Notifications
+
   static const String selectedPollTypeKey  = 'selected_poll_type';
   int? get selectedPollType => getIntWithName(selectedPollTypeKey);
   set selectedPollType(int? value) => setIntWithName(selectedPollTypeKey, value);
@@ -626,4 +627,9 @@ class Storage extends rokwire.Storage with NotificationsListener {
   static const String _gbvQuickExitPromptedKey = 'edu.illinois.rokwire.gbv.quick_exit_prompted';
   bool? get gbvQuickExitPrompted => getBoolWithName(_gbvQuickExitPromptedKey);
   set gbvQuickExitPrompted(bool? value) => setBoolWithName(_gbvQuickExitPromptedKey, value);
+
+  // Dining
+  static const String diningFilterKey = 'edu.illinois.rokwire.dining.filter';
+  String? get diningFilter => getStringWithName(diningFilterKey);
+  set diningFilter(String? value) => setStringWithName(diningFilterKey, value);
 }

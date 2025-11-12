@@ -772,7 +772,9 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
     return hasMenuData ? Container(color: Styles().colors.background, child:
       Column(children: <Widget>[
         Container(color: Styles().colors.background, height: 1,),
-        HorizontalDiningSpecials(locationId: widget.dining!.id, specials: _specials,),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+          HorizontalDiningSpecials(locationId: widget.dining!.id, specials: _specials,),
+        ),
         // Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
           // Row(children: <Widget>[
           //   Expanded(flex: 2, child:

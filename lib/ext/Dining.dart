@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -127,20 +128,9 @@ extension DiningUtils on Dining {
     return Localization().getStringEx("model.dining.schedule.label.closed_for_two_weeks", "Closed for next 2 weeks");
   }
 
-  bool  get isOpen {
-    if(diningSchedules != null && diningSchedules!.isNotEmpty){
-      for(DiningSchedule schedule in diningSchedules!){
-        if(schedule.isOpen){
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  bool get hasDiningSchedules {
-    return CollectionUtils.isNotEmpty(diningSchedules);
-  }
+  bool  get isOpen => diningSchedules?.firstWhereOrNull((schedule) => schedule.isOpen) != null;
+  bool get isStarred => (Auth2().prefs?.isFavorite(this) == true);
+  bool get hasDiningSchedules => CollectionUtils.isNotEmpty(diningSchedules);
 
   List<String> get displayScheduleDates{
     Set<String> displayScheduleDates = Set<String>();

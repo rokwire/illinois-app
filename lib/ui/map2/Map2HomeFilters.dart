@@ -362,13 +362,13 @@ class Map2DiningLocationsFilter extends Map2Filter {
 
   Map2DiningLocationsFilter._fromJson(Map<String, dynamic> json) :
     onlyOpened = JsonUtils.boolValue(json['onlyOpened']) ?? false,
-    paymentType = PaymentTypeImpl.fromJsonString(JsonUtils.stringValue(json['paymentType'])),
+    paymentType = PaymentTypeImpl.fromJson(JsonUtils.stringValue(json['paymentType'])),
     super._fromJson(json);
 
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
     'onlyOpened': onlyOpened,
-    'paymentType': paymentType?.toJsonString(),
+    'paymentType': paymentType?.toJson(),
     ...super.toJson(),
   };
 
