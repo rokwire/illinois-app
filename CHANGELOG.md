@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Added close filter button semantics hint in Maps2HomePanel [#5501](https://github.com/rokwire/illinois-app/issues/5501).
+
+## [7.3.24] - 2025-11-11
+### Added
 - Added favorite button in ExploreBuildingDetailPanel [#5517](https://github.com/rokwire/illinois-app/issues/5517).
 ### Changed
 - Added favorite button in LaundryRoomRibbonButton [#5352](https://github.com/rokwire/illinois-app/issues/5352).
