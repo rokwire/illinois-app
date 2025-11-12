@@ -653,7 +653,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
             Text(_selectedContentType?.displayTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
           ),
         ),
-      Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, container: true, child:
+      Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('panel.map2.button.close.hint', 'Double tap to clear ') + (_selectedContentType?.displayTitle ?? '') + " Filter", button: true, excludeSemantics: true, container: true, child:
         InkWell(onTap : _onTapClearContentType, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
