@@ -360,10 +360,17 @@ class Map2DiningLocationsFilter extends Map2Filter {
   factory Map2DiningLocationsFilter.defaultFilter() => Map2DiningLocationsFilter._();
   factory Map2DiningLocationsFilter.emptyFilter() => Map2DiningLocationsFilter._();
 
+  factory Map2DiningLocationsFilter.fromFilterParam(Map2FilterDiningsLocationsParam param) => Map2DiningLocationsFilter._(
+    searchText: param.searchText, paymentType: param.paymentType,
+    onlyOpened: param.openNow, starred: param.starred,
+    sortType: param.sortType, sortOrder: param.sortOrder,
+  );
+
   Map2DiningLocationsFilter._fromJson(Map<String, dynamic> json) :
     onlyOpened = JsonUtils.boolValue(json['onlyOpened']) ?? false,
     paymentType = PaymentTypeImpl.fromJson(JsonUtils.stringValue(json['paymentType'])),
     super._fromJson(json);
+
 
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{

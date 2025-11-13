@@ -15,10 +15,13 @@ import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
+import 'package:illinois/ui/map2/Map2HomeExts.dart';
+import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
@@ -486,18 +489,26 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
             ),
             IndexedSemantics(index: 2, child: Semantics( container: true, child:
               Map2PlainImageButton(imageKey: 'share-nodes',
-                label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
-                padding: EdgeInsets.only(left: 16, right: (8 + 2), top: 12, bottom: 12),
-                onTap: _onTapShareFilter
+                label: Localization().getStringEx('panel.dining2.button.share.title', 'Share'),
+                hint: Localization().getStringEx('panel.dining2.button.share.hint', 'Tap to share dining locations'),
+                padding: EdgeInsets.only(left: 6, right: 6, top: 12, bottom: 12),
+                onTap: _onTapShareFilter,
               )
             )),
-            IndexedSemantics(index: 1, child: Semantics( container: true, child:
+            IndexedSemantics(index: 3, child: Semantics( container: true, child:
+              Map2PlainImageButton(imageKey: 'location-outline',
+                label: Localization().getStringEx('panel.dining2.button.map.title', 'Map'),
+                hint: Localization().getStringEx('panel.dining2.button.map.hint', 'Show dining locations on map'),
+                padding: EdgeInsets.only(left: 6, right: 6, top: 12, bottom: 12),
+                onTap: _onTapMapFilter,
+              )
+            )),
+            IndexedSemantics(index: 4, child: Semantics( container: true, child:
               Map2PlainImageButton(imageKey: 'close',
-                  label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
-                  hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
-                padding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
-                onTap: _onTapClearFilter
+                  label: Localization().getStringEx('panel.dining2.button.clear.title', 'Clear'),
+                  hint: Localization().getStringEx('panel.dining2.button.clear.hint', 'Tap to clear current filters'),
+                padding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 12),
+                onTap: _onTapClearFilter,
               ),
             ))
           ]),
@@ -520,6 +531,11 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
       }
     });
     return descriptionList;
+  }
+
+  void _onTapMapFilter() {
+    Analytics().logSelect(target: "Filter: Map");
+    NotificationService().notify(Map2.notifySelect, _currentFilter.map2FilterParam);
   }
 
   void _onTapShareFilter() {
@@ -545,7 +561,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
     border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1),),
   );
 
-  static const EdgeInsetsGeometry _filterDescriptionBarPadding = EdgeInsets.only(left: 16);
+  static const EdgeInsetsGeometry _filterDescriptionBarPadding = EdgeInsets.only(left: 16, right: 8);
 
   TextStyle? get _filterDescriptionBoldStyle => Styles().textStyles.getTextStyle('widget.card.title.tiny.fat');
   TextStyle? get _filterDescriptionRegularStyle => Styles().textStyles.getTextStyle('widget.card.detail.small.regular');
@@ -788,6 +804,13 @@ class Dining2Filter {
     'sortOrder': sortOrder.toJson(),
   };
 
+  Map2FilterDiningsLocationsParam get map2FilterParam => Map2FilterDiningsLocationsParam(
+    paymentType: paymentType, searchText: searchText,
+    openNow: openNow, starred: starred,
+    sortType: sortType.map2SortType,
+    sortOrder: sortOrder.map2SortOrder,
+  );
+
   List<Dining>? build(List<Dining>? source, { Position? position }) {
     List<Dining>? result = _filter(source, searchLowerCaseText: searchText.toLowerCase());
     _sort(result, position: position);
@@ -878,6 +901,13 @@ extension Dining2SortTypeImpl on Dining2SortType {
     }
   }
 
+  Map2SortType get map2SortType {
+    switch (this) {
+      case Dining2SortType.alphabetical: return Map2SortType.alphabetical;
+      case Dining2SortType.proximity: return Map2SortType.proximity;
+    }
+  }
+
   String get displayTitle {
     switch (this) {
       case Dining2SortType.alphabetical: return Localization().getStringEx('model.map2.sort_type.alphabetical', 'Alphabetical');
@@ -916,6 +946,13 @@ extension Dining2SortOrderImpl on Dining2SortOrder {
     switch (this) {
       case Dining2SortOrder.ascending: return 'ascending';
       case Dining2SortOrder.descending: return 'descending';
+    }
+  }
+
+  Map2SortOrder get map2SortOrder {
+    switch (this) {
+      case Dining2SortOrder.ascending: return Map2SortOrder.ascending;
+      case Dining2SortOrder.descending: return Map2SortOrder.descending;
     }
   }
 

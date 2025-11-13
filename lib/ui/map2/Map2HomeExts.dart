@@ -4,6 +4,7 @@ import 'dart:collection';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
@@ -59,6 +60,8 @@ extension Map2ContentTypeImpl on Map2ContentType {
       return param;
     } else if (param is Map2FilterEvents2Param) {
       return Map2ContentType.Events2;
+    } else if (param is Map2FilterDiningsLocationsParam) {
+      return Map2ContentType.DiningLocations;
     } else if (param is Map2FilterBusStopsParam) {
       return Map2ContentType.BusStops;
     } else if (param is Map) {
@@ -377,6 +380,24 @@ extension Map2BuildingFilterAmenitiesToJson on LinkedHashMap<String, Set<String>
 class Map2FilterEvents2Param {
   final String searchText;
   Map2FilterEvents2Param([this.searchText = '']);
+}
+
+class Map2FilterDiningsLocationsParam {
+  final PaymentType? paymentType;
+  final String searchText;
+  final bool openNow;
+  final bool starred;
+  final Map2SortType sortType;
+  final Map2SortOrder sortOrder;
+
+  Map2FilterDiningsLocationsParam({
+    this.paymentType,
+    this.searchText = '',
+    this.openNow = false,
+    this.starred = false,
+    this.sortType = Map2SortType.alphabetical,
+    this.sortOrder = Map2SortOrder.ascending,
+  });
 }
 
 class Map2FilterBusStopsParam {

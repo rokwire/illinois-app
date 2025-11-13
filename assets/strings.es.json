@@ -450,6 +450,10 @@
     "panel.map2.button.visited.title":"Visited",
    	"panel.map2.button.visited.hint":"Tap to show only visited",
     "panel.map2.button.close.hint": "Double tap to clear {{content_type}} filter",
+    "panel.map2.button.share.title": "Share Locations",
+    "panel.map2.button.share.hint": "Tap to share current locations",
+    "panel.map2.button.clear.title": "Clear Filters",
+    "panel.map2.button.clear.hint": "Tap to clear current filters",
 
     "panel.map2.filter.buildings.text":"Buildings",
     "panel.map2.filter.student_courses.text":"Courses",
@@ -1276,6 +1280,12 @@
     "panel.dining2.filter.description.open_now.text":"Open Now",
     "panel.dining2.filter.description.filter.text":"Filter",
     "panel.dining2.filter.description.sort.text":"Sort",
+    "panel.dining2.button.map.title": "Map",
+    "panel.dining2.button.map.hint": "Show dining locations on map",
+    "panel.dining2.button.share.title": "Share",
+    "panel.dining2.button.share.hint": "Tap to share dining locations",
+    "panel.dining2.button.clear.title": "Clear",
+    "panel.dining2.button.clear.hint": "Tap to clear current filters",
 
     "panel.events_schedule.header.title": "Calendario de eventos",
     "panel.events_schedule.tab.title.saved": "Guardado",
