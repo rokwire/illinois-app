@@ -16,6 +16,7 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'package:web/web.dart' as web;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -292,6 +293,9 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       NativeCommunicator().dismissLaunchScreen().then((_) {
         _presentLaunchPopup();
       });
+      if (kIsWeb) {
+        _removeEnableAccessibilityButton();
+      }
     });
 
     super.initState();
@@ -590,6 +594,21 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       setState(() {
         _contentAlert = contentAlert;
       });
+    }
+  }
+
+  void _removeEnableAccessibilityButton() {
+    final nodeList = web.document.querySelectorAll(
+      'flt-semantics-placeholder[aria-label="Enable accessibility"]',
+    );
+    int nodesCount = nodeList.length;
+    if (nodesCount > 0) {
+      for (var i = 0; i < nodesCount; i++) {
+        final node = nodeList.item(i);
+        if (node != null && node.parentNode != null) {
+          node.parentNode!.removeChild(node);
+        }
+      }
     }
   }
 }

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added close filter button semantics hint in Maps2HomePanel [#5501](https://github.com/rokwire/illinois-app/issues/5501).
 ### Removed
 - WEB: Do not enable semantics by default - it breaks the text fields.
+- WEB: Remove hidden "Enable Accessibility" button [#5149](https://github.com/rokwire/illinois-app/issues/5149).
 
 ## [7.3.24] - 2025-11-11
 ### Added
