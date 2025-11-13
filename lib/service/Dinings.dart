@@ -18,12 +18,14 @@ import 'package:collection/collection.dart';
 import 'package:http/http.dart';
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:intl/intl.dart';
@@ -31,7 +33,10 @@ import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
 
 
-class Dinings with Service implements ContentItemCategoryClient{
+class Dinings with Service, NotificationsListener implements ContentItemCategoryClient {
+
+  static const String notifyLaunchDetail  = "edu.illinois.rokwire.dining2.launch.detail";
+  static const String notifyLaunchQuery  = "edu.illinois.rokwire.dining2.launch.query";
 
   static const String _diningContentCategory = "dining";
 
@@ -44,6 +49,9 @@ class Dinings with Service implements ContentItemCategoryClient{
   // Service
   @override
   void createService() {
+    NotificationService().subscribe(this,[
+      DeepLink.notifyUiUri,
+    ]);
     super.createService();
   }
 
@@ -54,7 +62,22 @@ class Dinings with Service implements ContentItemCategoryClient{
 
   @override
   void destroyService() {
+    NotificationService().unsubscribe(this);
     super.destroyService();
+  }
+
+  @override
+  Set<Service> get serviceDependsOn {
+    return { DeepLink() };
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == DeepLink.notifyUiUri) {
+      _onDeepLinkUri(JsonUtils.cast(param));
+    }
   }
 
   // ContentItemCategoryClient
@@ -144,6 +167,31 @@ class Dinings with Service implements ContentItemCategoryClient{
     return (feedbacksMap != null) ? feedbacksMap[diningId] : null;
   }
 
+  // Deep Links
+
+  static String get diningDetailRawUrl => '${DeepLink().appUrl}/dining2_detail'; //TBD: => dining_detail
+  static String eventDetailUrl(String diningId) => UrlUtils.buildWithQueryParameters(diningDetailRawUrl, <String, String>{
+    'dining_id' : diningId
+  });
+
+  static String get diningQueryRawUrl => '${DeepLink().appUrl}/dining2_query'; //TBD: => dining_query
+  static String diningQueryUrl(Map<String, String> params) => UrlUtils.buildWithQueryParameters(diningQueryRawUrl,
+    params
+  );
+
+  void _onDeepLinkUri(Uri? uri) {
+    if (uri != null) {
+      if (uri.matchDeepLinkUri(Uri.tryParse(diningDetailRawUrl))) {
+        try { NotificationService().notify(notifyLaunchDetail, uri.queryParameters.cast<String, dynamic>()); }
+        catch (e) { print(e.toString()); }
+      }
+      else if (uri.matchDeepLinkUri(Uri.tryParse(diningQueryRawUrl))) {
+        try { NotificationService().notify(notifyLaunchQuery, uri.queryParameters.cast<String, dynamic>()); }
+        catch (e) { print(e.toString()); }
+      }
+    }
+  }
+
   // Helpers
   void _sortExploresByLocation(List<Explore> explores, Position locationData) {
     explores.sort((Explore explore1, Explore explore2) {
@@ -172,9 +220,6 @@ class Dinings with Service implements ContentItemCategoryClient{
       return (explore1?.exploreTitle ?? "").compareTo(explore2?.exploreTitle ?? "");
     });
   }
-
-  /////////////////////////
-  // Enabled
 
 }
 

@@ -24,6 +24,7 @@ import 'package:illinois/ui/map2/Map2HomeExts.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -518,7 +519,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
 
   List<InlineSpan> get _filterDescriptionSpans {
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    LinkedHashMap<String, List<String>> descriptionMap = _currentFilter.description(_displayDinings);
+    LinkedHashMap<String, List<String>> descriptionMap = _currentFilter.description(dinings: _displayDinings);
     descriptionMap.forEach((String descriptionCategory, List<String> descriptionItems){
       if (descriptionList.isNotEmpty) {
         descriptionList.add(TextSpan(text: '; ', style: _filterDescriptionRegularStyle,),);
@@ -540,13 +541,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
 
   void _onTapShareFilter() {
     Analytics().logSelect(target: "Filter: Share");
-    /* TBD: Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromMap2DeepLinkParam(
-      param: Map2FilterDeepLinkParam(
-        contentType: contentType,
-        filter: _selectedFilterIfExists,
-      ),
-      analyticsFeature: widget.analyticsFeature,
-    ))); */
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromDiningFilterParam(_currentFilter, analyticsFeature: widget.analyticsFeature,)));
   }
 
   void _onTapClearFilter() {
@@ -786,6 +781,7 @@ class Dining2Filter {
       sortOrder: sortOrder ?? other.sortOrder,
   );
 
+  // Json Serialization
   static Dining2Filter? fromJson(Map<String, dynamic>? json) => (json != null) ? Dining2Filter(
     paymentType: PaymentTypeImpl.fromJson(JsonUtils.stringValue(json['paymentType'])),
     searchText: JsonUtils.stringValue(json['searchText']) ?? '',
@@ -796,13 +792,39 @@ class Dining2Filter {
   ) : null;
 
   toJson() => {
+    'paymentType': paymentType?.toJson(),
     'searchText': searchText,
     'openNow': openNow,
     'starred': starred,
-    'paymentType': paymentType?.toJson(),
     'sortType': sortType.toJson(),
     'sortOrder': sortOrder.toJson(),
   };
+
+  // Uri
+
+  factory Dining2Filter.fromUriParams(Map<String, String> uriParams) {
+    return Dining2Filter(
+      paymentType: PaymentTypeImpl.fromJson(uriParams['payment_type']),
+      searchText: uriParams['search_text'] ?? '',
+      openNow: JsonUtils.cast(JsonUtils.decode(uriParams['open_now'])) ?? false,
+      starred: JsonUtils.cast(JsonUtils.decode(uriParams['starred'])) ?? false,
+      sortType: Dining2SortTypeImpl.fromJson(uriParams['sort_type']) ?? defaultSortType,
+      sortOrder: Dining2SortOrderImpl.fromJson(uriParams['sort_order']) ?? defaultSortOrder,
+    );
+  }
+
+  Map<String, String> toUriParams() {
+    Map <String, String> uriParams = <String, String>{};
+    MapUtils.add(uriParams, 'payment_type', paymentType?.toJson());
+    MapUtils.add(uriParams, 'search_text', searchText.isNotEmpty ? searchText : null);
+    MapUtils.add(uriParams, 'open_now', openNow ? JsonUtils.encode(openNow) : null);
+    MapUtils.add(uriParams, 'starred', starred ? JsonUtils.encode(starred) : null);
+    MapUtils.add(uriParams, 'sort_type', (sortType != defaultSortType) ? sortType.toJson() : null);
+    MapUtils.add(uriParams, 'sort_order', (sortOrder != defaultSortOrder) ? sortOrder.toJson() : null);
+    return uriParams;
+  }
+
+  // Map2
 
   Map2FilterDiningsLocationsParam get map2FilterParam => Map2FilterDiningsLocationsParam(
     paymentType: paymentType, searchText: searchText,
@@ -810,6 +832,8 @@ class Dining2Filter {
     sortType: sortType.map2SortType,
     sortOrder: sortOrder.map2SortOrder,
   );
+
+  // Content
 
   List<Dining>? build(List<Dining>? source, { Position? position }) {
     List<Dining>? result = _filter(source, searchLowerCaseText: searchText.toLowerCase());
@@ -849,7 +873,23 @@ class Dining2Filter {
     });
   }
 
-  LinkedHashMap<String, List<String>> description(List<Dining>? dinings) {
+  String get descriptionText {
+    String descriptionText = '';
+    description().forEach((String descriptionCategory, List<String> descriptionItems){
+      if (descriptionText.isNotEmpty) {
+        descriptionText += '; ';
+      }
+      if (descriptionItems.isEmpty) {
+        descriptionText += descriptionCategory;
+      } else {
+        descriptionText += "$descriptionCategory: ";
+        descriptionText += descriptionItems.join(', ');
+      }
+    });
+    return descriptionText;
+  }
+
+  LinkedHashMap<String, List<String>> description({List<Dining>? dinings}) {
     LinkedHashMap<String, List<String>> descriptionMap = LinkedHashMap<String, List<String>>();
     if (searchText.isNotEmpty) {
       String searchKey = Localization().getStringEx('panel.dining2.filter.description.search.text', 'Search');
