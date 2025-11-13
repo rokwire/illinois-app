@@ -24,10 +24,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart' as uiuc;
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Safety.dart';
@@ -38,9 +40,11 @@ import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
+import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePlaceDetailPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
@@ -135,6 +139,8 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyEventDetail,
       FirebaseMessaging.notifyEventSelfCheckIn,
       FirebaseMessaging.notifyEventAttendeeSurveyInvitation,
+      FirebaseMessaging.notifyDiningLocationsNotification,
+      FirebaseMessaging.notifyDiningLocationDetail,
       FirebaseMessaging.notifyAthleticsGameStarted,
       FirebaseMessaging.notifyAthleticsNewsUpdated,
       FirebaseMessaging.notifyAthleticsTeam,
@@ -214,6 +220,9 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       Events2.notifyLaunchDetail,
       Events2.notifyLaunchQuery,
       Events2.notifySelfCheckIn,
+      Dinings.notifyLaunchDetail,
+      Dinings.notifyLaunchQuery,
+      Events2.notifyLaunchQuery,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
       Social.notifyMessageDetail,
@@ -292,6 +301,12 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
     else if (name == FirebaseMessaging.notifyEventAttendeeSurveyInvitation) {
       _onFirebaseEventAttendeeSurveyInvitation(param);
+    }
+    else if (name == FirebaseMessaging.notifyDiningLocationsNotification) {
+      _onFirebaseDiningLocations(param);
+    }
+    else if (name == FirebaseMessaging.notifyDiningLocationDetail) {
+      _onFirebaseDiningLocationDetail(param);
     }
     else if (name == FirebaseMessaging.notifyGameDetail) {
       _onFirebaseGameDetail(param);
@@ -529,6 +544,12 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
     else if (name == Events2.notifySelfCheckIn) {
       _onFirebaseEventSelfCheckIn(param);
+    }
+    else if (name == Dinings.notifyLaunchDetail) {
+      _onFirebaseDiningLocationDetail(param);
+    }
+    else if (name == Dinings.notifyLaunchQuery) {
+      _onFirebaseDiningLocationsQuery(param);
     }
     else if (name == Sports.notifyGameDetail) {
       _onFirebaseGameDetail(param);
@@ -1060,6 +1081,26 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
   
+  Future<void> _onFirebaseDiningLocations(Map<String, dynamic>? content) async {
+    if (context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Dining2HomePanel(filter: Dining2Filter.fromJson(content),)));
+    }
+  }
+
+  Future<void> _onFirebaseDiningLocationsQuery(Map<String, dynamic>? content) async {
+    Dining2Filter? diningFilter = (content != null) ? Dining2Filter.fromUriParams(content.cast()) : null;
+    if ((diningFilter != null) && context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Dining2HomePanel(filter: diningFilter,)));
+    }
+  }
+
+  Future<void> _onFirebaseDiningLocationDetail(Map<String, dynamic>? content) async {
+    String? diningId = (content != null) ? JsonUtils.stringValue(content['dining_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
+    if (StringUtils.isNotEmpty(diningId) && context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: Dining(id: diningId)))); // TBD: create better processing
+    }
+  }
+
   Future<void> _onFirebaseGameDetail(Map<String, dynamic>? content) async {
     String? gameId = (content != null) ? JsonUtils.stringValue(content['game_id']) : null;
     String? sport = (content != null) ? JsonUtils.stringValue(content['sport']) : null;

@@ -10,11 +10,13 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Building.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
+import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/map2/Map2HomeExts.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -89,6 +91,17 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
       saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 32, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.event_query.title', 'Share this event set'),
     description: Localization().getStringEx('panel.qr_code.event_query.description', 'Want to invite other Illinois app users to view this set of filtered events? Use one of the sharing options below.'),
+    analyticsFeature: analyticsFeature,
+  );
+
+  factory QrCodePanel.fromDiningFilterParam(Dining2Filter param, {Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
+    key: key,
+    deepLinkUrl: Dinings.diningQueryUrl(param.toUriParams()),
+      saveFileName: "dining ${DateFormat('yyyy-MM-dd HH.mm.ss').format(DateTime.now())}",
+      saveWatermarkText: param.descriptionText,
+      saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 32, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.qr_code.dining_query.title', 'Share Dining Locations'),
+    description: Localization().getStringEx('panel.qr_code.dining_query.description', 'Want to invite other Illinois app users to view this set of dining locations? Use one of the sharing options below.'),
     analyticsFeature: analyticsFeature,
   );
 

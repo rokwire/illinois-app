@@ -224,6 +224,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> with NotificationsListene
     }
     else if (explore is Dining) {
       return DiningCard(explore,
+        currentLocation: widget.currentLocation,
         onTap: (_) => _onTapListCard(explore),
       );
     }
