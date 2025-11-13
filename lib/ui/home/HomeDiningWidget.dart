@@ -27,10 +27,9 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
+import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/dining/DiningCard.dart';
-import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -117,45 +116,6 @@ class _HomeDiningWidgetState extends State<HomeDiningWidget> {
       });
     }
   }
-
-/*
-  @override String? get favoriteId => widget.favoriteId;
-  @override String? get title => HomeDiningWidget.title;
-  @override String? get emptyMessage => Localization().getStringEx("widget.home.dinings.text.empty.description", "Tap the ☆ on items in Dining for quick access here. (Your privacy level must be at least 2.)");
-
-  @override
-  Widget? widgetFromCode(String code) {
-    if (code == 'dinings_all') {
-      return HomeCommandButton(
-        title: Localization().getStringEx('widget.home.dinings.all.button.title', 'Residence Hall Dining'),
-        description: Localization().getStringEx('widget.home.dinings.all.button.description', 'Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.'),
-        favorite: HomeFavorite(code, category: widget.favoriteId),
-        onTap: _onTapDiningsAll,
-      );
-    }
-    else if (code == 'dinings_open') {
-      return HomeCommandButton(
-        title: Localization().getStringEx('widget.home.dinings.open.button.title', 'Residence Hall Dining Open Now'),
-        description: Localization().getStringEx('widget.home.dinings.open.button.description', 'Quick access to any locations that are currently open.'),
-        favorite: HomeFavorite(code, category: widget.favoriteId),
-        onTap: _onTapDiningsOpen,
-      );
-    }
-    else {
-      return null;
-    }
-  }
-  
-  void _onTapDiningsAll() {
-    Analytics().logSelect(target: "Residence Hall Dining", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel() ));
-  }
-
-  void _onTapDiningsOpen() {
-    Analytics().logSelect(target: "Residence Hall Dining Open Now", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel(initialFilter: DiningFilter(type: DiningFilterType.work_time, selectedIndexes: {1}))));
-  }
-*/
 }
 
 class _HomeDiningImplWidget extends StatefulWidget {
@@ -509,27 +469,30 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All / ${widget.contentType.diningTitle}", source: widget.runtimeType.toString());
     switch (widget.contentType) {
-      case FavoriteDiningContentType.my: _launchFavoriteLaundry(); break;
+      case FavoriteDiningContentType.my: _launchFavoriteDinings(); break;
       case FavoriteDiningContentType.all: _launchDinings(); break;
       case FavoriteDiningContentType.open: _launchOpenNowDinings(); break;
     }
   }
 
   void _launchDinings() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel(
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Dining2HomePanel(
       analyticsFeature: AnalyticsFeature.DiningAll
     ) ));;
   }
 
   void _launchOpenNowDinings() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningHomePanel(
-        initialFilter: DiningFilter(type: DiningFilterType.work_time, selectedIndexes: {1}),
-        analyticsFeature: AnalyticsFeature.DiningOpen
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Dining2HomePanel(
+      filter: Dining2Filter(openNow: true),
+      analyticsFeature: AnalyticsFeature.DiningOpen
     )));
   }
 
-  void _launchFavoriteLaundry() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Dining.favoriteKeyName]); } ));;
+  void _launchFavoriteDinings() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Dining2HomePanel(
+      filter: Dining2Filter(starred: true),
+      analyticsFeature: AnalyticsFeature.DiningFavorites
+    )));
   }
 }
 

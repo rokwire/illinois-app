@@ -43,7 +43,6 @@ import 'package:illinois/ui/events2/Event2SearchPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreBuildingsSearchPanel.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
-import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
 import 'package:illinois/ui/mtd/MTDStopSearchPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';

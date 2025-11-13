@@ -19,10 +19,10 @@ import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
+import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
@@ -219,7 +219,7 @@ extension FavoriteExt on Favorite {
       Event2HomePanel.present(context);
     }
     else if (lowerCaseKey == Dining.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) { return DiningHomePanel(); } ));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) { return Dining2HomePanel(); } ));
     }
     else if (lowerCaseKey == Game.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events)));
