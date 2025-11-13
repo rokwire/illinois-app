@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added close filter button semantics hint in Maps2HomePanel [#5501](https://github.com/rokwire/illinois-app/issues/5501).
+### Changed
+- Cleaned up Dining Home panel content and access to it [#5526](https://github.com/rokwire/illinois-app/issues/5526).
 
 ## [7.3.24] - 2025-11-11
 ### Added
