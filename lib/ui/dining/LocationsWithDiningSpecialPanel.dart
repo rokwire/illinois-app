@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Dinings.dart';
@@ -59,7 +60,7 @@ class _LocationsWithDiningSpecialPanelState extends State<LocationsWithDiningSpe
       _isLoading = true;
     });
 
-    Dinings().loadBackendDinings(widget.onlyOpened, null, widget.locationData).then((List<Dining>? list){
+    Dinings().loadFilteredDinings(onlyOpened: widget.onlyOpened, location: widget.locationData).then((List<Dining>? list){
       setState(() {
         _isLoading = false;
       });

@@ -228,14 +228,14 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
     List<PaymentType>? paymentTypes = _dining?.paymentTypes;
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
       details = [];
-      for (PaymentType? paymentType in paymentTypes) {
-        Widget? image = PaymentTypeHelper.paymentTypeIcon(paymentType);
+      for (PaymentType paymentType in paymentTypes) {
+        Widget? image = paymentType.iconWidget;
         if (image != null) {
           details.add(Padding(padding: EdgeInsets.only(right: 6), child:
             Row(children: <Widget>[
               image,
               _diningPaymentTypesExpanded ? Container(width: 5,) : Container(),
-              _diningPaymentTypesExpanded ? Text(PaymentTypeHelper.paymentTypeToDisplayString(paymentType)!) : Container()
+              _diningPaymentTypesExpanded ? Text(paymentType.displayTitle) : Container()
             ],)
           ));
         }
@@ -553,9 +553,9 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
     if (_dining?.hasDiningSchedules != true) {
       _isDiningLoading = true;
 
-      Dinings().loadBackendDinings(false, null, _locationData).then((List<Dining>? dinings) {
+      Dinings().loadFilteredDinings(location: _locationData).then((List<Dining>? dinings) {
         if (mounted && (dinings != null)) {
-          Dining? foundDining = Dining.entryInList(dinings, id: _dining?.id);
+          Dining? foundDining = DiningUtils.entryInList(dinings, id: _dining?.id);
           if (foundDining != null) {
             setState(() {
               _dining = foundDining;
@@ -772,7 +772,9 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
     return hasMenuData ? Container(color: Styles().colors.background, child:
       Column(children: <Widget>[
         Container(color: Styles().colors.background, height: 1,),
-        HorizontalDiningSpecials(locationId: widget.dining!.id, specials: _specials,),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+          HorizontalDiningSpecials(locationId: widget.dining!.id, specials: _specials,),
+        ),
         // Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
           // Row(children: <Widget>[
           //   Expanded(flex: 2, child:
@@ -887,14 +889,13 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
   List<Widget> _buildStations() {
     List<Widget> list = [];
     if(_productItems != null && _productItems!.isNotEmpty && _selectedScheduleIndex > -1) {
-      List<DiningProductItem> mealProducts = DiningUtils.getProductsForScheduleId(
+      List<DiningProductItem> mealProducts = DiningProductItemUtils.filter(
           _productItems,
           _schedules![_selectedScheduleIndex].scheduleId,
           Auth2().prefs?.includedFoodTypes,
           Auth2().prefs?.excludedFoodIngredients
       );
-      Map<String, List<DiningProductItem>> productStationMapping = DiningUtils
-          .getCategoryGroupedProducts(mealProducts);
+      Map<String, List<DiningProductItem>> productStationMapping = DiningProductItemUtils.productsByCategory(mealProducts);
 
       if (_productItems != null && _productItems!.isNotEmpty) {
         List<String> stations = productStationMapping.keys.toList();
@@ -997,24 +998,15 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
     });
   }
 
-  void _loadProductItems() {
+  void _loadProductItems() async {
     if (hasMenuData) {
       _isLoading = true;
-      DateTime? filterDate = _filterDates![_selectedDateFilterIndex];
-      Dinings().loadMenuItemsForDate(widget.dining!.id, filterDate).then((List<DiningProductItem>? items) {
-        Map<String, DiningProductItem> itemsMapping = <String, DiningProductItem>{};
-        items!.forEach((DiningProductItem item) {
-          if (item.itemID != null) {
-            itemsMapping[item.itemID!] = item;
-          }
-        });
-
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-            _productItems = items;
-          });
-        }
+      String? diningId = widget.dining?.id;
+      DateTime? filterDate = ListUtils.entry(_filterDates, _selectedDateFilterIndex);
+      List<DiningProductItem>? items = ((diningId != null) && (filterDate != null)) ? await Dinings().loadMenuItemsForDate(diningId: diningId, date: filterDate) : null;
+      setStateIfMounted(() {
+        _isLoading = false;
+        _productItems = items;
       });
     }
   }

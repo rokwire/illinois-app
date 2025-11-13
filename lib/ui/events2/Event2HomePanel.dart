@@ -779,7 +779,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
             Visibility(visible: _canShareFilters, child:
               Event2ImageCommandButton(Styles().images.getImage('share-nodes'),
                 label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
+                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hint', 'Tap to share current event set'),
                 contentPadding: EdgeInsets.only(left: 16, right: _canClearFilters ? (8 + 2) : 16, top: 12, bottom: 12),
                 onTap: _onShareFilters
               ),
@@ -787,7 +787,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
             Visibility(visible: _canClearFilters, child:
               Event2ImageCommandButton(Styles().images.getImage('close'), // size: 14
                 label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
+                hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hint', 'Tap to clear current filters'),
                 contentPadding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
                 onTap: _onClearFilters
               ),

@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Game.dart';
@@ -359,8 +360,8 @@ class _ExploreCardState extends State<ExploreCard> with NotificationsListener {
     List<PaymentType>? paymentTypes = dining?.paymentTypes;
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
       details = [];
-      for (PaymentType? paymentType in paymentTypes) {
-        Widget? image = PaymentTypeHelper.paymentTypeIcon(paymentType);
+      for (PaymentType paymentType in paymentTypes) {
+        Widget? image = paymentType.iconWidget;
         if (image != null) {
           details.add(Padding(padding: EdgeInsets.only(right: 6), child:image) );
         }

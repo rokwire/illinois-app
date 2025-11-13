@@ -35,7 +35,6 @@ import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
-import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
 import 'package:illinois/ui/map2/Map2BasePanel.dart';
@@ -607,6 +606,9 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
         searchText: param.searchText
       );
     }
+    else if (param is Map2FilterDiningsLocationsParam) {
+      _filters[Map2ContentType.DiningLocations] = Map2DiningLocationsFilter.fromFilterParam(param);
+    }
     else if (param is Map2FilterBusStopsParam) {
       _filters[Map2ContentType.BusStops] = Map2BusStopsFilter.defaultFilter(
         searchText: param.searchText,
@@ -965,7 +967,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   }
 
   Future<List<Explore>?> _loadDiningLocations() async =>
-    Dinings().loadBackendDinings(false, null, null);
+    Dinings().loadDinings();
 
   Future<List<Explore>?> _loadEvents2() async =>
     Events2().loadEventsList(await _event2QueryParam());
@@ -1178,8 +1180,8 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
             ),
             IndexedSemantics(index: 2, child: Semantics( container: true, child:
               Map2PlainImageButton(imageKey: 'share-nodes',
-                label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
+                label: Localization().getStringEx('panel.map2.button.share.title"', 'Share Locations'),
+                hint: Localization().getStringEx('panel.map2.button.share.hint', 'Tap to share current locations'),
                 padding: EdgeInsets.only(left: 16, right: (8 + 2), top: 12, bottom: 12),
                 onTap: _onTapShareFilter
               )
@@ -1187,7 +1189,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
             IndexedSemantics(index: 1, child: Semantics( container: true, child:
               Map2PlainImageButton(imageKey: 'close',
                   label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
-                  hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
+                  hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hint', 'Tap to clear current filters'),
                 padding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
                 onTap: _onTapClearFilter
               ),
