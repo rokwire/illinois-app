@@ -1,5 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Position.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -75,6 +78,10 @@ extension PaymentTypeUtils on PaymentType {
 
 extension DiningUtils on Dining {
 
+  bool  get isOpen => diningSchedules?.firstWhereOrNull((schedule) => schedule.isOpen) != null;
+  bool get isStarred => (Auth2().prefs?.isFavorite(this) == true);
+  bool get hasDiningSchedules => CollectionUtils.isNotEmpty(diningSchedules);
+
   String? get displayWorkTime {
     if (diningSchedules != null && diningSchedules!.isNotEmpty) {
       bool? useDeviceLocalTime = Storage().useDeviceLocalTimeZone;
@@ -127,10 +134,6 @@ extension DiningUtils on Dining {
     }
     return Localization().getStringEx("model.dining.schedule.label.closed_for_two_weeks", "Closed for next 2 weeks");
   }
-
-  bool  get isOpen => diningSchedules?.firstWhereOrNull((schedule) => schedule.isOpen) != null;
-  bool get isStarred => (Auth2().prefs?.isFavorite(this) == true);
-  bool get hasDiningSchedules => CollectionUtils.isNotEmpty(diningSchedules);
 
   List<String> get displayScheduleDates{
     Set<String> displayScheduleDates = Set<String>();
@@ -202,6 +205,26 @@ extension DiningUtils on Dining {
 
   String? _dateToLongDisplayDate(DateTime? dateUtc) {
     return AppDateTime().formatDateTime(dateUtc, format: 'EEEE, MMM d');
+  }
+
+  List<String> locationDetails({ Position? currentLocation }) {
+    List<String> details = <String>[];
+
+    if (address?.isNotEmpty == true) {
+      details.add(address ?? '');
+    }
+
+    String? dispayCoordinates = details.isEmpty ? exploreLocation?.displayCoordinates : null;
+    if (dispayCoordinates?.isNotEmpty == true) {
+      details.add(dispayCoordinates ?? '');
+    }
+
+    String? dispayDistance = StringUtils.ensureEmpty(currentLocation?.displayDistance(exploreLocation));
+    if (dispayDistance?.isNotEmpty == true) {
+      details.add(dispayDistance ?? '');
+    }
+
+    return details;
   }
 
   static Dining? entryInList(List<Dining>? dinings, { String? id}) {

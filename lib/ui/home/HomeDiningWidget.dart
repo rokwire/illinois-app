@@ -267,44 +267,44 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
   Widget get _diningsContentWidget {
       Widget? contentWidget;
       List<Dining>? displayDinings = _buildDisplayDinings();
-      int visibleCount = displayDinings?.length ?? 0;
+      if (displayDinings != null) {
+        if (1 < displayDinings.length) {
 
-      if (1 < visibleCount) {
+          List<Widget> pages = <Widget>[];
+          for (Dining dining in displayDinings) {
+            pages.add(Padding(
+                key: _contentKeys[dining.id ?? ''] ??= GlobalKey(),
+                padding: HomeCard.defaultPageMargin,
+                child: DiningCard(dining, onTap: (context) => _onTapDining(dining))
+            ));
+          }
 
-        List<Widget> pages = <Widget>[];
-        for (Dining dining in displayDinings!) {
-          pages.add(Padding(
-              key: _contentKeys[dining.id ?? ''] ??= GlobalKey(),
-              padding: HomeCard.defaultPageMargin,
-              child: DiningCard(dining, onTap: (context) => _onTapDining(dining))
-          ));
+          if (_pageController == null) {
+            double screenWidth = MediaQuery.of(context).size.width;
+            double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
+            _pageController = PageController(viewportFraction: pageViewport);
+          }
+
+          contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+            AccessiblePageView(
+              key: _pageViewKey,
+              controller: _pageController,
+              estimatedPageSize: _pageHeight,
+              allowImplicitScrolling: true,
+              children: pages,
+            ),
+          );
         }
-
-        if (_pageController == null) {
-          double screenWidth = MediaQuery.of(context).size.width;
-          double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
-          _pageController = PageController(viewportFraction: pageViewport);
+        else if (displayDinings.length == 1) {
+          contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
+            DiningCard(displayDinings.first, onTap: (context) => _onTapDining(displayDinings.first))
+          );
         }
-
-        contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-          AccessiblePageView(
-            key: _pageViewKey,
-            controller: _pageController,
-            estimatedPageSize: _pageHeight,
-            allowImplicitScrolling: true,
-            children: pages,
-          ),
-        );
-      }
-      else if (visibleCount == 1) {
-        contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
-          DiningCard(displayDinings?.first, onTap: (context) => _onTapDining(displayDinings!.first))
-        );
       }
 
       return (contentWidget != null) ? Column(children: <Widget>[
         contentWidget,
-        AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
+        AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => displayDinings?.length ?? 0, centerWidget:
           HomeBrowseLinkButton(
             title: Localization().getStringEx('widget.home.laundry.button.all.title', 'View All'),
             hint: Localization().getStringEx('widget.home.laundry.button.all.hint', 'Tap to view all laundries'),

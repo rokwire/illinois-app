@@ -322,9 +322,9 @@ class _DiningHomePanelState extends State<DiningHomePanel> with NotificationsLis
     }
 
     Dining? dining = ListUtils.entry(_dinings, index);
-    return Padding(padding: cardPadding, child:
+    return (dining != null) ? Padding(padding: cardPadding, child:
       DiningCard(dining, onTap: (_) => _onTapDining(dining))
-    );
+    ) : Container();
   }
 
   Widget _buildLoading() {

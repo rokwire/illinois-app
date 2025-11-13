@@ -80,7 +80,6 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
     _currentFilter = widget.filter ?? _storedFilter ?? Dining2Filter();
 
     _initDiningData();
-    _updateLocationServicesStatus();
 
     super.initState();
   }
@@ -576,9 +575,12 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
     }
     Dining? dining = ListUtils.entry(_displayDinings, index);
     EdgeInsets cardPadding = ((index + 1) < _displayDiningsCount) ? _cardPadding : _lastCardPadding;
-    return Padding(padding: cardPadding, child:
-      DiningCard(dining, onTap: (_) => _onTapDining(dining))
-    );
+    return (dining != null) ? Padding(padding: cardPadding, child:
+      DiningCard(dining,
+        currentLocation: _currentLocation,
+        onTap: (_) => _onTapDining(dining)
+      )
+    ) : Container();
   }
 
   void _onTapDining(Dining? dining) {
@@ -641,7 +643,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
   void _onFiltersChanged() {
     _storeCurrentFilter();
     setStateIfMounted((){
-      _displayDinings = _currentFilter.build(_dinings);
+      _displayDinings = _currentFilter.build(_dinings, position: _currentLocation);
     });
   }
 
@@ -655,6 +657,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
       List<dynamic> results = await Future.wait(<Future<dynamic>>[
         Dinings().loadDinings(),
         Dinings().loadDiningSpecials(),
+        _updateLocationServicesStatus(updateDisplayDinings: false),
       ]);
       if (mounted) {
         List<Dining>? dinings = JsonUtils.cast(ListUtils.entry<dynamic>(results, 0));
@@ -662,7 +665,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
         setState(() {
           _dinings = dinings;
           _diningSpecials = diningSpecials;
-          _displayDinings = _currentFilter.build(dinings);
+          _displayDinings = _currentFilter.build(dinings, position: _currentLocation);
           _diningsProgress = null;
         });
       }
@@ -677,6 +680,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
       List<dynamic> results = await Future.wait(<Future<dynamic>>[
         Dinings().loadDinings(),
         Dinings().loadDiningSpecials(),
+        _updateLocationServicesStatus(updateDisplayDinings: false),
       ]);
       if (mounted && (_diningsProgress == Dining2Progress.update)) {
         List<Dining>? dinings = JsonUtils.cast(ListUtils.entry<dynamic>(results, 0));
@@ -684,7 +688,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
         setState(() {
           if (dinings != null) {
             _dinings = dinings;
-            _displayDinings = _currentFilter.build(dinings);
+            _displayDinings = _currentFilter.build(dinings, position: _currentLocation);
           }
           if (diningSpecials != null) {
             _diningSpecials = diningSpecials;
@@ -697,23 +701,30 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
 
   // Locaction Services
 
-  Future<void> _updateLocationServicesStatus({ LocationServicesStatus? status }) async {
+  Future<void> _updateLocationServicesStatus({ LocationServicesStatus? status, bool forcePositionUpdate = false, bool updateDisplayDinings = true }) async {
     status ??= FlexUI().isLocationServicesAvailable ? await LocationServices().status : LocationServicesStatus.serviceDisabled;
-    if ((status != null) && (status != _locationServicesStatus) && mounted) {
-      setState(() {
-        _locationServicesStatus = status;
-      });
-
-      await _onLocationServicesStatusChanged();
+    if (mounted) {
+      if ((status != null) && (status != _locationServicesStatus)) {
+        setState(() {
+          _locationServicesStatus = status;
+        });
+        await _updateLocationPosition(updateDisplayDinings: true);
+      }
+      else if (forcePositionUpdate) {
+        await _updateLocationPosition(updateDisplayDinings: true);
+      }
     }
   }
 
-  Future<void> _onLocationServicesStatusChanged() async {
+  Future<void> _updateLocationPosition({ bool updateDisplayDinings = true }) async {
     if (_locationServicesStatus == LocationServicesStatus.permissionAllowed) {
       Position? currentLocation = await LocationServices().location;
       if ((currentLocation != null) && (currentLocation != _currentLocation) && mounted) {
         setState(() {
           _currentLocation = currentLocation;
+          if ((_sortType == Dining2SortType.proximity) && updateDisplayDinings) {
+            _displayDinings = _currentFilter.build(_dinings, position: _currentLocation);
+          }
         });
       }
     }
@@ -806,10 +817,10 @@ class Dining2Filter {
   void _sortByProximity(List<Dining>? content, { Position? position }) {
     content?.sort((Dining dining1, Dining dining2) {
       LatLng? location1 = dining1.exploreLocation?.exploreLocationMapCoordinate;
-      double? distance1 = ((location1 != null) && (position != null)) ? Geolocator.distanceBetween(location1.latitude, location1.longitude, position.latitude, position.longitude) : 0.0;
+      double distance1 = ((location1 != null) && (position != null)) ? Geolocator.distanceBetween(location1.latitude, location1.longitude, position.latitude, position.longitude) : 0.0;
 
       LatLng? location2 = dining2.exploreLocation?.exploreLocationMapCoordinate;
-      double? distance2 = ((location2 != null) && (position != null)) ? Geolocator.distanceBetween(location2.latitude, location2.longitude, position.latitude, position.longitude) : 0.0;
+      double distance2 = ((location2 != null) && (position != null)) ? Geolocator.distanceBetween(location2.latitude, location2.longitude, position.latitude, position.longitude) : 0.0;
 
       return (sortOrder == Dining2SortOrder.descending) ? distance2.compareTo(distance1) : distance1.compareTo(distance2); // SortUtils.compare(distance1, distance2);
     });

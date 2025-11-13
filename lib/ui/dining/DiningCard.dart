@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -32,10 +33,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class DiningCard extends StatefulWidget {
-  final Dining? dining;
+  final Dining dining;
+  final Position? currentLocation;
   final void Function(BuildContext context)? onTap;
 
-  DiningCard(this.dining, {super.key, this.onTap, });
+  DiningCard(this.dining, {super.key, this.currentLocation, this.onTap, });
 
   @override
   _DiningCardState createState() => _DiningCardState();
@@ -50,8 +52,6 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
   );*/
   //static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
   static const EdgeInsets _sectionPadding = EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16);
-  static const EdgeInsets _detailPadding = EdgeInsets.only(bottom: 8, left: 16, right: 16);
-  static const EdgeInsets _iconPadding = EdgeInsets.only(right: 6);
 
   @override
   void initState() {
@@ -70,7 +70,7 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
 
   String get semanticLabel {
     Explore? explore = widget.dining;
-    String title = widget.dining?.title ?? "";
+    String title = widget.dining.title ?? "";
     String workTime = ((explore is Dining) ? explore.displayWorkTime : null) ?? "";
     return "$title, $workTime";
   }
@@ -106,7 +106,7 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
   }
 
   Widget get _buildImage {
-    String? imageUrl = widget.dining?.imageUrl;
+    String? imageUrl = widget.dining.imageUrl;
     return Visibility(visible: StringUtils.isNotEmpty(imageUrl), child:
       Container(decoration: _imageHeadingDecoration, child:
         AspectRatio(aspectRatio: 2.5, child:
@@ -121,9 +121,9 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
   );
 
   Widget _exploreTop() {
-    bool isFavorite = widget.dining?.isFavorite ?? false;
-    bool starVisible = Auth2().canFavorite && (widget.dining is Favorite);
-    String leftLabel = widget.dining!.title ?? "";
+    bool isFavorite = widget.dining.isFavorite;
+    bool starVisible = Auth2().canFavorite;
+    String leftLabel = widget.dining.title ?? "";
     TextStyle? leftLabelStyle = Styles().textStyles.getTextStyle('widget.title.medium.fat') ;
 
     return Padding(padding: _sectionPadding, child:
@@ -177,44 +177,56 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
       details.add(workTime);
     }
 
-    return (0 < details.length)
-        ? Padding(
-        padding: EdgeInsets.only(bottom: 8),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: details))
-        : Container();
+    Widget? locationDetail = _diningLocationDetail();
+    if (locationDetail != null) {
+      details.add(locationDetail);
+    }
+
+    return (0 < details.length) ? Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: details)
+    ) : Container();
   }
 
   Widget? _diningWorkTimeDetail() {
-    Dining? dining = (widget.dining is Dining) ? (widget.dining as Dining) : null;
-    String? displayTime = dining?.displayWorkTime;
-    if ((displayTime != null) && displayTime.isNotEmpty) {
-      return Semantics(label: displayTime, child:Padding(
-        padding: _detailPadding,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Styles().images.getImage('time', excludeFromSemantics: true) ?? Container(),
-            Padding(
-              padding: _iconPadding,
-            ),
-            Expanded(
-              child: Text(displayTime,
-                  style: Styles().textStyles.getTextStyle('common.body')),
-            ),
-          ],
-        ),
-      ));
-    }
-    return null;
+    String? displayTime = widget.dining.displayWorkTime;
+    return ((displayTime != null) && displayTime.isNotEmpty) ? _buildDetailWidget('time', <String>[displayTime]) : null;
   }
+
+  Widget? _diningLocationDetail() {
+    List<String> locationDetails = widget.dining.locationDetails(currentLocation: widget.currentLocation);
+    return locationDetails.isNotEmpty ? _buildDetailWidget('location', locationDetails) : null;
+  }
+
+  Widget? _buildDetailWidget(String iconKey, Iterable<String> texts, {
+    EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
+    EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
+  }) {
+    List<Widget> contentRows = <Widget>[];
+    Widget? iconWidget = Styles().images.getImage(iconKey, excludeFromSemantics: true);
+    for (String text in texts) {
+      contentRows.add(Semantics(label: text, child: Row(children: <Widget>[
+        if (iconWidget != null)
+          Padding(padding: iconPadding, child:
+            Opacity(opacity: contentRows.isEmpty ? 1 : 0, child:
+              iconWidget,
+            )
+          ),
+        Expanded(child:
+          Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('common.body'),)
+        )
+      ])));
+    }
+    return contentRows.isNotEmpty ? Padding(padding: contentPadding, child:
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children:
+        contentRows
+      )
+    ) : null;
+  }
+
 
   Widget _diningPaymentTypes() {
     List<Widget>? details;
-    Dining? dining = (widget.dining is Dining) ? (widget.dining as Dining) : null;
-    List<PaymentType>? paymentTypes = dining?.paymentTypes;
+    List<PaymentType>? paymentTypes = widget.dining.paymentTypes;
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
       details = [];
       for (PaymentType paymentType in paymentTypes) {
@@ -253,8 +265,8 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
   }
 
   void _onTapDiningCardStar() {
-    Analytics().logSelect(target: "Favorite: ${widget.dining?.title}");
-    widget.dining?.toggleFavorite();
+    Analytics().logSelect(target: "Favorite: ${widget.dining.title}");
+    widget.dining.toggleFavorite();
   }
 
   // void _onTapCardImage(String? url) {
