@@ -16,6 +16,7 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'package:flutter/semantics.dart';
 import 'package:web/web.dart' as web;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -206,6 +207,10 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     await WebCacheImageService().init();
 
     runApp(App(initializeError: serviceError));
+
+    if (kIsWeb) {
+      SemanticsBinding.instance.ensureSemantics();
+    }
   }, FirebaseCrashlytics().handleZoneError);
 }
 
