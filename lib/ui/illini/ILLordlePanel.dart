@@ -15,6 +15,16 @@ class _ILLordlePanelState extends State<ILLordlePanel> {
   //bool _progress = false;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => Scaffold(
     appBar: HeaderBar(title: Localization().getStringEx('panel.illordle.header.title', 'ILLordle'),),
     body: _scaffoldContent,
@@ -22,7 +32,8 @@ class _ILLordlePanelState extends State<ILLordlePanel> {
   );
 
   Widget get _scaffoldContent =>
-    Padding (padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+    SingleChildScrollView(child:
+      Padding (padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
         Column(children: [
           Row(children: [
             Expanded(flex: 1, child: Container()),
@@ -36,7 +47,8 @@ class _ILLordlePanelState extends State<ILLordlePanel> {
             ILLordleWidget(),
           )
         ],)
-    );
+    )
+  );
 
 }
 
@@ -52,8 +64,33 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
   static const int wordLength = 5;
   static const int numberOfWords = 5;
 
+  final TextEditingController _textController = TextEditingController();
+  final FocusNode _textFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    _textController.addListener(_textListener);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _textController.removeListener(_textListener);
+    _textController.dispose();
+    _textFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) =>
+    Stack(children: [
+      Positioned.fill(child: _textFieldWidget),
+      GestureDetector(onTap: _onTapWordle, child:
+        _wordleWidget,
+      )
+    ],);
+
+  Widget get _wordleWidget =>
     AspectRatio(aspectRatio: 1, child:
       _buildWords()
     );
@@ -99,5 +136,52 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
   int get _gutterFlex => (gutter * gutterPrec).toInt();
   int get _cellFlex => ((1 - gutter) * gutterPrec).toInt();
 
+  // Keyboard Listener
+
+  Widget get _textFieldWidget => TextField(
+    style: Styles().textStyles.getTextStyle('widget.heading.extra_small'),
+    decoration: InputDecoration(border: InputBorder.none),
+    controller: _textController,
+    focusNode: _textFocusNode,
+    keyboardType: TextInputType.text,
+    textInputAction: TextInputAction.go,
+    textCapitalization: TextCapitalization.none,
+    maxLines: null,
+    expands: true,
+    showCursor: false,
+    autocorrect: false,
+    autofocus: true,
+    onSubmitted: _onTextSubmit,
+  );
+
+  void _textListener() {
+    if (_textController.text.isNotEmpty) {
+      _onKeyCharacter(_textController.text.substring(0, 1).toUpperCase());
+      _textController.text = '';
+    }
+  }
+
+  void _onTextSubmit(String text) {
+    _onSubmitWord();
+  }
+
+  void _onTapWordle() {
+    if (_textFocusNode.hasFocus) {
+      _textFocusNode.unfocus();
+    }
+    else {
+      _textFocusNode.requestFocus();
+    }
+  }
+
+  void _onKeyCharacter(String character) {
+    debugPrint('Key: $character');
+  }
+
+  void _onSubmitWord() {
+    debugPrint('Submit');
+    _textFocusNode.requestFocus(); // show again
+  }
 }
+
 
