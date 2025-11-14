@@ -1549,15 +1549,14 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         String itemTitle = term.name ?? '';
         TextStyle? itemTextStyle = (term.id == displayTermId) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
         Widget? itemIcon = (term.id == displayTermId) ? Styles().images.getImage('check', size: 18, color: Styles().colors.fillColorPrimary) : null;
-        items.add(AccessibleDropDownMenuItem<StudentCourseTerm>(key: ObjectKey(term), value: term,
-          child: Semantics(label: itemTitle, button: true, container: true, inMutuallyExclusiveGroup: true,
+        items.add(AccessibleDropDownMenuItem<StudentCourseTerm>(key: ObjectKey(term), value: term, semanticsLabel: itemTitle,
             child: Row(children: [
               Expanded(child:
                 Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
               ),
               if (itemIcon != null)
                 Padding(padding: EdgeInsets.only(left: 4), child: itemIcon,) ,
-            ],) )));
+            ],) ));
       }
     }
     return items;
@@ -1644,15 +1643,14 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       String itemTitle = paymentType.displayTitle;
       TextStyle? itemTextStyle = (paymentType == _selectedPaymentType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
       Widget? itemIcon = (paymentType == _selectedPaymentType) ? Styles().images.getImage('check', size: 18, color: Styles().colors.fillColorPrimary) : null;
-      items.add(AccessibleDropDownMenuItem<PaymentType>(key: ObjectKey(paymentType), value: paymentType,
-        child: Semantics(label: itemTitle, button: true, container: true, inMutuallyExclusiveGroup: true,
+      items.add(AccessibleDropDownMenuItem<PaymentType>(key: ObjectKey(paymentType), value: paymentType, semanticsLabel: itemTitle,
           child: Row(children: [
             Expanded(child:
               Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
             ),
             if (itemIcon != null)
               Padding(padding: EdgeInsets.only(left: 4), child: itemIcon,) ,
-          ],) )));
+          ])));
     }
     return items;
   }
@@ -1822,15 +1820,14 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
             bool isSortOrderSelected = sortType.isDropdownListEntrySelected(sortOrder) ?? (_selectedSortOrder == sortOrder);
             TextStyle? itemTextStyle = ((_selectedSortType == sortType) && isSortOrderSelected) ?
               _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
-            items.add(AccessibleDropDownMenuItem<Pair<Map2SortType, Map2SortOrder?>>(key: ObjectKey(Pair(sortType, sortOrder)), value: Pair(sortType, sortOrder), child:
-              Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true, child:
+            items.add(AccessibleDropDownMenuItem<Pair<Map2SortType, Map2SortOrder?>>(key: ObjectKey(Pair(sortType, sortOrder)), value: Pair(sortType, sortOrder), semanticsLabel: sortType.displayTitle, child:
                 Row(children: [
                   Expanded(child:
                     Text(itemText, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,)
                   ),
                 ],)
               )
-            ));
+            );
           }
         }
       }
