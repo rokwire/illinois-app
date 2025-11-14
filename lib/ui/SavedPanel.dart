@@ -315,7 +315,7 @@ class _SavedPanelState extends State<SavedPanel> with NotificationsListener {
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events2().loadEventsByIds(eventIds: favoriteIds?.toList()), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteDinings(LinkedHashSet<String>? favoriteIds) async =>
-    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Dinings().loadBackendDinings(false, null, null), favoriteIds) : null;
+    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Dinings().loadDinings(), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteGames(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Sports().loadGames(), favoriteIds) : null;

@@ -704,7 +704,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
 
   Widget get _websiteSection => _textFieldSection(_ProfileField.website,
     headingTitle: Localization().getStringEx('panel.profile.info.title.website.text', 'Website URL'),
-    headingHint: Localization().getStringEx('panel.profile.info.title.website.hinr', '(Ex: Linkedin)'),
+    headingHint: Localization().getStringEx('panel.profile.info.title.website.hint', '(Ex: Linkedin)'),
     textInputType: TextInputType.url,
     available: _showPrivacyControls,
   );

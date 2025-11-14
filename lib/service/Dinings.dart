@@ -14,36 +14,32 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-import 'package:flutter/foundation.dart';
+import 'package:collection/collection.dart';
+import 'package:http/http.dart';
+import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/service/DeepLink.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:intl/intl.dart';
 
 import 'package:geolocator/geolocator.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 
 
-class Dinings with Service implements ContentItemCategoryClient{
+class Dinings with Service, NotificationsListener implements ContentItemCategoryClient {
 
-  static final String _olddiningsFileName = 'dinings_schedules.json';
+  static const String notifyLaunchDetail  = "edu.illinois.rokwire.dining2.launch.detail";
+  static const String notifyLaunchQuery  = "edu.illinois.rokwire.dining2.launch.query";
 
   static const String _diningContentCategory = "dining";
-
-  String? _diningLocationsResponse;
-  DateTime? _lastDiningLocationsRequestTime;
-
-  String? _diningSpecialsResponse;
-  DateTime? _lastDiningSpecialsRequestTime;
 
   static final Dinings _instance = Dinings._internal();
 
@@ -54,8 +50,10 @@ class Dinings with Service implements ContentItemCategoryClient{
   // Service
   @override
   void createService() {
+    NotificationService().subscribe(this,[
+      DeepLink.notifyUiUri,
+    ]);
     super.createService();
-    _cleanDinigsCacheFile();
   }
 
   @override
@@ -65,7 +63,22 @@ class Dinings with Service implements ContentItemCategoryClient{
 
   @override
   void destroyService() {
+    NotificationService().unsubscribe(this);
     super.destroyService();
+  }
+
+  @override
+  Set<Service> get serviceDependsOn {
+    return { DeepLink() };
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == DeepLink.notifyUiUri) {
+      _onDeepLinkUri(JsonUtils.cast(param));
+    }
   }
 
   // ContentItemCategoryClient
@@ -75,204 +88,109 @@ class Dinings with Service implements ContentItemCategoryClient{
 
   // Implementation
 
-  Future<List<Dining>?> loadBackendDinings(bool onlyOpened, PaymentType? paymentType, Position? locationData) async {
-    if(_enabled) {
-      List<Dining> dinings = <Dining>[];
+  bool get _enabled => StringUtils.isNotEmpty(Config().illiniCashUrl);
 
-      // 1.2 Load Dining locations only if need
-      if (!_useCachedDiningLoacations) {
-        // 1.3 Load dining locations from server
-        _diningLocationsResponse = await _loadDiningsFromServer();
-        _lastDiningLocationsRequestTime = DateTime.now();
+  Future<List<Dining>?> loadDinings() async {
+    String? diningsUrl = _enabled ? "${Config().illiniCashUrl}/LocationSchedules" : null;
+    Response? response = (diningsUrl != null) ? await Network().get(diningsUrl, auth: Auth2Csrf()) : null;
+    Map<String, dynamic>? responseJson = (response?.succeeded == true) ? JsonUtils.decodeMap(response?.body) : null;
+    List<dynamic>? diningOptionsJsonList = (responseJson != null) ? JsonUtils.listValue(responseJson['DiningOptions']) : null;
+    return Dining.listFromJson(diningOptionsJsonList);
+  }
+
+  Future<List<Dining>?> loadFilteredDinings({bool? onlyOpened, PaymentType? paymentType, Position? location}) async {
+    List<Dining>? dinings = _enabled ? await loadDinings() : null;
+    if (dinings != null) {
+
+      if (paymentType != null) {
+        dinings = List.from(dinings.where((Dining? dining) => (dining?.paymentTypes?.contains(paymentType) == true)));
       }
 
-      Map<String, dynamic>? jsonData = JsonUtils.decode(_diningLocationsResponse);
-      if (jsonData != null) {
-        // 1.2.2 Load Menu Schedules
-        List<dynamic>? diningLocations = jsonData["DiningOptions"];
-        if (diningLocations != null && diningLocations.isNotEmpty) {
-          for (dynamic diningLocation in diningLocations) {
-            ListUtils.add(dinings, Dining.fromJson(JsonUtils.mapValue(diningLocation)));
-          }
-        }
+      if (onlyOpened == true) {
+        dinings = List.from(dinings.where((Dining? dining) => (dining?.isOpen == true)));
       }
 
       // 1.3 Sort
-      if (locationData != null) {
-        _sortExploresByLocation(dinings, locationData);
+      if (location != null) {
+        _sortExploresByLocation(dinings, location);
       }
       else {
         _sortExploresByName(dinings);
       }
 
-      // Filter by payment type
-      List<Dining>? diningsLimited = paymentType != null ? dinings.where((Dining? dining){
-        return (dining?.paymentTypes?.contains(paymentType) ?? false);
-      }).toList() : dinings;
-
-      //Filter only opened
-      return onlyOpened ? diningsLimited.where((Dining? dining) => dining!.isOpen).toList() : diningsLimited;
+      return dinings;
     }
-    return null;
+    else {
+      return null;
+    }
   }
 
   Future<Dining?> loadDining(String diningOptionId) async {
-    List<Dining>? dinings = await loadBackendDinings(false, null, null);
-    Dining? result;
-    if ((dinings != null) && dinings.isNotEmpty) {
-      for (Dining dining in dinings) {
-        if (dining.id == diningOptionId) {
-          result = dining;
-          break;
-        }
-      }
-    }
-    return result;
+    List<Dining>? dinings = await loadDinings();
+    return dinings?.firstWhereOrNull((Dining dining) => (dining.id == diningOptionId));
   }
 
-  Future<void> _cleanDinigsCacheFile() async {
-    Directory? appDocDir = kIsWeb ? null : await getApplicationDocumentsDirectory();
-    String? configFilePath = (appDocDir != null) ? join(appDocDir.path, _olddiningsFileName) : null;
-    File? diningsCacheFile = (configFilePath != null) ? File(configFilePath) : null;
-    bool exist = (diningsCacheFile != null) && (await diningsCacheFile.exists());
-    if (exist) {
-      await diningsCacheFile.delete();
-    }
-  }
-
-  bool get _useCachedDiningLoacations{
-    return (_diningLocationsResponse != null && _lastDiningLocationsRequestTime != null
-        && DateTime.now().difference(_lastDiningLocationsRequestTime!).inHours.abs() < 24);
-  }
-
-  Future<String?> _loadDiningsFromServer() async {
-    final url = (Config().illiniCashUrl != null) ? "${Config().illiniCashUrl}/LocationSchedules" : null;
-    final response = await Network().get(url, auth: Auth2Csrf());
-    String? responseBody;
-    if ((response != null) && (response.statusCode == 200)) {
-      responseBody = response.body;
-    } else {
-      Log.e('Failed to load dinings schedule table');
-    }
-    return responseBody;
-  }
-
-  Future<List<DiningProductItem>?> loadMenuItemsForDate(String? diningId, DateTime? diningDate) async{
-    if(_enabled) {
-      if (diningId != null && diningDate != null) {
-        String? filterDateString = DiningUtils.dateToRequestString(diningDate);
-
-        final url = (Config().illiniCashUrl != null) ? "${Config().illiniCashUrl}/Menu/$diningId/$filterDateString" : null;
-        final response = await Network().get(url, auth: Auth2Csrf());
-        if ((response != null) && (response.statusCode == 200)) {
-          List<dynamic>? jsonList = JsonUtils.decode(response.body);
-          List<DiningProductItem> productList = <DiningProductItem>[];
-          if (CollectionUtils.isNotEmpty(jsonList)) {
-            for (dynamic jsonEntry in jsonList!) {
-              DiningProductItem? item = DiningProductItem.fromJson(JsonUtils.mapValue(jsonEntry));
-              if (item != null) {
-                productList.add(item);
-              }
-            }
-          }
-          return productList;
-        } else {
-          throw Exception('Failed to load products for the desired date and location');
-        }
-      }
-      throw Exception('Failed to load products for the desired date and location');
-    }
-    return null;
+  Future<List<DiningProductItem>?> loadMenuItemsForDate({required String diningId, required DateTime date}) async {
+    String? url = _enabled ? "${Config().illiniCashUrl}/Menu/$diningId/${DateFormat('M-d-yyyy').format(date)}" : null;
+    Response? response = (url != null) ? await Network().get(url, auth: Auth2Csrf()) : null;
+    return (response?.succeeded == true) ? DiningProductItem.listFromJson(JsonUtils.decodeList(response?.body)) : null;
   }
 
 
   Future<DiningNutritionItem?> loadNutritionItemWithId(String? itemId) async {
-    if(_enabled) {
-      // TMP: "https://shibtest.housing.illinois.edu/MobileAppWS/api/Nutrition/44";
-      final url = (Config().illiniCashUrl != null) ? "${Config().illiniCashUrl}/Nutrition/$itemId" : null;
-      final response = await Network().get(url, auth: Auth2Csrf());
-      String? responseBody;
-      if ((response != null) && (response.statusCode == 200)) {
-        responseBody = response.body;
-
-        if (StringUtils.isNotEmpty(responseBody)) {
-          Map<String, dynamic>? jsonData = JsonUtils.decode(responseBody);
-          return DiningNutritionItem.fromJson(jsonData);
-        }
-      } else {
-        Log.e('Failed to load nutrition item with id: $itemId ');
-        Log.e(responseBody);
-      }
-    }
-
-    return null;
-  }
-
-  Future<String?> _loadDiningSpecialsFromServer() async {
-    _diningSpecialsResponse = null;
-    // TMP: "https://shibtest.housing.illinois.edu/MobileAppWS/api/Offers";
-    final url = (Config().illiniCashUrl != null) ? "${Config().illiniCashUrl}/Offers" : null;
-    final response = await Network().get(url, auth: Auth2Csrf());
-    if ((response != null) && (response.statusCode == 200)) {
-      _diningSpecialsResponse = response.body;
-      _lastDiningSpecialsRequestTime = DateTime.now();
-      return _diningSpecialsResponse;
-    }
-    return null;
-  }
-
-  bool get _useCachedDiningSpecials{
-    return (_diningSpecialsResponse != null && _lastDiningSpecialsRequestTime != null
-        && DateTime.now().difference(_lastDiningSpecialsRequestTime!).inHours.abs() < 24);
+    String? url = _enabled ? "${Config().illiniCashUrl}/Nutrition/$itemId" : null;
+    Response? response = (url != null) ? await Network().get(url, auth: Auth2Csrf()) : null;
+    return (response?.succeeded == true) ? DiningNutritionItem.fromJson(JsonUtils.decodeMap(response?.body)) : null;
   }
 
   Future<List<DiningSpecial>?> loadDiningSpecials() async {
-    if(_enabled) {
-      String? responseBody = _diningSpecialsResponse;
-      if (!_useCachedDiningSpecials) {
-        responseBody = await _loadDiningSpecialsFromServer();
-      }
-
-      if (responseBody != null) {
-        List<dynamic>? jsonList = JsonUtils.decode(responseBody);
-        if (CollectionUtils.isNotEmpty(jsonList)) {
-          List<DiningSpecial> list = <DiningSpecial>[];
-
-          for (dynamic jsonEntry in jsonList!) {
-            ListUtils.add(list, DiningSpecial.fromJson(JsonUtils.mapValue(jsonEntry) ));
-          }
-
-          return list;
-        }
-      } else {
-        Log.e('Failed to load special offers');
-        Log.e(responseBody);
-      }
-    }
-    return null;
+    String? url = _enabled ? "${Config().illiniCashUrl}/Offers" : null;
+    Response? response = (url != null) ? await Network().get(url, auth: Auth2Csrf()) : null;
+    return (response?.succeeded == true) ? DiningSpecial.listFromJson(JsonUtils.decodeList(response?.body)) : null;
   }
 
-  Map<String, dynamic>? get _diningContentData {
-    return Content().contentItem(_diningContentCategory);
-  }
+  Map<String, dynamic>? get _diningContentData =>
+    Content().contentItem(_diningContentCategory);
 
-  List<String>? get foodTypes {
-    return _enabled ? JsonUtils.listStringsValue(MapUtils.get(_diningContentData, 'food_types')) : null;
-  }
+  List<String>? get foodTypes =>
+    _enabled ? JsonUtils.listStringsValue(MapUtils.get(_diningContentData, 'food_types')) : null;
 
-  List<String>? get foodIngredients {
-    return _enabled ? JsonUtils.listStringsValue(MapUtils.get(_diningContentData, 'food_ingredients')) : null;
-  }
+  List<String>? get foodIngredients =>
+    _enabled ? JsonUtils.listStringsValue(MapUtils.get(_diningContentData, 'food_ingredients')) : null;
 
-  String? getLocalizedString(String? text) {
-    return _enabled ? Localization().getStringFromMapping(text,  JsonUtils.mapValue(MapUtils.get(_diningContentData, 'strings'))) : null;
-  }
+  String? getLocalizedString(String? text) =>
+    _enabled ? Localization().getStringFromMapping(text,  JsonUtils.mapValue(MapUtils.get(_diningContentData, 'strings'))) : null;
 
   Future<DiningFeedback?> loadDiningFeedback({String? diningId}) async {
     //return (_feedbacks ??= DiningFeedback.mapFromJson(JsonUtils.decodeMap(await AppBundle.loadString('assets/dining.feedbacks.json'))) ?? <String, DiningFeedback>{})[diningId];
     const String diningFeedbackCategory = 'dining_feedbacks';
     Map<String, DiningFeedback>? feedbacksMap = DiningFeedback.mapFromJson(JsonUtils.mapValue(await Content().loadContentItem(diningFeedbackCategory)));
     return (feedbacksMap != null) ? feedbacksMap[diningId] : null;
+  }
+
+  // Deep Links
+
+  static String get diningDetailRawUrl => '${DeepLink().appUrl}/dining2_detail'; //TBD: => dining_detail
+  static String eventDetailUrl(String diningId) => UrlUtils.buildWithQueryParameters(diningDetailRawUrl, <String, String>{
+    'dining_id' : diningId
+  });
+
+  static String get diningQueryRawUrl => '${DeepLink().appUrl}/dining2_query'; //TBD: => dining_query
+  static String diningQueryUrl(Map<String, String> params) => UrlUtils.buildWithQueryParameters(diningQueryRawUrl,
+    params
+  );
+
+  void _onDeepLinkUri(Uri? uri) {
+    if (uri != null) {
+      if (uri.matchDeepLinkUri(Uri.tryParse(diningDetailRawUrl))) {
+        try { NotificationService().notify(notifyLaunchDetail, uri.queryParameters.cast<String, dynamic>()); }
+        catch (e) { print(e.toString()); }
+      }
+      else if (uri.matchDeepLinkUri(Uri.tryParse(diningQueryRawUrl))) {
+        try { NotificationService().notify(notifyLaunchQuery, uri.queryParameters.cast<String, dynamic>()); }
+        catch (e) { print(e.toString()); }
+      }
+    }
   }
 
   // Helpers
@@ -304,85 +222,5 @@ class Dinings with Service implements ContentItemCategoryClient{
     });
   }
 
-  /////////////////////////
-  // Enabled
-
-  bool get _enabled => StringUtils.isNotEmpty(Config().illiniCashUrl);
 }
 
-class DiningUtils{
-
-  static String? dateToRequestString(DateTime? date) {
-    if(date != null){
-      return DateFormat('M-d-yyyy').format(date);
-    }
-    else {
-      return null;
-    }
-  }
-   
-  static List<DiningProductItem> getProductsForScheduleId(List<DiningProductItem>? allProducts, String? scheduleId, Set<String>? includedFoodTypePrefs, Set<String>? excludedFoodIngredientsPrefs) {
-    if(scheduleId != null && allProducts != null){
-      return allProducts.where((DiningProductItem item){
-        return scheduleId == item.scheduleId &&
-            ((includedFoodTypePrefs == null) || includedFoodTypePrefs.isEmpty || item.containsFoodType(includedFoodTypePrefs)) &&
-            ((excludedFoodIngredientsPrefs == null) || excludedFoodIngredientsPrefs.isEmpty || !item.containsFoodIngredient(excludedFoodIngredientsPrefs));
-      }).toList();
-    }
-    return [];
-  }
-
-  static Map<String,List<DiningProductItem>> getStationGroupedProducts(List<DiningProductItem>? allProducts){
-    Map<String, List<DiningProductItem>> mapping = Map<String,
-        List<DiningProductItem>>();
-    if(allProducts != null) {
-      for(DiningProductItem item in allProducts){
-        if((item.servingUnit != null) && !mapping.containsKey(item.servingUnit)){
-          mapping[item.servingUnit!] = <DiningProductItem>[];
-        }
-        mapping[item.servingUnit]!.add(item);
-      }
-    }
-    return mapping;
-  }
-
-  static Map<String,List<DiningProductItem>> getCourseGroupedProducts(List<DiningProductItem>? allProducts){
-    Map<String, List<DiningProductItem>> mapping = Map<String,
-        List<DiningProductItem>>();
-    if(allProducts != null) {
-      for(DiningProductItem item in allProducts){
-        if((item.course != null) && !mapping.containsKey(item.course)){
-          mapping[item.course!] = <DiningProductItem>[];
-        }
-        mapping[item.course]!.add(item);
-      }
-    }
-    return mapping;
-  }
-
-  static Map<String,List<DiningProductItem>> getCategoryGroupedProducts(List<DiningProductItem>? allProducts){
-    Map<String, List<DiningProductItem>> mapping = Map<String,
-        List<DiningProductItem>>();
-    if(allProducts != null) {
-      for(DiningProductItem item in allProducts){
-        if (item.category != null) {
-          if(!mapping.containsKey(item.category)){
-            mapping[item.category!] = <DiningProductItem>[];
-          }
-          mapping[item.category!]!.add(item);
-        }
-      }
-    }
-    return mapping;
-  }
-
-  static DiningNutritionItem? getNutritionItemById(String? itemId, List<DiningNutritionItem>? allItems){
-    if(itemId != null && allItems != null && allItems.isNotEmpty){
-      for(DiningNutritionItem item in allItems){
-        if(item.itemID == itemId)
-          return item;
-      }
-    }
-    return null;
-  }
-}

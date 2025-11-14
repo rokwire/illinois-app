@@ -65,6 +65,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Dining                         = AnalyticsFeature("Dining", key: {"Dining", "Food"});
   static const AnalyticsFeature   DiningAll                      = AnalyticsFeature("Dining: All", priority: -1);
   static const AnalyticsFeature   DiningOpen                     = AnalyticsFeature("Dining: Open", priority: -1);
+  static const AnalyticsFeature   DiningFavorites                = AnalyticsFeature("Dining: Favorites", priority: -1);
 
   static const AnalyticsFeature   AppHelp                        = AnalyticsFeature("App Help");
   static const AnalyticsFeature   Athletics                      = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});

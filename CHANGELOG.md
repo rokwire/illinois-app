@@ -5,11 +5,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.3.25] - 2025-11-13
+### Added
+- Added close filter button semantics hint in Maps2HomePanel [#5501](https://github.com/rokwire/illinois-app/issues/5501).
+### Removed
+- WEB: Do not enable semantics by default - it breaks the text fields.
+- WEB: Remove hidden "Enable Accessibility" button [#5149](https://github.com/rokwire/illinois-app/issues/5149).
+### Changed
+- Cleaned up Dining Home panel content and access to it [#5526](https://github.com/rokwire/illinois-app/issues/5526).
+
+## [7.3.24] - 2025-11-11
+### Added
+- Added favorite button in ExploreBuildingDetailPanel [#5517](https://github.com/rokwire/illinois-app/issues/5517).
+### Changed
+- Added favorite button in LaundryRoomRibbonButton [#5352](https://github.com/rokwire/illinois-app/issues/5352).
+- Cleaned up Dining model and service [#5526](https://github.com/rokwire/illinois-app/issues/5526).
+### Fixed
+- WEB: Enable accessibility by default [#5149](https://github.com/rokwire/illinois-app/issues/5149).
+
+## [7.3.23] - 2025-11-10
 ### Changed
 - Updated description for Event and Amenities filters [#5499](https://github.com/rokwire/illinois-app/issues/5499).
 ### Fixed 
 - Fixed Athletics home panel dropdown content [#5352](https://github.com/rokwire/illinois-app/issues/5352).
+### Added
 - Added starred filter to Events and News Athletics pages, merge all/my events and all/my news pages into one [#5352](https://github.com/rokwire/illinois-app/issues/5352).
+- Added starred filter to Laundry Panel, connect it to Home / Favorites / Laundry / My Laundry / View All [#5352](https://github.com/rokwire/illinois-app/issues/5352).
 
 ## [7.3.22] - 2025-11-07
 ### Fixed
