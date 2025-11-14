@@ -670,7 +670,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     _sortDropdownWidth ??= _evaluateSortDropdownWidth();
     return  MergeSemantics(key: _sortButtonKey ??= GlobalKey(), child:
     Semantics(value: event2SortTypeToDisplayString(_sortType), hint: _filtersButtonHint, child:
-      DropdownButtonHideUnderline(child:
+      DropdownButtonHideUnderline(key: _sortButtonKey ??= GlobalKey(), child:
         DropdownButton2<Event2SortType>(
           dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth, padding: EdgeInsets.zero),
           customButton: Event2FilterCommandButton(
@@ -694,12 +694,12 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
         items.add(AccessibleDropDownMenuItem<Event2SortType>(
           key: ObjectKey(sortType),
           value: sortType,
-          child: Semantics(label: displaySortType, button: true, container: true, inMutuallyExclusiveGroup: true,
+          semanticsLabel: displaySortType,
             child: Text(displaySortType, overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
               Styles().textStyles.getTextStyle("widget.message.regular.fat") :
               Styles().textStyles.getTextStyle("widget.message.regular"),
               semanticsLabel: "",
-        ))));
+        )));
       }
     }
     return items;
