@@ -315,7 +315,9 @@
     "panel.browse.entry.music_and_news.willfm_radio.title": "WILL Classical & More",
     "panel.browse.entry.music_and_news.willhd_radio.title": "Illinois Soul 101.1 FM",
     "panel.browse.entry.music_and_news.wpgufm_radio.title": "WPGU 107.1 FM",
+    "panel.browse.entry.music_and_news.illini_radio.title": "Illini Radio",
     "panel.browse.entry.music_and_news.daily_illini.title": "The Daily Illini",
+    "panel.browse.entry.music_and_news.illordle.title": "ILLordle",
 
     "panel.browse.entry.groups.groups.title": "Groups",
     "panel.browse.entry.research_projects.title": "Research Participation",
@@ -3818,6 +3820,9 @@
     "panel.appointment.schedule.questions.label.heading": "Appointment Questions",
     "panel.appointment.schedule.questions.header.title": "Schedule Appointment",
     "panel.appointment.reschedule.questions.header.title": "Reschedule Appointment",
+
+    "panel.illordle.header.title": "ILLordle",
+    "panel.illordle.heading.info.text": "Presented by The Daily Illini",
 
     "widget.game_day.label.my_game_day": "My Game Day",
     "widget.game_day.label.its_game_day":"It's Game Day!",

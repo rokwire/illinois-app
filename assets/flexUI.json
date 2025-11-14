@@ -33,7 +33,7 @@
 			"browse.messages": ["messages"],
 			"browse.mtd": ["all_mtd_stops", "my_mtd_stops", "my_locations"],
 			"browse.polls": ["create_poll", "recent_polls"],
-			"browse.music_and_news": ["illini_radio", "daily_illini"],
+			"browse.music_and_news": ["illini_radio", "daily_illini", "illordle"],
 			"browse.recent": ["recent_items"],
 			"browse.safety": ["safewalk_request", "saferides", "safety_resources", "sexual_misconduct"],
 			"browse.sexual_misconduct": ["sexual_misconduct"],
