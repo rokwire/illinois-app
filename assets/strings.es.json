@@ -3822,6 +3822,11 @@
 
     "panel.illordle.header.title": "ILLordle",
     "panel.illordle.heading.info.text": "Presented by The Daily Illini",
+    "panel.illordle.message.error.text": "Failed to load daily target",
+    "panel.illordle.game.status.succeeded.title": "You win!",
+    "panel.illordle.game.status.failed.title": "You lost",
+    "panel.illordle.game.status.word.text": "Today's word: {{word}}",
+    "panel.illordle.game.status.date.text.format": "MMMM, dd, yyyy",
 
     "widget.game_day.label.my_game_day": "Mi Día de Juegos",
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",

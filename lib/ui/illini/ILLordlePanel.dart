@@ -1,9 +1,13 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Content.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class ILLordlePanel extends StatefulWidget {
   @override
@@ -12,10 +16,15 @@ class ILLordlePanel extends StatefulWidget {
 
 class _ILLordlePanelState extends State<ILLordlePanel> {
 
-  //bool _progress = false;
+  bool _loadProgress = false;
+  String? _word;
+  Set<String>? _dictionary;
+  ILLordle? _storedGame;
 
   @override
   void initState() {
+    _storedGame = ILLordle.fromStorageString(Storage().illordleGame);
+    _loadData();
     super.initState();
   }
 
@@ -43,16 +52,104 @@ class _ILLordlePanelState extends State<ILLordlePanel> {
           Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
             Text(Localization().getStringEx('panel.illordle.heading.info.text', 'Presented by The Daily Illini'), style: Styles().textStyles.getTextStyleEx('widget.message.light.small'), textAlign: TextAlign.center,)
           ),
-          Padding (padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            ILLordleWidget(),
-          )
+          _bodyContent
         ],)
     )
   );
 
+  Widget get _bodyContent {
+    if (_loadProgress) {
+      return _loadingContent;
+    } else if (_word?.isNotEmpty != true) {
+      return _errorContent;
+    } else if (_storedGame?.word == _word) {
+      if (_storedGame?.isFinished == true) {
+        return _gameStatusContent(_storedGame?.word ?? '', succeeded: _storedGame?.isSucceeded == true);
+      } else {
+        return _illordleContent;
+      }
+    } else {
+      return _illordleContent;
+    }
+  }
+
+  Widget get _illordleContent =>
+    Padding (padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+      ILLordleWidget(_storedGame ?? ILLordle(_word ?? ''), dictionary: _dictionary),
+    );
+
+  static Widget get _loadingContent =>
+    Center(child:
+      Padding(padding: _messagePadding, child:
+        SizedBox(width: 32, height: 32, child:
+          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+        )
+      )
+    );
+
+  Widget get _errorContent => _messageContent(Localization().getStringEx('panel.illordle.message.error.text', 'Failed to load daily target'));
+
+  static Widget _messageContent(String status) =>
+    Padding(padding: _messagePadding, child:
+      Text(status, style: Styles().textStyles.getTextStyle("widget.message.regular.fat"), textAlign: TextAlign.center,)
+    );
+
+  static const double _messageBasePadding = 32;
+  static const double _messageHPadding = _messageBasePadding;
+  static const double _messageVPadding = _messageBasePadding * 5;
+  static EdgeInsetsGeometry _messagePadding = const EdgeInsets.symmetric(horizontal: _messageHPadding, vertical: _messageVPadding);
+
+  static Widget _gameStatusContent(String word, {bool succeeded = false}) =>
+    Padding(padding: _gameStatusPadding, child:
+      Column(mainAxisSize: MainAxisSize.min, children: [
+        Text(succeeded ? Localization().getStringEx('panel.illordle.game.status.succeeded.title', 'You win!') : Localization().getStringEx('panel.illordle.game.status.failed.title', 'You lost'),
+          style: Styles().textStyles.getTextStyle("widget.message.extra_large.extra_fat"), textAlign: TextAlign.center,
+        ),
+
+        Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+          Column(mainAxisSize: MainAxisSize.min, children: [
+            Text(Localization().getStringEx('panel.illordle.game.status.word.text', 'Today\'s word: {{word}}').replaceAll('{{word}}', word.toUpperCase()),
+              style: Styles().textStyles.getTextStyle("widget.message.regular.fat"), textAlign: TextAlign.center,
+            ),
+            Text(DateFormat(Localization().getStringEx('panel.illordle.game.status.date.text.format', 'MMMM, dd, yyyy')).format(DateTime.now()),
+              style: Styles().textStyles.getTextStyle("widget.message.regular"), textAlign: TextAlign.center,
+            ),
+          ]),
+        ),
+      ],)
+    );
+
+  static const double _gameStatusHPadding = _messageBasePadding;
+  static const double _gameStatusVPadding = _messageBasePadding * 3;
+  static EdgeInsetsGeometry _gameStatusPadding = const EdgeInsets.symmetric(horizontal: _gameStatusHPadding, vertical: _gameStatusVPadding);
+
+  // Data
+
+  Future<void> _loadData() async {
+    setState(() {
+      _loadProgress = true;
+    });
+
+    List<dynamic> results = await Future.wait([
+      ILLordle.loadDailyWord(),
+      ILLordle.loadDictionary(),
+    ]);
+
+    if (mounted) {
+      setState(() {
+        _word = JsonUtils.stringValue(ListUtils.entry(results, 0));
+        _dictionary = JsonUtils.setStringsValue(ListUtils.entry(results, 1));
+        _loadProgress = false;
+      });
+    }
+  }
 }
 
 class ILLordleWidget extends StatefulWidget {
+
+  final ILLordle game;
+  final Set<String>? dictionary;
+  ILLordleWidget(this.game, {super.key, this.dictionary});
 
   @override
   State<StatefulWidget> createState() => _ILLordleWidgetState();
@@ -60,9 +157,6 @@ class ILLordleWidget extends StatefulWidget {
 }
 
 class _ILLordleWidgetState extends State<ILLordleWidget> {
-
-  static const int wordLength = 5;
-  static const int numberOfWords = 5;
 
   final TextEditingController _textController = TextEditingController();
   final FocusNode _textFocusNode = FocusNode();
@@ -97,7 +191,7 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
 
   Widget _buildWords() {
     List<Widget> words = <Widget>[];
-    for (int i = 0; i < numberOfWords; i++) {
+    for (int i = 0; i < ILLordle.numberOfWords; i++) {
       if (words.isNotEmpty) {
         words.add(Expanded(flex: _gutterFlex, child: Container()));
       }
@@ -108,7 +202,7 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
 
   Widget _buildWord() {
     List<Widget> letters = <Widget>[];
-    for (int i = 0; i < wordLength; i++) {
+    for (int i = 0; i < ILLordle.wordLength; i++) {
       if (letters.isNotEmpty) {
         letters.add(Expanded(flex: _gutterFlex, child: Container()));
       }
@@ -184,4 +278,45 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
   }
 }
 
+class ILLordle {
+  static const int wordLength = 5;
+  static const int numberOfWords = 5;
+
+  String word;
+  List<String> moves;
+  ILLordle(this.word, { this.moves = const <String>['']});
+
+  // Accessories
+
+  bool get isFinished => moves.length == numberOfWords;
+  bool get isSucceeded => isFinished && (moves.last == word);
+  bool get isFailed => isFinished && (moves.last != word);
+
+  // Data Access
+
+  static const String _storageDelimiter = '\n';
+
+  static ILLordle? fromStorageString(String? value) {
+    List<String> entries = (value != null) ? value.split(_storageDelimiter) : <String>[];
+    return (1 < entries.length) ? ILLordle(entries.first, moves: entries.sublist(1)) : null;
+  }
+
+  String toStorageString() => <String>[
+    word,
+    ...moves
+  ].join(_storageDelimiter);
+
+  // Data Access
+
+  static const String _dictioaryContentCategory = 'illordle_dictioary';
+  static const String _dictioaryContentDelimiter = '\n';
+
+  static Future<Set<String>?> loadDictionary() async {
+    dynamic content = await Content().loadContentItem(_dictioaryContentCategory);
+    return SetUtils.from(JsonUtils.stringValue(content)?.split(_dictioaryContentDelimiter));
+  }
+
+  static Future<String?> loadDailyWord() async =>
+    Future.delayed(Duration(milliseconds: 500), () => 'simple');
+}
 
