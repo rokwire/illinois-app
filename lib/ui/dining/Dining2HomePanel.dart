@@ -158,7 +158,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
   Widget get _filterButtonsBar => Container(decoration: _buttonsBarDecoration, padding: _buttonsBarPadding, constraints: _buttonsBarConstraints, child:
     SingleChildScrollView(scrollDirection: Axis.horizontal, child:
       Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        Padding(padding: _filterButtonsStartEdgePadding, child:
+        Padding(padding: _filterButtonsFirstPadding, child:
           _searchFilterButton,
         ),
         Padding(padding: _filterButtonsPadding, child:
@@ -170,7 +170,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
         Padding(padding: _filterButtonsPadding, child:
           _paymentTypesFilterButton,
         ),
-        Padding(padding: _filterButtonsEndEdgePadding, child:
+        Padding(padding: _filterButtonsLastPadding, child:
           _sortFilterButton,
         ),
       ],)
@@ -185,8 +185,8 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
   static const BoxConstraints _buttonsBarConstraints = BoxConstraints(minWidth: double.infinity);
 
   static const EdgeInsetsGeometry _filterButtonsPadding = EdgeInsets.only(right: 6);
-  static const EdgeInsetsGeometry _filterButtonsStartEdgePadding = EdgeInsets.only(left: 16, right: 6);
-  static const EdgeInsetsGeometry _filterButtonsEndEdgePadding = EdgeInsets.only(right: 16);
+  static const EdgeInsetsGeometry _filterButtonsFirstPadding = EdgeInsets.only(left: 16, right: 6);
+  static const EdgeInsetsGeometry _filterButtonsLastPadding = EdgeInsets.only(right: 16);
 
   TextStyle? get _dropdownEntryNormalTextStyle => Styles().textStyles.getTextStyle("widget.message.regular");
   TextStyle? get _dropdownEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
