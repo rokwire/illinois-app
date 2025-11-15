@@ -1625,7 +1625,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
               padding: EdgeInsets.zero
             ),
         customButton: Map2FilterTextButton(
-          title: _selectedPaymentType?.displayTitle ?? Localization().getStringEx('panel.map2.button.payment_type.title', 'Payment Type'),
+          title: _selectedPaymentType?.displayTitle ?? PaymentTypeUtils.displayTitleAll,
           hint: Localization().getStringEx('panel.map2.button.payment_type.hint', 'Tap to select a payment type') + " $_filterButtonHint",
           rightIcon: Styles().images.getImage('chevron-down'),
           //onTap: _onPaymentType,
@@ -1637,51 +1637,52 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     )),
   );
 
-  List<DropdownMenuItem<PaymentType>> _buildPaymentTypesDropdownItems() {
-    List<DropdownMenuItem<PaymentType>> items = <DropdownMenuItem<PaymentType>>[];
-    for (PaymentType paymentType in PaymentType.values) {
-      String itemTitle = paymentType.displayTitle;
-      TextStyle? itemTextStyle = (paymentType == _selectedPaymentType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
-      Widget? itemIcon = (paymentType == _selectedPaymentType) ? Styles().images.getImage('check', size: 18, color: Styles().colors.fillColorPrimary) : null;
-      items.add(AccessibleDropDownMenuItem<PaymentType>(key: ObjectKey(paymentType), value: paymentType, semanticsLabel: itemTitle,
-          child: Row(children: [
-            Expanded(child:
-              Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
-            ),
-            if (itemIcon != null)
-              Padding(padding: EdgeInsets.only(left: 4), child: itemIcon,) ,
-          ])));
-    }
-    return items;
+  List<DropdownMenuItem<PaymentType>> _buildPaymentTypesDropdownItems() => [
+    _buildPaymentTypesDropdownItem(null),
+    ...PaymentType.values.map((paymentType) => _buildPaymentTypesDropdownItem(paymentType)),
+  ];
+
+  DropdownMenuItem<PaymentType> _buildPaymentTypesDropdownItem(PaymentType? paymentType) {
+    String itemTitle = paymentType?.displayTitle ?? PaymentTypeUtils.displayTitleAll;
+    TextStyle? itemTextStyle = (paymentType == _selectedPaymentType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
+    Widget? itemIcon = (paymentType == _selectedPaymentType) ? Styles().images.getImage('check', size: 18, color: Styles().colors.fillColorPrimary) : null;
+    return AccessibleDropDownMenuItem<PaymentType>(key: ObjectKey(paymentType), value: paymentType, semanticsLabel: itemTitle, child:
+      Row(children: [
+        Expanded(child:
+          Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
+        ),
+        if (itemIcon != null)
+          Padding(padding: EdgeInsets.only(left: 4), child: itemIcon,) ,
+      ])
+    );
   }
 
   double _evaluatePaymentTypesDropdownWidth() {
-    double width = 0;
+    double width = _evaluatePaymentTypeDropdownWidth(null);
     for (PaymentType paymentType in PaymentType.values) {
-      final Size sizeFull = (TextPainter(
-          text: TextSpan(
-            text: paymentType.displayTitle,
-            style: _dropdownEntrySelectedTextStyle,
-          ),
-          textScaler: MediaQuery.of(context).textScaler,
-          textDirection: TextDirection.ltr,
-        )..layout()).size;
-      if (width < sizeFull.width) {
-        width = sizeFull.width;
+      final double itemWidth = _evaluatePaymentTypeDropdownWidth(paymentType);
+      if (width < itemWidth) {
+        width = itemWidth;
       }
     }
-    return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width / 2); // add horizontal padding
+    return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width * 2 / 3); // add horizontal padding
   }
+
+  double _evaluatePaymentTypeDropdownWidth(PaymentType? paymentType) => (
+    TextPainter(
+      text: TextSpan(
+        text: paymentType?.displayTitle ?? PaymentTypeUtils.displayTitleAll,
+        style: _dropdownEntrySelectedTextStyle,
+      ),
+      textScaler: MediaQuery.of(context).textScaler,
+      textDirection: TextDirection.ltr,
+    )..layout()
+  ).size.width;
 
   void _onSelectPaymentType(PaymentType? value) {
     Analytics().logSelect(target: 'Payment Type: ${value?.displayTitle}');
     setStateIfMounted(() {
-      if (_selectedPaymentType != value) {
-        _selectedPaymentType = value;
-      }
-      else {
-        _selectedPaymentType = null;
-      }
+      _selectedPaymentType = value; // (_selectedPaymentType != value) ? value : null;
     });
     _onFiltersChanged();
     Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
