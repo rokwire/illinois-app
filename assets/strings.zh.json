@@ -116,6 +116,7 @@
 	"payment_type.text.cash":"现金",
 	"payment_type.text.google_pay":"GooglePay",
 	"payment_type.text.apple_pay":"ApplePay",
+	"payment_type.text.all":"All Payment Types",
 
 	"auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
 	"auth.logged_out.feature.not_available.message.short": "To access {{feature}}, you need to sign in with your NetID.",
