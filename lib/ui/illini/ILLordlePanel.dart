@@ -239,7 +239,7 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
     focusNode: _textFocusNode,
     keyboardType: TextInputType.text,
     textInputAction: TextInputAction.go,
-    textCapitalization: TextCapitalization.none,
+    textCapitalization: TextCapitalization.characters,
     maxLines: null,
     expands: true,
     showCursor: false,
@@ -313,7 +313,7 @@ class ILLordle {
 
   static Future<Set<String>?> loadDictionary() async {
     dynamic content = await Content().loadContentItem(_dictioaryContentCategory);
-    return SetUtils.from(JsonUtils.stringValue(content)?.split(_dictioaryContentDelimiter));
+    return SetUtils.from(JsonUtils.stringValue(content)?.toUpperCase().split(_dictioaryContentDelimiter));
   }
 
   static Future<String?> loadDailyWord() async =>
