@@ -76,7 +76,9 @@ class _ILLordlePanelState extends State<ILLordlePanel> {
 
   Widget get _illordleContent =>
     Padding (padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-      ILLordleWidget(_storedGame ?? ILLordle(_dailyWord?.word ?? ''), dictionary: _dictionary),
+      ILLordleWidget(_storedGame ?? ILLordle(_dailyWord?.word ?? ''),
+        dictionary: _dictionary, autofocus: true,
+      ),
     );
 
   static Widget get _loadingContent =>
@@ -180,7 +182,9 @@ class ILLordleWidget extends StatefulWidget {
 
   final ILLordle game;
   final Set<String>? dictionary;
-  ILLordleWidget(this.game, {super.key, this.dictionary});
+  final bool autofocus;
+
+  ILLordleWidget(this.game, {super.key, this.dictionary, this.autofocus = false});
 
   @override
   State<StatefulWidget> createState() => _ILLordleWidgetState();
@@ -189,18 +193,19 @@ class ILLordleWidget extends StatefulWidget {
 
 class _ILLordleWidgetState extends State<ILLordleWidget> {
 
-  final TextEditingController _textController = TextEditingController();
+  static const String _textFieldValue = ' ';
+  final TextEditingController _textController = TextEditingController(text: _textFieldValue);
   final FocusNode _textFocusNode = FocusNode();
 
   @override
   void initState() {
-    _textController.addListener(_textListener);
+    _textController.addListener(_onTextChanged);
     super.initState();
   }
 
   @override
   void dispose() {
-    _textController.removeListener(_textListener);
+    _textController.removeListener(_onTextChanged);
     _textController.dispose();
     _textFocusNode.dispose();
     super.dispose();
@@ -272,17 +277,26 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
     textInputAction: TextInputAction.go,
     textCapitalization: TextCapitalization.characters,
     maxLines: null,
+    maxLength: 2,
     expands: true,
     showCursor: false,
     autocorrect: false,
-    autofocus: true,
+    autofocus: widget.autofocus,
     onSubmitted: _onTextSubmit,
   );
 
-  void _textListener() {
+  void _onTextChanged() {
     if (_textController.text.isNotEmpty) {
-      _onKeyCharacter(_textController.text.substring(0, 1).toUpperCase());
-      _textController.text = '';
+      String textContent = _textController.text.trim();
+      if (textContent.isNotEmpty) {
+        _onKeyCharacter(textContent.substring(0, 1));
+      }
+    }
+    else {
+      _onBackward();
+    }
+    if (_textController.text != _textFieldValue) {
+      _textController.text = _textFieldValue;
     }
   }
 
@@ -301,6 +315,11 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
 
   void _onKeyCharacter(String character) {
     debugPrint('Key: $character');
+  }
+
+  void _onBackward() {
+    debugPrint('Backward');
+    _textFocusNode.requestFocus(); // show again
   }
 
   void _onSubmitWord() {
@@ -353,7 +372,7 @@ class ILLordle {
 
   static Future<Set<String>?> loadDictionary() async {
     dynamic content = await Content().loadContentItem(_dictioaryContentCategory);
-    return SetUtils.from(JsonUtils.stringValue(content)?.toUpperCase().split(_dictioaryContentDelimiter));
+    return SetUtils.from(JsonUtils.stringValue(content)?.split(_dictioaryContentDelimiter));
   }
 
   static Future<_ILLordleDailyWord?> loadDailyWord() async =>
