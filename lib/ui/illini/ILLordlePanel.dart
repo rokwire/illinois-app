@@ -17,7 +17,7 @@ class ILLordlePanel extends StatefulWidget {
 class _ILLordlePanelState extends State<ILLordlePanel> {
 
   bool _loadProgress = false;
-  String? _word;
+  _ILLordleDailyWord? _dailyWord;
   Set<String>? _dictionary;
   ILLordle? _storedGame;
 
@@ -60,11 +60,11 @@ class _ILLordlePanelState extends State<ILLordlePanel> {
   Widget get _bodyContent {
     if (_loadProgress) {
       return _loadingContent;
-    } else if (_word?.isNotEmpty != true) {
+    } else if (_dailyWord == null) {
       return _errorContent;
-    } else if (_storedGame?.word == _word) {
+    } else if (_storedGame?.word == _dailyWord?.word) {
       if (_storedGame?.isFinished == true) {
-        return _gameStatusContent(_storedGame?.word ?? '', succeeded: _storedGame?.isSucceeded == true);
+        return _gameStatusContent(_dailyWord!, succeeded: _storedGame?.isSucceeded == true);
       } else {
         return _illordleContent;
       }
@@ -75,7 +75,7 @@ class _ILLordlePanelState extends State<ILLordlePanel> {
 
   Widget get _illordleContent =>
     Padding (padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-      ILLordleWidget(_storedGame ?? ILLordle(_word ?? ''), dictionary: _dictionary),
+      ILLordleWidget(_storedGame ?? ILLordle(_dailyWord?.word ?? ''), dictionary: _dictionary),
     );
 
   static Widget get _loadingContent =>
@@ -99,25 +99,55 @@ class _ILLordlePanelState extends State<ILLordlePanel> {
   static const double _messageVPadding = _messageBasePadding * 5;
   static EdgeInsetsGeometry _messagePadding = const EdgeInsets.symmetric(horizontal: _messageHPadding, vertical: _messageVPadding);
 
-  static Widget _gameStatusContent(String word, {bool succeeded = false}) =>
-    Padding(padding: _gameStatusPadding, child:
+  Widget _gameStatusContent(_ILLordleDailyWord dailyWord, {bool succeeded = false}) {
+    return Padding(padding: _gameStatusPadding, child:
       Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(succeeded ? Localization().getStringEx('panel.illordle.game.status.succeeded.title', 'You win!') : Localization().getStringEx('panel.illordle.game.status.failed.title', 'You lost'),
-          style: Styles().textStyles.getTextStyle("widget.message.extra_large.extra_fat"), textAlign: TextAlign.center,
+        Text(succeeded ?
+            Localization().getStringEx('panel.illordle.game.status.succeeded.title', 'You win!') :
+            Localization().getStringEx('panel.illordle.game.status.failed.title', 'You lost'),
+          style: _gameStatusTitleTextStyle, textAlign: TextAlign.center,
         ),
 
         Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
           Column(mainAxisSize: MainAxisSize.min, children: [
-            Text(Localization().getStringEx('panel.illordle.game.status.word.text', 'Today\'s word: {{word}}').replaceAll('{{word}}', word.toUpperCase()),
-              style: Styles().textStyles.getTextStyle("widget.message.regular.fat"), textAlign: TextAlign.center,
+            Text(Localization().getStringEx('panel.illordle.game.status.word.text', 'Today\'s word: {{word}}').replaceAll('{{word}}', dailyWord.word.toUpperCase()),
+              style: _gameStatusSectionTextStyle, textAlign: TextAlign.center,
             ),
-            Text(DateFormat(Localization().getStringEx('panel.illordle.game.status.date.text.format', 'MMMM, dd, yyyy')).format(DateTime.now()),
-              style: Styles().textStyles.getTextStyle("widget.message.regular"), textAlign: TextAlign.center,
+            Text(DateFormat(Localization().getStringEx('panel.illordle.game.status.date.text.format', 'MMMM, dd, yyyy')).format(dailyWord.dateTime ?? DateTime.now()),
+              style: _gameStatusInfoTextStyle, textAlign: TextAlign.center,
             ),
+            if (succeeded && (dailyWord.author?.isNotEmpty == true))
+              Text(Localization().getStringEx('panel.illordle.game.status.author.text', 'Edited by {{author}}').replaceAll('{{author}}', dailyWord.author ?? ''),
+                style: _gameStatusInfoTextStyle, textAlign: TextAlign.center,
+              ),
+            if (succeeded && (dailyWord.quote?.isNotEmpty == true))
+              ...[
+                Padding(padding: EdgeInsets.only(top: 16, bottom: 4), child:
+                  Text(Localization().getStringEx('panel.illordle.game.status.related_to.text', 'Related to this word'),
+                    style: _gameStatusSectionTextStyle, textAlign: TextAlign.center,
+                  ),
+                ),
+                Container(decoration: _gameStatusQuoteDecoration, padding: _gameStatusQuotePadding, child:
+                  Text(dailyWord.quote ?? '',
+                    style: _gameStatusInfoTextStyle, textAlign: TextAlign.center,
+                  ),
+                )
+              ]
           ]),
         ),
       ],)
     );
+  }
+
+  TextStyle? get _gameStatusTitleTextStyle => Styles().textStyles.getTextStyle('widget.message.extra_large.extra_fat');
+  TextStyle? get _gameStatusSectionTextStyle => Styles().textStyles.getTextStyle('widget.message.regular.fat');
+  TextStyle? get _gameStatusInfoTextStyle => Styles().textStyles.getTextStyle('widget.message.regular');
+
+  Decoration get _gameStatusQuoteDecoration => BoxDecoration(
+    color: Styles().colors.lightGray,
+    border: Border.all(color: Styles().colors.surfaceAccent2),
+  );
+  EdgeInsetsGeometry get _gameStatusQuotePadding => EdgeInsets.symmetric(horizontal: 8, vertical: 4);
 
   static const double _gameStatusHPadding = _messageBasePadding;
   static const double _gameStatusVPadding = _messageBasePadding * 3;
@@ -137,7 +167,7 @@ class _ILLordlePanelState extends State<ILLordlePanel> {
 
     if (mounted) {
       setState(() {
-        _word = JsonUtils.stringValue(ListUtils.entry(results, 0));
+        _dailyWord = JsonUtils.cast(ListUtils.entry(results, 0));
         _dictionary = JsonUtils.setStringsValue(ListUtils.entry(results, 1));
         _loadProgress = false;
       });
@@ -316,7 +346,27 @@ class ILLordle {
     return SetUtils.from(JsonUtils.stringValue(content)?.toUpperCase().split(_dictioaryContentDelimiter));
   }
 
-  static Future<String?> loadDailyWord() async =>
-    Future.delayed(Duration(milliseconds: 500), () => 'simple');
+  static Future<_ILLordleDailyWord?> loadDailyWord() async =>
+    Future.delayed(Duration(milliseconds: 500), () => _ILLordleDailyWord(
+      word: 'viral',
+      date: '2025-11-14',
+      author: 'Anna Ceja',
+      quote: 'Viral TokTok star Joshua Block visits UI',
+    ));
 }
 
+class _ILLordleDailyWord {
+  final String word;
+
+  final String? date;
+  final String? author;
+  final String? quote;
+
+  _ILLordleDailyWord({
+    required this.word,
+    this.date, this.author, this.quote,
+  });
+
+  DateTime? get dateTime =>
+    (date != null) ? DateFormat('yyyy-MM-dd').tryParse(date ?? '') : null;
+}

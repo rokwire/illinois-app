@@ -3802,6 +3802,8 @@
 	"panel.illordle.game.status.failed.title": "You lost",
 	"panel.illordle.game.status.word.text": "Today's word: {{word}}",
 	"panel.illordle.game.status.date.text.format": "MMMM, dd, yyyy",
+	"panel.illordle.game.status.author.text": "Edited by {{author}}",
+	"panel.illordle.game.status.related_to.text": "Related to this word",
 
 	"widget.game_day.label.my_game_day": "我的比賽日",
 	"widget.game_day.label.its_game_day":"这是比赛日！",
