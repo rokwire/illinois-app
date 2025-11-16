@@ -63,8 +63,9 @@ class _ILLordlePanelState extends State<ILLordlePanel> {
     } else if (_dailyWord == null) {
       return _errorContent;
     } else if (_storedGame?.word == _dailyWord?.word) {
-      if (_storedGame?.isFinished == true) {
-        return _gameStatusContent(_dailyWord!, succeeded: _storedGame?.isSucceeded == true);
+      bool? gameResult = _storedGame?.result;
+      if (gameResult != null) {
+        return _gameStatusContent(_dailyWord!, succeeded: gameResult);
       } else {
         return _illordleContent;
       }
@@ -314,13 +315,22 @@ class ILLordle {
 
   String word;
   List<String> moves;
-  ILLordle(this.word, { this.moves = const <String>['']});
+  ILLordle(this.word, { this.moves = const <String>[]});
 
   // Accessories
 
-  bool get isFinished => moves.length == numberOfWords;
-  bool get isSucceeded => isFinished && (moves.last == word);
-  bool get isFailed => isFinished && (moves.last != word);
+  bool get isSucceeded => moves.isNotEmpty && (moves.last == word);
+  bool get isFailed => (moves.length == numberOfWords) && (moves.last != word);
+  bool? get result {
+    if (isSucceeded) {
+      return true;
+    } else if (isFailed) {
+      return false;
+    }
+    else {
+      return null;
+    }
+  }
 
   // Data Access
 
