@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -200,14 +199,16 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
   final TextEditingController _textController = TextEditingController(text: _textFieldValue);
   final FocusNode _textFocusNode = FocusNode();
 
-  late List<String> moves;
-  String rack = '';
+  late List<String> _moves;
+  String _rack = '';
+  
+  String? _message;
 
   @override
   void initState() {
-    moves = List<String>.from(widget.game.moves);
-
     _textController.addListener(_onTextChanged);
+
+    _moves = List<String>.from(widget.game.moves);
 
     super.initState();
   }
@@ -224,14 +225,21 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
   Widget build(BuildContext context) =>
     Stack(children: [
       Positioned.fill(child: _textFieldWidget),
-      GestureDetector(onTap: _onTapWordle, child:
-        _wordleWidget,
-      )
+      _wordleWidget,
+      if (_message?.isNotEmpty == true)
+        ...<Widget>[
+          Positioned.fill(child: _messageBackground),
+          Positioned.fill(child: Center(child: _messagePopup,)),
+        ],
     ],);
 
+  // Wordle
+
   Widget get _wordleWidget =>
-    AspectRatio(aspectRatio: 1, child:
-      _buildWords()
+    GestureDetector(onTap: _onTapWordle, child:
+      AspectRatio(aspectRatio: 1, child:
+        _buildWords()
+      ),
     );
 
   Widget _buildWords() {
@@ -239,20 +247,20 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
     int wordIndex = 0;
     List<Widget> words = <Widget>[];
 
-    int movesCount = min(moves.length, ILLordle.numberOfWords);
+    int movesCount = min(_moves.length, ILLordle.numberOfWords);
     while (wordIndex < movesCount) {
       if (words.isNotEmpty) {
         words.add(Expanded(flex: _gutterFlex, child: Container()));
       }
-      words.add(Expanded(flex: _cellFlex, child: _buildWord(moves[wordIndex], ILLordleLetterDisplay.move)));
+      words.add(Expanded(flex: _cellFlex, child: _buildWord(_moves[wordIndex], ILLordleLetterDisplay.move)));
       wordIndex++;
     }
 
-    if (rack.isNotEmpty) {
+    if (_rack.isNotEmpty) {
       if (words.isNotEmpty) {
         words.add(Expanded(flex: _gutterFlex, child: Container()));
       }
-      words.add(Expanded(flex: _cellFlex, child: _buildWord(rack, ILLordleLetterDisplay.rack)));
+      words.add(Expanded(flex: _cellFlex, child: _buildWord(_rack, ILLordleLetterDisplay.rack)));
       wordIndex++;
     }
 
@@ -321,6 +329,44 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
   int get _gutterFlex => (gutter * gutterPrec).toInt();
   int get _cellFlex => ((1 - gutter) * gutterPrec).toInt();
 
+  // Message
+
+  Widget get _messageBackground => GestureDetector(onTap: _onTapMessagePopupBackground, child:
+    Container(color: Styles().colors.surfaceAccentTransparent15,)
+  );
+
+  Widget get _messagePopup =>
+    Container(decoration: _messagePopupDecoration, padding: _messagePopupPadding, child:
+      Text(_message ?? '', style: _messagePopupTextStyle, textAlign: TextAlign.center,)
+    );
+
+  Decoration get _messagePopupDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border.all(color: Styles().colors.surfaceAccent),
+    borderRadius: BorderRadius.all(Radius.circular(12)),
+  );
+
+  EdgeInsetsGeometry get _messagePopupPadding => EdgeInsets.symmetric(horizontal: 12, vertical: 6);
+  TextStyle? get _messagePopupTextStyle => Styles().textStyles.getTextStyle('widget.message.regular.fat');
+
+  Future<void> _showMessage(String message, { Duration duration = const Duration(milliseconds: 1000)}) async {
+    setState(() {
+      _message = message;
+    });
+    await Future.delayed(duration);
+    if (mounted && (_message == message)) {
+      setState(() {
+        _message = null;
+      });
+    }
+  }
+
+  void _onTapMessagePopupBackground() {
+    setState(() {
+      _message = null;
+    });
+  }
+
   // Keyboard
 
   Widget get _textFieldWidget => TextField(
@@ -372,9 +418,9 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
 
   void _onKeyCharacter(String character) {
     debugPrint('Key: $character');
-    if (character.isAlpha && (rack.length < ILLordle.wordLength) && mounted) {
+    if (character.isAlpha && (_rack.length < ILLordle.wordLength) && mounted) {
       setState(() {
-        rack = rack + character.toLowerCase();
+        _rack = _rack + character.toLowerCase();
       });
     }
     _textFocusNode.requestFocus(); // show again
@@ -382,9 +428,9 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
 
   void _onBackward() {
     debugPrint('Backward');
-    if (rack.isNotEmpty && mounted) {
+    if (_rack.isNotEmpty && mounted) {
       setState(() {
-        rack = rack.substring(0, rack.length - 1);
+        _rack = _rack.substring(0, _rack.length - 1);
       });
     }
     _textFocusNode.requestFocus(); // show again
@@ -392,19 +438,16 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
 
   void _onSubmitWord() {
     debugPrint('Submit');
-    if (rack.length == ILLordle.wordLength) {
-      if ((widget.dictionary?.isNotEmpty == true) && (widget.dictionary?.contains(rack) != true)) {
-        _textFocusNode.unfocus();
-        AppAlert.showTextMessage(context, Localization().getStringEx('panel.illordle.move.invalid.text', 'Not in word list')).then((_){
-          if (mounted) {
-            _textFocusNode.requestFocus();
-          }
+    if (_rack.length == ILLordle.wordLength) {
+      if ((widget.dictionary?.isNotEmpty == true) && (widget.dictionary?.contains(_rack) != true)) {
+        _showMessage(Localization().getStringEx('panel.illordle.move.invalid.text', 'Not in word list')).then((_){
+          _textFocusNode.requestFocus(); // show again
         });
       }
       else {
         setState(() {
-          moves.add(rack);
-          rack = '';
+          _moves.add(_rack);
+          _rack = '';
         });
         _textFocusNode.requestFocus(); // show again
       }
@@ -471,17 +514,21 @@ class ILLordle {
   static const String _dictioaryContentDelimiter = '\n';
 
   static Future<Set<String>?> loadDictionary() async {
+    return <String>{'aaaaa'};
     dynamic content = await Content().loadContentItem(_dictioaryContentCategory);
     return SetUtils.from(JsonUtils.stringValue(content)?.split(_dictioaryContentDelimiter));
   }
 
   static Future<_ILLordleDailyWord?> loadDailyWord() async =>
-    Future.delayed(Duration(milliseconds: 500), () => _ILLordleDailyWord(
-      word: 'viral',
-      date: '2025-11-14',
-      author: 'Anna Ceja',
-      quote: 'Viral TokTok star Joshua Block visits UI',
-    ));
+    _sampeDailtyWord;
+    // Future.delayed(Duration(milliseconds: 500), () => _sampeDailtyWord);
+
+  static _ILLordleDailyWord _sampeDailtyWord = const _ILLordleDailyWord(
+    word: 'viral',
+    date: '2025-11-14',
+    author: 'Anna Ceja',
+    quote: 'Viral TokTok star Joshua Block visits UI',
+  );
 }
 
 class _ILLordleDailyWord {
@@ -491,7 +538,7 @@ class _ILLordleDailyWord {
   final String? author;
   final String? quote;
 
-  _ILLordleDailyWord({
+  const _ILLordleDailyWord({
     required this.word,
     this.date, this.author, this.quote,
   });
