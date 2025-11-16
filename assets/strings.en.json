@@ -3831,6 +3831,7 @@
     "panel.illordle.game.status.date.text.format": "MMMM, dd, yyyy",
     "panel.illordle.game.status.author.text": "Edited by {{author}}",
     "panel.illordle.game.status.related_to.text": "Related to this word",
+    "panel.illordle.move.invalid.text": "Not in word list",
 
     "widget.game_day.label.my_game_day": "My Game Day",
     "widget.game_day.label.its_game_day":"It's Game Day!",

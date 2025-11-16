@@ -90,7 +90,11 @@
     "essentialSkillsCoachGreen"            :"#247c03",
     "essentialSkillsCoachGreenAccent"      :"#6aa554",
     "essentialSkillsCoachCompleteGreen"    :"#64a70b",
-    "essentialSkillsCoachIncompleteGrey"    :"#5c5c5c"
+    "essentialSkillsCoachIncompleteGrey"    :"#5c5c5c",
+
+    "illordle.green"  : "#21aa57",
+    "illordle.yellow" : "#e5b22e",
+    "illordle.gray"   : "#7a7a7a"
   },
   "font_family": {
     "black": "ProximaNovaBlack",

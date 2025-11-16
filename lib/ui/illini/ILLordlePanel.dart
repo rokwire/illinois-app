@@ -1,9 +1,12 @@
 
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -197,9 +200,15 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
   final TextEditingController _textController = TextEditingController(text: _textFieldValue);
   final FocusNode _textFocusNode = FocusNode();
 
+  late List<String> moves;
+  String rack = '';
+
   @override
   void initState() {
+    moves = List<String>.from(widget.game.moves);
+
     _textController.addListener(_onTextChanged);
+
     super.initState();
   }
 
@@ -226,38 +235,84 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
     );
 
   Widget _buildWords() {
+
+    int wordIndex = 0;
     List<Widget> words = <Widget>[];
-    for (int i = 0; i < ILLordle.numberOfWords; i++) {
+
+    int movesCount = min(moves.length, ILLordle.numberOfWords);
+    while (wordIndex < movesCount) {
+      if (words.isNotEmpty) {
+        words.add(Expanded(flex: _gutterFlex, child: Container()));
+      }
+      words.add(Expanded(flex: _cellFlex, child: _buildWord(moves[wordIndex], ILLordleLetterDisplay.move)));
+      wordIndex++;
+    }
+
+    if (rack.isNotEmpty) {
+      if (words.isNotEmpty) {
+        words.add(Expanded(flex: _gutterFlex, child: Container()));
+      }
+      words.add(Expanded(flex: _cellFlex, child: _buildWord(rack, ILLordleLetterDisplay.rack)));
+      wordIndex++;
+    }
+
+    while (wordIndex < ILLordle.numberOfWords) {
       if (words.isNotEmpty) {
         words.add(Expanded(flex: _gutterFlex, child: Container()));
       }
       words.add(Expanded(flex: _cellFlex, child: _buildWord()));
+      wordIndex++;
     }
+
     return Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: words);
   }
 
-  Widget _buildWord() {
+  Widget _buildWord([String word = '', ILLordleLetterDisplay display = ILLordleLetterDisplay.rack]) {
+
+    int letterIndex = 0;
     List<Widget> letters = <Widget>[];
-    for (int i = 0; i < ILLordle.wordLength; i++) {
+
+    int wordLength = min(word.length, ILLordle.wordLength);
+    while (letterIndex < wordLength) {
+      if (letters.isNotEmpty) {
+        letters.add(Expanded(flex: _gutterFlex, child: Container()));
+      }
+      String letter = word.substring(letterIndex, letterIndex + 1);
+      ILLordleLetterStatus? letterStatus = (display == ILLordleLetterDisplay.move) ? widget.game.letterStatus(letter, letterIndex) : null;
+      letters.add(Expanded(flex: _cellFlex, child: _buildCell(letter, letterStatus)));
+      letterIndex++;
+    }
+
+    while (letterIndex < ILLordle.wordLength) {
       if (letters.isNotEmpty) {
         letters.add(Expanded(flex: _gutterFlex, child: Container()));
       }
       letters.add(Expanded(flex: _cellFlex, child: _buildCell()));
+      letterIndex++;
     }
+
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: letters);
   }
 
-  Widget _buildCell({ String letter = '' }) =>
-      AspectRatio(aspectRatio: 1, child:
-        Container(decoration: _cellDecoration(), padding: EdgeInsets.all(8), child:
-          Center(child:
-            Text(letter, style: Styles().textStyles.getTextStyle('widget.message.extra_large.fat'),)
-          )
-        ),
-      );
+  Widget _buildCell([String letter = '', ILLordleLetterStatus? status]) {
 
-  Decoration _cellDecoration() => BoxDecoration(
-    color: Styles().colors.surface,
+    Color? backColor = status?.color ?? Styles().colors.surface;
+
+    TextStyle? textStyle = (status != null) ?
+      Styles().textStyles.getTextStyleEx('widget.message.extra_large.fat', color: Styles().colors.textColorPrimary) :
+      Styles().textStyles.getTextStyle('widget.message.extra_large.fat');
+
+    return AspectRatio(aspectRatio: 1, child:
+      Container(decoration: _cellDecoration(backColor), padding: EdgeInsets.all(8), child:
+        Center(child:
+          Text(letter.toUpperCase(), style: textStyle,)
+        )
+      ),
+    );
+  }
+
+  Decoration _cellDecoration(Color? backColor) => BoxDecoration(
+    color: backColor ?? Styles().colors.surface,
     border: Border.all(color: Styles().colors.surfaceAccent)
   );
 
@@ -266,7 +321,7 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
   int get _gutterFlex => (gutter * gutterPrec).toInt();
   int get _cellFlex => ((1 - gutter) * gutterPrec).toInt();
 
-  // Keyboard Listener
+  // Keyboard
 
   Widget get _textFieldWidget => TextField(
     style: Styles().textStyles.getTextStyle('widget.heading.extra_small'),
@@ -313,19 +368,52 @@ class _ILLordleWidgetState extends State<ILLordleWidget> {
     }
   }
 
+  // Rack
+
   void _onKeyCharacter(String character) {
     debugPrint('Key: $character');
+    if (character.isAlpha && (rack.length < ILLordle.wordLength) && mounted) {
+      setState(() {
+        rack = rack + character.toLowerCase();
+      });
+    }
+    _textFocusNode.requestFocus(); // show again
   }
 
   void _onBackward() {
     debugPrint('Backward');
+    if (rack.isNotEmpty && mounted) {
+      setState(() {
+        rack = rack.substring(0, rack.length - 1);
+      });
+    }
     _textFocusNode.requestFocus(); // show again
   }
 
   void _onSubmitWord() {
     debugPrint('Submit');
-    _textFocusNode.requestFocus(); // show again
+    if (rack.length == ILLordle.wordLength) {
+      if ((widget.dictionary?.isNotEmpty == true) && (widget.dictionary?.contains(rack) != true)) {
+        _textFocusNode.unfocus();
+        AppAlert.showTextMessage(context, Localization().getStringEx('panel.illordle.move.invalid.text', 'Not in word list')).then((_){
+          if (mounted) {
+            _textFocusNode.requestFocus();
+          }
+        });
+      }
+      else {
+        setState(() {
+          moves.add(rack);
+          rack = '';
+        });
+        _textFocusNode.requestFocus(); // show again
+      }
+    }
+    else {
+      _textFocusNode.requestFocus(); // show again
+    }
   }
+
 }
 
 class ILLordle {
@@ -333,8 +421,11 @@ class ILLordle {
   static const int numberOfWords = 5;
 
   String word;
+  Set<String> _wordChars;
   List<String> moves;
-  ILLordle(this.word, { this.moves = const <String>[]});
+
+  ILLordle(this.word, { this.moves = const <String>[]}) :
+    _wordChars = Set<String>.from(word.characters);
 
   // Accessories
 
@@ -348,6 +439,15 @@ class ILLordle {
     }
     else {
       return null;
+    }
+  }
+
+  ILLordleLetterStatus letterStatus(String letter, [int position = 0]) {
+    if (_wordChars.contains(letter)) {
+      return ((0 <= position) && (position < word.length) && (word.substring(position, position + 1) == letter)) ? ILLordleLetterStatus.inPlace : ILLordleLetterStatus.inUse;
+    }
+    else {
+      return ILLordleLetterStatus.outOfUse;
     }
   }
 
@@ -398,4 +498,22 @@ class _ILLordleDailyWord {
 
   DateTime? get dateTime =>
     (date != null) ? DateFormat('yyyy-MM-dd').tryParse(date ?? '') : null;
+}
+
+enum ILLordleLetterStatus { inPlace, inUse, outOfUse }
+
+extension _ILLordleLetterStatusUi on ILLordleLetterStatus {
+  Color get color {
+    switch (this) {
+      case ILLordleLetterStatus.inPlace: return Styles().colors.getColor('illordle.green') ?? const Color(0xFF21AA57);
+      case ILLordleLetterStatus.inUse: return Styles().colors.getColor('illordle.yellow') ?? const Color(0xFFE5B22E);
+      case ILLordleLetterStatus.outOfUse: return Styles().colors.getColor('illordle.gray') ?? const Color(0xFF7A7A7A);
+    }
+  }
+}
+
+enum ILLordleLetterDisplay { rack, move }
+
+extension _StringExt on String {
+  bool get isAlpha => (length == 1) && (toUpperCase() != toLowerCase());
 }
