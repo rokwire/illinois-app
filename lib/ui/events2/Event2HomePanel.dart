@@ -694,12 +694,12 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
         items.add(AccessibleDropDownMenuItem<Event2SortType>(
           key: ObjectKey(sortType),
           value: sortType,
-          child: Semantics(label: displaySortType, button: true, container: true, inMutuallyExclusiveGroup: true,
+          semanticsLabel: displaySortType,
             child: Text(displaySortType, overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
               Styles().textStyles.getTextStyle("widget.message.regular.fat") :
               Styles().textStyles.getTextStyle("widget.message.regular"),
               semanticsLabel: "",
-        ))));
+        )));
       }
     }
     return items;

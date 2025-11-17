@@ -364,10 +364,11 @@ packages:
   dropdown_button2:
     dependency: "direct main"
     description:
-      name: dropdown_button2
-      sha256: b0fe8d49a030315e9eef6c7ac84ca964250155a6224d491c1365061bc974a9e1
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/dropdown_button2"
+      ref: "fix/v2.3.9-semantics-ios"
+      resolved-ref: "5985397109db4ad3d4fb20b9fe93f11e58a89e7e"
+      url: "https://github.com/rokwire/dropdown_button2.git"
+    source: git
     version: "2.3.9"
   emoji_picker_flutter:
     dependency: "direct main"

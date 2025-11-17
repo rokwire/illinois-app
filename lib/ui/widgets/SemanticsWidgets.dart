@@ -235,8 +235,12 @@ abstract class SemanticsPageAdapter<T> {
 }
 
 class AccessibleDropDownMenuItem <T> extends DropdownMenuItem <T>{
-  AccessibleDropDownMenuItem({super.key, required super.child, super.value});
+  final String? semanticsLabel;
+
+  AccessibleDropDownMenuItem({required super.child, super.key,  super.value, this.semanticsLabel,});
 
   @override
-  Widget build(BuildContext context) => MergeSemantics(child: Semantics( container: true, child: super.build(context)));
+  Widget build(BuildContext context) => Semantics(label: semanticsLabel, button: true, inMutuallyExclusiveGroup: true, container: true, child:
+      super.build(context)
+  );
 }

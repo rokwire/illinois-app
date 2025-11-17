@@ -117,6 +117,7 @@
     "payment_type.text.cash":"Cash",
     "payment_type.text.google_pay":"Google Pay",
     "payment_type.text.apple_pay":"Apple Pay",
+    "payment_type.text.all":"All Payment Types",
 
     "auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
     "auth.logged_out.feature.not_available.message.short": "To access {{feature}}, you need to sign in with your NetID.",
@@ -4372,7 +4373,7 @@
     "widget.access.auth.features.email_login.unsatisfied.message": "Sign in with your email",
     "widget.access.auth.features.phone_login.unsatisfied.message": "Sign in with your phone number",
 
-    "widget.event2.card.detail.recurring.label": "Repeats",
+    "widget.event2.card.detail.recurring.label": "Recurring Event",
     "widget.event2.card.detail.super_event.label": "Multi-Event",
     "widget.event2.card.detail.in_person.label": "In Person",
     "widget.event2.card.detail.online.label": "Online",
