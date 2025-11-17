@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed contrast accessibility issue for close button in ModalPhotoImagePanel [#5429](https://github.com/rokwire/illinois-app/issues/5429).
 ### Added
 - Added "All Payment Types" to Payment Type dropdown in Map2 and Dining2HomePanel [#5352](https://github.com/rokwire/illinois-app/issues/5352).
+- Added ILLordle game, POC only for now [#5442](https://github.com/rokwire/illinois-app/issues/5442).
 
 ## [7.3.25] - 2025-11-13
 ### Added
