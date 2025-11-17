@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -295,8 +294,6 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   late List<String> _moves;
   String _rack = '';
   
-  String? _message;
-
   @override
   void initState() {
     _textController.addListener(_onTextChanged);
@@ -327,11 +324,6 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
       if (widget.enabled)
         Positioned.fill(child: _textFieldWidget),
       _wordleWidget,
-      if (_message?.isNotEmpty == true)
-        ...<Widget>[
-          Positioned.fill(child: _messageBackground),
-          Positioned.fill(child: Center(child: _messagePopup,)),
-        ],
     ],);
 
   // Wordle
@@ -440,43 +432,6 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   int get _gutterFlex => (_gutter * _gutterPrec).toInt();
   int get _cellFlex => ((1 - _gutter) * _gutterPrec).toInt();
 
-  // Message
-
-  Widget get _messageBackground => GestureDetector(onTap: _onTapMessagePopupBackground, child:
-    Container(color: Styles().colors.surfaceAccentTransparent15,)
-  );
-
-  Widget get _messagePopup =>
-    Container(decoration: _messagePopupDecoration, padding: _messagePopupPadding, child:
-      Text(_message ?? '', style: _messagePopupTextStyle, textAlign: TextAlign.center,)
-    );
-
-  Decoration get _messagePopupDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    border: Border.all(color: Styles().colors.surfaceAccent),
-    borderRadius: BorderRadius.all(Radius.circular(12)),
-  );
-
-  EdgeInsetsGeometry get _messagePopupPadding => EdgeInsets.symmetric(horizontal: 12, vertical: 6);
-  TextStyle? get _messagePopupTextStyle => Styles().textStyles.getTextStyle('widget.message.regular.fat');
-
-  Future<void> _showMessage(String message, { Duration duration = const Duration(milliseconds: 1000)}) async {
-    setState(() {
-      _message = message;
-    });
-    await Future.delayed(duration);
-    if (mounted && (_message == message)) {
-      setState(() {
-        _message = null;
-      });
-    }
-  }
-
-  void _onTapMessagePopupBackground() {
-    setState(() {
-      _message = null;
-    });
-  }
 
   // Keyboard
 
@@ -554,9 +509,8 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     debugPrint('Submit');
     if (_rack.length == WordleGame.wordLength) {
       if ((widget.dictionary?.isNotEmpty == true) && (widget.dictionary?.contains(_rack) != true)) {
-        _showMessage(Localization().getStringEx('widget.wordle.move.invalid.text', 'Not in word list')).then((_){
-          _textFocusNode.requestFocus(); // show again
-        });
+        AppToast.showMessage(Localization().getStringEx('widget.wordle.move.invalid.text', 'Not in word list'), gravity: ToastGravity.CENTER, duration: Duration(milliseconds: 1000));
+        _textFocusNode.requestFocus(); // show again
       }
       else if (_moves.length < WordleGame.numberOfWords) {
         setState(() {
