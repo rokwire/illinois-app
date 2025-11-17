@@ -19,19 +19,16 @@ class ILLordlePanel extends StatefulWidget {
 class _ILLordlePanelState extends State<ILLordlePanel> with NotificationsListener {
 
   bool _loadProgress = false;
-  _ILLordleDailyWord? _dailyWord;
-  Set<String>? _dictionary;
   Wordle? _game;
-
-  Wordle _newGame() => Wordle(_dailyWord?.word ?? '');
+  WordleDailyWord? _dailyWord;
+  Set<String>? _dictionary;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      WordleWidget.notifyGameOver,
+      WordleGameWidget.notifyGameOver,
     ]);
-    _game = Wordle.fromStorageString(Storage().illordleGame);
-    _loadData();
+    _initData();
     super.initState();
   }
 
@@ -43,7 +40,7 @@ class _ILLordlePanelState extends State<ILLordlePanel> with NotificationsListene
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == WordleWidget.notifyGameOver) {
+    if (name == WordleGameWidget.notifyGameOver) {
       _onGameOver(JsonUtils.cast(param));
     }
   }
@@ -71,7 +68,11 @@ class _ILLordlePanelState extends State<ILLordlePanel> with NotificationsListene
           Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
             Text(Localization().getStringEx('panel.illordle.heading.info.text', 'Presented by The Daily Illini'), style: Styles().textStyles.getTextStyleEx('widget.message.light.small'), textAlign: TextAlign.center,)
           ),
-          _bodyContent
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+            AspectRatio(aspectRatio: 1, child:
+              _bodyContent
+            ),
+          ),
         ],)
     )
   );
@@ -81,69 +82,116 @@ class _ILLordlePanelState extends State<ILLordlePanel> with NotificationsListene
       return _loadingContent;
     } else if (_dailyWord == null) {
       return _errorContent;
-    } else if (_game?.word == _dailyWord?.word) {
-      if (_game?.isFinished == true) {
-        return _gameStatusContent;
-      } else {
-        return _wordleContent(_game);
-      }
     } else {
-      return _wordleContent();
+      return WordleWidget(
+        game: _game ??= Wordle(_dailyWord!.word),
+        dailyWord: _dailyWord!,
+        dictionary: _dictionary,
+        autofocus: true
+      );
     }
   }
 
-  Widget _wordleContent([Wordle? game]) =>
-    Padding (padding: _wordlePadding, child:
-      WordleWidget(game ?? _newGame(),
-        dictionary: _dictionary, autofocus: true,
-      ),
-    );
+  Widget get _loadingContent => Center(child:
+    SizedBox(width: 32, height: 32, child:
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+    ),
+  );
 
-  static EdgeInsetsGeometry _wordlePadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+  Widget get _errorContent => Center(child:
+    Text(Localization().getStringEx('panel.illordle.message.error.text', 'Failed to load daily target'), style: Styles().textStyles.getTextStyle("widget.message.regular.fat"), textAlign: TextAlign.center,)
+  );
 
-  Widget get _loadingContent =>
-    Center(child:
-      Padding(padding: _messagePadding, child:
-        SizedBox(width: 32, height: 32, child:
-          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
-        )
-      )
-    );
+  // Data
 
-  Widget get _errorContent => _messageContent(Localization().getStringEx('panel.illordle.message.error.text', 'Failed to load daily target'));
+  Future<void> _initData() async {
+    setState(() {
+      _loadProgress = true;
+    });
 
-  static Widget _messageContent(String status) =>
-    Padding(padding: _messagePadding, child:
-      Text(status, style: Styles().textStyles.getTextStyle("widget.message.regular.fat"), textAlign: TextAlign.center,)
-    );
+    List<dynamic> results = await Future.wait([
+      Wordle.loadDailyWord(),
+      Wordle.loadDictionary(),
+    ]);
 
-  static const double _messageBasePadding = 32;
-  static const double _messageHPadding = _messageBasePadding;
-  static const double _messageVPadding = _messageBasePadding * 5;
-  static EdgeInsetsGeometry _messagePadding = const EdgeInsets.symmetric(horizontal: _messageHPadding, vertical: _messageVPadding);
+    Wordle? game = Wordle.fromStorageString(Storage().illordleGame);
+    WordleDailyWord? dailyWord = JsonUtils.cast(ListUtils.entry(results, 0));
+    Set<String>? dictionary = JsonUtils.setStringsValue(ListUtils.entry(results, 1));
+    if ((dailyWord != null) && ((game == null) || (game.word != dailyWord.word))) {
+      game = Wordle(dailyWord.word);
+    }
+
+    if (mounted) {
+      setState(() {
+        _game = game;
+        _dailyWord = dailyWord;
+        _dictionary = dictionary;
+        _loadProgress = false;
+      });
+    }
+  }
+
+  // Game
+
+  void _onGameOver(Wordle? game) {
+    if ((game != null) && mounted) {
+      setState(() {
+        _game = game;
+      });
+    }
+  }
+
+  void _onLongPressLogo() {
+    if (_dailyWord != null) {
+      setState((){
+        _game = Wordle(_dailyWord!.word);
+      });
+      Storage().illordleGame = _game?.toStorageString();
+      AppToast.showMessage('New Game', duration: Duration(milliseconds: 1000));
+    }
+  }
+}
+
+class WordleWidget extends StatelessWidget {
+
+  final Wordle game;
+  final WordleDailyWord dailyWord;
+  final Set<String>? dictionary;
+  final bool autofocus;
+
+  WordleWidget({super.key,
+    required this.game,
+    required this.dailyWord,
+    this.dictionary,
+    this.autofocus = false
+  });
+
+  @override
+  Widget build(BuildContext context) => game.isFinished ?
+    _gameStatusContent : _wordleGameContent;
+
+  Widget get _wordlePreviewContent => WordleGameWidget(game, enabled: false,);
+  Widget get _wordleGameContent => WordleGameWidget(game, dictionary: dictionary, autofocus: autofocus,);
+  Widget get _wordleStatusLayer =>  Container(color: Styles().colors.blackTransparent018,);
 
   Widget get _gameStatusContent =>
-    Padding (padding: _wordlePadding, child:
-      Stack(children: [
-        WordleWidget(_game ?? _newGame(), enabled: false,),
-        Positioned.fill(child: _gameStatusLayer),
-        Positioned.fill(child:
-          Align(alignment: Alignment.bottomCenter, child:
-            Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8), child:
-              _gameStatusPopup,
-            )
+    Stack(children: [
+      _wordlePreviewContent,
+      Positioned.fill(child: _wordleStatusLayer),
+      Positioned.fill(child:
+        Align(alignment: Alignment.bottomCenter, child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8), child:
+            _gameStatusPopup,
           )
-        ),
-      ],),
-    );
+        )
+      ),
+    ],);
 
-  Widget get _gameStatusLayer =>  Container(color: Styles().colors.blackTransparent018,);
 
   Widget get _gameStatusPopup {
-    bool succeeded = (_game?.isSucceeded == true);
     return Container(decoration: _gameStatusPopupDecoration, padding: _gameStatusPopupPadding, child:
       Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(succeeded ?
+        Text(game.isSucceeded ?
             Localization().getStringEx('panel.illordle.game.status.succeeded.title', 'You win!') :
             Localization().getStringEx('panel.illordle.game.status.failed.title', 'You lost'),
           style: _gameStatusTitleTextStyle, textAlign: TextAlign.center,
@@ -151,17 +199,17 @@ class _ILLordlePanelState extends State<ILLordlePanel> with NotificationsListene
 
         Padding(padding: EdgeInsets.only(top: 12), child:
           Column(mainAxisSize: MainAxisSize.min, children: [
-            Text(Localization().getStringEx('panel.illordle.game.status.word.text', 'Today\'s word: {{word}}').replaceAll('{{word}}', _dailyWord?.word.toUpperCase() ?? ''),
+            Text(Localization().getStringEx('panel.illordle.game.status.word.text', 'Today\'s word: {{word}}').replaceAll('{{word}}', dailyWord.word.toUpperCase()),
               style: _gameStatusSectionTextStyle, textAlign: TextAlign.center,
             ),
-            Text(DateFormat(Localization().getStringEx('panel.illordle.game.status.date.text.format', 'MMMM, dd, yyyy')).format(_dailyWord?.dateTime ?? DateTime.now()),
+            Text(DateFormat(Localization().getStringEx('panel.illordle.game.status.date.text.format', 'MMMM, dd, yyyy')).format(dailyWord.dateTime ?? DateTime.now()),
               style: _gameStatusInfoTextStyle, textAlign: TextAlign.center,
             ),
-            if (succeeded && (_dailyWord?.author?.isNotEmpty == true))
-              Text(Localization().getStringEx('panel.illordle.game.status.author.text', 'Edited by {{author}}').replaceAll('{{author}}', _dailyWord?.author ?? ''),
+            if (game.isSucceeded && (dailyWord.author?.isNotEmpty == true))
+              Text(Localization().getStringEx('panel.illordle.game.status.author.text', 'Edited by {{author}}').replaceAll('{{author}}', dailyWord.author ?? ''),
                 style: _gameStatusInfoTextStyle, textAlign: TextAlign.center,
               ),
-            if (succeeded && (_dailyWord?.quote?.isNotEmpty == true))
+            if (game.isSucceeded && (dailyWord.quote?.isNotEmpty == true))
               ...[
                 Padding(padding: EdgeInsets.only(top: 12), child:
                   Text(Localization().getStringEx('panel.illordle.game.status.related_to.text', 'Related to this word'),
@@ -170,7 +218,7 @@ class _ILLordlePanelState extends State<ILLordlePanel> with NotificationsListene
                 ),
                 Padding(padding: EdgeInsets.only(top: 2, bottom: 4), child:
                   Container(decoration: _gameStatusQuoteDecoration, padding: _gameStatusQuotePadding, child:
-                    Text(_dailyWord?.quote ?? '',
+                    Text(dailyWord.quote ?? '',
                       style: _gameStatusInfoTextStyle, textAlign: TextAlign.center,
                     ),
                   )
@@ -199,48 +247,9 @@ class _ILLordlePanelState extends State<ILLordlePanel> with NotificationsListene
     border: Border.all(color: Styles().colors.surfaceAccent2),
   );
   EdgeInsetsGeometry get _gameStatusQuotePadding => EdgeInsets.symmetric(horizontal: 8, vertical: 4);
-
-  // Data
-
-  Future<void> _loadData() async {
-    setState(() {
-      _loadProgress = true;
-    });
-
-    List<dynamic> results = await Future.wait([
-      Wordle.loadDailyWord(),
-      Wordle.loadDictionary(),
-    ]);
-
-    if (mounted) {
-      setState(() {
-        _dailyWord = JsonUtils.cast(ListUtils.entry(results, 0));
-        _dictionary = JsonUtils.setStringsValue(ListUtils.entry(results, 1));
-        _loadProgress = false;
-      });
-    }
-  }
-
-  // Game
-
-  void _onGameOver(Wordle? game) {
-    if ((game != null) && mounted) {
-      setState(() {
-        _game = game;
-      });
-    }
-  }
-
-  void _onLongPressLogo() {
-    setState((){
-      _game = _newGame();
-    });
-    Storage().illordleGame = _game?.toStorageString();
-    AppToast.showMessage('New Game', duration: Duration(milliseconds: 1000));
-  }
 }
 
-class WordleWidget extends StatefulWidget {
+class WordleGameWidget extends StatefulWidget {
 
   static const String notifyGameOver = 'edu.illinois.rokwire.illini.wordle.game.over';
 
@@ -249,14 +258,14 @@ class WordleWidget extends StatefulWidget {
   final bool enabled;
   final bool autofocus;
 
-  WordleWidget(this.game, {super.key, this.dictionary, this.enabled = true, this.autofocus = false});
+  WordleGameWidget(this.game, {super.key, this.dictionary, this.enabled = true, this.autofocus = false});
 
   @override
-  State<StatefulWidget> createState() => _WordleWidgetState();
+  State<StatefulWidget> createState() => _WordleGameWidgetState();
 
 }
 
-class _WordleWidgetState extends State<WordleWidget> {
+class _WordleGameWidgetState extends State<WordleGameWidget> {
 
   static const String _textFieldValue = ' ';
   final TextEditingController _textController = TextEditingController(text: _textFieldValue);
@@ -518,7 +527,7 @@ class _WordleWidgetState extends State<WordleWidget> {
         Storage().illordleGame = game.toStorageString();
 
         if ((_moves.last == widget.game.word) || (_moves.length == Wordle.numberOfWords)) {
-          NotificationService().notify(WordleWidget.notifyGameOver, game);
+          NotificationService().notify(WordleGameWidget.notifyGameOver, game);
         }
         else {
           _textFocusNode.requestFocus(); // show again
@@ -593,11 +602,11 @@ class Wordle {
   //static const String _dictioaryContentCategory = 'illordle_dictioary';
   //static const String _dictioaryContentDelimiter = '\n';
 
-  static Future<_ILLordleDailyWord?> loadDailyWord() async =>
+  static Future<WordleDailyWord?> loadDailyWord() async =>
     _sampeDailtyWord;
     // Future.delayed(Duration(milliseconds: 500), () => _sampeDailtyWord);
 
-  static _ILLordleDailyWord _sampeDailtyWord = const _ILLordleDailyWord(
+  static WordleDailyWord _sampeDailtyWord = const WordleDailyWord(
     word: 'viral',
     date: '2025-11-14',
     author: 'Anna Ceja',
@@ -605,14 +614,14 @@ class Wordle {
   );
 }
 
-class _ILLordleDailyWord {
+class WordleDailyWord {
   final String word;
 
   final String? date;
   final String? author;
   final String? quote;
 
-  const _ILLordleDailyWord({
+  const WordleDailyWord({
     required this.word,
     this.date, this.author, this.quote,
   });
