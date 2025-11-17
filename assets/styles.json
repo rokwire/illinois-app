@@ -90,7 +90,11 @@
     "essentialSkillsCoachGreen"            :"#247c03",
     "essentialSkillsCoachGreenAccent"      :"#6aa554",
     "essentialSkillsCoachCompleteGreen"    :"#64a70b",
-    "essentialSkillsCoachIncompleteGrey"    :"#5c5c5c"
+    "essentialSkillsCoachIncompleteGrey"    :"#5c5c5c",
+
+    "illordle.green"  : "#21aa57",
+    "illordle.yellow" : "#e5b22e",
+    "illordle.gray"   : "#7a7a7a"
   },
   "font_family": {
     "black": "ProximaNovaBlack",
@@ -1123,6 +1127,7 @@
     "university-logo-blue": {"src": "images/block-i-blue.png", "type": "flutter.asset"},
     "university-logo-circle-white": {"src": "images/group-5-white.png", "type": "flutter.asset"},
     "university-logo-circle-dark": {"src": "images/group-5-blue.png", "type": "flutter.asset"},
+    "illordle-logo": {"src": "images/illordle.png", "type": "flutter.asset", "todo": "size?"},
     "transit-logo": {"src": "images/mtd-logo.png", "type": "flutter.asset"},
     "facebook-logo": {"src": "images/fb-16x32.png", "type": "flutter.asset", "todo": "size?"},
     "twitter-logo": {"src": "images/twitter-32x28.png", "type": "flutter.asset", "todo": "size?"},

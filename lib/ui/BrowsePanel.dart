@@ -21,6 +21,7 @@ import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
+import 'package:illinois/ui/illini/WordlePanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
@@ -588,6 +589,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "music_and_news.illini_radio":    _onTapIlliniRadio(context); break;
       case "music_and_news.daily_illini":    _onTapDailyIllini(context); break;
+      case "music_and_news.illordle":        _onTapIllordle(context); break;
 
       case "groups.groups":                  _onTapGroups(context); break;
 
@@ -743,6 +745,11 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapIlliniRadio(BuildContext context) {
     Analytics().logSelect(target: "Illini Radio");
     RadioPopupWidget.show(context);
+  }
+
+  static void _onTapIllordle(BuildContext context) {
+    Analytics().logSelect(target: "ILLordle");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WordlePanel()));
   }
 
   static void _onTapGroups(BuildContext context) {

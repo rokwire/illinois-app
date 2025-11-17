@@ -50,6 +50,7 @@ import 'package:illinois/ui/home/HomeWellnessToDoWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessRingsWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessTipsWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessResourcesWidget.dart';
+import 'package:illinois/ui/home/HomeWordleWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -321,6 +322,15 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeRadioWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeRadioWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'illordle') {
+      if (title) {
+        return HomeWordleWidget.title;
+      } else if (handle) {
+        return HomeWordleWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeWordleWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
 

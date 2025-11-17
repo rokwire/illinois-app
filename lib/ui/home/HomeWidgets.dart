@@ -264,6 +264,7 @@ class HomeFavoriteWidget extends StatefulWidget {
   final Widget? child;
   final String? favoriteId;
   final List<Widget>? actions;
+  final HomeFavoriteTitleBuilder? titleBuilder;
 
 
   const HomeFavoriteWidget({Key? key,
@@ -271,6 +272,7 @@ class HomeFavoriteWidget extends StatefulWidget {
     this.child,
     this.favoriteId,
     this.actions,
+    this.titleBuilder,
   }) : super(key: key);
 
   @override
@@ -352,22 +354,25 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
 
   Widget _titleWidget({ double rightPadding = 0 }) {
     Widget? dropdownIcon = _dropdownIcon;
+    Widget titleTextWidget = _titleTextWidget(dropdownIcon: dropdownIcon, rightPadding: rightPadding);
     return InkWell(onTap : _onToggleExoanded, child:
       Row(children: [
         if (dropdownIcon != null)
           Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
             dropdownIcon
           ),
-        Expanded(child:
-          Padding(padding: EdgeInsets.only(left: (dropdownIcon == null) ? 16 : 0, right: rightPadding, top: 10, bottom: 10), child:
-            Text(widget.title?.toUpperCase() ?? '',
-              style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
-            ),
-          ),
+        Expanded(child: widget.titleBuilder?.call(titleTextWidget) ?? titleTextWidget
         )
       ],)
     );
   }
+
+  Widget _titleTextWidget({ Widget? dropdownIcon, double rightPadding = 0 }) =>
+    Padding(padding: EdgeInsets.only(left: (dropdownIcon == null) ? 16 : 0, right: rightPadding, top: 10, bottom: 10), child:
+      Text(widget.title?.toUpperCase() ?? '',
+        style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
+      ),
+    );
 
   Widget? get _dropdownIcon =>
     Styles().images.getImage(_expanded ? 'chevron2-up' : 'chevron2-down', color: Styles().colors.fillColorSecondary, excludeFromSemantics: true);
@@ -397,6 +402,8 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
     }
   }
 }
+
+typedef HomeFavoriteTitleBuilder = Widget Function(Widget defaultContent);
 
 ////////////////////////////
 // HomeCardWidget
