@@ -91,7 +91,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
 
   @override
   Widget build(BuildContext context) =>
-    HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, child:
+    HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, titleBuilder: _titleBuilder, child:
       Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
         AspectRatio(aspectRatio: 1, child:
           VisibilityDetector(
@@ -128,6 +128,9 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   Widget get _errorContent => Center(child:
     Text(Localization().getStringEx('panel.wordle.message.error.text', 'Failed to load daily target'), style: Styles().textStyles.getTextStyle("widget.message.regular.fat"), textAlign: TextAlign.center,)
   );
+
+  Widget _titleBuilder(Widget defaultContent) =>
+    GestureDetector(onLongPress: _onLongPressLogo, onDoubleTap: _onDoubleTapLogo, child: defaultContent);
 
   // Visibiility Detection
 
