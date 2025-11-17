@@ -670,7 +670,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     _sortDropdownWidth ??= _evaluateSortDropdownWidth();
     return  MergeSemantics(key: _sortButtonKey ??= GlobalKey(), child:
     Semantics(value: event2SortTypeToDisplayString(_sortType), hint: _filtersButtonHint, child:
-      DropdownButtonHideUnderline(key: _sortButtonKey ??= GlobalKey(), child:
+      DropdownButtonHideUnderline(child:
         DropdownButton2<Event2SortType>(
           dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth, padding: EdgeInsets.zero),
           customButton: Event2FilterCommandButton(
