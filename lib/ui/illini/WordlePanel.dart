@@ -448,6 +448,8 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     expands: true,
     showCursor: false,
     autocorrect: false,
+    enableSuggestions: false,
+    enableInteractiveSelection: false,
     autofocus: widget.autofocus,
     onSubmitted: _onTextSubmit,
     contextMenuBuilder: _onBuildTextContextMenu,
