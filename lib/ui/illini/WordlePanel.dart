@@ -2,10 +2,12 @@
 
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -298,9 +300,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   @override
   void initState() {
     _textController.addListener(_onTextChanged);
-
     _moves = List<String>.from(widget.game.moves);
-
     super.initState();
   }
 
@@ -310,6 +310,15 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     _textController.dispose();
     _textFocusNode.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant WordleGameWidget oldWidget) {
+    if (!identical(widget.game, oldWidget.game) && mounted) {
+      _moves = List<String>.from(widget.game.moves);
+      _rack = '';
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -580,9 +589,9 @@ class WordleGame {
   static const int wordLength = 5;
   static const int numberOfWords = 5;
 
-  String word;
-  Set<String> _wordChars;
-  List<String> moves;
+  final String word;
+  final Set<String> _wordChars;
+  final List<String> moves;
 
   WordleGame(this.word, { this.moves = const <String>[]}) :
     _wordChars = Set<String>.from(word.characters);
@@ -609,7 +618,20 @@ class WordleGame {
     }
   }
 
-  // Data Access
+  // Equality
+
+  @override
+  bool operator==(Object other) =>
+    (other is WordleGame) &&
+    (word == other.word) &&
+    DeepCollectionEquality().equals(moves, other.moves);
+
+  @override
+  int get hashCode =>
+    word.hashCode ^
+    DeepCollectionEquality().hash(moves);
+
+  // Storage Serialization
 
   static const String _storageDelimiter = '\n';
 
