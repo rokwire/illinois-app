@@ -411,7 +411,8 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   static BorderRadiusGeometry get _linkContentBorderRadius => BorderRadius.all(_linkContentRadius);
   static BorderRadiusGeometry get _linkContentBottomBorderRadius => BorderRadius.vertical(bottom: _linkContentRadius);
 
-  bool get _hasImage => StringUtils.isNotEmpty(_event.imageUrl);
+  String? get _imageUrl => _event.imageUrl ?? (_event.isSportEvent ? _event.displayImageUrl : null);
+  bool get _hasImage => StringUtils.isNotEmpty(_imageUrl);
 
   bool get _hasGroup => (widget.group != null);
   bool get _isGroupAdmin => (widget.group?.currentMember?.isAdmin ?? false);
@@ -423,7 +424,7 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
     Container(decoration: _imageHeadingDecoration, child:
       AspectRatio(aspectRatio: 2.5, child:
         AccessibleImageHolder(child:
-          Image.network(_event.imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+          Image.network(_imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
         )
       ),
     )
