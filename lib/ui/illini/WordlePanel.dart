@@ -310,7 +310,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   // Wordle
 
   Widget get _wordleWidget =>
-    GestureDetector(onTap: _onTapWordle, child:
+    GestureDetector(onTap: _onTapWordle, onLongPress: _onLongPressWordle, child:
       AspectRatio(aspectRatio: 1, child:
         _buildWords()
       ),
@@ -488,6 +488,9 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     }
   }
 
+  void _onLongPressWordle() {
+
+  }
   // Rack
 
   void _onKeyCharacter(String character) {
