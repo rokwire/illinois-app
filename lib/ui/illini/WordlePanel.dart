@@ -329,7 +329,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   // Wordle
 
   Widget get _wordleWidget =>
-    GestureDetector(onTap: _onTapWordle, onLongPress: _onLongPressWordle, child:
+    GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onTapWordle, onLongPress: _onLongPressWordle, child:
       AspectRatio(aspectRatio: 1, child:
         _buildWords()
       ),
@@ -450,6 +450,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     autocorrect: false,
     autofocus: widget.autofocus,
     onSubmitted: _onTextSubmit,
+    contextMenuBuilder: _onBuildTextContextMenu,
   );
 
   void _onTextChanged() {
@@ -470,6 +471,9 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   void _onTextSubmit(String text) {
     _onSubmitWord();
   }
+
+  Widget _onBuildTextContextMenu(BuildContext context, EditableTextState editableTextState) =>
+    Container();
 
   void _onTapWordle() {
     if (_textFocusNode.hasFocus) {
