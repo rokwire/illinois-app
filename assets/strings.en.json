@@ -4368,7 +4368,7 @@
     "widget.access.auth.features.email_login.unsatisfied.message": "Sign in with your email",
     "widget.access.auth.features.phone_login.unsatisfied.message": "Sign in with your phone number",
 
-    "widget.event2.card.detail.recurring.label": "Repeats",
+    "widget.event2.card.detail.recurring.label": "Recurring Event",
     "widget.event2.card.detail.super_event.label": "Multi-Event",
     "widget.event2.card.detail.in_person.label": "In Person",
     "widget.event2.card.detail.online.label": "Online",

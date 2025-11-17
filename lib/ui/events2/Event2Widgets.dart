@@ -238,14 +238,13 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
       ),
     );
 
-  Widget get _pageContentWidget =>
-    _hasImage ? _pageImageContentWidget : _pageStandardContentWidget;
+  Widget get _pageContentWidget => _pageStandardContentWidget;
 
   Widget get _pageStandardContentWidget =>
     Container(decoration: _pageContentDecoration, child:
       ClipRRect(borderRadius: _pageContentBorderRadius, child:
         Column(mainAxisSize: MainAxisSize.min, children: [
-          _imageHeadingWidget,
+          _hasImage ? _imageHeadingWidget : _imageHeadingPlaceholderWidget,
           _contentHeadingWidget,
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
             Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -253,35 +252,9 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
               _detailsWidget,
             ]),
           ),
-          ..._linkedEventsPagerWidget,
         ]),
       ),
     );
-
-  Widget get _pageImageContentWidget =>
-    Column(mainAxisSize: MainAxisSize.min, children: [
-      Container(decoration: _pageTopContentDecoration, child:
-        ClipRRect(borderRadius: _pageContentTopBorderRadius, child:
-          Column(mainAxisSize: MainAxisSize.min, children: [
-            _imageHeadingWidget,
-          ])
-        ),
-      ),
-      Container(decoration: _pageBottomContentDecoration, child:
-        ClipRRect(borderRadius: _pageContentBottomBorderRadius, child:
-          Column(mainAxisSize: MainAxisSize.min, children: [
-            _contentHeadingWidget,
-            Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                _titleWidget,
-                _detailsWidget,
-              ]),
-            ),
-            ..._linkedEventsPagerWidget,
-          ]),
-        ),
-      ),
-    ]);
 
   Widget get _linkContentWidget =>
     Container(decoration: _linkContentDecoration, child:
@@ -365,25 +338,8 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
     boxShadow: _pageContentShadow
   );*/
 
-  static Decoration get _pageTopContentDecoration => BoxDecoration(
-    borderRadius: _pageContentTopBorderRadius,
-    boxShadow: _pageContentShadow
-  );
-
-  static Decoration get _pageBottomContentDecoration => BoxDecoration(
-    color: HomeCard.backColor,
-    borderRadius: _pageContentBottomBorderRadius,
-    boxShadow: _pageContentShadow
-  );
-
-  static List<BoxShadow> get _pageContentShadow => [
-    HomeCard.boxShadow
-  ];
-
   static Radius get _pageContentRadius => HomeCard.radius;
   static BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.all(_pageContentRadius);
-  static BorderRadiusGeometry get _pageContentTopBorderRadius => BorderRadius.vertical(top: _pageContentRadius);
-  static BorderRadiusGeometry get _pageContentBottomBorderRadius => BorderRadius.vertical(bottom: _pageContentRadius);
 
   static Decoration get _linkContentDecoration => BoxDecoration(
     color: Styles().colors.white,
@@ -420,11 +376,23 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   bool get _canDeleteGroupEvent => _isGroupAdmin;
   bool get _hasGroupEventOptions => _hasGroup && (_canEditGroupEvent || _canDeleteGroupEvent);
 
+  bool get _isPageDisplayMode => (widget.displayMode == Event2CardDisplayMode.page);
+
   Widget get _imageHeadingWidget => Visibility(visible: _hasImage, child:
     Container(decoration: _imageHeadingDecoration, child:
       AspectRatio(aspectRatio: 2.5, child:
         AccessibleImageHolder(child:
           Image.network(_imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+        )
+      ),
+    )
+  );
+
+  Widget get _imageHeadingPlaceholderWidget => Visibility(visible: !_hasImage, child:
+    Container(decoration: _imageHeadingDecoration, child:
+      AspectRatio(aspectRatio: 2.5, child:
+        AccessibleImageHolder(child:
+          Styles().images.getImage('event-detail-default', fit: BoxFit.cover, excludeFromSemantics: true)
         )
       ),
     )
@@ -508,7 +476,8 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(_event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
+    Text(_event.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'),
+        maxLines: (_isPageDisplayMode ? 1 : 2), overflow: TextOverflow.ellipsis);
 
   Widget get _detailsWidget {
     List<Widget> detailWidgets = <Widget>[
@@ -542,47 +511,51 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
         details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.super_event.label', 'Multi-Event'), 'event',));
       }
       if (_event.isRecurring) {
-        details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.recurring.label', 'Repeats'), 'recurrence',));
+        details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.recurring.label', 'Recurring Event'), 'recurrence',));
       }
       return details.isNotEmpty ? details : null;
+    } else if(_isPageDisplayMode) {
+      // Add blank space for events that do not have linked events
+      return [_buildTextDetailWidget('', '',)];
     }
     return null;
   }
 
   List<Widget>? get _locationDetailWidget {
     if (_event.isInPerson) {
-
-      List<Widget> details = <Widget>[
-        _buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.in_person.label', 'In Person'), 'location'),
-      ];
+      List<String> locationStrings = <String>[];
 
       String? displayName = _event.location?.displayName;
       if (displayName != null) {
-        details.add(_buildLocationTextDetailWidget(displayName));
+        locationStrings.add(displayName);
       }
 
       String? displayAddress = _event.location?.displayAddress;
       if ((displayAddress != null) && (displayAddress != displayName)) {
-        details.add(_buildLocationTextDetailWidget(displayAddress));
+        locationStrings.add(displayAddress);
       }
 
       String? displayDescription = _event.location?.displayDescription; // ?? _event.location?.displayCoordinates
       if ((displayDescription != null) && (displayDescription != displayAddress) && (displayDescription != displayName)) {
-        details.add(_buildLocationTextDetailWidget(displayDescription));
+        locationStrings.add(displayDescription);
       }
 
       String? distanceText = _event.getDisplayDistance(_userLocation);
       if (distanceText != null) {
-        details.add(_buildLocationTextDetailWidget(distanceText));
+        locationStrings.add(distanceText);
       }
 
-      return details;
+      int maxLines = _isPageDisplayMode ? 1 : 2;
+      String resultText = Localization().getStringEx('widget.event2.card.detail.in_person.label', 'In Person');
+      if (locationStrings.isNotEmpty) {
+        resultText += '; ';
+      }
+      resultText += locationStrings.join('; ');
+
+      return [_buildTextDetailWidget(resultText, 'location', maxLines: maxLines)];
     }
     return null;
   }
-
-  Widget _buildLocationTextDetailWidget(String text) =>
-    _buildDetailWidget(Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('common.body'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero);
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
@@ -591,12 +564,14 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   }) =>
     _buildDetailWidget(
       Text(text, style: Styles().textStyles.getTextStyle('common.body'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
-      iconKey, contentPadding: contentPadding, iconPadding: iconPadding, iconVisible: iconVisible
+      iconKey, contentPadding: contentPadding, iconPadding: iconPadding, iconVisible: iconVisible,
+      crossAxisAlignment: ((maxLines == 1) ? CrossAxisAlignment.center : CrossAxisAlignment.start)
     );
 
   Widget _buildDetailWidget(Widget contentWidget, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
+    CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.center,
     bool iconVisible = true
   }) {
     List<Widget> contentList = <Widget>[];
@@ -612,7 +587,7 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
       contentWidget
     ),);
     return Padding(padding: contentPadding, child:
-      Row(children: contentList)
+      Row(crossAxisAlignment: crossAxisAlignment, children: contentList)
     );
   }
 
