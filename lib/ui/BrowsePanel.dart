@@ -21,7 +21,7 @@ import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
-import 'package:illinois/ui/illini/ILLordlePanel.dart';
+import 'package:illinois/ui/illini/WordlePanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
@@ -749,7 +749,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapIllordle(BuildContext context) {
     Analytics().logSelect(target: "ILLordle");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ILLordlePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WordlePanel()));
   }
 
   static void _onTapGroups(BuildContext context) {
