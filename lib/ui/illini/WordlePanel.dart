@@ -7,6 +7,7 @@ import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:intl/intl.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -19,10 +20,11 @@ class WordlePanel extends StatefulWidget {
 
 class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
 
-  bool _loadProgress = false;
   WordleGame? _game;
   WordleDailyWord? _dailyWord;
   Set<String>? _dictionary;
+  bool _loadProgress = false;
+  bool _hintMode = false;
 
   @override
   void initState() {
@@ -60,7 +62,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
           Row(children: [
             Expanded(flex: 1, child: Container()),
             Expanded(flex: 2, child:
-              GestureDetector(onLongPress: _onLongPressLogo, child:
+              GestureDetector(onLongPress: _onLongPressLogo, onDoubleTap: _onDoubleTapLogo, child:
                 Styles().images.getImage('illordle-logo') ?? Container()
               )
             ),
@@ -88,7 +90,8 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
         game: _game ??= WordleGame(_dailyWord!.word),
         dailyWord: _dailyWord!,
         dictionary: _dictionary,
-        autofocus: true
+        autofocus: true,
+        hintMode: _hintMode,
       );
     }
   }
@@ -148,8 +151,15 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
         _game = WordleGame(_dailyWord!.word);
       });
       Storage().illordleGame = _game?.toStorageString();
-      AppToast.showMessage('New Game', duration: Duration(milliseconds: 1000));
+      AppToast.showMessage('New Game', gravity: ToastGravity.CENTER, duration: Duration(milliseconds: 1000));
     }
+  }
+
+  void _onDoubleTapLogo() {
+    setState(() {
+      _hintMode = !_hintMode;
+    });
+    AppToast.showMessage('Hint Mode: ' + (_hintMode ? 'ON' : 'OFF'), gravity: ToastGravity.CENTER, duration: Duration(milliseconds: 1000));
   }
 }
 
@@ -159,26 +169,28 @@ class WordleWidget extends StatelessWidget {
   final WordleDailyWord dailyWord;
   final Set<String>? dictionary;
   final bool autofocus;
+  final bool hintMode;
 
   WordleWidget({super.key,
     required this.game,
     required this.dailyWord,
     this.dictionary,
-    this.autofocus = false
+    this.autofocus = false,
+    this.hintMode = false,
   });
 
   @override
   Widget build(BuildContext context) => game.isFinished ?
     _gameStatusContent : _wordleGameContent;
 
+  Widget get _wordleGameContent => WordleGameWidget(game, dictionary: dictionary, autofocus: autofocus, hintMode: hintMode);
   Widget get _wordlePreviewContent => WordleGameWidget(game, enabled: false,);
-  Widget get _wordleGameContent => WordleGameWidget(game, dictionary: dictionary, autofocus: autofocus,);
-  Widget get _wordleStatusLayer =>  Container(color: Styles().colors.blackTransparent018,);
+  Widget get _wordlePreviewLayer =>  Container(color: Styles().colors.blackTransparent018,);
 
   Widget get _gameStatusContent =>
     Stack(children: [
       _wordlePreviewContent,
-      Positioned.fill(child: _wordleStatusLayer),
+      Positioned.fill(child: _wordlePreviewLayer),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8), child:
@@ -258,8 +270,14 @@ class WordleGameWidget extends StatefulWidget {
   final Set<String>? dictionary;
   final bool enabled;
   final bool autofocus;
+  final bool hintMode;
 
-  WordleGameWidget(this.game, {super.key, this.dictionary, this.enabled = true, this.autofocus = false});
+  WordleGameWidget(this.game, { super.key,
+    this.dictionary,
+    this.enabled = true,
+    this.autofocus = false,
+    this.hintMode = false,
+  });
 
   @override
   State<StatefulWidget> createState() => _WordleGameWidgetState();
@@ -360,8 +378,13 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
         letters.add(Expanded(flex: _gutterFlex, child: Container()));
       }
       String letter = word.substring(letterIndex, letterIndex + 1);
-      _WordleLetterStatus? letterStatus = (display == _WordleLetterDisplay.move) ? widget.game.letterStatus(letter, letterIndex) : null;
-      letters.add(Expanded(flex: _cellFlex, child: _buildCell(letter, letterStatus)));
+      _WordleLetterStatus? letterStatus = widget.game.letterStatus(letter, letterIndex);
+      letters.add(Expanded(flex: _cellFlex, child: _buildCell(
+        letter: letter,
+        status: letterStatus,
+        display: display,
+        hintMode: widget.hintMode,
+      )));
       letterIndex++;
     }
 
@@ -376,32 +399,37 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: letters);
   }
 
-  Widget _buildCell([String letter = '', _WordleLetterStatus? status]) {
+  Widget _buildCell({String letter = '', _WordleLetterStatus? status, _WordleLetterDisplay display = _WordleLetterDisplay.rack, bool hintMode = false }) {
 
-    Color? backColor = status?.color ?? Styles().colors.surface;
-
-    TextStyle? textStyle = (status != null) ?
+    Color backColor = ((display == _WordleLetterDisplay.move) && (status != null)) ? status.color : Styles().colors.surface;
+    TextStyle? textStyle = ((display == _WordleLetterDisplay.move) && (status != null)) ?
       Styles().textStyles.getTextStyleEx('widget.message.extra_large.fat', color: Styles().colors.textColorPrimary) :
       Styles().textStyles.getTextStyle('widget.message.extra_large.fat');
 
+    bool previewHint = (display == _WordleLetterDisplay.rack) && (status != null) && hintMode;
+    Color? borderColor = previewHint ? status.color : Styles().colors.surfaceAccent;
+    double borderWidth = previewHint ? 3 : 1;
+    Decoration cellDecoration = BoxDecoration(
+      color: backColor,
+      border: Border.all(color: borderColor, width: borderWidth)
+    );
+
+
     return AspectRatio(aspectRatio: 1, child:
-      Container(decoration: _cellDecoration(backColor), padding: EdgeInsets.all(8), child:
-        Center(child:
-          Text(letter.toUpperCase(), style: textStyle,)
-        )
+      Container(decoration: cellDecoration, child:
+        Padding(padding: EdgeInsets.all(8), child:
+          Center(child:
+            Text(letter.toUpperCase(), style: textStyle,)
+          )
+        ),
       ),
     );
   }
 
-  Decoration _cellDecoration(Color? backColor) => BoxDecoration(
-    color: backColor ?? Styles().colors.surface,
-    border: Border.all(color: Styles().colors.surfaceAccent)
-  );
-
-  static const double gutter = 0.075;
-  static const double gutterPrec = 1000;
-  int get _gutterFlex => (gutter * gutterPrec).toInt();
-  int get _cellFlex => ((1 - gutter) * gutterPrec).toInt();
+  static const double _gutter = 0.075;
+  static const double _gutterPrec = 1000;
+  int get _gutterFlex => (_gutter * _gutterPrec).toInt();
+  int get _cellFlex => ((1 - _gutter) * _gutterPrec).toInt();
 
   // Message
 
@@ -641,7 +669,7 @@ extension _WordleLetterStatusUi on _WordleLetterStatus {
   }
 }
 
-enum _WordleLetterDisplay { rack, move }
+enum _WordleLetterDisplay { move, rack, }
 
 extension _StringExt on String {
   bool get isAlpha => (length == 1) && (toUpperCase() != toLowerCase());
