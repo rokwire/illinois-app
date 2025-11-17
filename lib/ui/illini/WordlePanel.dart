@@ -119,7 +119,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
       WordleGame.loadDictionary(),
     ]);
 
-    WordleGame? game = WordleGame.fromStorageString(Storage().illordleGame);
+    WordleGame? game = WordleGame.fromStorage();
     WordleDailyWord? dailyWord = JsonUtils.cast(ListUtils.entry(results, 0));
     Set<String>? dictionary = JsonUtils.setStringsValue(ListUtils.entry(results, 1));
     if ((dailyWord != null) && ((game == null) || (game.word != dailyWord.word))) {
@@ -151,7 +151,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
       setState((){
         _game = WordleGame(_dailyWord!.word);
       });
-      Storage().illordleGame = _game?.toStorageString();
+      _game?.saveToStorage();
       AppToast.showMessage('New Game', gravity: ToastGravity.CENTER, duration: Duration(milliseconds: 1000));
     }
   }
@@ -587,17 +587,23 @@ class WordleGame {
 
   // Storage Serialization
 
-  static const String _storageDelimiter = '\n';
+  static WordleGame? fromStorage() =>
+      WordleGame.fromStorageString(Storage().illordleGame);
 
   static WordleGame? fromStorageString(String? value) {
     List<String> entries = (value != null) ? value.split(_storageDelimiter) : <String>[];
     return (1 < entries.length) ? WordleGame(entries.first, moves: entries.sublist(1)) : null;
   }
 
+  void saveToStorage() =>
+    Storage().illordleGame = toStorageString();
+
   String toStorageString() => <String>[
     word,
     ...moves
   ].join(_storageDelimiter);
+
+  static const String _storageDelimiter = '\n';
 
   // Data Access
 
@@ -631,6 +637,23 @@ class WordleDailyWord {
 
   DateTime? get dateTime =>
     (date != null) ? DateFormat('yyyy-MM-dd').tryParse(date ?? '') : null;
+
+  // Equality
+
+  @override
+  bool operator==(Object other) =>
+    (other is WordleDailyWord) &&
+    (word == other.word) &&
+    (date == other.date) &&
+    (author == other.author) &&
+    (quote == other.quote);
+
+  @override
+  int get hashCode =>
+    (word.hashCode) ^
+    (date?.hashCode ?? 0) ^
+    (author?.hashCode ?? 0) ^
+    (quote?.hashCode ?? 0);
 }
 
 enum _WordleLetterStatus { inPlace, inUse, outOfUse }
