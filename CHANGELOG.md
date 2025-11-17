@@ -5,12 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.3.26] - 2025-11-17
 ### Fixed
 - Fixed empty semantic node for dropdown menu items in ios [#4996](https://github.com/rokwire/illinois-app/issues/4996).
 - Show images of the sporting events in the events feed [#5533](https://github.com/rokwire/illinois-app/issues/5533).
 - Make Event widget cards a fixed height [#5507](https://github.com/rokwire/illinois-app/issues/5507).
+- Fixed contrast accessibility issue for close button in ModalPhotoImagePanel [#5429](https://github.com/rokwire/illinois-app/issues/5429).
 ### Added
 - Added "All Payment Types" to Payment Type dropdown in Map2 and Dining2HomePanel [#5352](https://github.com/rokwire/illinois-app/issues/5352).
+- Added ILLordle game, POC only for now [#5442](https://github.com/rokwire/illinois-app/issues/5442).
 
 ## [7.3.25] - 2025-11-13
 ### Added
