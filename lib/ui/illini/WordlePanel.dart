@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -130,6 +131,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
     if ((dailyWord != null) && ((game == null) || (game.word != dailyWord.word))) {
       game = WordleGame(dailyWord.word);
     }
+    _logFinishedAlert(game);
 
     if (mounted) {
       setState(() {
@@ -141,15 +143,27 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
     }
   }
 
+  // Analytics
+
+  void _logFinishedAlert(WordleGame? game) {
+    if ((game != null) && game.isFinished) {
+      Analytics().logAlert(text: game.isSucceeded ?
+        Localization().getStringEx('widget.wordle.game.status.succeeded.title', 'You win!', language: 'en') :
+        Localization().getStringEx('widget.wordle.game.status.failed.title', 'You lost', language: 'en'));
+    }
+  }
+
   // Game
 
   void _onGameOver(WordleGame? game) {
     if ((game != null) && mounted) {
+      _logFinishedAlert(game);
       setState(() {
         _game = game;
       });
     }
   }
+
 
   void _onLongPressLogo() {
     if (_dailyWord != null) {
@@ -314,10 +328,12 @@ class _WordleWidgetState extends State<WordleWidget> {
   EdgeInsetsGeometry get _gameStatusStoryPadding => EdgeInsets.symmetric(horizontal: 8, vertical: 4);
 
   void _onTapStatusStory(BuildContext context) {
+    Analytics().logSelect(target: 'Story Url');
     AppLaunchUrl.launch(context: context, url: widget.dailyWord.storyUrl, tryInternal: false);
   }
 
   void _onStatusPopupClose() {
+    Analytics().logSelect(target: 'Close');
     setState(() {
       _gameStatusContentEnabled = false;
     });
@@ -576,6 +592,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     debugPrint('Submit');
     if (_rack.length == widget.game.wordLength) {
       if ((widget.dictionary?.isNotEmpty == true) && (widget.dictionary?.contains(_rack) != true)) {
+        _logAnalytics(_rack, _moves.length + 1, status: AnalyticsIllordleEventStatus.notInDictionary);
         AppToast.showMessage(Localization().getStringEx('widget.wordle.move.invalid.text', 'Not in word list'), gravity: ToastGravity.CENTER, duration: Duration(milliseconds: 1000));
         _textFocusNode.requestFocus(); // show again
       }
@@ -588,10 +605,16 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
         WordleGame game = WordleGame.fromOther(widget.game, moves: _moves);
         game.saveToStorage();
 
-        if ((_moves.last == widget.game.word) || (_moves.length == widget.game.numberOfWords)) {
+        if (_moves.last == widget.game.word) {
+          _logAnalytics(_moves.last, _moves.length, status: AnalyticsIllordleEventStatus.success);
+          NotificationService().notify(WordleGameWidget.notifyGameOver, game);
+        }
+        if (_moves.length == widget.game.numberOfWords) {
+          _logAnalytics(_moves.last, _moves.length, status: AnalyticsIllordleEventStatus.fail);
           NotificationService().notify(WordleGameWidget.notifyGameOver, game);
         }
         else {
+          _logAnalytics(_moves.last, _moves.length);
           _textFocusNode.requestFocus(); // show again
         }
       }
@@ -603,6 +626,14 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
       _textFocusNode.requestFocus(); // show again
     }
   }
+
+  void _logAnalytics(String guess, int attempt, { AnalyticsIllordleEventStatus? status }) =>
+      Analytics().logIllordle(
+        word: widget.game.word,
+        guess: guess,
+        attempt: attempt,
+        status: status,
+      );
 
 }
 

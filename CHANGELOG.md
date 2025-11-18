@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Assistant: Events UI fragments have fixed height [#5542](https://github.com/rokwire/illinois-app/issues/5542).
 ### Changed
 - ILLordle: link to live illordle APIs [#5442](https://github.com/rokwire/illinois-app/issues/5442).
-### Changed
 - ILLordle: updated game status UI: open story URL, added close button [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Added
+- ILLordle: added analytics [#5442](https://github.com/rokwire/illinois-app/issues/5442).
 
 ## [7.3.26] - 2025-11-17
 ### Fixed
