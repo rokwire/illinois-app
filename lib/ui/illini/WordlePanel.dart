@@ -568,7 +568,7 @@ class WordleGame {
   // Accessories
 
   int get wordLength => word.length;
-  int get numberOfWords => wordLength;
+  int get numberOfWords => wordLength + 1;
 
   bool get isSucceeded => moves.isNotEmpty && (moves.last == word);
   bool get isFailed => (moves.length == numberOfWords) && (moves.last != word);
