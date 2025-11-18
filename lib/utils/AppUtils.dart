@@ -290,6 +290,13 @@ class AppSemantics {
     static String get _selectHintSrc =>
       Localization().getStringEx('model.accessability.button.select.hint', 'Double tap to select $_subjectMacro');
 
+    static Widget textFieldSemanticsLabel({String? label, String? hint, String? value}) =>
+      Semantics(
+        label: label,
+        hint: hint,
+        child: Container(),
+      );
+
 
 // final SemanticsNode? semanticsNode = renderObject.debugSemantics;
 // final SemanticsOwner? owner = renderObject.owner!.semanticsOwner;
