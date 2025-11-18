@@ -383,31 +383,33 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
   bool get _isPageDisplayMode => (widget.displayMode == Event2CardDisplayMode.page);
 
   Widget get _imageHeadingWidget {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double preferredWidth = screenWidth / 4.0;
-    double? imageWidth = kIsWeb ? max(preferredWidth, 400) : null;
+    Size imageSize = _imageHeadingWebSize;
     return Visibility(
         visible: _hasImage,
         child: Container(
           decoration: _imageHeadingDecoration,
-          child: AccessibleImageHolder(child: WebNetworkImage(imageUrl: _imageUrl, width: imageWidth,
+          child: AccessibleImageHolder(child: WebNetworkImage(imageUrl: _imageUrl, width: imageSize.width, height: imageSize.height,
               fit: BoxFit.cover, excludeFromSemantics: true)),
         ));
   }
 
   Widget get _imageHeadingPlaceholderWidget {
+    Size imageSize = _imageHeadingWebSize;
+    return Visibility(
+        visible: !_hasImage,
+        child: Container(
+          decoration: _imageHeadingDecoration,
+          child: AccessibleImageHolder(child: Styles().images.getImage('event-detail-default', fit: BoxFit.cover,
+              excludeFromSemantics: true, width: imageSize.width, height: imageSize.height)),
+        ));
+  }
+
+  Size get _imageHeadingWebSize {
     double screenWidth = MediaQuery.of(context).size.width;
     double preferredWidth = screenWidth / 4.0;
-    double? imageWidth = kIsWeb ? max(preferredWidth, 400) : null;
-    return Visibility(visible: !_hasImage, child:
-      Container(decoration: _imageHeadingDecoration, child:
-        AspectRatio(aspectRatio: 2.5, child:
-          AccessibleImageHolder(child:
-            Styles().images.getImage('event-detail-default', fit: BoxFit.cover, excludeFromSemantics: true, width: imageWidth)
-          )
-        ),
-      )
-    );
+    double imageWidth = max(preferredWidth, 400);
+    double imageHeight = (imageWidth / 2.5);
+    return Size(imageWidth, imageHeight);
   }
 
   Decoration get _imageHeadingDecoration => BoxDecoration(
