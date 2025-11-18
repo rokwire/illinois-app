@@ -632,4 +632,9 @@ class Storage extends rokwire.Storage with NotificationsListener {
   static const String diningFilterKey = 'edu.illinois.rokwire.dining.filter';
   String? get diningFilter => getStringWithName(diningFilterKey);
   set diningFilter(String? value) => setStringWithName(diningFilterKey, value);
+
+  // Illini ILLordle
+  static const String illordleGameKey = 'edu.illinois.rokwire.illini.illlordle.game';
+  String? get illordleGame => getStringWithName(illordleGameKey);
+  set illordleGame(String? value) => setStringWithName(illordleGameKey, value);
 }

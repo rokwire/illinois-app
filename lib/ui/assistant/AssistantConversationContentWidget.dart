@@ -552,7 +552,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       dynamic element = elements[index];
       Widget? elementCard;
       if (element is Event2) {
-        elementCard = Event2Card(element, displayMode: Event2CardDisplayMode.list, onTap: () => _onTapEvent(element));
+        elementCard = Event2Card(element, displayMode: Event2CardDisplayMode.page, onTap: () => _onTapEvent(element));
       } else if (element is Dining) {
         elementCard = DiningCard(element, onTap: (_) => _onTapDiningLocation(element));
       } else if (element is DiningProductItem) {

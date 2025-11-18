@@ -116,6 +116,7 @@
 	"payment_type.text.cash":"现金",
 	"payment_type.text.google_pay":"GooglePay",
 	"payment_type.text.apple_pay":"ApplePay",
+	"payment_type.text.all":"All Payment Types",
 
 	"auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
 	"auth.logged_out.feature.not_available.message.short": "To access {{feature}}, you need to sign in with your NetID.",
@@ -314,7 +315,9 @@
 	"panel.browse.entry.music_and_news.willfm_radio.title": "WILL Classical & More",
 	"panel.browse.entry.music_and_news.willhd_radio.title": "Illinois Soul 101.1 FM",
 	"panel.browse.entry.music_and_news.wpgufm_radio.title": "WPGU 107.1 調頻",
+	"panel.browse.entry.music_and_news.illini_radio.title": "Illini Radio",
 	"panel.browse.entry.music_and_news.daily_illini.title": "The Daily Illini",
+	"panel.browse.entry.music_and_news.illordle.title": "ILLordle",
 
 	"panel.browse.entry.groups.groups.title": "Groups",
 	"panel.browse.entry.research_projects.title": "Research Participation",
@@ -3811,6 +3814,18 @@
 	"panel.appointment.schedule.questions.header.title": "安排预约",
 	"panel.appointment.reschedule.questions.header.title": "重新预约",
 
+	"panel.wordle.header.title": "ILLordle",
+	"panel.wordle.heading.info.text": "Presented by The Daily Illini",
+	"panel.wordle.message.error.text": "Failed to load daily target",
+	"widget.home.wordle.header.title": "ILLordle",
+	"widget.wordle.game.status.succeeded.title": "You win!",
+	"widget.wordle.game.status.failed.title": "You lost",
+	"widget.wordle.game.status.word.text": "Today's word: {{word}}",
+	"widget.wordle.game.status.date.text.format": "MMMM, dd, yyyy",
+	"widget.wordle.game.status.author.text": "Edited by {{author}}",
+	"widget.wordle.game.status.related_to.text": "Related to this word",
+	"widget.wordle.move.invalid.text": "Not in word list",
+
 	"widget.game_day.label.my_game_day": "我的比賽日",
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 	"widget.game_day.label.no_games":"今日Illini 球队没有比赛.",
@@ -4343,7 +4358,7 @@
 	"widget.access.auth.features.email_login.unsatisfied.message": "使用您的邮箱登入",
 	"widget.access.auth.features.phone_login.unsatisfied.message": "使用手機登入",
 
-	"widget.event2.card.detail.recurring.label": "重复",
+	"widget.event2.card.detail.recurring.label": "重複事件",
 	"widget.event2.card.detail.super_event.label": "多个活动",
 	"widget.event2.card.detail.in_person.label": "实体",
 	"widget.event2.card.detail.online.label": "在线",

@@ -1216,10 +1216,10 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     Map2FilterImageButton.defaultHeight + 2 * 8;
 
   EdgeInsetsGeometry get _contentFilterButtonsBarPadding =>
-    EdgeInsets.only(left: 16, top: 8, bottom: 8);
+    EdgeInsets.symmetric(vertical: 8);
 
   EdgeInsetsGeometry get _contentFilterExtraButtonsBarPadding =>
-    EdgeInsets.only(left: 16, bottom: 8);
+    EdgeInsets.only(bottom: 8);
 
   EdgeInsetsGeometry get _contentFilterDescriptionBarPadding =>
     EdgeInsets.only(left: 16);
@@ -1247,7 +1247,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   }
 
   List<Widget> get _campusBuildingsFilterButtons => <Widget>[
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
     if (_isSortAvailable)
@@ -1257,26 +1257,24 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     Padding(padding: _filterButtonsPadding, child:
       _starredFilterButton,
     ),
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsLastPadding, child:
       _amenitiesBuildingsFilterButton,
     ),
-    _filterButtonsEdgeSpacing,
   ];
 
   List<Widget> get _studentCoursesFilterButtons => <Widget>[
     if (_isSortAvailable)
-      Padding(padding: _filterButtonsPadding, child:
+      Padding(padding: _filterButtonsFirstPadding, child:
         _sortFilterButton,
       ),
     if (StudentCourses().terms?.isNotEmpty == true)
-      Padding(padding: _filterButtonsPadding, child:
+      Padding(padding: _isSortAvailable ? _filterButtonsLastPadding : _filterButtonsFirstPadding, child:
         _termsButton,
       ),
-    _filterButtonsEdgeSpacing,
   ];
 
   List<Widget> get _diningLocationsFilterButtons => <Widget>[
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
     if (_isSortAvailable)
@@ -1289,57 +1287,53 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     Padding(padding: _filterButtonsPadding, child:
       _openNowDiningLocationsFilterButton,
     ),
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsLastPadding, child:
       _paymentTypesDiningLocationsFilterButton,
     ),
-    _filterButtonsEdgeSpacing,
   ];
 
   List<Widget> get _events2FilterButtons => <Widget>[
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
     if (_isSortAvailable)
       Padding(padding: _filterButtonsPadding, child:
         _sortFilterButton,
       ),
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsLastPadding, child:
       _filtersFilterButton,
     ),
-    _filterButtonsEdgeSpacing,
   ];
 
   List<Widget> get _laundryRoomsFilterButtons => <Widget>[
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
     if (_isSortAvailable)
       Padding(padding: _filterButtonsPadding, child:
         _sortFilterButton,
       ),
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsLastPadding, child:
       _starredFilterButton,
     ),
-    _filterButtonsEdgeSpacing,
   ];
 
   List<Widget> get _busStopsFilterButtons => <Widget>[
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
     if (_isSortAvailable)
       Padding(padding: _filterButtonsPadding, child:
         _sortFilterButton,
       ),
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsLastPadding, child:
       _starredFilterButton,
     ),
-    _filterButtonsEdgeSpacing,
   ];
 
 
   List<Widget> get _storiedSitesFilterButtons => <Widget>[
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
     if (_isSortAvailable)
@@ -1380,41 +1374,58 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   }
 
   List<Widget> _storiedSitesTagButtons(LinkedHashMap<String, dynamic> tags, { String? tagPrefix }) {
-    List<Widget> buttons = <Widget>[];
 
-    // First add simple tag buttons
+    // 1. Build display tags as they should appear in the bar
+    List<String> displayTags = <String>[];
+
+    // 1.1. First add simple tag buttons
     for (String tagEntry in tags.keys) {
       LinkedHashMap? tagValue = JsonUtils.cast(tags[tagEntry]);
       if (tagValue?.isNotEmpty != true) {
-        String tag = (tagPrefix?.isNotEmpty == true) ? "$tagPrefix.$tagEntry" : tagEntry;
-        buttons.add(Padding(padding: _filterButtonsPadding, child:
-          _storiedSiteSimpleTagButton(tag, title: tagEntry),
-        ));
+        displayTags.add(tagEntry);
       }
     }
 
-    // Then add compound tag buttons after the single
+    // 1.2. Then add compound tag buttons after the single
     for (String tagEntry in tags.keys) {
       LinkedHashMap? tagValue = JsonUtils.cast(tags[tagEntry]);
       if (tagValue?.isNotEmpty == true) {
-        String tag = (tagPrefix?.isNotEmpty == true) ? "$tagPrefix.$tagEntry" : tagEntry;
-        buttons.add(Padding(padding: _filterButtonsPadding, child:
-          _storiedSiteCompoundTagButton(tag, title: tagEntry),
-        ));
+        displayTags.add(tagEntry);
       }
     }
+
+    // 2. Build button widgets for display tags
+    List<Widget> buttons = <Widget>[];
+    for (String tagEntry in displayTags) {
+
+      LinkedHashMap? tagValue = JsonUtils.cast(tags[tagEntry]);
+      String tag = (tagPrefix?.isNotEmpty == true) ? "$tagPrefix.$tagEntry" : tagEntry;
+
+      EdgeInsetsGeometry padding;
+      if (buttons.isEmpty && (tagPrefix?.isNotEmpty == true)) {
+        padding = _filterButtonsFirstPadding;
+      } else if ((buttons.length + 1) == displayTags.length) {
+        padding = _filterButtonsLastPadding;
+      } else {
+        padding = _filterButtonsPadding;
+      }
+
+      buttons.add(Padding(padding: padding, child: (tagValue?.isNotEmpty == true) ?
+        _storiedSiteCompoundTagButton(tag, title: tagEntry) : _storiedSiteSimpleTagButton(tag, title: tagEntry),
+      ));
+    }
+
     return buttons;
   }
 
   List<Widget> get _myLocationsFilterButtons => <Widget>[
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
     if (_isSortAvailable)
-      Padding(padding: _filterButtonsPadding, child:
+      Padding(padding: _filterButtonsLastPadding, child:
         _sortFilterButton,
       ),
-    _filterButtonsEdgeSpacing,
   ];
 
   // Search Filter Button
@@ -1549,15 +1560,14 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         String itemTitle = term.name ?? '';
         TextStyle? itemTextStyle = (term.id == displayTermId) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
         Widget? itemIcon = (term.id == displayTermId) ? Styles().images.getImage('check', size: 18, color: Styles().colors.fillColorPrimary) : null;
-        items.add(AccessibleDropDownMenuItem<StudentCourseTerm>(key: ObjectKey(term), value: term,
-          child: Semantics(label: itemTitle, button: true, container: true, inMutuallyExclusiveGroup: true,
+        items.add(AccessibleDropDownMenuItem<StudentCourseTerm>(key: ObjectKey(term), value: term, semanticsLabel: itemTitle,
             child: Row(children: [
               Expanded(child:
                 Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
               ),
               if (itemIcon != null)
                 Padding(padding: EdgeInsets.only(left: 4), child: itemIcon,) ,
-            ],) )));
+            ],) ));
       }
     }
     return items;
@@ -1626,7 +1636,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
               padding: EdgeInsets.zero
             ),
         customButton: Map2FilterTextButton(
-          title: _selectedPaymentType?.displayTitle ?? Localization().getStringEx('panel.map2.button.payment_type.title', 'Payment Type'),
+          title: _selectedPaymentType?.displayTitle ?? PaymentTypeUtils.displayTitleAll,
           hint: Localization().getStringEx('panel.map2.button.payment_type.hint', 'Tap to select a payment type') + " $_filterButtonHint",
           rightIcon: Styles().images.getImage('chevron-down'),
           //onTap: _onPaymentType,
@@ -1638,52 +1648,52 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     )),
   );
 
-  List<DropdownMenuItem<PaymentType>> _buildPaymentTypesDropdownItems() {
-    List<DropdownMenuItem<PaymentType>> items = <DropdownMenuItem<PaymentType>>[];
-    for (PaymentType paymentType in PaymentType.values) {
-      String itemTitle = paymentType.displayTitle;
-      TextStyle? itemTextStyle = (paymentType == _selectedPaymentType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
-      Widget? itemIcon = (paymentType == _selectedPaymentType) ? Styles().images.getImage('check', size: 18, color: Styles().colors.fillColorPrimary) : null;
-      items.add(AccessibleDropDownMenuItem<PaymentType>(key: ObjectKey(paymentType), value: paymentType,
-        child: Semantics(label: itemTitle, button: true, container: true, inMutuallyExclusiveGroup: true,
-          child: Row(children: [
-            Expanded(child:
-              Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
-            ),
-            if (itemIcon != null)
-              Padding(padding: EdgeInsets.only(left: 4), child: itemIcon,) ,
-          ],) )));
-    }
-    return items;
+  List<DropdownMenuItem<PaymentType>> _buildPaymentTypesDropdownItems() => [
+    _buildPaymentTypesDropdownItem(null),
+    ...PaymentType.values.map((paymentType) => _buildPaymentTypesDropdownItem(paymentType)),
+  ];
+
+  DropdownMenuItem<PaymentType> _buildPaymentTypesDropdownItem(PaymentType? paymentType) {
+    String itemTitle = paymentType?.displayTitle ?? PaymentTypeUtils.displayTitleAll;
+    TextStyle? itemTextStyle = (paymentType == _selectedPaymentType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
+    Widget? itemIcon = (paymentType == _selectedPaymentType) ? Styles().images.getImage('check', size: 18, color: Styles().colors.fillColorPrimary) : null;
+    return AccessibleDropDownMenuItem<PaymentType>(key: ObjectKey(paymentType), value: paymentType, semanticsLabel: itemTitle, child:
+      Row(children: [
+        Expanded(child:
+          Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
+        ),
+        if (itemIcon != null)
+          Padding(padding: EdgeInsets.only(left: 4), child: itemIcon,) ,
+      ])
+    );
   }
 
   double _evaluatePaymentTypesDropdownWidth() {
-    double width = 0;
+    double width = _evaluatePaymentTypeDropdownWidth(null);
     for (PaymentType paymentType in PaymentType.values) {
-      final Size sizeFull = (TextPainter(
-          text: TextSpan(
-            text: paymentType.displayTitle,
-            style: _dropdownEntrySelectedTextStyle,
-          ),
-          textScaler: MediaQuery.of(context).textScaler,
-          textDirection: TextDirection.ltr,
-        )..layout()).size;
-      if (width < sizeFull.width) {
-        width = sizeFull.width;
+      final double itemWidth = _evaluatePaymentTypeDropdownWidth(paymentType);
+      if (width < itemWidth) {
+        width = itemWidth;
       }
     }
-    return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width / 2); // add horizontal padding
+    return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width * 2 / 3); // add horizontal padding
   }
+
+  double _evaluatePaymentTypeDropdownWidth(PaymentType? paymentType) => (
+    TextPainter(
+      text: TextSpan(
+        text: paymentType?.displayTitle ?? PaymentTypeUtils.displayTitleAll,
+        style: _dropdownEntrySelectedTextStyle,
+      ),
+      textScaler: MediaQuery.of(context).textScaler,
+      textDirection: TextDirection.ltr,
+    )..layout()
+  ).size.width;
 
   void _onSelectPaymentType(PaymentType? value) {
     Analytics().logSelect(target: 'Payment Type: ${value?.displayTitle}');
     setStateIfMounted(() {
-      if (_selectedPaymentType != value) {
-        _selectedPaymentType = value;
-      }
-      else {
-        _selectedPaymentType = null;
-      }
+      _selectedPaymentType = value; // (_selectedPaymentType != value) ? value : null;
     });
     _onFiltersChanged();
     Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
@@ -1822,15 +1832,14 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
             bool isSortOrderSelected = sortType.isDropdownListEntrySelected(sortOrder) ?? (_selectedSortOrder == sortOrder);
             TextStyle? itemTextStyle = ((_selectedSortType == sortType) && isSortOrderSelected) ?
               _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
-            items.add(AccessibleDropDownMenuItem<Pair<Map2SortType, Map2SortOrder?>>(key: ObjectKey(Pair(sortType, sortOrder)), value: Pair(sortType, sortOrder), child:
-              Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true, child:
+            items.add(AccessibleDropDownMenuItem<Pair<Map2SortType, Map2SortOrder?>>(key: ObjectKey(Pair(sortType, sortOrder)), value: Pair(sortType, sortOrder), semanticsLabel: sortType.displayTitle, child:
                 Row(children: [
                   Expanded(child:
                     Text(itemText, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,)
                   ),
                 ],)
               )
-            ));
+            );
           }
         }
       }
@@ -1891,9 +1900,8 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   TextStyle? get _dropdownEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
 
   static const EdgeInsetsGeometry _filterButtonsPadding = EdgeInsets.only(right: 6);
-
-  Widget get _filterButtonsEdgeSpacing =>
-    SizedBox(width: 18,);
+  static const EdgeInsetsGeometry _filterButtonsFirstPadding = EdgeInsets.only(left: 16, right: 6);
+  static const EdgeInsetsGeometry _filterButtonsLastPadding = EdgeInsets.only(right: 16);
 
   Map2Filter? get _selectedFilter => _getFilter(_selectedContentType, ensure: true);
   Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);

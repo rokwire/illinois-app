@@ -49,6 +49,7 @@ extension DiningSchedulesFilterExt on Iterable<DiningSchedule> {
 }
 
 extension PaymentTypeUtils on PaymentType {
+
   String get displayTitle {
     switch (this) {
       case PaymentType.ClassicMeal: return Localization().getStringEx('payment_type.text.classic_meal', 'Classic Meal');
@@ -60,6 +61,8 @@ extension PaymentTypeUtils on PaymentType {
       case PaymentType.ApplePay: return Localization().getStringEx('payment_type.text.apple_pay', 'Apple Pay');
     }
   }
+
+  static String get displayTitleAll => Localization().getStringEx('payment_type.text.all', 'All ');
 
   String get imageAsset {
     switch (this) {
