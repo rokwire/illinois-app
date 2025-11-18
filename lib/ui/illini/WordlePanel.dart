@@ -4,12 +4,15 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Content.dart';
+import 'package:http/http.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -216,14 +219,15 @@ class WordleWidget extends StatelessWidget {
             Text(Localization().getStringEx('widget.wordle.game.status.word.text', 'Today\'s word: {{word}}').replaceAll('{{word}}', dailyWord.word.toUpperCase()),
               style: _gameStatusSectionTextStyle, textAlign: TextAlign.center,
             ),
-            Text(DateFormat(Localization().getStringEx('widget.wordle.game.status.date.text.format', 'MMMM, dd, yyyy')).format(dailyWord.dateTime ?? DateTime.now()),
-              style: _gameStatusInfoTextStyle, textAlign: TextAlign.center,
-            ),
+            if (dailyWord.date != null)
+              Text(DateFormat(Localization().getStringEx('widget.wordle.game.status.date.text.format', 'MMMM, dd, yyyy')).format(dailyWord.date ?? DateTime.now()),
+                style: _gameStatusInfoTextStyle, textAlign: TextAlign.center,
+              ),
             if (game.isSucceeded && (dailyWord.author?.isNotEmpty == true))
               Text(Localization().getStringEx('widget.wordle.game.status.author.text', 'Edited by {{author}}').replaceAll('{{author}}', dailyWord.author ?? ''),
                 style: _gameStatusInfoTextStyle, textAlign: TextAlign.center,
               ),
-            if (game.isSucceeded && (dailyWord.quote?.isNotEmpty == true))
+            if (game.isSucceeded && (dailyWord.storyTitle?.isNotEmpty == true))
               ...[
                 Padding(padding: EdgeInsets.only(top: 12), child:
                   Text(Localization().getStringEx('widget.wordle.game.status.related_to.text', 'Related to this word'),
@@ -232,7 +236,7 @@ class WordleWidget extends StatelessWidget {
                 ),
                 Padding(padding: EdgeInsets.only(top: 2, bottom: 4), child:
                   Container(decoration: _gameStatusQuoteDecoration, padding: _gameStatusQuotePadding, child:
-                    Text(dailyWord.quote ?? '',
+                    Text(dailyWord.storyTitle ?? '',
                       style: _gameStatusInfoTextStyle, textAlign: TextAlign.center,
                     ),
                   )
@@ -340,7 +344,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     int wordIndex = 0;
     List<Widget> words = <Widget>[];
 
-    int movesCount = min(_moves.length, WordleGame.numberOfWords);
+    int movesCount = min(_moves.length, widget.game.numberOfWords);
     while (wordIndex < movesCount) {
       if (words.isNotEmpty) {
         words.add(Expanded(flex: _gutterFlex, child: Container()));
@@ -357,7 +361,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
       wordIndex++;
     }
 
-    while (wordIndex < WordleGame.numberOfWords) {
+    while (wordIndex < widget.game.numberOfWords) {
       if (words.isNotEmpty) {
         words.add(Expanded(flex: _gutterFlex, child: Container()));
       }
@@ -373,7 +377,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     int letterIndex = 0;
     List<Widget> letters = <Widget>[];
 
-    int wordLength = min(word.length, WordleGame.wordLength);
+    int wordLength = min(word.length, widget.game.wordLength);
     while (letterIndex < wordLength) {
       if (letters.isNotEmpty) {
         letters.add(Expanded(flex: _gutterFlex, child: Container()));
@@ -389,7 +393,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
       letterIndex++;
     }
 
-    while (letterIndex < WordleGame.wordLength) {
+    while (letterIndex < widget.game.wordLength) {
       if (letters.isNotEmpty) {
         letters.add(Expanded(flex: _gutterFlex, child: Container()));
       }
@@ -493,9 +497,9 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
 
   void _onKeyCharacter(String character) {
     debugPrint('Key: $character');
-    if (character.isAlpha && (_rack.length < WordleGame.wordLength) && mounted) {
+    if (character.isAlpha && (_rack.length < widget.game.wordLength) && mounted) {
       setState(() {
-        _rack = _rack + character.toLowerCase();
+        _rack = _rack + character.toUpperCase();
       });
     }
     _textFocusNode.requestFocus(); // show again
@@ -513,12 +517,12 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
 
   void _onSubmitWord() {
     debugPrint('Submit');
-    if (_rack.length == WordleGame.wordLength) {
+    if (_rack.length == widget.game.wordLength) {
       if ((widget.dictionary?.isNotEmpty == true) && (widget.dictionary?.contains(_rack) != true)) {
         AppToast.showMessage(Localization().getStringEx('widget.wordle.move.invalid.text', 'Not in word list'), gravity: ToastGravity.CENTER, duration: Duration(milliseconds: 1000));
         _textFocusNode.requestFocus(); // show again
       }
-      else if (_moves.length < WordleGame.numberOfWords) {
+      else if (_moves.length < widget.game.numberOfWords) {
         setState(() {
           _moves.add(_rack);
           _rack = '';
@@ -527,7 +531,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
         WordleGame game = WordleGame.fromOther(widget.game, moves: _moves);
         Storage().illordleGame = game.toStorageString();
 
-        if ((_moves.last == widget.game.word) || (_moves.length == WordleGame.numberOfWords)) {
+        if ((_moves.last == widget.game.word) || (_moves.length == widget.game.numberOfWords)) {
           NotificationService().notify(WordleGameWidget.notifyGameOver, game);
         }
         else {
@@ -546,8 +550,6 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
 }
 
 class WordleGame {
-  static const int wordLength = 5;
-  static const int numberOfWords = 5;
 
   final String word;
   final Set<String> _wordChars;
@@ -564,6 +566,9 @@ class WordleGame {
   );
 
   // Accessories
+
+  int get wordLength => word.length;
+  int get numberOfWords => wordLength;
 
   bool get isSucceeded => moves.isNotEmpty && (moves.last == word);
   bool get isFailed => (moves.length == numberOfWords) && (moves.last != word);
@@ -614,35 +619,43 @@ class WordleGame {
   // Data Access
 
   static Future<Set<String>?> loadDictionary() async {
-    dynamic content = await Content().loadContentItem('illordle_dictioary');
-    return SetUtils.from(JsonUtils.stringValue(content)?.split('\n'));
+    String? url = Config().illordleWordsUrl;
+    Response? response = (url?.isNotEmpty == true) ? await Network().get(url) : null;
+    return (response?.succeeded == true) ? SetUtils.from(JsonUtils.stringValue(response?.body)?.split(RegExp(r'[\r\n]')).map((String word) => word.toUpperCase())) : null;
   }
 
-  static Future<WordleDailyWord?> loadDailyWord() async =>
-    Future.delayed(Duration(milliseconds: 500), () => _sampeDailtyWord);
-
-  static WordleDailyWord _sampeDailtyWord = const WordleDailyWord(
-    word: 'viral',
-    date: '2025-11-14',
-    author: 'Anna Ceja',
-    quote: 'Viral TokTok star Joshua Block visits UI',
-  );
+  static Future<WordleDailyWord?> loadDailyWord() async {
+    String? url = Config().illordleDailyWordUrl;
+    Response? response = (url?.isNotEmpty == true) ? await Network().get(url) : null;
+    return (response?.succeeded == true) ? WordleDailyWord.fromJson(JsonUtils.decodeMap(response?.body)) : null;
+  }
 }
 
 class WordleDailyWord {
   final String word;
-
-  final String? date;
+  final DateTime? date;
   final String? author;
-  final String? quote;
+  final String? storyTitle;
+  final String? storyUrl;
 
   const WordleDailyWord({
     required this.word,
-    this.date, this.author, this.quote,
+    this.date, this.author,
+    this.storyTitle, this.storyUrl,
   });
 
-  DateTime? get dateTime =>
-    (date != null) ? DateFormat('yyyy-MM-dd').tryParse(date ?? '') : null;
+  // Json Serialization
+  static WordleDailyWord? fromJson(Map<String, dynamic>? json) =>
+    _fromJsonWord(JsonUtils.stringValue(json?['word']), json: json);
+
+  static WordleDailyWord? _fromJsonWord(String? word, { Map<String, dynamic>? json }) => ((word != null) && word.isNotEmpty) ?
+    WordleDailyWord(
+      word: word.toUpperCase(),
+      date: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json?['date'])),
+      author: JsonUtils.stringValue(json?['author']),
+      storyTitle: JsonUtils.stringValue(json?['story_title']),
+      storyUrl: JsonUtils.stringValue(json?['story_url']),
+    ) : null;
 
   // Equality
 
@@ -652,14 +665,14 @@ class WordleDailyWord {
     (word == other.word) &&
     (date == other.date) &&
     (author == other.author) &&
-    (quote == other.quote);
+    (storyTitle == other.storyTitle);
 
   @override
   int get hashCode =>
     (word.hashCode) ^
     (date?.hashCode ?? 0) ^
     (author?.hashCode ?? 0) ^
-    (quote?.hashCode ?? 0);
+    (storyTitle?.hashCode ?? 0);
 }
 
 enum _WordleLetterStatus { inPlace, inUse, outOfUse }

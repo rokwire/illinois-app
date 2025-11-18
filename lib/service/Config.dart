@@ -87,6 +87,10 @@ class Config extends rokwire.Config {
   Map<String, dynamic>? get dailyIllini   => JsonUtils.mapValue(content['dailyIllini']);
   Map<String, String>?  get dailyIlliniUrlParams => JsonUtils.mapCastValue(dailyIllini?['url_params']);
 
+  Map<String, dynamic>? get illordle      => JsonUtils.mapValue(dailyIllini?['illordle']);
+  String? get illordleDailyWordUrl        => JsonUtils.stringValue(illordle?['dailyWordUrl']);
+  String? get illordleWordsUrl            => JsonUtils.stringValue(illordle?['wordsUrl']);
+
   // Getters: Secret Keys
 
   String? get illiniCashAppKey       => JsonUtils.stringValue(secretIlliniCash['app_key']);
