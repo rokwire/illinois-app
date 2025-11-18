@@ -67,30 +67,6 @@ class AnalyticsFeature {
   static const AnalyticsFeature   DiningOpen                     = AnalyticsFeature("Dining: Open", priority: -1);
   static const AnalyticsFeature   DiningFavorites                = AnalyticsFeature("Dining: Favorites", priority: -1);
 
-  static const AnalyticsFeature   AppHelp                        = AnalyticsFeature("App Help");
-  static const AnalyticsFeature   Athletics                      = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
-  static const AnalyticsFeature   Appointments                   = AnalyticsFeature("Appointments");
-  static const AnalyticsFeature   Assistant                      = AnalyticsFeature("Assistant");
-  static const AnalyticsFeature   Browse                         = AnalyticsFeature("Sections", key: "Browse");
-  static const AnalyticsFeature   Buildings                      = AnalyticsFeature("Buildings", key: "Building", priority: -1); // e.g. WellnessBuilding => Wellness
-  static const AnalyticsFeature   Guide                          = AnalyticsFeature("Campus Guide", key: {"Campus", "Guide", "For Students"});
-  static const AnalyticsFeature   Debug                          = AnalyticsFeature("Debug", priority: 1);
-  static const AnalyticsFeature   Favorites                      = AnalyticsFeature("Favorites");
-  static const AnalyticsFeature   Home                           = AnalyticsFeature("Home", priority: -1); // e.g. Event2HomePanel => Event
-  static const AnalyticsFeature   Laundry                        = AnalyticsFeature("Laundry");
-  static const AnalyticsFeature   MTD                            = AnalyticsFeature("MTD", key: {"MTD", "POI"});
-  static const AnalyticsFeature   Messages                       = AnalyticsFeature("Messages");
-  static const AnalyticsFeature   News                           = AnalyticsFeature("Illini News", key: {"DailyIllini", "Twitter"});
-  static const AnalyticsFeature   Notifications                  = AnalyticsFeature("Notifications");
-  static const AnalyticsFeature   Onboarding                     = AnalyticsFeature("Onboarding");
-  static const AnalyticsFeature   Polls                          = AnalyticsFeature("Polls", key: "Poll", priority: -1);
-  static const AnalyticsFeature   Profile                        = AnalyticsFeature("Profile");
-  static const AnalyticsFeature   Radio                          = AnalyticsFeature("Radio Stations", key: "Radio");
-  static const AnalyticsFeature   Recent                         = AnalyticsFeature("Recent");
-  static const AnalyticsFeature   Safety                         = AnalyticsFeature("Safety");
-
-  static const AnalyticsFeature   Settings                       = AnalyticsFeature("Settings", priority: -1);
-
   static const AnalyticsFeature   Wallet                         = AnalyticsFeature("Wallet");
   static const AnalyticsFeature   WalletBusPass                  = AnalyticsFeature("Wallet: Bus Pass", key: "BusPass", priority: 1);
   static const AnalyticsFeature   WalletIlliniCash               = AnalyticsFeature("Wallet: Illini Cash", key: "IlliniCash", priority: 1);
@@ -109,13 +85,33 @@ class AnalyticsFeature {
   static const AnalyticsFeature   WellnessSuccessTeam            = AnalyticsFeature("Wellness: Primary Care Provider", key: {"WellnessSuccessTeam"}, priority: 1);
   static const AnalyticsFeature   WellnessRecreation             = AnalyticsFeature("Wellness: Recreation", priority: -1);
 
+  static const AnalyticsFeature   AppHelp                        = AnalyticsFeature("App Help");
+  static const AnalyticsFeature   Athletics                      = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
+  static const AnalyticsFeature   Appointments                   = AnalyticsFeature("Appointments");
+  static const AnalyticsFeature   Assistant                      = AnalyticsFeature("Assistant");
+  static const AnalyticsFeature   Browse                         = AnalyticsFeature("Sections", key: "Browse");
+  static const AnalyticsFeature   Buildings                      = AnalyticsFeature("Buildings", key: "Building", priority: -1); // e.g. WellnessBuilding => Wellness
+  static const AnalyticsFeature   Guide                          = AnalyticsFeature("Campus Guide", key: {"Campus", "Guide", "For Students"});
+  static const AnalyticsFeature   Debug                          = AnalyticsFeature("Debug", priority: 1);
+  static const AnalyticsFeature   Favorites                      = AnalyticsFeature("Favorites");
+  static const AnalyticsFeature   Home                           = AnalyticsFeature("Home", priority: -1); // e.g. Event2HomePanel => Event
+  static const AnalyticsFeature   Illordle                       = AnalyticsFeature("Illordle", key: "Wordle");
+  static const AnalyticsFeature   Laundry                        = AnalyticsFeature("Laundry");
+  static const AnalyticsFeature   MTD                            = AnalyticsFeature("MTD", key: {"MTD", "POI"});
+  static const AnalyticsFeature   Messages                       = AnalyticsFeature("Messages");
+  static const AnalyticsFeature   News                           = AnalyticsFeature("Illini News", key: {"DailyIllini", "Twitter"});
+  static const AnalyticsFeature   Notifications                  = AnalyticsFeature("Notifications");
+  static const AnalyticsFeature   Onboarding                     = AnalyticsFeature("Onboarding");
+  static const AnalyticsFeature   Polls                          = AnalyticsFeature("Polls", key: "Poll", priority: -1);
+  static const AnalyticsFeature   Profile                        = AnalyticsFeature("Profile");
+  static const AnalyticsFeature   Radio                          = AnalyticsFeature("Radio Stations", key: "Radio");
+  static const AnalyticsFeature   Recent                         = AnalyticsFeature("Recent");
+  static const AnalyticsFeature   Safety                         = AnalyticsFeature("Safety");
+  static const AnalyticsFeature   Settings                       = AnalyticsFeature("Settings", priority: -1);
+
   static const AnalyticsFeature   Unknown                        = AnalyticsFeature("Unknown");
 
   static const List<AnalyticsFeature> _features = <AnalyticsFeature>[
-    Favorites,
-    Browse,
-    Map,
-
     Academics,
     AcademicsEvents,
     AcademicsChecklist,
@@ -129,6 +125,7 @@ class AnalyticsFeature {
     AcademicsToDoList,
     AcademicsDueDateCatalog,
     AcademicsMyIllini,
+    AcademicsCampusReminders,
     AcademicsAppointments,
 
     Map,
@@ -155,34 +152,17 @@ class AnalyticsFeature {
     ResearchProjectOpen,
     ResearchProjectMy,
 
-    Athletics,
-    Guide,
-    Settings,
-    Profile,
-    Notifications,
-
     Dining,
     DiningAll,
     DiningOpen,
-
-    AppHelp,
-    Buildings,
-    MTD,
-    Messages,
-    News,
-    Polls,
-    Laundry,
-    Radio,
-    Recent,
-    Safety,
-    Debug,
-    Onboarding,
+    DiningFavorites,
 
     Wallet,
     WalletBusPass,
     WalletIlliniCash,
     WalletIlliniID,
     WalletMealPlan,
+    WalletLibraryCard,
 
     Wellness,
     WellnessDailyTips,
@@ -193,6 +173,31 @@ class AnalyticsFeature {
     WellnessResources,
     WellnessMentalHealth,
     WellnessSuccessTeam,
+    WellnessRecreation,
+
+    AppHelp,
+    Athletics,
+    Appointments,
+    Assistant,
+    Browse,
+    Buildings,
+    Guide,
+    Debug,
+    Favorites,
+    Home,
+    Illordle,
+    Laundry,
+    MTD,
+    Messages,
+    News,
+    Notifications,
+    Onboarding,
+    Polls,
+    Profile,
+    Radio,
+    Recent,
+    Safety,
+    Settings,
   ];
 
   final String name;

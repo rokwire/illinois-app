@@ -5,8 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [7.3.27] - 2025-11-18
 ### Fixed
 - Assistant: Events UI fragments have fixed height [#5542](https://github.com/rokwire/illinois-app/issues/5542).
+### Changed
+- ILLordle: link to live illordle APIs [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+- ILLordle: updated game status UI: open story URL, added close button [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Added
+- ILLordle: added analytics [#5442](https://github.com/rokwire/illinois-app/issues/5442).
 
 ## [7.3.26] - 2025-11-17
 ### Fixed
