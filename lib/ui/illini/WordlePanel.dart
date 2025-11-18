@@ -252,8 +252,8 @@ class _WordleWidgetState extends State<WordleWidget> {
             Text(Localization().getStringEx('widget.wordle.game.status.word.text', 'Today\'s word: {{word}}').replaceAll('{{word}}', widget.dailyWord.word.toUpperCase()),
               style: _gameStatusSectionTextStyle, textAlign: TextAlign.center,
             ),
-            if (widget.dailyWord.date != null)
-              Text(DateFormat(Localization().getStringEx('widget.wordle.game.status.date.text.format', 'MMMM, dd, yyyy')).format(widget.dailyWord.date ?? DateTime.now()),
+            if (widget.dailyWord.dateUtc != null)
+              Text(DateFormat(Localization().getStringEx('widget.wordle.game.status.date.text.format', 'MMMM, dd, yyyy')).format(widget.dailyWord.dateUtc?.toLocal() ?? DateTime.now()),
                 style: _gameStatusInfoTextStyle, textAlign: TextAlign.center,
               ),
             if (widget.game.isSucceeded && (widget.dailyWord.author?.isNotEmpty == true))
@@ -699,14 +699,14 @@ class WordleGame {
 
 class WordleDailyWord {
   final String word;
-  final DateTime? date;
+  final DateTime? dateUtc;
   final String? author;
   final String? storyTitle;
   final String? storyUrl;
 
   const WordleDailyWord({
     required this.word,
-    this.date, this.author,
+    this.dateUtc, this.author,
     this.storyTitle, this.storyUrl,
   });
 
@@ -717,7 +717,7 @@ class WordleDailyWord {
   static WordleDailyWord? _fromJsonWord(String? word, { Map<String, dynamic>? json }) => ((word != null) && word.isNotEmpty) ?
     WordleDailyWord(
       word: word.toUpperCase(),
-      date: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json?['date'])),
+      dateUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json?['date'],), format: 'EEE, d MMM yyyy hh:mm:ss Z', isUtc: true),
       author: JsonUtils.stringValue(json?['author']),
       storyTitle: JsonUtils.stringValue(json?['story_title']),
       storyUrl: JsonUtils.stringValue(json?['story_url']),
@@ -729,14 +729,14 @@ class WordleDailyWord {
   bool operator==(Object other) =>
     (other is WordleDailyWord) &&
     (word == other.word) &&
-    (date == other.date) &&
+    (dateUtc == other.dateUtc) &&
     (author == other.author) &&
     (storyTitle == other.storyTitle);
 
   @override
   int get hashCode =>
     (word.hashCode) ^
-    (date?.hashCode ?? 0) ^
+    (dateUtc?.hashCode ?? 0) ^
     (author?.hashCode ?? 0) ^
     (storyTitle?.hashCode ?? 0);
 }
