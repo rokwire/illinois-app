@@ -8,6 +8,7 @@ import 'package:http/http.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rokwire_plugin/ext/network.dart';
@@ -185,27 +186,27 @@ class WordleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => game.isFinished ?
-    _gameStatusContent : _wordleGameContent;
+    _gameStatusContent(context) : _wordleGameContent;
 
   Widget get _wordleGameContent => WordleGameWidget(game, dictionary: dictionary, autofocus: autofocus, hintMode: hintMode);
   Widget get _wordlePreviewContent => WordleGameWidget(game, enabled: false,);
   Widget get _wordlePreviewLayer =>  Container(color: Styles().colors.blackTransparent018,);
 
-  Widget get _gameStatusContent =>
+  Widget _gameStatusContent(BuildContext context) =>
     Stack(children: [
       _wordlePreviewContent,
       Positioned.fill(child: _wordlePreviewLayer),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8), child:
-            _gameStatusPopup,
+            _gameStatusPopup(context),
           )
         )
       ),
     ],);
 
 
-  Widget get _gameStatusPopup {
+  Widget _gameStatusPopup(BuildContext context) {
     return Container(decoration: _gameStatusPopupDecoration, padding: _gameStatusPopupPadding, child:
       Column(mainAxisSize: MainAxisSize.min, children: [
         Text(game.isSucceeded ?
@@ -235,11 +236,13 @@ class WordleWidget extends StatelessWidget {
                   ),
                 ),
                 Padding(padding: EdgeInsets.only(top: 2, bottom: 4), child:
-                  Container(decoration: _gameStatusQuoteDecoration, padding: _gameStatusQuotePadding, child:
-                    Text(dailyWord.storyTitle ?? '',
-                      style: _gameStatusInfoTextStyle, textAlign: TextAlign.center,
+                  _gameStatusStoryWrapper(context, child:
+                    Container(decoration: _gameStatusStoryDecoration, padding: _gameStatusStoryPadding, child:
+                      Text(dailyWord.storyTitle ?? '',
+                        style: _gameStatusInfoTextStyle, textAlign: TextAlign.center,
+                      ),
                     ),
-                  )
+                  ),
                 )
               ]
           ]),
@@ -247,6 +250,9 @@ class WordleWidget extends StatelessWidget {
       ],)
     );
   }
+
+  Widget _gameStatusStoryWrapper(BuildContext context, { required Widget child }) => (dailyWord.storyUrl?.isNotEmpty == true) ?
+    InkWell(onTap: () => _onTapStatusStory(context), child: child,) : child;
 
   Decoration get _gameStatusPopupDecoration => BoxDecoration(
     color: Styles().colors.surface,
@@ -260,11 +266,15 @@ class WordleWidget extends StatelessWidget {
   TextStyle? get _gameStatusSectionTextStyle => Styles().textStyles.getTextStyle('widget.message.regular.fat');
   TextStyle? get _gameStatusInfoTextStyle => Styles().textStyles.getTextStyle('widget.message.regular');
 
-  Decoration get _gameStatusQuoteDecoration => BoxDecoration(
+  Decoration get _gameStatusStoryDecoration => BoxDecoration(
     color: Styles().colors.lightGray,
     border: Border.all(color: Styles().colors.surfaceAccent2),
   );
-  EdgeInsetsGeometry get _gameStatusQuotePadding => EdgeInsets.symmetric(horizontal: 8, vertical: 4);
+  EdgeInsetsGeometry get _gameStatusStoryPadding => EdgeInsets.symmetric(horizontal: 8, vertical: 4);
+
+  void _onTapStatusStory(BuildContext context) {
+    AppLaunchUrl.launch(context: context, url: dailyWord.storyUrl, tryInternal: false);
+  }
 }
 
 class WordleGameWidget extends StatefulWidget {
