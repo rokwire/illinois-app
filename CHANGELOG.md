@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.3.28] - 2025-11-19
+### Fixed
+- ILLordle: Fixed word guestures scoring [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Changed
+- ILLordle: Updated section title and description in Home / Browse [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Added
+- ILLordle: added related overrides in Debug panel [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+
 ## [7.3.27] - 2025-11-18
 ### Fixed
 - Assistant: Events UI fragments have fixed height [#5542](https://github.com/rokwire/illinois-app/issues/5542).

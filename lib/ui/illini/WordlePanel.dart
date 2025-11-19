@@ -422,7 +422,12 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
       if (words.isNotEmpty) {
         words.add(Expanded(flex: _gutterFlex, child: Container()));
       }
-      words.add(Expanded(flex: _cellFlex, child: _buildWord(_moves[wordIndex], _WordleLetterDisplay.move)));
+      String move = _moves[wordIndex];
+      words.add(Expanded(flex: _cellFlex, child: _buildWord(
+        word: move,
+        status: widget.game.wordStatus(move),
+        display: _WordleLetterDisplay.move
+      )));
       wordIndex++;
     }
 
@@ -430,7 +435,11 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
       if (words.isNotEmpty) {
         words.add(Expanded(flex: _gutterFlex, child: Container()));
       }
-      words.add(Expanded(flex: _cellFlex, child: _buildWord(_rack, _WordleLetterDisplay.rack)));
+      words.add(Expanded(flex: _cellFlex, child: _buildWord(
+        word: _rack,
+        status: widget.game.wordStatus(_rack),
+        display: _WordleLetterDisplay.rack,
+      )));
       wordIndex++;
     }
 
@@ -445,7 +454,11 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     return Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: words);
   }
 
-  Widget _buildWord([String word = '', _WordleLetterDisplay display = _WordleLetterDisplay.rack]) {
+  Widget _buildWord({
+    String word = '',
+    List<_WordleLetterStatus> status = const <_WordleLetterStatus>[],
+    _WordleLetterDisplay display = _WordleLetterDisplay.rack
+  }) {
 
     int letterIndex = 0;
     List<Widget> letters = <Widget>[];
@@ -456,7 +469,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
         letters.add(Expanded(flex: _gutterFlex, child: Container()));
       }
       String letter = word.substring(letterIndex, letterIndex + 1);
-      _WordleLetterStatus? letterStatus = widget.game.letterStatus(letter, letterIndex);
+      _WordleLetterStatus? letterStatus = ListUtils.entry(status, letterIndex);
       letters.add(Expanded(flex: _cellFlex, child: _buildCell(
         letter: letter,
         status: letterStatus,
@@ -477,7 +490,12 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: letters);
   }
 
-  Widget _buildCell({String letter = '', _WordleLetterStatus? status, _WordleLetterDisplay display = _WordleLetterDisplay.rack, bool hintMode = false }) {
+  Widget _buildCell({
+    String letter = '',
+    _WordleLetterStatus? status,
+    _WordleLetterDisplay display = _WordleLetterDisplay.rack,
+    bool hintMode = false
+  }) {
 
     Color backColor = ((display == _WordleLetterDisplay.move) && (status != null)) ? status.color : Styles().colors.surface;
     TextStyle? textStyle = ((display == _WordleLetterDisplay.move) && (status != null)) ?
@@ -491,7 +509,6 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
       color: backColor,
       border: Border.all(color: borderColor, width: borderWidth)
     );
-
 
     return AspectRatio(aspectRatio: 1, child:
       Container(decoration: cellDecoration, child:
@@ -569,7 +586,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   // Rack
 
   void _onKeyCharacter(String character) {
-    debugPrint('Key: $character');
+    //debugPrint('Key: $character');
     if (character.isAlpha && (_rack.length < widget.game.wordLength) && mounted) {
       setState(() {
         _rack = _rack + character.toUpperCase();
@@ -579,7 +596,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   }
 
   void _onBackward() {
-    debugPrint('Backward');
+    //debugPrint('Backward');
     if (_rack.isNotEmpty && mounted) {
       setState(() {
         _rack = _rack.substring(0, _rack.length - 1);
@@ -589,9 +606,9 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   }
 
   void _onSubmitWord() {
-    debugPrint('Submit');
+    //debugPrint('Submit');
     if (_rack.length == widget.game.wordLength) {
-      if ((widget.dictionary?.isNotEmpty == true) && (widget.dictionary?.contains(_rack) != true)) {
+      if ((widget.dictionary?.isNotEmpty == true) && (Storage().debugWordleIgnoreDictionary != true) && (widget.dictionary?.contains(_rack) != true)) {
         _logAnalytics(_rack, _moves.length + 1, status: AnalyticsIllordleEventStatus.notInDictionary);
         AppToast.showMessage(Localization().getStringEx('widget.wordle.move.invalid.text', 'Not in word list'), gravity: ToastGravity.CENTER, duration: Duration(milliseconds: 1000));
         _textFocusNode.requestFocus(); // show again
@@ -641,12 +658,10 @@ class WordleGame {
 
   final String uuid;
   final String word;
-  final Set<String> _wordChars;
   final List<String> moves;
 
   WordleGame(this.word, { String? uuid, this.moves = const <String>[] }) :
-    this.uuid = uuid ?? Uuid().v1(),
-    _wordChars = Set<String>.from(word.characters);
+    this.uuid = uuid ?? Uuid().v1();
 
   factory WordleGame.fromOther(WordleGame other, {
     String? word,
@@ -666,13 +681,35 @@ class WordleGame {
   bool get isFailed => (moves.length == numberOfWords) && (moves.last != word);
   bool get isFinished => isSucceeded || isFailed;
 
-  _WordleLetterStatus letterStatus(String letter, [int position = 0]) {
-    if (_wordChars.contains(letter)) {
-      return ((0 <= position) && (position < word.length) && (word.substring(position, position + 1) == letter)) ? _WordleLetterStatus.inPlace : _WordleLetterStatus.inUse;
+  List<_WordleLetterStatus> wordStatus(String guess) {
+
+    Map<String, int> wordLettersBag = _LettersBag.fromWord(word);
+    List<_WordleLetterStatus> guessStatus = List<_WordleLetterStatus>.filled(guess.length, _WordleLetterStatus.outOfUse);
+
+    // Pass 1: determine inPlace
+    for (int index = 0; index < guess.length; index++) {
+      if (index < word.length) {
+        String guessLetter = guess.substring(index, index + 1);
+        String wordLetter = word.substring(index, index + 1);
+        if (guessLetter == wordLetter) {
+          guessStatus[index] = _WordleLetterStatus.inPlace;
+          wordLettersBag.removeLetter(wordLetter);
+        }
+      }
     }
-    else {
-      return _WordleLetterStatus.outOfUse;
+
+    // Pass 2: determine inUse
+    for (int guessIndex = 0; guessIndex < guess.length; guessIndex++) {
+      if (guessStatus[guessIndex] == _WordleLetterStatus.outOfUse) {
+        String guessLetter = guess.substring(guessIndex, guessIndex + 1);
+        if (wordLettersBag.containsLetter(guessLetter)) {
+          guessStatus[guessIndex] = _WordleLetterStatus.inUse;
+          wordLettersBag.removeLetter(guessLetter);
+        }
+      }
     }
+
+    return guessStatus;
   }
 
   // Equality
@@ -708,23 +745,28 @@ class WordleGame {
   // Storage Serialization
 
   static WordleGame? fromStorage() =>
-    WordleGame.fromJson(JsonUtils.decodeMap(Storage().illordleGame) );
+    WordleGame.fromJson(JsonUtils.decodeMap(Storage().wordleGame) );
 
   void saveToStorage() =>
-    Storage().illordleGame = JsonUtils.encode(toJson());
+    Storage().wordleGame = JsonUtils.encode(toJson());
 
   // Data Access
+
+  static Future<WordleDailyWord?> loadDailyWord() async {
+    WordleDailyWord? debugDailyWord = WordleDailyWord.fromJson(JsonUtils.decodeMap(Storage().debugWordleDailyWord));
+    return (debugDailyWord != null) ?  debugDailyWord : await loadDailyWordFromNet();
+  }
+
+  static Future<WordleDailyWord?> loadDailyWordFromNet() async {
+    String? url = Config().illordleDailyWordUrl;
+    Response? response = (url?.isNotEmpty == true) ? await Network().get(url) : null;
+    return (response?.succeeded == true) ? WordleDailyWord.fromJson(JsonUtils.decodeMap(response?.body)) : null;
+  }
 
   static Future<Set<String>?> loadDictionary() async {
     String? url = Config().illordleWordsUrl;
     Response? response = (url?.isNotEmpty == true) ? await Network().get(url) : null;
     return (response?.succeeded == true) ? SetUtils.from(JsonUtils.stringValue(response?.body)?.split(RegExp(r'[\r\n]')).map((String word) => word.toUpperCase())) : null;
-  }
-
-  static Future<WordleDailyWord?> loadDailyWord() async {
-    String? url = Config().illordleDailyWordUrl;
-    Response? response = (url?.isNotEmpty == true) ? await Network().get(url) : null;
-    return (response?.succeeded == true) ? WordleDailyWord.fromJson(JsonUtils.decodeMap(response?.body)) : null;
   }
 }
 
@@ -748,11 +790,28 @@ class WordleDailyWord {
   static WordleDailyWord? _fromJsonWord(String? word, { Map<String, dynamic>? json }) => ((word != null) && word.isNotEmpty) ?
     WordleDailyWord(
       word: word.toUpperCase(),
-      dateUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json?['date'],), format: 'EEE, d MMM yyyy hh:mm:ss Z', isUtc: true),
+      dateUtc: dateFromString(JsonUtils.stringValue(json?['date'],)),
       author: JsonUtils.stringValue(json?['author']),
       storyTitle: JsonUtils.stringValue(json?['story_title']),
       storyUrl: JsonUtils.stringValue(json?['story_url']),
     ) : null;
+
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'word': word,
+    'date': dateAsString,
+    'author': author,
+    'story_title': storyTitle,
+    'story_url': storyUrl,
+  };
+
+  static DateTime? dateFromString(String? value) =>
+    DateTimeUtils.dateTimeFromString(value, format: _dateFormat, isUtc: true);
+
+  String? get dateAsString =>
+    DateTimeUtils.utcDateTimeToString(dateUtc, format: _dateFormat);
+
+  static const String _dateFormat = 'EEE, d MMM yyyy hh:mm:ss Z';
 
   // Equality
 
@@ -788,4 +847,36 @@ enum _WordleLetterDisplay { move, rack, }
 
 extension _StringExt on String {
   bool get isAlpha => (length == 1) && (toUpperCase() != toLowerCase());
+}
+
+extension _LettersBag on Map<String, int> {
+
+  static Map<String, int> fromWord(String word) {
+    Map<String, int> bag = <String, int>{};
+    for (int index = 0; index < word.length; index++) {
+      String letter = word.substring(index, index + 1);
+      bag[letter] = (bag[letter] ?? 0) + 1;
+    }
+    return bag;
+  }
+
+  bool removeLetter(String letter) {
+    int letterCount = this[letter] ?? 0;
+    if (0 < letterCount) {
+      letterCount = letterCount - 1;
+      if (0 < letterCount) {
+        this[letter] = letterCount;
+      }
+      else {
+        this.remove(letter);
+      }
+      return true; // removed
+    }
+    else {
+      return false; // not in the bag
+    }
+  }
+
+  int _letterCount(String letter) => this[letter] ?? 0;
+  bool containsLetter(String letter) => (0 < _letterCount(letter));
 }

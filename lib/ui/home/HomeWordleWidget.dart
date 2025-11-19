@@ -80,8 +80,11 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
       _onAppLivecycleStateChanged(param);
     }
     else if (name == Storage.notifySettingChanged) {
-      if ((param == Storage.illordleGameKey) && mounted) {
+      if ((param == Storage.wordleGameKey) && mounted) {
         _onWodleGameChanged();
+      }
+      if ((param == Storage.debugWordleDailyWordKey) && mounted) {
+        _refreshDataIfVisible();
       }
     }
     else if (name == WordleGameWidget.notifyGameOver) {
@@ -182,7 +185,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
     if ((_loadingData == false) && mounted) {
       setState(() {
         _loadingData = true;
-        _refreshingData = true;
+        _refreshingData = false;
       });
 
       List<dynamic> results = await Future.wait([
