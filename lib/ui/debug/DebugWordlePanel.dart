@@ -69,7 +69,7 @@ class _DebugWordlePanelState extends State<DebugWordlePanel>  {
         Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
         ToggleRibbonButton(title: "Ignore Words Dictionary", toggled: _debugIgnoreDictionary, onTap: _onIgnoreDictionary),
         Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
-        ToggleRibbonButton(title: 'Use This Daily Word', toggled: _debugUseDailtyWord, onTap: _onUseDailtyWord),
+        ToggleRibbonButton(title: "Use This Today's Word", toggled: _debugUseDailtyWord, onTap: _onUseDailtyWord),
         Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Container(height: 1, color: Styles().colors.surfaceAccent ,),),
         if (_debugUseDailtyWord)
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
