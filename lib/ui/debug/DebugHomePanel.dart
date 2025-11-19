@@ -26,6 +26,7 @@ import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/ui/debug/DebugGuideBrowsePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
+import 'package:illinois/ui/debug/DebugWordlePanel.dart';
 import 'package:illinois/ui/map2/Map2LocationPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
@@ -145,124 +146,127 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
     body: SingleChildScrollView(child: _scaffoldContent),
   );
 
-  Widget get _scaffoldContent => Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-    _buildStaticInfo(),
+  Widget get _scaffoldContent =>
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      _buildStaticInfo(),
 
-    Container(height: 1, color: Styles().colors.surfaceAccent),
+      Container(height: 1, color: Styles().colors.surfaceAccent),
 
-    ToggleRibbonButton(title: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck ?? false, onTap: _onDisableLiveGameCheckToggled),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    ToggleRibbonButton(title: 'Display all times in Central Time', toggled: !Storage().useDeviceLocalTimeZone!, onTap: _onUseDeviceLocalTimeZoneToggled),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    ToggleRibbonButton(title: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    ToggleRibbonButton(title: 'Show map levels', toggled: Storage().debugMapShowLevels!, onTap: _onMapShowLevels),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    ToggleRibbonButton(title: 'Canvas LMS', toggled: (Storage().debugUseCanvasLms == true), onTap: _onUseCanvasLms),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    ToggleRibbonButton(title: 'Sample Appointments', toggled: (Storage().debugUseSampleAppointments == true), onTap: _onUseSampleAppointments),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    ToggleRibbonButton(title: 'Mobile icard - Use Identity BB', toggled: (Storage().debugUseIdentityBb == true), onTap: _onUseIdentityBb),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    ToggleRibbonButton(title: 'Mobile icard - Automatic Credentials', toggled: (Storage().debugAutomaticCredentials == true), onTap: _onAutomaticCredentials),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    ToggleRibbonButton(title: 'Messages/Conversations Enabled', toggled: (Storage().debugMessagesDisabled == false), onTap: _onMessagesEnabled),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    ToggleRibbonButton(title: 'Use Test Wallet Service', toggled: (Storage().debugUseIlliniCashTestUrl == true), enabled: _canUseTestWalletService, onTap: _canUseTestWalletService ? _onUseTestWalletService : null,
-      textStyle: Styles().textStyles.getTextStyle(_canUseTestWalletService ? 'widget.button.title.medium.fat' : 'widget.button.title.medium.fat.variant3'),
-    ),
-
-    Container(height: 1, color: Styles().colors.surfaceAccent),
-
-    Container(padding: EdgeInsets.symmetric(horizontal: 15, vertical: 16), child:
-      TextFormField(
-        controller: _mapThresholdDistanceController,
-        keyboardType: TextInputType.number,
-        validator: _validateThresoldDistance,
-        decoration: InputDecoration(
-        border: OutlineInputBorder(), hintText: "Enter map threshold distance in meters", labelText: 'Threshold Distance (meters)')
+      ToggleRibbonButton(title: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck ?? false, onTap: _onDisableLiveGameCheckToggled),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      ToggleRibbonButton(title: 'Display all times in Central Time', toggled: !Storage().useDeviceLocalTimeZone!, onTap: _onUseDeviceLocalTimeZoneToggled),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      ToggleRibbonButton(title: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      ToggleRibbonButton(title: 'Show map levels', toggled: Storage().debugMapShowLevels!, onTap: _onMapShowLevels),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      ToggleRibbonButton(title: 'Canvas LMS', toggled: (Storage().debugUseCanvasLms == true), onTap: _onUseCanvasLms),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      ToggleRibbonButton(title: 'Sample Appointments', toggled: (Storage().debugUseSampleAppointments == true), onTap: _onUseSampleAppointments),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      ToggleRibbonButton(title: 'Mobile icard - Use Identity BB', toggled: (Storage().debugUseIdentityBb == true), onTap: _onUseIdentityBb),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      ToggleRibbonButton(title: 'Mobile icard - Automatic Credentials', toggled: (Storage().debugAutomaticCredentials == true), onTap: _onAutomaticCredentials),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      ToggleRibbonButton(title: 'Messages/Conversations Enabled', toggled: (Storage().debugMessagesDisabled == false), onTap: _onMessagesEnabled),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      ToggleRibbonButton(title: 'Use Test Wallet Service', toggled: (Storage().debugUseIlliniCashTestUrl == true), enabled: _canUseTestWalletService, onTap: _canUseTestWalletService ? _onUseTestWalletService : null,
+        textStyle: Styles().textStyles.getTextStyle(_canUseTestWalletService ? 'widget.button.title.medium.fat' : 'widget.button.title.medium.fat.variant3'),
       ),
-    ),
 
-    Container(height: 1, color: Styles().colors.surfaceAccent),
+      Container(height: 1, color: Styles().colors.surfaceAccent),
 
-    Container(padding: EdgeInsets.symmetric(horizontal: 15, vertical: 16), child:
-      TextFormField(
-        controller: _geoFenceRegionRadiusController,
-        keyboardType: TextInputType.number,
-        validator: _validateGeoFenceRegionRadius,
-        decoration: InputDecoration(
-        border: OutlineInputBorder(), hintText: "Enter geo fence region radius in meters", labelText: 'Geo Fence Region Radius (meters)')
+      Container(padding: EdgeInsets.symmetric(horizontal: 15, vertical: 16), child:
+        TextFormField(
+          controller: _mapThresholdDistanceController,
+          keyboardType: TextInputType.number,
+          validator: _validateThresoldDistance,
+          decoration: InputDecoration(
+          border: OutlineInputBorder(), hintText: "Enter map threshold distance in meters", labelText: 'Threshold Distance (meters)')
+        ),
       ),
-    ),
 
-    Container(height: 1, color: Styles().colors.surfaceAccent),
-    _buildEnvironmentUi(),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      Container(height: 1, color: Styles().colors.surfaceAccent),
 
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-      _buildSurveyCreation()
-    ),
+      Container(padding: EdgeInsets.symmetric(horizontal: 15, vertical: 16), child:
+        TextFormField(
+          controller: _geoFenceRegionRadiusController,
+          keyboardType: TextInputType.number,
+          validator: _validateGeoFenceRegionRadius,
+          decoration: InputDecoration(
+          border: OutlineInputBorder(), hintText: "Enter geo fence region radius in meters", labelText: 'Geo Fence Region Radius (meters)')
+        ),
+      ),
 
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      Container(height: 1, color: Styles().colors.surfaceAccent),
+      _buildEnvironmentUi(),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
 
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-      _buildSportOffset()
-    ),
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+        _buildSurveyCreation()
+      ),
 
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
 
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-      _buildAppReview()
-    ),
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+        _buildSportOffset()
+      ),
 
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: "Clear Account Prefs", onTap: _onTapClearAccountPrefs),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: "Clear Voting", onTap: _onTapClearVoting),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: _refreshTokenTitle, onTap: _onTapRefreshToken),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: "Create Message", onTap: _onCreateInboxMessageClicked),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: "Inbox User Info", onTap: _onInboxUserInfoClicked),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: "User Profile Info", onTap: _onUserProfileInfoClicked),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: "User Card Info", onTap: _onUserCardInfoClicked),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: 'Canvas User Info', onTap: _onTapCanvasUser),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: "Edit Guide", onTap: _onTapGuideEdit),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: "Browse Guide", onTap: _onTapGuideBrowse),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: "Student Courses", onTap: _onTapStudentCourses),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: "Styles", onTap: _onTapStyles),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: 'Rewards', onTap: _onTapRewards),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: 'Rate App', onTap: _onTapRateApp),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: 'Review App', onTap: _onTapReviewApp),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: "Http Proxy", onTap: _onTapHttpProxy),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: "Test Crash", onTap: _onTapCrash),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: "Clear Essential Skills Coach Data", onTap: _onTapClearEssentialSkillsCoachData),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
-    RibbonButton(title: 'Set Assistant Location', onTap: _onTapSetAssistantLocation),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
 
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-      _buildFontAwesomeInfo(),
-    ),
-    Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+        _buildAppReview()
+      ),
 
-    Container(height: 32),
-  ],);
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: "Clear Account Prefs", onTap: _onTapClearAccountPrefs),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: "Clear Voting", onTap: _onTapClearVoting),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: _refreshTokenTitle, onTap: _onTapRefreshToken),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: "Create Message", onTap: _onCreateInboxMessageClicked),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: "Inbox User Info", onTap: _onInboxUserInfoClicked),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: "User Profile Info", onTap: _onUserProfileInfoClicked),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: "User Card Info", onTap: _onUserCardInfoClicked),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: 'Canvas User Info', onTap: _onTapCanvasUser),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: "Edit Guide", onTap: _onTapGuideEdit),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: "Browse Guide", onTap: _onTapGuideBrowse),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: "Student Courses", onTap: _onTapStudentCourses),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: "Styles", onTap: _onTapStyles),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: 'Rewards', onTap: _onTapRewards),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: 'Rate App', onTap: _onTapRateApp),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: 'Review App', onTap: _onTapReviewApp),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: "Http Proxy", onTap: _onTapHttpProxy),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: "Test Crash", onTap: _onTapCrash),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: "Clear Essential Skills Coach Data", onTap: _onTapClearEssentialSkillsCoachData),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: 'Set Assistant Location', onTap: _onTapSetAssistantLocation),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: 'ILLordle', onTap: _onTapWordle),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+        _buildFontAwesomeInfo(),
+      ),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+
+      Container(height: 32),
+    ],);
 
   Widget _buildStaticInfo() =>
     Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), constraints: BoxConstraints(minWidth: double.infinity), color: Styles().colors.background, child:
@@ -786,6 +790,9 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
       Storage().debugAssistantLocation = AssistantLocation.fromExploreLocation(newLocation);
     });
   }
+
+  void _onTapWordle() =>
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugWordlePanel()));
 
   String get _refreshTokenTitle {
     Auth2Token? token = Auth2().token;

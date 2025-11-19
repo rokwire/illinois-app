@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ILLordle: Fixed word guestures scoring [#5442](https://github.com/rokwire/illinois-app/issues/5442).
 ### Changed
 - ILLordle: Updated section title and description in Home / Browse [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Added
+- ILLordle: added related overrides in Debug panel [#5442](https://github.com/rokwire/illinois-app/issues/5442).
 
 ## [7.3.27] - 2025-11-18
 ### Fixed

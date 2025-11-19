@@ -608,7 +608,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   void _onSubmitWord() {
     //debugPrint('Submit');
     if (_rack.length == widget.game.wordLength) {
-      if ((widget.dictionary?.isNotEmpty == true) && (widget.dictionary?.contains(_rack) != true)) {
+      if ((widget.dictionary?.isNotEmpty == true) && (Storage().debugWordleIgnoreDictionary != true) && (widget.dictionary?.contains(_rack) != true)) {
         _logAnalytics(_rack, _moves.length + 1, status: AnalyticsIllordleEventStatus.notInDictionary);
         AppToast.showMessage(Localization().getStringEx('widget.wordle.move.invalid.text', 'Not in word list'), gravity: ToastGravity.CENTER, duration: Duration(milliseconds: 1000));
         _textFocusNode.requestFocus(); // show again
@@ -745,14 +745,19 @@ class WordleGame {
   // Storage Serialization
 
   static WordleGame? fromStorage() =>
-    WordleGame.fromJson(JsonUtils.decodeMap(Storage().illordleGame) );
+    WordleGame.fromJson(JsonUtils.decodeMap(Storage().wordleGame) );
 
   void saveToStorage() =>
-    Storage().illordleGame = JsonUtils.encode(toJson());
+    Storage().wordleGame = JsonUtils.encode(toJson());
 
   // Data Access
 
   static Future<WordleDailyWord?> loadDailyWord() async {
+    WordleDailyWord? debugDailyWord = WordleDailyWord.fromJson(JsonUtils.decodeMap(Storage().debugWordleDailyWord));
+    return (debugDailyWord != null) ?  debugDailyWord : await loadDailyWordFromNet();
+  }
+
+  static Future<WordleDailyWord?> loadDailyWordFromNet() async {
     String? url = Config().illordleDailyWordUrl;
     Response? response = (url?.isNotEmpty == true) ? await Network().get(url) : null;
     return (response?.succeeded == true) ? WordleDailyWord.fromJson(JsonUtils.decodeMap(response?.body)) : null;
@@ -785,11 +790,28 @@ class WordleDailyWord {
   static WordleDailyWord? _fromJsonWord(String? word, { Map<String, dynamic>? json }) => ((word != null) && word.isNotEmpty) ?
     WordleDailyWord(
       word: word.toUpperCase(),
-      dateUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json?['date'],), format: 'EEE, d MMM yyyy hh:mm:ss Z', isUtc: true),
+      dateUtc: dateFromString(JsonUtils.stringValue(json?['date'],)),
       author: JsonUtils.stringValue(json?['author']),
       storyTitle: JsonUtils.stringValue(json?['story_title']),
       storyUrl: JsonUtils.stringValue(json?['story_url']),
     ) : null;
+
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'word': word,
+    'date': dateAsString,
+    'author': author,
+    'story_title': storyTitle,
+    'story_url': storyUrl,
+  };
+
+  static DateTime? dateFromString(String? value) =>
+    DateTimeUtils.dateTimeFromString(value, format: _dateFormat, isUtc: true);
+
+  String? get dateAsString =>
+    DateTimeUtils.utcDateTimeToString(dateUtc, format: _dateFormat);
+
+  static const String _dateFormat = 'EEE, d MMM yyyy hh:mm:ss Z';
 
   // Equality
 
