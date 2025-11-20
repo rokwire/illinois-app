@@ -34,6 +34,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:web/web.dart' as web;
 
 class WalletIlliniCashPage extends StatefulWidget with WalletHomePage {
 
@@ -503,7 +504,8 @@ class _WalletIlliniCashPageState extends State<WalletIlliniCashPage> with Notifi
     }
     else if (_authLoading != true) {
       setState(() { _authLoading = true; });
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+      web.Window? webWindow = WebUtils.createIosWebWindow();
+      Auth2().authenticateWithOidc(iosWebWindow: webWindow).then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _authLoading = false; });
           if (result != Auth2OidcAuthenticateResult.succeeded) {

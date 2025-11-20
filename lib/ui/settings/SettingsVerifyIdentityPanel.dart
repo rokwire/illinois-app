@@ -27,6 +27,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:web/web.dart' as web;
 
 class SettingsVerifyIdentityPanel extends StatefulWidget{
   @override
@@ -142,7 +143,8 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
     }
     else if (_loading != true) {
       _setLoading(true);
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? success) {
+      web.Window? webWindow = WebUtils.createIosWebWindow();
+      Auth2().authenticateWithOidc(iosWebWindow: webWindow).then((Auth2OidcAuthenticateResult? success) {
         if (mounted) {
           _setLoading(false);
           if (success == Auth2OidcAuthenticateResult.succeeded) {

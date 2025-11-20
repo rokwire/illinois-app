@@ -50,6 +50,7 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:universal_io/io.dart';
+import 'package:web/web.dart' as web;
 
 class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
   final Event2? event;
@@ -1109,7 +1110,8 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
     }
     else if (_authLoading != true) {
       setState(() { _authLoading = true; });
-      Auth2().authenticateWithOidc().then((pluginAuth.Auth2OidcAuthenticateResult? result) {
+      web.Window? webWindow = WebUtils.createIosWebWindow();
+      Auth2().authenticateWithOidc(iosWebWindow: webWindow).then((pluginAuth.Auth2OidcAuthenticateResult? result) {
         setStateIfMounted(() { _authLoading = false; });
           if (result != pluginAuth.Auth2OidcAuthenticateResult.succeeded) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));

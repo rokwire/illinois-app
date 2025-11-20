@@ -28,6 +28,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:web/web.dart' as web;
 
 /////////////////////////////////
 // WalletMealPlanWidget
@@ -481,7 +482,8 @@ class _WalletMealPlanPageState extends State<WalletMealPlanPage> with Notificati
     }
     else if (_authLoading != true) {
       setState(() { _authLoading = true; });
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+      web.Window? webWindow = WebUtils.createIosWebWindow();
+      Auth2().authenticateWithOidc(iosWebWindow: webWindow).then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _authLoading = false; });
           if (result == Auth2OidcAuthenticateResult.failed) {

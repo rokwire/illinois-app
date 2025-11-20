@@ -28,6 +28,8 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:web/web.dart' as web;
 
 class HomeCreatePollWidget extends StatefulWidget {
   final String? favoriteId;
@@ -130,7 +132,8 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> with Notifi
     }
     else if (_authLoading != true) {
       setState(() { _authLoading = true; });
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+      web.Window? webWindow = WebUtils.createIosWebWindow();
+      Auth2().authenticateWithOidc(iosWebWindow: webWindow).then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _authLoading = false; });
           if (result != Auth2OidcAuthenticateResult.succeeded) {
