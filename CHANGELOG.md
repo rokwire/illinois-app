@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - WEB: Handle OIDC login in iOS web browsers [#4949](https://github.com/rokwire/illinois-app/issues/4949).
 
+## [7.3.29] - 2025-11-20
+### Changed
+- Increased alpha for Close button border color in ModalPhotoImagePanel [#5429](https://github.com/rokwire/illinois-app/issues/5429).
+
 ## [7.3.28] - 2025-11-19
 ### Fixed
 - ILLordle: Fixed word guestures scoring [#5442](https://github.com/rokwire/illinois-app/issues/5442).
