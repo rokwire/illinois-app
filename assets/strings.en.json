@@ -3826,6 +3826,8 @@
     "panel.wordle.heading.info.text": "Presented by The Daily Illini",
     "panel.wordle.message.error.text": "Failed to load daily target",
     "widget.home.wordle.header.title": "ILLordle",
+    "widget.home.wordle.button.view.title": "View",
+    "widget.home.wordle.button.view.hint": "Tap to view ILLordle game",
     "widget.wordle.game.status.succeeded.title": "You win!",
     "widget.wordle.game.status.failed.title": "You lost",
     "widget.wordle.game.status.word.text": "Today's word: {{word}}",
