@@ -1245,8 +1245,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
     ]);
   }
 
-  Widget get _imageWidget => (widget.isClickable != true) ? ModalImageHolder(child: _rawImageWidget) : _rawImageWidget;
-  Widget get _rawImageWidget => AccessibleImageHolder(child: Image.network(widget.post?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true));
+  Widget get _imageWidget => (widget.isClickable != true) ? AccessibleImageHolder(child: ModalImageHolder(child: _rawImageWidget)) : AccessibleImageHolder(child: _rawImageWidget);
+  Widget get _rawImageWidget => Image.network(widget.post?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true);
 
   //ReactionWidget //TBD move to GroupReaction when ready to hook BB
 
@@ -2411,8 +2411,8 @@ class _ImageChooserState extends State<ImageChooserWidget>{
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(imageUrl)
-              ? Positioned.fill(child: ModalImageHolder(child:
-                  AccessibleImageHolder(emptySemanticsLabel: widget.imageSemanticsLabel ?? "", prefixSemanticsLabel: widget.imageSemanticsLabel ?? "", child:
+              ? Positioned.fill(child: AccessibleImageHolder(child:
+                  ModalImageHolder(child:
                     Image.network(imageUrl!,  fit: BoxFit.cover))))
               : Container(),
           Visibility( visible: showSlant,
@@ -3087,12 +3087,12 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> with 
   @override
   Widget build(BuildContext context) {
     Widget? profileImage = _hasProfilePhoto ?
-        Semantics(container: true, label: "Profile image", hint: "Double tap to zoom",child: AccessibleImageHolder(metaData: _metaData, child:
-            Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: (_hasProfilePhoto ? BoxFit.cover : BoxFit.contain), image: Image.memory(_imageBytes!).image))))
+        AccessibleImageHolder(metaData: _metaData, child:
+            Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: (_hasProfilePhoto ? BoxFit.cover : BoxFit.contain), image: Image.memory(_imageBytes!).image)))
         ) :
         ExcludeSemantics(child: Styles().images.getImage('profile-placeholder', excludeFromSemantics: true));
 
-    return Semantics(excludeSemantics: _hasProfilePhoto == false, child:
+    return Semantics(excludeSemantics: _hasProfilePhoto == false || _metaData == null, child: //TBD use modal_image_holder
       GestureDetector(
         onTap: widget.onTap ?? _onImageTap,
         child: Stack(alignment: Alignment.center, children: [
