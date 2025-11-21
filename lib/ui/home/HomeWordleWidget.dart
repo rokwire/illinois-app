@@ -95,7 +95,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   @override
   Widget build(BuildContext context) =>
     HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, titleBuilder: _titleBuilder, child:
-      Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+      Padding(padding: EdgeInsets.only(left: 32, right: 32, bottom: 16), child:
         AspectRatio(aspectRatio: _dailyWord?.asectRatio ?? 1.0, child:
           VisibilityDetector(
             key: _visibilityDetectorKey,
@@ -118,6 +118,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
         dictionary: _dictionary,
         autofocus: false,
         hintMode: _hintMode,
+        gutterRatio: 0.0875,
       );
     }
   }

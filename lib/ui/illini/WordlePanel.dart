@@ -190,7 +190,7 @@ class WordleWidget extends StatefulWidget {
   final Set<String>? dictionary;
   final bool autofocus;
   final bool hintMode;
-  final double cellGutterRatio;
+  final double gutterRatio;
 
   WordleWidget({super.key,
     required this.game,
@@ -198,7 +198,7 @@ class WordleWidget extends StatefulWidget {
     this.dictionary,
     this.autofocus = false,
     this.hintMode = false,
-    this.cellGutterRatio = 0.075,
+    this.gutterRatio = 0.075,
   });
 
   @override
@@ -221,8 +221,8 @@ class _WordleWidgetState extends State<WordleWidget> {
   Widget build(BuildContext context) => widget.game.isFinished ?
     _gameStatusContent : _wordleGameContent;
 
-  Widget get _wordleGameContent => WordleGameWidget(widget.game, dictionary: widget.dictionary, autofocus: widget.autofocus, hintMode: widget.hintMode, cellGutterRatio: widget.cellGutterRatio);
-  Widget get _wordlePreviewContent => WordleGameWidget(widget.game, enabled: false, cellGutterRatio: widget.cellGutterRatio);
+  Widget get _wordleGameContent => WordleGameWidget(widget.game, dictionary: widget.dictionary, autofocus: widget.autofocus, hintMode: widget.hintMode, gutterRatio: widget.gutterRatio);
+  Widget get _wordlePreviewContent => WordleGameWidget(widget.game, enabled: false, gutterRatio: widget.gutterRatio);
   Widget get _wordlePreviewLayer =>  Container(color: Styles().colors.blackTransparent018,);
 
   Widget get _gameStatusContent =>
@@ -351,14 +351,14 @@ class WordleGameWidget extends StatefulWidget {
   final bool enabled;
   final bool autofocus;
   final bool hintMode;
-  final double cellGutterRatio;
+  final double gutterRatio;
 
   WordleGameWidget(this.game, { super.key,
     this.dictionary,
     this.enabled = true,
     this.autofocus = false,
     this.hintMode = false,
-    this.cellGutterRatio = 0.075,
+    this.gutterRatio = 0.075,
   });
 
   @override
@@ -524,8 +524,8 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   }
 
   static const double _gutterPrec = 1000;
-  int get _gutterFlex => (widget.cellGutterRatio * _gutterPrec).toInt();
-  int get _cellFlex => ((1 - widget.cellGutterRatio) * _gutterPrec).toInt();
+  int get _gutterFlex => (widget.gutterRatio * _gutterPrec).toInt();
+  int get _cellFlex => ((1 - widget.gutterRatio) * _gutterPrec).toInt();
 
 
   // Keyboard
