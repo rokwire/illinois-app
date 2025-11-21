@@ -806,10 +806,10 @@ class WordleDailyWord {
   };
 
   static DateTime? dateFromString(String? value) =>
-    DateTimeUtils.dateTimeFromString(value, format: _dateFormat, isUtc: true);
+    (value != null) ? DateFormat(_dateFormat).tryParse(value, true) : null;
 
-  String? get dateAsString =>
-    DateTimeUtils.utcDateTimeToString(dateUtc, format: _dateFormat);
+  String? get dateAsString => (dateUtc != null) ?
+    (DateFormat(_dateFormat).format(dateUtc!) + ' GMT') : null;
 
   static const String _dateFormat = 'EEE, d MMM yyyy hh:mm:ss Z';
 
