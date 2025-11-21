@@ -79,7 +79,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
             Text(Localization().getStringEx('panel.wordle.heading.info.text', 'Presented by The Daily Illini'), style: Styles().textStyles.getTextStyleEx('widget.message.light.small'), textAlign: TextAlign.center,)
           ),
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            AspectRatio(aspectRatio: 1, child:
+            AspectRatio(aspectRatio: _dailyWord?.asectRatio ?? 1.0, child:
               _bodyContent
             ),
           ),
@@ -190,6 +190,7 @@ class WordleWidget extends StatefulWidget {
   final Set<String>? dictionary;
   final bool autofocus;
   final bool hintMode;
+  final double cellGutterRatio;
 
   WordleWidget({super.key,
     required this.game,
@@ -197,6 +198,7 @@ class WordleWidget extends StatefulWidget {
     this.dictionary,
     this.autofocus = false,
     this.hintMode = false,
+    this.cellGutterRatio = 0.075,
   });
 
   @override
@@ -219,8 +221,8 @@ class _WordleWidgetState extends State<WordleWidget> {
   Widget build(BuildContext context) => widget.game.isFinished ?
     _gameStatusContent : _wordleGameContent;
 
-  Widget get _wordleGameContent => WordleGameWidget(widget.game, dictionary: widget.dictionary, autofocus: widget.autofocus, hintMode: widget.hintMode);
-  Widget get _wordlePreviewContent => WordleGameWidget(widget.game, enabled: false,);
+  Widget get _wordleGameContent => WordleGameWidget(widget.game, dictionary: widget.dictionary, autofocus: widget.autofocus, hintMode: widget.hintMode, cellGutterRatio: widget.cellGutterRatio);
+  Widget get _wordlePreviewContent => WordleGameWidget(widget.game, enabled: false, cellGutterRatio: widget.cellGutterRatio);
   Widget get _wordlePreviewLayer =>  Container(color: Styles().colors.blackTransparent018,);
 
   Widget get _gameStatusContent =>
@@ -349,12 +351,14 @@ class WordleGameWidget extends StatefulWidget {
   final bool enabled;
   final bool autofocus;
   final bool hintMode;
+  final double cellGutterRatio;
 
   WordleGameWidget(this.game, { super.key,
     this.dictionary,
     this.enabled = true,
     this.autofocus = false,
     this.hintMode = false,
+    this.cellGutterRatio = 0.075,
   });
 
   @override
@@ -407,7 +411,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
 
   Widget get _wordleWidget =>
     GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onTapWordle, onLongPress: _onLongPressWordle, child:
-      AspectRatio(aspectRatio: 1, child:
+      AspectRatio(aspectRatio: widget.game.asectRatio, child:
         _buildWords()
       ),
     );
@@ -510,21 +514,18 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
       border: Border.all(color: borderColor, width: borderWidth)
     );
 
-    return AspectRatio(aspectRatio: 1, child:
-      Container(decoration: cellDecoration, child:
-        Padding(padding: EdgeInsets.all(8), child:
-          Center(child:
-            Text(letter.toUpperCase(), style: textStyle,)
-          )
-        ),
+    return Container(decoration: cellDecoration, child:
+      Padding(padding: EdgeInsets.all(8), child:
+        Center(child:
+          Text(letter.toUpperCase(), style: textStyle,)
+        )
       ),
     );
   }
 
-  static const double _gutter = 0.075;
   static const double _gutterPrec = 1000;
-  int get _gutterFlex => (_gutter * _gutterPrec).toInt();
-  int get _cellFlex => ((1 - _gutter) * _gutterPrec).toInt();
+  int get _gutterFlex => (widget.cellGutterRatio * _gutterPrec).toInt();
+  int get _cellFlex => ((1 - widget.cellGutterRatio) * _gutterPrec).toInt();
 
 
   // Keyboard
@@ -674,8 +675,9 @@ class WordleGame {
 
   // Accessories
 
-  int get wordLength => word.length;
-  int get numberOfWords => wordLength + 1;
+  int get wordLength => word.wordLength;
+  int get numberOfWords => word.numberOfWords;
+  double get asectRatio => word.asectRatio;
 
   bool get isSucceeded => moves.isNotEmpty && (moves.last == word);
   bool get isFailed => (moves.length == numberOfWords) && (moves.last != word);
@@ -813,6 +815,11 @@ class WordleDailyWord {
 
   static const String _dateFormat = 'EEE, d MMM yyyy hh:mm:ss Z';
 
+  // Accessories
+  int get wordLength => word.wordLength;
+  int get numberOfWords => word.numberOfWords;
+  double get asectRatio => word.asectRatio;
+
   // Equality
 
   @override
@@ -829,6 +836,13 @@ class WordleDailyWord {
     (dateUtc?.hashCode ?? 0) ^
     (author?.hashCode ?? 0) ^
     (storyTitle?.hashCode ?? 0);
+
+}
+
+extension _WordleWordRules on String {
+  int get wordLength => length;
+  int get numberOfWords => wordLength + 1;
+  double get asectRatio => wordLength.toDouble() / numberOfWords.toDouble();
 }
 
 enum _WordleLetterStatus { inPlace, inUse, outOfUse }

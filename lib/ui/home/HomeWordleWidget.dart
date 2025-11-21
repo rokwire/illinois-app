@@ -96,7 +96,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   Widget build(BuildContext context) =>
     HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, titleBuilder: _titleBuilder, child:
       Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-        AspectRatio(aspectRatio: 1, child:
+        AspectRatio(aspectRatio: _dailyWord?.asectRatio ?? 1.0, child:
           VisibilityDetector(
             key: _visibilityDetectorKey,
             onVisibilityChanged: _onVisibilityChanged,
