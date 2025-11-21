@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- ILLordle: Updated today's date parsing and formatting [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Fixed
+- ILLordle: Ficed cell aspect ration, shrink a bit the favorite widget [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Added
+- ILLordle: Added "View" button in favorite widget [#5442](https://github.com/rokwire/illinois-app/issues/5442).
 
 ## [7.3.29] - 2025-11-20
 ### Changed
