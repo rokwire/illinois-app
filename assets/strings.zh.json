@@ -1121,7 +1121,7 @@
 	"panel.explore.state.online.empty.mtd_stops":"沒有可用的巴士站位置。",
 	"panel.explore.state.online.empty.my_locations":"No saved locations available.",
 	"panel.explore.state.online.empty.mental_health":"沒有可用的治療師位置。",
-	"panel.explore.state.online.empty.student_course":"沒有註冊學生課程。",
+	"panel.explore.state.online.empty.student_course":"您似乎沒有註冊任何面授課程。",
 	"panel.explore.state.online.empty.appointments":"沒有可用的約會。",
 	"panel.explore.state.online.empty.stored_sites":"No storied sites are available.",
 
@@ -1145,7 +1145,7 @@
 	"panel.explore.state.failed.mtd_stops":"無法加載 MTD 停止位置。",
 	"panel.explore.state.failed.my_locations":"Failed to load saved locations.",
 	"panel.explore.state.failed.mental_health":"沒有可用的治療師位置。",
-	"panel.explore.state.failed.student_course":"無法加載學生課程。",
+	"panel.explore.state.failed.student_course":"離線時沒有可用的學生課程。",
 	"panel.explore.state.failed.appointments":"無法加載約會。",
 	"panel.explore.state.failed.stored_sites":"Failed to load storied sites.",
 
