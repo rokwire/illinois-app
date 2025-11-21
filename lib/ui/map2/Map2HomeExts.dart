@@ -117,7 +117,7 @@ extension Map2ContentTypeImpl on Map2ContentType {
   String get displayEmptyContentMessage {
     switch (this) {
       case Map2ContentType.CampusBuildings:      return Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.');
-      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses registered.');
+      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'You do not appear to be registered for any in-person courses.');
       case Map2ContentType.DiningLocations:      return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
       case Map2ContentType.Events2:              return Localization().getStringEx('panel.explore.state.online.empty.events2', 'No events are available.');
       case Map2ContentType.LaundryRooms:         return Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.');
@@ -131,7 +131,7 @@ extension Map2ContentTypeImpl on Map2ContentType {
   String get displayFailedContentMessage {
     switch (this) {
       case Map2ContentType.CampusBuildings:      return Localization().getStringEx('panel.explore.state.failed.buildings', 'Failed to load building locations.');
-      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.state.failed.student_course', 'Failed to load student courses.');
+      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.state.failed.student_course', 'You do not appear to be registered for any in-person courses.');
       case Map2ContentType.DiningLocations:      return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
       case Map2ContentType.Events2:              return Localization().getStringEx('panel.explore.state.failed.events2', 'Failed to load all events.');
       case Map2ContentType.LaundryRooms:         return Localization().getStringEx('panel.explore.state.failed.laundry', 'Failed to load laundry locations.');
