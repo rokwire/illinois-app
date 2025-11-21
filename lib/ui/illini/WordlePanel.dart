@@ -21,6 +21,12 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:uuid/uuid.dart';
 
 class WordlePanel extends StatefulWidget {
+  final WordleGame? game;
+  final WordleDailyWord? dailyWord;
+  final Set<String>? dictionary;
+
+  WordlePanel({super.key, this.game, this.dailyWord, this.dictionary});
+
   @override
   State<StatefulWidget> createState() => _WordlePanelState();
 }
@@ -38,7 +44,9 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
     NotificationService().subscribe(this, [
       WordleGameWidget.notifyGameOver,
     ]);
+
     _initData();
+
     super.initState();
   }
 
@@ -116,22 +124,44 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
   // Data
 
   Future<void> _initData() async {
-    setState(() {
-      _loadProgress = true;
-    });
 
-    List<dynamic> results = await Future.wait([
-      WordleGame.loadDailyWord(),
-      WordleGame.loadDictionary(),
-    ]);
+    WordleDailyWord? dailyWord = widget.dailyWord;
+    Set<String>? dictionary = widget.dictionary;
 
-    WordleGame? game = WordleGame.fromStorage();
-    WordleDailyWord? dailyWord = JsonUtils.cast(ListUtils.entry(results, 0));
-    Set<String>? dictionary = JsonUtils.setStringsValue(ListUtils.entry(results, 1));
+    List<Future<dynamic>> futures = <Future<dynamic>>[];
+
+    int dailyWordIndex = (dailyWord == null) ? futures.length : -1;
+    if (0 <= dailyWordIndex) {
+      futures.add(WordleGame.loadDailyWord());
+    }
+
+    int dictionaryIndex = (dictionary == null) ? futures.length : -1;
+    if (0 <= dictionaryIndex) {
+      futures.add(WordleGame.loadDictionary());
+    }
+
+
+    if (0 < futures.length) {
+
+      setState(() {
+        _loadProgress = true;
+      });
+
+      List<dynamic> results = await Future.wait(futures);
+
+      if (0 <= dailyWordIndex) {
+        dailyWord = JsonUtils.cast(ListUtils.entry(results, dailyWordIndex));
+      }
+
+      if (0 <= dictionaryIndex) {
+        dictionary = JsonUtils.setStringsValue(ListUtils.entry(results, dictionaryIndex));
+      }
+    }
+
+    WordleGame? game = widget.game ??  WordleGame.fromStorage();
     if ((dailyWord != null) && ((game == null) || (game.word != dailyWord.word))) {
       game = WordleGame(dailyWord.word);
     }
-    _logFinishedAlert(game);
 
     if (mounted) {
       setState(() {
@@ -140,7 +170,10 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
         _dictionary = dictionary;
         _loadProgress = false;
       });
+
+      _logFinishedAlert(game);
     }
+
   }
 
   // Analytics
@@ -345,6 +378,7 @@ class _WordleWidgetState extends State<WordleWidget> {
 class WordleGameWidget extends StatefulWidget {
 
   static const String notifyGameOver = 'edu.illinois.rokwire.illini.wordle.game.over';
+  static const String notifyGameProgress = 'edu.illinois.rokwire.illini.wordle.game.progress';
 
   final WordleGame game;
   final Set<String>? dictionary;
@@ -584,6 +618,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   void _onLongPressWordle() {
 
   }
+
   // Rack
 
   void _onKeyCharacter(String character) {
@@ -633,6 +668,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
         }
         else {
           _logAnalytics(_moves.last, _moves.length);
+          NotificationService().notify(WordleGameWidget.notifyGameProgress, game);
           _textFocusNode.requestFocus(); // show again
         }
       }

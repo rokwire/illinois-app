@@ -315,6 +315,9 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
 
   void _onTapView() {
     Analytics().logSelect(target: 'View', source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WordlePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WordlePanel(
+      dailyWord: _dailyWord,
+      dictionary: _dictionary,
+    )));
   }
 }
