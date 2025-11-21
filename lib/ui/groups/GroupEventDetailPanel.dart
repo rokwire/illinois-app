@@ -25,6 +25,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -158,7 +159,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       child:Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child: ModalImageHolder(child: Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true))) : Container(),
+          StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child: AccessibleImageHolder(child: ModalImageHolder(child: Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)))) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(
