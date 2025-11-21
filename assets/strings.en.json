@@ -1126,7 +1126,7 @@
     "panel.explore.state.online.empty.mtd_stops":"No bus stop locations available.",
     "panel.explore.state.online.empty.my_locations":"No saved locations available.",
     "panel.explore.state.online.empty.mental_health":"No therapist locations are available.",
-    "panel.explore.state.online.empty.student_course":"No student courses registered.",
+    "panel.explore.state.online.empty.student_course":"You do not appear to be registered for any in-person courses.",
     "panel.explore.state.online.empty.appointments":"No appointments are available.",
     "panel.explore.state.online.empty.stored_sites":"No storied sites are available.",
 
@@ -1150,7 +1150,7 @@
     "panel.explore.state.failed.mtd_stops":"Failed to load MTD stop locations.",
     "panel.explore.state.failed.my_locations":"Failed to load saved locations.",
     "panel.explore.state.failed.mental_health":"Failed to load therapist locations.",
-    "panel.explore.state.failed.student_course":"Failed to load student courses.",
+    "panel.explore.state.failed.student_course":"You do not appear to be registered for any in-person courses.",
     "panel.explore.state.failed.appointments":"Failed to load appointments.",
     "panel.explore.state.failed.stored_sites":"Failed to load storied sites.",
 
@@ -3845,6 +3845,8 @@
     "panel.wordle.heading.info.text": "Presented by The Daily Illini",
     "panel.wordle.message.error.text": "Failed to load daily target",
     "widget.home.wordle.header.title": "ILLordle",
+    "widget.home.wordle.button.view.title": "View",
+    "widget.home.wordle.button.view.hint": "Tap to view ILLordle game",
     "widget.wordle.game.status.succeeded.title": "You win!",
     "widget.wordle.game.status.failed.title": "You lost",
     "widget.wordle.game.status.word.text": "Today's word: {{word}}",

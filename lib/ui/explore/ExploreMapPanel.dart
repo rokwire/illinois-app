@@ -2600,7 +2600,7 @@ extension ExploreMapTypeImpl on ExploreMapType {
       case ExploreMapType.Dining: return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
       case ExploreMapType.Laundry: return Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.');
       case ExploreMapType.Buildings: return Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.');
-      case ExploreMapType.StudentCourse: return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses registered.');
+      case ExploreMapType.StudentCourse: return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'You do not appear to be registered for any in-person courses.');
       case ExploreMapType.Appointments: return Localization().getStringEx('panel.explore.state.online.empty.appointments', 'No appointments available.');
       case ExploreMapType.MTDStops: return Localization().getStringEx('panel.explore.state.online.empty.mtd_stops', 'No MTD stop locations available.');
       case ExploreMapType.MyLocations: return Localization().getStringEx('panel.explore.state.online.empty.my_locations', 'No saved locations available.');
@@ -2615,7 +2615,7 @@ extension ExploreMapTypeImpl on ExploreMapType {
       case ExploreMapType.Dining: return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
       case ExploreMapType.Laundry: return Localization().getStringEx('panel.explore.state.failed.laundry', 'Failed to load laundry locations.');
       case ExploreMapType.Buildings: return Localization().getStringEx('panel.explore.state.failed.buildings', 'Failed to load building locations.');
-      case ExploreMapType.StudentCourse: return Localization().getStringEx('panel.explore.state.failed.student_course', 'Failed to load student courses.');
+      case ExploreMapType.StudentCourse: return Localization().getStringEx('panel.explore.state.failed.student_course', 'You do not appear to be registered for any in-person courses.');
       case ExploreMapType.Appointments: return Localization().getStringEx('panel.explore.state.failed.appointments', 'Failed to load appointments.');
       case ExploreMapType.MTDStops: return Localization().getStringEx('panel.explore.state.failed.mtd_stops', 'Failed to load MTD stop locations.');
       case ExploreMapType.MyLocations: return Localization().getStringEx('panel.explore.state.failed.my_locations', 'Failed to load saved locations.');
