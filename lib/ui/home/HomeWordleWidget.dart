@@ -1,7 +1,9 @@
 
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -80,8 +82,11 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
       _onAppLivecycleStateChanged(param);
     }
     else if (name == Storage.notifySettingChanged) {
-      if ((param == Storage.illordleGameKey) && mounted) {
+      if ((param == Storage.wordleGameKey) && mounted) {
         _onWodleGameChanged();
+      }
+      if ((param == Storage.debugWordleDailyWordKey) && mounted) {
+        _refreshDataIfVisible();
       }
     }
     else if (name == WordleGameWidget.notifyGameOver) {
@@ -92,13 +97,11 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   @override
   Widget build(BuildContext context) =>
     HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, titleBuilder: _titleBuilder, child:
-      Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-        AspectRatio(aspectRatio: 1, child:
-          VisibilityDetector(
-            key: _visibilityDetectorKey,
-            onVisibilityChanged: _onVisibilityChanged,
-            child: _contentWidget,
-          )
+      Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+        VisibilityDetector(
+          key: _visibilityDetectorKey,
+          onVisibilityChanged: _onVisibilityChanged,
+          child:  _contentWidget,
         ),
       )
     );
@@ -109,24 +112,47 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
     } else if (_dailyWord == null) {
       return _errorContent;
     } else {
-      return WordleWidget(
+      return Column(mainAxisSize: MainAxisSize.min, children: [
+        _woddleWidget,
+        _viewButton,
+      ],);
+    }
+  }
+
+  Widget get _woddleWidget =>
+    AspectRatio(aspectRatio: _dailyWord?.asectRatio ?? 1.0, child:
+      WordleWidget(
         game: _game ??= WordleGame(_dailyWord!.word),
         dailyWord: _dailyWord!,
         dictionary: _dictionary,
         autofocus: false,
         hintMode: _hintMode,
-      );
-    }
-  }
+        gutterRatio: 0.0875,
+      ),
+    );
 
-  Widget get _loadingContent => Center(child:
-    SizedBox(width: 32, height: 32, child:
-      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+  Widget get _loadingContent =>
+    AspectRatio(aspectRatio: 1, child:
+      Center(child:
+        SizedBox(width: 32, height: 32, child:
+          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
+        ),
+      )
+    );
+
+  Widget get _errorContent =>
+    AspectRatio(aspectRatio: 1, child:
+      Center(child:
+        Text(Localization().getStringEx('panel.wordle.message.error.text', 'Failed to load daily target'), style: Styles().textStyles.getTextStyle("widget.message.regular.fat"), textAlign: TextAlign.center,)
+      )
+    );
+
+  Widget get _viewButton => Center(child:
+    HomeBrowseLinkButton(
+      title: Localization().getStringEx('widget.home.wordle.button.view.title', 'View'),
+      hint: Localization().getStringEx('widget.home.wordle.button.view.hint', 'Tap to view ILLordle game'),
+      onTap: _onTapView,
     ),
-  );
-
-  Widget get _errorContent => Center(child:
-    Text(Localization().getStringEx('panel.wordle.message.error.text', 'Failed to load daily target'), style: Styles().textStyles.getTextStyle("widget.message.regular.fat"), textAlign: TextAlign.center,)
   );
 
   Widget _titleBuilder(Widget defaultContent) =>
@@ -182,7 +208,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
     if ((_loadingData == false) && mounted) {
       setState(() {
         _loadingData = true;
-        _refreshingData = true;
+        _refreshingData = false;
       });
 
       List<dynamic> results = await Future.wait([
@@ -285,5 +311,13 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
       _hintMode = !_hintMode;
     });
     AppToast.showMessage('Hint Mode: ' + (_hintMode ? 'ON' : 'OFF'), gravity: ToastGravity.CENTER, duration: Duration(milliseconds: 1000));
+  }
+
+  void _onTapView() {
+    Analytics().logSelect(target: 'View', source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WordlePanel(
+      dailyWord: _dailyWord,
+      dictionary: _dictionary,
+    )));
   }
 }

@@ -26,6 +26,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:web/web.dart' as web;
 
 class ProfileLoginPage extends StatefulWidget {
 
@@ -176,7 +177,8 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
     }
     else if (_connectingNetId != true) {
       setState(() { _connectingNetId = true; });
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+      web.Window? webWindow = WebUtils.createIosWebWindow();
+      Auth2().authenticateWithOidc(iosWebWindow: webWindow).then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _connectingNetId = false; });
           if (result != Auth2OidcAuthenticateResult.succeeded) {
@@ -639,7 +641,8 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
         progressController(loading: false);
         _popToMe();
         if (result == true) {
-          Auth2().authenticateWithOidc(link: true).then((Auth2OidcAuthenticateResult? result) {
+          web.Window? webWindow = WebUtils.createIosWebWindow();
+          Auth2().authenticateWithOidc(link: true, iosWebWindow: webWindow).then((Auth2OidcAuthenticateResult? result) {
             if (result == Auth2OidcAuthenticateResult.failed) {
               AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to add {{app_title}} NetID.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
             } else if (result == Auth2OidcAuthenticateResult.failedAccountExist) {
@@ -703,7 +706,8 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
 
   Future<bool?> _linkVerifySignIn() async {
     if (Auth2().isOidcLoggedIn) {
-      Auth2OidcAuthenticateResult? result = await Auth2().authenticateWithOidc();
+      web.Window? webWindow = WebUtils.createIosWebWindow();
+      Auth2OidcAuthenticateResult? result = await Auth2().authenticateWithOidc(iosWebWindow: webWindow);
       return (result != null) ? (result == Auth2OidcAuthenticateResult.succeeded) : null;
     }
     else if (Auth2().isEmailLoggedIn) {

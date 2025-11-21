@@ -253,6 +253,14 @@ class Storage extends rokwire.Storage with NotificationsListener {
   bool? get debugUseIlliniCashTestUrl => getBoolWithName(debugUseIlliniCashTestUrlKey);
   set debugUseIlliniCashTestUrl(bool? value) => setBoolWithName(debugUseIlliniCashTestUrlKey, value);
 
+  static const String debugWordleIgnoreDictionaryKey  = 'edu.illinois.rokwire.illini.wordle.debug.dictionary.ignore';
+  bool? get debugWordleIgnoreDictionary => getBoolWithName(debugWordleIgnoreDictionaryKey);
+  set debugWordleIgnoreDictionary(bool? value) => setBoolWithName(debugWordleIgnoreDictionaryKey, value);
+
+  static const String debugWordleDailyWordKey = 'edu.illinois.rokwire.illini.wordle.debug.dailty_word';
+  String? get debugWordleDailyWord => getStringWithName(debugWordleDailyWordKey);
+  set debugWordleDailyWord(String? value) => setStringWithName(debugWordleDailyWordKey, value);
+
   // Firebase
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
 // Replacing "firebase_subscription_topis" with "firebase_messaging_subscription_topis" key ensures that
@@ -634,7 +642,7 @@ class Storage extends rokwire.Storage with NotificationsListener {
   set diningFilter(String? value) => setStringWithName(diningFilterKey, value);
 
   // Illini ILLordle
-  static const String illordleGameKey = 'edu.illinois.rokwire.illini.illlordle.game';
-  String? get illordleGame => getStringWithName(illordleGameKey);
-  set illordleGame(String? value) => setStringWithName(illordleGameKey, value);
+  static const String wordleGameKey = 'edu.illinois.rokwire.illini.wordle.game';
+  String? get wordleGame => getStringWithName(wordleGameKey);
+  set wordleGame(String? value) => setStringWithName(wordleGameKey, value);
 }

@@ -5,8 +5,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- ILLordle: Updated today's date parsing and formatting [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+- Updated failed/empty student course content messages in Maps [#4314](https://github.com/rokwire/illinois-app/issues/4314).
+### Fixed
+- ILLordle: Ficed cell aspect ration, shrink a bit the favorite widget [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Added
+- ILLordle: Added "View" button in favorite widget [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+
+## [7.3.29] - 2025-11-20
+### Changed
+- Increased alpha for Close button border color in ModalPhotoImagePanel [#5429](https://github.com/rokwire/illinois-app/issues/5429).
+### Fixed
+- WEB: Handle OIDC login in iOS web browsers [#4949](https://github.com/rokwire/illinois-app/issues/4949).
+
+## [7.3.28] - 2025-11-19
+### Fixed
+- ILLordle: Fixed word guestures scoring [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Changed
+- ILLordle: Updated section title and description in Home / Browse [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Added
+- ILLordle: added related overrides in Debug panel [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+
+## [7.3.27] - 2025-11-18
 ### Fixed
 - Assistant: Events UI fragments have fixed height [#5542](https://github.com/rokwire/illinois-app/issues/5542).
+### Changed
+- ILLordle: link to live illordle APIs [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+- ILLordle: updated game status UI: open story URL, added close button [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Added
+- ILLordle: added analytics [#5442](https://github.com/rokwire/illinois-app/issues/5442).
 
 ## [7.3.26] - 2025-11-17
 ### Fixed

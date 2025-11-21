@@ -26,6 +26,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:web/web.dart' as web;
 
 class Onboarding2LoginNetIdPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
@@ -142,7 +143,8 @@ class _Onboarding2LoginNetIdPanelState extends State<Onboarding2LoginNetIdPanel>
     Analytics().logSelect(target: 'Log in with NetID');
     if (_progress != true) {
       setState(() { _loginProgress = true; });
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+      web.Window? webWindow = WebUtils.createIosWebWindow();
+      Auth2().authenticateWithOidc(iosWebWindow: webWindow).then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           if (result == Auth2OidcAuthenticateResult.succeeded) {
             FlexUI().update().then((_) {
