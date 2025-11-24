@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.3.31] - 2025-11-24
+### Changed
+- Updated some setting defaults for new app users [#5536](https://github.com/rokwire/illinois-app/issues/5536).
+
 ## [7.3.30] - 2025-11-21
 ### Changed
 - ILLordle: Updated today's date parsing and formatting [#5442](https://github.com/rokwire/illinois-app/issues/5442).
