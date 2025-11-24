@@ -307,8 +307,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(url)
-              ? Positioned.fill(child: ModalImageHolder(child:
-                  AccessibleImageHolder(child:
+              ? Positioned.fill(child: AccessibleImageHolder(child:
+                  ModalImageHolder(child:
                     WebNetworkImage(imageUrl: url, excludeFromSemantics: true, fit: BoxFit.cover))))
               : Container(),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
