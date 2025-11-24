@@ -165,7 +165,8 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   };
 
   static const Map<String, bool> _defaultNotificationSettings = {
-    _pauseNotificationKey : false
+    _pauseNotificationKey : false,
+    _athleticsUpdatesNewsNotificationSetting: false,
   };
 
   //settingKeys
