@@ -625,7 +625,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     return StringUtils.isNotEmpty(_group?.imageURL) ?
       Container(height: 200, color: Styles().colors.background, child:
         Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-            Positioned.fill(child: ModalImageHolder(child: AccessibleImageHolder(emptySemanticsLabel: "Group image", prefixSemanticsLabel: "Group image", child: WebNetworkImage(imageUrl: _group?.imageURL, excludeFromSemantics: true, fit: BoxFit.cover)))),
+            Positioned.fill(child: AccessibleImageHolder(child: ModalImageHolder(child: WebNetworkImage(imageUrl: _group?.imageURL, excludeFromSemantics: true, fit: BoxFit.cover)))),
             CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
               Container(height: 53,),
             ),

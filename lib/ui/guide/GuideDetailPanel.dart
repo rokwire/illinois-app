@@ -20,6 +20,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -298,7 +299,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> with Notification
               Row(children: [
                 Expanded(child:
                   Column(children: [
-                    ModalImageHolder(child: WebNetworkImage(imageUrl: imageUrl, excludeFromSemantics: true,)),
+                    AccessibleImageHolder(child: ModalImageHolder(child: WebNetworkImage(imageUrl: imageUrl, excludeFromSemantics: true,))),
                   ]),
                 ),
               ],)
