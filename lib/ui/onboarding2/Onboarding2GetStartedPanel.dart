@@ -48,7 +48,7 @@ class _Onboarding2GetStartedPanelState extends State<Onboarding2GetStartedPanel>
 
   @override
   Widget build(BuildContext context) =>
-    Scaffold(backgroundColor: Styles().colors.background, body:
+    Semantics(container: true, explicitChildNodes: true, label: '', child: Scaffold(backgroundColor: Styles().colors.background, body:
       SwipeDetector(onSwipeLeft: () => _onboardingNext(), child:
         Column(children: [
           Expanded(child:
@@ -92,7 +92,7 @@ class _Onboarding2GetStartedPanelState extends State<Onboarding2GetStartedPanel>
           ),
         ]),
       ),
-    );
+    ));
 
   void _onReturningUser(BuildContext context){
     Analytics().logSelect(target: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue', language: 'en'));
