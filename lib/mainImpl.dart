@@ -16,6 +16,7 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:ui';
 import 'package:flutter/rendering.dart';
 import 'package:web/web.dart' as web;
 import 'package:flutter/cupertino.dart';
@@ -336,7 +337,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
   }
 
   Widget _buildMaterialApp() {
-    return Semantics(container: true, explicitChildNodes: true, label: '', child: MaterialApp(
+    return MaterialApp(
       key: _key,
       navigatorKey: widget.navigatorKey,
       localizationsDelegates: [
@@ -351,17 +352,8 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       title: Localization().getStringEx('app.title', 'Illinois'),
       theme: _appTheme,
-      home: _homePanel,
-      // Remove role="dialog"
-      builder: (context, child) {
-        return Semantics(
-          container: true,
-          explicitChildNodes: true,
-          label: '',
-          child: child ?? const SizedBox(),
-        );
-      },
-    ));
+      home: _homePanel
+    );
   }
 
   Widget get _homePanel {
