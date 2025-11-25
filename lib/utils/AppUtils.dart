@@ -208,14 +208,17 @@ class AppSemantics {
           sendSemanticsEvent(
             TapSemanticEvent());
 
-    static void triggerAccessibilityFocus(GlobalKey? groupKey) => groupKey?.currentContext?.mounted == true ?
-      groupKey?.currentContext?.findRenderObject()?.
-        sendSemanticsEvent(
-          FocusSemanticEvent()) :
-      null;
+    static void triggerAccessibilityFocus(GlobalKey? groupKey, {Duration? delay}) => Future.delayed(delay ?? Duration.zero, ()=>
+      groupKey?.currentContext?.mounted == true && isAccessibilityFocused(groupKey) == false ?
+        groupKey?.currentContext?.findRenderObject()?.
+          sendSemanticsEvent(
+            FocusSemanticEvent()) :
+        null);
+
+    static bool isAccessibilityFocused(GlobalKey? key) => extractSemanticsNote(key)?.hasFlag(SemanticsFlag.isFocused) ?? false;
 
     static SemanticsNode? extractSemanticsNote(GlobalKey? groupKey) =>
-        groupKey?.currentContext?.findRenderObject()?.debugSemantics;
+        groupKey?.currentContext?.mounted == true ? groupKey?.currentContext?.findRenderObject()?.debugSemantics : null;
 
     static String getIosHintLongPress(String? hint) => Platform.isIOS ? "Double tap and hold to  $hint" : "";
 
