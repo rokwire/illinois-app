@@ -22,6 +22,7 @@ import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -242,13 +243,15 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
 
     Widget get _photoWidget => _isFieldAvailable(_ProfileField.photoUrl) ? Stack(children: [
       Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 20), child:
-        DirectoryProfilePhoto(
-          key: _photoKey,
-          photoUrl: _photoImageUrl,
-          photoUrlHeaders: _photoAuthHeaders,
-          photoData: _photoImageData,
-          imageSize: _photoImageSize,
-        ),
+        AccessibleImageHolder(imageUrl: Content().getUserPhotoUrl(accountId: Auth2().accountId), child:
+          DirectoryProfilePhoto(
+            key: _photoKey,
+            photoUrl: _photoImageUrl,
+            photoUrlHeaders: _photoAuthHeaders,
+            photoData: _photoImageData,
+            imageSize: _photoImageSize,
+          ),
+        )
       ),
       Positioned.fill(child:
         Align(alignment: _showPrivacyControls ? Alignment.bottomLeft : Alignment.bottomRight, child:
