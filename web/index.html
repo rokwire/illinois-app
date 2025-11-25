@@ -161,6 +161,7 @@
         loadingAnnouncement.textContent = 'Page loading, please wait.';
       });
 
+      // change play / pause video button
       button.addEventListener('click', () => {
         if (isPaused) {
           video.play();
@@ -176,6 +177,7 @@
         isPaused = !isPaused;
       });
 
+      // hide video containers
       window.addEventListener('flutter-first-frame', () => {
         container.classList.add('hidden');
 
@@ -188,6 +190,19 @@
         button.setAttribute('tabindex', '-1');
         button.setAttribute('aria-hidden', 'true');
         button.disabled = true;
+      });
+
+      // remove role="dialog" from the semantics tree. It breaks the assistive tools.
+      const observer = new MutationObserver(() => {
+        document
+          .querySelectorAll('flt-semantics[role="dialog"]')
+          .forEach(el => el.removeAttribute('role'));
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true
       });
   </script>
 </body>
