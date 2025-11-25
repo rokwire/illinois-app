@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Accessibility for images in Directory of Users [#5554](https://github.com/rokwire/illinois-app/issues/5554).
 
 ## [7.3.31] - 2025-11-24
 ### Changed
