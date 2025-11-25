@@ -492,6 +492,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   GlobalKey? _sortButtonKey;
   GlobalKey? _filtersButtonKey;
+  final Map<Event2SortType, GlobalKey> _sortItemKeys = {};
 
   @override
   void initState() {
@@ -680,8 +681,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
           isExpanded: false,
           items: _buildSortDropdownItems(),
           onChanged: _onSortType,
+          onMenuStateChange: (isOpen) => isOpen ?  //Handling Accessibility focus
+            AppSemantics.triggerAccessibilityFocus( _sortItemKeys[_sortType], delay: Duration(seconds: 1)) : null
         )
-      )),
+      ))
     );
   }
 
@@ -691,10 +694,11 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     for (Event2SortType sortType in Event2SortType.values) {
       if ((sortType != Event2SortType.proximity) || locationAvailable) {
         String? displaySortType = _sortDropdownItemTitle(sortType);
+        GlobalKey itemKey = _sortItemKeys[sortType] ??= GlobalKey();
         items.add(AccessibleDropDownMenuItem<Event2SortType>(
-          key: ObjectKey(sortType),
-          value: sortType,
-          semanticsLabel: displaySortType,
+            key: itemKey,
+            value: sortType,
+            semanticsLabel: displaySortType,
             child: Text(displaySortType, overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
               Styles().textStyles.getTextStyle("widget.message.regular.fat") :
               Styles().textStyles.getTextStyle("widget.message.regular"),
@@ -913,8 +917,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
           Event2FilterParam.notifySubscribersChanged(except: this);
 
           _reload().then((_) =>
-              Future.delayed(Platform.isIOS ? Duration(seconds: 1) : Duration.zero, ()=>
-                  AppSemantics.triggerAccessibilityFocus(_filtersButtonKey))
+                  AppSemantics.triggerAccessibilityFocus(_filtersButtonKey, delay: Duration(seconds: 1))
           );
       }
     });
@@ -1222,9 +1225,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
         });
         Storage().events2SortType = event2SortTypeToString(_sortType);
         _reload().then((_)=>
-            Future.delayed(Platform.isIOS ? Duration(seconds: 1) : Duration.zero, ()=>
-                AppSemantics.triggerAccessibilityFocus(_sortButtonKey)));
-
+            AppSemantics.triggerAccessibilityFocus(_sortButtonKey, delay: Duration(seconds: 1)));
       }
     }
   }
