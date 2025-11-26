@@ -174,7 +174,7 @@
             ],
             "title": "Champaign Police Department",
             "directoryContent": [],
-            "description": "To file a report with a local police department, call 217-333-8911. Dispatchers will connect callers with a police officer from a local agency based on the location of the incident. Online reports cannot be accepted.",
+            "description": "<p>To file a report with a local police department, call <a href=\"tel:2173338911\">217-333-8911</a>. Dispatchers will connect callers with a police officer from a local agency based on the location of the incident. Online reports cannot be accepted.</p>",
             "detailsList": [
                 {
                     "title": "Contact Information",
@@ -192,12 +192,8 @@
                             "content": "217-333-8911"
                         },
                         {
-                            "type": "phone",
-                            "content": "911"
-                        },
-                        {
                             "type": "text",
-                            "content": "Always call 911 in an emergency."
+                            "content": "<p>Always call&nbsp;<a href=\"tel:911\">911</a> in an emergency.</p>"
                         }
                     ]
                 },
@@ -1072,11 +1068,7 @@
                     "content": [
                         {
                             "type": "text",
-                            "content": "Hotline and ER Response: 24/7"
-                        },
-                        {
-                            "type": "text",
-                            "content": "Office:\nMonday, Wednesday, Friday, 8:30 a.m. - 5 p.m.\nTuesday, Thursday, 8:30 a.m. - 7 p.m."
+                            "content": "<p><strong>Hotline and ER Response:</strong> 24/7</p><p><strong>Office:&nbsp;</strong></p><p>Monday, Wednesday, Friday, 8:30 a.m. - 5 p.m.</p><p>Tuesday, Thursday, 8:30 a.m. - 7 p.m.</p>"
                         }
                     ]
                 },
@@ -1403,28 +1395,8 @@
                             "content": "1110 W. Springfield Ave., Urbana, IL 61801"
                         },
                         {
-                            "type": "phone",
-                            "content": "217-333-8911"
-                        },
-                        {
-                            "type": "phone",
-                            "content": "911"
-                        },
-                        {
                             "type": "text",
-                            "content": "Call or text 911 in an emergency"
-                        },
-                        {
-                            "type": "text",
-                            "content": "Call the Champaign County non-emergency line 217-333-8911 to file a report or connect with a police officer from the agency with jurisdiction (based on crime location)."
-                        },
-                        {
-                            "type": "text",
-                            "content": "Activate any emergency phone on campus"
-                        },
-                        {
-                            "type": "text",
-                            "content": "Online reports cannot be accepted for these situations"
+                            "content": "<p>Call or text&nbsp;<a href=\"tel:911\">911</a> in an emergency</p><p>Call the Champaign County non-emergency line <a href=\"tel:2173338911\">217-333-8911 </a>to file a report or connect with a police officer from the agency with jurisdiction (based on crime location).</p><p>Activate any emergency phone on campus</p><p>Online reports cannot be accepted for these situations</p>"
                         }
                     ]
                 },
@@ -1561,7 +1533,7 @@
             ],
             "title": "Urbana Police Department",
             "directoryContent": [],
-            "description": "To file a report with the University of Illinois, Champaign, or Urbana police departments, call the Champaign County dispatch center at 217-333-8911 to connect with a police officer based on the location of the incident. Online reports cannot be accepted.",
+            "description": "<p>To file a report with the University of Illinois, Champaign, or Urbana police departments, call the Champaign County dispatch center at <a href=\"tel:2173338911\">217-333-8911</a> to connect with a police officer based on the location of the incident. Online reports cannot be accepted.</p>",
             "detailsList": [
                 {
                     "title": "Contact Information",
@@ -1583,12 +1555,8 @@
                             "content": "217-333-8911"
                         },
                         {
-                            "type": "phone",
-                            "content": "911"
-                        },
-                        {
                             "type": "text",
-                            "content": "Always call 911 in an emergency."
+                            "content": "<p>Always call&nbsp;<a href=\"tel:911\">911</a> in an emergency.</p>"
                         }
                     ]
                 },
