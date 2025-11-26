@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/widgets/FocusableSemanticsWidget.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -91,13 +92,9 @@ class Onboarding2ToggleButton extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return FocusableActionDetector(focusNode: FocusNode(),
-        actions: <Type, Action<Intent>>{
-          ActivateIntent: CallbackAction<Intent>(onInvoke: (_) {
-                onTap!();
-                anaunceChange();
-            return null;
-          }),
+    return FocusableSemanticsWidget(onSelect: () {
+          onTap!();
+          anaunceChange();
         },
         child: Semantics(
           label: _label,
