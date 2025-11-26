@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/GBV.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -90,7 +91,12 @@ class GBVDetailContentWidget extends StatelessWidget {
         return [
           Expanded(child:
             Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-              SelectableText(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small"))
+              SelectionArea(child:
+                HtmlWidget(
+                  detail.content ?? '',
+                  textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
+                )
+              )
             )
           )
         ];

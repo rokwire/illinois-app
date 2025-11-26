@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -45,7 +46,7 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
                 Container(height: 1, color: Styles().colors.surfaceAccent)
                 ),
                 Padding(padding: EdgeInsets.only(bottom: 32), child: (
-                    Text(widget.resource.description ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"))
+                    HtmlWidget(widget.resource.description ?? '', textStyle: Styles().textStyles.getTextStyle("widget.detail.regular"))
                 )),
                 Container(decoration:
                   BoxDecoration(

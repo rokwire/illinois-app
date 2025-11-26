@@ -199,7 +199,7 @@
                 {
                     "title": "Contact Information",
                     "content": [
-                         {
+                        {
                             "type": "text",
                             "content": "Located near the intersection of First Street and University Avenue in Champaign."
                         },
@@ -211,11 +211,11 @@
                             "type": "phone",
                             "content": "217-333-8911"
                         },
-                         {
+                        {
                             "type": "phone",
                             "content": "911"
                         },
-                         {
+                        {
                             "type": "text",
                             "content": "Always call 911 in an emergency."
                         }
@@ -468,7 +468,7 @@
                 {
                     "title": "Contact Information",
                     "content": [
-                         {
+                        {
                             "type": "text",
                             "content": "Room 206, Turner Student Services Building (2nd floor)"
                         },
@@ -484,13 +484,13 @@
                             "type": "external_link",
                             "content": "https://counselingcenter.illinois.edu/counseling/individual-counseling"
                         },
-                         {
+                        {
                             "type": "text",
-                            "content": "Counseling Center clinicians are available during business hours for same-day urgent meetings without an appointment. If possible, we request you call to let us know you're on your way. Our same-day urgent meetings are brief (15-30 minute) one-time meetings for students feeling overwhelming distress such as:\n• Thoughts of harming themselves or others.\n• Experienced a recent traumatic event."                      
+                            "content": "Counseling Center clinicians are available during business hours for same-day urgent meetings without an appointment. If possible, we request you call to let us know you're on your way. Our same-day urgent meetings are brief (15-30 minute) one-time meetings for students feeling overwhelming distress such as:\n• Thoughts of harming themselves or others.\n• Experienced a recent traumatic event."
                         },
-                         {
+                        {
                             "type": "text",
-                            "content": "We offer individual appointments. Please call us or visit our make-an-appointment feature on our website. We also offer several group therapy options appropriate for survivors of sexual violence."                      
+                            "content": "We offer individual appointments. Please call us or visit our make-an-appointment feature on our website. We also offer several group therapy options appropriate for survivors of sexual violence."
                         }
                     ]
                 },
@@ -570,11 +570,11 @@
                             "type": "external_link",
                             "content": "https://courageconnection.org/"
                         },
-                         {
+                        {
                             "type": "phone",
                             "content": "877-384-4390"
                         },
-                          {
+                        {
                             "type": "text",
                             "content": "If you or someone you love needs help, please call our 24/7 Domestic Violence Hotline."
                         }
@@ -654,7 +654,7 @@
                         {
                             "type": "phone",
                             "content": "911"
-                        },   
+                        },
                         {
                             "type": "text",
                             "content": "Always call 911 in an emergency."
@@ -732,7 +732,7 @@
                 {
                     "title": "Hours",
                     "content": [
-                      
+
                         {
                             "type": "text",
                             "content": "During the academic year: Monday - Friday, 8 a.m. - 5 p.m."
@@ -740,7 +740,7 @@
                         {
                             "type": "text",
                             "content": "During academic breaks and summer: Monday - Friday, 8 a.m. - 4:30 p.m."
-                        }, 
+                        },
                         {
                             "type": "text",
                             "content": "Dial-a-Nurse Services: 24 hours/day, 365 days/year"
@@ -801,7 +801,7 @@
                             "type": "text",
                             "content": "During the academic year: Monday - Friday, 8 a.m. - 5 p.m."
                         },
-                         {
+                        {
                             "type": "text",
                             "content": "During academic breaks and summer: Monday - Friday, 8 a.m. - 4:30 p.m."
                         },
@@ -996,7 +996,7 @@
                             "type": "text",
                             "content": "Our office is generally open weekdays, 8:30 a.m. - 5 p.m."
                         },
-                         {
+                        {
                             "type": "text",
                             "content": "We encourage making an appointment in advance whenever possible."
                         }
@@ -1009,7 +1009,7 @@
                             "type": "text",
                             "content": "Director: Claire Sharples Brooks"
                         },
-                         {
+                        {
                             "type": "text",
                             "content": "Case Manager: Chandra Hall"
                         }
@@ -1147,7 +1147,7 @@
                             "type": "text",
                             "content": "Hotline and ER Response: 24/7"
                         },
-                         {
+                        {
                             "type": "text",
                             "content": "Office:\nMonday, Wednesday, Friday, 8:30 a.m. - 5 p.m.\nTuesday, Thursday, 8:30 a.m. - 7 p.m."
                         }
@@ -1431,7 +1431,7 @@
                             "type": "text",
                             "content": "When you contact the Title IX Office, you can say as much or as little as you would like. We are here to help answer questions and schedule appointments with office staff."
                         },
-                         {
+                        {
                             "type": "text",
                             "content": "If you choose to submit a report of sexual misconduct to the university, you can do so online, in person, over the phone, or via email."
                         }
@@ -1477,7 +1477,7 @@
                             "type": "phone",
                             "content": "217-333-8911"
                         },
-                         {
+                        {
                             "type": "phone",
                             "content": "911"
                         },
@@ -1649,15 +1649,15 @@
                             "type": "phone",
                             "content": "217-384-2324"
                         },
-                         {
+                        {
                             "type": "phone",
                             "content": "217-333-8911"
                         },
-                         {
+                        {
                             "type": "phone",
                             "content": "911"
                         },
-                         {
+                        {
                             "type": "text",
                             "content": "Always call 911 in an emergency."
                         }
