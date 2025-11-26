@@ -91,8 +91,15 @@ class Onboarding2ToggleButton extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return
-      Semantics(
+    return FocusableActionDetector(focusNode: FocusNode(),
+        actions: <Type, Action<Intent>>{
+          ActivateIntent: CallbackAction<Intent>(onInvoke: (_) {
+                onTap!();
+                anaunceChange();
+            return null;
+          }),
+        },
+        child: Semantics(
           label: _label,
           value: (toggled!
               ? Localization().getStringEx(
@@ -123,7 +130,7 @@ class Onboarding2ToggleButton extends StatelessWidget{
                   ),
                 )
             ),],),
-          ));
+          )));
   }
 
   void anaunceChange() {
