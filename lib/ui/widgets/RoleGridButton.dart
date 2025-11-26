@@ -84,18 +84,25 @@ class RoleGridButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-    GestureDetector(onTap: _onTap, child:
-      Semantics(label: title, excludeSemantics: true, sortKey: _semanticsSortKey, value: _semanticsValue, child:
-        selected ? Stack(children: [
-          _contentWidget,
-          Positioned.fill(child:
-            Align(alignment: Alignment.topRight, child:
-              _selectionMarker
+    FocusableActionDetector(focusNode: FocusNode(),
+      actions: <Type, Action<Intent>>{
+        ActivateIntent: CallbackAction<Intent>(onInvoke: (_) {
+          _onTap();
+          return null;
+        }),
+      },
+      child: GestureDetector(onTap: _onTap, child:
+        Semantics(label: title, excludeSemantics: true, sortKey: _semanticsSortKey, value: _semanticsValue, child:
+          selected ? Stack(children: [
+            _contentWidget,
+            Positioned.fill(child:
+              Align(alignment: Alignment.topRight, child:
+                _selectionMarker
+              )
             )
-          )
-        ],) : _contentWidget
-     )
-    );
+          ],) : _contentWidget
+        )
+    ));
 
   Widget get _contentWidget => Padding(padding: margin, child:
     Padding(padding: margin, child:
