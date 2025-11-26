@@ -465,7 +465,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
             GroupCard(
               group: group,
               displayType: GroupCardDisplayType.myGroup,
-              onImageTap: () { _onTapImage(group); },
               key: _getGroupKey(group),
             ),
           ));
@@ -492,7 +491,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
               group: group,
               displayType: GroupCardDisplayType.myGroup,
               key: _getGroupKey(group),
-              onImageTap: () { _onTapImage(group); },
             ),
           ));
         }
@@ -526,7 +524,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
               group: group,
               key: _getGroupKey(group),
               displayType: GroupCardDisplayType.allGroups,
-              onImageTap: () { _onTapImage(group); },
             ),
           ));
         }
@@ -667,13 +664,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
   Future<void> _onPullToRefresh() async {
     Analytics().logSelect(target: "Pull To Refresh");
     _reloadGroupsContent();
-  }
-
-  void _onTapImage(Group? group){
-    Analytics().logSelect(target: "Image");
-    if(group?.imageURL!=null){
-      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalPhotoImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
-    }
   }
 
   void _syncAuthmanGroups() {
