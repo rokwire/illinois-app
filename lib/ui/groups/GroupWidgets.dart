@@ -712,6 +712,7 @@ class GroupCard extends StatefulWidget with AnalyticsInfo {
 
 class _GroupCardState extends State<GroupCard> with NotificationsListener {
   static const double _smallImageSize = 64;
+  static const double _maxImageWidth = 150;
 
   GroupStats? _groupStats;
 
@@ -938,35 +939,28 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     ],);
   }
 
-  Widget _buildImage() {
-    double maxImageWidgth = 150;
-    String? imageUrl = widget.group?.imageURL;
-    return
-      StringUtils.isEmpty(imageUrl) ? Container() :
-      // Expanded(
-      //     flex: 1,
-      //     child:
-      Semantics(
-          label: "Group image",
-          button: true,
-          hint: "Double tap to zoom the image",
-          child: GestureDetector(
-              onTap: () {
-                if (widget.onImageTap != null) {
-                  widget.onImageTap!();
-                }
-              },
-              child: Container(
-                padding: EdgeInsets.only(left: 8),
-                child: Container(
-                  constraints: BoxConstraints(maxWidth: maxImageWidgth),
-                  // width: _smallImageSize,
-                  height: _smallImageSize,
-                  child: Image.network(imageUrl!, excludeFromSemantics: true,
-                    fit: BoxFit.fill,),),))
-        // )
-      );
-  }
+  Widget _buildImage() => StringUtils.isEmpty(widget.group?.imageURL) ?
+      Container() :
+      _imageWidget;
+
+  Widget get _imageWidget => widget.onImageTap != null ?
+      GestureDetector(
+        onTap: ()  => widget.onImageTap?.call(), child:
+          AccessibleImageHolder(imageUrl: widget.group?.imageURL, child:
+          _rawImageWidget)) :
+      AccessibleImageHolder(child:
+        ModalImageHolder(imageUrl: widget.group?.imageURL, child:
+          _rawImageWidget));
+
+  Widget get _rawImageWidget => widget.group?.imageURL != null ?
+      Container(
+          padding: EdgeInsets.only(left: 8),
+          child: Container(
+            constraints: BoxConstraints(maxWidth: _maxImageWidth),
+            // width: _smallImageSize,
+            height: _smallImageSize,
+            child: Image.network(widget.group?.imageURL ?? "", excludeFromSemantics: true, fit: BoxFit.fill,),),) :
+            Container();
 
 
     Widget _buildUpdateTime() {
