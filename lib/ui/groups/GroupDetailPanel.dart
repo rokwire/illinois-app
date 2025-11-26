@@ -2313,7 +2313,7 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with Notification
               ObjectKey(message),
             post: message,
             group: _group!,
-            isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == message.creatorId).isNotEmpty,
+            isAdmin: message.creator?.findAsMember(groupMembers: widget.groupAdmins)?.isAdmin,
             analyticsFeature: widget.analyticsFeature,
             // creator: _getMessageCreatorAsMember(message),
             // updateController: widget.updateController,
