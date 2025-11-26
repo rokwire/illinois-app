@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Fixed
-- Accessibility for images in Directory of Users [#5554](https://github.com/rokwire/illinois-app/issues/5554).
+- Fixed accessibility for images in Directory of Users [#5554](https://github.com/rokwire/illinois-app/issues/5554).
+- Fixed message creator's status in Group / Messages  [#5561](https://github.com/rokwire/illinois-app/issues/5561).
 
 ## [7.3.31] - 2025-11-24
 ### Changed
