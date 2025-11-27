@@ -5,9 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- GBV: Added HTML support for resource detail text [#5505](https://github.com/rokwire/illinois-app/issues/5505).
+
+## [7.3.32] - 2025-11-26
 ### Fixed
 - Fixed accessibility for images in Directory of Users [#5554](https://github.com/rokwire/illinois-app/issues/5554).
 - Fixed accessibility for images in Groups [#5549](https://github.com/rokwire/illinois-app/issues/5549).
+- Fixed accessibility for images in Events [#5553](https://github.com/rokwire/illinois-app/issues/5553).
 - Fixed message creator's status in Group / Messages  [#5561](https://github.com/rokwire/illinois-app/issues/5561).
 
 ## [7.3.31] - 2025-11-24
