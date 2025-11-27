@@ -1194,7 +1194,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                                 padding: EdgeInsets.only(top: 14),
                                 child: _imageWidget
                               ),
-                            WebEmbed(body: htmlBody),
+                            WebEmbed(htmlBody),
                             // Container(
                             //   constraints: BoxConstraints(maxHeight: 200),
                             //     child: Semantics(
@@ -1456,7 +1456,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       child: AccessibleImageHolder(child: Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true))
               )),
 
-              WebEmbed(body: bodyText),
+              WebEmbed(bodyText),
               Container(
                     padding: EdgeInsets.only(top: 12),
                     child: Row(children: [

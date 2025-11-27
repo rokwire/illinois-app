@@ -341,7 +341,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                     ),
                 ],),
                 if (!kIsWeb)
-                  WebEmbed(body: message.message),
+                  WebEmbed(message.message),
 
               ]),
               ),

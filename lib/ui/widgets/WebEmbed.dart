@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 enum WebEmbedType {
@@ -8,91 +11,58 @@ enum WebEmbedType {
   other,
 }
 
-class WebEmbed extends StatefulWidget {
-  final String? body;
+class WebEmbed extends StatelessWidget {
+  final _WebEmbedData? _data;
+  final EdgeInsetsGeometry padding;
 
-  const WebEmbed({Key? key, this.body}) : super(key: key);
+  WebEmbed(String? body, {super.key, this.padding = const EdgeInsets.symmetric(vertical: 8.0) }) :
+    _data = _WebEmbedData.fromBody(body);
 
   @override
-  State<WebEmbed> createState() => _WebEmbedState();
+  Widget build(BuildContext context) => (_data != null) ?
+    Padding(padding: padding, child:
+      AspectRatio(aspectRatio: _data!.aspectRatio, child:
+        WebViewWidget(controller: _data!.controller),
+      ),
+    ) : Container();
 }
 
-class _WebEmbedState extends State<WebEmbed> {
-  late final WebViewController _controller;
-  String? _embedUrl;
-  double _aspectRatio = 1;
+class _WebEmbedData {
+  final double aspectRatio;
+  final WebViewController controller;
 
-  @override
-  void didUpdateWidget(covariant WebEmbed oldWidget) {
-    if(widget.body != oldWidget.body) {
-     _loadUrl();
-    }
-    super.didUpdateWidget(oldWidget);
-  }
+  _WebEmbedData({
+    required this.controller,
+    required this.aspectRatio
+  });
 
-  @override
-  void initState() {
-    super.initState();
-    initController();
-  }
-
-   void initController() {
-    final link = _findEmbedLink(widget.body);
+  static _WebEmbedData? fromBody(String? body) {
+    String? link = _findEmbedLink(body);
     if (link != null) {
       // Determine embed type & build final embed URL:
-      final type = _determinePlatform(link);
-      _embedUrl = _buildEmbedUrl(link, type) ?? link;
-      // Aspect ratio 16:9 for recognized, else 1:1
-      if (type != WebEmbedType.other) {
-        _aspectRatio = 16 / 9;
-      }
-      // Setup controller to load the URL
-      _controller = WebViewController()
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..loadRequest(Uri.parse(_embedUrl!));
+      WebEmbedType type = _determinePlatform(link);
+      String embedUrl = _buildEmbedUrl(link, type) ?? link;
+      Uri? embedUri = Uri.tryParse(embedUrl);
+      if (embedUri != null) {}
+      return (embedUri != null) ? _WebEmbedData(
+        controller: WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..loadRequest(embedUri, headers: {
+              HttpHeaders.refererHeader: Config().universityHomepageUrl ?? 'https://illinois.edu',
+          }),
+        aspectRatio: (type != WebEmbedType.other) ? (16 / 9) : 1,
+      ) : null;
     } else {
-      // No recognized link => no controller
-      _controller = WebViewController();
+      return null;
     }
   }
 
-  void _loadUrl() {
-    final link = _findEmbedLink(widget.body);
-    if (link != null) {
-      // Determine embed type & build final embed URL:
-      final type = _determinePlatform(link);
-      _embedUrl = _buildEmbedUrl(link, type) ?? link;
-      // Aspect ratio 16:9 for recognized, else 1:1
-      if (type != WebEmbedType.other) {
-        _aspectRatio = 16 / 9;
-      }
-      // Load the new URL into the existing controller
-      _controller.loadRequest(Uri.parse(_embedUrl!));
-    } else {
-      _embedUrl = null;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_embedUrl == null) {
-      // No recognized embed => return empty
-      return Container();
-    }
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: AspectRatio(
-        aspectRatio: _aspectRatio,
-        child: WebViewWidget(controller: _controller),
-      ),
-    );
-  }
 
   // -------------------------------
   //      Link detection
   // -------------------------------
 
-  String? _findEmbedLink(String? text) {
+  static String? _findEmbedLink(String? text) {
     if (text == null) return null;
     final lower = text.toLowerCase();
     // naive detection
@@ -108,7 +78,7 @@ class _WebEmbedState extends State<WebEmbed> {
     return null;
   }
 
-  String? _extractLink(String text, List<String> markers) {
+  static String? _extractLink(String text, List<String> markers) {
     final lower = text.toLowerCase();
     for (String marker in markers) {
       int index = lower.indexOf(marker);
@@ -127,7 +97,7 @@ class _WebEmbedState extends State<WebEmbed> {
     return null;
   }
 
-  bool _isWhitespaceOrSeparator(String ch) {
+  static bool _isWhitespaceOrSeparator(String ch) {
     return ch.trim().isEmpty || ch == '"' || ch == "'" || ch == "<" || ch == ">";
   }
 
@@ -135,7 +105,7 @@ class _WebEmbedState extends State<WebEmbed> {
   //      Platform & URLs
   // -------------------------------
 
-  WebEmbedType _determinePlatform(String urlStr) {
+  static WebEmbedType _determinePlatform(String urlStr) {
     final lower = urlStr.toLowerCase();
     if (lower.contains('youtu.be') || lower.contains('youtube.com')) {
       return WebEmbedType.youtube;
@@ -148,7 +118,7 @@ class _WebEmbedState extends State<WebEmbed> {
     }
   }
 
-  String? _buildEmbedUrl(String originalUrl, WebEmbedType type) {
+  static String? _buildEmbedUrl(String originalUrl, WebEmbedType type) {
     switch (type) {
       case WebEmbedType.youtube:
         return _getYouTubeEmbedUrl(originalUrl);
@@ -161,7 +131,7 @@ class _WebEmbedState extends State<WebEmbed> {
     }
   }
 
-  String? _getYouTubeEmbedUrl(String urlStr) {
+  static String? _getYouTubeEmbedUrl(String urlStr) {
     final uri = Uri.tryParse(urlStr);
     if (uri == null) return null;
     if (uri.host.contains('youtu.be')) {
@@ -177,14 +147,14 @@ class _WebEmbedState extends State<WebEmbed> {
     return null;
   }
 
-  String? _getVimeoEmbedUrl(String urlStr) {
+  static String? _getVimeoEmbedUrl(String urlStr) {
     final uri = Uri.tryParse(urlStr);
     if (uri == null || uri.pathSegments.isEmpty) return null;
     final videoId = uri.pathSegments.last;
     return 'https://player.vimeo.com/video/$videoId';
   }
 
-  String? _getKalturaEmbedUrl(String urlStr) {
+  static String? _getKalturaEmbedUrl(String urlStr) {
     final uri = Uri.tryParse(urlStr);
     if (uri == null) return null;
     if (uri.host.contains('mediaspace.illinois.edu')) {
@@ -196,5 +166,4 @@ class _WebEmbedState extends State<WebEmbed> {
     }
     return null;
   }
-
 }
