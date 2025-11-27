@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/GBV.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:illinois/service/Analytics.dart';
 
@@ -92,9 +94,10 @@ class GBVDetailContentWidget extends StatelessWidget {
           Expanded(child:
             Container(padding: EdgeInsets.symmetric(vertical: 12), child:
               SelectionArea(child:
-                HtmlWidget(
-                  detail.content ?? '',
+                HtmlWidget(detail.content ?? '',
                   textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
+                  customStylesBuilder: (element) => (element.localName == "a") ? _htmlLinkStyle : null,
+                  onTapUrl: (String url) => _onTapHtmlLink(context, url),
                 )
               )
             )
@@ -126,5 +129,23 @@ class GBVDetailContentWidget extends StatelessWidget {
   void _onTapButton (BuildContext context, GBVResourceDetail detail) {
     Analytics().logSelect(target: 'Resource Button - ${detail.title ?? detail.content}');
     AppLaunchUrl.launch(context: context, url: detail.content);
+  }
+
+  Map<String, String> get _htmlLinkStyle => <String, String>{
+    // 'color': _htmlLinkColor,
+    'text-decoration-color': _htmlLinkColor,
+  };
+
+  String get _htmlLinkColor =>
+      ColorUtils.toHex(Styles().colors.fillColorSecondary);
+
+  bool _onTapHtmlLink(BuildContext context, String url)  {
+    Analytics().logSelect(target: 'Link: $url');
+    if (DeepLink().isAppUrl(url)) {
+      DeepLink().launchUrl(url);
+    } else {
+      AppLaunchUrl.launch(context: context, url: url, tryInternal: false);
+    }
+    return true;
   }
 }
