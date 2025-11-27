@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 enum WebEmbedType {
@@ -44,7 +47,9 @@ class _WebEmbedData {
       return (embedUri != null) ? _WebEmbedData(
         controller: WebViewController()
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
-          ..loadRequest(embedUri),
+          ..loadRequest(embedUri, headers: {
+              HttpHeaders.refererHeader: Config().universityHomepageUrl ?? 'https://illinois.edu',
+          }),
         aspectRatio: (type != WebEmbedType.other) ? (16 / 9) : 1,
       ) : null;
     } else {
