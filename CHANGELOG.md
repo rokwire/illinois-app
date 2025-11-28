@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - GBV: Added HTML support for resource detail text [#5505](https://github.com/rokwire/illinois-app/issues/5505).
+### Fixed
+- YouTube videos in a Group post display [#5513](https://github.com/rokwire/illinois-app/issues/5513).
 
 ## [7.3.32] - 2025-11-26
 ### Fixed
