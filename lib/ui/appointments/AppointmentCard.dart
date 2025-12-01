@@ -31,7 +31,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
-import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -81,8 +80,8 @@ class _AppointmentCardState extends State<AppointmentCard> with NotificationsLis
     const double imageSize = 64;
     const double iconSize = 18;
     String? imageKey = widget.appointment.imageKey;
-    String semanticsImageLabel = 'appointment image';
-    String semanticsImageHint = 'Double tap to expand image';
+    //String semanticsImageLabel = 'appointment image';
+    //String semanticsImageHint = 'Double tap to expand image';
 
     String typeImageKey = (widget.appointment.type == AppointmentType.online) ? 'laptop' : 'location';
     String? displayTime = widget.appointment.displayShortScheduleTime;
