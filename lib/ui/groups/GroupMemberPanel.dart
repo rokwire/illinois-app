@@ -187,9 +187,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(65),
             child: Container(width: 65, height: 65, child:
-              Semantics(label: "user image", hint: "Double tap to zoom", child:
                 GroupMemberProfileImage(userId: _member?.userId))
-            ),
           ),
         ),
         Container(width: 16,),
@@ -229,7 +227,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                   children: [
                     ToggleRibbonButton(
                         borderRadius: BorderRadius.circular(4),
-                        label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
+                        title: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
                         toggled: _isAdmin,
                         onTap: _updateMemberStatus
                     ),

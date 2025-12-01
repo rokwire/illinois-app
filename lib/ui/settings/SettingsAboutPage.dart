@@ -10,13 +10,13 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SettingsContactsPage extends StatefulWidget{
+class SettingsAboutPage extends StatefulWidget{
   @override
-  State<StatefulWidget> createState() => _SettingsContactsPageState();
+  State<StatefulWidget> createState() => _SettingsAboutPageState();
 
 }
 
-class _SettingsContactsPageState extends State<SettingsContactsPage> {
+class _SettingsAboutPageState extends State<SettingsAboutPage> {
   static BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10));
   static BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10));
 
@@ -70,7 +70,7 @@ class _SettingsContactsPageState extends State<SettingsContactsPage> {
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIcon: Styles().images.getImage('external-link', size: 20),
           borderRadius: borderRadius,
-          label: label,
+          title: label,
           onTap: () => onTap?.call()
       );
 

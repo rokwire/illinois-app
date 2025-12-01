@@ -160,27 +160,7 @@
                     "content": [
                         {
                             "type": "text",
-                            "content": "If you choose to have a medical forensic exam after a sexual assault, here’s what you should know:"
-                        },
-                        {
-                            "type": "text",
-                            "content": "What the Exam May Include:\n• A physical exam\nEvidence collection\n• Forensic photography\n• Lab tests and/or medications\n• Support from a rape crisis center advocate"
-                        },
-                        {
-                            "type": "text",
-                            "content": "You Are in Control:\n• You decide which parts of the exam yoou want or don't want.\n• Nothing will be done without your consent."
-                        },
-                        {
-                            "type": "text",
-                            "content": "Evidence Collection\nAvailable within 7 days of the assault.\nYou can choose:\n• To have evidence collected or not.\n• To release your evidence for testing now or store it for up to 10 years.\n• To collect and store evidence even if you’re not ready to notify law enforcement."
-                        },
-                        {
-                            "type": "text",
-                            "content": "Law Enforcement Notification\n• Hospital staff must notify law enforcement that a crime occurred, but your identity can remain anonymous.\n• You decide if and when to report to law enforcement and what information is shared."
-                        },
-                        {
-                            "type": "text",
-                            "content": "Coverage for Your Visit\n• You will receive a payment voucher that covers:\n• Your initial Emergency Department (ED) visit\n• Any related follow-up care within 180 days, including:\n• Medications\n• Lab Tests\n• Mental health resources\n• Your primary insurance will be billed, but you will have no out-of-pocket costs related to your visit.\n• If you are not the policyholder on your insurance (e.g., a parent, caregiver, or spouse is), you can opt out of billing your primary insurance to keep your visit private."
+                            "content": "<p>If you choose to have a medical forensic exam after a sexual assault, here&rsquo;s what you should know:</p><p><strong>What the Exam May Include:</strong></p><ul><li>A physical exam</li><li>Evidence collection</li><li>Forensic photography</li><li>Lab tests and/or medications</li><li>Support from a rape crisis center advocate</li></ul><p><strong>You Are in Control</strong></p><ul><li>You decide which parts of the exam you want or don&rsquo;t want.</li><li>Nothing will be done without your consent.</li></ul><p><strong>Evidence Collection</strong></p><ul><li>Available within 7 days of the assault.</li><li>You can choose:<ul><li>To have evidence collected or not.</li><li>To release your evidence for testing now or store it for up to 10 years.</li><li>To collect and store evidence even if you&rsquo;re not ready to notify law enforcement.</li></ul></li></ul><p><strong>Law Enforcement Notification</strong></p><ul><li>Hospital staff must notify law enforcement that a crime occurred, but your identity can remain anonymous.</li><li>You decide if and when to report to law enforcement and what information is shared.</li></ul><p><strong>Coverage for Your Visit</strong></p><ul><li>You will receive a payment voucher that covers:<ul><li>Your initial Emergency Department (ED) visit</li><li>Any related follow-up care within 180 days, including:<ul><li>Medications</li><li>Lab tests</li><li>Mental health resources</li></ul></li></ul></li><li>Your primary insurance will be billed, but you will have no out-of-pocket costs related to your visit.</li><li>If you are not the policyholder on your insurance (e.g., a parent, caregiver, or spouse is), you can opt out of billing your primary insurance to keep your visit private.</li></ul>"
                         }
                     ]
                 }
@@ -194,12 +174,12 @@
             ],
             "title": "Champaign Police Department",
             "directoryContent": [],
-            "description": "To file a report with a local police department, call 217-333-8911. Dispatchers will connect callers with a police officer from a local agency based on the location of the incident. Online reports cannot be accepted.",
+            "description": "<p>To file a report with a local police department, call <a href=\"tel:2173338911\">217-333-8911</a>. Dispatchers will connect callers with a police officer from a local agency based on the location of the incident. Online reports cannot be accepted.</p>",
             "detailsList": [
                 {
                     "title": "Contact Information",
                     "content": [
-                         {
+                        {
                             "type": "text",
                             "content": "Located near the intersection of First Street and University Avenue in Champaign."
                         },
@@ -211,13 +191,9 @@
                             "type": "phone",
                             "content": "217-333-8911"
                         },
-                         {
-                            "type": "phone",
-                            "content": "911"
-                        },
-                         {
+                        {
                             "type": "text",
-                            "content": "Always call 911 in an emergency."
+                            "content": "<p>Always call&nbsp;<a href=\"tel:911\">911</a> in an emergency.</p>"
                         }
                     ]
                 },
@@ -272,7 +248,7 @@
                     "content": "Available to students and employees of ALL genders."
                 }
             ],
-            "description": "Confidential Advisors are staff trained and dedicated to provide survivor support and advocacy at the Women’s Resources Center (WRC), an on-campus resource for students and employees of ALL genders.",
+            "description": "<p>Available to students and employees of <strong>ALL genders</strong>.</p>",
             "detailsList": [
                 {
                     "title": "Contact Information",
@@ -300,19 +276,7 @@
                     "content": [
                         {
                             "type": "text",
-                            "content": "In-person services can be accessed on weekdays from 9 a.m. to 5 p.m. on a walk-in basis or by making an appointment."
-                        },
-                        {
-                            "type": "text",
-                            "content": "To schedule a free appointment over the phone, call us at 217-333-3137 (select extension 2 when prompted) and leave the following limited pieces of information (voicemails are not confidential and we want to keep you as safe as possible):"
-                        },
-                        {
-                            "type": "text",
-                            "content": "• Your first name;\n• A safe phone number where we can reach you; and\n• Whether it is safe for us to leave you a voicemail when calling you back."
-                        },
-                        {
-                            "type": "text",
-                            "content": "You will receive a follow-up email or phone call from a confidential advisor within one business day."
+                            "content": "<p>In-person services can be accessed on weekdays from 9 a.m. to 5 p.m. on a walk-in basis or by making an appointment.</p><p>To schedule a free appointment over the phone, call us at <a href=\"tel:2173333137\">217-333-3137</a> (select extension 2 when prompted) and leave the following limited pieces of information (voicemails are not confidential and we want to keep you as safe as possible):</p><ul><li>Your first name</li><li>A safe phone number where we can reach you; and</li><li>Whether it is safe for us to leave you a voicemail when calling you back.</li></ul><p><strong>You will receive a follow-up email or phone call from a confidential advisor within one business day.</strong></p>"
                         }
                     ]
                 },
@@ -397,15 +361,7 @@
                         },
                         {
                             "type": "text",
-                            "content": "Call to speak with staff or to schedule appointments."
-                        },
-                        {
-                            "type": "text",
-                            "content": "Drop-In Hours (no appointment needed):\nMonday, Tuesday, Thursday, Friday: 10 a.m. - 3 p.m.\nWednesday: 1 - 4 p.m."
-                        },
-                        {
-                            "type": "text",
-                            "content": "Appointments\nAll appointments must be scheduled at least one day in advance. Call to schedule an appointment. Please be sure to indicate your preferred appointment type (phone, in-person, video conference) when you call."
+                            "content": "<p>Call to speak with staff or to schedule appointments.</p><p><strong>Drop-In Hours (no appointment needed)</strong></p><p>Monday, Tuesday, Thursday, Friday: 10 a.m. - 3 p.m.</p><p>Wednesday: 1 - 4 p.m.</p><p><strong>Appointments</strong></p><p>All appointments must be scheduled at least one day in advance. Call to schedule an appointment. Please be sure to indicate your preferred appointment type (phone, in-person, video conference) when you call.</p>"
                         }
                     ]
                 },
@@ -414,15 +370,7 @@
                     "content": [
                         {
                             "type": "text",
-                            "content": "Drop-In Hours\nMonday and Tuesday: 10 a.m. - 3 p.m.\nWednesday: 1 p.m. - 4 p.m.\nThursday and Friday: 10 a.m. - 3 p.m."
-                        },
-                        {
-                            "type": "text",
-                            "content": "Please note that staff is only able to meet with one student at a time, so there may be a wait. Staff will meet with students in the order they arrive. For issues that are more complex, we ask that you please schedule an appointment."
-                        },
-                        {
-                            "type": "text",
-                            "content": "Office Hours\nMonday - Friday: 8:30 a.m. - 5 p.m."
+                            "content": "<p><strong>Drop-In Hours</strong></p><p>Monday and Tuesday: 10 a.m. - 3 p.m.</p><p>Wednesday: 1 p.m. - 4 p.m.</p><p>Thursday and Friday: 10 a.m. - 3 p.m.</p><p>Please note that staff is only able to meet with one student at a time, so there may be a wait. Staff will meet with students in the order they arrive. For issues that are more complex, we ask that you please schedule an appointment.</p><p><strong>Office Hours</strong></p><p>Monday - Friday: 8:30 a.m. - 5 p.m.</p>"
                         }
                     ]
                 },
@@ -468,7 +416,7 @@
                 {
                     "title": "Contact Information",
                     "content": [
-                         {
+                        {
                             "type": "text",
                             "content": "Room 206, Turner Student Services Building (2nd floor)"
                         },
@@ -484,13 +432,9 @@
                             "type": "external_link",
                             "content": "https://counselingcenter.illinois.edu/counseling/individual-counseling"
                         },
-                         {
+                        {
                             "type": "text",
-                            "content": "Counseling Center clinicians are available during business hours for same-day urgent meetings without an appointment. If possible, we request you call to let us know you're on your way. Our same-day urgent meetings are brief (15-30 minute) one-time meetings for students feeling overwhelming distress such as:\n• Thoughts of harming themselves or others.\n• Experienced a recent traumatic event."                      
-                        },
-                         {
-                            "type": "text",
-                            "content": "We offer individual appointments. Please call us or visit our make-an-appointment feature on our website. We also offer several group therapy options appropriate for survivors of sexual violence."                      
+                            "content": "<p>Counseling Center clinicians are available during business hours for same-day urgent meetings without an appointment. If possible, we request you call to let us know you're on your way. Our same-day urgent meetings are brief (15-30 minute) one-time meetings for students feeling overwhelming distress such as:</p><ul><li>Thoughts of harming themselves or others.</li><li>Experienced a recent traumatic event.</li></ul><p>We offer individual appointments. Please call us or visit our make-an-appointment feature on our website. We also offer several group therapy options appropriate for survivors of sexual violence.</p>"
                         }
                     ]
                 },
@@ -570,11 +514,11 @@
                             "type": "external_link",
                             "content": "https://courageconnection.org/"
                         },
-                         {
+                        {
                             "type": "phone",
                             "content": "877-384-4390"
                         },
-                          {
+                        {
                             "type": "text",
                             "content": "If you or someone you love needs help, please call our 24/7 Domestic Violence Hotline."
                         }
@@ -624,7 +568,7 @@
             "categories": [],
             "title": "Filing A Report",
             "directoryContent": [],
-            "description": "Students have the right to report (or not report) an incident of sexual misconduct to the University of Illinois Title IX Office, law enforcement, or both.\nFor assistance in making a report, Confidential Advisors at the Women's Resources Center are available to students and employees of ALL genders.",
+            "description": "Students have the right to report (or not report) an incident of sexual misconduct to the University of Illinois Title IX Office, law enforcement, or both.\n \nFor assistance in making a report, Confidential Advisors at the Women's Resources Center are available to students and employees of ALL genders.",
             "detailsList": [
                 {
                     "title": "University Reporting Form (Title IX Office)",
@@ -636,7 +580,7 @@
                         {
                             "type": "button",
                             "title": "University Reporting Form",
-                            "content": "https://wecare.illinois.edu/report/"
+                            "content": "https://wecare.illinois.edu/report/?utm_source=IllinoisApp&utm_medium=MobileApp&utm_campaign=Reporting"
                         },
                         {
                             "type": "text",
@@ -654,7 +598,7 @@
                         {
                             "type": "phone",
                             "content": "911"
-                        },   
+                        },
                         {
                             "type": "text",
                             "content": "Always call 911 in an emergency."
@@ -693,7 +637,7 @@
             "id": "learn_about_resources",
             "type": "directory",
             "categories": [],
-            "title": "Learn about resources to support a friend",
+            "title": "Learn about resources for my friend",
             "directoryContent": [],
             "description": "",
             "detailsList": []
@@ -716,23 +660,14 @@
                             "content": "1109 South Lincoln Avenue, Urbana, Illinois 61801"
                         },
                         {
-                            "type": "phone",
-                            "content": "217-333-2700"
-                        },
-                        {
                             "type": "text",
-                            "content": "McKinley Health Center is located on the southeast part of campus—south of the Lincoln-Allen Residence Hall and north of the Pennsylvania-Florida Residence Hall."
-                        },
-                        {
-                            "type": "text",
-                            "content": "Contact Dial-a-Nurse Services at 217-333-2700, 24 hours/day, 365 days/year."
+                            "content": "<p>McKinley Health Center is located on the southeast part of campus&mdash;south of the Lincoln-Allen Residence Hall and north of the Pennsylvania-Florida Residence Hall.</p><p>Contact Dial-a-Nurse Services at <a href=\"tel:2173332700\">217-333-2700</a>, 24 hours/day, 365 days/year.</p>"
                         }
                     ]
                 },
                 {
                     "title": "Hours",
                     "content": [
-                      
                         {
                             "type": "text",
                             "content": "During the academic year: Monday - Friday, 8 a.m. - 5 p.m."
@@ -740,7 +675,7 @@
                         {
                             "type": "text",
                             "content": "During academic breaks and summer: Monday - Friday, 8 a.m. - 4:30 p.m."
-                        }, 
+                        },
                         {
                             "type": "text",
                             "content": "Dial-a-Nurse Services: 24 hours/day, 365 days/year"
@@ -801,7 +736,7 @@
                             "type": "text",
                             "content": "During the academic year: Monday - Friday, 8 a.m. - 5 p.m."
                         },
-                         {
+                        {
                             "type": "text",
                             "content": "During academic breaks and summer: Monday - Friday, 8 a.m. - 4:30 p.m."
                         },
@@ -829,19 +764,7 @@
                     "content": [
                         {
                             "type": "text",
-                            "content": "The first appointment will provide the student with an oppurtunity to talk confidentially with a licensed mental health caregiver about immediate concerns."
-                        },
-                        {
-                            "type": "text",
-                            "content": "• The student should plan for this appointment to last about 60 to 90 minutes in total."
-                        },
-                        {
-                            "type": "text",
-                            "content": "• The student will complete initial intake forms and meet for about 45 minutes."
-                        },
-                        {
-                            "type": "text",
-                            "content": "• The student will talk about some of the reasons for the appointment, and the caregiver will collaborate with the student to help determine what services and resources will be most helpful."
+                            "content": "<p>The first appointment will provide the student with an opportunity to talk confidentially with a licensed mental health caregiver about immediate concerns.</p><ul><li>The student should plan for this appointment to last about 60 to 90 minutes in total.</li><li>The student will complete initial intake forms and meet for about 45 minutes.</li><li>The student will talk about some of the reasons for the appointment, and the caregiver will collaborate with the student to help determine what services and resources will be most helpful.</li></ul>"
                         }
                     ]
                 }
@@ -996,7 +919,7 @@
                             "type": "text",
                             "content": "Our office is generally open weekdays, 8:30 a.m. - 5 p.m."
                         },
-                         {
+                        {
                             "type": "text",
                             "content": "We encourage making an appointment in advance whenever possible."
                         }
@@ -1009,7 +932,7 @@
                             "type": "text",
                             "content": "Director: Claire Sharples Brooks"
                         },
-                         {
+                        {
                             "type": "text",
                             "content": "Case Manager: Chandra Hall"
                         }
@@ -1145,11 +1068,7 @@
                     "content": [
                         {
                             "type": "text",
-                            "content": "Hotline and ER Response: 24/7"
-                        },
-                         {
-                            "type": "text",
-                            "content": "Office:\nMonday, Wednesday, Friday, 8:30 a.m. - 5 p.m.\nTuesday, Thursday, 8:30 a.m. - 7 p.m."
+                            "content": "<p><strong>Hotline and ER Response:</strong> 24/7</p><p><strong>Office:&nbsp;</strong></p><p>Monday, Wednesday, Friday, 8:30 a.m. - 5 p.m.</p><p>Tuesday, Thursday, 8:30 a.m. - 7 p.m.</p>"
                         }
                     ]
                 },
@@ -1240,9 +1159,9 @@
             "id": "strive_to_support_a_friend",
             "type": "panel",
             "categories": [],
-            "title": "Say the right things to my friend.",
+            "title": "Say the right things to my friend",
             "directoryContent": [],
-            "description": "Your support can be extremely helpful to a survivor. Be as supportive and non-judgmental as possible. There is no one-size-fits-all response. Your response can significantly impact whether the survivor feels validated and/or seeks help.\n\nIf someone shares their experience with you, you can show support through STRIVE.",
+            "description": "<p>Your support can be extremely helpful to a survivor. Be as supportive and non-judgmental as possible. There is no one-size-fits-all response. Your response can significantly impact whether the survivor feels validated and/or seeks help.</p><p>If someone shares their experience with you, you can show support through <strong>STRIVE</strong>.</p>",
             "detailsList": [
                 {
                     "title": "Start by believing.",
@@ -1350,7 +1269,9 @@
             "id": "support_a_friend",
             "type": "resource_list",
             "resourceScreenId": "supporting_a_friend",
-            "categories":["RESOURCES TO SUPPORT A FRIEND"],
+            "categories": [
+                "RESOURCES TO SUPPORT A FRIEND"
+            ],
             "title": "Support a friend",
             "directoryContent": []
         },
@@ -1431,7 +1352,7 @@
                             "type": "text",
                             "content": "When you contact the Title IX Office, you can say as much or as little as you would like. We are here to help answer questions and schedule appointments with office staff."
                         },
-                         {
+                        {
                             "type": "text",
                             "content": "If you choose to submit a report of sexual misconduct to the university, you can do so online, in person, over the phone, or via email."
                         }
@@ -1474,28 +1395,8 @@
                             "content": "1110 W. Springfield Ave., Urbana, IL 61801"
                         },
                         {
-                            "type": "phone",
-                            "content": "217-333-8911"
-                        },
-                         {
-                            "type": "phone",
-                            "content": "911"
-                        },
-                        {
                             "type": "text",
-                            "content": "Call or text 911 in an emergency"
-                        },
-                        {
-                            "type": "text",
-                            "content": "Call the Champaign County non-emergency line 217-333-8911 to file a report or connect with a police officer from the agency with jurisdiction (based on crime location)."
-                        },
-                        {
-                            "type": "text",
-                            "content": "Activate any emergency phone on campus"
-                        },
-                        {
-                            "type": "text",
-                            "content": "Online reports cannot be accepted for these situations"
+                            "content": "<p>Call or text&nbsp;<a href=\"tel:911\">911</a> in an emergency</p><p>Call the Champaign County non-emergency line <a href=\"tel:2173338911\">217-333-8911 </a>to file a report or connect with a police officer from the agency with jurisdiction (based on crime location).</p><p>Activate any emergency phone on campus</p><p>Online reports cannot be accepted for these situations</p>"
                         }
                     ]
                 },
@@ -1632,7 +1533,7 @@
             ],
             "title": "Urbana Police Department",
             "directoryContent": [],
-            "description": "To file a report with the University of Illinois, Champaign, or Urbana police departments, call the Champaign County dispatch center at 217-333-8911 to connect with a police officer based on the location of the incident. Online reports cannot be accepted.",
+            "description": "<p>To file a report with the University of Illinois, Champaign, or Urbana police departments, call the Champaign County dispatch center at <a href=\"tel:2173338911\">217-333-8911</a> to connect with a police officer based on the location of the incident. Online reports cannot be accepted.</p>",
             "detailsList": [
                 {
                     "title": "Contact Information",
@@ -1649,17 +1550,13 @@
                             "type": "phone",
                             "content": "217-384-2324"
                         },
-                         {
+                        {
                             "type": "phone",
                             "content": "217-333-8911"
                         },
-                         {
-                            "type": "phone",
-                            "content": "911"
-                        },
-                         {
+                        {
                             "type": "text",
-                            "content": "Always call 911 in an emergency."
+                            "content": "<p>Always call&nbsp;<a href=\"tel:911\">911</a> in an emergency.</p>"
                         }
                     ]
                 },

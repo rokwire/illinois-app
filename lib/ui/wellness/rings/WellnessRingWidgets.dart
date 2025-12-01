@@ -10,7 +10,10 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+import '../../../service/Content.dart';
 
 // Widgets
 //////////////////
@@ -207,14 +210,15 @@ class _WellnessRingState extends State<WellnessRing> with NotificationsListener,
     bool hasProfilePicture = (profileImageBytes != null);
     Image? profileImage = hasProfilePicture ? Image.memory(profileImageBytes) : null;
     Widget profilePictureWidget = hasProfilePicture
-        ? ModalImageHolder(
-            image: profileImage?.image,
-            child: Container(
+        ? AccessibleImageHolder(imageUrl: Content().getUserPhotoUrl(accountId: Auth2().accountId), child:
+            ModalImageHolder(
+              image: profileImage,
+              child: Container(
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
                     image: DecorationImage(fit: hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage!.image))),
-          )
+          ))
         : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true) ?? Container());
     return
       Stack(

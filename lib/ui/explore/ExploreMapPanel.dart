@@ -11,6 +11,7 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/MTD.dart';
@@ -42,7 +43,6 @@ import 'package:illinois/ui/events2/Event2SearchPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreBuildingsSearchPanel.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
-import 'package:illinois/ui/dining/DiningHomePanel.dart';
 import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
 import 'package:illinois/ui/mtd/MTDStopSearchPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
@@ -1372,8 +1372,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: (_itemsDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
-      label: _selectedMapType?.displayTitle,
-      hint: _selectedMapType?._displayHint,
+      title: _selectedMapType?.displayTitle,
+      semanticsHint: _selectedMapType?._displayHint,
       onTap: _onExploreTypesDropdown
     );
   }
@@ -1435,7 +1435,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         backgroundColor: Styles().colors.white,
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
-        label: _eventsDisplayTypeName(displayType),
+        title: _eventsDisplayTypeName(displayType),
         onTap: () => _onEventsDisplayType(displayType));
   }
 
@@ -1491,7 +1491,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedMapType == exploreItem) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedMapType == exploreItem) ? 'check-accent' : null,
-        label: exploreItem.displayTitle,
+        title: exploreItem.displayTitle,
         onTap: () => _onTapExploreType(exploreItem)
       ));
     }
@@ -1714,7 +1714,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       Localization().getStringEx('panel.explore.filter.payment_types.all', 'All Payment Types')  
     ];
     for (PaymentType paymentType in PaymentType.values) {
-      _filterPaymentTypeValues!.add(PaymentTypeHelper.paymentTypeToDisplayString(paymentType) ?? '');
+      _filterPaymentTypeValues!.add(paymentType.displayTitle);
     }
 
     _filterWorkTimeValues = [
@@ -2024,7 +2024,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     String? workTime = _getSelectedWorkTime(selectedFilterList);
     PaymentType? paymentType = _getSelectedPaymentType(selectedFilterList);
     bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
-    return await Dinings().loadBackendDinings(onlyOpened, paymentType, null);
+    return await Dinings().loadFilteredDinings(onlyOpened: onlyOpened, paymentType: paymentType);
   }
 
   Future<List<Explore>?> _loadLaundry() async {
@@ -2598,7 +2598,7 @@ extension ExploreMapTypeImpl on ExploreMapType {
       case ExploreMapType.Dining: return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
       case ExploreMapType.Laundry: return Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.');
       case ExploreMapType.Buildings: return Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.');
-      case ExploreMapType.StudentCourse: return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses registered.');
+      case ExploreMapType.StudentCourse: return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'You do not appear to be registered for any in-person courses.');
       case ExploreMapType.Appointments: return Localization().getStringEx('panel.explore.state.online.empty.appointments', 'No appointments available.');
       case ExploreMapType.MTDStops: return Localization().getStringEx('panel.explore.state.online.empty.mtd_stops', 'No MTD stop locations available.');
       case ExploreMapType.MyLocations: return Localization().getStringEx('panel.explore.state.online.empty.my_locations', 'No saved locations available.');
@@ -2613,7 +2613,7 @@ extension ExploreMapTypeImpl on ExploreMapType {
       case ExploreMapType.Dining: return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
       case ExploreMapType.Laundry: return Localization().getStringEx('panel.explore.state.failed.laundry', 'Failed to load laundry locations.');
       case ExploreMapType.Buildings: return Localization().getStringEx('panel.explore.state.failed.buildings', 'Failed to load building locations.');
-      case ExploreMapType.StudentCourse: return Localization().getStringEx('panel.explore.state.failed.student_course', 'Failed to load student courses.');
+      case ExploreMapType.StudentCourse: return Localization().getStringEx('panel.explore.state.failed.student_course', 'You do not appear to be registered for any in-person courses.');
       case ExploreMapType.Appointments: return Localization().getStringEx('panel.explore.state.failed.appointments', 'Failed to load appointments.');
       case ExploreMapType.MTDStops: return Localization().getStringEx('panel.explore.state.failed.mtd_stops', 'Failed to load MTD stop locations.');
       case ExploreMapType.MyLocations: return Localization().getStringEx('panel.explore.state.failed.my_locations', 'Failed to load saved locations.');

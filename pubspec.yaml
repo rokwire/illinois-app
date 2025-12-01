@@ -11,7 +11,7 @@ description: Illinois client application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 7.3.17+2717
+version: 7.3.33+2733
 
 publish_to: none
 
@@ -51,7 +51,6 @@ dependencies:
   package_info_plus: ^8.3.0
   device_calendar: ^4.3.3
   image_cropping: ^0.0.15
-  dropdown_button2: ^2.3.9
   video_player: ^2.9.3
   just_audio: ^0.9.46
   confetti: ^0.8.0
@@ -113,6 +112,12 @@ dependencies:
 #     path: packages/google_maps_flutter/google_maps_flutter
 #     ref: google_maps_flutter-v2.2.5
 
+#  dropdown_button2: ^2.3.9
+  dropdown_button2:
+    git:
+      url: https://github.com/rokwire/dropdown_button2.git
+      path: packages/dropdown_button2
+      ref: fix/v2.3.9-semantics-ios
 
 # Uncomment this when weekday_selector plugin gets compatible with Flutter 3.22.2
 # weekday_selector: ^1.1.0

@@ -75,7 +75,7 @@ class _Map2FilterBuildingAmenitiesPanelState extends State<Map2FilterBuildingAme
       )] : null;
 
   String get _infoText =>
-    Localization().getStringEx('panel.map2.filter.amenities.info', 'Choose from the below amenities to view buildings with one or more of these amenities.');
+    Localization().getStringEx('panel.map2.filter.amenities.info', 'To view buildings with specific amenities, choose one or more of the options below and tap the back button.');
 
   BoxDecoration get _contentDecoration => BoxDecoration(
     color: Styles().colors.surface,

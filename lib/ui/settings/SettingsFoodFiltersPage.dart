@@ -21,6 +21,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 
 class SettingsFoodFiltersPage extends StatefulWidget{
@@ -35,29 +36,32 @@ class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
 
   @override
   void initState() {
+    _includedFoodTypes = SetUtils.from(Auth2().prefs?.includedFoodTypes) ?? <String>{};
+    _excludedFoodIngredients = SetUtils.from(Auth2().prefs?.excludedFoodIngredients) ?? <String>{};
+    // Do not fire potential notifications that may cause setState during building the widgets tree:
+    WidgetsBinding.instance.addPostFrameCallback((_) => _fixFoodFilters());
+    super.initState();
+  }
 
-    _includedFoodTypes = Set.from(Auth2().prefs?.includedFoodTypes ?? <String>{});
-
+  void _fixFoodFilters() {
     // Validate selection: make sure selection does not contain unavailable items
     int includedCount = _includedFoodTypes.length;
-    Set<String> availableFoodTypes = Set.from(Dinings().foodTypes ?? <String>[]);
+    Set<String> availableFoodTypes = SetUtils.from(Dinings().foodTypes) ?? <String>{};
     _includedFoodTypes.removeWhere((foodType) => availableFoodTypes.contains(foodType) != true);
-    if (includedCount != _includedFoodTypes.length) {
-      Auth2().prefs?.includedFoodTypes = _includedFoodTypes;
-    }
-
-
-    _excludedFoodIngredients = Set.from(Auth2().prefs?.excludedFoodIngredients ?? <String>{});
+    bool includedModified = includedCount != _includedFoodTypes.length;
 
     // Validate selection: make sure selection does not contain unavailable items
     int excludedCount = _excludedFoodIngredients.length;
-    Set<String> availableFoodIngredients = Set.from(Dinings().foodIngredients ?? <String>[]);
+    Set<String> availableFoodIngredients = SetUtils.from(Dinings().foodIngredients) ?? <String>{};
     _excludedFoodIngredients.removeWhere((foodIngredient) => availableFoodIngredients.contains(foodIngredient) != true);
-    if (excludedCount != _excludedFoodIngredients.length) {
-      Auth2().prefs?.excludedFoodIngredients = _excludedFoodIngredients;
-    }
+    bool excludedModified = excludedCount != _excludedFoodIngredients.length;
 
-    super.initState();
+    if (includedModified || excludedModified) {
+      Auth2().prefs?.applyFoodFilters(
+        includedFoodTypes: includedModified ? _includedFoodTypes : null,
+        excludedFoodIngredients: excludedModified ? _excludedFoodIngredients : null,
+      );
+    }
   }
 
   @override
@@ -109,7 +113,7 @@ class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
     if (foodTypes != null) {
       for (String foodType in foodTypes) {
         list.add(ToggleRibbonButton(
-          label: Dinings().getLocalizedString(foodType),
+          title: Dinings().getLocalizedString(foodType),
           toggled: _includedFoodTypes.contains(foodType),
           onTap: () => _onFoodTypePrefTapped(foodType),
         ));
@@ -125,7 +129,7 @@ class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
     if (foodIngredients != null) {
       for(String foodIngredient in foodIngredients) {
         list.add(ToggleRibbonButton(
-          label: Dinings().getLocalizedString(foodIngredient),
+          title: Dinings().getLocalizedString(foodIngredient),
           toggled: _excludedFoodIngredients.contains(foodIngredient),
           onTap: () => _onFoodIngredientPrefTapped(foodIngredient),
         ));

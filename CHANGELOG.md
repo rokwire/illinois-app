@@ -6,6 +6,121 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [7.3.33] - 2025-12-01
+### Added
+- GBV: Added HTML support for resource detail text [#5505](https://github.com/rokwire/illinois-app/issues/5505).
+### Fixed
+- YouTube videos in a Group post display [#5513](https://github.com/rokwire/illinois-app/issues/5513).
+- Fixed Semantics for Dining and Appointment card and detail panels [#5550](https://github.com/rokwire/illinois-app/issues/5550).
+
+## [7.3.32] - 2025-11-26
+### Fixed
+- Fixed accessibility for images in Directory of Users [#5554](https://github.com/rokwire/illinois-app/issues/5554).
+- Fixed accessibility for images in Groups [#5549](https://github.com/rokwire/illinois-app/issues/5549).
+- Fixed accessibility for images in Events [#5553](https://github.com/rokwire/illinois-app/issues/5553).
+- Fixed message creator's status in Group / Messages  [#5561](https://github.com/rokwire/illinois-app/issues/5561).
+
+## [7.3.31] - 2025-11-24
+### Changed
+- Updated some setting defaults for new app users [#5536](https://github.com/rokwire/illinois-app/issues/5536).
+
+## [7.3.30] - 2025-11-21
+### Changed
+- ILLordle: Updated today's date parsing and formatting [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+- Updated failed/empty student course content messages in Maps [#4314](https://github.com/rokwire/illinois-app/issues/4314).
+- Improved AccessibleImageHolder and ModalImageHolder [#5548](https://github.com/rokwire/illinois-app/issues/5548).
+### Fixed
+- ILLordle: Ficed cell aspect ration, shrink a bit the favorite widget [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Added
+- ILLordle: Added "View" button in favorite widget [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+
+## [7.3.29] - 2025-11-20
+### Changed
+- Increased alpha for Close button border color in ModalPhotoImagePanel [#5429](https://github.com/rokwire/illinois-app/issues/5429).
+
+## [7.3.28] - 2025-11-19
+### Fixed
+- ILLordle: Fixed word guestures scoring [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Changed
+- ILLordle: Updated section title and description in Home / Browse [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Added
+- ILLordle: added related overrides in Debug panel [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+
+## [7.3.27] - 2025-11-18
+### Fixed
+- Assistant: Events UI fragments have fixed height [#5542](https://github.com/rokwire/illinois-app/issues/5542).
+### Changed
+- ILLordle: link to live illordle APIs [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+- ILLordle: updated game status UI: open story URL, added close button [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+### Added
+- ILLordle: added analytics [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+
+## [7.3.26] - 2025-11-17
+### Fixed
+- Fixed empty semantic node for dropdown menu items in ios [#4996](https://github.com/rokwire/illinois-app/issues/4996).
+- Show images of the sporting events in the events feed [#5533](https://github.com/rokwire/illinois-app/issues/5533).
+- Make Event widget cards a fixed height [#5507](https://github.com/rokwire/illinois-app/issues/5507).
+- Fixed contrast accessibility issue for close button in ModalPhotoImagePanel [#5429](https://github.com/rokwire/illinois-app/issues/5429).
+### Added
+- Added "All Payment Types" to Payment Type dropdown in Map2 and Dining2HomePanel [#5352](https://github.com/rokwire/illinois-app/issues/5352).
+- Added ILLordle game, POC only for now [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+
+## [7.3.25] - 2025-11-13
+### Added
+- Added close filter button semantics hint in Maps2HomePanel [#5501](https://github.com/rokwire/illinois-app/issues/5501).
+### Changed
+- Cleaned up Dining Home panel content and access to it [#5526](https://github.com/rokwire/illinois-app/issues/5526).
+
+## [7.3.24] - 2025-11-11
+### Added
+- Added favorite button in ExploreBuildingDetailPanel [#5517](https://github.com/rokwire/illinois-app/issues/5517).
+### Changed
+- Added favorite button in LaundryRoomRibbonButton [#5352](https://github.com/rokwire/illinois-app/issues/5352).
+- Cleaned up Dining model and service [#5526](https://github.com/rokwire/illinois-app/issues/5526).
+
+## [7.3.23] - 2025-11-10
+### Changed
+- Updated description for Event and Amenities filters [#5499](https://github.com/rokwire/illinois-app/issues/5499).
+### Fixed 
+- Fixed Athletics home panel dropdown content [#5352](https://github.com/rokwire/illinois-app/issues/5352).
+### Added
+- Added starred filter to Events and News Athletics pages, merge all/my events and all/my news pages into one [#5352](https://github.com/rokwire/illinois-app/issues/5352).
+- Added starred filter to Laundry Panel, connect it to Home / Favorites / Laundry / My Laundry / View All [#5352](https://github.com/rokwire/illinois-app/issues/5352).
+
+## [7.3.22] - 2025-11-07
+### Changed
+- ToggleRibbonButton handles semantic hints properly, some cleanup applied as well [#4874](https://github.com/rokwire/illinois-app/issues/4874).
+- Improved semantics for profile photos [#5180](https://github.com/rokwire/illinois-app/issues/5180).
+- UI Clean Up: Merge Favorite Widgets [#5352](https://github.com/rokwire/illinois-app/issues/5352).
+
+## [7.3.21] - 2025-11-03
+### Added
+- Added semantic label for Read More link in group's About us section [#4874](https://github.com/rokwire/illinois-app/issues/4874).
+- Assistant: log analytics event on query response [#5508](https://github.com/rokwire/illinois-app/issues/5508).
+- Add AccessibleImageHolder to ModalPhotoImagePanel [#5439](https://github.com/rokwire/illinois-app/issues/5439).
+
+## [7.3.20] - 2025-10-31
+### Fixed 
+- Accessibility: Make sure slider do not announce values below Min and above Max slider value [#5109](https://github.com/rokwire/illinois-app/issues/5109).
+
+## [7.3.19] - 2025-10-20
+### Changed
+- Check for actual content change when processing FlexUI.notifyChanged notification [#5502](https://github.com/rokwire/illinois-app/issues/5502).
+- Only show resources footer on confidential resources screen [#5400](https://github.com/rokwire/illinois-app/issues/5400).
+### Fixed
+- Fixed Food Filters validation in Food Filters settings page [#5502](https://github.com/rokwire/illinois-app/issues/5502).
+- Browse Panel does not modify FlexUI's content any more [#5502](https://github.com/rokwire/illinois-app/issues/5502).
+
+## [7.3.18] - 2025-10-29
+### Changed
+- Show Food Filter in Settings [#5490](https://github.com/rokwire/illinois-app/issues/5490).
+- Assistant: increase request timeout to 120 secs for the /query api [#5493](https://github.com/rokwire/illinois-app/issues/5493).
+- Map2: minor cleanup and rearrange after accessibility updates.
+### Fixed
+- Map2: fixed empty content processing of My Locations.
+### Removed
+- Maps Accessibility resize workaround is removed [#5051](https://github.com/rokwire/illinois-app/issues/5051).
+
 ## [7.3.17] - 2025-10-22
 ### Changed
 - Assistant: struct output type name from "dining_schedule" to "dining_hall_details" [#5477](https://github.com/rokwire/illinois-app/issues/5477).

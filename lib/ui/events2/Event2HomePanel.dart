@@ -389,7 +389,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
 
       dynamic result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
         title: Localization().getStringEx('panel.events2.home.attributes.filters.header.title', 'Event Filters'),
-        description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
+        description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose at least one attribute to filter the events and tap Apply to save.'),
         footerBuilder: _buildFiltersFooter,
 
         contentAttributes: contentAttributes,
@@ -492,6 +492,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
 
   GlobalKey? _sortButtonKey;
   GlobalKey? _filtersButtonKey;
+  final Map<Event2SortType, GlobalKey> _sortItemKeys = {};
 
   @override
   void initState() {
@@ -680,8 +681,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
           isExpanded: false,
           items: _buildSortDropdownItems(),
           onChanged: _onSortType,
+          onMenuStateChange: (isOpen) => isOpen ?  //Handling Accessibility focus
+            AppSemantics.triggerAccessibilityFocus( _sortItemKeys[_sortType], delay: Duration(seconds: 1)) : null
         )
-      )),
+      ))
     );
   }
 
@@ -691,15 +694,16 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     for (Event2SortType sortType in Event2SortType.values) {
       if ((sortType != Event2SortType.proximity) || locationAvailable) {
         String? displaySortType = _sortDropdownItemTitle(sortType);
+        GlobalKey itemKey = _sortItemKeys[sortType] ??= GlobalKey();
         items.add(AccessibleDropDownMenuItem<Event2SortType>(
-          key: ObjectKey(sortType),
-          value: sortType,
-          child: Semantics(label: displaySortType, button: true, container: true, inMutuallyExclusiveGroup: true,
+            key: itemKey,
+            value: sortType,
+            semanticsLabel: displaySortType,
             child: Text(displaySortType, overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
               Styles().textStyles.getTextStyle("widget.message.regular.fat") :
               Styles().textStyles.getTextStyle("widget.message.regular"),
               semanticsLabel: "",
-        ))));
+        )));
       }
     }
     return items;
@@ -779,7 +783,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
             Visibility(visible: _canShareFilters, child:
               Event2ImageCommandButton(Styles().images.getImage('share-nodes'),
                 label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
+                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hint', 'Tap to share current event set'),
                 contentPadding: EdgeInsets.only(left: 16, right: _canClearFilters ? (8 + 2) : 16, top: 12, bottom: 12),
                 onTap: _onShareFilters
               ),
@@ -787,7 +791,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
             Visibility(visible: _canClearFilters, child:
               Event2ImageCommandButton(Styles().images.getImage('close'), // size: 14
                 label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
+                hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hint', 'Tap to clear current filters'),
                 contentPadding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
                 onTap: _onClearFilters
               ),
@@ -913,8 +917,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
           Event2FilterParam.notifySubscribersChanged(except: this);
 
           _reload().then((_) =>
-              Future.delayed(Platform.isIOS ? Duration(seconds: 1) : Duration.zero, ()=>
-                  AppSemantics.triggerAccessibilityFocus(_filtersButtonKey))
+                  AppSemantics.triggerAccessibilityFocus(_filtersButtonKey, delay: Duration(seconds: 1))
           );
       }
     });
@@ -1222,9 +1225,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
         });
         Storage().events2SortType = event2SortTypeToString(_sortType);
         _reload().then((_)=>
-            Future.delayed(Platform.isIOS ? Duration(seconds: 1) : Duration.zero, ()=>
-                AppSemantics.triggerAccessibilityFocus(_sortButtonKey)));
-
+            AppSemantics.triggerAccessibilityFocus(_sortButtonKey, delay: Duration(seconds: 1)));
       }
     }
   }

@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -120,7 +121,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
       scrollDirection: Axis.vertical,
       slivers: <Widget>[
         SliverToutHeaderBar(
-          flexImageUrl: game?.imageUrl,
+          flexImageUrl: (widget.event?.displayImageUrl ?? game?.imageUrl),
           flexBackColor: Styles().colors.fillColorPrimary,
           flexRightToLeftTriangleColor: Styles().colors.fillColorPrimary,
           flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,

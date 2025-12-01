@@ -77,7 +77,7 @@ class _Event2SetupGroupsState extends State<Event2SetupGroups> {
     List<Widget> cardsList = <Widget>[_groupsToolBar];
     for (Group group in _groups!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
-        ToggleRibbonButton(label: group.title ?? '', toggled: _selectedGroupIds.contains(group.id), onTap: () => _onGroupToggled(group.id)),
+        ToggleRibbonButton(title: group.title ?? '', toggled: _selectedGroupIds.contains(group.id), onTap: () => _onGroupToggled(group.id)),
       ),);
     }
     return Padding(padding: const EdgeInsets.only(bottom: 32), child:

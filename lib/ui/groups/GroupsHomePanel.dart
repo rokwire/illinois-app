@@ -41,7 +41,6 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
-import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -240,7 +239,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
           rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
-          label: contentType.displayTitle,
+          title: contentType.displayTitle,
           onTap: () => _onTapContentTypeDropdownItem(contentType)
         ));
       }
@@ -255,7 +254,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
       rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',
-      label: _selectedContentType?.displayTitle ?? '',
+      title: _selectedContentType?.displayTitle ?? '',
       onTap: _changeContentTypesVisibility
     ));
   }
@@ -465,7 +464,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
             GroupCard(
               group: group,
               displayType: GroupCardDisplayType.myGroup,
-              onImageTap: () { _onTapImage(group); },
               key: _getGroupKey(group),
             ),
           ));
@@ -492,7 +490,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
               group: group,
               displayType: GroupCardDisplayType.myGroup,
               key: _getGroupKey(group),
-              onImageTap: () { _onTapImage(group); },
             ),
           ));
         }
@@ -526,7 +523,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
               group: group,
               key: _getGroupKey(group),
               displayType: GroupCardDisplayType.allGroups,
-              onImageTap: () { _onTapImage(group); },
             ),
           ));
         }
@@ -655,7 +651,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
                     visible: _canSyncAuthmanGroups,
                     child: RibbonButton(
                         leftIconKey: "info",
-                        label: Localization().getStringEx("", "Sync Authman Groups"),//TBD localize
+                        title: Localization().getStringEx("", "Sync Authman Groups"),//TBD localize
                         onTap: () {
                           _syncAuthmanGroups();
                           Navigator.pop(context);
@@ -667,13 +663,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
   Future<void> _onPullToRefresh() async {
     Analytics().logSelect(target: "Pull To Refresh");
     _reloadGroupsContent();
-  }
-
-  void _onTapImage(Group? group){
-    Analytics().logSelect(target: "Image");
-    if(group?.imageURL!=null){
-      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalPhotoImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
-    }
   }
 
   void _syncAuthmanGroups() {

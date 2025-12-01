@@ -83,8 +83,9 @@ class _GroupAboutContentState extends State<GroupAboutContentWidget> {
       contentList.add(ExpandableText(_group?.description ?? '',
         textStyle: Styles().textStyles.getTextStyle('panel.group.detail.regular'),
         trimLinesCount: 4,
-        readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),),
-      );
+        readMoreIcon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
+        readMoreLabel: Localization().getStringEx("panel.group_detail.label.read_mpre.about_us",  'Read more about us'),
+      ),);
     }
 
     /*if (StringUtils.isNotEmpty(_group?.researchConsentDetails)) {
@@ -173,7 +174,7 @@ class _GroupAboutContentState extends State<GroupAboutContentWidget> {
 
   Widget _buildWebsiteLinkButton() {
     return RibbonButton(
-        label: Localization().getStringEx("panel.group_detail.button.more_info.title", 'More Info'),
+        title: Localization().getStringEx("panel.group_detail.button.more_info.title", 'More Info'),
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
         rightIconKey: 'external-link',
         padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
@@ -212,14 +213,15 @@ class _OfficerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 128,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: groupMember?.userId)),
-        Padding(padding: EdgeInsets.only(top: 4),
-          child: Text(groupMember?.name ?? "", style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),),),
-        Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles.getTextStyle('widget.card.detail.regular')),
-      ],),
-    );
+    return Semantics(container: true, child:
+      Container(
+        width: 128,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: groupMember?.userId)),
+          Padding(padding: EdgeInsets.only(top: 4),
+            child: Text(groupMember?.name ?? "", style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),),),
+          Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles.getTextStyle('widget.card.detail.regular')),
+        ],),
+    ));
   }
 }

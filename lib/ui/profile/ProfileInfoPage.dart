@@ -163,25 +163,25 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
   );
 
   Widget get _directoryVisibilityContent =>
-    DirectoryProfileCard(child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-        Row(children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 16, top: 12), child:
-              _directoryVisibilityTitle
+    Semantics(container: true, onTap: _onToggleDirectoryVisibility, child:
+      DirectoryProfileCard(child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+          Row(children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(left: 16, top: 12), child:
+                _directoryVisibilityTitle
+              ),
             ),
+            _directoryVisibilityControl,
+          ],),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16,), child:
+            Container(height: 1, color: Styles().colors.surfaceAccent,),
           ),
-          _directoryVisibilityControl,
-        ],),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16,), child:
-          Container(height: 1, color: Styles().colors.surfaceAccent,),
-        ),
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child:
-          _directoryVisibilityDescription,
-        )
-      ],)
-
-    );
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child:
+            _directoryVisibilityDescription,
+          )
+        ],)
+    ));
 
   Widget get _directoryVisibilityControl {
     if (_updatingDirectoryVisibility) {
@@ -197,35 +197,60 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
 
 
   Widget get _directoryVisibilityDisabledButton =>
-    Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 12), child:
-      Styles().images.getImage('toggle-off',
-        color: Styles().colors.fillColorPrimaryTransparent03,
-        colorBlendMode: BlendMode.dstIn,
+    Semantics(label: _directoryVisibilityToggleLabel, hint: _directoryVisibilityToggleHint, enabled: _directoryVisibilityEnabled, button: true, excludeSemantics: true, child:
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 12), child:
+        Styles().images.getImage('toggle-off',
+          color: Styles().colors.fillColorPrimaryTransparent03,
+          colorBlendMode: BlendMode.dstIn,
+        )
       )
     );
 
   Widget get _directoryVisibilityToggleButton =>
-    InkWell(onTap: _onToggleDirectoryVisibility, child:
-      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 12), child:
-        Styles().images.getImage(directoryVisibility ? 'toggle-on' : 'toggle-off')
+    Semantics(label: _directoryVisibilityToggleLabel, hint: _directoryVisibilityToggleHint, value: _directoryVisibilityToggleValue, toggled: directoryVisibility, enabled: _directoryVisibilityEnabled, button: true, excludeSemantics: true, child:
+      InkWell(onTap: _onToggleDirectoryVisibility, child:
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 12), child:
+          Styles().images.getImage(directoryVisibility ? 'toggle-on' : 'toggle-off')
+        )
       )
     );
 
   Widget get _directoryVisibilityProgress =>
-    Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 12), child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2), child:
-          SizedBox(width: 24, height: 24, child:
-            CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
-          )
+    Semantics(label: _directoryVisibilityProgressLabel, hint: _directoryVisibilityProgressHint, container: true, child:
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 12), child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2), child:
+            SizedBox(width: 24, height: 24, child:
+              CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
+            )
+        )
       )
     );
 
   Widget get _directoryVisibilityTitle =>
-    Text(Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility'),
-      style: _directoryVisibilityEnabled ?
-        Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.enabled') :
-        Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.disabled')
-    );
+    ExcludeSemantics(child:
+      Text(Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility'),
+        style: _directoryVisibilityEnabled ?
+          Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.enabled') :
+          Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.disabled')
+    ));
+
+  String get _directoryVisibilityTitleText =>
+    Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility');
+
+  String get _directoryVisibilityToggleLabel => _directoryVisibilityTitleText;
+
+  String get _directoryVisibilityToggleValue => AppSemantics.toggleValue(directoryVisibility);
+
+  String get _directoryVisibilityToggleHint => AppSemantics.toggleHint(directoryVisibility,
+    enabled: _directoryVisibilityEnabled,
+    subject: _directoryVisibilityTitleText
+  );
+
+  String get _directoryVisibilityAnnouncement => AppSemantics.toggleAnnouncement(directoryVisibility, subject: _directoryVisibilityTitleText);
+  String get _directoryVisibilityFailedAnnouncement => AppSemantics.toggleFailedAnnouncement(directoryVisibility, subject: _directoryVisibilityTitleText);
+
+  String get _directoryVisibilityProgressLabel => _directoryVisibilityTitleText;
+  String get _directoryVisibilityProgressHint => AppSemantics.progressHint(subject: _directoryVisibilityTitleText);
 
   Widget get _directoryVisibilityDescription {
 
@@ -269,11 +294,13 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
             _editing = false;
             _privacy = privacy;
           });
+          AppSemantics.announceMessage(context, _directoryVisibilityAnnouncement);
         }
         else {
           setState(() {
             _updatingDirectoryVisibility = false;
           });
+          AppSemantics.announceMessage(context, _directoryVisibilityFailedAnnouncement);
           AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.directory_visibility.toggle.failed.text', 'Failed to update directory visibility.'));
         }
       }

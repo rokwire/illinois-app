@@ -132,16 +132,17 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
   @override
   void initState() {
 
-    NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
-      Auth2UserPrefs.notifyFavoritesChanged,
-    ]);
-
     // Build Favorite codes before start listening for Auth2UserPrefs.notifyFavoritesChanged
     // because _buildFavoriteCodes may fire such.
     _systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
     _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
-    _favoriteCodes = _buildFavoriteCodes();
+    _favoriteCodes = _buildFavoriteCodes(checkUpdate: true);
+
+    NotificationService().subscribe(this, [
+      FlexUI.notifyChanged,
+      Auth2.notifyLoginChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
+    ]);
 
     WidgetsBinding.instance.addPostFrameCallback((_) =>
       _updateWidgetVisibilities()
@@ -162,6 +163,9 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
       _updateContentCodes();
+    }
+    else if (name == Auth2.notifyLoginChanged) {
+      _updateFavoriteCodes(checkUpdate: true);
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       _updateFavoriteCodes();
@@ -257,23 +261,24 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
     }
   }
 
-  List<String>? _buildFavoriteCodes() {
+  List<String>? _buildFavoriteCodes({bool checkUpdate = false}) {
     LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
     if (homeFavorites == null) {
       homeFavorites = _initDefaultFavorites();
     }
+    else if (checkUpdate) {
+      homeFavorites = _updateLastFavorites(homeFavorites);
+    }
     return (homeFavorites != null) ? List.from(homeFavorites) : null;
   }
 
-  void _updateFavoriteCodes() {
-    if (mounted) {
-      List<String>? favoriteCodes = _buildFavoriteCodes();
-      if ((favoriteCodes != null) && !DeepCollectionEquality().equals(_favoriteCodes, favoriteCodes)) {
+  void _updateFavoriteCodes({bool checkUpdate = false}) {
+      List<String>? favoriteCodes = _buildFavoriteCodes(checkUpdate: checkUpdate);
+      if ((favoriteCodes != null) && !DeepCollectionEquality().equals(_favoriteCodes, favoriteCodes) && mounted) {
         setState(() {
           _favoriteCodes = favoriteCodes;
         });
       }
-    }
   }
 
   static LinkedHashSet<String>? _initDefaultFavorites() {
@@ -309,6 +314,31 @@ class _HomeFavoritesContentWidgetState extends State<HomeFavoritesContentWidget>
       }
     }
     return null;
+  }
+
+  static Map<String, String> _favoritesReplacements = <String, String> {
+    'event_feed': 'events',
+    'my_events': 'events',
+    'all_groups': 'groups',
+    'my_groups': 'groups',
+    'all_research_projects': 'research_projects',
+    'my_research_projects': 'research_projects',
+    'my_laundry': 'laundry',
+    'my_dining': 'dining',
+    'dinings': 'dining',
+    'my_athletics': 'sport_events',
+    'my_news': 'sport_news',
+  };
+
+  static LinkedHashSet<String> _updateLastFavorites(LinkedHashSet<String> favorites) {
+    if (_favoritesReplacements.keys.firstWhereOrNull((String code) => favorites.contains(code)) != null) {
+      LinkedHashSet<String> updatedFavorites = LinkedHashSet<String>.from(favorites.map((String code) => _favoritesReplacements[code] ?? code));
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), updatedFavorites);
+      return updatedFavorites;
+    }
+    else {
+      return favorites;
+    }
   }
 
   GlobalKey _widgetKey(String code) => _widgetKeys[code] ??= GlobalKey();

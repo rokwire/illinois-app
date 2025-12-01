@@ -615,7 +615,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     await Events2().loadEventsList(Events2Query());
 
   Future<List<Explore>?> _loadDinings() async {
-    return Dinings().loadBackendDinings(false, null, null);
+    return Dinings().loadDinings();
   }
 
   Future<List<Explore>?> _loadLaundry() async {

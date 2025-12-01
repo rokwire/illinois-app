@@ -38,9 +38,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class AthleticsEventsContentWidget extends StatefulWidget {
-  final bool? showFavorites;
+  final bool? starred;
 
-  AthleticsEventsContentWidget({this.showFavorites});
+  AthleticsEventsContentWidget({this.starred});
 
   @override
   State<AthleticsEventsContentWidget> createState() => _AthleticsEventsContentWidgetState();
@@ -57,6 +57,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   static const int _eventsPageLength = 16;
 
   List<SportDefinition>? _teamsFilter;
+  late bool _starred;
 
   ScrollController _scrollController = ScrollController();
 
@@ -68,7 +69,9 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     super.initState();
     NotificationService().subscribe(this, [Events2.notifyChanged, Auth2UserPrefs.notifyInterestsChanged, Auth2UserPrefs.notifyFavoritesChanged]);
     _scrollController.addListener(_scrollListener);
-    _loadEvents();
+    _starred = (widget.starred == true);
+    _buildTeamsFilter();
+    _reloadEvents();
   }
 
   @override
@@ -78,18 +81,13 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   @override
-  void didUpdateWidget(AthleticsEventsContentWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.showFavorites != oldWidget.showFavorites) {
-      setState(() {
-        _loadEvents();
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Column(children: [AthleticsTeamsFilterWidget(favoritesMode: _favoritesMode), Expanded(child: _buildContent())]);
+    return Column(children: [
+      AthleticsTeamsFilterWidget(starred: _starred, onStarred: _onTapStarred,),
+      Expanded(child:
+        _buildContent()
+      )
+    ]);
   }
 
   Widget _buildContent() {
@@ -176,6 +174,14 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
                     strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
   }
 
+  void _onTapStarred() {
+    Analytics().logSelect(target: 'Starred');
+    setState(() {
+      _starred = !_starred;
+    });
+    _reloadEvents();
+  }
+
   void _onTapGame(Event2 event) {
     Analytics().logSelect(target: 'Athletics Event');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game, event: event)));
@@ -187,26 +193,15 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       limit: limit,
       timeFilter: Event2TimeFilter.upcoming,
       attributes: _buildQueryAttributes(),
-      types: _favoritesMode ? {Event2TypeFilter.favorite} : null,
+      types: _starred ? {Event2TypeFilter.favorite} : null,
       groupings: Event2Grouping.individualEvents(),
       sortType: Event2SortType.dateTime,
       sortOrder: Event2SortOrder.ascending
     );
   }
 
-  void _loadEvents() {
-    _buildTeamsFilter();
-    if (CollectionUtils.isNotEmpty(_teamsFilter)) {
-      _reloadEvents();
-    } else {
-      setState(() {
-        _events = <Event2>[];
-      });
-    }
-  }
-
   Future<void> _reloadEvents({ int limit = _eventsPageLength }) async {
-    if (!_loadingEvents && !_refreshingEvents) {
+    if (!_loadingEvents && !_refreshingEvents && mounted) {
       setStateIfMounted(() {
         _loadingEvents = true;
         _extendingEvents = false;
@@ -304,18 +299,19 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     }
   }
 
-  void _buildTeamsFilter() {
+  List<SportDefinition>? _buildTeamsFilter() {
     Set<String>? preferredTeams = Auth2().prefs?.sportsInterests;
     if (CollectionUtils.isNotEmpty(preferredTeams)) {
-      _teamsFilter = <SportDefinition>[];
+      List<SportDefinition> teamsFilter = <SportDefinition>[];
       for (String sportShortName in preferredTeams!) {
         SportDefinition? sport = Sports().getSportByShortName(sportShortName);
         if (sport != null) {
-          _teamsFilter!.add(sport);
+          teamsFilter.add(sport);
         }
       }
+      return teamsFilter;
     } else {
-      _teamsFilter = null;
+      return null;
     }
   }
 
@@ -345,7 +341,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     }
   }
 
-  bool get _favoritesMode => (widget.showFavorites == true);
+  bool get _favoritesMode => (_starred == true);
 
   String get _emptyMessageHtml {
     return _favoritesMode ?
@@ -360,9 +356,10 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     if (name == Events2.notifyChanged) {
       _reloadEvents();
     } else if (name == Auth2UserPrefs.notifyInterestsChanged) {
-      _loadEvents();
+      _teamsFilter = _buildTeamsFilter();
+      _reloadEvents();
     } else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      if (_favoritesMode) {
+      if (_starred) {
         _reloadEvents();
       }
     }
