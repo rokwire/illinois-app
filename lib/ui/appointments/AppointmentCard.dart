@@ -30,7 +30,9 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class AppointmentCard extends StatefulWidget with AnalyticsInfo {
@@ -65,14 +67,14 @@ class _AppointmentCardState extends State<AppointmentCard> with NotificationsLis
 
   @override
   Widget build(BuildContext context) =>
-    InkWell(onTap: widget.onTap ?? _onTapAppointmentCard, child:
-      Semantics(label: widget.appointment.title,
-        child: AccentCard(
-          displayMode: widget.displayMode,
-          accentColor: (widget.appointment.isUpcoming ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary),
-          child: _contentWidget,
+    Semantics(container: true, child:
+      InkWell(onTap: widget.onTap ?? _onTapAppointmentCard, child:
+          AccentCard(
+            displayMode: widget.displayMode,
+            accentColor: (widget.appointment.isUpcoming ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary),
+            child: _contentWidget,
         ),
-      ),
+      )
     );
 
   Widget get _contentWidget {
@@ -184,13 +186,13 @@ class _AppointmentCardState extends State<AppointmentCard> with NotificationsLis
             Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Opacity(opacity: StringUtils.isNotEmpty(imageKey) ? 1 : 0, child:
                 Padding(padding: EdgeInsets.only(left: 16), child:
-                  Semantics(label: semanticsImageLabel, button: true, hint: semanticsImageHint, child:
-                    InkWell(onTap: () => StringUtils.isNotEmpty(imageKey) ? _onTapCardImage(imageKey) : null, child:
                       SizedBox(width: imageSize, height: imageSize, child:
-                        Styles().images.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders)
-                      )
+                        AccessibleImageHolder(child:
+                          ModalImageHolder(child:
+                            Styles().images.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders)
+                          )
+                        )
                     )
-                  )
                 )
               ),
 
@@ -215,13 +217,6 @@ class _AppointmentCardState extends State<AppointmentCard> with NotificationsLis
       appointment: widget.appointment,
       analyticsFeature: widget.analyticsFeature,
     )));
-  }
-
-  void _onTapCardImage(String? imageKey) {
-    Analytics().logSelect(target: 'Appointment Image');
-    Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) =>
-      ModalPhotoImagePanel(imageKey: imageKey, onCloseAnalytics: () => Analytics().logSelect(target: 'Close Image')))
-    );
   }
 
   void _onTapExploreCardStar() {

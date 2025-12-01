@@ -30,6 +30,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class DiningCard extends StatefulWidget {
@@ -110,7 +111,9 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
     return Visibility(visible: StringUtils.isNotEmpty(imageUrl), child:
       Container(decoration: _imageHeadingDecoration, child:
         AspectRatio(aspectRatio: 2.5, child:
-          Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+            AccessibleImageHolder(child:
+              Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+            )
         ),
       )
     );
