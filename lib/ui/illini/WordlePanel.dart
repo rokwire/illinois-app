@@ -13,11 +13,13 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rokwire_plugin/ext/network.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:timezone/timezone.dart';
 import 'package:uuid/uuid.dart';
 
 class WordlePanel extends StatefulWidget {
@@ -301,8 +303,8 @@ class _WordleWidgetState extends State<WordleWidget> {
             Text(Localization().getStringEx('widget.wordle.game.status.word.text', 'Today\'s word: {{word}}').replaceAll('{{word}}', widget.dailyWord.word.toUpperCase()),
               style: _gameStatusSectionTextStyle, textAlign: TextAlign.center,
             ),
-            if (widget.dailyWord.dateUtc != null)
-              Text(DateFormat(Localization().getStringEx('widget.wordle.game.status.date.text.format', 'MMMM, dd, yyyy')).format(widget.dailyWord.dateUtc?.toLocal() ?? DateTime.now()),
+            if (widget.dailyWord.dateUni != null)
+              Text(DateFormat(Localization().getStringEx('widget.wordle.game.status.date.text.format', 'MMMM, dd, yyyy')).format(widget.dailyWord.dateUni ?? DateTime.now()),
                 style: _gameStatusInfoTextStyle, textAlign: TextAlign.center,
               ),
             if (widget.game.isSucceeded && (widget.dailyWord.author?.isNotEmpty == true))
@@ -810,14 +812,14 @@ class WordleGame {
 
 class WordleDailyWord {
   final String word;
-  final DateTime? dateUtc;
+  final DateTime? dateUni;
   final String? author;
   final String? storyTitle;
   final String? storyUrl;
 
   const WordleDailyWord({
     required this.word,
-    this.dateUtc, this.author,
+    this.dateUni, this.author,
     this.storyTitle, this.storyUrl,
   });
 
@@ -828,7 +830,7 @@ class WordleDailyWord {
   static WordleDailyWord? _fromJsonWord(String? word, { Map<String, dynamic>? json }) => ((word != null) && word.isNotEmpty) ?
     WordleDailyWord(
       word: word.toUpperCase(),
-      dateUtc: dateFromString(JsonUtils.stringValue(json?['date'],)),
+      dateUni: dateUniFromString(JsonUtils.stringValue(json?['date'],)),
       author: JsonUtils.stringValue(json?['author']),
       storyTitle: JsonUtils.stringValue(json?['story_title']),
       storyUrl: JsonUtils.stringValue(json?['story_url']),
@@ -837,19 +839,21 @@ class WordleDailyWord {
 
   Map<String, dynamic> toJson() => <String, dynamic>{
     'word': word,
-    'date': dateAsString,
+    'date': dateUniAsString,
     'author': author,
     'story_title': storyTitle,
     'story_url': storyUrl,
   };
 
-  static DateTime? dateFromString(String? value) =>
-    (value != null) ? DateFormat(_dateFormat).tryParse(value, true) : null;
+  static DateTime? dateUniFromString(String? value) {
+    DateTime? dateTimeUtc = (value != null) ? DateFormat(_dateFormat).tryParse(value, true) : null;
+    return (dateTimeUtc != null) ? TZDateTime(DateTimeUni.timezoneUniOrLocal, dateTimeUtc.year, dateTimeUtc.month, dateTimeUtc.day) : null;
+  }
 
-  String? get dateAsString => (dateUtc != null) ?
-    (DateFormat(_dateFormat).format(dateUtc!) + ' GMT') : null;
+  String? get dateUniAsString => (dateUni != null) ?
+    (DateFormat(_dateFormat).format(DateTime.utc(dateUni!.year, dateUni!.month, dateUni!.day)) + ' GMT') : null;
 
-  static const String _dateFormat = 'EEE, d MMM yyyy hh:mm:ss Z';
+  static const String _dateFormat = 'EEE, d MMM yyyy HH:mm:ss Z';
 
   // Accessories
   int get wordLength => word.wordLength;
@@ -862,14 +866,14 @@ class WordleDailyWord {
   bool operator==(Object other) =>
     (other is WordleDailyWord) &&
     (word == other.word) &&
-    (dateUtc == other.dateUtc) &&
+    (dateUni == other.dateUni) &&
     (author == other.author) &&
     (storyTitle == other.storyTitle);
 
   @override
   int get hashCode =>
     (word.hashCode) ^
-    (dateUtc?.hashCode ?? 0) ^
+    (dateUni?.hashCode ?? 0) ^
     (author?.hashCode ?? 0) ^
     (storyTitle?.hashCode ?? 0);
 
