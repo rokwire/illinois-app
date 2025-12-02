@@ -81,7 +81,7 @@ class _DebugWordlePanelState extends State<DebugWordlePanel>  {
   Widget get _dailtyWord =>
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Text('Word:', style: _captionTextStyle,),
-      TextField(controller: _wordController, keyboardType: TextInputType.name, decoration: _textFieldDecoration, style: _textFieldStyle, onChanged: _onChangedWord,),
+      TextField(controller: _wordController, keyboardType: TextInputType.text, decoration: _textFieldDecoration, style: _textFieldStyle, textCapitalization: TextCapitalization.characters, onChanged: _onChangedWord,),
       Container(height: 8,),
       Text('Date:', style: _captionTextStyle,),
       TextField(controller: _dateController, keyboardType: TextInputType.text, decoration: _textFieldDecoration, style: _isDateValid ? _textFieldStyle : _textFieldInvalidStyle, onChanged: _onChangedDate),
