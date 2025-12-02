@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/widgets/FocusableSemanticsWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -58,23 +59,23 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
       body: SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
         Column(children: [
           Expanded(child:
-            SingleChildScrollView(child:
+            FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: SingleChildScrollView(child:
               Column(children:[
                 Container(color: Styles().colors.fillColorPrimary, child:
                   Column(children: <Widget>[
                     Row(children: [
-                      Onboarding2BackButton(padding: const EdgeInsets.all(16), imageColor: Styles().colors.white, onTap: _onTapBack,),
-                      Expanded(child:
+                      FocusTraversalOrder(order: NumericFocusOrder(1), child: Onboarding2BackButton(padding: const EdgeInsets.all(16), imageColor: Styles().colors.white, onTap: _onTapBack,)),
+                      FocusTraversalOrder(order: NumericFocusOrder(2), child: Expanded(child:
                         Align(alignment: Alignment.centerRight, child:
-                          Semantics(
+                          FocusableSemanticsWidget(child: Semantics(
                             label: Localization().getStringEx('panel.onboarding2.privacy.level.button.privacy_policy.title', "Privacy Notice "),
                             hint: Localization().getStringEx('panel.onboarding2.privacy.level.button.privacy_policy.hint', ''),
                             button: true,
                             excludeSemantics: true,
                             child: _buildPrivacyPolicyButton(context)
-                          ),
+                          )),
                         )
-                      ),
+                      )),
                     ],),
 
                     Container(height: 18,),
@@ -84,6 +85,7 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
                       hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
                       header: true,
                       excludeSemantics: true,
+                      focusable: false,
                       child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
                         Align(alignment: Alignment.topCenter, child:
                           Text(_privacyTitle, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.heading.title"),)
@@ -109,11 +111,11 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
                 ),
 
                 Padding(padding: EdgeInsets.symmetric(vertical:24, horizontal: 20), child:
-                  PrivacyLevelSlider(initialValue: _privacyLevel.toDouble(), readOnly: true, color: Styles().colors.background,),
+                  FocusableSemanticsWidget(child: Semantics(focusable: true, child: PrivacyLevelSlider(initialValue: _privacyLevel.toDouble(), readOnly: true, color: Styles().colors.background,))),
                 ),
               ]),
             )
-          ),
+          )),
           Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
             Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
               Container(height: 16,),
