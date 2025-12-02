@@ -5,10 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.3.33] - 2025-12-01
 ### Added
 - GBV: Added HTML support for resource detail text [#5505](https://github.com/rokwire/illinois-app/issues/5505).
 ### Fixed
 - YouTube videos in a Group post display [#5513](https://github.com/rokwire/illinois-app/issues/5513).
+- Fixed Semantics for Dining and Appointment card and detail panels [#5550](https://github.com/rokwire/illinois-app/issues/5550).
 
 ## [7.3.32] - 2025-11-26
 ### Fixed
