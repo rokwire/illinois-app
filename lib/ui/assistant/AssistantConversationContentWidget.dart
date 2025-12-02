@@ -75,6 +75,7 @@ class AssistantConversationContentWidget extends StatefulWidget {
 class _AssistantConversationContentWidgetState extends State<AssistantConversationContentWidget>
     with NotificationsListener, WidgetsBindingObserver, AutomaticKeepAliveClientMixin<AssistantConversationContentWidget> {
   static final String resourceName = 'assistant';
+  static final double _defaultHorizontalPaddingValue = 16;
 
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
@@ -215,7 +216,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                       SingleChildScrollView(
                           controller: _scrollController,
                           physics: AlwaysScrollableScrollPhysics(),
-                          child: Padding(padding: EdgeInsets.all(16), child:
+                          child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
                           Container(
                               child: Semantics(/*liveRegion: true, */child:
                               Column(children:
@@ -245,9 +246,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if (_provider == null) {
       return Container();
     }
+    final double horizontalPadding = 116;
     bool isNegativeFeedbackFormVisible = (message.feedbackResponseType == FeedbackResponseType.negative);
     bool isPositiveFeedbackFormVisible = (message.feedbackResponseType == FeedbackResponseType.positive);
-    EdgeInsets bubblePadding = message.user ? EdgeInsets.only(left: 100.0) : EdgeInsets.only(right: 100);
+    EdgeInsets bubblePadding = message.user ? EdgeInsets.only(left: horizontalPadding, right: _defaultHorizontalPaddingValue) : EdgeInsets.only(left: _defaultHorizontalPaddingValue, right: horizontalPadding);
     String answer = message.isAnswerUnknown
         ? Localization()
             .getStringEx('panel.assistant.unknown.answer.value', "I wasn’t able to find an answer from an official university source.")
@@ -455,7 +457,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
     return Visibility(
         visible: additionalControlsVisible,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: _defaultHorizontalPaddingValue), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Visibility(
                 visible: feedbackControlsVisible,
@@ -512,7 +514,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                             padding: EdgeInsets.only(top: 15),
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: webLinkWidgets)))
                   ])))
-        ]));
+        ])));
   }
 
   void _onTapLinksLabel(Message message) {
@@ -540,7 +542,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     }
     PageController? currentController = _structsPageControllers![messageId];
     if (currentController == null) {
-      const int pageSpacing = 8;
+      const int pageSpacing = 4;
       double screenWidth = MediaQuery.of(context).size.width - (2 * pageSpacing);
       double pageViewport = (screenWidth - 2 * pageSpacing) / screenWidth;
       currentController = PageController(viewportFraction: pageViewport);
@@ -564,14 +566,14 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       }
 
       if (elementCard != null) {
-        pages.add(Padding(padding: EdgeInsets.only(right: 18, bottom: 8), child: elementCard));
+        pages.add(Padding(padding: EdgeInsets.only(right: 8, bottom: 8), child: elementCard));
       }
     }
     return Container(
         padding: EdgeInsets.only(top: 10),
         child: Column(children: <Widget>[
-          ExpandablePageView(allowImplicitScrolling: true, controller: currentController, children: pages, padEnds: false,),
-          AccessibleViewPagerNavigationButtons(controller: currentController, pagesCount: () => elementsCount),
+          Padding(padding: EdgeInsets.symmetric(horizontal: _defaultHorizontalPaddingValue), child: ExpandablePageView(allowImplicitScrolling: true, controller: currentController, children: pages, padEnds: false,)),
+          AccessibleViewPagerNavigationButtons(controller: currentController, pagesCount: () => elementsCount,),
         ]));
   }
 
@@ -717,7 +719,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildTypingChatBubble() {
     return Align(
         alignment: AlignmentDirectional.centerStart,
-        child: Semantics(focused: true, label: "Loading", child: SizedBox(
+        child: Semantics(focused: true, label: "Loading", child: Padding(padding: EdgeInsets.symmetric(horizontal: _defaultHorizontalPaddingValue), child: SizedBox(
             width: 100,
             height: 50,
             child: Material(
@@ -726,7 +728,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                 child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: TypingIndicator(
-                        flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent))))));
+                        flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent)))))));
   }
 
   List<Widget> _buildWebLinkWidgets(List<SourceDataEntry>? sourceDataEntries) {
@@ -770,7 +772,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildDeepLinksWidget(Message message) {
     List<Link>? deepLinks = message.links;
     bool hasDeepLinks = CollectionUtils.isNotEmpty(deepLinks);
-    return Visibility(visible: hasDeepLinks, child: Padding(padding: EdgeInsets.only(top: 10), child: _buildDeepLinkWidgets(deepLinks)));
+    return Visibility(visible: hasDeepLinks, child: Padding(padding: EdgeInsets.only(left: _defaultHorizontalPaddingValue, top: 10, right: _defaultHorizontalPaddingValue), child: _buildDeepLinkWidgets(deepLinks)));
   }
 
   Widget _buildDeepLinkWidgets(List<Link>? links) {

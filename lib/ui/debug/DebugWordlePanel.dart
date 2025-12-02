@@ -81,7 +81,7 @@ class _DebugWordlePanelState extends State<DebugWordlePanel>  {
   Widget get _dailtyWord =>
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Text('Word:', style: _captionTextStyle,),
-      TextField(controller: _wordController, keyboardType: TextInputType.name, decoration: _textFieldDecoration, style: _textFieldStyle, onChanged: _onChangedWord,),
+      TextField(controller: _wordController, keyboardType: TextInputType.text, decoration: _textFieldDecoration, style: _textFieldStyle, textCapitalization: TextCapitalization.characters, onChanged: _onChangedWord,),
       Container(height: 8,),
       Text('Date:', style: _captionTextStyle,),
       TextField(controller: _dateController, keyboardType: TextInputType.text, decoration: _textFieldDecoration, style: _isDateValid ? _textFieldStyle : _textFieldInvalidStyle, onChanged: _onChangedDate),
@@ -161,18 +161,18 @@ class _DebugWordlePanelState extends State<DebugWordlePanel>  {
 
   void _applyDailyWord(WordleDailyWord? word) {
     _wordController.text = word?.word ?? '';
-    _dateController.text = word?.dateAsString ?? '';
+    _dateController.text = word?.dateUniAsString ?? '';
     _authorController.text = word?.author ?? '';
     _storyTexyController.text = word?.storyTitle ?? '';
     _storyUrlController.text = word?.storyUrl ?? '';
     setState(() {
-      _isDateValid = (WordleDailyWord.dateFromString(_dateController.text) != null);
+      _isDateValid = (WordleDailyWord.dateUniFromString(_dateController.text) != null);
     });
   }
 
   WordleDailyWord? get _appliedDailyWord => _wordController.text.isNotEmpty ? WordleDailyWord(
     word: _wordController.text,
-    dateUtc: WordleDailyWord.dateFromString(_dateController.text),
+    dateUni: WordleDailyWord.dateUniFromString(_dateController.text),
     author: StringUtils.ensureEmpty(_authorController.text),
     storyTitle: StringUtils.ensureEmpty(_storyTexyController.text),
     storyUrl: StringUtils.ensureEmpty(_storyUrlController.text),
@@ -185,7 +185,7 @@ class _DebugWordlePanelState extends State<DebugWordlePanel>  {
 
   void _onChangedDate(String value) {
     setState(() {
-      _isDateValid = (WordleDailyWord.dateFromString(_dateController.text) != null);
+      _isDateValid = (WordleDailyWord.dateUniFromString(_dateController.text) != null);
     });
   }
 
