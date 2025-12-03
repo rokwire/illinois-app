@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
-import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -115,23 +114,20 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> with 
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 8),child:
               Visibility(visible: _publishAllSubEventsVisible, child:
-                Semantics(toggled: _publishAllSubEvents, excludeSemantics: true,
-                    label: Localization().getStringEx("", "PUBLISH ALL LINKED SUB-EVENTS"),
-                    hint: Localization().getStringEx("", ""),
-                    child: EnabledToggleButton(
-                      label: Localization().getStringEx("", "PUBLISH ALL LINKED SUB-EVENTS"),
-                      toggled: _publishAllSubEvents,
-                      textStyle: _event?.published == true ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
-                      enabled: _event?.published == true,
-                      onTap: (){
-                        if(_event?.published == true)
-                          setStateIfMounted(() {
-                            _publishAllSubEvents = !_publishAllSubEvents;
-                          });
-                      },
-                      border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                    )))),
+                ToggleRibbonButton(
+                  title: Localization().getStringEx("", "PUBLISH ALL LINKED SUB-EVENTS"),
+                  toggled: _publishAllSubEvents,
+                  textStyle: _event?.published == true ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
+                  enabled: _event?.published == true,
+                  onTap: (){
+                    if(_event?.published == true)
+                      setStateIfMounted(() {
+                        _publishAllSubEvents = !_publishAllSubEvents;
+                      });
+                  },
+                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                ))),
               Padding(padding: EdgeInsets.only(bottom: 16), child: Event2SetupSuperEventPanel.buildSectionTitleWidget('SUB-EVENT(s)')),
               _buildSubEventsSection(_selectedSubEvents,
                   emptyMsg: 'This event is not linked to any sub-events. Please see below.',
@@ -156,21 +152,18 @@ class Event2SetupSuperEventState extends State<Event2SetupSuperEventPanel> with 
 
       bool toggled = _superEventChildDisplayOnlyUnderSuperEvent == true;
       return Column(children: [
-          Semantics(toggled: toggled, excludeSemantics: true,
-          label: Localization().getStringEx("", "DISPLAY ONLY UNDER SUPER EVENT"),
-          hint: Localization().getStringEx("", ""),
-          child: ToggleRibbonButton(
-            label: Localization().getStringEx("", "DISPLAY ONLY UNDER SUPER EVENT"),
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            toggled: toggled,
-            onTap: (){
-              setStateIfMounted(() {
-                _superEventChildDisplayOnlyUnderSuperEvent = !toggled;
-              });
-            },
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-            borderRadius: BorderRadius.all(Radius.circular(4)),
-          ))
+        ToggleRibbonButton(
+          title: Localization().getStringEx("", "DISPLAY ONLY UNDER SUPER EVENT"),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          toggled: toggled,
+          onTap: (){
+            setStateIfMounted(() {
+              _superEventChildDisplayOnlyUnderSuperEvent = !toggled;
+            });
+          },
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          borderRadius: BorderRadius.all(Radius.circular(4)),
+        )
       ]);
   }
 

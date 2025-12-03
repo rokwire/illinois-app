@@ -453,7 +453,14 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
   }
 
   Widget _buildToggleWidget({required String label, bool? value, required void Function()? onTapValue}) {
-    return Container(
+    bool toggled = (value == true);
+    String semanticsValue = AppSemantics.toggleValue(toggled);
+    String semanticsHint = AppSemantics.toggleHint(toggled,
+      subject: label,
+    );
+
+    return Semantics(label: label, hint: semanticsHint, value: semanticsValue, button: true, child:
+      Container(
         decoration: BoxDecoration(
             color: Styles().colors.white,
             borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -466,7 +473,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
               child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   child: Styles().images.getImage((value == true) ? 'toggle-on' : 'toggle-off') ?? Container()))
-        ]));
+        ])));
   }
 
   Widget _buildDateFilters() {

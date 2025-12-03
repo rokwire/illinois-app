@@ -53,6 +53,8 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String notifyEventDetail                                = "$notifyBase.event.detail";
   static const String notifyEventSelfCheckIn                           = "$notifyBase.event.self_checkin";
   static const String notifyEventAttendeeSurveyInvitation              = "$notifyBase.event.attendee.survey.invitation";
+  static const String notifyDiningLocationsNotification                = "$notifyBase.dining_locations";
+  static const String notifyDiningLocationDetail                       = "$notifyBase.dining_location.detail";
   static const String notifyGameDetail                                 = "$notifyBase.game.detail";
   static const String notifyAthleticsGameStarted                       = "$notifyBase.athletics_game.started";
   static const String notifyAthleticsNewsUpdated                       = "$notifyBase.athletics.news.updated";
@@ -119,12 +121,12 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String notifySettingsFavoritesNotification              = "$notifyBase.settings.favorites";
   static const String notifySettingsAssessmentsNotification            = "$notifyBase.settings.assessments";
   static const String notifySettingsCalendarNotification               = "$notifyBase.settings.calendar";
-  static const String notifySettingsAppointmentsNotification        = "$notifyBase.settings.appointments";
-  static const String notifySettingsMapsNotification                    = "$notifyBase.settings.maps";
-  static const String notifySettingsContactsNotification               = "$notifyBase.settings.contacts";
-  static const String notifySettingsResearchNotification              = "$notifyBase.settings.research";
-  static const String notifySettingsPrivacyNotification                 = "$notifyBase.settings.privacy";
-  static const String notifySettingsNotificationsNotification         = "$notifyBase.settings.notifications";
+  static const String notifySettingsAppointmentsNotification           = "$notifyBase.settings.appointments";
+  static const String notifySettingsMapsNotification                   = "$notifyBase.settings.maps";
+  static const String notifySettingsAboutNotification                  = "$notifyBase.settings.contacts";
+  static const String notifySettingsResearchNotification               = "$notifyBase.settings.research";
+  static const String notifySettingsPrivacyNotification                = "$notifyBase.settings.privacy";
+  static const String notifySettingsNotificationsNotification          = "$notifyBase.settings.notifications";
   static const String notifyGuideArticleDetailNotification             = "$notifyBase.guide.article.detail";
 
   // Topic names
@@ -163,7 +165,8 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   };
 
   static const Map<String, bool> _defaultNotificationSettings = {
-    _pauseNotificationKey : false
+    _pauseNotificationKey : false,
+    _athleticsUpdatesNewsNotificationSetting: false,
   };
 
   //settingKeys
@@ -208,6 +211,8 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String payloadTypeEventDetail = 'event_detail';
   static const String payloadTypeEventSelfCheckIn = 'event.self_checkin';
   static const String payloadTypeEvent = 'event';
+  static const String payloadTypeDiningLocations = 'dining_locations';
+  static const String payloadTypeDiningLocationDetail = 'dining_location_detail';
   static const String payloadTypeGameDetail = 'game_detail';
   static const String payloadTypeAthleticsGameStarted = 'athletics_game_started';
   static const String payloadTypeAthleticsNewDetail = 'athletics_news_detail';
@@ -274,7 +279,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String payloadTypeSettingsCalendar = 'settings.calendar';
   static const String payloadTypeSettingsAppointments = 'settings.appointments';
   static const String payloadTypeSettingsMaps = 'settings.maps';
-  static const String payloadTypeSettingsContacts = 'settings.contacts';
+  static const String payloadTypeSettingsAbout = 'settings.contacts';
   static const String payloadTypeSettingsResearch = 'settings.research';
   static const String payloadTypeSettingsNotifications = 'settings.notifications';
   static const String payloadTypeSettingsPrivacy = 'settings.privacy';
@@ -428,6 +433,12 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
         // Handle 'upcoming_event' and 'event_notification' operations as showing event detail
         NotificationService().notify(notifyEventDetail, data);
       }
+    }
+    else if (type == payloadTypeDiningLocations) {
+      NotificationService().notify(notifyDiningLocationsNotification, data);
+    }
+    else if (type == payloadTypeDiningLocationDetail) {
+      NotificationService().notify(notifyDiningLocationDetail, data);
     }
     else if (type == payloadTypeGameDetail) {
       NotificationService().notify(notifyGameDetail, data);
@@ -629,8 +640,8 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
     else if (type == payloadTypeSettingsMaps) {
       NotificationService().notify(notifySettingsMapsNotification, data);
     }
-    else if (type == payloadTypeSettingsContacts) {
-      NotificationService().notify(notifySettingsContactsNotification, data);
+    else if (type == payloadTypeSettingsAbout) {
+      NotificationService().notify(notifySettingsAboutNotification, data);
     }
     else if (type == payloadTypeSettingsResearch) {
       NotificationService().notify(notifySettingsResearchNotification, data);

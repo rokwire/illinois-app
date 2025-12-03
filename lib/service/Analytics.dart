@@ -331,6 +331,20 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
   static const String   LogEventsAssistantPromptEventName  = "events_assistant_promo";
   static const String   LogEventsAssistantPromptAction     = "action";
 
+  // Assistant Response
+  // { "event" : { "name":"assistant_query_response", "result":"success | fail", "http_response_code":"...", } }
+  static const String   LogAssistantQueryResponseEventName = "assistant_query_response";
+  static const String   LogAssistantResultName             = "result";
+  static const String   LogAssistantResultSuccessValue     = "success";
+  static const String   LogAssistantResultFailValue        = "fail";
+
+  // Illordle
+  static const String   LogIllordleEventName               = "illordle";
+  static const String   LogIllordleWordName                = "word";
+  static const String   LogIllordleGuessName               = "guess";
+  static const String   LogIllordleAttemptName             = "attempt";
+  static const String   LogIllordleStatusName              = "status";
+
   // Attributes
   static const String   LogAttributeUrl                    = "url";
   static const String   LogAttributeSource                 = "source";
@@ -1225,11 +1239,44 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
       LogEventsAssistantPromptAction      : action,
     });
   }
+
+  void logAssistantQueryResponse({required bool succeeded, int? httpResponseCode}) {
+    Map<String, dynamic> event = {
+      LogEventName                        : LogAssistantQueryResponseEventName,
+      LogAssistantResultName              : succeeded ? LogAssistantResultSuccessValue : LogAssistantResultFailValue
+    };
+    if (httpResponseCode != null) {
+      event[LogHttpResponseCodeName] = httpResponseCode;
+    }
+    logEvent(event);
+  }
+
+  void logIllordle({ required String word, required String guess, required int attempt, AnalyticsIllordleEventStatus? status }) {
+    logEvent({
+      LogEventName                        : LogIllordleEventName,
+      LogIllordleWordName                 : word,
+      LogIllordleGuessName                : guess,
+      LogIllordleAttemptName              : attempt,
+      LogIllordleStatusName               : status?._attributeString,
+    });
+  }
 }
 
 extension _UriAnalytics on Uri {
   String get command {
     String value = path;
     return  value.startsWith('/') ? value.substring(1) : value;
+  }
+}
+
+enum AnalyticsIllordleEventStatus { notInDictionary, success, fail }
+
+extension _AnalyticsIllordleEventStatus on AnalyticsIllordleEventStatus {
+  String get _attributeString {
+    switch (this) {
+      case AnalyticsIllordleEventStatus.notInDictionary: return 'invalid';
+      case AnalyticsIllordleEventStatus.success: return 'win';
+      case AnalyticsIllordleEventStatus.fail: return 'lost';
+    }
   }
 }

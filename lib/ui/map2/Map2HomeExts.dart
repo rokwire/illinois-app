@@ -4,6 +4,7 @@ import 'dart:collection';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
@@ -59,6 +60,8 @@ extension Map2ContentTypeImpl on Map2ContentType {
       return param;
     } else if (param is Map2FilterEvents2Param) {
       return Map2ContentType.Events2;
+    } else if (param is Map2FilterDiningsLocationsParam) {
+      return Map2ContentType.DiningLocations;
     } else if (param is Map2FilterBusStopsParam) {
       return Map2ContentType.BusStops;
     } else if (param is Map) {
@@ -114,7 +117,7 @@ extension Map2ContentTypeImpl on Map2ContentType {
   String get displayEmptyContentMessage {
     switch (this) {
       case Map2ContentType.CampusBuildings:      return Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.');
-      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses registered.');
+      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'You do not appear to be registered for any in-person courses.');
       case Map2ContentType.DiningLocations:      return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
       case Map2ContentType.Events2:              return Localization().getStringEx('panel.explore.state.online.empty.events2', 'No events are available.');
       case Map2ContentType.LaundryRooms:         return Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.');
@@ -128,7 +131,7 @@ extension Map2ContentTypeImpl on Map2ContentType {
   String get displayFailedContentMessage {
     switch (this) {
       case Map2ContentType.CampusBuildings:      return Localization().getStringEx('panel.explore.state.failed.buildings', 'Failed to load building locations.');
-      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.state.failed.student_course', 'Failed to load student courses.');
+      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.state.failed.student_course', 'You do not appear to be registered for any in-person courses.');
       case Map2ContentType.DiningLocations:      return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
       case Map2ContentType.Events2:              return Localization().getStringEx('panel.explore.state.failed.events2', 'Failed to load all events.');
       case Map2ContentType.LaundryRooms:         return Localization().getStringEx('panel.explore.state.failed.laundry', 'Failed to load laundry locations.');
@@ -326,22 +329,75 @@ extension ExplorePOIImpl on ExplorePOI {
     );
 }
 
-extension Map2BuildingAmenities on LinkedHashSet<String> {
-  LinkedHashMap<String, String> selectedFromBuildingAmenities(Map<String, String> buildingAmenities) {
+extension Map2BuildingDisplayAmenities on Map<String, String> {
+
+  Map<String, Set<String>> get amenitiesNameToIds {
+    Map<String, Set<String>> result = <String, Set<String>>{};
+    forEach((String amenityId, String amenityName) {
+      Set<String> amenityIds = result[amenityName] ??= <String>{};
+      amenityIds.add(amenityId);
+    });
+    return result;
+  }
+
+}
+
+
+extension Map2BuildingSelectedAmenities on LinkedHashSet<String> {
+
+  LinkedHashMap<String, String> selectedAmenitiesIdToName(Map<String, String> amenitiesIdToName) {
     LinkedHashMap<String, String> selectedAmenities = LinkedHashMap<String, String>();
     for (String amenityId in this) {
-      String? amenuityName = buildingAmenities[amenityId];
+      String? amenuityName = amenitiesIdToName[amenityId];
       if (amenuityName != null) {
         selectedAmenities[amenityId] = amenuityName;
       }
     }
     return selectedAmenities;
   }
+
+}
+
+extension Map2BuildingFilterAmenitiesFromJson on Map<String, dynamic> {
+
+  LinkedHashMap<String, Set<String>> toAmenityNameToIds() {
+    LinkedHashMap<String, Set<String>> nameToIds = LinkedHashMap<String, Set<String>>();
+    for (String amenityName in keys) {
+      Set<String>? amenityIds = SetUtils.from(JsonUtils.listStringsValue(this[amenityName]));
+      if (amenityIds != null) {
+        nameToIds[amenityName] = amenityIds;
+      }
+    }
+    return nameToIds;
+  }
+
+}
+
+extension Map2BuildingFilterAmenitiesToJson on LinkedHashMap<String, Set<String>> {
+  Map<String, dynamic> toJson() => map((String key, Set<String> value) => MapEntry(key, value.toList()));
 }
 
 class Map2FilterEvents2Param {
   final String searchText;
   Map2FilterEvents2Param([this.searchText = '']);
+}
+
+class Map2FilterDiningsLocationsParam {
+  final PaymentType? paymentType;
+  final String searchText;
+  final bool openNow;
+  final bool starred;
+  final Map2SortType sortType;
+  final Map2SortOrder sortOrder;
+
+  Map2FilterDiningsLocationsParam({
+    this.paymentType,
+    this.searchText = '',
+    this.openNow = false,
+    this.starred = false,
+    this.sortType = Map2SortType.alphabetical,
+    this.sortOrder = Map2SortOrder.ascending,
+  });
 }
 
 class Map2FilterBusStopsParam {

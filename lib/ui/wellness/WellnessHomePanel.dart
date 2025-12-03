@@ -146,7 +146,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                   rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                  label: _selectedContentType?.displayTitle ?? '',
+                  title: _selectedContentType?.displayTitle ?? '',
                   onTap: _changeSettingsContentValuesVisibility
               ),
             ),
@@ -196,7 +196,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
-        label: contentType.displayTitle,
+        title: contentType.displayTitle,
         onTap: () => _onTapDropdownItem(contentType)
         )
       );

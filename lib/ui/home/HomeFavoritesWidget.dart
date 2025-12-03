@@ -407,7 +407,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events2().loadEventsList(Events2Query(ids: favoriteIds)), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteDinings(LinkedHashSet<String>? favoriteIds) async =>
-    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Dinings().loadBackendDinings(false, null, null), favoriteIds) : null;
+    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Dinings().loadDinings(), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteGames(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events2().loadEventsList(Events2Query(ids: favoriteIds, attributes: {'category': Events2.sportEventCategory})), favoriteIds) : null;
@@ -543,9 +543,9 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
     if (widget.favoriteKey == MTDStop.favoriteKeyName) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(scope: MTDStopsScope.my)));
     } else if(widget.favoriteKey == Game.favoriteKeyName) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.my_events)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events, starred: true,)));
     } else if(widget.favoriteKey == News.favoriteKeyName) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.my_news)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news, starred: true,)));
     } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
     }

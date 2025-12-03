@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:http/http.dart';
 import 'package:illinois/model/Assistant.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
@@ -389,10 +390,15 @@ class Assistant with Service, NotificationsListener implements ContentItemCatego
 
     try {
       String? json = JsonUtils.encode(body);
-      Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json);
+      int? requestTimeout = Config().assistantQueryRequestTimeout;
+      Response? response = await ((requestTimeout != null) ?
+        Network().post(url, auth: Auth2(), headers: headers, body: json, timeout: requestTimeout) :
+        Network().post(url, auth: Auth2(), headers: headers, body: json));
       int? responseCode = response?.statusCode;
       String? responseString = response?.body;
-      if (responseCode == 200) {
+      bool succeeded = (responseCode == 200);
+      Analytics().logAssistantQueryResponse(succeeded: succeeded, httpResponseCode: responseCode);
+      if (succeeded) {
         Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
         if (responseJson != null) {
           //get and update session id

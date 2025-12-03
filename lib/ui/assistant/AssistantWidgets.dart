@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -139,10 +139,10 @@ class AssistantDiningNutritionItemCard extends StatelessWidget {
                 children: <Widget>[
                   Padding(padding: EdgeInsets.only(top: 2, bottom: 14), child: Row(children: [Expanded(child: Text(item.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.medium.fat'), overflow: TextOverflow.ellipsis))])),
                   Visibility(
-                    visible: (item.nutritionList?.isNotEmpty == true),
+                    visible: (item.nutritionAttributes?.isNotEmpty == true),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text(Localization().getStringEx('panel.assistant.dining_nutrition_item.info.label', 'NUTRITION INFO:'), style: Styles().textStyles.getTextStyle('widget.label.small.fat'), overflow: TextOverflow.ellipsis),
-                      _buildNutritionInfoWidget(item.nutritionList),
+                      _buildNutritionInfoWidget(item.nutritionAttributes),
                     ]),
                   ),
                 ],
@@ -152,16 +152,16 @@ class AssistantDiningNutritionItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildNutritionInfoWidget(List<NutritionNameValuePair>? nutritionList) {
+  Widget _buildNutritionInfoWidget(List<NutritionAttribute>? nutritionList) {
     if (nutritionList == null || nutritionList.isEmpty) {
       return Container();
     }
     String nutritionInfo = '';
-    for (NutritionNameValuePair pair in nutritionList) {
+    for (NutritionAttribute pair in nutritionList) {
       if (nutritionInfo.isNotEmpty) {
         nutritionInfo += ', ';
       }
-      nutritionInfo += '${pair.name}: ${pair.value}';
+      nutritionInfo += '${pair.displayName}: ${pair.value}';
     }
     return Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
       Expanded(

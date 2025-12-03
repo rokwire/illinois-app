@@ -354,11 +354,18 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
       if (exploreLatLng != null) {
         LatLng? existingGroupCenter = lookupForInsertInExploreGroup(exploreGroups.keys, exploreLatLng, thresoldDistance: thresoldDistance);
         if (existingGroupCenter != null) {
-          Set<Explore> groupExplores = exploreGroups[existingGroupCenter] ?? <Explore>{};
-          groupExplores.add(explore);
+          Set<Explore>? groupExplores = exploreGroups[existingGroupCenter];
+          if (groupExplores != null) {
+            groupExplores.add(explore);
+          }
+          else {
+            groupExplores = <Explore>{ explore };
+          }
           LatLng updatedGroupCenter = groupExplores.centerPoint ?? exploreLatLng;
-          exploreGroups[updatedGroupCenter] = groupExplores;
-          exploreGroups.remove(existingGroupCenter);
+          if (updatedGroupCenter != existingGroupCenter) {
+            exploreGroups.remove(existingGroupCenter);
+            exploreGroups[updatedGroupCenter] = groupExplores;
+          }
         }
         else {
           exploreGroups[exploreLatLng] = <Explore>{explore};
@@ -395,11 +402,11 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
           exploreGroups.remove(nearbyGroups?.right);
         }
         else {
-          return;
+          break;
         }
       }
       else {
-        return;
+        break;
       }
     }
   }

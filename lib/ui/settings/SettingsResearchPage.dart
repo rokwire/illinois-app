@@ -44,7 +44,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchPage> {
       ]),
       Container(height: 4),
       ToggleRibbonButton(
-          label: Localization().getStringEx('panel.settings.home.calendar.research.toggle.title', 'Participate in research'),
+          title: Localization().getStringEx('panel.settings.home.calendar.research.toggle.title', 'Participate in research'),
           border: Border.all(color: Styles().colors.surfaceAccent),
           borderRadius: BorderRadius.all(Radius.circular(4)),
           toggled: Questionnaires().participateInResearch == true,
@@ -54,7 +54,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchPage> {
       RibbonButton(
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4)),
-          label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
+          title: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
           textStyle:  (Questionnaires().participateInResearch == true) ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
           rightIconKey: Questionnaires().participateInResearch ?? false ? 'chevron-right-bold' : 'chevron-right-gray',
           onTap: _onResearchQuestionnaireClicked

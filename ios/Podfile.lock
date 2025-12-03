@@ -197,7 +197,7 @@ PODS:
     - Flutter
   - record_darwin (1.0.0):
     - Flutter
-  - rokwire_plugin (1.12.0):
+  - rokwire_plugin (1.12.1):
     - Flutter
   - SDWebImage (5.21.0):
     - SDWebImage/Core (= 5.21.0)
@@ -443,7 +443,7 @@ SPEC CHECKSUMS:
   quick_actions_ios: 4b07fb49d8d8f3518d7565fbb7a91014067a7d82
   quill_native_bridge_ios: f47af4b14e7757968486641656c5d23250cee521
   record_darwin: fb1f375f1d9603714f55b8708a903bbb91ffdb0a
-  rokwire_plugin: 2d1457e00a08434486172e34b499545d366ee16b
+  rokwire_plugin: 46cdb69ac19c9ebc7cd059ef8b8f725049b4ac46
   SDWebImage: f84b0feeb08d2d11e6a9b843cb06d75ebf5b8868
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
   shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7

@@ -30,8 +30,10 @@ class Storage extends rokwire.Storage with NotificationsListener {
 
   static String get notifySettingChanged => rokwire.Storage.notifySettingChanged;
   static String get notifyHomeFavoriteExpandedChanged => 'edu.illinois.rokwire.storage.home.favorite.expanded.changed';
+  static String get notifyHomeFavoriteSelectedContent => 'edu.illinois.rokwire.storage.home.favorite.selected.content.changed';
 
   late Map<String, bool> _homeFavoriteExpandedStates;
+  late Map<String, String> _homeFavoriteSelectedContents;
 
   // Singletone Factory
 
@@ -58,6 +60,7 @@ class Storage extends rokwire.Storage with NotificationsListener {
   Future<void> initService() async {
     await super.initService();
     _homeFavoriteExpandedStates = _loadHomeFavoriteExpandedStates() ?? <String, bool>{};
+    _homeFavoriteSelectedContents = _loadHomeFavoriteSelectedContents() ?? <String, String>{};
   }
 
   // NotificationsListener Overrides
@@ -100,6 +103,7 @@ class Storage extends rokwire.Storage with NotificationsListener {
   }
 
   // Notifications
+
   static const String selectedPollTypeKey  = 'selected_poll_type';
   int? get selectedPollType => getIntWithName(selectedPollTypeKey);
   set selectedPollType(int? value) => setIntWithName(selectedPollTypeKey, value);
@@ -248,6 +252,14 @@ class Storage extends rokwire.Storage with NotificationsListener {
   static const String debugUseIlliniCashTestUrlKey  = 'debugUseIlliniCashTestUrl';
   bool? get debugUseIlliniCashTestUrl => getBoolWithName(debugUseIlliniCashTestUrlKey);
   set debugUseIlliniCashTestUrl(bool? value) => setBoolWithName(debugUseIlliniCashTestUrlKey, value);
+
+  static const String debugWordleIgnoreDictionaryKey  = 'edu.illinois.rokwire.illini.wordle.debug.dictionary.ignore';
+  bool? get debugWordleIgnoreDictionary => getBoolWithName(debugWordleIgnoreDictionaryKey);
+  set debugWordleIgnoreDictionary(bool? value) => setBoolWithName(debugWordleIgnoreDictionaryKey, value);
+
+  static const String debugWordleDailyWordKey = 'edu.illinois.rokwire.illini.wordle.debug.dailty_word';
+  String? get debugWordleDailyWord => getStringWithName(debugWordleDailyWordKey);
+  set debugWordleDailyWord(String? value) => setStringWithName(debugWordleDailyWordKey, value);
 
   // Firebase
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
@@ -412,6 +424,7 @@ class Storage extends rokwire.Storage with NotificationsListener {
   String? get homeContentType => getStringWithName(homeContentTypeKey);
   set homeContentType(String? value) => setStringWithName(homeContentTypeKey, value);
 
+  // Home: Expanded States
   String get _homeFavoriteExpandedStatesMapKey => 'edu.illinois.rokwire.home.favorite.expanded.state';
   Map<String, bool>? _loadHomeFavoriteExpandedStates() => JsonUtils.mapCastValue(JsonUtils.decode(getStringWithName(_homeFavoriteExpandedStatesMapKey)));
   void _saveHomeFavoriteExpandedStatesMap(Map<String, bool>? value) => setStringWithName(_homeFavoriteExpandedStatesMapKey, JsonUtils.encode(value));
@@ -436,6 +449,24 @@ class Storage extends rokwire.Storage with NotificationsListener {
     }
   }
 
+  // Home: FavoritesContentType selections
+  String get _homeFavoriteSelectedContentsMapKey => 'edu.illinois.rokwire.home.favorite.selected.content';
+  Map<String, String>? _loadHomeFavoriteSelectedContents() => JsonUtils.mapCastValue(JsonUtils.decode(getStringWithName(_homeFavoriteSelectedContentsMapKey)));
+  void _saveHomeFavoriteSelectedContents(Map<String, String>? value) => setStringWithName(_homeFavoriteSelectedContentsMapKey, JsonUtils.encode(value));
+
+  String? getHomeFavoriteSelectedContent(String? key) => _homeFavoriteSelectedContents[key];
+  void setHomeFavoriteSelectedContent(String? key, String? value) {
+    if ((key != null) && (value != getHomeFavoriteSelectedContent(key))) {
+      if (value != null) {
+        _homeFavoriteSelectedContents[key] = value;
+      }
+      else {
+        _homeFavoriteSelectedContents.remove(key);
+      }
+      _saveHomeFavoriteSelectedContents(_homeFavoriteSelectedContents);
+      NotificationService().notify(notifyHomeFavoriteSelectedContent, key);
+    }
+  }
 
   // Browse Tout
   String get browseToutImageUrlKey => 'edu.illinois.rokwire.browse.tout.image.url';
@@ -604,4 +635,14 @@ class Storage extends rokwire.Storage with NotificationsListener {
   static const String _gbvQuickExitPromptedKey = 'edu.illinois.rokwire.gbv.quick_exit_prompted';
   bool? get gbvQuickExitPrompted => getBoolWithName(_gbvQuickExitPromptedKey);
   set gbvQuickExitPrompted(bool? value) => setBoolWithName(_gbvQuickExitPromptedKey, value);
+
+  // Dining
+  static const String diningFilterKey = 'edu.illinois.rokwire.dining.filter';
+  String? get diningFilter => getStringWithName(diningFilterKey);
+  set diningFilter(String? value) => setStringWithName(diningFilterKey, value);
+
+  // Illini ILLordle
+  static const String wordleGameKey = 'edu.illinois.rokwire.illini.wordle.game';
+  String? get wordleGame => getStringWithName(wordleGameKey);
+  set wordleGame(String? value) => setStringWithName(wordleGameKey, value);
 }

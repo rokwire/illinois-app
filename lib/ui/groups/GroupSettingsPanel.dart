@@ -37,6 +37,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -211,7 +212,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL) ? Positioned.fill(child:  Semantics(label: "Group Image", child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)))) : Container(),
+          StringUtils.isNotEmpty(_group?.imageURL) ? Positioned.fill(child: AccessibleImageHolder(child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)))) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(
@@ -227,19 +228,15 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           Container(
             height: _imageHeight,
             child: Center(
-              child:
-              Semantics(label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add Cover Image"),
-                  hint: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image.hint","") : Localization().getStringEx("panel.groups_settings.add_image.hint",""),
-                  button: true, excludeSemantics: true, child:
-                  RoundedButton(
+              child: RoundedButton(
                     label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add Cover Image"),
+                    hint: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image.hint","") : Localization().getStringEx("panel.groups_settings.add_image.hint",""),
                     textStyle: _canUpdate ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
                     borderColor: _canUpdate ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                     contentWeight: 0.8,
                     onTap: _onTapAddImage,)
               ),
             ),
-          )
         ],
       ),
     );
@@ -627,6 +624,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               Container(
                   child: _buildSwitch(
                       title: Localization().getStringEx("panel.groups.common.private.search.hidden.label", "Make Group Hidden"),
+                      subject: Localization().getStringEx("panel.groups.common.private.search.hidden.subject", "Hidden Group"),
                       value: _group?.hiddenForSearch,
                       enabled: _canUpdate,
                       onTap: _onTapHiddenForSearch)),
@@ -652,8 +650,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   Widget _buildAdministrative() { // Administrative cannot be updated
     return Padding(padding: EdgeInsets.all(16), child: Container(child:
-    _buildSwitch(title: Localization().getStringEx('panel.groups.common.administrative.switch.label', 'Is this an administrative group?'),
-        value: _group?.administrative, enabled: false)));
+    _buildSwitch(
+      title: Localization().getStringEx('panel.groups.common.administrative.switch.label', 'Is this an administrative group?'),
+      subject: Localization().getStringEx('panel.groups.common.administrative.switch.subject', 'Administrative Group'),
+      value: _group?.administrative,
+      enabled: false
+    )));
   }
 
   //
@@ -866,23 +868,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           Padding(
               padding: EdgeInsets.only(top: 12),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Container(
-                    decoration: BoxDecoration(
-                        color: Styles().colors.white,
-                        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                        borderRadius: BorderRadius.all(Radius.circular(4))),
-                    padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                        Expanded( child:
-                        Text(Localization().getStringEx("panel.groups_settings.authman.enabled.label", "Is this a managed membership group?"),
-                            style: Styles().textStyles.getTextStyle("widget.message.regular.fat.accent"))),
-                        GestureDetector(
-                            onTap: _onTapAuthMan,
-                            child: Padding(
-                                padding: EdgeInsets.only(left: 10), child: Styles().images.getImage(isAuthManGroup ? 'toggle-on' : 'toggle-off')))
-                      ])
-                    ])),
+                _buildSwitch(
+                  title: Localization().getStringEx("panel.groups_create.authman.enabled.label", "Is this a managed membership group?"),
+                  subject: Localization().getStringEx("panel.groups_create.authman.enabled.subject", "Managed Membership Group"),
+                  value: isAuthManGroup,
+                  onTap: _onTapAuthMan,
+                ),
                 Visibility(
                     visible: isAuthManGroup,
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1138,8 +1129,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child:  RibbonButton(
-            label: Localization().getStringEx('panel.groups_settings..button.advanced_settings.title', 'Advanced Settings'), //Localize
-            hint: Localization().getStringEx('panel.groups_settings..button.advanced_settings..hint', ''),
+            title: Localization().getStringEx('panel.groups_settings..button.advanced_settings.title', 'Advanced Settings'), //Localize
+            semanticsHint: Localization().getStringEx('panel.groups_settings..button.advanced_settings..hint', ''),
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.circular(4),
             onTap: (){
@@ -1157,11 +1148,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //ProjectSettings
 /*  Widget _buildProjectSettingsLayout() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-      EnabledToggleButton(
+      ToggleRibbonButton(
         label: Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants'),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        enabled: true,
         toggled: _group?.canJoinAutomatically == true,
         onTap: _onTapJoinAutomatically
       )
@@ -1218,12 +1208,17 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     );
   }
 
-  Widget _buildSwitch({String? title, bool? value, bool enabled = true, void Function()? onTap}) {
+  Widget _buildSwitch({required String title, bool? value, String? subject, bool? enabled, void Function()? onTap}) {
+    bool toggled = (value == true);
+    String semanticsValue = AppSemantics.toggleValue(toggled);
+    String semanticsHint = AppSemantics.toggleHint(toggled,
+      enabled: (enabled != false),
+      subject: subject ?? title,
+    );
+
     return Container(
       child: Semantics(
-        label: title,
-        value: value == true?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
-        button: true,
+        label: title, hint: semanticsHint, value: semanticsValue, button: true, enabled: enabled,
         child: Container(
           decoration: BoxDecoration(
               color: Styles().colors.white,
@@ -1232,16 +1227,18 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Expanded(
-                  child: Text(title ?? "",
-                      style:enabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") :  Styles().textStyles.getTextStyle("widget.button.title.disabled"), semanticsLabel: "",)),
+              Expanded(child:
+                Text(title, style: (enabled != false) ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"), semanticsLabel: "",)),
               GestureDetector(
-                  onTap: (enabled && (onTap != null)) ?
+                  onTap: ((enabled != false) && (onTap != null)) ?
                     (){
                       onTap();
                       AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(value == true), title);
                   } : (){},
-                  child: Padding(padding: EdgeInsets.only(left: 10), child: Styles().images.getImage(value ?? false ? 'toggle-on' : 'toggle-off')))
+                  child: Padding(padding: EdgeInsets.only(left: 10), child: (enabled != false) ?
+                    Styles().images.getImage(value ?? false ? 'toggle-on' : 'toggle-off') :
+                    Styles().images.getImage('toggle-off', color: Styles().colors.fillColorPrimaryTransparent03, colorBlendMode: BlendMode.dstIn,)
+                  ))
             ])
           ])),
     ));

@@ -22,6 +22,7 @@ import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -242,13 +243,15 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
 
     Widget get _photoWidget => _isFieldAvailable(_ProfileField.photoUrl) ? Stack(children: [
       Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 20), child:
-        DirectoryProfilePhoto(
-          key: _photoKey,
-          photoUrl: _photoImageUrl,
-          photoUrlHeaders: _photoAuthHeaders,
-          photoData: _photoImageData,
-          imageSize: _photoImageSize,
-        ),
+        AccessibleImageHolder(imageUrl: Content().getUserPhotoUrl(accountId: Auth2().accountId), child:
+          DirectoryProfilePhoto(
+            key: _photoKey,
+            photoUrl: _photoImageUrl,
+            photoUrlHeaders: _photoAuthHeaders,
+            photoData: _photoImageData,
+            imageSize: _photoImageSize,
+          ),
+        )
       ),
       Positioned.fill(child:
         Align(alignment: _showPrivacyControls ? Alignment.bottomLeft : Alignment.bottomRight, child:
@@ -267,6 +270,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
 
     Widget get _editPhotoButton =>
       _photoIconButton(_editIcon,
+        semanticsLabel: Localization().getStringEx('panel.profile.info.command.button.photo.edit.text', 'Edit Photo'),
         onTap: _onEditPhotoButton,
         progress: _clearingUserPhoto,
       );
@@ -282,8 +286,8 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
           builder: (context) => Container(padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
-              RibbonButton(label: Localization().getStringEx('panel.profile.info.command.button.photo.edit.text', 'Edit Photo'), rightIconKey: 'edit', onTap: () { Navigator.of(context).pop(); _onEditPhoto(); }),
-              RibbonButton(label: Localization().getStringEx('panel.profile.info.command.button.photo.clear.text', 'Clear Photo'), rightIconKey: 'clear', onTap: () { Navigator.of(context).pop(); _onClearPhoto(); }),
+              RibbonButton(title: Localization().getStringEx('panel.profile.info.command.button.photo.edit.text', 'Edit Photo'), rightIconKey: 'edit', onTap: () { Navigator.of(context).pop(); _onEditPhoto(); }),
+              RibbonButton(title: Localization().getStringEx('panel.profile.info.command.button.photo.clear.text', 'Clear Photo'), rightIconKey: 'clear', onTap: () { Navigator.of(context).pop(); _onClearPhoto(); }),
             ])
           ),
         );
@@ -370,21 +374,23 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
       onTap: (_fieldTextNotEmpty[_ProfileField.photoUrl] == true) ? () => _onToggleFieldVisibility(_ProfileField.photoUrl) : null,
     );
 
-    Widget _photoIconButton(Widget? icon, { void Function()? onTap, bool progress = false}) =>
-      InkWell(onTap: onTap, child:
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Styles().colors.white,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 1)
-          ),
-          child: Padding(padding: EdgeInsets.all(12),
-            child: progress ? SizedBox(
-              width: _buttonIconSize,
-              height: _buttonIconSize,
-              child: DirectoryProgressWidget(),
-            ) : icon
-          ),
+    Widget _photoIconButton(Widget? icon, {String? semanticsLabel, void Function()? onTap, bool progress = false}) =>
+      Semantics(label: semanticsLabel, button: true, child:
+        InkWell(onTap: onTap, child:
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Styles().colors.white,
+              border: Border.all(color: Styles().colors.surfaceAccent, width: 1)
+            ),
+            child: Padding(padding: EdgeInsets.all(12),
+              child: progress ? SizedBox(
+                width: _buttonIconSize,
+                height: _buttonIconSize,
+                child: DirectoryProgressWidget(),
+              ) : icon
+            ),
+          )
         )
       );
 
@@ -436,6 +442,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   ],);
 
   Widget get _pronunciationPlayButton => _iconButton(
+    semanticsLabel: Localization().getStringEx("panel.profile.info.button.pronunciation_play.title", "Play Pronunciation"),
     icon: _pronunciationPlayIcon,
     progress: _initializingAudioPlayer,
     onTap: _onPlayPronunciation,
@@ -444,11 +451,13 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   Widget? get _pronunciationPlayIcon => (_audioPlayer?.playing == true) ? _pauseIcon : _playIcon;
 
   Widget get _pronunciationEditButton => _iconButton(
+    semanticsLabel: Localization().getStringEx("panel.profile.info.button.pronunciation_edit.title", "Edit Pronunciation"),
     icon: _editIcon,
     onTap: _onEditPronunciation,
   );
 
   Widget get _pronunciationDeleteButton => _iconButton(
+    semanticsLabel: Localization().getStringEx("panel.profile.info.button.pronunciation_delete.title", "Delete Pronunciation"),
     icon: _trashIcon,
     progress: _clearingUserPronunciation,
     onTap: _onDeletePronunciation,
@@ -698,7 +707,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
 
   Widget get _websiteSection => _textFieldSection(_ProfileField.website,
     headingTitle: Localization().getStringEx('panel.profile.info.title.website.text', 'Website URL'),
-    headingHint: Localization().getStringEx('panel.profile.info.title.website.hinr', '(Ex: Linkedin)'),
+    headingHint: Localization().getStringEx('panel.profile.info.title.website.hint', '(Ex: Linkedin)'),
     textInputType: TextInputType.url,
     available: _showPrivacyControls,
   );
@@ -792,9 +801,11 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
             Styles().images.getImage('lock', color: Styles().colors.mediumGray2, size: _buttonIconSize)
           ),
         if (enabled && !locked)
-          InkWell(onTap: () => _onTextEdit(field), child:
-            Padding(padding: EdgeInsets.only(left: 2, right: 14,  top: 14, bottom: 14), child:
-              Styles().images.getImage('edit', color: Styles().colors.mediumGray2, size: _buttonIconSize)
+          Semantics(label: "Edit", button: true, child:
+            InkWell(onTap: () => _onTextEdit(field), child:
+              Padding(padding: EdgeInsets.only(left: 2, right: 14,  top: 14, bottom: 14), child:
+                Styles().images.getImage('edit', color: Styles().colors.mediumGray2, size: _buttonIconSize)
+              )
             )
           ),
       ])
@@ -810,13 +821,15 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
       onTap: ((_fieldTextNotEmpty[field] == true) && !locked) ? () => _onToggleFieldVisibility(field) : null,
     );
 
-  Widget _iconButton({ Widget? icon, void Function()? onTap, bool progress = false}) =>
-    InkWell(onTap: onTap, child:
-      Container(decoration: _controlDecoration, child:
-        Padding(padding: EdgeInsets.all(15), child:
-          SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
-            progress ? DirectoryProgressWidget() : Center(child: icon,)
-          ),
+  Widget _iconButton({ Widget? icon, String? semanticsLabel, void Function()? onTap, bool progress = false}) =>
+    Semantics(label: semanticsLabel, button: true, child:
+      InkWell(onTap: onTap, child:
+        Container(decoration: _controlDecoration, child:
+          Padding(padding: EdgeInsets.all(15), child:
+            SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+              progress ? DirectoryProgressWidget() : Center(child: icon,)
+            ),
+          )
         )
       )
     );
@@ -866,25 +879,32 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   //static  Widget? get _stopIcon => Styles().images.getImage('stop', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
 
   Widget _visibilityDropdown(_ProfileField field, {
+      String? semanticsLabel = "Edit Visibility",
       bool locked = false,
       EdgeInsetsGeometry buttonPadding = _dropdownButtonPadding,
       double buttonInnerIconPadding = _dropdownButtonInnerIconPaddingX,
     }) =>
-    DropdownButtonHideUnderline(child:
-      DropdownButton2<Auth2FieldVisibility>(
-        dropdownStyleData: DropdownStyleData(
-          width: _visibilityDropdownItemsWidth ??= _evaluateVisibilityDropdownItemsWidth(),
-          direction: DropdownDirection.left,
-          decoration: _controlDecoration,
+    Semantics(button: locked ? false : true,
+      label: locked ? "" : semanticsLabel,
+      excludeSemantics: locked ? false :  true,
+      value: locked ? null : profileFieldVisibility(field).displayTitle,
+      enabled: ((_fieldTextNotEmpty[field] == true) && !locked),
+      child: DropdownButtonHideUnderline(child:
+        DropdownButton2<Auth2FieldVisibility>(
+          dropdownStyleData: DropdownStyleData(
+            width: _visibilityDropdownItemsWidth ??= _evaluateVisibilityDropdownItemsWidth(),
+            direction: DropdownDirection.left,
+            decoration: _controlDecoration,
+          ),
+          customButton: locked ? _visibilityDropdownLockedButton : _visibilityDropdownButton(field,
+            padding: buttonPadding,
+            innerIconPadding: buttonInnerIconPadding,
+          ),
+          isExpanded: false,
+          items: _visibilityDropdownItems(field),
+          onChanged: ((_fieldTextNotEmpty[field] == true) && !locked) ? (Auth2FieldVisibility? visibility) => _onDropdownFieldVisibility(field, visibility) : null,
         ),
-        customButton: locked ? _visibilityDropdownLockedButton : _visibilityDropdownButton(field,
-          padding: buttonPadding,
-          innerIconPadding: buttonInnerIconPadding,
-        ),
-        isExpanded: false,
-        items: _visibilityDropdownItems(field),
-        onChanged: ((_fieldTextNotEmpty[field] == true) && !locked) ? (Auth2FieldVisibility? visibility) => _onDropdownFieldVisibility(field, visibility) : null,
-      ),
+      )
     );
 
   Widget _visibilityDropdownButton(_ProfileField field, {
@@ -910,11 +930,13 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
     );
 
   Widget get _visibilityDropdownLockedButton =>
-      Container(decoration: _controlDecoration, child:
-        Padding(padding: EdgeInsets.only(left: 23, right: 23, top: 15, bottom: 15), child:
-          SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
-            Center(child: _lockIcon,)
-          ),
+      Semantics(label: "Locked", child:
+        Container(decoration: _controlDecoration, child:
+          Padding(padding: EdgeInsets.only(left: 23, right: 23, top: 15, bottom: 15), child:
+            SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+              Center(child: _lockIcon,)
+            ),
+          )
         )
       );
 
@@ -932,12 +954,16 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   DropdownMenuItem<Auth2FieldVisibility> _visibilityDropdownItem(Auth2FieldVisibility visibility, { bool selected = false}) =>
     DropdownMenuItem<Auth2FieldVisibility>(
       value: visibility,
-      child: Semantics(label: visibility.semanticLabel, container: true, button: true, child:
+      child: Semantics(label: visibility.semanticLabel, container: true, button: true, checked: selected, inMutuallyExclusiveGroup: true, child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisSize: MainAxisSize.max, children: [
             Padding(padding: EdgeInsets.only(right: _dropdownItemInnerIconPaddingX), child:
               SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
-                Center(child: visibility.displayDropdownItemIcon)
+                Center(child:
+                  ExcludeSemantics(child:
+                    visibility.displayDropdownItemIcon
+                  )
+                )
               )
             ),
             Expanded(child:
@@ -947,9 +973,11 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
                 semanticsLabel: "",
               ),
             ),
-            Padding(padding: EdgeInsets.only(left: _dropdownItemInnerIconPaddingX), child:
-              SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
-                Center(child: selected ? _redioOnDropdownIcon : _redioOffDropdownIcon)
+            ExcludeSemantics(child:
+              Padding(padding: EdgeInsets.only(left: _dropdownItemInnerIconPaddingX), child:
+                SizedBox(width: _buttonIconSize, height: _buttonIconSize, child:
+                  Center(child: selected ? _redioOnDropdownIcon : _redioOffDropdownIcon)
+                )
               )
             )
           ],),

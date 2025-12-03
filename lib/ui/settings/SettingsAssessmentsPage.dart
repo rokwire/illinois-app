@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -63,25 +62,16 @@ class _SettingsAssessmentsPageState extends State<SettingsAssessmentsPage> with 
   }
 
   Widget _buildContent() {
-    List<Widget> contentList = [];
-    List<dynamic> codes = FlexUI()['assessments'] ?? [];
-    for (String code in codes) {
-      if (code == 'settings') {
-        contentList.addAll(_buildAssessmentsSettings());
-      }
-    }
-
-    if (contentList.isNotEmpty) {
-      contentList.insert(0, Container(height: 8));
-      contentList.add(Container(height: 16));
-    }
-
-    return Container(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList));
+    return Padding(padding: EdgeInsets.only(top: 8, bottom: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+        _buildAssessmentsSettings(),
+      )
+    );
   }
 
   List<Widget> _buildAssessmentsSettings() {
     List<Widget> contentList = [];
-    List<dynamic> codes = FlexUI()['assessments.settings'] ?? [];
+    List<dynamic> codes = FlexUI()['settings.assessments'] ?? [];
     for (String code in codes) {
       if (code == 'skills_self_evaluation') {
         contentList.add(_buildTitleWidget(Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.title', 'Skills Self-Evaluation & Career Explorer')));
@@ -103,12 +93,12 @@ class _SettingsAssessmentsPageState extends State<SettingsAssessmentsPage> with 
   }
 
   List<Widget> _buildAssessmentSettings(String assessment, String name) {
-    List<dynamic> codes = FlexUI()['assessments.settings.$assessment'] ?? [];
+    List<dynamic> codes = FlexUI()['settings.assessments.$assessment'] ?? [];
     List<Widget> contentList = [];
     for (String code in codes) {
       if (code == 'save') {
         contentList.add(ToggleRibbonButton(
-            label: Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_results.label', 'Save my results to compare to future results'),
+            title: Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_results.label', 'Save my results to compare to future results'),
             toggled: Storage().assessmentsSaveResultsMap?[name] ?? Auth2().privacyMatch(4),
             border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4)),

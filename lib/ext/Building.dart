@@ -19,10 +19,16 @@ extension BuildingFilter on Building {
       (floors?.firstWhereOrNull((String floor) => floor.toLowerCase().contains(searchLowerCase)) != null)
     ));
 
-  bool matchAmenities(Map<String, String> amenities) =>
-    (amenities.isNotEmpty && (
-      (features?.firstWhereOrNull((BuildingFeature feature) => feature.matchAmenities(amenities)) != null)
-    ));
+  bool matchAmenityIds(Iterable<Set<String>> amenityIdsList) {
+    if (amenityIdsList.isNotEmpty) {
+      for (Set<String> amenityIds in amenityIdsList) {
+        if (features?.firstWhereOrNull((BuildingFeature feature) => amenityIds.contains(feature.key)) == null) {
+          return false; // No feature matches this set of amenities
+        }
+      }
+    }
+    return true;
+  }
 
   Map<String, String> get featureNames {
     Map<String, String> featuresMap = <String, String>{};
@@ -39,14 +45,23 @@ extension BuildingFilter on Building {
   }
 }
 
-extension BuildingsSearch on Iterable<Building>  {
+extension BuildingsListSearch on Iterable<Building>  {
 
-  Map<String, String> get featureNames {
-    Map<String, String> featuresMap = <String, String>{};
+  Map<String, Set<String>> get amenitiesNameToIds {
+    Map<String, Set<String>> nameToIds = <String, Set<String>>{};
     for (Building building in this) {
-      featuresMap.addAll(building.featureNames);
+      if (building.features != null) {
+        for (BuildingFeature feature in building.features!) {
+          String? featureKey = feature.key;
+          String? featureName = feature.value?.name;
+          if ((featureKey != null) && (featureName != null)) {
+            Set<String> ids = nameToIds[featureName] ??= <String>{};
+            ids.add(featureKey);
+          }
+        }
+      }
     }
-    return featuresMap;
+    return nameToIds;
   }
 }
 
@@ -57,7 +72,6 @@ extension BuildingEntranceSearch on BuildingEntrance {
 
 extension BuildingFeatureSearch on BuildingFeature {
   bool matchSearchTextLowerCase(String searchLowerCase) => value?.matchSearchTextLowerCase(searchLowerCase) == true;
-  bool matchAmenities(Map<String, String> amenities) => amenities.containsKey(key);
 }
 
 extension BuildingFeatureValueSearch on BuildingFeatureValue {

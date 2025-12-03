@@ -51,7 +51,7 @@ class _SettingsAppointmentsPageState extends State<SettingsAppointmentsPage> {
       ]),
       Container(height: 4),
       ToggleRibbonButton(
-          label: Localization().getStringEx('panel.settings.home.appointments.mckinley.label', 'MyMcKinley'),
+          title: Localization().getStringEx('panel.settings.home.appointments.mckinley.label', 'MyMcKinley'),
           toggled: Storage().appointmentsCanDisplay ?? false,
           border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4)),

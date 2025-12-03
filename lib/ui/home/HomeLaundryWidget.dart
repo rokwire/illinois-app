@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,13 +8,14 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Laundries.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/AccentCard.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -24,6 +26,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class HomeLaundryWidget extends StatefulWidget {
 
@@ -37,47 +40,106 @@ class HomeLaundryWidget extends StatefulWidget {
       title: title,
     );
 
+  String get _title => title;
   static String get title => Localization().getStringEx('widget.home.laundry.text.title', 'Laundry');
 
   State<HomeLaundryWidget> createState() => _HomeLaundryWidgetState();
 }
 
-class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with NotificationsListener {
+class _HomeLaundryWidgetState extends State<HomeLaundryWidget> {
+  late FavoriteContentType _contentType;
+
+  @override
+  void initState() {
+    _contentType = FavoritesContentTypeImpl.fromJson(Storage().getHomeFavoriteSelectedContent(widget.favoriteId)) ?? FavoriteContentType.all;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, child:
+      _contentWidget,
+    );
+  }
+
+  Widget get _contentWidget => Column(mainAxisSize: MainAxisSize.min, children: [
+    Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 8), child:
+      _contentTypeBar,
+    ),
+    ..._contentTypeWidgets,
+  ],);
+
+  Iterable<Widget> get _contentTypeWidgets => FavoriteContentType.values.map((FavoriteContentType contentType) =>
+    Visibility(visible: (_contentType == contentType), maintainState: true, child:
+    _HomeLaundryImplWidget(contentType,
+        updateController: widget.updateController,
+      ),
+    ));
+
+  Widget get _contentTypeBar => Row(children:List<Widget>.from(
+    FavoriteContentType.values.map((FavoriteContentType contentType) => Expanded(child:
+      HomeFavTabBarBtn(contentType.laundryTitle.toUpperCase(),
+        position: contentType.position,
+        selected: _contentType == contentType,
+        onTap: () => _onContentType(contentType),
+      )
+    )),
+  ));
+
+  void _onContentType(FavoriteContentType contentType) {
+    if ((_contentType != contentType) && mounted) {
+      setState(() {
+        _contentType = contentType;
+        Storage().setHomeFavoriteSelectedContent(widget.favoriteId, contentType.toJson());
+      });
+    }
+  }
+}
+
+class _HomeLaundryImplWidget extends StatefulWidget {
+
+  final FavoriteContentType contentType;
+  final StreamController<String>? updateController;
+
+  // ignore: unused_element_parameter
+  const _HomeLaundryImplWidget(this.contentType, {super.key, this.updateController});
+
+  State<StatefulWidget> createState() => _HomeLaundryImplWidgetState();
+}
+
+class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with NotificationsListener {
 
   LaundrySchool? _laundrySchool;
-  bool _loading = false;
+  bool _loadingLaundry = false;
+  bool _refreshingLaundry = false;
+
+  bool _visible = false;
+  Key _visibilityDetectorKey = UniqueKey();
   DateTime? _pausedDateTime;
+  FavoriteContentStatus _contentStatus = FavoriteContentStatus.none;
   
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
-  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
 
   @override
   void initState() {
 
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
       AppLivecycle.notifyStateChanged,
-      Config.notifyConfigChanged,
     ]);
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
-          _refreshLaundry(showProgress: true);
+          _refreshLaundryIfVisible();
         }
       });
     }
 
-    if (Connectivity().isNotOffline) {
-      _loading = true;
-      Laundries().loadSchoolRooms().then((LaundrySchool? laundrySchool) {
-        setStateIfMounted(() {
-          _laundrySchool = laundrySchool;
-          _loading = false;
-        });
-      });
-    }
+    _loadLaundry();
 
     super.initState();
   }
@@ -94,15 +156,13 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
   @override
   void onNotification(String name, dynamic param) {
     if (name == Connectivity.notifyStatusChanged) {
-      _refreshLaundry();
+      _loadLaundryIfVisible();
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      setStateIfMounted();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
-    }
-    else if (name == Config.notifyConfigChanged) {
-      if (mounted) {
-        setState(() {});
-      }
     }
   }
 
@@ -114,63 +174,57 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _refreshLaundry();
+          _refreshLaundryIfVisible();
         }
       }
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
-        title: HomeLaundryWidget.title,
-        child: _buildContent(),
-    );
-  }
+  Widget build(BuildContext context) => VisibilityDetector(
+    key: _visibilityDetectorKey,
+    onVisibilityChanged: _onVisibilityChanged,
+    child: _contentWidget,
+  );
 
-  Widget _buildContent() {
+  Widget get _contentWidget {
     if (Connectivity().isOffline) {
       return HomeMessageCard(
         title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
         message: Localization().getStringEx("widget.home.laundry.text.offline", "Laundries are not available while offline."),
       );
     }
-    else if (_loading) {
+    else if (_loadingLaundry || _refreshingLaundry) {
       return HomeProgressWidget();
     }
-    else if (CollectionUtils.isEmpty(_laundrySchool?.rooms)) {
-      return HomeMessageCard(
-        message: Localization().getStringEx("widget.home.laundry.text.empty.description", "No Laundries are available right now."),
-      );
-    }
     else {
-      return _buildRoomsContent();
+      return _laundryContentWidget;
     }
-
   }
 
-  Widget _buildRoomsContent() {
-    Widget contentWidget;
-    int visibleCount = _laundrySchool?.rooms?.length ?? 0;
+  Widget get _laundryContentWidget {
+      Widget? contentWidget;
+      List<LaundryRoom>? displayLaundryRooms = _buildDisplayLaundryRooms();
+      int visibleCount = displayLaundryRooms?.length ?? 0;
 
-    if (1 < visibleCount) {
+      if (1 < visibleCount) {
 
-      List<Widget> pages = <Widget>[];
-      for (LaundryRoom room in _laundrySchool!.rooms!) {
-        pages.add(Padding(
-          key: _contentKeys[room.id ?? ''] ??= GlobalKey(),
-          padding: HomeCard.defaultPageMargin,
-          child: LaundryRoomCard(room: room, displayMode: CardDisplayMode.home, onTap: () => _onTapRoom(room))
-        ));
-      }
+        List<Widget> pages = <Widget>[];
+        for (LaundryRoom room in displayLaundryRooms!) {
+          pages.add(Padding(
+              key: _contentKeys[room.id ?? ''] ??= GlobalKey(),
+              padding: HomeCard.defaultPageMargin,
+              child: LaundryRoomCard(room: room, displayMode: CardDisplayMode.home, onTap: () => _onTapRoom(room))
+          ));
+        }
 
-      if (_pageController == null) {
-        double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
-        _pageController = PageController(viewportFraction: pageViewport);
-      }
+        if (_pageController == null) {
+          double screenWidth = MediaQuery.of(context).size.width;
+          double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
+          _pageController = PageController(viewportFraction: pageViewport);
+        }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
         AccessiblePageView(
           key: _pageViewKey,
           controller: _pageController,
@@ -178,64 +232,25 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
           allowImplicitScrolling: true,
           children: pages,
         ),
-      );
-    }
-    else {
-      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
-        LaundryRoomCard(room: _laundrySchool!.rooms!.first, onTap: () => _onTapRoom(_laundrySchool!.rooms!.single))
-      );
-    }
+        );
+      }
+      else if (visibleCount == 1) {
+        contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
+        LaundryRoomCard(room: displayLaundryRooms!.first, onTap: () => _onTapRoom(_laundrySchool!.rooms!.single))
+        );
+      }
 
-    return Column(children: <Widget>[
-      contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
+      return (contentWidget != null) ? Column(children: <Widget>[
+        contentWidget,
+        AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
         HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.laundry.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.laundry.button.all.hint', 'Tap to view all laundries'),
           onTap: _onTapSeeAll,
         ),
-      ),
-    ]);
-  }
-
-  void _onTapRoom(LaundryRoom room) {
-    Analytics().logSelect(target: "Laundry: '${room.name}'", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: room,)));
-  }
-
-  void _onTapSeeAll() {
-    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel(laundrySchool: _laundrySchool,)));
-  }
-
-  void _refreshLaundry({bool showProgress = false}) {
-    if (Connectivity().isNotOffline) {
-      if (showProgress && mounted) {
-        setState(() {
-          _loading = true;
-        });
-      }
-      Laundries().loadSchoolRooms().then((LaundrySchool? laundrySchool) {
-        if (mounted && (laundrySchool != null) && (_laundrySchool != laundrySchool)) {
-          setState(() {
-            _laundrySchool = laundrySchool;
-            _pageViewKey = UniqueKey();
-            // _pageController = null;
-            if ((_laundrySchool?.rooms?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
-              _pageController?.jumpToPage(0);
-            }
-            _contentKeys.clear();
-          });
-        }
-      }).whenComplete(() {
-        if (mounted && showProgress) {
-          setState(() {
-            _loading = false;
-          });
-        }
-      });
+        ),
+      ]) : _emptyContentWidget;
     }
-  }
 
   double get _pageHeight {
 
@@ -248,6 +263,175 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> with Notification
     }
 
     return minContentHeight ?? 0;
+  }
+
+  static const String localScheme = 'local';
+  static const String localLaundryHost = 'laundry';
+  static const String localUrlMacro = '{{local_url}}';
+  static const String privacyScheme = 'privacy';
+  static const String privacyLevelHost = 'level';
+  static const String privacyUrlMacro = '{{privacy_url}}';
+
+  Widget get _emptyContentWidget {
+    if (widget.contentType == FavoriteContentType.all) {
+      return HomeMessageCard(message: Localization().getStringEx("widget.home.laundry.all.text.empty.description", "No Laundries are available right now."),);
+    }
+    else if (widget.contentType == FavoriteContentType.my) {
+      String message = Localization().getStringEx("widget.home.laundry.my.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Laundry</b></a> for quick access here.  (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
+          .replaceAll(localUrlMacro, '$localScheme://$localLaundryHost')
+          .replaceAll(privacyUrlMacro, '$privacyScheme://$privacyLevelHost');
+
+      return HomeMessageHtmlCard(message: message, onTapLink: _onMessageLink,);
+    }
+    else {
+      return Container();
+    }
+  }
+
+  void _onMessageLink(String? url) {
+    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+    if (uri?.scheme == localScheme) {
+      if (uri?.host.toLowerCase() == localLaundryHost.toLowerCase()) {
+        Analytics().logSelect(target: "Laundry", source: widget.runtimeType.toString());
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel(laundrySchool: _laundrySchool)));
+      }
+      else if ((uri?.scheme == privacyScheme) && (uri?.host == privacyLevelHost)) {
+        Analytics().logSelect(target: 'Privacy Level', source: runtimeType.toString());
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
+      }
+    }
+  }
+
+  // Visibility
+
+  void _onVisibilityChanged(VisibilityInfo info) {
+    _updateInternalVisibility(!info.visibleBounds.isEmpty);
+  }
+
+  void _updateInternalVisibility(bool visible) {
+    if (_visible != visible) {
+      _visible = visible;
+      _onInternalVisibilityChanged();
+    }
+  }
+
+  void _onInternalVisibilityChanged() {
+    if (_visible) {
+      switch(_contentStatus) {
+        case FavoriteContentStatus.none: break;
+        case FavoriteContentStatus.refresh: _refreshLaundry(); break;
+        case FavoriteContentStatus.reload: _loadLaundry(); break;
+      }
+    }
+  }
+
+  // Content Data
+
+  Future<void> _loadLaundryIfVisible() async {
+    if (_visible) {
+      return _loadLaundry();
+    }
+    else if (_contentStatus.index < FavoriteContentStatus.reload.index) {
+      _contentStatus = FavoriteContentStatus.reload;
+    }
+  }
+
+  Future<void> _loadLaundry() async {
+    if ((_loadingLaundry == false) && mounted) {
+      setState(() {
+        _loadingLaundry = true;
+        _refreshingLaundry = false;
+      });
+
+      LaundrySchool? laundrySchool = await Laundries().loadSchoolRooms();
+
+      setStateIfMounted(() {
+        _laundrySchool = laundrySchool;
+        _contentStatus = FavoriteContentStatus.none;
+        _loadingLaundry = false;
+        _contentKeys.clear();
+      });
+    }
+  }
+
+  Future<void> _refreshLaundryIfVisible() async {
+    if (_visible) {
+      return _refreshLaundry();
+    }
+    else if (_contentStatus.index < FavoriteContentStatus.refresh.index) {
+      _contentStatus = FavoriteContentStatus.refresh;
+    }
+  }
+
+  Future<void> _refreshLaundry() async {
+    if ((_loadingLaundry == false) && (_refreshingLaundry == false) && mounted) {
+      setState(() {
+        _refreshingLaundry = true;
+      });
+
+      LaundrySchool? laundrySchool = await Laundries().loadSchoolRooms();
+
+      if (mounted && _refreshingLaundry && (laundrySchool != null) && (_laundrySchool != laundrySchool)) {
+        setState(() {
+          _laundrySchool = laundrySchool;
+          _contentStatus = FavoriteContentStatus.none;
+          _refreshingLaundry = false;
+          _pageViewKey = UniqueKey();
+          _contentKeys.clear();
+          // _pageController = null;
+          if ((_laundrySchool?.rooms?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
+            _pageController?.jumpToPage(0);
+          }
+        });
+      }
+    }
+  }
+
+  List<LaundryRoom>? _buildDisplayLaundryRooms() {
+    switch (widget.contentType) {
+      case FavoriteContentType.my: return _buildFavoriteLaundryRooms();
+      case FavoriteContentType.all: return _laundrySchool?.rooms;
+    }
+  }
+
+  List<LaundryRoom>? _buildFavoriteLaundryRooms() {
+    List<LaundryRoom>? laundryRooms = _laundrySchool?.rooms;
+    LinkedHashSet<String>? favoriteRoomIds = Auth2().prefs?.getFavorites(LaundryRoom.favoriteKeyName);
+    if ((laundryRooms != null) && (favoriteRoomIds != null)) {
+      Map<String, LaundryRoom> favorites = <String, LaundryRoom>{};
+      if (laundryRooms.isNotEmpty && favoriteRoomIds.isNotEmpty) {
+        for (LaundryRoom laundryRoom in laundryRooms) {
+          if ((laundryRoom.favoriteId != null) && favoriteRoomIds.contains(laundryRoom.favoriteId)) {
+            favorites[laundryRoom.favoriteId!] = laundryRoom;
+          }
+        }
+      }
+
+      List<Favorite>? result = <Favorite>[];
+      if (favorites.isNotEmpty) {
+        for (String favoriteId in favoriteRoomIds) {
+          ListUtils.add(result, favorites[favoriteId]);
+        }
+      }
+
+      // show last added at top
+      return List.from(result.reversed);
+    }
+    else {
+      return null;
+    }
+  }
+
+  // Event Handlers
+
+  void _onTapRoom(LaundryRoom room) {
+    Analytics().logSelect(target: "Laundry: '${room.name}'", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: room,)));
+  }
+
+  void _onTapSeeAll() {
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel(laundrySchool: _laundrySchool, starred: widget.contentType == FavoriteContentType.my,)));
   }
 }
 
@@ -268,7 +452,6 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> with NotificationsLis
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
-      FlexUI.notifyChanged,
     ]);
     super.initState();
   }
@@ -284,9 +467,6 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> with NotificationsLis
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setStateIfMounted(() {});
-    }
-    else if (name == FlexUI.notifyChanged) {
       setStateIfMounted(() {});
     }
   }
@@ -342,5 +522,14 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> with NotificationsLis
   void _onTapLaundryCard() {
     Analytics().logSelect(target: "Laundry: '${widget.room.name}'", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: widget.room,)));
+  }
+}
+
+extension _FavoriteLaundryContentType on FavoriteContentType {
+  String get laundryTitle {
+    switch (this) {
+      case FavoriteContentType.my: return Localization().getStringEx('widget.home.laundry.my.text.title', 'My Laundry');
+      case FavoriteContentType.all: return Localization().getStringEx('widget.home.laundry.all.text.title', 'All Laundry');
+    }
   }
 }
