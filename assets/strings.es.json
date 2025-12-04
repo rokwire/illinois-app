@@ -255,6 +255,8 @@
     "panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
     "panel.browse.section.groups.title": "Grupos",
     "panel.browse.section.groups.description": "Discover a new group or start your own.",
+    "panel.browse.section.groups2.title": "Groups2",
+    "panel.browse.section.groups2.description": "Discover a new group or start your own.",
     "panel.browse.section.research_projects.title": "Research Participation",
     "panel.browse.section.research_projects.description": "Discover research projects.",
     "panel.browse.section.laundry.title": "Ropa sucia",
@@ -320,6 +322,7 @@
     "panel.browse.entry.music_and_news.illordle.title": "ILLordle",
 
     "panel.browse.entry.groups.groups.title": "Grupos",
+    "panel.browse.entry.groups2.groups2.title": "Groups2",
     "panel.browse.entry.research_projects.title": "Research Participation",
     "panel.browse.entry.laundry.laundry.title": "Ropa sucia",
 
