@@ -422,8 +422,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
         if (researchProject.isVisible) {
           widgets.add(Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(
-              group: researchProject,
+            child: GroupCard(researchProject,
               displayType: cardDisplayType,
               onImageTap: () => _onTapImage(researchProject)
             ,),

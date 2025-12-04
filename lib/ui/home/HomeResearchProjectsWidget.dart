@@ -213,7 +213,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
         pages.add(Padding(
           padding: HomeCard.defaultPageMargin,
           child: Semantics(// excludeSemantics: !(_pageController?.page == _researchProjects?.indexOf(researchProject)),
-           child: GroupCard(key: researchProjectKey, group: researchProject, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+           child: GroupCard(researchProject, key: researchProjectKey, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
           )
         ));
       }
@@ -237,7 +237,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
     else if (visibleCount == 1) {
       contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
-         GroupCard(group: visibleResearchProjects!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+         GroupCard(visibleResearchProjects!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
         )
       );
     }
