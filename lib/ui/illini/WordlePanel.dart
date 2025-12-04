@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rokwire_plugin/ext/network.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -799,13 +800,13 @@ class WordleGame {
 
   static Future<WordleDailyWord?> loadDailyWordFromNet() async {
     String? url = Config().illordleDailyWordUrl;
-    Response? response = (url?.isNotEmpty == true) ? await Network().get(url) : null;
+    Response? response = (url?.isNotEmpty == true) ? await Network().get(url, auth: Auth2Csrf()) : null;
     return (response?.succeeded == true) ? WordleDailyWord.fromJson(JsonUtils.decodeMap(response?.body)) : null;
   }
 
   static Future<Set<String>?> loadDictionary() async {
     String? url = Config().illordleWordsUrl;
-    Response? response = (url?.isNotEmpty == true) ? await Network().get(url) : null;
+    Response? response = (url?.isNotEmpty == true) ? await Network().get(url, auth: Auth2Csrf()) : null;
     return (response?.succeeded == true) ? SetUtils.from(JsonUtils.stringValue(response?.body)?.split(RegExp(r'[\r\n]')).map((String word) => word.toUpperCase())) : null;
   }
 }
