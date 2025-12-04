@@ -1,5 +1,6 @@
 
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,17 +34,18 @@ class GroupHome2Panel extends StatefulWidget with AnalyticsInfo {
   @override
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Groups;
 }
-enum _ContentActivity { load, refresh, extend }
+enum _ContentActivity { reload, refresh, extend }
 
 class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsListener {
 
-  ScrollController _scrollController = ScrollController();
   GlobalKey _filtersButtonKey = GlobalKey();
+  Map<String, GlobalKey> _cardKeys = <String, GlobalKey>{};
+  ScrollController _scrollController = ScrollController();
 
   List<Group>? _contentList;
-  Map<String, GlobalKey> _cardKeys = <String, GlobalKey>{};
-  bool? _lastPageLoadedAll;
   _ContentActivity? _contentActivity;
+  bool? _lastPageLoadedAll;
+  GroupsFilter? _filter;
   static const int _contentPageLength = 16;
 
   @override
@@ -58,7 +60,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     ]);
 
     _scrollController.addListener(_scrollListener);
-    _loadContent();
+    _reloadContent();
     super.initState();
   }
 
@@ -209,7 +211,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   );
 
   Widget get _bodyContent {
-    if (_contentActivity == _ContentActivity.load) {
+    if (_contentActivity == _ContentActivity.reload) {
       return _loadingContent;
     }
     else if (_contentActivity == _ContentActivity.refresh) {
@@ -232,15 +234,16 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     List<Widget> cardsList = <Widget>[];
     List<Group> groups = _contentList ?? [];
     for (Group group in groups) {
-      cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
+      cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 16 : 0), child:
         GroupCard(group,
           key: _cardKeys[group.id],
+          margin: EdgeInsets.zero,
           displayType: GroupCardDisplayType.allGroups,
         ),
       ),);
     }
     if (_contentActivity == _ContentActivity.extend) {
-      cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
+      cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 16 : 0), child:
         _extendingIndicator
       ));
     }
@@ -291,9 +294,77 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   bool? get _hasMoreContent => (_lastPageLoadedAll != false);
 
-  Future<void> _loadContent({ int limit = _contentPageLength }) async {}
-  Future<void> _refreshContent() async {}
-  Future<void> _extendContent() async {}
+  Future<void> _reloadContent({ int limit = _contentPageLength }) async {
+    if ((_contentActivity != _ContentActivity.reload) && mounted) {
+      setState(() {
+        _contentActivity = _ContentActivity.reload;
+      });
+
+      int queryLimit = max(_contentList?.length ?? 0, _contentPageLength);
+      List<Group>? contentList = await Groups().loadGroupsV2(GroupsQuery(
+        filter: _filter, offset: 0, limit: queryLimit,
+      ));
+      
+      if (mounted && (_contentActivity == _ContentActivity.reload)) {
+        setState(() {
+          _contentList = contentList;
+          _lastPageLoadedAll = (contentList != null) ? (contentList.length >= queryLimit) : null;
+          _contentActivity = null;
+        });
+      }
+    }
+  }
+
+  Future<void> _refreshContent() async {
+    if (((_contentActivity != _ContentActivity.reload) && (_contentActivity != _ContentActivity.refresh)) && mounted) {
+      setState(() {
+        _contentActivity = _ContentActivity.refresh;
+      });
+
+      int queryLimit = max(_contentList?.length ?? 0, _contentPageLength);
+      List<Group>? contentList = await Groups().loadGroupsV2(GroupsQuery(
+        filter: _filter, offset: 0, limit: queryLimit,
+      ));
+      
+      if (mounted && (_contentActivity == _ContentActivity.refresh)) {
+        setState(() {
+          if (contentList != null) {
+            _contentList = contentList;
+            _lastPageLoadedAll = (contentList.length >= queryLimit);
+          }
+          _contentActivity = null;
+        });
+      }
+    }
+  }
+  
+  Future<void> _extendContent() async {
+    if ((_contentActivity == null) && mounted) {
+      setState(() {
+        _contentActivity = _ContentActivity.extend;
+      });
+
+      int queryOffset = _contentList?.length ?? 0;
+      int queryLimit = _contentPageLength;
+      List<Group>? contentList = await Groups().loadGroupsV2(GroupsQuery(
+        filter: _filter, offset: queryOffset, limit: queryLimit,
+      ));
+
+      if (mounted && (_contentActivity == _ContentActivity.extend)) {
+        setState(() {
+          if (contentList != null) {
+            if (_contentList != null) {
+              _contentList?.addAll(contentList);
+            } else {
+              _contentList = List<Group>.from(contentList);
+            }
+            _lastPageLoadedAll = (contentList.length >= queryLimit);
+          }
+          _contentActivity = null;
+        });
+      }
+    }
+  }
 
   // Command Handlers
 
