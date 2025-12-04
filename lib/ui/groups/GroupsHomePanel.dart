@@ -461,8 +461,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
         if (group.isVisible) {
           EdgeInsetsGeometry padding = widgets.isNotEmpty ? const EdgeInsets.symmetric(vertical: 8) : const EdgeInsets.only(top: 6, bottom: 8);
           widgets.add(Padding(padding: padding, child:
-            GroupCard(
-              group: group,
+            GroupCard(group,
               displayType: GroupCardDisplayType.myGroup,
               key: _getGroupKey(group),
             ),
@@ -486,8 +485,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
       for (Group group in myPendingGroups) {
         if (group.isVisible) {
           widgets.add(Padding(padding: const EdgeInsets.symmetric(vertical: 8), child:
-            GroupCard(
-              group: group,
+            GroupCard(group,
               displayType: GroupCardDisplayType.myGroup,
               key: _getGroupKey(group),
             ),
@@ -519,8 +517,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
         if (group.isVisible) {
           EdgeInsetsGeometry padding = widgets.isNotEmpty ? const EdgeInsets.symmetric(vertical: 8) : const EdgeInsets.only(top: 6, bottom: 8);
           widgets.add(Padding(padding: padding, child:
-            GroupCard(
-              group: group,
+            GroupCard(group,
               key: _getGroupKey(group),
               displayType: GroupCardDisplayType.allGroups,
             ),

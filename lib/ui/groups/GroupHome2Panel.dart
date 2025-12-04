@@ -125,8 +125,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     List<Group> groups = _contentList ?? [];
     for (Group group in groups) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
-        GroupCard(
-          group: group,
+        GroupCard(group,
           key: _cardKeys[group.id],
           displayType: GroupCardDisplayType.allGroups,
         ),
