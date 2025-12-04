@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - ILLordle: Fixed daily word processing [#5442](https://github.com/rokwire/illinois-app/issues/5442).
 - Assistant: increase UI fragments width and fix paddings [#5542](https://github.com/rokwire/illinois-app/issues/5542).
+- Preload profile photo when editing [#5571](https://github.com/rokwire/illinois-app/issues/5571).
 
 ## [7.3.33] - 2025-12-01
 ### Added
