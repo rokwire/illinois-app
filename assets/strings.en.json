@@ -3158,6 +3158,15 @@
 
     "panel.group.home2.failed.text": "Failed to load groups",
     "panel.group.home2.empty.text": "There are no groups matching the selected filters",
+    "panel.group.home2.bar.button.filter.title": "Filter",
+    "panel.group.home2.bar.button.create.title": "Create",
+    "panel.group.home2.bar.button.create.hint": "Tap to create group",
+    "panel.group.home2.bar.button.search.title": "Search",
+    "panel.group.home2.bar.button.search.hint": "Tap to search groups",
+    "panel.group.home2.bar.button.share.title": "Share",
+    "panel.group.home2.bar.button.share.hint": "Tap to share current groups ",
+    "panel.group.home2.bar.button.share.title": "Clear",
+    "panel.group.home2.bar.button.share.hint": "Tap to clear current filter ",
 
     "panel.groups_settings.label.heading": "Group Settings",
     "panel.groups_settings.label.project.heading": "Project Settings",
