@@ -3156,6 +3156,9 @@
     "panel.groups_home.groups.count.single.label": "group",
     "panel.groups_home.groups.count.plural.label": "groups",
 
+    "panel.group.home2.failed.text": "Failed to load groups",
+    "panel.group.home2.empty.text": "There are no groups matching the selected filters",
+
     "panel.groups_settings.label.heading": "Group Settings",
     "panel.groups_settings.label.project.heading": "Project Settings",
     "panel.groups_settings.label.heading.general_info": "General group information",
