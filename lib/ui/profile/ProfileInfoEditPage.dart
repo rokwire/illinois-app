@@ -299,21 +299,23 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
 
     void _onEditPhoto() {
       Analytics().logSelect(target: 'Edit Photo');
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(isUserPic: true))).then((imageUploadResult) {
-        if (mounted && (imageUploadResult is ImagesResult)) {
-          if (imageUploadResult.resultType == ImagesResultType.succeeded) {
-            setState(() {
-              _photoKey = UniqueKey();
-              _photoText = Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium) ?? '';
-              _photoImageToken = DirectoryProfilePhotoUtils.newToken;
-              _photoImageData = imageUploadResult.imageData;
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(isUserPic: true,
+          preloadImageUrl: Content().getUserPhotoUrl(accountId: Auth2().accountId, params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken)), photoUrlHeaders: _photoAuthHeaders,))).then(
+            (imageUploadResult) {
+              if (mounted && (imageUploadResult is ImagesResult)) {
+                if (imageUploadResult.resultType == ImagesResultType.succeeded) {
+                  setState(() {
+                    _photoKey = UniqueKey();
+                    _photoText = Content().getUserPhotoUrl(accountId: Auth2().accountId, type: UserProfileImageType.medium) ?? '';
+                    _photoImageToken = DirectoryProfilePhotoUtils.newToken;
+                    _photoImageData = imageUploadResult.imageData;
+                  });
+                }
+                else if (imageUploadResult.resultType == ImagesResultType.error) {
+                  AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile_info.picture.upload.failed.msg', 'Failed to upload profile picture. Please, try again later.'));
+                }
+              }
             });
-          }
-          else if (imageUploadResult.resultType == ImagesResultType.error) {
-            AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile_info.picture.upload.failed.msg', 'Failed to upload profile picture. Please, try again later.'));
-          }
-        }
-      });
     }
 
     void _onClearPhoto() {
