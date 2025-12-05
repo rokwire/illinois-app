@@ -456,6 +456,8 @@ class Abc {
   }
 }
 
+
+
 extension _GroupsFilterContentAttributes on GroupsFilter {
 
   static const String _detailsContentAttributeId = 'group-details';
@@ -488,45 +490,23 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
   }
 
   static GroupsFilter _fromAttributesSelection(Map<String, dynamic> selection) {
-    Set<_GroupsFilterDetailAttribute> details = _GroupsFilterDetailAttributeImpl.setFromAttributesSelection(selection[_detailsContentAttributeId]) ?? <_GroupsFilterDetailAttribute>{};
-    Set<_GroupsFilterLimitAttribute> limits = _GroupsFilterLimitAttributeImpl.setFromAttributesSelection(selection[_limitsContentAttributeId]) ?? <_GroupsFilterLimitAttribute>{};
+    Set<GroupsFilterType> types = <GroupsFilterType>{
+      ..._GroupsFilterTypeContentAttribute.setFromAttributesSelection(selection[_detailsContentAttributeId]) ?? <GroupsFilterType>{},
+      ..._GroupsFilterTypeContentAttribute.setFromAttributesSelection(selection[_limitsContentAttributeId]) ?? <GroupsFilterType>{},
+    };
 
     Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
     attributes.remove(_detailsContentAttributeId);
     attributes.remove(_limitsContentAttributeId);
+
     return GroupsFilter(
-      attributes: attributes,
-
-      public: details.contains(_GroupsFilterDetailAttribute.public) ? true : null,
-      private: details.contains(_GroupsFilterDetailAttribute.private) ? true : null,
-      eventAdmin: details.contains(_GroupsFilterDetailAttribute.eventAdmin) ? true : null,
-      managed: details.contains(_GroupsFilterDetailAttribute.managed) ? true : null,
-
-      admin: limits.contains(_GroupsFilterLimitAttribute.admin) ? true : null,
-      member: limits.contains(_GroupsFilterLimitAttribute.member) ? true : null,
-      candidate: limits.contains(_GroupsFilterLimitAttribute.candidate) ? true : null,
+      attributes: attributes.isNotEmpty ? attributes : null,
+      types: types.isNotEmpty ? types : null,
     );
   }
 
-  List<_GroupsFilterDetailAttribute> get _detailsContentAttributes => <_GroupsFilterDetailAttribute>[
-    if (public == true)
-      _GroupsFilterDetailAttribute.public,
-    if (private == true)
-      _GroupsFilterDetailAttribute.private,
-    if (eventAdmin == true)
-      _GroupsFilterDetailAttribute.eventAdmin,
-    if (managed == true)
-      _GroupsFilterDetailAttribute.managed,
-  ];
-
-  List<_GroupsFilterLimitAttribute> get _limitsContentAttributes => <_GroupsFilterLimitAttribute>[
-    if (admin == true)
-      _GroupsFilterLimitAttribute.admin,
-    if (member == true)
-      _GroupsFilterLimitAttribute.member,
-    if (candidate == true)
-      _GroupsFilterLimitAttribute.candidate,
-  ];
+  List<GroupsFilterType> get _detailsContentAttributes => List<GroupsFilterType>.from(GroupsFilterGroup.details.types.where((GroupsFilterType type) => (types?.contains(type) == true)));
+  List<GroupsFilterType> get _limitsContentAttributes => List<GroupsFilterType>.from(GroupsFilterGroup.limits.types.where((GroupsFilterType type) => (types?.contains(type) == true)));
 
   static ContentAttributes? get _contentAttributes {
     ContentAttributes? contentAttributes = ContentAttributes.fromOther(Groups().groupsContentAttributes);
@@ -544,7 +524,7 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
     semanticsHint: Localization().getStringEx('model.group.attributes.details.hint.semantics', 'Double type to show group details.'),
     widget: ContentAttributeWidget.dropdown,
     scope: <String>{ Groups.groupsContentAttributesScope },
-    values: List<ContentAttributeValue>.from(_GroupsFilterDetailAttribute.values.map((_GroupsFilterDetailAttribute value) => ContentAttributeValue(
+    values: List<ContentAttributeValue>.from(GroupsFilterGroup.details.types.map((GroupsFilterType value) => ContentAttributeValue(
       value: value, label: value.displayTitle, group: Localization().getStringEx('model.group.attributes.details.group.visibility', 'Visibility'),
     ))),
   );
@@ -556,55 +536,59 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
     semanticsHint: Localization().getStringEx('model.group.attributes.limits.hint.semantics', 'Double tap to choose group limits.'),
     widget: ContentAttributeWidget.dropdown,
     scope: <String>{ Groups.groupsContentAttributesScope },
-    values: List<ContentAttributeValue>.from(_GroupsFilterLimitAttribute.values.map((_GroupsFilterLimitAttribute value) => ContentAttributeValue(
+    values: List<ContentAttributeValue>.from(GroupsFilterGroup.limits.types.map((GroupsFilterType value) => ContentAttributeValue(
       value: value, label: value.displayTitle,
     ))),
   );
 
 }
 
-enum _GroupsFilterDetailAttribute { public, private, eventAdmin, managed }
+enum GroupsFilterGroup { details, limits }
 
-extension _GroupsFilterDetailAttributeImpl on _GroupsFilterDetailAttribute {
-  String get displayTitle {
-    switch (this) {
-      case _GroupsFilterDetailAttribute.public: return Localization().getStringEx('model.group.attributes.detail.public', 'Public');
-      case _GroupsFilterDetailAttribute.private: return Localization().getStringEx('model.group.attributes.detail.private', 'Private');
-      case _GroupsFilterDetailAttribute.eventAdmin: return Localization().getStringEx('model.group.attributes.detail.event_admins', 'Event Admins');
-      case _GroupsFilterDetailAttribute.managed: return Localization().getStringEx('model.group.attributes.detail.managed', 'Univerity Managed');
-    }
-  }
+extension _GroupsFilterGroupContentAttribute on GroupsFilterGroup {
+  static const Map<GroupsFilterType, GroupsFilterGroup> _typeGroups = <GroupsFilterType, GroupsFilterGroup> {
+    GroupsFilterType.public: GroupsFilterGroup.details,
+    GroupsFilterType.private: GroupsFilterGroup.details,
+    GroupsFilterType.eventAdmin: GroupsFilterGroup.details,
+    GroupsFilterType.managed: GroupsFilterGroup.details,
 
-  static Set<_GroupsFilterDetailAttribute>? setFromAttributesSelection(dynamic attributeSelection) {
-    if (attributeSelection is List) {
-      return SetUtils.from(JsonUtils.listCastValue<_GroupsFilterDetailAttribute>(attributeSelection));
+    GroupsFilterType.admin: GroupsFilterGroup.limits,
+    GroupsFilterType.member: GroupsFilterGroup.limits,
+    GroupsFilterType.candidate: GroupsFilterGroup.limits,
+  };
+
+  List<GroupsFilterType> get types {
+    List<GroupsFilterType> types = <GroupsFilterType>[];
+    for (GroupsFilterType type in GroupsFilterType.values) {
+      if (_typeGroups[type] == this) {
+        types.add(type);
+      }
     }
-    else if (attributeSelection is _GroupsFilterDetailAttribute) {
-      return <_GroupsFilterDetailAttribute>{attributeSelection};
-    }
-    else {
-      return null;
-    }
+    return types;
   }
 }
 
-enum _GroupsFilterLimitAttribute { admin, member, candidate }
+extension _GroupsFilterTypeContentAttribute on GroupsFilterType {
 
-extension _GroupsFilterLimitAttributeImpl on _GroupsFilterLimitAttribute {
   String get displayTitle {
     switch (this) {
-      case _GroupsFilterLimitAttribute.admin: return Localization().getStringEx('model.group.attributes.limit.admin', 'Groups I administer');
-      case _GroupsFilterLimitAttribute.member: return Localization().getStringEx('model.group.attributes.limit.member', 'Groups I am member of');
-      case _GroupsFilterLimitAttribute.candidate: return Localization().getStringEx('model.group.attributes.limit.candidate', 'Groups I\'ve requested to join (pending or denied)');
+      case GroupsFilterType.public: return Localization().getStringEx('model.group.attributes.detail.public', 'Public');
+      case GroupsFilterType.private: return Localization().getStringEx('model.group.attributes.detail.private', 'Private');
+      case GroupsFilterType.eventAdmin: return Localization().getStringEx('model.group.attributes.detail.event_admins', 'Event Admins');
+      case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed', 'Univerity Managed');
+
+      case GroupsFilterType.admin: return Localization().getStringEx('model.group.attributes.limit.admin', 'Groups I administer');
+      case GroupsFilterType.member: return Localization().getStringEx('model.group.attributes.limit.member', 'Groups I am member of');
+      case GroupsFilterType.candidate: return Localization().getStringEx('model.group.attributes.limit.candidate', 'Groups I\'ve requested to join (pending or denied)');
     }
   }
 
-  static Set<_GroupsFilterLimitAttribute>? setFromAttributesSelection(dynamic attributeSelection) {
+  static Set<GroupsFilterType>? setFromAttributesSelection(dynamic attributeSelection) {
     if (attributeSelection is List) {
-      return SetUtils.from(JsonUtils.listCastValue<_GroupsFilterLimitAttribute>(attributeSelection));
+      return SetUtils.from(JsonUtils.listCastValue<GroupsFilterType>(attributeSelection));
     }
-    else if (attributeSelection is _GroupsFilterLimitAttribute) {
-      return <_GroupsFilterLimitAttribute>{attributeSelection};
+    else if (attributeSelection is GroupsFilterType) {
+      return <GroupsFilterType>{attributeSelection};
     }
     else {
       return null;
