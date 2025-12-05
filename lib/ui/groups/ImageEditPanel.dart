@@ -23,6 +23,7 @@ SOFTWARE.*/
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/ImageDescriptionInput.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -32,20 +33,23 @@ import 'package:rokwire_plugin/model/content.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:image_cropping/image_cropping.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:mime_type/mime_type.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class ImageEditPanel extends StatefulWidget {
   final String? storagePath;
   final int? width;
   final bool isUserPic;
+  final Map<String, String>? photoUrlHeaders;
 
   final String? preloadImageUrl;
 
-  const ImageEditPanel({Key? key, this.storagePath, this.width = 1080, this.isUserPic = false, this.preloadImageUrl}) : super(key: key);
+  const ImageEditPanel({Key? key, this.storagePath, this.width = 1080, this.isUserPic = false, this.preloadImageUrl, this.photoUrlHeaders}) : super(key: key);
 
   _ImageEditState createState() => _ImageEditState();
 }
@@ -358,8 +362,8 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   Future<void> _preloadImageFromUrl() async {
     _showLoader();
     if(widget.preloadImageUrl != null){
-      _imageBytes = await readNetworkImage(widget.preloadImageUrl!);
-      ImageMetaData? metaData = await _loadImageMetaData(widget.preloadImageUrl!);
+      _imageBytes = await readNetworkImage(widget.preloadImageUrl!, headers: widget.photoUrlHeaders);
+      ImageMetaData? metaData = await _loadImageMetaData(widget.isUserPic ? UrlUtils.stripQueryParameters(widget.preloadImageUrl) : widget.preloadImageUrl);
       _imageDescriptionData = metaData != null ? ImageDescriptionDataExt.fromMetaData(metaData) : ImageDescriptionData();
 
       if(_imageBytes != null) {
@@ -377,19 +381,12 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
     (await Content().loadImageMetaData(url: imageUrl)).imageMetaData :
     null;
 
-  //Utils: TBD move to Utils file if we keeps it
-  // Reading bytes from a network image
-  static Future<Uint8List?> readNetworkImage(String imageUrl) async {
-    try {
-      final ByteData data = await NetworkAssetBundle(Uri.parse(imageUrl))
-          .load(imageUrl);
-      final Uint8List bytes = data.buffer.asUint8List();
-      return bytes;
-    } catch (e){
-      return null;
-    }
+  static Future<Uint8List?> readNetworkImage(String imageUrl, {Map<String, String>? headers}) async {
+    Response? response = await Network().get(imageUrl, headers: headers);
+    int? responseCode = response?.statusCode;
+    return ((responseCode != null) && (responseCode >= 200) && (responseCode <= 301)) ?
+       response?.bodyBytes : null;
   }
-
 }
 
 /// class for dialog button
