@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Assistant: increase UI fragments width and fix paddings [#5542](https://github.com/rokwire/illinois-app/issues/5542).
 - WEB: ILLordle: Fixed loading data [#5568](https://github.com/rokwire/illinois-app/issues/5568).
 - Preload profile photo when editing [#5571](https://github.com/rokwire/illinois-app/issues/5571).
+- WEB: ILLordle: Make black text color and decrease the size of the widget [#5568](https://github.com/rokwire/illinois-app/issues/5568).
 
 ## [7.3.33] - 2025-12-01
 ### Added
