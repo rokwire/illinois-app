@@ -7,21 +7,27 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupHome2Panel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'edu.illinois.rokwire.group.home2';
 
-  GroupHome2Panel({super.key});
+  final GroupsFilter? filter;
+
+  GroupHome2Panel({super.key, this.filter});
 
   static void push(BuildContext context) =>
     Navigator.push(context, CupertinoPageRoute(
@@ -60,6 +66,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     ]);
 
     _scrollController.addListener(_scrollListener);
+    _filter = widget.filter;
     _reloadContent();
     super.initState();
   }
@@ -294,6 +301,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   bool? get _hasMoreContent => (_lastPageLoadedAll != false);
 
+  //ignore: unused_element_parameter
   Future<void> _reloadContent({ int limit = _contentPageLength }) async {
     if ((_contentActivity != _ContentActivity.reload) && mounted) {
       setState(() {
@@ -370,7 +378,18 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   void _onFilter() {
     Analytics().logSelect(target: 'Filter');
+    GroupsFilter filter = _filter ?? GroupsFilter();
+    filter.edit(context).then((GroupsFilter? filter){
+      if ((filter != null) && mounted) {
+        setState(() {
+          _filter = filter;
+        });
 
+        _reloadContent().then((_) =>
+          AppSemantics.triggerAccessibilityFocus(_filtersButtonKey, delay: Duration(seconds: 1))
+        );
+      }
+    });
   }
 
   void _onSearch() {
@@ -406,5 +425,189 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       _attributes = <String, dynamic>{};
       _sortType = Event2SortType.dateTime;
     });*/
+  }
+}
+
+class Abc {
+  Future<GroupsFilter?> edit(BuildContext context, GroupsFilter filter) async {
+    ContentAttributes? contentAttributes = _GroupsFilterContentAttributes._contentAttributes;
+    if (contentAttributes != null) {
+      Map<String, dynamic> selection = MapUtils.from(filter.attributes) ?? <String, dynamic>{};
+      selection[_GroupsFilterContentAttributes._detailsContentAttributeId] = filter._detailsContentAttributes;
+      selection[_GroupsFilterContentAttributes._limitsContentAttributeId] = filter._limitsContentAttributes;
+
+      dynamic result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+        title: Localization().getStringEx('model.group.attributes.filters.header.title', 'Group Filters'),
+        description: Localization().getStringEx('model.group.attributes.filters.header.description', 'Choose at least one attribute to filter the groups and tap Apply to save.'),
+        contentAttributes: contentAttributes,
+        selection: selection,
+
+        scope: Groups.groupsContentAttributesScope,
+        sortType: ContentAttributesSortType.native,
+        filtersMode: true,
+        //countAttributeValues: countAttributeValues,
+      )));
+
+      Map<String, dynamic>? selection2 = JsonUtils.mapValue(result);
+      return (selection2 != null) ? _GroupsFilterContentAttributes._fromAttributesSelection(selection) : null;
+    } else {
+      return null;
+    }
+  }
+}
+
+extension _GroupsFilterContentAttributes on GroupsFilter {
+
+  static const String _detailsContentAttributeId = 'group-details';
+  static const String _limitsContentAttributeId = 'group-limits';
+
+  Future<GroupsFilter?> edit(BuildContext context) async {
+    ContentAttributes? contentAttributes = _contentAttributes;
+    if (contentAttributes != null) {
+      Map<String, dynamic> inputSelection = MapUtils.from(attributes) ?? <String, dynamic>{};
+      inputSelection[_detailsContentAttributeId] = _detailsContentAttributes;
+      inputSelection[_limitsContentAttributeId] = _limitsContentAttributes;
+
+      dynamic result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+        title: Localization().getStringEx('model.group.attributes.filters.header.title', 'Group Filters'),
+        description: Localization().getStringEx('model.group.attributes.filters.header.description', 'Choose at least one attribute to filter the groups and tap Apply to save.'),
+        contentAttributes: contentAttributes,
+        selection: inputSelection,
+
+        scope: Groups.groupsContentAttributesScope,
+        sortType: ContentAttributesSortType.native,
+        filtersMode: true,
+        //countAttributeValues: countAttributeValues,
+      )));
+
+      Map<String, dynamic>? outputSelection = JsonUtils.mapValue(result);
+      return (outputSelection != null) ? _fromAttributesSelection(outputSelection) : null;
+    } else {
+      return null;
+    }
+  }
+
+  static GroupsFilter _fromAttributesSelection(Map<String, dynamic> selection) {
+    Set<_GroupsFilterDetailAttribute> details = _GroupsFilterDetailAttributeImpl.setFromAttributesSelection(selection[_detailsContentAttributeId]) ?? <_GroupsFilterDetailAttribute>{};
+    Set<_GroupsFilterLimitAttribute> limits = _GroupsFilterLimitAttributeImpl.setFromAttributesSelection(selection[_limitsContentAttributeId]) ?? <_GroupsFilterLimitAttribute>{};
+
+    Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
+    attributes.remove(_detailsContentAttributeId);
+    attributes.remove(_limitsContentAttributeId);
+    return GroupsFilter(
+      attributes: attributes,
+
+      public: details.contains(_GroupsFilterDetailAttribute.public) ? true : null,
+      private: details.contains(_GroupsFilterDetailAttribute.private) ? true : null,
+      eventAdmin: details.contains(_GroupsFilterDetailAttribute.eventAdmin) ? true : null,
+      managed: details.contains(_GroupsFilterDetailAttribute.managed) ? true : null,
+
+      admin: limits.contains(_GroupsFilterLimitAttribute.admin) ? true : null,
+      member: limits.contains(_GroupsFilterLimitAttribute.member) ? true : null,
+      candidate: limits.contains(_GroupsFilterLimitAttribute.candidate) ? true : null,
+    );
+  }
+
+  List<_GroupsFilterDetailAttribute> get _detailsContentAttributes => <_GroupsFilterDetailAttribute>[
+    if (public == true)
+      _GroupsFilterDetailAttribute.public,
+    if (private == true)
+      _GroupsFilterDetailAttribute.private,
+    if (eventAdmin == true)
+      _GroupsFilterDetailAttribute.eventAdmin,
+    if (managed == true)
+      _GroupsFilterDetailAttribute.managed,
+  ];
+
+  List<_GroupsFilterLimitAttribute> get _limitsContentAttributes => <_GroupsFilterLimitAttribute>[
+    if (admin == true)
+      _GroupsFilterLimitAttribute.admin,
+    if (member == true)
+      _GroupsFilterLimitAttribute.member,
+    if (candidate == true)
+      _GroupsFilterLimitAttribute.candidate,
+  ];
+
+  static ContentAttributes? get _contentAttributes {
+    ContentAttributes? contentAttributes = ContentAttributes.fromOther(Groups().groupsContentAttributes);
+
+    contentAttributes?.attributes?.insert(0, _detailsContentAttribute);
+    contentAttributes?.attributes?.add(_limitsContentAttribute);
+
+    return contentAttributes;
+  }
+
+  static ContentAttribute get _detailsContentAttribute => ContentAttribute(
+    id: _detailsContentAttributeId,
+    title: Localization().getStringEx('model.group.attributes.details.title', 'Group Details'),
+    emptyHint: Localization().getStringEx('model.group.attributes.details.hint.empty', 'Select group details'),
+    semanticsHint: Localization().getStringEx('model.group.attributes.details.hint.semantics', 'Double type to show group details.'),
+    widget: ContentAttributeWidget.dropdown,
+    scope: <String>{ Groups.groupsContentAttributesScope },
+    values: List<ContentAttributeValue>.from(_GroupsFilterDetailAttribute.values.map((_GroupsFilterDetailAttribute value) => ContentAttributeValue(
+      value: value, label: value.displayTitle, group: Localization().getStringEx('model.group.attributes.details.group.visibility', 'Visibility'),
+    ))),
+  );
+
+  static ContentAttribute get _limitsContentAttribute => ContentAttribute(
+    id: _limitsContentAttributeId,
+    title: Localization().getStringEx('model.group.attributes.limits.title', 'Limit Results To'),
+    emptyHint: Localization().getStringEx('model.group.attributes.limits.hint.empty', 'Choose limits'),
+    semanticsHint: Localization().getStringEx('model.group.attributes.limits.hint.semantics', 'Double tap to choose group limits.'),
+    widget: ContentAttributeWidget.dropdown,
+    scope: <String>{ Groups.groupsContentAttributesScope },
+    values: List<ContentAttributeValue>.from(_GroupsFilterLimitAttribute.values.map((_GroupsFilterLimitAttribute value) => ContentAttributeValue(
+      value: value, label: value.displayTitle,
+    ))),
+  );
+
+}
+
+enum _GroupsFilterDetailAttribute { public, private, eventAdmin, managed }
+
+extension _GroupsFilterDetailAttributeImpl on _GroupsFilterDetailAttribute {
+  String get displayTitle {
+    switch (this) {
+      case _GroupsFilterDetailAttribute.public: return Localization().getStringEx('model.group.attributes.detail.public', 'Public');
+      case _GroupsFilterDetailAttribute.private: return Localization().getStringEx('model.group.attributes.detail.private', 'Private');
+      case _GroupsFilterDetailAttribute.eventAdmin: return Localization().getStringEx('model.group.attributes.detail.event_admins', 'Event Admins');
+      case _GroupsFilterDetailAttribute.managed: return Localization().getStringEx('model.group.attributes.detail.managed', 'Univerity Managed');
+    }
+  }
+
+  static Set<_GroupsFilterDetailAttribute>? setFromAttributesSelection(dynamic attributeSelection) {
+    if (attributeSelection is List) {
+      return SetUtils.from(JsonUtils.listCastValue<_GroupsFilterDetailAttribute>(attributeSelection));
+    }
+    else if (attributeSelection is _GroupsFilterDetailAttribute) {
+      return <_GroupsFilterDetailAttribute>{attributeSelection};
+    }
+    else {
+      return null;
+    }
+  }
+}
+
+enum _GroupsFilterLimitAttribute { admin, member, candidate }
+
+extension _GroupsFilterLimitAttributeImpl on _GroupsFilterLimitAttribute {
+  String get displayTitle {
+    switch (this) {
+      case _GroupsFilterLimitAttribute.admin: return Localization().getStringEx('model.group.attributes.limit.admin', 'Groups I administer');
+      case _GroupsFilterLimitAttribute.member: return Localization().getStringEx('model.group.attributes.limit.member', 'Groups I am member of');
+      case _GroupsFilterLimitAttribute.candidate: return Localization().getStringEx('model.group.attributes.limit.candidate', 'Groups I\'ve requested to join (pending or denied)');
+    }
+  }
+
+  static Set<_GroupsFilterLimitAttribute>? setFromAttributesSelection(dynamic attributeSelection) {
+    if (attributeSelection is List) {
+      return SetUtils.from(JsonUtils.listCastValue<_GroupsFilterLimitAttribute>(attributeSelection));
+    }
+    else if (attributeSelection is _GroupsFilterLimitAttribute) {
+      return <_GroupsFilterLimitAttribute>{attributeSelection};
+    }
+    else {
+      return null;
+    }
   }
 }
