@@ -398,7 +398,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
 
   void _onTapDiningLocation(Dining dining) {
     Analytics().logSelect(target: 'Assistant: Dining Location "${dining.title}"');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: dining)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining)));
   }
 
   void _onTapDiningProductItem(DiningProductItem item) {

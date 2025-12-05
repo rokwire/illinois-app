@@ -595,7 +595,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> with Notificati
       }
     }
     else if (sourceItem is Dining) {
-      return ExploreDiningDetailPanel(dining: sourceItem,);
+      return ExploreDiningDetailPanel(sourceItem,);
     }
     else if (sourceItem is Game) {
       return AthleticsGameDetailPanel(game: sourceItem,);
