@@ -732,8 +732,7 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
     _displayDateScheduleMapping = widget.dining.displayDateScheduleMapping;
 
     _selectedDateFilterIndex = _getTodayFilterIndex();
-    String? currentDate = ListUtils.entry(_displayDates, _selectedDateFilterIndex);
-    _schedules = _displayDateScheduleMapping[currentDate] ?? [];
+    _schedules = _buildCurrentSchedule();
     _selectedScheduleIndex = _getCurrentScheduleIndex();
 
     _loadProductItems();
@@ -975,6 +974,23 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
     }
   }
 
+  List<DiningSchedule> _buildCurrentSchedule() {
+    String? displayDate = ListUtils.entry(_displayDates, _selectedDateFilterIndex);
+    List<DiningSchedule>? schedules = _displayDateScheduleMapping[displayDate];
+    return (schedules != null) ? ListUtils.sort(schedules, _compareSchedules) : <DiningSchedule>[];
+  }
+
+  static int _compareSchedules(DiningSchedule ds1, DiningSchedule ds2) {
+    int order = SortUtils.compare(ds1.startTimeUtc, ds2.startTimeUtc);
+    if (order != 0) {
+      order = SortUtils.compare(ds1.endTimeUtc, ds2.endTimeUtc);
+    }
+    if (order == 0) {
+      order = SortUtils.compare(ds1.meal, ds2.meal);
+    }
+    return order;
+  }
+
   bool get hasMenuData{
     return _filterDates.isNotEmpty && _schedules.isNotEmpty;
   }
@@ -1028,9 +1044,7 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
     if (_selectedDateFilterIndex < _filterDates.length - 1) {
       setState(() {
         _selectedDateFilterIndex++;
-
-        String? displayDate = ListUtils.entry(_displayDates, _selectedDateFilterIndex);
-        _schedules = _displayDateScheduleMapping[displayDate] ?? [];
+        _schedules = _buildCurrentSchedule();
         _selectedScheduleIndex = _getCurrentScheduleIndex();
       });
 
@@ -1043,9 +1057,7 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
     if (_selectedDateFilterIndex > 0) {
       setState(() {
         _selectedDateFilterIndex--;
-
-        String? displayDate = ListUtils.entry(_displayDates, _selectedDateFilterIndex);
-        _schedules = _displayDateScheduleMapping[displayDate] ?? [];
+        _schedules = _buildCurrentSchedule();
         _selectedScheduleIndex = _getCurrentScheduleIndex();
       });
 
