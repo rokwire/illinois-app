@@ -1097,7 +1097,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   Future<void> _onFirebaseDiningLocationDetail(Map<String, dynamic>? content) async {
     String? diningId = (content != null) ? JsonUtils.stringValue(content['dining_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
     if (StringUtils.isNotEmpty(diningId) && context.mounted) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: Dining(id: diningId)))); // TBD: create better processing
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(Dining(id: diningId)))); // TBD: create better processing
     }
   }
 

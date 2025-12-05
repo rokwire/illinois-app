@@ -184,7 +184,7 @@ extension FavoriteExt on Favorite {
       }
     }
     else if (this is Dining) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(this as Dining,)));
     }
     else if (this is Game) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: this as Game,)));
