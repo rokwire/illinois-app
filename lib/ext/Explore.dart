@@ -305,7 +305,7 @@ extension ExploreExt on Explore {
         }
     }
     else if (this is Dining) {
-      return ExploreDiningDetailPanel(dining: this as Dining, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature,);
+      return ExploreDiningDetailPanel(this as Dining, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature,);
     }
     else if (this is LaundryRoom) {
       return LaundryRoomDetailPanel(room: this as LaundryRoom, analyticsFeature: analyticsFeature,);

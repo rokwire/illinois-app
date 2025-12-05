@@ -48,7 +48,7 @@ class ExploreDetailPanel extends StatelessWidget with AnalyticsInfo {
 
   static Widget? contentPanel({Explore? explore, Position? initialLocationData, AnalyticsFeature? analyticsFeature, Group? browseGroup}) {
     if (explore is Dining) {
-      return ExploreDiningDetailPanel(dining: explore, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature);
+      return ExploreDiningDetailPanel(explore, initialLocationData: initialLocationData, analyticsFeature: analyticsFeature);
     }
     else if (explore is LaundryRoom) {
       return LaundryRoomDetailPanel(room: explore, analyticsFeature: analyticsFeature);
