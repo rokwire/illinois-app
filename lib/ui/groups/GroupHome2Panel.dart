@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
@@ -67,7 +68,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     ]);
 
     _scrollController.addListener(_scrollListener);
-    _filter = widget.filter;
+    _filter = widget.filter ?? Storage().lastFilter;
     _reloadContent();
     super.initState();
   }
@@ -407,6 +408,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
         setState(() {
           _filter = filter;
         });
+        Storage().lastFilter = filter;
 
         _reloadContent().then((_) =>
           AppSemantics.triggerAccessibilityFocus(_filtersButtonKey, delay: Duration(seconds: 1))
@@ -441,6 +443,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     setState(() {
       _filter = null;
     });
+    Storage().lastFilter = null;
 
     _reloadContent();
   }
@@ -630,3 +633,12 @@ extension _GroupsFilterTypeContentAttribute on GroupsFilterType {
 extension _ContentActivityImpl on _ContentActivity {
   bool get _hidesContent => ((this == _ContentActivity.reload) || (this == _ContentActivity.refresh));
 }
+
+extension _GroupsStorageImpl on Storage {
+  GroupsFilter? get lastFilter =>
+    GroupsFilter.fromJson(JsonUtils.decodeMap(groupsFilter));
+
+  set lastFilter(GroupsFilter? filter) =>
+    groupsFilter = JsonUtils.encode(filter?.toJson());
+}
+
