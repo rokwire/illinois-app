@@ -49,6 +49,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   ScrollController _scrollController = ScrollController();
 
   List<Group>? _contentList;
+  int? _totalContentLength;
   _ContentActivity? _contentActivity;
   bool? _lastPageLoadedAll;
   GroupsFilter? _filter;
@@ -162,6 +163,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   ],);
 
   Widget get _contentDescriptionBar {
+    // Build description map
     LinkedHashMap<String, List<String>>? descriptionMap = LinkedHashMap<String, List<String>>();
 
     String filterTitle = Localization().getStringEx('panel.group.home2.bar.description.filters.title', 'Filter');
@@ -170,27 +172,34 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       Localization().getStringEx('panel.group.home2.bar.description.filters.empty.title', 'None')
     ];
 
-    List<InlineSpan> descriptionList = <InlineSpan>[];
+    if (_totalContentLength != null) {
+      String groupsTitle = Localization().getStringEx('panel.group.home2.bar.description.groups.title', 'Groups');
+      descriptionMap[groupsTitle] = <String>[_totalContentLength?.toString() ?? ''];
+    }
+
+    // Build RichText spans list from desriptin map
+    List<InlineSpan> descriptionSpans = <InlineSpan>[];
     TextStyle? boldStyle = Styles().textStyles.getTextStyle('widget.card.title.tiny.fat');
     TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.card.detail.small.regular');
     descriptionMap.forEach((String descriptionCategory, List<String> descriptionItems){
-      if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
+      if (descriptionSpans.isNotEmpty) {
+        descriptionSpans.add(TextSpan(text: '; ', style: regularStyle,),);
       }
       if (descriptionItems.isEmpty) {
-        descriptionList.add(TextSpan(text: descriptionCategory, style: boldStyle,));
+        descriptionSpans.add(TextSpan(text: descriptionCategory, style: boldStyle,));
       } else {
-        descriptionList.add(TextSpan(text: "$descriptionCategory: " , style: boldStyle,));
-        descriptionList.add(TextSpan(text: descriptionItems.join(', '), style: regularStyle,),);
+        descriptionSpans.add(TextSpan(text: "$descriptionCategory: " , style: boldStyle,));
+        descriptionSpans.add(TextSpan(text: descriptionItems.join(', '), style: regularStyle,),);
       }
     });
 
+    // Build description bar widget
     return Padding(padding: EdgeInsets.only(top: 12), child:
       Container(decoration: _contentDescriptionDecoration, child:
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
-              RichText(text: TextSpan(style: regularStyle, children: descriptionList)),
+              RichText(text: TextSpan(style: regularStyle, children: descriptionSpans)),
             ),
           ),
           Visibility(visible: _canShareFilters, child:
@@ -310,13 +319,16 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       });
 
       int queryLimit = max(_contentList?.length ?? 0, _contentPageLength);
-      List<Group>? contentList = await Groups().loadGroupsV2(GroupsQuery(
+      GroupsLoadResult? contentResult = await Groups().loadGroupsV2(GroupsQuery(
         filter: _filter, offset: 0, limit: queryLimit,
       ));
-      
+      List<Group>? contentList = contentResult?.groups;
+      int? totalContentLength = contentResult?.totalCount;
+
       if (mounted && (_contentActivity == _ContentActivity.reload)) {
         setState(() {
-          _contentList = contentList;
+          _contentList = (contentList != null) ? List<Group>.from(contentList) : null;
+          _totalContentLength = totalContentLength;
           _lastPageLoadedAll = (contentList != null) ? (contentList.length >= queryLimit) : null;
           _contentActivity = null;
         });
@@ -331,15 +343,20 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       });
 
       int queryLimit = max(_contentList?.length ?? 0, _contentPageLength);
-      List<Group>? contentList = await Groups().loadGroupsV2(GroupsQuery(
+      GroupsLoadResult? contentResult = await Groups().loadGroupsV2(GroupsQuery(
         filter: _filter, offset: 0, limit: queryLimit,
       ));
-      
+      List<Group>? contentList = contentResult?.groups;
+      int? totalContentLength = contentResult?.totalCount;
+
       if (mounted && (_contentActivity == _ContentActivity.refresh)) {
         setState(() {
           if (contentList != null) {
-            _contentList = contentList;
+            _contentList = List<Group>.from(contentList);
             _lastPageLoadedAll = (contentList.length >= queryLimit);
+          }
+          if (totalContentLength != null) {
+            _totalContentLength = totalContentLength;
           }
           _contentActivity = null;
         });
@@ -355,9 +372,11 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
       int queryOffset = _contentList?.length ?? 0;
       int queryLimit = _contentPageLength;
-      List<Group>? contentList = await Groups().loadGroupsV2(GroupsQuery(
+      GroupsLoadResult? contentResult = await Groups().loadGroupsV2(GroupsQuery(
         filter: _filter, offset: queryOffset, limit: queryLimit,
       ));
+      List<Group>? contentList = contentResult?.groups;
+      int? totalContentLength = contentResult?.totalCount;
 
       if (mounted && (_contentActivity == _ContentActivity.extend)) {
         setState(() {
@@ -368,6 +387,9 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
               _contentList = List<Group>.from(contentList);
             }
             _lastPageLoadedAll = (contentList.length >= queryLimit);
+          }
+          if (totalContentLength != null) {
+            _totalContentLength = totalContentLength;
           }
           _contentActivity = null;
         });
