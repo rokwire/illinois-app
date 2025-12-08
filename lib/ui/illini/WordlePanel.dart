@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -89,7 +90,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
           Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
             Text(Localization().getStringEx('panel.wordle.heading.info.text', 'Presented by The Daily Illini'), style: Styles().textStyles.getTextStyleEx('widget.message.light.small'), textAlign: TextAlign.center,)
           ),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: (kIsWeb ? 150 : 16), vertical: 16), child:
             AspectRatio(aspectRatio: _dailyWord?.asectRatio ?? 1.0, child:
               _bodyContent
             ),

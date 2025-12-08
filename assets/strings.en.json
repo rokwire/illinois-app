@@ -1359,6 +1359,7 @@
     "panel.events2.home.attributes.event_time.hint.semantics": "Double tap to show date & time options.",
     "panel.events2.home.message.failed.title": "Failed",
     "panel.events2.home.message.empty.description": "There are no events matching the selected filters.",
+    "panel.events2.home.prompt.close.hint": "Close prompt",
 
     "panel.event2.filters.header.title": "Event Filters",
 

@@ -1167,9 +1167,11 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
               ])
             ),
             Align(alignment: Alignment.topRight, child:
-              GestureDetector(onTap: _onTapCloseAssistantPrompt, child:
-                Padding(padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 16), child:
-                  Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
+              Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), hint: Localization().getStringEx("panel.events2.home.prompt.close.hint", "Close prompt"), button: true, child:
+                GestureDetector(onTap: _onTapCloseAssistantPrompt, child:
+                  Padding(padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 16), child:
+                    Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
+                  )
                 )
               )
             )

@@ -463,7 +463,7 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
 
   void _onTapDining(Dining dining) {
     Analytics().logSelect(target: "Dinning: '${dining.title}'", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: dining,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining,)));
   }
 
   void _onTapSeeAll() {
