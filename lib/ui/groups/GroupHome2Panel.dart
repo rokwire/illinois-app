@@ -11,6 +11,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
+import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -419,7 +420,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   void _onSearch() {
     Analytics().logSelect(target: 'Search');
-    //Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
   }
 
   void _onCreate() {
