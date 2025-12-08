@@ -3169,8 +3169,11 @@
     "panel.group.home2.bar.button.search.hint": "Tap to search groups",
     "panel.group.home2.bar.button.share.title": "Share",
     "panel.group.home2.bar.button.share.hint": "Tap to share current groups ",
-    "panel.group.home2.bar.button.share.title": "Clear",
-    "panel.group.home2.bar.button.share.hint": "Tap to clear current filter ",
+    "panel.group.home2.bar.button.clear.title": "Clear",
+   	"panel.group.home2.bar.button.clear.hint": "Tap to clear current filter ",
+    "panel.group.home2.bar.description.filters.title": "Filter",
+    "panel.group.home2.bar.description.groups.title": "Groups",
+   	"panel.group.home2.bar.description.filters.empty.title": "None",
 
     "panel.groups_settings.label.heading": "Configuración del Grupo",
     "panel.groups_settings.label.project.heading": "Configuración del Proyecto",
@@ -4411,6 +4414,7 @@
 
     "model.group.attributes.filters.header.title": "Group Filters",
     "model.group.attributes.filters.header.description": "Choose at least one attribute to filter the groups and tap Apply to save.",
+    "model.group.attributes.filters.description.title": "Filter",
 
     "model.group.attributes.details.title": "Group Details",
     "model.group.attributes.details.header.description": "Choose from the below options and tap the back button.",
@@ -4419,10 +4423,14 @@
     "model.group.attributes.details.hint.semantics": "Double tap to show group details.",
 
     "model.group.attributes.details.group.visibility": "Visibility",
-    "model.group.attributes.detail.public": "Public",
-    "model.group.attributes.detail.private": "Private",
-    "model.group.attributes.detail.event_admins": "Event Admins",
-    "model.group.attributes.detail.managed": "Univerity Managed",
+    "model.group.attributes.detail.public.title": "Public",
+   	"model.group.attributes.detail.public.hint": "Public",
+   	"model.group.attributes.detail.private.title": "Private",
+   	"model.group.attributes.detail.private.hint": "Private",
+   	"model.group.attributes.detail.event_admins.title": "Event Admins",
+   	"model.group.attributes.detail.event_admins.hint": "Event Admins",
+   	"model.group.attributes.detail.managed.title": "Univerity Managed",
+   	"model.group.attributes.detail.managed.hint": "Univerity Managed",
 
     "model.group.attributes.limits.title": "Limit Results To",
     "model.group.attributes.limits.header.description": "Choose from the below options and tap the back button.",
@@ -4430,9 +4438,12 @@
     "model.group.attributes.limits.hint.empty": "Choose limits",
     "model.group.attributes.limits.hint.semantics": "Double tap to choose group limits.",
 
-    "model.group.attributes.limit.admin": "Groups I administer",
-    "model.group.attributes.limit.member": "Groups I am member of",
-    "model.group.attributes.limit.candidate": "Groups I've requested to join (pending or denied)",
+    "model.group.attributes.limit.admin.title": "Groups I administer",
+   	"model.group.attributes.limit.admin.hint": "Admin",
+   	"model.group.attributes.limit.member.title": "Groups I am member of",
+   	"model.group.attributes.limit.member.hint": "Member",
+   	"model.group.attributes.limit.candidate.title": "Groups I've requested to join (pending or denied)",
+   	"model.group.attributes.limit.candidate.hint": "Requested to Join",
 
     "model.dining.schedule.label.closed_for_two_weeks":"Cerrado por las próximas 2 semanas",
     "model.dining.schedule.label.open_at":"Apertura en",

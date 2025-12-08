@@ -163,53 +163,54 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   Widget get _contentDescriptionBar {
     LinkedHashMap<String, List<String>>? descriptionMap = LinkedHashMap<String, List<String>>();
-    if ((descriptionMap != null) && descriptionMap.isNotEmpty)  {
-      List<InlineSpan> descriptionList = <InlineSpan>[];
-      TextStyle? boldStyle = Styles().textStyles.getTextStyle('widget.card.title.tiny.fat');
-      TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.card.detail.small.regular');
-      descriptionMap.forEach((String descriptionCategory, List<String> descriptionItems){
-        if (descriptionList.isNotEmpty) {
-          descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
-        }
-        if (descriptionItems.isEmpty) {
-          descriptionList.add(TextSpan(text: descriptionCategory, style: boldStyle,));
-        } else {
-          descriptionList.add(TextSpan(text: "$descriptionCategory: " , style: boldStyle,));
-          descriptionList.add(TextSpan(text: descriptionItems.join(', '), style: regularStyle,),);
-        }
-      });
 
-      return Padding(padding: EdgeInsets.only(top: 12), child:
-        Container(decoration: _contentDescriptionDecoration, child:
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Expanded(child:
-              Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
-                RichText(text: TextSpan(style: regularStyle, children: descriptionList)),
-              ),
-            ),
-            Visibility(visible: _canShareFilters, child:
-              Event2ImageCommandButton(Styles().images.getImage('share-nodes'),
-                label: Localization().getStringEx('panel.group.home2.bar.button.share.title', 'Share'),
-                hint: Localization().getStringEx('panel.group.home2.bar.button.share.hint', 'Tap to share current groups'),
-                contentPadding: EdgeInsets.only(left: 16, right: _canClearFilter ? (8 + 2) : 16, top: 12, bottom: 12),
-                onTap: _onShareFilters
-              ),
-            ),
-            Visibility(visible: _canClearFilter, child:
-              Event2ImageCommandButton(Styles().images.getImage('close'), // size: 14
-                label: Localization().getStringEx('panel.group.home2.bar.button.clear.title', 'Clear Filters'),
-                hint: Localization().getStringEx('panel.group.home2.bar.button.clear.hint', 'Tap to clear current filters'),
-                contentPadding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
-                onTap: _onClearFilter
-              ),
-            ),
-          ],)
-      ));
+    String filterTitle = Localization().getStringEx('panel.group.home2.bar.description.filters.title', 'Filter');
+    List<String>? filterDescription = _filter?.description;
+    descriptionMap[filterTitle] = ((filterDescription != null) && filterDescription.isNotEmpty) ? filterDescription : <String>[
+      Localization().getStringEx('panel.group.home2.bar.description.filters.empty.title', 'None')
+    ];
 
-    } else {
-      return Container(height: 12);
-    }
+    List<InlineSpan> descriptionList = <InlineSpan>[];
+    TextStyle? boldStyle = Styles().textStyles.getTextStyle('widget.card.title.tiny.fat');
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle('widget.card.detail.small.regular');
+    descriptionMap.forEach((String descriptionCategory, List<String> descriptionItems){
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
+      }
+      if (descriptionItems.isEmpty) {
+        descriptionList.add(TextSpan(text: descriptionCategory, style: boldStyle,));
+      } else {
+        descriptionList.add(TextSpan(text: "$descriptionCategory: " , style: boldStyle,));
+        descriptionList.add(TextSpan(text: descriptionItems.join(', '), style: regularStyle,),);
+      }
+    });
 
+    return Padding(padding: EdgeInsets.only(top: 12), child:
+      Container(decoration: _contentDescriptionDecoration, child:
+        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
+              RichText(text: TextSpan(style: regularStyle, children: descriptionList)),
+            ),
+          ),
+          Visibility(visible: _canShareFilters, child:
+            Event2ImageCommandButton(Styles().images.getImage('share-nodes'),
+              label: Localization().getStringEx('panel.group.home2.bar.button.share.title', 'Share'),
+              hint: Localization().getStringEx('panel.group.home2.bar.button.share.hint', 'Tap to share current groups'),
+              contentPadding: EdgeInsets.only(left: 16, right: _canClearFilter ? (8 + 2) : 16, top: 12, bottom: 12),
+              onTap: _onShareFilters
+            ),
+          ),
+          Visibility(visible: _canClearFilter, child:
+            Event2ImageCommandButton(Styles().images.getImage('close'), // size: 14
+              label: Localization().getStringEx('panel.group.home2.bar.button.clear.title', 'Clear Filters'),
+              hint: Localization().getStringEx('panel.group.home2.bar.button.clear.hint', 'Tap to clear current filters'),
+              contentPadding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
+              onTap: _onClearFilter
+            ),
+          ),
+        ],)
+    ));
   }
 
   Decoration get _contentDescriptionDecoration => BoxDecoration(
@@ -402,18 +403,16 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     Navigator.push(context, MaterialPageRoute(builder: (context) => GroupCreatePanel()));
   }
 
-  bool get _canShareFilters => true;
+  bool get _canShareFilters =>
+    (_filter?.isNotEmpty == true) && (_contentActivity?._hidesContent != true);
 
   void _onShareFilters() {
     Analytics().logSelect(target: 'Share Filters');
     // Navigator.push(context, CupertinoPageRoute(builder: (context) => QrCodePanel.fromEventFilterParam(_currentFilterParam)));
   }
 
-  bool get _canClearFilter => true;
-    /*(_timeFilter != Event2TimeFilter.upcoming) ||
-    (_sortType != Event2SortType.dateTime) ||
-    _types.isNotEmpty ||
-    _attributes.isNotEmpty;*/
+  bool get _canClearFilter =>
+    (_filter?.isNotEmpty == true) && (_contentActivity?._hidesContent != true);
 
   void _onClearFilter() {
     Analytics().logSelect(target: 'Clear Filter');
@@ -427,36 +426,6 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     });*/
   }
 }
-
-class Abc {
-  Future<GroupsFilter?> edit(BuildContext context, GroupsFilter filter) async {
-    ContentAttributes? contentAttributes = _GroupsFilterContentAttributes._contentAttributes;
-    if (contentAttributes != null) {
-      Map<String, dynamic> selection = MapUtils.from(filter.attributes) ?? <String, dynamic>{};
-      selection[_GroupsFilterContentAttributes._detailsContentAttributeId] = filter._detailsContentAttributes;
-      selection[_GroupsFilterContentAttributes._limitsContentAttributeId] = filter._limitsContentAttributes;
-
-      dynamic result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
-        title: Localization().getStringEx('model.group.attributes.filters.header.title', 'Group Filters'),
-        description: Localization().getStringEx('model.group.attributes.filters.header.description', 'Choose at least one attribute to filter the groups and tap Apply to save.'),
-        contentAttributes: contentAttributes,
-        selection: selection,
-
-        scope: Groups.groupsContentAttributesScope,
-        sortType: ContentAttributesSortType.native,
-        filtersMode: true,
-        //countAttributeValues: countAttributeValues,
-      )));
-
-      Map<String, dynamic>? selection2 = JsonUtils.mapValue(result);
-      return (selection2 != null) ? _GroupsFilterContentAttributes._fromAttributesSelection(selection) : null;
-    } else {
-      return null;
-    }
-  }
-}
-
-
 
 extension _GroupsFilterContentAttributes on GroupsFilter {
 
@@ -540,7 +509,37 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
       value: value, label: value.displayTitle,
     ))),
   );
+  
+  List<String> get description {
+    List<String> descriptionList = <String>[];
 
+    for (GroupsFilterType type in GroupsFilterGroup.details.types) {
+      if (types?.contains(type) == true) {
+        descriptionList.add(type.displayHint);
+      }
+    }
+
+    ContentAttributes? contentAttributes = Groups().groupsContentAttributes;
+    List<ContentAttribute>? attributesList = contentAttributes?.attributes;
+    if ((attributes?.isNotEmpty == true) && (contentAttributes != null) && (attributesList != null)) {
+      for (ContentAttribute attribute in attributesList) {
+        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(attributes, complete: true);
+        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+          for (String attributeValue in displayAttributeValues) {
+            descriptionList.add(attributeValue);
+          }
+        }
+      }
+    }
+
+    for (GroupsFilterType type in GroupsFilterGroup.limits.types) {
+      if (types?.contains(type) == true) {
+        descriptionList.add(type.displayHint);
+      }
+    }
+
+    return descriptionList;
+  }
 }
 
 enum GroupsFilterGroup { details, limits }
@@ -572,14 +571,27 @@ extension _GroupsFilterTypeContentAttribute on GroupsFilterType {
 
   String get displayTitle {
     switch (this) {
-      case GroupsFilterType.public: return Localization().getStringEx('model.group.attributes.detail.public', 'Public');
-      case GroupsFilterType.private: return Localization().getStringEx('model.group.attributes.detail.private', 'Private');
-      case GroupsFilterType.eventAdmin: return Localization().getStringEx('model.group.attributes.detail.event_admins', 'Event Admins');
-      case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed', 'Univerity Managed');
+      case GroupsFilterType.public: return Localization().getStringEx('model.group.attributes.detail.public.title', 'Public');
+      case GroupsFilterType.private: return Localization().getStringEx('model.group.attributes.detail.private.title', 'Private');
+      case GroupsFilterType.eventAdmin: return Localization().getStringEx('model.group.attributes.detail.event_admins.title', 'Event Admins');
+      case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.title', 'Univerity Managed');
 
-      case GroupsFilterType.admin: return Localization().getStringEx('model.group.attributes.limit.admin', 'Groups I administer');
-      case GroupsFilterType.member: return Localization().getStringEx('model.group.attributes.limit.member', 'Groups I am member of');
-      case GroupsFilterType.candidate: return Localization().getStringEx('model.group.attributes.limit.candidate', 'Groups I\'ve requested to join (pending or denied)');
+      case GroupsFilterType.admin: return Localization().getStringEx('model.group.attributes.limit.admin.title', 'Groups I administer');
+      case GroupsFilterType.member: return Localization().getStringEx('model.group.attributes.limit.member.title', 'Groups I am member of');
+      case GroupsFilterType.candidate: return Localization().getStringEx('model.group.attributes.limit.candidate.title', 'Groups I\'ve requested to join (pending or denied)');
+    }
+  }
+
+  String get displayHint {
+    switch (this) {
+      case GroupsFilterType.public: return Localization().getStringEx('model.group.attributes.detail.public.hint', 'Public');
+      case GroupsFilterType.private: return Localization().getStringEx('model.group.attributes.detail.private.hint', 'Private');
+      case GroupsFilterType.eventAdmin: return Localization().getStringEx('model.group.attributes.detail.event_admins.hint', 'Event Admins');
+      case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.hint', 'Univerity Managed');
+
+      case GroupsFilterType.admin: return Localization().getStringEx('model.group.attributes.limit.admin.hint', 'Admin');
+      case GroupsFilterType.member: return Localization().getStringEx('model.group.attributes.limit.member.hint', 'Member');
+      case GroupsFilterType.candidate: return Localization().getStringEx('model.group.attributes.limit.candidate.hint', 'Requested to Join');
     }
   }
 
@@ -594,4 +606,8 @@ extension _GroupsFilterTypeContentAttribute on GroupsFilterType {
       return null;
     }
   }
+}
+
+extension _ContentActivityImpl on _ContentActivity {
+  bool get _hidesContent => ((this == _ContentActivity.reload) || (this == _ContentActivity.refresh));
 }
