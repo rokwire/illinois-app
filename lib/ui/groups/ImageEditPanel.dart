@@ -148,9 +148,9 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                     RoundedButton(label: "Ok",
                       onTap: _onFinish,
                       progress: _saving,
-                      progressSize: 24,)
-                      // enabled: _imageDescriptionData?.isValidated == true,
-                      // borderColor: _imageDescriptionData?.isValidated == true? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,),
+                      progressSize: 24,
+                      enabled: _imageDescriptionData?.isValidated == true,
+                      borderColor: _imageDescriptionData?.isValidated == true? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,),
                   ),
                   Container(width: 16,),
                   Expanded(
@@ -316,6 +316,11 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   }
 
   void _onFinish() async{
+    if(_imageDescriptionData?.isValidated != true){
+      AppAlert.showTextMessage(this.context, Localization().getStringEx("panel.image_edit.alt_text.validation.msg", "Please provide image alt text."));
+      return;
+    }
+
     if(widget.storagePath!=null || widget.isUserPic){
       if (_saving != true) {
         setState(() {
