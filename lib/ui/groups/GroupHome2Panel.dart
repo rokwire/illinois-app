@@ -425,8 +425,8 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     Navigator.push(context, MaterialPageRoute(builder: (context) => GroupCreatePanel()));
   }
 
-  bool get _canShareFilters =>
-    (_filter?.isNotEmpty == true) && (_contentActivity?._hidesContent != true);
+  bool get _canShareFilters => false; // No share feature for now
+    // (_filter?.isNotEmpty == true) && (_contentActivity?._hidesContent != true);
 
   void _onShareFilters() {
     Analytics().logSelect(target: 'Share Filters');
@@ -438,14 +438,11 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   void _onClearFilter() {
     Analytics().logSelect(target: 'Clear Filter');
-    /*setState(() {
-      _timeFilter = Event2TimeFilter.upcoming;
-      _customStartTime = null;
-      _customEndTime = null;
-      _types = LinkedHashSet<Event2TypeFilter>();
-      _attributes = <String, dynamic>{};
-      _sortType = Event2SortType.dateTime;
-    });*/
+    setState(() {
+      _filter = null;
+    });
+
+    _reloadContent();
   }
 }
 
