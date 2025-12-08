@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Preload profile photo when editing [#5571](https://github.com/rokwire/illinois-app/issues/5571).
 - Sort dining schedules by time [#5577](https://github.com/rokwire/illinois-app/issues/5577).
 - Accessibility for unlabeled buttons [#5573](https://github.com/rokwire/illinois-app/issues/5573).
+- Image Alt text is required [#4836](https://github.com/rokwire/illinois-app/issues/4836).
 
 ## [7.3.33] - 2025-12-01
 ### Added
