@@ -1356,6 +1356,7 @@
     "panel.events2.home.attributes.event_time.hint.semantics": "Toca dos veces para mostrar las opciones de fecha y hora.",
     "panel.events2.home.message.failed.title": "Error",
     "panel.events2.home.message.empty.description": "No hay eventos que coincidan con los filtros seleccionados.",
+    "panel.events2.home.prompt.close.hint": "Close prompt",
 
     "panel.event2.filters.header.title": "Filtros para los Eventos",
 
