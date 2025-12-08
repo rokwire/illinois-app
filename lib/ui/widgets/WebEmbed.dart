@@ -3,6 +3,8 @@ import 'package:universal_io/io.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:web/web.dart' as web;
+import 'dart:ui_web' as ui_web;
 
 enum WebEmbedType {
   youtube,
@@ -16,24 +18,43 @@ class WebEmbed extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   WebEmbed(String? body, {super.key, this.padding = const EdgeInsets.symmetric(vertical: 8.0) }) :
-    _data = _WebEmbedData.fromBody(body);
+    _data = _WebEmbedData.fromBody(body) {
+    if (kIsWeb && (_data != null)) {
+      _WebEmbedRegistry.register(_data!.url);
+    }
+  }
 
   @override
   Widget build(BuildContext context) => (_data != null) ?
     Padding(padding: padding, child:
       AspectRatio(aspectRatio: _data!.aspectRatio, child:
-        WebViewWidget(controller: _data!.controller),
+        _buildWebWidget(context),
       ),
     ) : Container();
+
+  Widget _buildWebWidget(BuildContext context) {
+    if (_data != null) {
+      if (kIsWeb) {
+        String url = _data!.url;
+        return HtmlElementView(viewType: '${_WebEmbedRegistry.webEmbedViewTypeKey}-${url.hashCode}');
+      } else {
+        return WebViewWidget(controller: _data!.controller);
+      }
+    } else {
+      return Container();
+    }
+  }
 }
 
 class _WebEmbedData {
   final double aspectRatio;
   final WebViewController controller;
+  final String url;
 
   _WebEmbedData({
     required this.controller,
-    required this.aspectRatio
+    required this.aspectRatio,
+    required this.url,
   });
 
   static _WebEmbedData? fromBody(String? body) {
@@ -51,7 +72,7 @@ class _WebEmbedData {
         controller..loadRequest(embedUri, headers: {
           HttpHeaders.refererHeader: Config().universityHomepageUrl ?? 'https://illinois.edu',
         });
-        return _WebEmbedData(controller: controller, aspectRatio: (type != WebEmbedType.other) ? (16 / 9) : 1);
+        return _WebEmbedData(controller: controller, aspectRatio: (type != WebEmbedType.other) ? (16 / 9) : 1, url: embedUrl);
       } else {
         return null;
       }
@@ -168,5 +189,32 @@ class _WebEmbedData {
       return null;
     }
     return null;
+  }
+}
+
+class _WebEmbedRegistry {
+  static final String webEmbedViewTypeKey = 'web-embed-iframe';
+  static final Set<String> _registered = {};
+
+  static void register(String url) {
+    final key = '$webEmbedViewTypeKey-${url.hashCode}';
+    if (!_registered.contains(key)) {
+      ui_web.platformViewRegistry.registerViewFactory(
+        key,
+        (int viewId) {
+          final iFrame = web.HTMLIFrameElement()
+            ..src = url
+            ..style.border = '0'
+            ..style.width = '100%'
+            ..style.height = '100%'
+            ..style.display = 'block'
+            ..allowFullscreen = true;
+
+          return iFrame;
+        }
+      );
+
+      _registered.add(key);
+    }
   }
 }

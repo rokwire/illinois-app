@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Preload profile photo when editing [#5571](https://github.com/rokwire/illinois-app/issues/5571).
 - WEB: ILLordle: Make black text color and decrease the size of the widget [#5568](https://github.com/rokwire/illinois-app/issues/5568).
 - Sort dining schedules by time [#5577](https://github.com/rokwire/illinois-app/issues/5577).
+- WEB: Show videos in a Group post [#5513](https://github.com/rokwire/illinois-app/issues/5513).
 
 ## [7.3.33] - 2025-12-01
 ### Added
