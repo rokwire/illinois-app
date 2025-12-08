@@ -172,7 +172,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       Localization().getStringEx('panel.group.home2.bar.description.filters.empty.title', 'None')
     ];
 
-    if (_totalContentLength != null) {
+    if ((_totalContentLength != null) && (_contentActivity?._hidesContent != true)) {
       String groupsTitle = Localization().getStringEx('panel.group.home2.bar.description.groups.title', 'Groups');
       descriptionMap[groupsTitle] = <String>[_totalContentLength?.toString() ?? ''];
     }
