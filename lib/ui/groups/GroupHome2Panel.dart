@@ -471,7 +471,7 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
         scope: Groups.groupsContentAttributesScope,
         sortType: ContentAttributesSortType.native,
         filtersMode: true,
-        //countAttributeValues: countAttributeValues,
+        countAttributeValues: _countAttributeValues,
       )));
 
       Map<String, dynamic>? outputSelection = JsonUtils.mapValue(result);
@@ -479,6 +479,34 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
     } else {
       return null;
     }
+  }
+
+  static Future<Map<dynamic, int?>?> _countAttributeValues({
+    required ContentAttribute attribute,
+    required List<ContentAttributeValue> attributeValues,
+    Map<String, dynamic>? attributesSelection,
+    ContentAttributes? contentAttributes,
+  }) async {
+    String? attributeId = attribute.id;
+    if (attributeId != null) {
+      GroupsFilter baseFilter = _fromAttributesSelection(attributesSelection ?? {});
+
+      Map<String, dynamic> valueIds = <String, dynamic>{};
+      Map<String, GroupsFilter> countFilters = <String, GroupsFilter>{};
+      for (ContentAttributeValue attributeValue in attributeValues) {
+        String? valueId = attributeValue.valueId;
+        if (valueId != null) {
+          valueIds[valueId] = attributeValue.value;
+          countFilters[valueId] = _fromAttributesSelection({
+            attributeId: attributeValue.value,
+          });
+        }
+      }
+
+      Map<String, int?>? counts = await Groups().loadGroupsV2Counts(countFilters, baseFilter: baseFilter, );
+      return counts?.map<dynamic, int?>((String valueId, int? count) => MapEntry(valueIds[valueId], count));
+    }
+    return null;
   }
 
   static GroupsFilter _fromAttributesSelection(Map<String, dynamic> selection) {
@@ -624,6 +652,21 @@ extension _GroupsFilterTypeContentAttribute on GroupsFilterType {
     }
     else if (attributeSelection is GroupsFilterType) {
       return <GroupsFilterType>{attributeSelection};
+    }
+    else {
+      return null;
+    }
+  }
+}
+
+extension _ContentAttributeValueImpl on ContentAttributeValue {
+  String? get valueId {
+    dynamic v = value;
+    if (v is String) {
+      return v;
+    }
+    else if (v is GroupsFilterType) {
+      return v.toCode();
     }
     else {
       return null;
