@@ -35,6 +35,7 @@ import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:illinois/ui/widgets/FocusableSemanticsWidget.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -93,13 +94,13 @@ class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
   
   Widget get _contentTypeBar => Row(children:List<Widget>.from(
     FavoriteContentType.values.map((FavoriteContentType contentType) => Expanded(child:
-      HomeFavTabBarBtn(contentType.eventsTitle.toUpperCase(),
+      FocusableSemanticsWidget(child: HomeFavTabBarBtn(contentType.eventsTitle.toUpperCase(),
         position: contentType.position,
         selected: _contentType == contentType,
         onTap: () => _onContentType(contentType),
       )
     )),
-  ));
+  )));
 
   void _onContentType(FavoriteContentType contentType) {
     if ((_contentType != contentType) && mounted) {

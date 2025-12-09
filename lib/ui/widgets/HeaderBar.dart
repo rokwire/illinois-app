@@ -315,13 +315,13 @@ class _RootHeaderBarState extends State<RootHeaderBar> with NotificationsListene
   }
 
   Widget _buildHeaderHomeButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapHome(),),);
+    return FocusableSemanticsWidget(child: Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapHome(),),));
   }
 
   Widget _buildHeaderBackButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapBack()));
+    return FocusableSemanticsWidget(child: Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapBack())));
   }
 
   Widget _buildHeaderWidget() {
