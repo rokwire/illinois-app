@@ -84,7 +84,6 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
       Polls.notifyResultsChanged,
       GeoFence.notifyCurrentRegionsUpdated,
       FlexUI.notifyChanged,
-      Groups.notifyUserMembershipUpdated,
     ]);
 
     _scrollController = ScrollController();
@@ -707,11 +706,6 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
     }
     else if (name == FlexUI.notifyChanged) {
       setStateIfMounted(() { });
-    }
-    else if (name == Groups.notifyUserMembershipUpdated) {
-      _reloadMyGroups().then((_) {
-        _loadPolls();
-      });
     }
   }
 }

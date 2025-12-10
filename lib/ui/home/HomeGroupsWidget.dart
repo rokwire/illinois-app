@@ -122,7 +122,6 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
     super.initState();
 
     NotificationService().subscribe(this, [
-      Groups.notifyUserMembershipUpdated,
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
       Groups.notifyGroupDeleted,
@@ -158,7 +157,6 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
     else if ((name == Groups.notifyGroupCreated) ||
       (name == Groups.notifyGroupUpdated) ||
       (name == Groups.notifyGroupDeleted) ||
-      (name == Groups.notifyUserMembershipUpdated) ||
       (name == Connectivity.notifyStatusChanged) ||
       (name == Auth2.notifyLoginChanged)
     ) {

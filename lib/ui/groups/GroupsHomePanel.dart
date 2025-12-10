@@ -81,7 +81,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      Groups.notifyUserMembershipUpdated,
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
       Groups.notifyGroupDeleted,
@@ -713,10 +712,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> with NotificationsLis
   // NotificationsListener
 
   void onNotification(String name, dynamic param){
-    if (name == Groups.notifyUserMembershipUpdated) {
-      _updateState();
-    }
-    else if (name == Groups.notifyGroupCreated) {
+    if (name == Groups.notifyGroupCreated) {
       if (mounted) {
         _newGroupId = param;
         _newGroupKey = GlobalKey();

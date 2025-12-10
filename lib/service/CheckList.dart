@@ -56,7 +56,6 @@ abstract class CheckList with Service, NotificationsListener implements ContentI
     super.createService();
     NotificationService().subscribe(this, [
       Content.notifyContentItemsChanged,
-      Groups.notifyUserMembershipUpdated,
       Groups.notifyGroupUpdated,
       Groups.notifyUserGroupsUpdated,
     ]);
@@ -107,9 +106,7 @@ abstract class CheckList with Service, NotificationsListener implements ContentI
     if (name == Content.notifyContentItemsChanged) {
       _onContentItemsChanged(param);
     }
-    else if (name == Groups.notifyUserMembershipUpdated ||
-        name == Groups.notifyGroupUpdated ||
-        name == Groups.notifyUserGroupsUpdated) {
+    else if (name == Groups.notifyGroupUpdated || name == Groups.notifyUserGroupsUpdated) {
       _loadPageVerification(notify: true);
     }
   }

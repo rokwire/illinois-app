@@ -64,7 +64,6 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       Groups.notifyGroupUpdated,
       Groups.notifyGroupDeleted,
       Groups.notifyUserGroupsUpdated,
-      Groups.notifyUserMembershipUpdated,
       Auth2.notifyLoginChanged,
     ]);
 
@@ -89,8 +88,6 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     else if ((name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted)) {
     }
     else if (name == Groups.notifyUserGroupsUpdated) {
-    }
-    else if (name == Groups.notifyUserMembershipUpdated) {
     }
     else if (name == Auth2.notifyLoginChanged) {
     }
