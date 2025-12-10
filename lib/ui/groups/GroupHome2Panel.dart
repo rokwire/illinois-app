@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -80,19 +81,6 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     super.dispose();
   }
 
-  // NotificationsListener
-
-  void onNotification(String name, dynamic param) {
-    if (name == Groups.notifyGroupCreated) {
-    }
-    else if ((name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted)) {
-    }
-    else if (name == Groups.notifyUserGroupsUpdated) {
-    }
-    else if (name == Auth2.notifyLoginChanged) {
-    }
-  }
-
   @override
   Widget build(BuildContext context) => Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx("panel.groups_home.label.heading", "Groups"), leading: RootHeaderBarLeading.Back,),
@@ -166,7 +154,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     LinkedHashMap<String, List<String>>? descriptionMap = LinkedHashMap<String, List<String>>();
 
     String filterTitle = Localization().getStringEx('panel.group.home2.bar.description.filters.title', 'Filter');
-    List<String>? filterDescription = _filter?.description;
+    List<String>? filterDescription = _filter?.authValidated.description;
     descriptionMap[filterTitle] = ((filterDescription != null) && filterDescription.isNotEmpty) ? filterDescription : <String>[
       Localization().getStringEx('panel.group.home2.bar.description.filters.empty.title', 'None')
     ];
@@ -308,18 +296,19 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     }
   }
 
-  bool? get _hasMoreContent => (_lastPageLoadedAll != false);
+  bool? get _hasMoreContent => (_totalContentLength != null) ? (_listSafeContentLength < _totalSafeContentLength) : (_lastPageLoadedAll != false);
+  int get _totalSafeContentLength => _totalContentLength ?? 0;
+  int get _listSafeContentLength => _contentList?.length ?? 0;
+  int get _refreshContentLength => max(_listSafeContentLength, _contentPageLength);
 
-  //ignore: unused_element_parameter
   Future<void> _reloadContent({ int limit = _contentPageLength }) async {
     if ((_contentActivity != _ContentActivity.reload) && mounted) {
       setState(() {
         _contentActivity = _ContentActivity.reload;
       });
 
-      int queryLimit = max(_contentList?.length ?? 0, _contentPageLength);
       GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
-        filter: _filter, offset: 0, limit: queryLimit,
+        filter: _filter?.authValidated, offset: 0, limit: limit,
       ));
       List<Group>? contentList = contentResult?.groups;
       int? totalContentLength = contentResult?.totalCount;
@@ -328,7 +317,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
         setState(() {
           _contentList = (contentList != null) ? List<Group>.from(contentList) : null;
           _totalContentLength = totalContentLength;
-          _lastPageLoadedAll = (contentList != null) ? (contentList.length >= queryLimit) : null;
+          _lastPageLoadedAll = (contentList != null) ? (contentList.length >= limit) : null;
           _contentActivity = null;
         });
       }
@@ -343,7 +332,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
       int queryLimit = max(_contentList?.length ?? 0, _contentPageLength);
       GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
-        filter: _filter, offset: 0, limit: queryLimit,
+        filter: _filter?.authValidated, offset: 0, limit: queryLimit,
       ));
       List<Group>? contentList = contentResult?.groups;
       int? totalContentLength = contentResult?.totalCount;
@@ -372,7 +361,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       int queryOffset = _contentList?.length ?? 0;
       int queryLimit = _contentPageLength;
       GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
-        filter: _filter, offset: queryOffset, limit: queryLimit,
+        filter: _filter?.authValidated, offset: queryOffset, limit: queryLimit,
       ));
       List<Group>? contentList = contentResult?.groups;
       int? totalContentLength = contentResult?.totalCount;
@@ -396,11 +385,60 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     }
   }
 
+  // Notification Handlers
+
+  void onNotification(String name, dynamic param) {
+    if (name == Groups.notifyGroupCreated) {
+      String? groupId = JsonUtils.stringValue(param);
+      if (mounted && (groupId != null)) {
+        _onGroupCreated(groupId);
+      }
+    }
+    else if (name == Groups.notifyGroupUpdated) {
+      String? groupId = JsonUtils.stringValue(param);
+      if (mounted && ((groupId == null) || (_contentList?.containsGroupId(groupId) == true))) {
+        _reloadContent(limit: _refreshContentLength);
+      }
+    }
+    else if (name == Groups.notifyGroupDeleted) {
+      String? groupId = JsonUtils.stringValue(param);
+      if (mounted && (groupId != null) && (_contentList?.containsGroupId(groupId) == true)) {
+        _reloadContent(limit: max(_refreshContentLength - 1, _contentPageLength));
+      }
+    }
+    else if (name == Groups.notifyUserGroupsUpdated) {
+      _reloadContent(limit: _refreshContentLength);
+    }
+    else if (name == Auth2.notifyLoginChanged) {
+      _reloadContent(limit: _refreshContentLength);
+    }
+  }
+
+  void _onGroupCreated(String groupId) {
+    setStateIfMounted(() {
+      _cardKeys[groupId] = GlobalKey();
+    });
+    _reloadContent(limit: max(_totalSafeContentLength, _refreshContentLength) + 1 /* _refreshContentLength + 1 */ /* TBD: ensure groupId visibility */).then((_){
+      if (mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          BuildContext? cardContext = _cardKeys[groupId]?.currentContext;
+          if ((cardContext != null) && cardContext.mounted) {
+            Scrollable.ensureVisible(cardContext, duration: Duration(milliseconds: 300)).then((_){
+              setStateIfMounted((){
+                _cardKeys.remove(groupId);
+              });
+            });
+          }
+        });
+      }
+    });
+  }
+
   // Command Handlers
 
   void _onFilter() {
     Analytics().logSelect(target: 'Filter');
-    GroupsFilter filter = _filter ?? GroupsFilter();
+    GroupsFilter filter = _filter?.authValidated ?? GroupsFilter();
     filter.edit(context).then((GroupsFilter? filter){
       if ((filter != null) && mounted) {
         setState(() {
@@ -434,7 +472,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   }
 
   bool get _canClearFilter =>
-    (_filter?.isNotEmpty == true) && (_contentActivity?._hidesContent != true);
+    (_filter?.authValidated.isNotEmpty == true) && (_contentActivity?._hidesContent != true);
 
   void _onClearFilter() {
     Analytics().logSelect(target: 'Clear Filter');
@@ -686,3 +724,18 @@ extension _GroupsStorageImpl on Storage {
     groupsFilter = JsonUtils.encode(filter?.toJson());
 }
 
+extension GroupsFilterAuthTypes on Set<GroupsFilterType> {
+  static const Set<GroupsFilterType> _authTypes = <GroupsFilterType> {
+    GroupsFilterType.eventAdmin, GroupsFilterType.admin, GroupsFilterType.member, GroupsFilterType.candidate,
+  };
+
+  Set<GroupsFilterType> get noAuthTypes => this.difference(_authTypes);
+}
+
+extension _GroupsFilterAuthImpl on GroupsFilter {
+
+  GroupsFilter get authValidated => Auth2().isLoggedIn ? this : GroupsFilter(
+    types: types?.noAuthTypes,
+    attributes: attributes
+  );
+}
