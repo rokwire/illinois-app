@@ -301,8 +301,10 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   int get _listSafeContentLength => _contentList?.length ?? 0;
   int get _refreshContentLength => max(_listSafeContentLength, _contentPageLength);
 
-  Future<void> _reloadContent({ int limit = _contentPageLength }) async {
+  Future<void> _reloadContent({ int limit = _contentPageLength, bool restoreScrollPosition = false }) async {
     if ((_contentActivity != _ContentActivity.reload) && mounted) {
+      double scrollPosition = _scrollController.hasClients ? _scrollController.offset : 0;
+
       setState(() {
         _contentActivity = _ContentActivity.reload;
       });
@@ -320,6 +322,12 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
           _lastPageLoadedAll = (contentList != null) ? (contentList.length >= limit) : null;
           _contentActivity = null;
         });
+
+        if (restoreScrollPosition) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _scrollController.jumpTo(scrollPosition);
+          });
+        }
       }
     }
   }
@@ -397,20 +405,20 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     else if (name == Groups.notifyGroupUpdated) {
       String? groupId = JsonUtils.stringValue(param);
       if (mounted && ((groupId == null) || (_contentList?.containsGroupId(groupId) == true))) {
-        _reloadContent(limit: _refreshContentLength);
+        _reloadContent(limit: _refreshContentLength, restoreScrollPosition: true);
       }
     }
     else if (name == Groups.notifyGroupDeleted) {
       String? groupId = JsonUtils.stringValue(param);
       if (mounted && (groupId != null) && (_contentList?.containsGroupId(groupId) == true)) {
-        _reloadContent(limit: max(_refreshContentLength - 1, _contentPageLength));
+        _reloadContent(limit: max(_refreshContentLength - 1, _contentPageLength), restoreScrollPosition: true);
       }
     }
     else if (name == Groups.notifyUserGroupsUpdated) {
-      _reloadContent(limit: _refreshContentLength);
+      _reloadContent(limit: _refreshContentLength, restoreScrollPosition: true);
     }
     else if (name == Auth2.notifyLoginChanged) {
-      _reloadContent(limit: _refreshContentLength);
+      _reloadContent(limit: _refreshContentLength, restoreScrollPosition: true);
     }
   }
 
@@ -423,7 +431,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
         WidgetsBinding.instance.addPostFrameCallback((_) {
           BuildContext? cardContext = _cardKeys[groupId]?.currentContext;
           if ((cardContext != null) && cardContext.mounted) {
-            Scrollable.ensureVisible(cardContext, duration: Duration(milliseconds: 300)).then((_){
+            Scrollable.ensureVisible(cardContext).then((_){
               setStateIfMounted((){
                 _cardKeys.remove(groupId);
               });
