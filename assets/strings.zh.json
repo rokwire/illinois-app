@@ -4412,6 +4412,8 @@
 	"model.group.attributes.detail.event_admins.hint": "Event Admins",
 	"model.group.attributes.detail.managed.title": "Univerity Managed",
 	"model.group.attributes.detail.managed.hint": "Univerity Managed",
+	"model.group.attributes.detail.administrative.title": "Administrative",
+	"model.group.attributes.detail.administrative.hint": "Administrative",
 
 	"model.group.attributes.limits.title": "Limit Results To",
 	"model.group.attributes.limits.header.description": "Choose from the below options and tap the back button.",

@@ -321,7 +321,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       });
 
       int queryLimit = max(_contentList?.length ?? 0, _contentPageLength);
-      GroupsLoadResult? contentResult = await Groups().loadGroupsV2(GroupsQuery(
+      GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
         filter: _filter, offset: 0, limit: queryLimit,
       ));
       List<Group>? contentList = contentResult?.groups;
@@ -345,7 +345,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       });
 
       int queryLimit = max(_contentList?.length ?? 0, _contentPageLength);
-      GroupsLoadResult? contentResult = await Groups().loadGroupsV2(GroupsQuery(
+      GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
         filter: _filter, offset: 0, limit: queryLimit,
       ));
       List<Group>? contentList = contentResult?.groups;
@@ -374,7 +374,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
       int queryOffset = _contentList?.length ?? 0;
       int queryLimit = _contentPageLength;
-      GroupsLoadResult? contentResult = await Groups().loadGroupsV2(GroupsQuery(
+      GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
         filter: _filter, offset: queryOffset, limit: queryLimit,
       ));
       List<Group>? contentList = contentResult?.groups;
@@ -503,7 +503,7 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
         }
       }
 
-      Map<String, int?>? counts = await Groups().loadGroupsV2Counts(countFilters, baseFilter: baseFilter, );
+      Map<String, int?>? counts = await Groups().countGroupsV3(countFilters, baseFilter: baseFilter, );
       return counts?.map<dynamic, int?>((String valueId, int? count) => MapEntry(valueIds[valueId], count));
     }
     return null;
@@ -601,6 +601,7 @@ extension _GroupsFilterGroupContentAttribute on GroupsFilterGroup {
     GroupsFilterType.private: GroupsFilterGroup.details,
     GroupsFilterType.eventAdmin: GroupsFilterGroup.details,
     GroupsFilterType.managed: GroupsFilterGroup.details,
+  //GroupsFilterType.administrative:
 
     GroupsFilterType.admin: GroupsFilterGroup.limits,
     GroupsFilterType.member: GroupsFilterGroup.limits,
@@ -626,6 +627,7 @@ extension _GroupsFilterTypeContentAttribute on GroupsFilterType {
       case GroupsFilterType.private: return Localization().getStringEx('model.group.attributes.detail.private.title', 'Private');
       case GroupsFilterType.eventAdmin: return Localization().getStringEx('model.group.attributes.detail.event_admins.title', 'Event Admins');
       case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.title', 'Univerity Managed');
+      case GroupsFilterType.administrative: return Localization().getStringEx('model.group.attributes.detail.administrative.title', 'Administrative');
 
       case GroupsFilterType.admin: return Localization().getStringEx('model.group.attributes.limit.admin.title', 'Groups I administer');
       case GroupsFilterType.member: return Localization().getStringEx('model.group.attributes.limit.member.title', 'Groups I am member of');
@@ -639,6 +641,7 @@ extension _GroupsFilterTypeContentAttribute on GroupsFilterType {
       case GroupsFilterType.private: return Localization().getStringEx('model.group.attributes.detail.private.hint', 'Private');
       case GroupsFilterType.eventAdmin: return Localization().getStringEx('model.group.attributes.detail.event_admins.hint', 'Event Admins');
       case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.hint', 'Univerity Managed');
+      case GroupsFilterType.administrative: return Localization().getStringEx('model.group.attributes.detail.administrative.hint', 'Administrative');
 
       case GroupsFilterType.admin: return Localization().getStringEx('model.group.attributes.limit.admin.hint', 'Admin');
       case GroupsFilterType.member: return Localization().getStringEx('model.group.attributes.limit.member.hint', 'Member');
