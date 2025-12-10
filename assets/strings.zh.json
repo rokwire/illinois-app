@@ -2833,10 +2833,10 @@
 	"panel.groups.common.privacy.description.short.public":  "只有成员可以看到群组活动与贴文，除非该活动标示为公开。",
 	"panel.groups.common.privacy.description.long.private": "当任何应用程序用户以全名搜寻群组，都可以找到这个群组。只有管理员可以看到群组成员。",
 	"panel.groups.common.privacy.description.long.public":  "当任何应用程序用户以都会看到这个群组。只有管理员可以看到群组成员。",
-	"panel.groups.common.administrative.switch.label": "這是一個管理群組嗎？",
-	"panel.groups.common.administrative.switch.subject": "Administrative Group",
+	"panel.groups.common.administrative.switch.label": "這個群組是負責管理伊利諾州應用程式活動的管理團隊嗎？",
+	"panel.groups.common.administrative.switch.subject": "管理團隊組",
 	"panel.groups.common.private.search.hidden.label": "隐藏群组",
-	"panel.groups.common.private.search.hidden.subject": "Hidden Group",
+	"panel.groups.common.private.search.hidden.subject": "隱藏群組",
 	"panel.groups.common.private.search.hidden.description": "隐藏的群组无法被搜寻到。",
 
 	"panel.group_detail.header.project.title": "Research Project Details",
