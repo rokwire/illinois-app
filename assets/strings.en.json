@@ -3349,7 +3349,7 @@
     "panel.content.attributes.label.no_selection.title": "None",
     "panel.content.attributes.label.no_selection.title.format": "No %s",
     "panel.content.attributes.prompt.apply_changes.title": "Apply your changes?",
-    "panel.content.attributes.prompt.loose_changes.title": "Loose your changes?",
+    "panel.content.attributes.prompt.loose_changes.title": "Lose your changes?",
 
     "panel.mtd_stops.home.header_bar.title": "Bus Stops",
     "panel.mtd_stops.home.content_type.all.title": "All Bus Stops",

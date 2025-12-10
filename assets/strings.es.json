@@ -3353,7 +3353,7 @@
     "panel.content.attributes.label.no_selection.title": "Ninguno",
     "panel.content.attributes.label.no_selection.title.format": "Ningún %s",
     "panel.content.attributes.prompt.apply_changes.title": "Apply your changes?",
-    "panel.content.attributes.prompt.loose_changes.title": "Loose your changes?",
+    "panel.content.attributes.prompt.loose_changes.title": "Lose your changes?",
 
     "panel.mtd_stops.home.header_bar.title": "Paradas de Autobús",
     "panel.mtd_stops.home.content_type.all.title": "Todas las Paradas de Autobús",

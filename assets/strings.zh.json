@@ -3329,7 +3329,7 @@
 	"panel.content.attributes.label.no_selection.title": "无",
 	"panel.content.attributes.label.no_selection.title.format": "无 %s",
 	"panel.content.attributes.prompt.apply_changes.title": "Apply your changes?",
-	"panel.content.attributes.prompt.loose_changes.title": "Loose your changes?",
+	"panel.content.attributes.prompt.loose_changes.title": "Lose your changes?",
 
 	"panel.mtd_stops.home.header_bar.title": "公交车站",
 	"panel.mtd_stops.home.content_type.all.title": "所有公交车站",
