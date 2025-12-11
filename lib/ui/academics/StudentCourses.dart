@@ -386,7 +386,7 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   _buildTitle(),
 
-                  if ((widget.course?.displayInfo.isNotEmpty == true) || (widget.course?.displayInfo?.isNotEmpty == true))
+                  if ((widget.course?.displayInfo.isNotEmpty == true) || (widget.course?.displayInfo.isNotEmpty == true))
                     ...<Widget>[
                       Container(height: 12),
                       if (widget.course?.displayInfo.isNotEmpty == true)
@@ -397,7 +397,7 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
 
                   Container(height: 18),
 
-                  if (widget.course?.section?.displaySchedule?.isNotEmpty == true)
+                  if (widget.course?.section?.displaySchedule.isNotEmpty == true)
                     _buildScheduleDetail(),
 
                   if (widget.course?.section?.building?.fullAddress?.isNotEmpty == true)
