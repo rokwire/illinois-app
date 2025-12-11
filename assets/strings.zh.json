@@ -3483,6 +3483,7 @@
 
 	"panel.student_courses.header.title": "我的課程",
 	"panel.student_courses.instructor.title": "Instructor: %s",
+	"panel.student_courses.map.button.title": "View In-Person Courses on Map",
 	"panel.student_courses.empty.content.msg": "You do not appear to be enrolled in any courses.",
 	"panel.student_courses.load.failed.error.msg": "您似乎沒有註冊所選學期的任何課程。",
 	"panel.student_courses.load.offline.error.msg": "My Courses not available while offline.",
