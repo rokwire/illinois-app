@@ -6,9 +6,11 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/explore/DisplayFloorPlanPanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/widgets/AccentCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -17,6 +19,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -402,6 +405,11 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
 
                   if ((widget.course?.section?.room?.isNotEmpty == true) || (widget.course?.section?.building?.floors?.isNotEmpty == true))
                     _buildRoom(),
+
+                  Container(height: 32),
+                  
+                  _buildMapButton(),
+                  
                 ])
               )
             ], addSemanticIndexes:false),),
@@ -485,6 +493,16 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
       )
     );
 
+  Widget _buildMapButton() =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: 18 + 8), child:
+      RoundedButton(
+        label: Localization().getStringEx('panel.student_courses.map.button.title', 'View In-Person Courses on Map'),
+        textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
+        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        onTap: _onMap,
+      ),
+    );
+
   void _onLocation() {
     Analytics().logSelect(target: "Location Directions");
     widget.course?.launchDirections();
@@ -496,8 +514,14 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
   }
 
   void _onRoom() {
+    Analytics().logSelect(target: "Toggle Floor Plan & Amenities");
     setState(() {
       _roomExpanded = !_roomExpanded;
     });
+  }
+
+  void _onMap() {
+    Analytics().logSelect(target: "View on Map");
+    NotificationService().notify(Map2.notifySelect, Map2ContentType.StudentCourses);
   }
 }
