@@ -46,13 +46,10 @@ extension Map2ContentTypeImpl on Map2ContentType {
     }
   }
 
-  static const Map2ContentType _defaultType = Map2ContentType.CampusBuildings;
-
   static Map2ContentType? initialType({ dynamic initialSelectParam, Iterable<Map2ContentType>? availableTypes }) => (
     (selectParamType(initialSelectParam)?._ensure(availableTypes: availableTypes)) ??
     (Storage().storedMap2ContentType?._ensure(availableTypes: availableTypes)) ??
-    (_defaultType._ensure(availableTypes: availableTypes)) ??
-    ((availableTypes?.isNotEmpty == true) ? availableTypes?.first : null)
+    (null)
   );
 
   static Map2ContentType? selectParamType(dynamic param) {
