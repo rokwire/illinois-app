@@ -370,174 +370,120 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
   }
 
   Widget _buildContent() {
-    return   Column(
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            child: CustomScrollView(
-              scrollDirection: Axis.vertical,
-              slivers: <Widget>[
-                SliverToutHeaderBar(
-                  flexRightToLeftTriangleColor: Colors.white,
-                  flexImageKey: 'course-detail-default',
-                ),
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                      [
-                        Stack(
-                          children: <Widget>[
-                            Container(
-                                color: Colors.white,
-                                child: Column(
-                                  children: <Widget>[
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Column(
-                                          children: <Widget>[
-                                            Padding(
-                                                padding:
-                                                EdgeInsets.only(right: 20, left: 20),
-                                                child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: <Widget>[
-                                                      _buildTitle(),
-                                                      _buildDisplayInfo(),
-                                                      _buildInstructor(),
-                                                      _buildSchedule(),
-                                                      _buildLocation(),
-                                                      _buildRoom(),
-                                                    ]
-                                                )),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                )
-                            )
-                          ],
-                        )
-                      ],
-                      addSemanticIndexes:false),
-                )
-              ],
+    return Column(children: <Widget>[
+      Expanded(child:
+        Container(child:
+          CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
+            SliverToutHeaderBar(
+              flexRightToLeftTriangleColor: Colors.white,
+              flexImageKey: 'course-detail-default',
             ),
-          ),
-        ),
-      ],
-    );
-  }
+            SliverList(delegate: SliverChildListDelegate([
+              Container(color: Colors.white, padding:EdgeInsets.symmetric(horizontal: 20), child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  _buildTitle(),
 
-  Widget _buildTitle(){
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                widget.course?.title ?? "",
-                style: Styles().textStyles.getTextStyle("widget.student_courses.title.extra_large")
-              ),
-            ),
-          ],
-        ));
-  }
+                  if ((widget.course?.displayInfo.isNotEmpty == true) || (widget.course?.displayInfo?.isNotEmpty == true))
+                    ...<Widget>[
+                      Container(height: 12),
+                      if (widget.course?.displayInfo.isNotEmpty == true)
+                        _buildDisplayInfo(),
+                      if (widget.course?.section?.instructor?.isNotEmpty == true)
+                        _buildInstructor(),
+                    ],
 
-  Widget _buildDisplayInfo(){
-    return  widget.course?.displayInfo != null?
-    Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Text(
-          widget.course?.displayInfo ?? "",
-          style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
-        )) :
-    Container();
-  }
+                  Container(height: 18),
 
-  Widget _buildInstructor(){
-    return
-      Padding(padding: EdgeInsets.symmetric(vertical: 10),
-        child: Row(children: [Expanded(child:
-          Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [widget.course?.section?.instructor ?? '']), style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),)
-        )]),
-    );
-  }
+                  if (widget.course?.section?.displaySchedule?.isNotEmpty == true)
+                    _buildScheduleDetail(),
 
-  Widget _buildSchedule(){
-    String courseSchedule = widget.course?.section?.displaySchedule ?? '';
-    return Visibility(visible: courseSchedule.isNotEmpty, child:
-      Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-        Row(children: [
-          Padding(padding: EdgeInsets.only(right: 6), child:
-            Styles().images.getImage('calendar', excludeFromSemantics: true),
-          ),
-          Expanded(child:
-            Text(courseSchedule, style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),
-          )
+                  if (widget.course?.section?.building?.fullAddress?.isNotEmpty == true)
+                    _buildLocation(),
 
-        ],),
-      ),
-    );
-  }
-
-  Widget _buildLocation(){
-    String courseLocation = widget.course?.section?.building?.fullAddress ?? '';
-    return Visibility(visible: courseLocation.isNotEmpty, child:
-      InkWell(onTap: (widget.course?.hasValidLocation ?? false) ? _onLocation : null, child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
-          Row(children: [
-            Padding(padding: EdgeInsets.only(right: 6), child:
-              Styles().images.getImage('location', excludeFromSemantics: true),
-            ),
-            Expanded(child:
-              Text(courseLocation, style: (widget.course?.hasValidLocation ?? false) ?
-                Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline") :
-                Styles().textStyles.getTextStyle("widget.button.light.title.medium")
-              ),
-            )
+                  if ((widget.course?.section?.room?.isNotEmpty == true) || (widget.course?.section?.building?.floors?.isNotEmpty == true))
+                    _buildRoom(),
+                ])
+              )
+            ], addSemanticIndexes:false),),
           ],),
         ),
       ),
+    ],);
+  }
+
+  Widget _buildTitle() =>
+    Text(widget.course?.title ?? "", style: Styles().textStyles.getTextStyle("widget.title.medium_large.fat"));
+
+  Widget _buildDisplayInfo() =>
+    Text(widget.course?.displayInfo ?? "", style: Styles().textStyles.getTextStyle("widget.item.regular.thin"));
+
+  Widget _buildInstructor() =>
+    Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [widget.course?.section?.instructor ?? '']), style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),);
+
+  Widget _buildScheduleDetail() =>
+    Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
+      Row(children: [
+        _buildDetailIcon('calendar'),
+        Expanded(child:
+          Text(widget.course?.section?.displaySchedule ?? '', style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),
+        )
+      ],),
+    );
+
+  Widget _buildLocation() =>
+    InkWell(onTap: (widget.course?.hasValidLocation ?? false) ? _onLocation : null, child:
+      Padding(padding: EdgeInsets.symmetric(vertical: 6,), child:
+        Row(children: [
+          _buildDetailIcon('location'),
+          Expanded(child:
+            Text(widget.course?.section?.building?.fullAddress ?? '', style: (widget.course?.hasValidLocation ?? false) ?
+              Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline") :
+              Styles().textStyles.getTextStyle("widget.button.light.title.medium")
+            ),
+          )
+        ],),
+      ),
+    );
+
+
+  Widget _buildRoom() {
+    String room = widget.course?.section?.room ?? 'Room';
+    List<String> floors = widget.course?.section?.building?.floors ?? [];
+    return Padding(padding: EdgeInsets.symmetric(), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        InkWell(onTap: _onRoom, child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
+            Row(children: [
+              _buildDetailIcon(_roomExpanded ? 'chevron-up' : 'chevron-down'),
+              Text("Room ${room}", style: Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline"))
+            ]),
+          ),
+        ),
+        Visibility(visible: _roomExpanded, child:
+          Row(children: [
+            _buildDetailIcon(),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text("${Localization().getStringEx('panel.explore_building_detail.detail.fllor_plan_and_amenities', 'Floor Plans & Amenities')}:", style: Styles().textStyles.getTextStyle('widget.button.light.title.medium.fat')),
+              ...floors.map((floor) => InkWell(onTap: () => _onFloor(floor), child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 2), child:
+                  Text("Floor ${floor}", style: Styles().textStyles.getTextStyle("widget.description.small.underline")))
+                )
+              ).toList()
+            ])
+          ]),
+        )
+      ])
     );
   }
 
-  Widget _buildRoom() {
-    String room = widget.course?.section?.room ?? '';
-    List<String> floors = widget.course?.section?.building?.floors ?? [];
-    return Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 4), child:
-      InkWell(onTap: _onRoom, child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            Padding(padding: EdgeInsets.only(right: 6), child:
-            (_roomExpanded)
-              ? Styles().images.getImage('chevron-up', excludeFromSemantics: true) ?? Container()
-              : Styles().images.getImage('chevron-down', excludeFromSemantics: true) ?? Container()
-            ),
-            Text("Room ${room}", style: Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline"))
-          ]),
-          Visibility(visible: _roomExpanded, child:
-            Padding(padding: EdgeInsets.only(left: 17), child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
-                  Text("${Localization().getStringEx('panel.explore_building_detail.detail.fllor_plan_and_amenities', 'Floor Plans & Amenities')}:", style: Styles().textStyles.getTextStyle('widget.button.light.title.medium.fat'))
-                ),
-                ...floors.map((floor) => InkWell(onTap: () => _onFloor(floor), child:
-                  Padding(padding: EdgeInsets.symmetric(vertical: 2), child:
-                    Text("Floor ${floor}", style: Styles().textStyles.getTextStyle("widget.description.small.underline")))
-                  )
-                ).toList()
-              ])
-            )
-          )
-        ])
+  Widget _buildDetailIcon([String? iconKey]) =>
+    Padding(padding: EdgeInsets.only(right: 8), child:
+      SizedBox(width: 18, height: 18, child:
+        Center(child: (iconKey != null) ?
+          Styles().images.getImage(iconKey, excludeFromSemantics: true) : null
+        )
       )
     );
-  }
 
   void _onLocation() {
     Analytics().logSelect(target: "Location Directions");
