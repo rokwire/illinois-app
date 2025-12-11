@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sort dining schedules by time [#5577](https://github.com/rokwire/illinois-app/issues/5577).
 - WEB: Show videos in a Group post [#5513](https://github.com/rokwire/illinois-app/issues/5513).
 - Accessibility for unlabeled buttons [#5573](https://github.com/rokwire/illinois-app/issues/5573).
+- ProfileInfoEditPanel Improved accessibility for buttons with same label [#4874](https://github.com/rokwire/illinois-app/issues/4874).
 - Image Alt text is required [#4836](https://github.com/rokwire/illinois-app/issues/4836).
 - Image Alt text for GameDetails [#5553](https://github.com/rokwire/illinois-app/issues/5553).
 
