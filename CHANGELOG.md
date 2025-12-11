@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ProfileInfoEditPanel Improved accessibility for buttons with same label [#4874](https://github.com/rokwire/illinois-app/issues/4874).
 - Image Alt text is required [#4836](https://github.com/rokwire/illinois-app/issues/4836).
 - Image Alt text for GameDetails [#5553](https://github.com/rokwire/illinois-app/issues/5553).
+### Changed
+- Removed default map selection to Campus Buildings [#5580](https://github.com/rokwire/illinois-app/issues/5580).
 
 ## [7.3.33] - 2025-12-01
 ### Added
