@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Image Alt text for GameDetails [#5553](https://github.com/rokwire/illinois-app/issues/5553).
 ### Changed
 - Removed default map selection to Campus Buildings [#5580](https://github.com/rokwire/illinois-app/issues/5580).
+### Added
+- WEB: Do not allow web app usage for mobile devices [#5594](https://github.com/rokwire/illinois-app/issues/5594).
 
 ## [7.3.33] - 2025-12-01
 ### Added
