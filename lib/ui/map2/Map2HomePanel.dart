@@ -53,6 +53,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/places.dart';
+import 'package:rokwire_plugin/service/Log.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -122,6 +123,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   final GlobalKey _scaffoldKey = GlobalKey();
   final GlobalKey _contentHeadingBarKey = GlobalKey();
   final GlobalKey _contentTypesBarKey = GlobalKey();
+  final GlobalKey _contentTitleKey = GlobalKey();
   final GlobalKey _traySheetKey = GlobalKey();
   final GlobalKey _traySheetHeaderKey = GlobalKey();
   final GlobalKey _sortButtonKey = GlobalKey();
@@ -132,6 +134,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   final GlobalKey _searchButtonKey = GlobalKey();
   final GlobalKey _paymentTypesButtonKey = GlobalKey();
   final GlobalKey _openNowButtonKey = GlobalKey();
+  final Map<Map2ContentType, GlobalKey> contentTypeKeys = {};
 
 
   final ScrollController _contentTypesScrollController = ScrollController();
@@ -167,6 +170,8 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   Position? _currentLocation;
   Map<String, dynamic>? _mapStyles;
 
+  bool _needHeadingAccessibilityFocus = false;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -193,6 +198,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     _initExplores();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _accessibilityFocusHeading();
+      _needHeadingAccessibilityFocus = true;
     });
     super.initState();
   }
@@ -533,6 +539,16 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     }
   }
 
+  @override
+  onMapCreated(GoogleMapController controller){
+    super.onMapCreated(controller);
+    if(_needHeadingAccessibilityFocus){
+      Log.d("_accessibilityFocusHeading");
+      _accessibilityFocusHeading();
+      _needHeadingAccessibilityFocus = false;
+    }
+  }
+
   // Content Types
 
   Widget get _contentTypesBar => 
@@ -552,7 +568,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       if (_availableContentTypes.contains(contentType)) {
         entries.add(Padding(
           padding: EdgeInsets.only(left: entries.isNotEmpty ? 8 : 0),
-          child: Map2ContentTypeButton(contentType.displayTitle,
+          child: Map2ContentTypeButton(key: contentTypeKeys[contentType] ??= GlobalKey(), contentType.displayTitle,
             onTap: () => _onTapContentTypeEntry(contentType),
           )
         ));
@@ -632,18 +648,20 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   // Content Filters
 
   Widget get _contentHeadingBar =>
-    Container(key: _contentHeadingBarKey, decoration: _contentHeadingDecoration, child:
-      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: _searchOn ? <Widget>[
-        _contentFilterSearchBar,
-      ] : <Widget>[
-        _contentTitleBar,
-        if ((_exploresProgress == null) || (_exploresProgress == ExploreProgressType.update))
-          ...[_contentFilterButtonsBar ?? Container(),
-            ...(_contentFilterButtonsExtraBars ?? [])
-          ],
-        if (_exploresProgress == null)
-          _contentFilterDescriptionBar ?? Container(),
-      ],),
+    Semantics(key: _contentHeadingBarKey, child:
+      Container(decoration: _contentHeadingDecoration, child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: _searchOn ? <Widget>[
+          _contentFilterSearchBar,
+        ] : <Widget>[
+          _contentTitleBar,
+          if ((_exploresProgress == null) || (_exploresProgress == ExploreProgressType.update))
+            ...[_contentFilterButtonsBar ?? Container(),
+              ...(_contentFilterButtonsExtraBars ?? [])
+            ],
+          if (_exploresProgress == null)
+            _contentFilterDescriptionBar ?? Container(),
+        ],),
+      )
     );
 
   BoxDecoration get _contentHeadingDecoration =>
@@ -654,7 +672,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     );
 
   Widget get _contentTitleBar =>
-    Semantics(header: true, container: true, child:
+    Semantics(key: _contentTitleKey, header: true, container: true, focused: true, child:
       Row(children: [
         Expanded(child:
           Padding(padding: EdgeInsets.only(left: 16, top: 8, bottom: 8), child:
@@ -674,9 +692,11 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   void _onTapClearContentType() {
     Analytics().logSelect(target: 'Content: Clear');
+    GlobalKey? _lastSelectedContentKey = contentTypeKeys[_selectedContentType];
     _clearContent();
     WidgetsBinding.instance.addPostFrameCallback((_){
       _updateContentTypesScrollPosition();
+      AppSemantics.triggerAccessibilityFocus(_lastSelectedContentKey);
     });
   }
 
@@ -1194,7 +1214,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
                 onTap: _onTapShareFilter
               )
             )),
-            IndexedSemantics(index: 1, child: Semantics( container: true, child:
+            IndexedSemantics(index: 3, child: Semantics( container: true, child:
               Map2PlainImageButton(imageKey: 'close',
                   label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
                   hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hint', 'Tap to clear current filters'),
@@ -1891,9 +1911,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         _selectedSortOrder = value.right ?? _expectedSortOrder(value.left);
       });
       _onSortChanged();
-      Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
-        AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
-      );
+      AppSemantics.triggerAccessibilityFocus(_sortButtonKey, delay: Duration(seconds: 1));
     }
   }
 
@@ -2130,6 +2148,6 @@ extension _Map2Accessibility on _Map2HomePanelState{
   void _accessibilityFocusHeading() {
     AppSemantics.triggerAccessibilityFocus(_rootHeaderBarTitleKey); //When already on this tab
     WidgetsBinding.instance.addPostFrameCallback((_) => //When coming from other tab
-      AppSemantics.triggerAccessibilityFocus(_rootHeaderBarTitleKey));
+      AppSemantics.triggerAccessibilityFocus(_rootHeaderBarTitleKey, delay: Duration(microseconds: 200))); // Delay so we can determine properly if it's already focused so we can avoid second pronunciation
   }
 }

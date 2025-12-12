@@ -16,7 +16,9 @@ class Map2ContentTypeButton extends StatelessWidget {
     Semantics(label: label ?? title, hint: hint, button: true, child:
       InkWell(onTap: onTap, child:
         Container(decoration: _decoration, padding: padding, child:
-          Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.small.medium'),),
+          ExcludeSemantics(child:
+            Text(title ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.small.medium'),),
+          )
         )
       )
     );
