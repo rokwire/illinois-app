@@ -16,9 +16,14 @@ class GBVQuickExitWidget extends StatelessWidget {
     Row(crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(padding: EdgeInsets.only(right: 8), child:
-        GestureDetector(onTap: () => _onQuickExitInfo(context), child:
-        Styles().images.getImage('info', excludeFromSemantics: true) ?? Container(),
-        )
+        Semantics(
+            label: Localization().getStringEx('widget.sexual_misconduct.quick_exit.info_button', 'Quick exit information'), button: true, enabled: true,
+            onTap: () => _onQuickExitInfo(context),
+            child: GestureDetector(onTap: () => _onQuickExitInfo(context), child: Tooltip(message: Localization().getStringEx('widget.sexual_misconduct.quick_exit.info_button', 'Quick exit information'),
+              child: Semantics(excludeSemantics: false, child: Styles().images.getImage('info', excludeFromSemantics: false) ?? Container(),),
+              ),
+            ),
+          ),
         ),
         Expanded(child:
         RichText(text:
@@ -51,13 +56,15 @@ class GBVQuickExitWidget extends StatelessWidget {
       alignment: Alignment.center,
       infoTextWidget: Column(children: [
         GBVQuickExitIcon(),
+        Semantics(label: Localization().getStringEx('widget.sexual_misconduct.quick_exit.icon', 'Quick exit icon'), child: GBVQuickExitIcon(),
+        ),
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
         Text(Localization().getStringEx('widget.sexual_misconduct.quick_exit.dialog.description', 'Use the quick exit icon at any time to be routed to the Illinois app home screen.'),
           style: Styles().textStyles.getTextStyle('widget.description.regular'), textAlign: TextAlign.left,
         )
       ]
       ),
-      closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
+      closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: false),
     ),);
   }
 
@@ -85,8 +92,9 @@ class GBVQuickExitIcon extends StatelessWidget {
           offset: Offset(2, 2)
         ),]
       ),
-      child: Center(child:
-        Styles().images.getImage('person-to-door', excludeFromSemantics: true, width: size / 2) ?? Container()
+        child: Center(
+          child: Semantics( child: Styles().images.getImage('person-to-door', excludeFromSemantics: false, width: size / 2) ?? Container(),
+          ),
       )
     );
 }
