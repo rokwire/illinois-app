@@ -35,6 +35,7 @@ import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
 import 'package:illinois/ui/map2/Map2BasePanel.dart';
@@ -178,7 +179,8 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       Map2ExplorePOICard.notifyPOIUpdated,
       Map2.notifySelect,
       FlexUI.notifyChanged,
-      uiuc.TabBar.notifySelectionChanged,
+      RootPanel.notifyTabAppear,
+      RootPanel.notifyTabDisappear,
     ]);
 
     _availableContentTypes = Map2ContentTypeImpl.availableTypes;
@@ -251,10 +253,15 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       _updateAvailableContentTypes();
       updateLocationServicesStatus();
     }
-    else if (name == uiuc.TabBar.notifySelectionChanged){
-      int index = JsonUtils.intValue(param) ?? 0;
-      if(index == 1)  //Index to code ? or pass directly code
+    else if (name == RootPanel.notifyTabAppear){
+      if ((JsonUtils.cast<RootTab>(param) == RootTab.Map) && mounted) {
         _accessibilityFocusHeading();
+      }
+    }
+    else if (name == RootPanel.notifyTabDisappear){
+      if ((JsonUtils.cast<RootTab>(param) == RootTab.Map) && mounted) {
+        _clearContent();
+      }
     }
   }
 
@@ -668,31 +675,33 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   void _onTapClearContentType() {
     Analytics().logSelect(target: 'Content: Clear');
-    setState(() {
-      _selectedContentType = null;
-      _explores = _filteredExplores = null;
-      _selectedExploreGroup = null;
-      _trayExplores = null;
-      _exploresTask = null;
-      _exploresProgress = null;
-
-      _storiedSitesTags = null;
-      _expandedStoriedSitesTag = null;
-
-      markers = null;
-      exploreMapGroups = null;
-      targetCameraUpdate = null;
-      buildMarkersTask = null;
-      lastMapZoom = null;
-      markersProgress = false;
-
-      _pinnedExplore = null;
-      _pinnedMarker = null;
-    });
+    _clearContent();
     WidgetsBinding.instance.addPostFrameCallback((_){
       _updateContentTypesScrollPosition();
     });
   }
+
+  void _clearContent() => setState((){
+    _selectedContentType = null;
+    _explores = _filteredExplores = null;
+    _selectedExploreGroup = null;
+    _trayExplores = null;
+    _exploresTask = null;
+    _exploresProgress = null;
+
+    _storiedSitesTags = null;
+    _expandedStoriedSitesTag = null;
+
+    markers = null;
+    exploreMapGroups = null;
+    targetCameraUpdate = null;
+    buildMarkersTask = null;
+    lastMapZoom = null;
+    markersProgress = false;
+
+    _pinnedExplore = null;
+    _pinnedMarker = null;
+  });
 
   // My Locactions Content && Selection
 
