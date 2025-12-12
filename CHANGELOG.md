@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show Map2 without last selected content [#5580](https://github.com/rokwire/illinois-app/issues/5580).
 - Load default camera position from app config [#5580](https://github.com/rokwire/illinois-app/issues/5580).
 - Improved usability of Student Courses detail panel [#5583](https://github.com/rokwire/illinois-app/issues/5583).
+### Added
+- WEB: Do not allow web app usage for mobile devices [#5594](https://github.com/rokwire/illinois-app/issues/5594).
 
 ## [7.3.33] - 2025-12-01
 ### Added

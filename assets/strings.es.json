@@ -3838,6 +3838,10 @@
     "panel.appointment.schedule.questions.header.title": "Programar la Cita",
     "panel.appointment.reschedule.questions.header.title": "Reprogramar la Cita",
 
+    "panel.web.restricted_mobile_devices.store.apple.label": "App Store",
+    "panel.web.restricted_mobile_devices.store.google.label": "Play Store",
+    "panel.web.restricted_mobile_devices.text": "Please use the mobile app to open {{app_title}}{{store_href}}. (The website is for desktop and laptop use only.)",
+
     "panel.image_edit.header.title": "Select Image",
     "panel.image_edit.alt_text.validation.msg": "Please provide image alt text.",
     "panel.image_edit.alt_text.description": "Add a one to two sentence description of the image. Do not include \"Image of . . .\"",
