@@ -2,7 +2,7 @@
 	"": {
 		"content": {
 			"tabbar": ["home", "map", "wallet", "assistant"],
-			"tabbar.default": "favorites",
+			"tabbar.default": ["home"],
 
 			"home": [
 				"gies_checklist", "new_student_checklist", "student_courses", "canvas_courses",
