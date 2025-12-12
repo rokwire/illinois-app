@@ -107,7 +107,9 @@ enum RootTab { Home, Favorites, Browse, Map, Academics, Wellness, Wallet, Assist
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
 
-  static const String notifyTabChanged    = "edu.illinois.rokwire.root.tab.changed";
+  static const String notifyTabPresent    = "edu.illinois.rokwire.root.tab.present";
+  static const String notifyTabAppear     = "edu.illinois.rokwire.root.tab.appear";
+  static const String notifyTabDisappear  = "edu.illinois.rokwire.root.tab.disappear";
 
   RootPanel() : super(key: stateKey);
 
@@ -120,8 +122,8 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   List<RootTab>  _tabs = [];
   Map<RootTab, Widget?> _panels = {};
 
-  TabController?  _tabBarController;
-  int            _currentTabIndex = 0;
+  late TabController _tabBarController;
+  int _currentTabIndex = 0;
 
   late QuickActions _quickActions;
   late List<ShortcutItem> _quickActionItems;
@@ -248,8 +250,10 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       uiuc.TabBar.notifySelectionChanged,
     ]);
 
+    RootTab rootTab = _defaultTab ?? RootTab.Home;
+
     _tabs = _getTabs();
-    _currentTabIndex = _defaultTabIndex ?? _getIndexByRootTab(RootTab.Home) ?? 0;
+    _currentTabIndex = _getIndexByRootTab(rootTab) ?? 0;
     _tabBarController = TabController(length: _tabs.length, initialIndex: _currentTabIndex, animationDuration: Duration.zero, vsync: this);
     _updateTabPanels(_tabs);
 
@@ -257,9 +261,10 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     _quickActions.initialize(_onQuickAction);
     _quickActions.setShortcutItems(_quickActionItems = _buildQuickActionItems());
 
-    Analytics().logPageWidget(_getTabPanelAtIndex(_currentTabIndex));
+    NotificationService().notify(RootPanel.notifyTabAppear, rootTab);
 
     Services().initUI();
+
     _showPresentPoll();
     _checkDidNotificationLaunch().then((action) {
       action?.call();
@@ -654,7 +659,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
     RootTab? rootTab = getRootTabByIndex(tabIndex);
 
-    //Treat Assistant tab differently because it is modal bottom sheet
     if (rootTab == RootTab.Assistant) {
       AssistantHomePanel.present(context);
     }
@@ -662,24 +666,15 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       WalletHomePanel.present(context);
     }
     else if ((0 <= tabIndex) && (tabIndex < _tabs.length) && (tabIndex != _currentTabIndex)) {
-      _tabBarController!.animateTo(tabIndex);
+      NotificationService().notify(RootPanel.notifyTabDisappear, getRootTabByIndex(_currentTabIndex));
 
-      if (getRootTabByIndex(_currentTabIndex) == RootTab.Map) {
-        Analytics().logMapHide();
-      }
+      _tabBarController.animateTo(tabIndex);
 
       setState(() {
         _currentTabIndex = tabIndex;
       });
 
-      Widget? tabPanel = _getTabPanelAtIndex(tabIndex);
-      Analytics().logPageWidget(tabPanel);
-
-      if (getRootTabByIndex(_currentTabIndex) == RootTab.Map) {
-        Analytics().logMapShow();
-      }
-
-      NotificationService().notify(RootPanel.notifyTabChanged, rootTab);
+      NotificationService().notify(RootPanel.notifyTabAppear, rootTab);
     }
   }
 
@@ -753,10 +748,8 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
-  int? get _defaultTabIndex {
-    dynamic defaultTabCode = FlexUI()['tabbar.default'];
-    return (defaultTabCode is String) ? _getIndexByRootTab(rootTabFromString(defaultTabCode)) : null;
-  }
+  RootTab? get _defaultTab =>
+    rootTabFromString(JsonUtils.stringValue(ListUtils.entry(FlexUI()['tabbar.default'], 0)));
 
   void _updateTabsContent() {
     List<RootTab> tabs = _getTabs();
@@ -774,7 +767,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
         _tabBarController = TabController(length: _tabs.length, animationDuration: Duration.zero, vsync: this);
       });
 
-      _tabBarController!.animateTo(_currentTabIndex);
+      _tabBarController.animateTo(_currentTabIndex);
     }
   }
 
