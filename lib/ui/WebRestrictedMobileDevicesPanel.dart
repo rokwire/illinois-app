@@ -34,9 +34,8 @@ class WebRestrictedMobileDevicesPanel extends StatelessWidget {
       backgroundColor: Styles().colors.background,
       body: SafeArea(
           child: Column(children: [
-        ExcludeSemantics(child: Onboarding2TitleWidget(title: '')),
-        Semantics(
-            child: Expanded(
+        Onboarding2TitleWidget(title: ''),
+        Expanded(
                 child: Center(
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
@@ -52,7 +51,7 @@ class WebRestrictedMobileDevicesPanel extends StatelessWidget {
                 textStyle: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
                 customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null),
           ),
-        )))
+        ))
       ])),
     );
   }
