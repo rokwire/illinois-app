@@ -55,8 +55,6 @@
     "tabbar.favorites.hint":"Favorites Page",
     "tabbar.map.title":"Map",
     "tabbar.map.hint":"Map Page",
-    "tabbar.map0.title":"Map0",
-    "tabbar.map0.hint":"Map0 Page",
     "tabbar.academics.title":"Academics",
     "tabbar.academics.hint":"Academics Page",
     "tabbar.wellness.title":"Wellness",
@@ -432,7 +430,6 @@
     "panel.search.field.search.hint": "Type a search term",
 
     "panel.map2.header.title": "Map",
-    "panel.map0.header.title": "Map0",
     "panel.map2.button.search.title":"Search",
    	"panel.map2.button.search.hint":"Tap to search locations",
     "panel.map2.button.terms.title":"Terms",

@@ -48,7 +48,6 @@ import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePlaceDetailPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
-import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
@@ -103,7 +102,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:quick_actions/quick_actions.dart';
 
-enum RootTab { Home, Favorites, Browse, Map0, Map, Academics, Wellness, Wallet, Assistant }
+enum RootTab { Home, Favorites, Browse, Map, Academics, Wellness, Wallet, Assistant }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -127,7 +126,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   late QuickActions _quickActions;
   late List<ShortcutItem> _quickActionItems;
 
-  _RootPanelState();
 
   @override
   void initState() {
@@ -670,14 +668,9 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
         Analytics().logMapHide();
       }
 
-      if (mounted) {
-        setState(() {
-          _currentTabIndex = tabIndex;
-        });
-      }
-      else {
+      setState(() {
         _currentTabIndex = tabIndex;
-      }
+      });
 
       Widget? tabPanel = _getTabPanelAtIndex(tabIndex);
       Analytics().logPageWidget(tabPanel);
@@ -743,9 +736,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (rootTab == RootTab.Map) {
       return Map2HomePanel();
     }
-    else if (rootTab == RootTab.Map0) {
-      return ExploreMapPanel();
-    }
     else if (rootTab == RootTab.Academics) {
       return AcademicsHomePanel(rootTabDisplay: true,);
     }
@@ -770,26 +760,21 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   void _updateTabsContent() {
     List<RootTab> tabs = _getTabs();
-    if (!DeepCollectionEquality().equals(_tabs, tabs)) {
+    if (mounted & !DeepCollectionEquality().equals(_tabs, tabs)) {
       _updateTabPanels(tabs);
 
       RootTab? currentRootTab = getRootTabByIndex(_currentTabIndex);
-      if (mounted) {
-        setState(() {
-          _tabs = tabs;
-          _currentTabIndex = (currentRootTab != null) ? (_getIndexByRootTab(currentRootTab) ?? 0)  : 0;
 
-          // Do not initialize _currentTabIndex as initialIndex because we get empty panel content.
-          // Initialize TabController with initialIndex = 0 and then manually animate to desired tab index.
-          _tabBarController = TabController(length: _tabs.length, animationDuration: Duration.zero, vsync: this);
-        });
-        _tabBarController!.animateTo(_currentTabIndex);
-      }
-      else {
+      setState(() {
         _tabs = tabs;
         _currentTabIndex = (currentRootTab != null) ? (_getIndexByRootTab(currentRootTab) ?? 0)  : 0;
-        _tabBarController = TabController(length: _tabs.length, initialIndex: _currentTabIndex, animationDuration: Duration.zero, vsync: this);
-      }
+
+        // Do not initialize _currentTabIndex as initialIndex because we get empty panel content.
+        // Initialize TabController with initialIndex = 0 and then manually animate to desired tab index.
+        _tabBarController = TabController(length: _tabs.length, animationDuration: Duration.zero, vsync: this);
+      });
+
+      _tabBarController!.animateTo(_currentTabIndex);
     }
   }
 
@@ -1515,9 +1500,6 @@ RootTab? rootTabFromString(String? value) {
     }
     else if (value == 'map') {
       return RootTab.Map;
-    }
-    else if (value == 'map0') {
-      return RootTab.Map0;
     }
     else if (value == 'academics') {
       return RootTab.Academics;

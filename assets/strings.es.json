@@ -54,8 +54,6 @@
     "tabbar.favorites.hint":"Página de favoritos",
     "tabbar.map.title":"Mapa",
     "tabbar.map.hint":"Página del mapa",
-    "tabbar.map0.title":"Map0",
-    "tabbar.map0.hint":"Map0 Page",
     "tabbar.academics.title":"Académica",
     "tabbar.academics.hint":"Página académica",
     "tabbar.wellness.title":"Bienestar",
@@ -431,7 +429,6 @@
     "panel.search.field.search.hint": "Escriba un término de búsqueda",
 
     "panel.map2.header.title": "Mapa",
-    "panel.map0.header.title": "Map0",
     "panel.map2.button.search.title":"Search",
    	"panel.map2.button.search.hint":"Tap to search locations",
     "panel.map2.button.terms.title":"Terms",
