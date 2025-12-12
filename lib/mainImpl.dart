@@ -16,6 +16,7 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'package:illinois/ui/WebRestrictedMobileDevicesPanel.dart';
 import 'package:web/web.dart' as web;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -351,8 +352,10 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
   }
 
   Widget get _homePanel {
-
-    if (_initializeError != null) {
+    if (kIsWeb && (WebUtils.isAndroidWeb() || WebUtils.isIosWeb())) {
+      return WebRestrictedMobileDevicesPanel();
+    }
+    else if (_initializeError != null) {
       return OnboardingErrorPanel(error: _initializeError, retryHandler: _retryInitialze);
     }
     else if (!kIsWeb && _upgradeRequiredVersion != null) {
