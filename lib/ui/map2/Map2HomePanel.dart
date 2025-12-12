@@ -577,7 +577,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   void _onContentTypeEntry(Map2ContentType contentType) {
     setState(() {
-      Storage().storedMap2ContentType = _selectedContentType = contentType;
+      _selectedContentType = contentType;
     });
     _initExplores();
   }
@@ -669,7 +669,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   void _onTapClearContentType() {
     Analytics().logSelect(target: 'Content: Clear');
     setState(() {
-      Storage().storedMap2ContentType = _selectedContentType = null;
+      _selectedContentType = null;
       _explores = _filteredExplores = null;
       _selectedExploreGroup = null;
       _trayExplores = null;

@@ -512,11 +512,6 @@ class Storage extends rokwire.Storage with NotificationsListener {
   String? get selectedMapExploreType => getStringWithName(selectedMapExploreTypeKey);
   set selectedMapExploreType(String? value) => setStringWithName(selectedMapExploreTypeKey, value);
 
-  // Map2
-  String get selectedMap2ContentTypeKey => 'edu.illinois.rokwire.map2.selected.contnet.type';
-  String? get selectedMap2ContentType => getStringWithName(selectedMap2ContentTypeKey);
-  set selectedMap2ContentType(String? value) => setStringWithName(selectedMap2ContentTypeKey, value);
-
   // Appointments
   String get appointmentsDisplayEnabledKey => 'edu.illinois.rokwire.appointments.display_enabled';
   bool? get appointmentsCanDisplay => getBoolWithName(appointmentsDisplayEnabledKey, defaultValue: true);
