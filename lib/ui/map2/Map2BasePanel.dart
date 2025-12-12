@@ -12,8 +12,10 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/MTD.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/map2/Map2HomeExts.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -42,10 +44,15 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
   LocationServicesStatus? locationServicesStatus;
 
   // Map Content Static Data
-  static const CameraPosition defaultCameraPosition = CameraPosition(target: defaultCameraTarget, zoom: defaultCameraZoom);
-  static const LatLng defaultCameraTarget = LatLng(40.102116, -88.227129);
-  static const double defaultCameraZoom = 17;
-  static const double groupMarkersUpdateThresoldDelta = 0.1;
+  static CameraPosition get defaultCameraPosition => Config().defaultCameraPosition ?? _defaultCameraPosition;
+  static LatLng get defaultCameraTarget => Config().defaultCameraTarget ?? _defaultCameraTarget;
+  static double get defaultCameraZoom => Config().defaultCameraZoom ?? _defaultCameraZoom;
+  static double get markersUpdateZoomDelta => Config().markersUpdateZoomDelta ?? _markersUpdateZoomDelta;
+
+  static const CameraPosition _defaultCameraPosition = CameraPosition(target: _defaultCameraTarget, zoom: _defaultCameraZoom);
+  static const LatLng _defaultCameraTarget = LatLng(40.102116, -88.227129);
+  static const double _defaultCameraZoom = 17;
+  static const double _markersUpdateZoomDelta = 0.1;
 
   // Markers Content Static Data
 
@@ -206,7 +213,7 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
       if (lastMapZoom == null) {
         lastMapZoom = mapZoom;
       }
-      else if ((lastMapZoom! - mapZoom).abs() > groupMarkersUpdateThresoldDelta) {
+      else if ((lastMapZoom! - mapZoom).abs() > markersUpdateZoomDelta) {
         buildMapContentData(mapExplores, updateCamera: false, showProgress: true, zoom: mapZoom,);
       }
     }

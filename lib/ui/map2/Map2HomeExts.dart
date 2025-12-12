@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/map2/Map2HomeFilters.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
@@ -414,15 +415,33 @@ class Map2FilterDeepLinkParam {
   };
 }
 
-/* class Map2FilterDeepLinkParam0 {
-  final Map<String, dynamic>? params;
-  Map2FilterDeepLinkParam(this.params);
+extension Map2AppConfig on Config {
 
-  Map2ContentType? get contentType => Map2ContentTypeImpl.fromJson(params?['contentType']);
-  Map2Filter? get filter => Map2Filter.fromJson(JsonUtils.decodeMap(params?['filter']), contentType: contentType);
+  CameraPosition? get defaultCameraPosition {
+    LatLng? target = defaultCameraTarget;
+    return (target != null) ? CameraPosition(
+      target: target,
+      bearing: defaultCameraBearing ?? 0,
+      tilt: defaultCameraTilt ?? 0,
+      zoom: defaultCameraZoom ?? 0,
+    ) : null;
+  }
 
-  static Map<String, String?> buildUrlParam({Map2ContentType? contentType, Map2Filter? filter}) => <String, String?>{
-    'contentType': contentType?.toJson(),
-    'filter': JsonUtils.encode(filter?.toJson()),
-  };
-}*/
+  LatLng? get defaultCameraTarget =>
+    _LatLngAppConfig.fromConfigJson(JsonUtils.mapValue(_initialCameraPosition?['target']));
+
+  double? get defaultCameraBearing => JsonUtils.doubleValue(_initialCameraPosition?['bearing']);
+  double? get defaultCameraTilt => JsonUtils.doubleValue(_initialCameraPosition?['tilt']);
+  double? get defaultCameraZoom => JsonUtils.doubleValue(_initialCameraPosition?['zoom']);
+
+  double? get markersUpdateZoomDelta => JsonUtils.doubleValue(map2Settings?['markers_update_zoom_delta']);
+  Map<String, dynamic>? get _initialCameraPosition => JsonUtils.mapValue(map2Settings?['initial_camera_position']);
+}
+
+extension _LatLngAppConfig on LatLng {
+  static LatLng? fromConfigJson(Map<String, dynamic>? json) {
+    double? latitude = JsonUtils.doubleValue(json?['latitude']);
+    double? longitude = JsonUtils.doubleValue(json?['longitude']);
+    return ((latitude != null) && (longitude != null)) ? LatLng(latitude, longitude) : null;
+  }
+}
