@@ -576,8 +576,6 @@
 
     "widget.home.welcome.title.text": { "font_family": "semi_bold", "size": 20.0, "color": "fillColorPrimary"},
 
-    "widget.student_courses.title.extra_large": {"extends": "widget.title.extra_large", "letter_spacing": 1.0},
-
     "widget.tab_bar.title.selected": {"font_family": "bold", "size": 12.0, "color": "fillColorSecondary"},
     "widget.tab_bar.title.not_selected": {"font_family": "bold", "size": 12.0, "color": "mediumGray"},
 
