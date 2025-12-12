@@ -7,7 +7,6 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/map2/Map2HomeFilters.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -46,11 +45,8 @@ extension Map2ContentTypeImpl on Map2ContentType {
     }
   }
 
-  static Map2ContentType? initialType({ dynamic initialSelectParam, Iterable<Map2ContentType>? availableTypes }) => (
-    (selectParamType(initialSelectParam)?._ensure(availableTypes: availableTypes)) ??
-    (Storage().storedMap2ContentType?._ensure(availableTypes: availableTypes)) ??
-    (null)
-  );
+  static Map2ContentType? initialType({ dynamic initialSelectParam, Iterable<Map2ContentType>? availableTypes }) =>
+    selectParamType(initialSelectParam)?._ensure(availableTypes: availableTypes);
 
   static Map2ContentType? selectParamType(dynamic param) {
     if (param is Map2ContentType) {
@@ -293,14 +289,6 @@ extension Map2SortOrderImpl on Map2SortOrder {
       case Map2SortOrder.descending: return Localization().getStringEx('model.map2.sort_order.ascending.mark', '↓');
     }
   }
-}
-
-extension Map2StorageContentType on Storage {
-  static const String _nullContentTypeJson = 'null';
-
-  Map2ContentType? get storedMap2ContentType => Map2ContentTypeImpl.fromJson(Storage().selectedMap2ContentType);
-  set storedMap2ContentType(Map2ContentType? value) => Storage().selectedMap2ContentType = value?.toJson() ?? _nullContentTypeJson;
-
 }
 
 extension ExplorePOIImpl on ExplorePOI {
