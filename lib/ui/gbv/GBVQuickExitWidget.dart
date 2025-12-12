@@ -32,7 +32,7 @@ class GBVQuickExitWidget extends StatelessWidget {
         ),
         Padding(padding: EdgeInsets.symmetric(horizontal: 4)),
         GestureDetector(onTap: () => _onQuickExit(context), child:
-        _quickExitIcon
+            _quickExitIcon
         )
       ],
     )
@@ -42,7 +42,7 @@ class GBVQuickExitWidget extends StatelessWidget {
   Widget quickExitButton(BuildContext context) => GestureDetector(onTap: () => _onQuickExit(context), child: _quickExitIcon);
 
   Widget get _quickExitIcon =>
-      GBVQuickExitIcon();
+    GBVQuickExitIcon();
 
   void _onQuickExitInfo(BuildContext context) {
     showDialog(context: context, builder: (_) => InfoPopup(
@@ -74,19 +74,19 @@ class GBVQuickExitIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      Container(height: size, width: size,
-          decoration: BoxDecoration(
-              color: Styles().colors.white,
-              border: Border.all(color: Styles().colors.lightGray),
-              borderRadius: BorderRadius.circular(size / 2),
-              boxShadow: [BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 5.0,
-                  offset: Offset(2, 2)
-              ),]
-          ),
-          child: Center(child:
-          Styles().images.getImage('person-to-door', excludeFromSemantics: true, width: size / 2) ?? Container()
-          )
-      );
+    Container(height: size, width: size,
+      decoration: BoxDecoration(
+        color: Styles().colors.white,
+        border: Border.all(color: Styles().colors.lightGray),
+        borderRadius: BorderRadius.circular(size / 2),
+        boxShadow: [BoxShadow(
+          color: Colors.black26,
+          blurRadius: 5.0,
+          offset: Offset(2, 2)
+        ),]
+      ),
+      child: Center(child:
+        Styles().images.getImage('person-to-door', excludeFromSemantics: true, width: size / 2) ?? Container()
+      )
+    );
 }
