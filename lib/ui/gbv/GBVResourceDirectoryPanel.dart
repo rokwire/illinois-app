@@ -51,15 +51,15 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
   Widget _bodyWidget () {
     return
       SingleChildScrollView(child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        GBVQuickExitWidget(),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        Column(children: [
-          ...widget.gbvData.directoryCategories.map((category) => _buildCategory(category, widget.gbvData.resources)),
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          GBVQuickExitWidget(),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+            Column(children: [
+              ...widget.gbvData.directoryCategories.map((category) => _buildCategory(category, widget.gbvData.resources)),
+            ])
+          ),
+          _buildWeCareUrlWidget() ?? Container()
         ])
-        ),
-        _buildWeCareUrlWidget() ?? Container()
-      ])
       );
   }
 
@@ -67,84 +67,81 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
     List<GBVResource> resources = List.from(allResources.where((resource) => resource.categories.contains(category)));
     return
       Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-      Container(decoration:
-      BoxDecoration(
-        color: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-      ), child:
-      Column(children: [
-        GestureDetector(onTap: () => _expandSection(category), child:
-        Container(decoration: BoxDecoration(), child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-          Styles().images.getImage((_expandedSections.contains(category)) ? 'chevron-up' : 'chevron-down', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-          ),
-          Text(category, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
-        ])
+        Container(decoration:
+          BoxDecoration(
+            color: Styles().colors.white,
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+          ), child:
+          Column(children: [
+            GestureDetector(onTap: () => _expandSection(category), child:
+            Container(decoration: BoxDecoration(), child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
+            Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                Styles().images.getImage((_expandedSections.contains(category)) ? 'chevron-up' : 'chevron-down', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+              ),
+              Text(category, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
+            ])
+            )
+            )
+            ),
+            Visibility(visible: _expandedSections.contains(category), child:
+              Padding(padding: EdgeInsets.only(bottom: 8), child:
+                Column(children:
+                 List.from(resources.map((resource) => _resourceWidget(resource)))
+                )
+              )
+            ),
+          ])
         )
-        )
-        ),
-        Visibility(visible: _expandedSections.contains(category), child:
-        Padding(padding: EdgeInsets.only(bottom: 8), child:
-        Column(children:
-        List.from(resources.map((resource) => _resourceWidget(resource)))
-        )
-        )
-        ),
-      ])
-      )
       );
   }
 
   Widget _resourceWidget (GBVResource resource) {
     Widget descriptionWidget = (resource.type == GBVResourceType.external_link)
-        ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-    Column(children:
-    List.from(
-        resource.directoryContent.where((detail) => detail.type != GBVResourceDetailType.external_link)
-            .map((detail) => GBVDetailContentWidget(resourceDetail: detail))
-    )
-    )
-    )
-        : Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-    Column(children:
-    List.from(resource.directoryContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail)))
-    )
-    );
+      ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        Column(children:
+          List.from(
+              resource.directoryContent.where((detail) => detail.type != GBVResourceDetailType.external_link)
+                .map((detail) => GBVDetailContentWidget(resourceDetail: detail))
+          )
+        )
+      )
+      : Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        Column(children:
+          List.from(resource.directoryContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail)))
+        )
+      );
     return
       Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-      GestureDetector(onTap: () => _onTapResource(resource), child:
-      Container(decoration:
-      BoxDecoration(
-        color: Styles().colors.white,
-        border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
-      ), child:
-      Padding(padding: EdgeInsets.only(top: 20), child:
-      Row(children: [
-        Expanded(child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-          Padding(padding: EdgeInsets.only(left: 16), child:
-          Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
-          ),
-          descriptionWidget
-        ])
-        ),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
-        (resource.type != GBVResourceType.external_link)
-            ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-            : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link))
-            ? Semantics(
-            label: Localization().getStringEx('panel.sexual_misconduct.resource_directory.external_link_icon', 'Opens in external browser'), image: true,
-            child: Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container(),
+        GestureDetector(onTap: () => _onTapResource(resource), child:
+          Container(decoration:
+            BoxDecoration(
+              color: Styles().colors.white,
+              border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
+            ), child:
+            Padding(padding: EdgeInsets.only(top: 20), child:
+              Row(children: [
+                Expanded(child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                    Padding(padding: EdgeInsets.only(left: 16), child:
+                      Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
+                    ),
+                    descriptionWidget
+                  ])
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
+                  (resource.type != GBVResourceType.external_link)
+                    ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                    : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link))
+                    ? Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                    : Container()
+                )
+              ])
             )
-            : Container()
+          )
         )
-      ])
-      )
-      )
-      )
       );
   }
 
@@ -173,36 +170,31 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
           Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(gbvData: widget.gbvData, resourceListScreen: targetScreen)));
         } else break;
       }
+      }
     }
-  }
 
   Widget? _buildWeCareUrlWidget() {
     String? url = Config().gbvWeCareResourcesUrl;
     return (url != null) ?
-    Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
-    RichText(text: TextSpan(children: [
-      TextSpan(
-          text: Localization().getStringEx('panel.sexual_misconduct.resource_directory.view_additional', 'View additional resources on the '),
-          style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
-      ),
-      TextSpan(
-          text: Localization().getStringEx('panel.sexual_misconduct.resource_directory.we_care', 'Illinois We Care website'),
-          style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
-          recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(url)
-      ),
-      WidgetSpan(
-          child: Semantics(
-            label: Localization().getStringEx('panel.sexual_misconduct.resource_directory.external_link_icon', 'Opens directory in browser'),
-            image: true,
-            child: Padding(
-                padding: EdgeInsets.only(left: 4),
-                child: Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-            ),
-          )
+      Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
+            RichText(text: TextSpan(children: [
+              TextSpan(
+                text: Localization().getStringEx('panel.sexual_misconduct.resource_directory.view_additional', 'View additional resources on the '),
+                style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
+                ),
+              TextSpan(
+              text: Localization().getStringEx('panel.sexual_misconduct.resource_directory.we_care', 'Illinois We Care website'),
+              style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
+              recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(url)
+              ),
+              WidgetSpan(child:
+                Padding(padding: EdgeInsets.only(left: 4), child:
+                  Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                )
+              )
+            ]))
       )
-    ]))
-    )
-        : null;
+      : null;
   }
 
   void _launchUrl(String? url) async {
