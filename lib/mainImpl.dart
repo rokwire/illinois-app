@@ -355,10 +355,10 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
     if (_initializeError != null) {
       return OnboardingErrorPanel(error: _initializeError, retryHandler: _retryInitialze);
     }
-    else if (_upgradeRequiredVersion != null) {
+    else if (!kIsWeb && _upgradeRequiredVersion != null) {
       return OnboardingUpgradePanel(requiredVersion:_upgradeRequiredVersion);
     }
-    else if (_upgradeAvailableVersion != null) {
+    else if (!kIsWeb && _upgradeAvailableVersion != null) {
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
     }
     else if (_contentAlert?.isCurrent == true) {
