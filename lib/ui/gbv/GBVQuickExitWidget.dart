@@ -16,14 +16,15 @@ class GBVQuickExitWidget extends StatelessWidget {
     Row(crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(padding: EdgeInsets.only(right: 8), child:
-        Semantics(
-            label: Localization().getStringEx('widget.sexual_misconduct.quick_exit.info_button', 'Quick exit information'), button: true, enabled: true,
-            onTap: () => _onQuickExitInfo(context),
-            child: GestureDetector(onTap: () => _onQuickExitInfo(context), child: Tooltip(message: Localization().getStringEx('widget.sexual_misconduct.quick_exit.info_button', 'Quick exit information'),
-              child: Semantics(excludeSemantics: false, child: Styles().images.getImage('info', excludeFromSemantics: false) ?? Container(),),
+        Semantics(label: Localization().getStringEx('widget.sexual_misconduct.quick_exit.info_button', 'Quick exit information'),
+          button: true, enabled: true, onTap: () => _onQuickExitInfo(context),
+          child: GestureDetector(onTap: () => _onQuickExitInfo(context),
+            child: Tooltip(message: Localization().getStringEx('widget.sexual_misconduct.quick_exit.info_button', 'Quick exit information'),
+              child: Semantics(excludeSemantics: true, child: Styles().images.getImage('info', excludeFromSemantics: false) ?? Container(),
               ),
             ),
           ),
+        ),
         ),
         Expanded(child:
         RichText(text:
@@ -36,18 +37,20 @@ class GBVQuickExitWidget extends StatelessWidget {
         )
         ),
         Padding(padding: EdgeInsets.symmetric(horizontal: 4)),
-        GestureDetector(onTap: () => _onQuickExit(context), child:
-            _quickExitIcon
-        )
+        quickExitButton(context),
       ],
     )
     );
   }
 
-  Widget quickExitButton(BuildContext context) => GestureDetector(onTap: () => _onQuickExit(context), child: _quickExitIcon);
+  Widget quickExitButton(BuildContext context) => Semantics(
+    label: Localization().getStringEx('widget.sexual_misconduct.quick_exit.button', 'Quick exit'), button: true, enabled: true,
+    onTap: () => _onQuickExit(context), child: GestureDetector(
+    onTap: () => _onQuickExit(context), child: Tooltip(message: Localization().getStringEx('widget.sexual_misconduct.quick_exit.button', 'Quick exit'),
+    child: Semantics(excludeSemantics: true, child: _quickExitIcon,),),),);
 
   Widget get _quickExitIcon =>
-    GBVQuickExitIcon();
+      GBVQuickExitIcon();
 
   void _onQuickExitInfo(BuildContext context) {
     showDialog(context: context, builder: (_) => InfoPopup(
@@ -55,7 +58,6 @@ class GBVQuickExitWidget extends StatelessWidget {
       padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
       alignment: Alignment.center,
       infoTextWidget: Column(children: [
-        GBVQuickExitIcon(),
         Semantics(label: Localization().getStringEx('widget.sexual_misconduct.quick_exit.icon', 'Quick exit icon'), child: GBVQuickExitIcon(),
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
@@ -81,20 +83,18 @@ class GBVQuickExitIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-    Container(height: size, width: size,
-      decoration: BoxDecoration(
-        color: Styles().colors.white,
-        border: Border.all(color: Styles().colors.lightGray),
-        borderRadius: BorderRadius.circular(size / 2),
-        boxShadow: [BoxShadow(
-          color: Colors.black26,
-          blurRadius: 5.0,
-          offset: Offset(2, 2)
-        ),]
-      ),
-        child: Center(
-          child: Semantics( child: Styles().images.getImage('person-to-door', excludeFromSemantics: false, width: size / 2) ?? Container(),
+      Container(height: size, width: size,
+          decoration: BoxDecoration(
+              color: Styles().colors.white,
+              border: Border.all(color: Styles().colors.lightGray),
+              borderRadius: BorderRadius.circular(size / 2),
+              boxShadow: [BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 5.0,
+                  offset: Offset(2, 2)
+              ),]
           ),
-      )
-    );
+          child: Center(child: Semantics( child: Styles().images.getImage('person-to-door', excludeFromSemantics: false, width: size / 2) ?? Container(),),
+          )
+      );
 }
