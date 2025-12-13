@@ -34,6 +34,7 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
@@ -421,10 +422,9 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     if(widget.showImageTout) {
       if (!StringUtils.isEmpty(widget.game?.imageUrl)) {
         widgets.add(Positioned(
-            child: ModalImageHolder(
-                child: Image.network(widget.game!.imageUrl!,
-              semanticLabel: widget.game?.sport?.title ?? "sport",
-            ))));
+            child: AccessibleImageHolder(child: ModalImageHolder(
+                child: Image.network(widget.game!.imageUrl!, excludeFromSemantics: true,
+            )))));
       }
       widgets.add(Semantics(
           excludeSemantics: true,

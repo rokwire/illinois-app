@@ -37,6 +37,7 @@ import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -249,11 +250,13 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
       widgets.add(Container(
         height: 200,
         child: SizedBox.expand(
-          child: ModalImageHolder(child: Image.network(
-            game!.newsImageUrl!,
-            semanticLabel: "game",
-            fit: BoxFit.fitWidth,
-          )),
+          child: AccessibleImageHolder(child:
+            ModalImageHolder(child: Image.network(
+              game!.newsImageUrl!,
+              excludeFromSemantics: true,
+              fit: BoxFit.fitWidth,
+            )),
+          )
         ),
       ));
     }

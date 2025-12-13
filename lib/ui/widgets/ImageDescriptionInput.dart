@@ -41,8 +41,9 @@ class _ImageDescriptionInputState extends State<ImageDescriptionInput> {
 
   @override
   Widget build(BuildContext context) {
-      String label = Localization().getStringEx('', 'Alt Text');
-      String hint = Localization().getStringEx('', 'Add a one to two sentence description of the image. Do not include \"Image of . . .\"');
+      String label = Localization().getStringEx('panel.image_edit.alt_text.title', 'Alt Text');
+      String hint = Localization().getStringEx("panel.image_edit.alt_text.hint", "required");
+      String description = Localization().getStringEx('panel.image_edit.alt_text.description', 'Add a one to two sentence description of the image. Do not include \"Image of . . .\"');
       return Container(
           // padding: EdgeInsets.symmetric(horizontal: 12),
          // decoration: BoxDecoration(
@@ -52,7 +53,12 @@ class _ImageDescriptionInputState extends State<ImageDescriptionInput> {
          // ),
         child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min,
           children: [
-            Text(label, style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
+            Semantics(label: "$label $hint", excludeSemantics: true, child:
+              Row(children: [
+                Text(label, style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
+                Padding(padding: EdgeInsets.only(left: 2), child:
+                  Text('*', style: Styles().textStyles.getTextStyle("widget.label.small.fat"),)),
+            ],)),
             Visibility(visible: _imageDescriptionData.decorative == false, child:
                 Column(
                   children: [
@@ -60,7 +66,7 @@ class _ImageDescriptionInputState extends State<ImageDescriptionInput> {
                     Container(
                         padding: EdgeInsets.only(top: 8, bottom: 8),
                         decoration: PostInputField.fieldDecoration,
-                        child: Semantics(label: label, hint: hint, container: true,
+                        child: Semantics(label: label, hint: description, container: true,
                           child:TextField(
                             controller: _textController,
                             onChanged: (value) {
@@ -87,7 +93,7 @@ class _ImageDescriptionInputState extends State<ImageDescriptionInput> {
                     ),
                     Container(height: 8,),
                     ExcludeSemantics(child:
-                      Text(hint, style: Styles().textStyles.getTextStyle("widget.description.regular"),)),
+                      Text(description, style: Styles().textStyles.getTextStyle("widget.description.regular"),)),
               ])),
           Container(height: 8),
           _buildSwitch(
@@ -114,18 +120,16 @@ class _ImageDescriptionInputState extends State<ImageDescriptionInput> {
                      RoundedButton(label: "Ok",
                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                        backgroundColor: Colors.white,
-                       // borderColor: _imageDescriptionData.isValidated == true ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
-                       // enabled: _imageDescriptionData.isValidated == true,
+                       borderColor: _imageDescriptionData.isValidated == true ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
+                       enabled: _imageDescriptionData.isValidated == true,
                        rightIcon: Container(),
                        padding: _dialogButtonPadding,
                        onTap: (){
-                         // if(StringUtils.isNotEmpty(imageUrl) && imageDescriptionData?.isValidated == true){
-                         //   Content().uploadImageMetaData(imageUrl: imageUrl ?? "", imageMetaData: imageDescriptionData.)
-                         // }
-                         Navigator.pop(context, _imageDescriptionData);
+                         if(_imageDescriptionData.isValidated == true)
+                            Navigator.pop(context, _imageDescriptionData);
+                         else
+                           AppAlert.showTextMessage(context, Localization().getStringEx("panel.image_edit.alt_text.validation.msg", "Please provide image alt text."));
                        },
-                       // enabled: _imageInputData.isValidated,
-                       // borderColor: _imageInputData.isValidated ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,
                        // )
                      )),
                      Container(width: 18,),

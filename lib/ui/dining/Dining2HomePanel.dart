@@ -596,10 +596,10 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
     ) : Container();
   }
 
-  void _onTapDining(Dining? dining) {
-    Analytics().logSelect(target: dining?.title);
+  void _onTapDining(Dining dining) {
+    Analytics().logSelect(target: dining.title);
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-      ExploreDiningDetailPanel(dining: dining, analyticsFeature: widget.analyticsFeature,)
+      ExploreDiningDetailPanel(dining, analyticsFeature: widget.analyticsFeature,)
     ));
   }
 
