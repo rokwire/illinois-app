@@ -16,6 +16,7 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'package:flutter/semantics.dart';
 import 'package:illinois/ui/WebRestrictedMobileDevicesPanel.dart';
 import 'package:web/web.dart' as web;
 import 'package:flutter/cupertino.dart';
@@ -207,6 +208,11 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     await WebCacheImageService().init();
 
     runApp(App(initializeError: serviceError));
+
+    //TBD: DD - enable semantics currently only for web and for mobile devices. When the app is optimized for accessibility - enable it for all web devices
+    if (WebUtils.isMobileDeviceWeb()) {
+      SemanticsBinding.instance.ensureSemantics();
+    }
   }, FirebaseCrashlytics().handleZoneError);
 }
 
@@ -352,7 +358,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
   }
 
   Widget get _homePanel {
-    if (kIsWeb && (WebUtils.isAndroidWeb() || WebUtils.isIosWeb())) {
+    if (WebUtils.isMobileDeviceWeb()) {
       return WebRestrictedMobileDevicesPanel();
     }
     else if (_initializeError != null) {

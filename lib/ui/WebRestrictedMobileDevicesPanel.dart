@@ -29,40 +29,53 @@ class WebRestrictedMobileDevicesPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String message = _buildMessage();
     return Scaffold(
       backgroundColor: Styles().colors.background,
       body: SafeArea(
           child: Column(children: [
         Onboarding2TitleWidget(title: ''),
-        Expanded(
-                child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-            child: HtmlWidget('<div style=text-align:center>$message</div>',
-                onTapUrl: (url) {
-                  Uri? uri = UriExt.tryParse(url);
-                  if (uri != null) {
-                    return launchUrl(uri);
-                  } else {
-                    return false;
-                  }
-                },
-                textStyle: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
-                customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null),
-          ),
-        ))
+            Expanded(
+            child: Center(
+                child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                    child: FocusableActionDetector(
+                      focusNode: FocusNode(),
+                      child: Semantics(
+                        label: _buildMessage(includeHref: false),
+                        onTap: () {
+                          Uri? uri = UriExt.tryParse(_getStoreUrl());
+                          if (uri != null) {
+                            launchUrl(uri);
+                          }
+                        },
+                        container: true,
+                        focused: true,
+                        button: true,
+                        excludeSemantics: true,
+                        child: HtmlWidget('<div style=text-align:center>${_buildMessage(includeHref: true)}</div>',
+                            onTapUrl: (url) {
+                              Uri? uri = UriExt.tryParse(url);
+                              if (uri != null) {
+                                return launchUrl(uri);
+                              } else {
+                                return false;
+                              }
+                            },
+                            textStyle: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
+                            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null),
+                      ),
+                    ))))
       ])),
     );
   }
 
-  String _buildMessage() {
+  String _buildMessage({bool includeHref = false}) {
     String message = Localization().getStringEx('panel.web.restricted_mobile_devices.text', 'Please use the mobile app to open {{app_title}}{{store_href}}. (The website is for desktop and laptop use only.)').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
     final String storeHrefMacro = '{{store_href}}';
     String? storeUrl = _getStoreUrl();
     if (storeUrl != null) {
       String storeText = WebUtils.isIosWeb() ? Localization().getStringEx('panel.web.restricted_mobile_devices.store.apple.label', 'App Store') : Localization().getStringEx('panel.web.restricted_mobile_devices.store.google.label', 'Play Store');
-      final String storeHrefValue = ": <a href='$storeUrl'><b>$storeText</b></a>";
+      final String storeHrefValue = includeHref ? ": <a href='$storeUrl'><b>$storeText</b></a>" : ': $storeText'; // Differ the message so that in can be read by the screen readers.
       message = message.replaceAll(storeHrefMacro, storeHrefValue);
     } else {
       message = message.replaceAll(storeHrefMacro, '');
