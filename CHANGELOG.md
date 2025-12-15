@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Fixed
+- Fixed navigation to Assistant, Academics and Wellness home panels [#5541](https://github.com/rokwire/illinois-app/issues/5541).
+- Do not show "View In-Person Courses on Map" for online courses [#5583](https://github.com/rokwire/illinois-app/issues/5583).
 - WEB: Accessibility for the mobile devices panel [#5594](https://github.com/rokwire/illinois-app/issues/5594).
 
 ## [7.3.34] - 2025-12-12

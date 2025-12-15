@@ -1273,21 +1273,13 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   void _onFirebaseAcademicsNotification(AcademicsContentType content) {
     if (context.mounted) {
-      if (AcademicsHomePanel.hasState) {
-        NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
-      } else {
-        AcademicsHomePanel.push(context, content);
-      }
+      AcademicsHomePanel.present(context, content);
     }
   }
 
   void _onFirebaseWellnessNotification(WellnessContentType content) {
     if (context.mounted) {
-      if (WellnessHomePanel.hasState) {
-        NotificationService().notify(WellnessHomePanel.notifySelectContent, content);
-      } else {
-        WellnessHomePanel.push(context, content);
-      }
+      WellnessHomePanel.present(context, content);
     }
   }
 
