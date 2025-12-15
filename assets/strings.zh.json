@@ -54,8 +54,6 @@
 	"tabbar.favorites.hint":"收藏頁面",
 	"tabbar.map.title":"地图",
 	"tabbar.map.hint":"地图頁面",
-	"tabbar.map0.title":"Map0",
-	"tabbar.map0.hint":"Map0 Page",
 	"tabbar.academics.title":"學业",
 	"tabbar.academics.hint":"學业頁面",
 	"tabbar.wellness.title":"健康",
@@ -434,7 +432,6 @@
 	"panel.search.field.search.hint":"输入搜索词",
 
 	"panel.map2.header.title": "地圖",
-	"panel.map0.header.title": "Map0",
 	"panel.map2.button.search.title":"Search",
 	"panel.map2.button.search.hint":"Tap to search locations",
 	"panel.map2.button.terms.title":"Terms",

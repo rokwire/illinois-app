@@ -57,6 +57,16 @@ class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
   @override
   AnalyticsFeature? get analyticsFeature => (state?._selectedContentType ?? contentType)?.analyticsFeature;
 
+  static void present(BuildContext context, WellnessContentType content) {
+    if (hasState) {
+      Navigator.of(context).popUntil((route) => (route.settings.name == routeName) || (route.isFirst));
+      NotificationService().notify(notifySelectContent, content);
+    }
+    else {
+      push(context, content);
+    }
+  }
+
   static Future<void> push(BuildContext context, WellnessContentType content) =>
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: content), settings: RouteSettings(name: WellnessHomePanel.routeName)));
 

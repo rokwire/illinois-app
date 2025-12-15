@@ -84,7 +84,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   bool _shouldScrollToBottom = false;
   bool _shouldSemanticFocusToLastBubble = false;
 
-  bool _listening = false;
+  _ListeningStatus _listeningStatus = _ListeningStatus.off;
 
   bool _loadingResponse = false;
   Message? _feedbackMessage;
@@ -148,6 +148,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _structsPageControllers?.values.forEach((controller) {
       controller.dispose();
     });
+    _ensureNotListening(updateStatus: false);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -174,9 +175,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         (name == Styles.notifyChanged)) {
       setStateIfMounted((){});
     } else if (name == SpeechToText.notifyError) {
-      setState(() {
-        _listening = false;
-      });
+      Future.delayed(Duration(), _stopListening);
     } else if (name == LocationServices.notifyStatusChanged) {
       if (param == null) {
         _loadLocationStatus();
@@ -825,25 +824,23 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
             icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor, semanticLabel: "",),
             onPressed: ((_provider != null) && enabled)
                 ? () {
-              _submitMessage(message: _inputController.text, provider: _provider!);
+              _ensureNotListening().then((_){
+                if (mounted) {
+                  _submitMessage(message: _inputController.text, provider: _provider!);
+                }
+              });
             }
                 : null)));
     } else {
-      return Visibility(
-          visible: enabled && SpeechToText().isEnabled,
-          child: MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Speech to text"),
-            child:IconButton(
-              splashRadius: 24,
-              icon: _listening ? Icon(Icons.stop_circle_outlined, color: Styles().colors.fillColorSecondary, semanticLabel: "Stop",) : Icon(Icons.mic, color: Styles().colors.fillColorSecondary, semanticLabel: "microphone",),
-              onPressed: enabled
-                  ? () {
-                if (_listening) {
-                  _stopListening();
-                } else {
-                  _startListening();
-                }
-              }
-                  : null))));
+      return Visibility(visible: enabled && SpeechToText().isEnabled, child:
+        MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Speech to text"), child:
+          IconButton(
+            splashRadius: 24,
+            icon: _listeningIcon,
+            onPressed: enabled ? _toggleListening : null
+          )
+        ))
+      );
     }
   }
 
@@ -1162,28 +1159,71 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     }
   }
 
-  void _startListening() {
-    SpeechToText().listen(onResult: _onSpeechResult);
-    setState(() {
-      _listening = true;
-    });
+  void _startListening() async {
+    if ((_listeningStatus == _ListeningStatus.off) && mounted) {
+      setState(() {
+        _listeningStatus = _ListeningStatus.progress;
+      });
+      bool? result = await SpeechToText().listen(onResult: _onSpeechResult);
+      if (mounted) {
+        setState(() {
+          _listeningStatus = (result == true) ? _ListeningStatus.on : _ListeningStatus.off;
+        });
+      }
+    }
   }
 
-  void _stopListening() async {
+  Future<void> _stopListening({bool updateStatus = true, bool showProgress = false }) async {
+    if ((_listeningStatus == _ListeningStatus.on) && mounted && updateStatus && showProgress) {
+      setState(() {
+        _listeningStatus = _ListeningStatus.progress;
+      });
+    }
     await SpeechToText().stopListening();
-    setState(() {
-      _listening = false;
-    });
+    if (mounted && updateStatus) {
+      setState(() {
+        _listeningStatus = _ListeningStatus.off;
+      });
+    }
+  }
+
+  Future<void> _ensureNotListening({bool updateStatus = true }) async {
+    if (_listeningStatus == _ListeningStatus.on) {
+      await _stopListening(updateStatus: updateStatus, showProgress: false);
+    }
   }
 
   void _onSpeechResult(String result, bool finalResult) {
-    setState(() {
-      _inputController.text = result;
-      if (finalResult) {
-        _listening = false;
-      }
-    });
+    if ((_listeningStatus == _ListeningStatus.on) && mounted) {
+      setState(() {
+        _inputController.text = result;
+      });
+    }
+    if (finalResult) {
+      Future.delayed(Duration(), _stopListening);
+    }
   }
+
+  void _toggleListening() {
+    switch (_listeningStatus) {
+      case _ListeningStatus.on: _stopListening(showProgress: true); break;
+      case _ListeningStatus.off: _startListening(); break;
+      default: break;
+    }
+  }
+
+  Widget get _listeningIcon {
+    switch(_listeningStatus) {
+      case _ListeningStatus.on: return Icon(Icons.stop_circle_outlined, color: Styles().colors.fillColorSecondary, semanticLabel: "Stop Listening",);
+      case _ListeningStatus.off: return Icon(Icons.mic, color: Styles().colors.fillColorSecondary, semanticLabel: "Start Listening",);
+      case _ListeningStatus.progress: return _listeningProgress;
+    }
+  }
+
+  Widget get _listeningProgress =>
+      SizedBox(width: 16, height: 16, child:
+          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
+      );
 
   Future<void> _onPullToRefresh() async {
     if (mounted && (_evaluatingQueryLimit == false)) {
@@ -1342,3 +1382,5 @@ class _AssistantMarkdownIconBuilder extends MarkdownElementBuilder {
     return RichText(text: TextSpan(children: [WidgetSpan(child: Icon(icon, color: color, size: size), alignment: PlaceholderAlignment.middle)]));
   }
 }
+
+enum _ListeningStatus { on, off, progress }
