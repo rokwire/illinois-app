@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed navigation to Assistant, Academics and Wellness home panels [#5541](https://github.com/rokwire/illinois-app/issues/5541).
 - Do not show "View In-Person Courses on Map" for online courses [#5583](https://github.com/rokwire/illinois-app/issues/5583).
+### Added
+- Add accessibility semantics for GBV widgets [#5414](https://github.com/rokwire/illinois-app/issues/5414).
 
 ## [7.3.34] - 2025-12-12
 ### Fixed
@@ -21,14 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Image Alt text is required [#4836](https://github.com/rokwire/illinois-app/issues/4836).
 - Image Alt text for GameDetails [#5553](https://github.com/rokwire/illinois-app/issues/5553).
 - Improve accessibility focus for map panel [#5500](https://github.com/rokwire/illinois-app/issues/5500).
-- Add accessibility semantics for GBV widgets [#5414](https://github.com/rokwire/illinois-app/issues/5414).
+- Improved speech to text management in Assistant panel for iOS [#4364](https://github.com/rokwire/illinois-app/issues/4364).
 ### Changed
 - Removed default map selection to Campus Buildings [#5580](https://github.com/rokwire/illinois-app/issues/5580).
 - Show Map2 without last selected content [#5580](https://github.com/rokwire/illinois-app/issues/5580).
 - Load default camera position from app config [#5580](https://github.com/rokwire/illinois-app/issues/5580).
 - Improved usability of Student Courses detail panel [#5583](https://github.com/rokwire/illinois-app/issues/5583).
-### Fixed
-- Improved speech to text management in Assistant panel for iOS [#4364](https://github.com/rokwire/illinois-app/issues/4364).
 
 ## [7.3.33] - 2025-12-01
 ### Added
