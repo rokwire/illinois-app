@@ -134,9 +134,10 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
                 Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
                   (resource.type != GBVResourceType.external_link)
                     ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-                    : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link))
-                    ? Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-                    : Container()
+                    : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link)) ? Semantics(
+                    label: Localization().getStringEx('panel.sexual_misconduct.resource_directory.external_link_icon', 'Opens in external browser'), image: true,
+                    child: Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container(),
+                    ): Container()
                 )
               ])
             )
@@ -187,10 +188,10 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
               style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
               recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(url)
               ),
-              WidgetSpan(child:
-                Padding(padding: EdgeInsets.only(left: 4), child:
-                  Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-                )
+              WidgetSpan(child: Semantics(
+                label: Localization().getStringEx('panel.sexual_misconduct.resource_directory.external_link_icon', 'Opens directory in browser'),
+                image: true, child: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()),
+              )
               )
             ]))
       )

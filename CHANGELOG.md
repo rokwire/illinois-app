@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Image Alt text is required [#4836](https://github.com/rokwire/illinois-app/issues/4836).
 - Image Alt text for GameDetails [#5553](https://github.com/rokwire/illinois-app/issues/5553).
 - Improve accessibility focus for map panel [#5500](https://github.com/rokwire/illinois-app/issues/5500).
+- Add accessibility semantics for GBV widgets [#5414](https://github.com/rokwire/illinois-app/issues/5414).
 ### Changed
 - Removed default map selection to Campus Buildings [#5580](https://github.com/rokwire/illinois-app/issues/5580).
 - Show Map2 without last selected content [#5580](https://github.com/rokwire/illinois-app/issues/5580).
