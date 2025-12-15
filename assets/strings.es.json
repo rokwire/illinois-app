@@ -54,8 +54,6 @@
     "tabbar.favorites.hint":"Página de favoritos",
     "tabbar.map.title":"Mapa",
     "tabbar.map.hint":"Página del mapa",
-    "tabbar.map0.title":"Map0",
-    "tabbar.map0.hint":"Map0 Page",
     "tabbar.academics.title":"Académica",
     "tabbar.academics.hint":"Página académica",
     "tabbar.wellness.title":"Bienestar",
@@ -433,7 +431,6 @@
     "panel.search.field.search.hint": "Escriba un término de búsqueda",
 
     "panel.map2.header.title": "Mapa",
-    "panel.map0.header.title": "Map0",
     "panel.map2.button.search.title":"Search",
    	"panel.map2.button.search.hint":"Tap to search locations",
     "panel.map2.button.terms.title":"Terms",
@@ -3507,6 +3504,7 @@
 
     "panel.student_courses.header.title": "Mis cursos",
     "panel.student_courses.instructor.title": "Instructor: %s",
+    "panel.student_courses.map.button.title": "View In-Person Courses on Map",
     "panel.student_courses.empty.content.msg": "No parece estar inscrito en ningún curso para el término seleccionado.",
     "panel.student_courses.load.failed.error.msg": "Parece que no tiene cursos registrados para el término seleccionado.",
     "panel.student_courses.load.offline.error.msg": "Mis Cursos no está disponible sin conexión.",
@@ -3839,6 +3837,10 @@
     "panel.appointment.schedule.questions.label.heading": "Preguntas para la Cita",
     "panel.appointment.schedule.questions.header.title": "Programar la Cita",
     "panel.appointment.reschedule.questions.header.title": "Reprogramar la Cita",
+
+    "panel.web.restricted_mobile_devices.store.apple.label": "App Store",
+    "panel.web.restricted_mobile_devices.store.google.label": "Play Store",
+    "panel.web.restricted_mobile_devices.text": "Please use the mobile app to open {{app_title}}{{store_href}}. (The website is for desktop and laptop use only.)",
 
     "panel.image_edit.header.title": "Select Image",
     "panel.image_edit.alt_text.validation.msg": "Please provide image alt text.",

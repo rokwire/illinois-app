@@ -417,7 +417,11 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
       AppLivecycle.notifyStateChanged,
       AppNavigation.notifyEvent,
       LocationServices.notifyStatusChanged,
-      
+
+      RootPanel.notifyTabAppear,
+      RootPanel.notifyTabDisappear,
+      RootPanel.notifyTabPresent,
+
       Auth2UserPrefs.notifyRolesChanged,
       Auth2UserPrefs.notifyFavoriteChanged,
       Auth2.notifyLoginSucceeded,
@@ -488,6 +492,20 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
       _applyLocationServicesStatus(param);
     }
     
+    else if (name == RootPanel.notifyTabAppear) {
+      logPageWidget(RootPanel.stateKey.currentState?.currentTabPanel);
+      if (param == RootTab.Map) {
+        logMapShow();
+      }
+    }
+    else if (name == RootPanel.notifyTabDisappear) {
+      if (param == RootTab.Map) {
+        logMapHide();
+      }
+    }
+    else if (name == RootPanel.notifyTabPresent) {
+    }
+
     else if (name == Auth2UserPrefs.notifyRolesChanged) {
       _updateUserRoles();
     }
@@ -836,20 +854,11 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
         }
       }
 
-      String? panelName;
-      AnalyticsFeature? panelFeature;
-      Map<String, dynamic>? panelAttributes;
-      if (panel is AnalyticsInfo) {
-        panelName = (panel as AnalyticsInfo).analyticsPageName;
-        panelFeature = (panel as AnalyticsInfo).analyticsFeature;
-        panelAttributes = (panel as AnalyticsInfo).analyticsPageAttributes;
-      }
-      if (panelName == null) {
-        panelName = panel.runtimeType.toString();
-      }
-      if (panelFeature == null) {
-        panelFeature = AnalyticsFeature.fromName(panelName);
-      }
+      AnalyticsInfo? analyticsPanelInfo = (panel is AnalyticsInfo) ? (panel as AnalyticsInfo) : null;
+
+      String panelName = analyticsPanelInfo?.analyticsPageName ?? panel.runtimeType.toString();
+      AnalyticsFeature? panelFeature = analyticsPanelInfo?.analyticsFeature ?? AnalyticsFeature.fromName(panelName);
+      Map<String, dynamic>? panelAttributes = analyticsPanelInfo?.analyticsPageAttributes;
 
       logPage(name: panelName, feature: panelFeature, attributes: panelAttributes);
     }

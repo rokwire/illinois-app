@@ -68,6 +68,16 @@ class AcademicsHomePanel extends StatefulWidget with AnalyticsInfo {
   @override
   AnalyticsFeature? get analyticsFeature => state?._selectedContentType.analyticsFeature ?? contentType?.analyticsFeature ?? AnalyticsFeature.Academics;
 
+  static void present(BuildContext context, AcademicsContentType content) {
+    if (hasState) {
+      Navigator.of(context).popUntil((route) => (route.settings.name == routeName) || (route.isFirst));
+      NotificationService().notify(notifySelectContent, content);
+    }
+    else {
+      push(context, content);
+    }
+  }
+
   static Future<void> push(BuildContext context, AcademicsContentType content) =>
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(contentType: content), settings: RouteSettings(name: AcademicsHomePanel.routeName)));
 

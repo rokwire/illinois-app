@@ -25,6 +25,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 class ProfileInfoEditPage extends StatefulWidget {
   final bool onboarding;
@@ -411,7 +412,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   // Edit: Pronunciation
 
   Widget get _pronunciationSection => _isFieldAvailable(_ProfileField.pronunciationUrl) ? _fieldSection(
-    headingTitle: Localization().getStringEx('panel.profile.info.title.pronunciation.text', 'Name Pronunciation'),
+    headingTitle: _ProfileField.pronunciationUrl.sectionTitle,
     fieldControl: StringUtils.isNotEmpty(_pronunciationText) ? _pronunciationEditBar : _pronunciationCreateControl,
   ) : Container();
 
@@ -593,100 +594,82 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   // Edit: Other Sections
 
   Widget get _firstNameSection => _textFieldSection(_ProfileField.firstName,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.first_name.text', 'First Name'),
     enabled: _canEditName, locked: true, available: _showPrivacyControls,
   );
 
   Widget get _middleNameSection => _textFieldSection(_ProfileField.middleName,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.middle_name.text', 'Middle Name'),
     enabled: _canEditName, locked: true, available: _showPrivacyControls,
   );
 
   Widget get _lastNameSection => _textFieldSection(_ProfileField.lastName,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.last_name.text', 'Last Name'),
     enabled: _canEditName, locked: true, available: _showPrivacyControls,
   );
 
   Widget get _pronounsSection => _textFieldSection(_ProfileField.pronouns,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.pronouns.text', 'Pronouns'),
     available: _showPrivacyControls,
   );
 
   Widget get _titleSection => _textFieldSection(_ProfileField.title,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.title.text', 'Title'),
     headingHint: Localization().getStringEx('panel.profile.info.title.title.hint', '(Ex: Professional/Extracurricular Role)'),
     available: _showPrivacyControls,
   );
 
   Widget get _collegeSection => _textFieldSection(_ProfileField.college,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.college.text', 'College, School, or Unit'),
     enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _departmentSection => _textFieldSection(_ProfileField.department,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.department.text', 'Department'),
     enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _majorSection => _textFieldSection(_ProfileField.major,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.major.text', 'Major'),
     enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _department2Section => _textFieldSection(_ProfileField.department2,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.department2.text', 'Second Department'),
     enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _major2Section => _textFieldSection(_ProfileField.major2,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.major2.text', 'Second Major'),
     enabled: false, available: _showPrivacyControls,
   );
 
   Widget get _poBoxSection => _textFieldSection(_ProfileField.poBox,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.pobox.text', 'PO Box'),
     textInputType: TextInputType.text,
     available: _showPrivacyControls,
   );
 
   Widget get _addressSection => _textFieldSection(_ProfileField.address,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.work_address.text', 'Work Address'),
     textInputType: TextInputType.streetAddress,
     available: _showPrivacyControls,
   );
 
   Widget get _address2Section => _textFieldSection(_ProfileField.address2,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.work_address_2.text', 'Work Address 2'),
     textInputType: TextInputType.streetAddress,
     available: _showPrivacyControls,
   );
 
   Widget get _citySection => _textFieldSection(_ProfileField.city,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.city.text', 'City'),
     textInputType: TextInputType.text,
     available: _showPrivacyControls,
   );
 
   Widget get _stateSection => _textFieldSection(_ProfileField.state,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.state.text', 'State Abbreviation'),
     textInputType: TextInputType.text,
     available: _showPrivacyControls,
   );
 
   Widget get _zipSection => _textFieldSection(_ProfileField.zip,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.zip.text', 'Zip Code'),
     textInputType: TextInputType.text,
     available: _showPrivacyControls,
   );
 
   Widget get _countrySection => _textFieldSection(_ProfileField.country,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.country.text', 'Country Abbreviation'),
     textInputType: TextInputType.text,
     available: _showPrivacyControls,
   );
 
   Widget get _emailSection => _textFieldSection(_ProfileField.email,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.email.text', 'Email Address'),
     textInputType: TextInputType.emailAddress,
     enabled: (widget.authType?.loginType?.shouldHaveEmail != true) || StringUtils.isEmpty(widget.profile?.email),
     locked: (widget.authType?.loginType?.shouldHaveEmail == true),
@@ -694,13 +677,11 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   );
 
   Widget get _email2Section => _textFieldSection(_ProfileField.email2,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.email2.text', 'Alternate Email Address'),
     textInputType: TextInputType.emailAddress,
     available: _showPrivacyControls,
   );
 
   Widget get _phoneSection => _textFieldSection(_ProfileField.phone,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.phone.text', 'Phone Number'),
     textInputType: TextInputType.phone,
     enabled: (widget.authType?.loginType?.shouldHavePhone != true) || StringUtils.isEmpty(widget.profile?.phone),
     locked: (widget.authType?.loginType?.shouldHavePhone == true),
@@ -708,7 +689,6 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   );
 
   Widget get _websiteSection => _textFieldSection(_ProfileField.website,
-    headingTitle: Localization().getStringEx('panel.profile.info.title.website.text', 'Website URL'),
     headingHint: Localization().getStringEx('panel.profile.info.title.website.hint', '(Ex: Linkedin)'),
     textInputType: TextInputType.url,
     available: _showPrivacyControls,
@@ -722,7 +702,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
     int maxLines = 1,
   }) => (((_fieldTextControllers[field]?.text.isNotEmpty == true) || enabled) && _isFieldAvailable(field)) ?
     _fieldSection(
-      headingTitle: headingTitle,
+      headingTitle: headingTitle ?? field.sectionTitle,
       headingHint: headingHint,
       fieldControl: _textFieldControl(field,
           textInputType: textInputType,
@@ -785,16 +765,20 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
       Row(children: [
         Expanded(child:
           Padding(padding: EdgeInsets.only(left: 12, right: enabled ? 12 : 0, top: 0, bottom: 0), child:
-            TextField(
-              controller: _fieldTextControllers[field],
-              focusNode: _fieldFocusNodes[field],
-              decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.zero),
-              style: Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin'),
-              maxLines: maxLines,
-              keyboardType: textInputType,
-              autocorrect: autocorrect,
-              readOnly: ((enabled != true) || (locked == true)),
-              onChanged: (String text) => _onTextChanged(field, text),
+            MergeSemantics(child:
+              Semantics(label: field.sectionTitle, textField: true, child:
+                TextField(
+                  controller: _fieldTextControllers[field],
+                  focusNode: _fieldFocusNodes[field],
+                  decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.zero),
+                  style: Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin'),
+                  maxLines: maxLines,
+                  keyboardType: textInputType,
+                  autocorrect: autocorrect,
+                  readOnly: ((enabled != true) || (locked == true)),
+                  onChanged: (String text) => _onTextChanged(field, text),
+                )
+              )
             )
           )
         ),
@@ -803,7 +787,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
             Styles().images.getImage('lock', color: Styles().colors.mediumGray2, size: _buttonIconSize)
           ),
         if (enabled && !locked)
-          Semantics(label: "Edit", button: true, child:
+          Semantics(label: sprintf("Edit %s", [field.sectionTitle]) , button: true, child:
             InkWell(onTap: () => _onTextEdit(field), child:
               Padding(padding: EdgeInsets.only(left: 2, right: 14,  top: 14, bottom: 14), child:
                 Styles().images.getImage('edit', color: Styles().colors.mediumGray2, size: _buttonIconSize)
@@ -881,13 +865,13 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   //static  Widget? get _stopIcon => Styles().images.getImage('stop', color: Styles().colors.fillColorPrimary, size: _editButtonIconSize);
 
   Widget _visibilityDropdown(_ProfileField field, {
-      String? semanticsLabel = "Edit Visibility",
+      String? semanticsLabel,
       bool locked = false,
       EdgeInsetsGeometry buttonPadding = _dropdownButtonPadding,
       double buttonInnerIconPadding = _dropdownButtonInnerIconPaddingX,
     }) =>
     Semantics(button: locked ? false : true,
-      label: locked ? "" : semanticsLabel,
+      label: locked ? "" : (semanticsLabel ?? sprintf("Edit %s Visibility", [field.sectionTitle])),
       excludeSemantics: locked ? false :  true,
       value: locked ? null : profileFieldVisibility(field).displayTitle,
       enabled: ((_fieldTextNotEmpty[field] == true) && !locked),
@@ -1292,6 +1276,33 @@ enum _ProfileField {
 
 extension _ProfileFieldExt on _ProfileField {
   bool get isName => (this == _ProfileField.firstName) || (this == _ProfileField.middleName) || (this == _ProfileField.lastName);
+
+  String? get sectionTitle => switch(this) {
+    _ProfileField.firstName => Localization().getStringEx('panel.profile.info.title.first_name.text', 'First Name'),
+    _ProfileField.middleName => Localization().getStringEx('panel.profile.info.title.middle_name.text', 'Middle Name'),
+    _ProfileField.lastName => Localization().getStringEx('panel.profile.info.title.last_name.text', 'Last Name'),
+    _ProfileField.pronouns => Localization().getStringEx('panel.profile.info.title.pronouns.text', 'Pronouns'),
+    _ProfileField.pronunciationUrl => Localization().getStringEx('panel.profile.info.title.pronunciation.text', 'Name Pronunciation'),
+    _ProfileField.email => Localization().getStringEx('panel.profile.info.title.email.text', 'Email Address'),
+    _ProfileField.email2 => Localization().getStringEx('panel.profile.info.title.email2.text', 'Alternate Email Address'),
+    _ProfileField.phone => Localization().getStringEx('panel.profile.info.title.phone.text', 'Phone Number'),
+    _ProfileField.website => Localization().getStringEx('panel.profile.info.title.website.text', 'Website URL'),
+    _ProfileField.college => Localization().getStringEx('panel.profile.info.title.college.text', 'College, School, or Unit'),
+    _ProfileField.department => Localization().getStringEx('panel.profile.info.title.department.text', 'Department'),
+    _ProfileField.major => Localization().getStringEx('panel.profile.info.title.major.text', 'Major'),
+    _ProfileField.department2 => Localization().getStringEx('panel.profile.info.title.department2.text', 'Second Department'),
+    _ProfileField.major2 =>Localization().getStringEx('panel.profile.info.title.major2.text', 'Second Major'),
+    _ProfileField.title =>Localization().getStringEx('panel.profile.info.title.title.text', 'Title'),
+    _ProfileField.address => Localization().getStringEx('panel.profile.info.title.work_address.text', 'Work Address'),
+    _ProfileField.address2 => Localization().getStringEx('panel.profile.info.title.work_address_2.text', 'Work Address 2'),
+    _ProfileField.poBox => Localization().getStringEx('panel.profile.info.title.pobox.text', 'PO Box'),
+    _ProfileField.city => Localization().getStringEx('panel.profile.info.title.city.text', 'City'),
+    _ProfileField.zip => Localization().getStringEx('panel.profile.info.title.zip.text', 'Zip Code'),
+    _ProfileField.state => Localization().getStringEx('panel.profile.info.title.state.text', 'State Abbreviation'),
+    _ProfileField.country => Localization().getStringEx('panel.profile.info.title.country.text', 'Country Abbreviation'),
+    _ProfileField.universityRole => null, //No section title for this field
+    _ProfileField.photoUrl => null, //No section title for this field
+  };
 }
 
 ///////////////////////////////////////////
