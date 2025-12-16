@@ -291,7 +291,9 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   }
 
   void _scrollListener() {
-    if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_hasMoreContent != false) && (_contentActivity == null)) {
+    double scrollOffset = _scrollController.offset;
+    double scrollMaxExtent = _scrollController.position.maxScrollExtent;
+    if ((scrollOffset > scrollMaxExtent) && (_hasMoreContent != false) && (_contentActivity == null)) {
       _extendContent();
     }
   }
@@ -301,7 +303,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   int get _listSafeContentLength => _contentList?.length ?? 0;
   int get _refreshContentLength => max(_listSafeContentLength, _contentPageLength);
 
-  Future<void> _reloadContent({ int limit = _contentPageLength, bool restoreScrollPosition = false }) async {
+  Future<void> _reloadContent({ int limit = _contentPageLength, String? limitId, bool restoreScrollPosition = false }) async {
     if ((_contentActivity != _ContentActivity.reload) && mounted) {
       double scrollPosition = _scrollController.hasClients ? _scrollController.offset : 0;
 
@@ -310,7 +312,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       });
 
       GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
-        filter: _filter?.authValidated, offset: 0, limit: limit,
+        filter: _filter?.authValidated, offset: 0, limit: limit, limitId: limitId,
       ));
       List<Group>? contentList = contentResult?.groups;
       int? totalContentLength = contentResult?.totalCount;
@@ -338,7 +340,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
         _contentActivity = _ContentActivity.refresh;
       });
 
-      int queryLimit = max(_contentList?.length ?? 0, _contentPageLength);
+      int queryLimit = _refreshContentLength;
       GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
         filter: _filter?.authValidated, offset: 0, limit: queryLimit,
       ));
@@ -359,7 +361,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       }
     }
   }
-  
+
   Future<void> _extendContent() async {
     if ((_contentActivity == null) && mounted) {
       setState(() {
@@ -423,23 +425,23 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   }
 
   void _onGroupCreated(String groupId) {
-    setStateIfMounted(() {
-      _cardKeys[groupId] = GlobalKey();
-    });
-    _reloadContent(limit: max(_totalSafeContentLength, _refreshContentLength) + 1 /* _refreshContentLength + 1 */ /* TBD: ensure groupId visibility */).then((_){
-      if (mounted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          BuildContext? cardContext = _cardKeys[groupId]?.currentContext;
-          if ((cardContext != null) && cardContext.mounted) {
-            Scrollable.ensureVisible(cardContext).then((_){
-              setStateIfMounted((){
-                _cardKeys.remove(groupId);
-              });
-            });
-          }
-        });
-      }
-    });
+    if (mounted) {
+      setState(() {
+        _cardKeys[groupId] = GlobalKey();
+        _filter = null;
+      });
+      _reloadContent(limit: max(_totalSafeContentLength, _refreshContentLength) + 1).then((_){
+        if (mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            BuildContext? cardContext = _cardKeys[groupId]?.currentContext;
+            _cardKeys.remove(groupId);
+            if ((cardContext != null) && cardContext.mounted) {
+              Scrollable.ensureVisible(cardContext, duration: Duration(milliseconds: 300));
+            }
+          });
+        }
+      });
+    }
   }
 
   // Command Handlers
