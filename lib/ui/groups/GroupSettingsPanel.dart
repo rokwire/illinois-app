@@ -272,13 +272,15 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             _buildInfoHeader(title,null),
             Container(
               decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
-              child: Semantics(
+              child:
+                /* WEB: Unable to type in web TextField with Semantics*
+                Semantics(
                   label: fieldTitle,
                   hint: fieldHint,
                   textField: true,
                   value: _groupTitleController.text,
                   excludeSemantics: true,
-                  child: TextField(
+                  child:*/ TextField(
                     controller: _groupTitleController,
                     enabled: _canUpdate,
                     readOnly: !_canUpdate,
@@ -286,7 +288,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     maxLines: 1,
                     decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
                     style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
-                  )),
+                  ),
             ),
           ],
         ),
@@ -345,13 +347,15 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           _buildInfoHeader(title,fieldTitle),
           Container(
             decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
-            child: Semantics(
+            child:
+              /* WEB: Unable to type in web TextField with Semantics*
+              Semantics(
                 label: title,
                 hint: fieldHint,
                 textField: true,
                 excludeSemantics: true,
                 value: _groupDescriptionController.text,
-                child: TextField(
+                child:*/ TextField(
                   controller: _groupDescriptionController,
                   onChanged: (description){ _group!.description = description;  setStateIfMounted(() {});},
                   maxLines: 8,
@@ -361,7 +365,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     hintText: fieldHint,
                     border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                   style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
-                )),
+                ),
           ),
         ],
       ),

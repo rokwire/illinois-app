@@ -86,13 +86,14 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
           child: Text("Recepients:", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: Styles().colors.white,
+          /* WEB: Unable to type in web TextField with Semantics*
+          Semantics(textField: true, child:*/ Container(color: Styles().colors.white,
             child: TextField(
               maxLines: 2,
               controller: _recepientsController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
               style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
-            ),
+            // ),
           )),
           Align(alignment: Alignment.topRight,
             child: Semantics (button: true, label: "Clear",
@@ -114,13 +115,14 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
           child: Text("Subject:", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: Styles().colors.white,
+          /* WEB: Unable to type in web TextField with Semantics*
+          Semantics(textField: true, child:*/ Container(color: Styles().colors.white,
             child: TextField(
               maxLines: 1,
               controller: _subjectController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
               style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
-            ),
+            // ),
           )),
           Align(alignment: Alignment.topRight,
             child: Semantics (button: true, label: "Clear",
@@ -142,13 +144,14 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
           child: Text("Body:", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: Styles().colors.white,
+          /* WEB: Unable to type in web TextField with Semantics*
+          Semantics(textField: true, child:*/ Container(color: Styles().colors.white,
             child: TextField(
               maxLines: 6,
               controller: _bodyController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
               style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
-            ),
+            // ),
           )),
           Align(alignment: Alignment.topRight,
             child: Semantics (button: true, label: "Clear",
@@ -170,13 +173,14 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
           child: Text("Data:", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
         ),
         Stack(children: <Widget>[
-          Semantics(textField: true, child:Container(color: Styles().colors.white,
+          /* WEB: Unable to type in web TextField with Semantics*
+          Semantics(textField: true, child:*/ Container(color: Styles().colors.white,
             child: TextField(
               maxLines: 6,
               controller: _dataController,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
               style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
-            ),
+            // ),
           )),
           Align(alignment: Alignment.topRight,
             child: Semantics (button: true, label: "Clear",

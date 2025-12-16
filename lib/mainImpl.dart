@@ -16,7 +16,7 @@
 
 import 'dart:async';
 import 'dart:collection';
-import 'package:flutter/semantics.dart';
+import 'package:flutter/rendering.dart';
 import 'package:illinois/ui/WebRestrictedMobileDevicesPanel.dart';
 import 'package:web/web.dart' as web;
 import 'package:flutter/cupertino.dart';
@@ -209,8 +209,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
 
     runApp(App(initializeError: serviceError));
 
-    //TBD: DD - enable semantics currently only for web and for mobile devices. When the app is optimized for accessibility - enable it for all web devices
-    if (WebUtils.isMobileDeviceWeb()) {
+    if (kIsWeb) {
       SemanticsBinding.instance.ensureSemantics();
     }
   }, FirebaseCrashlytics().handleZoneError);
@@ -353,7 +352,7 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       title: Localization().getStringEx('app.title', 'Illinois'),
       theme: _appTheme,
-      home: _homePanel,
+      home: _homePanel
     );
   }
 

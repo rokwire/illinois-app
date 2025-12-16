@@ -124,10 +124,11 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> with Notificati
     Container(height: 48, padding: EdgeInsets.only(left: 16), color: Colors.white, child:
       Row(children: <Widget>[
         Flexible(child:
+          /* WEB: Unable to type in web TextField with Semantics*
           Semantics(textField: true, excludeSemantics: true,
             label: Localization().getStringEx('panel.mtd_stops.search.search.field.title', 'Search'),
             hint: Localization().getStringEx('panel.mtd_stops.search.search.field.search.hint', ''),
-            child: TextField(
+            child: */TextField(
               controller: _searchController,
               onChanged: (text) => _onSearchTextChanged(text),
               onSubmitted: (_) => _onTapSearch(),
@@ -138,7 +139,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> with Notificati
               decoration: InputDecoration(
                 border: InputBorder.none,
               ),
-            ),
+            // ),
           ),
         ),
         Semantics(button: true, excludeSemantics: true,

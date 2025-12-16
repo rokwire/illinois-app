@@ -541,7 +541,9 @@ class _PollOptionViewState extends State<PollOptionView> {
           Container(
             padding: EdgeInsets.only(left: 12, right: canClose ? 18 : 12),
             decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
-            child: Semantics(label: widget.title, hint: Localization().getStringEx("panel.create_poll_panel.hint", ""), textField: true, excludeSemantics: true, child:
+            child:
+            /* WEB: Unable to type in web TextField with Semantics*
+              Semantics(label: widget.title, hint: Localization().getStringEx("panel.create_poll_panel.hint", ""), textField: true, excludeSemantics: true, child:*/
               TextField(
                   controller: widget.textController,
                   onChanged: (String text) {
@@ -555,7 +557,7 @@ class _PollOptionViewState extends State<PollOptionView> {
                   style: Styles().textStyles.getTextStyle("widget.detail.regular"),
                   enabled: widget.enabled,
                   textCapitalization: TextCapitalization.sentences,
-                )),
+                ),
           ),
           Visibility(visible: canClose, child:
             Positioned.fill(child:

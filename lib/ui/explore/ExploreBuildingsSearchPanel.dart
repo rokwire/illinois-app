@@ -114,12 +114,14 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
     border: Border(bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 1))
   );
 
-  Widget _buildSearchTextField() => Semantics(
+  Widget _buildSearchTextField() =>
+    /* WEB: Unable to type in web TextField with Semantics*
+    Semantics(
     label: Localization().getStringEx('panel.search.field.search.title', 'Search'),
     hint: Localization().getStringEx('panel.search.field.search.hint', ''),
     textField: true,
     excludeSemantics: true,
-    child: TextField(
+    child:*/ TextField(
       controller: _searchTextController,
       focusNode: _searchTextNode,
       onChanged: (text) => _onTextChanged(text),
@@ -132,7 +134,7 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
       decoration: InputDecoration(
         border: InputBorder.none,
       ),
-    ),
+    // ),
   );
 
   Widget _buildSearchImageButton(String image, {String? label, String? hint, void Function()? onTap}) =>

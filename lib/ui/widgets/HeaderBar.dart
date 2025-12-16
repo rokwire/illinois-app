@@ -21,6 +21,7 @@ import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
+import 'package:illinois/ui/widgets/FocusableSemanticsWidget.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -314,13 +315,13 @@ class _RootHeaderBarState extends State<RootHeaderBar> with NotificationsListene
   }
 
   Widget _buildHeaderHomeButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapHome(),),);
+    return FocusableSemanticsWidget(child: Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapHome(),),));
   }
 
   Widget _buildHeaderBackButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapBack()));
+    return FocusableSemanticsWidget(child: Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapBack())));
   }
 
   Widget _buildHeaderWidget() {
@@ -368,19 +369,19 @@ class _RootHeaderBarState extends State<RootHeaderBar> with NotificationsListene
   }
 
   Widget _buildHeaderSettingsButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
+    return FocusableSemanticsWidget(child: Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
 //    IconButton(icon: Styles().images.getImage('images/settings-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => onTapSettings())
       InkWell(onTap: () => _onTapSettings(), child:
         Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: 16, left: 6), child:
           Styles().images.getImage('settings-white', excludeFromSemantics: true),
         )
       )
-    );
+    ));
   }
 
   Widget _buildHeaderNotificationsButton() {
     int unreadMsgsCount = Inbox().unreadMessagesCount;
-    return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.notifications.hint', ''), button: true, excludeSemantics: true, child:
+    return FocusableSemanticsWidget(child: Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.notifications.hint', ''), button: true, excludeSemantics: true, child:
 //    IconButton(icon: Styles().images.getImage('images/notifications-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapNotifications())
       InkWell(onTap: () => _onTapNotifications(), child:
         Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 2), child:
@@ -392,11 +393,11 @@ class _RootHeaderBarState extends State<RootHeaderBar> with NotificationsListene
           ])
         )
       )
-    );
+    ));
   }
 
   Widget _buildHeaderPersonalInfoButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
+    return FocusableSemanticsWidget(child: Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
 //    IconButton(icon: Styles().images.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations())
       InkWell(onTap: () => _onTapPersonalInformation(), child:
         CollectionUtils.isNotEmpty(Auth2().profilePicture) ?
@@ -411,7 +412,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> with NotificationsListene
             Styles().images.getImage('person-circle-white', excludeFromSemantics: true),
           ),
       )
-    );
+    ));
   }
 
   void _onTapHome() {

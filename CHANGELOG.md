@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WEB: Accessibility for the mobile devices panel [#5594](https://github.com/rokwire/illinois-app/issues/5594).
 ### Added
 - Add accessibility semantics for GBV widgets [#5414](https://github.com/rokwire/illinois-app/issues/5414).
+- WEB: Enable web accessibility and allow navigating through widgets - Part 1 [#5136](https://github.com/rokwire/illinois-app/issues/5136).
 
 ## [7.3.34] - 2025-12-12
 ### Fixed

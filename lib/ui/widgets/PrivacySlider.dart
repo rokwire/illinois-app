@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class PrivacyLevelSlider extends StatefulWidget {
@@ -78,12 +81,20 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                             //           max(roundedValue - 1,  privacyLevelMinValue).toString(),
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2), //Fix cut off circle
-                                  child: Slider(
+                                  child: Semantics(label: Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.slider.hint", "Privacy Level"), value: '$roundedValue',
+                                    enabled: (widget.readOnly == false),
+                                          increasedValue: widget.readOnly || (roundedValue >= privacyLevelMaxValue) ? null :
+                                            Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.slider.increase", "increased to") +
+                                                min(roundedValue + 1, privacyLevelMaxValue).toString(),
+                                          decreasedValue:  widget.readOnly || (roundedValue <= privacyLevelMinValue) ? null :
+                                            Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.slider.decrease", "decreased to") +
+                                                max(roundedValue - 1,  privacyLevelMinValue).toString(),
+                                    child: ExcludeSemantics( child: Slider(
                                       value: _discreteValue!,
                                       min: privacyLevelMinValue.toDouble(),
                                       max: privacyLevelMaxValue.toDouble(),
                                       divisions: privacyLevelDivisions,
-                                      semanticFormatterCallback: (double value) => "Privacy level set to ${widget.readOnly ? roundedValue : value.round()} of $privacyLevelMaxValue",
+                                      // semanticFormatterCallback: (double value) => "Privacy level set to ${widget.readOnly ? roundedValue : value.round()} of $privacyLevelMaxValue",
                                       label: "$roundedValue",
                                       onChanged: (double value) {
                                         if (!widget.readOnly) {
@@ -99,7 +110,7 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                                           });
                                           }
                                         },
-                                      ))
+                                      ))))
                                     )
                   ]),
               Container(
