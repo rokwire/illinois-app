@@ -259,8 +259,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //Name
   Widget _buildNameField() {
     String title = (_group?.researchProject == true) ? Localization().getStringEx("panel.project_settings.name.title", "PROJECT NAME") : Localization().getStringEx("panel.groups_settings.name.title", "GROUP NAME");
-    String? fieldTitle = Localization().getStringEx("panel.groups_settings.name.field", "NAME FIELD");
-    String? fieldHint = Localization().getStringEx("panel.groups_settings.name.field.hint", "");
+    // String? fieldTitle = Localization().getStringEx("panel.groups_settings.name.field", "NAME FIELD");
+    // String? fieldHint = Localization().getStringEx("panel.groups_settings.name.field.hint", "");
 
     return
       Column(children: <Widget>[
