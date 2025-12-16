@@ -644,9 +644,9 @@ extension _GroupsFilterGroupContentAttribute on GroupsFilterGroup {
   static const Map<GroupsFilterType, GroupsFilterGroup> _typeGroups = <GroupsFilterType, GroupsFilterGroup> {
     GroupsFilterType.public: GroupsFilterGroup.details,
     GroupsFilterType.private: GroupsFilterGroup.details,
-    GroupsFilterType.eventAdmin: GroupsFilterGroup.details,
+  //TBD: GroupsFilterType.eventAdmin: GroupsFilterGroup.details,
     GroupsFilterType.managed: GroupsFilterGroup.details,
-  //GroupsFilterType.administrative:
+  //NA: GroupsFilterType.administrative:
 
     GroupsFilterType.admin: GroupsFilterGroup.limits,
     GroupsFilterType.member: GroupsFilterGroup.limits,
