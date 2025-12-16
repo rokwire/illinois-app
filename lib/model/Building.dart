@@ -23,6 +23,7 @@ class Building with Explore implements Favorite {
 
   final String? imageURL;
   final String? mailCode;
+  final String? shortName;
 
   final double? latitude;
   final double? longitude;
@@ -35,7 +36,7 @@ class Building with Explore implements Favorite {
     this.id, this.name, this.number,
     this.fullAddress, this.address1, this.address2,
     this.city, this.state, this.zipCode,
-    this.imageURL, this.mailCode,
+    this.imageURL, this.mailCode, this.shortName,
     this.latitude, this.longitude,
     this.features, this.entrances, this.floors,
   });
@@ -56,6 +57,7 @@ class Building with Explore implements Favorite {
 
       imageURL: JsonUtils.stringValue(MapUtils.get2(json, ['imageURL', 'ImageURL'])),
       mailCode: JsonUtils.stringValue(MapUtils.get2(json, ['mailCode', 'MailCode'])),
+      shortName: JsonUtils.stringValue(MapUtils.get2(json, ['shortName', 'ShortName'])),
 
       latitude: JsonUtils.doubleValue(MapUtils.get2(json, ['latitude', 'Latitude'])),
       longitude: JsonUtils.doubleValue(MapUtils.get2(json, ['longitude', 'Longitude'])),
@@ -81,6 +83,7 @@ class Building with Explore implements Favorite {
 
     'imageURL': imageURL,
     'mailCode': mailCode,
+    'shortName': shortName,
 
     'latitude': latitude,
     'longitude': longitude,
@@ -107,6 +110,7 @@ class Building with Explore implements Favorite {
     (city == other.city) &&
     (state == other.state) &&
     (mailCode == other.mailCode) &&
+    (shortName == other.shortName) &&
 
     (imageURL == other.imageURL) &&
     (zipCode == other.zipCode) &&
@@ -134,6 +138,7 @@ class Building with Explore implements Favorite {
 
     (imageURL?.hashCode ?? 0) ^
     (mailCode?.hashCode ?? 0) ^
+    (shortName?.hashCode ?? 0) ^
 
     (latitude?.hashCode ?? 0) ^
     (longitude?.hashCode ?? 0) ^
