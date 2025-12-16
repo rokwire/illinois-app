@@ -32,10 +32,10 @@ class GroupHome2Panel extends StatefulWidget with AnalyticsInfo {
 
   GroupHome2Panel({super.key, this.filter});
 
-  static void push(BuildContext context) =>
+  static void push(BuildContext context, {GroupsFilter? filter}) =>
     Navigator.push(context, CupertinoPageRoute(
       settings: RouteSettings(name: routeName),
-      builder: (context) => GroupHome2Panel()
+      builder: (context) => GroupHome2Panel(filter: filter,)
     ));
 
   _GroupHome2PanelState createState() => _GroupHome2PanelState();

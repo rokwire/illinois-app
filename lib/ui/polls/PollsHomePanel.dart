@@ -548,7 +548,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
   }
 
   Future<void> _reloadMyGroups() async {
-    List<Group>? allMyGroups = await Groups().loadGroups(contentType: GroupsContentType.my);
+    List<Group>? allMyGroups = await Groups().loadUserGroupsV3();
     _myGroups = _buildVisibleGroups(allMyGroups);
   }
 

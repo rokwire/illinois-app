@@ -19,7 +19,7 @@
 			"home.system": ["tout", "welcome_message", "emergency", "voter_registration", "connect"],
 			"home.connect": ["netid", "phone_or_email"],
 
-			"browse": ["academics", "appointments", "athletics", "campus_guide", "dining", "directory", "events", "laundry", "groups", "groups2", "messages", "mtd", "my", "polls", "music_and_news", "recent", "safety", "sexual_misconduct", "surveys", "research_projects", "wellness"],
+			"browse": ["academics", "appointments", "athletics", "campus_guide", "dining", "directory", "events", "laundry", "groups", "messages", "mtd", "my", "polls", "music_and_news", "recent", "safety", "sexual_misconduct", "surveys", "research_projects", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "appointments", "my_illini"],
 			"browse.appointments": ["appointments"],
 			"browse.athletics": ["sport_events", "sport_news", "sport_teams", "my_game_day"],
@@ -29,7 +29,6 @@
 			"browse.directory": ["user_directory"],
 			"browse.events": ["events"],
 			"browse.groups": ["groups"],
-			"browse.groups2": ["groups2"],
 			"browse.research_projects": ["research_projects"],
 			"browse.messages": ["messages"],
 			"browse.mtd": ["all_mtd_stops", "my_mtd_stops", "my_locations"],

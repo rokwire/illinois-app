@@ -28,7 +28,6 @@ import 'package:illinois/ui/directory/DirectoryAccountsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
-import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
@@ -593,7 +592,6 @@ class _BrowseEntry extends StatelessWidget {
       case "music_and_news.illordle":        _onTapIllordle(context); break;
 
       case "groups.groups":                  _onTapGroups(context); break;
-      case "groups2.groups2":                 _onTapGroups2(context); break;
 
       case "research_projects.research_projects": _onTapResearchProjects(context); break;
 
@@ -756,11 +754,6 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapGroups(BuildContext context) {
     Analytics().logSelect(target: "Groups");
-    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel()));
-  }
-
-  static void _onTapGroups2(BuildContext context) {
-    Analytics().logSelect(target: "Groups2");
     GroupHome2Panel.push(context);
   }
 
