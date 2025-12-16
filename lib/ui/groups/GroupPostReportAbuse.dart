@@ -112,15 +112,17 @@ class _GroupPostReportAbusePanelState extends State<GroupPostReportAbusePanel> {
         Stack(children: [
           Container(
             decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white),
-            child: Semantics(textField: true, excludeSemantics: true,
+            child:
+            /* WEB: Unable to type in web TextField with Semantics*
+            Semantics(textField: true, excludeSemantics: true,
               label: Localization().getStringEx('panel.group.detail.post.report_abuse.comment.label', 'Comment Label'),
               hint: Localization().getStringEx('panel.group.detail.post.report_abuse.comment.hint', ''),
-              child: TextField(controller: _commentController, maxLines: 10,
+              child:*/ TextField(controller: _commentController, maxLines: 10,
                 onChanged: _onCommentChanged,
                 style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                 decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.only(left: 8, right: 20, top: 4, bottom: 4)),
               )
-            )
+            // )
           ),
           Align(alignment: Alignment.topRight, child:
             Visibility(visible:  _hasComment, child:

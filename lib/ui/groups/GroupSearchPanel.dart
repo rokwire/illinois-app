@@ -110,12 +110,13 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
               children: <Widget>[
                 Flexible(
                     child:
+                    /* WEB: Unable to type in web TextField with Semantics*
                     Semantics(
                       label: Localization().getStringEx('panel.groups_search.field.search.title', 'Search'),
                       hint: Localization().getStringEx('panel.groups_search.field.search.hint', ''),
                       textField: true,
                       excludeSemantics: true,
-                      child: TextField(
+                      child:*/ TextField(
                         controller: _searchController,
                         onChanged: (text) => _onTextChanged(text),
                         onSubmitted: (_) => _onTapSearch(),
@@ -126,7 +127,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
                         decoration: InputDecoration(
                           border: InputBorder.none,
                         ),
-                      ),
+                      // ),
                     )
                 ),
                 Semantics(

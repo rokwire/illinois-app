@@ -131,11 +131,12 @@ class _ProfileLoginEmailPanelState extends State<ProfileLoginEmailPanel>  {
                 ),)],),
                 
                 Padding(padding: EdgeInsets.only(bottom: 12), child:
+                  /* WEB: Unable to type in web TextField with Semantics*
                   Semantics(textField: true, excludeSemantics: true,
                     label: Localization().getStringEx("panel.onboarding2.email.label.email.text", "Email Address:"),
                     hint: Localization().getStringEx("panel.onboarding2.email.label.email.hint", ""),
                     value: _emailController.text,
-                    child: Container(
+                    child: */Container(
                       color: Styles().colors.background,
                       child: TextField(
                         controller: _emailController,
@@ -146,19 +147,20 @@ class _ProfileLoginEmailPanelState extends State<ProfileLoginEmailPanel>  {
                         style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
                         decoration: textFeildDecoration,
                       ),
-                    ),
+                    // ),
                   ),
                 ),
 
                 Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 6), child:
                   Text(Localization().getStringEx("panel.onboarding2.email.label.password.text", "Password:"), style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),)
                 ),)],),
-                
+
+                /* WEB: Unable to type in web TextField with Semantics*
                 Semantics(textField: true, excludeSemantics: true, 
                   label: Localization().getStringEx("panel.onboarding2.email.label.password.text", "Password:"),
                   hint: Localization().getStringEx("panel.onboarding2.email.label.password.hint", ""),
                   value: _passwordController.text,
-                  child: Container(
+                  child:*/ Container(
                     color: Styles().colors.white,
                     child: TextField(
                       controller: _passwordController,
@@ -172,7 +174,7 @@ class _ProfileLoginEmailPanelState extends State<ProfileLoginEmailPanel>  {
                       style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
                       decoration: textFeildDecoration,
                     ),
-                  ),
+                  // ),
                 ),
 
                 Visibility(visible: (_state == Auth2EmailAccountState.nonExistent), child:
@@ -182,11 +184,12 @@ class _ProfileLoginEmailPanelState extends State<ProfileLoginEmailPanel>  {
                       Text(Localization().getStringEx("panel.onboarding2.email.label.confirm_password.text", "Confirm Password:"), style:  Styles().textStyles.getTextStyle("widget.title.medium"),)
                     ),)],),
 
+                    /* WEB: Unable to type in web TextField with Semantics*
                     Semantics(textField: true, excludeSemantics: true,
                       label: Localization().getStringEx("panel.onboarding2.email.label.confirm_password.text", "Confirm Password:"),
                       hint: Localization().getStringEx("panel.onboarding2.email.label.confirm_password.hint", ""),
                       value: _confirmPasswordController.text,
-                      child: Container(
+                      child:*/ Container(
                         color: Styles().colors.white,
                         child: TextField(
                           controller: _confirmPasswordController,
@@ -200,7 +203,7 @@ class _ProfileLoginEmailPanelState extends State<ProfileLoginEmailPanel>  {
                           style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
                           decoration: textFeildDecoration,
                         ),
-                      ),
+                      // ),
                     ),
                   ],)
                 ),

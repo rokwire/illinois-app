@@ -319,13 +319,13 @@ class Event2CreatePanel extends StatefulWidget {
     String? semanticsLabel,
     String? semanticsHint,
   }) =>
-    Semantics(
-      label: semanticsLabel,
+      /* WEB: Unable to type in web TextField with Semantics*
+      Semantics(label: semanticsLabel,
       hint: semanticsHint,
       textField: true,
       excludeSemantics: true,
       value: controller.text,
-      child: TextField(
+      child: */TextField(
         controller: controller,
         focusNode: focusNode,
         decoration: textEditDecoration(padding: padding),
@@ -335,7 +335,7 @@ class Event2CreatePanel extends StatefulWidget {
         keyboardType: keyboardType,
         autocorrect: autocorrect,
         onChanged: (onChanged != null) ? ((_) => onChanged) : null,
-    ));
+    );
 
   static Widget buildInnerTextEditWidget(TextEditingController controller, {
     FocusNode? focusNode,

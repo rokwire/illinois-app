@@ -152,12 +152,13 @@ class _GroupMembersSearchState extends State<GroupMembersSearchPanel> with Notif
           children: <Widget>[
             Flexible(
                 child:
+                /* WEB: Unable to type in web TextField with Semantics*
                 Semantics(
                   label: Localization().getStringEx('panel.manage_members.field.search.title', 'Search'),
                   hint: Localization().getStringEx('panel.manage_members.field.search.hint', ''),
                   textField: true,
                   excludeSemantics: true,
-                  child: TextField(
+                  child:*/ TextField(
                     controller: _searchEditingController,
                     onChanged: (text) => _onSearchTextChanged(text),
                     onSubmitted: (_) => _onTapSearch(),
@@ -169,7 +170,7 @@ class _GroupMembersSearchState extends State<GroupMembersSearchPanel> with Notif
                     decoration: InputDecoration(
                       border: InputBorder.none,
                     ),
-                  ),
+                  // ),
                 )
             ),
             Semantics(

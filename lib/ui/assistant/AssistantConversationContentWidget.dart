@@ -836,7 +836,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                           child: Padding(
                               padding: const EdgeInsets.only(left: 16.0),
                               child: Stack(children: [
-                                  Semantics(container: true, child:  Padding(padding: EdgeInsets.only(right: 28), child: TextField(
+                                  /* WEB: Unable to type in web TextField with Semantics*
+                                  Semantics(container: true, child: */ Padding(padding: EdgeInsets.only(right: 28), child: TextField(
                                     key: _inputFieldKey,
                                     enabled: enabled,
                                     controller: _inputController,
@@ -855,7 +856,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                             ? null
                                             : Localization().getStringEx('panel.assistant.label.queries.limit.title',
                                             'Sorry you are out of questions for today. Please check back tomorrow to ask more questions!')),
-                                    style: Styles().textStyles.getTextStyle('widget.title.regular')))),
+                                    style: Styles().textStyles.getTextStyle('widget.title.regular'))),
                                 Align(
                                     alignment: Alignment.centerRight,
                                     child: Padding(padding: EdgeInsets.only(right: 0), child: _buildSendImage(enabled)))
