@@ -17,7 +17,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/rendering.dart';
-import 'package:illinois/ui/WebRestrictedMobileDevicesPanel.dart';
+import 'package:illinois/ui/web/WebRestrictedMobileDevicesPanel.dart';
 import 'package:web/web.dart' as web;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +64,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/service/WellnessRings.dart';
-import 'package:illinois/ui/WebLoginNetIdPanel.dart';
+import 'package:illinois/ui/web/WebLoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingAlertPanel.dart';
 
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
