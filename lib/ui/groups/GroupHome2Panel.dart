@@ -587,7 +587,7 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
     widget: ContentAttributeWidget.dropdown,
     scope: <String>{ Groups.groupsContentAttributesScope },
     values: List<ContentAttributeValue>.from(GroupsFilterGroup.details.types.map((GroupsFilterType value) => ContentAttributeValue(
-      value: value, label: value.displayTitle, group: Localization().getStringEx('model.group.attributes.details.group.visibility', 'Visibility'),
+      value: value, label: value.displayTitle, selectLabel: value.displaySelectTitle, group: Localization().getStringEx('model.group.attributes.details.group.visibility', 'Visibility'),
     ))),
   );
 
@@ -599,7 +599,7 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
     widget: ContentAttributeWidget.dropdown,
     scope: <String>{ Groups.groupsContentAttributesScope },
     values: List<ContentAttributeValue>.from(GroupsFilterGroup.limits.types.map((GroupsFilterType value) => ContentAttributeValue(
-      value: value, label: value.displayTitle,
+      value: value, label: value.displayTitle, selectLabel: value.displaySelectTitle,
     ))),
   );
   
@@ -608,7 +608,7 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
 
     for (GroupsFilterType type in GroupsFilterGroup.details.types) {
       if (types?.contains(type) == true) {
-        descriptionList.add(type.displayHint);
+        descriptionList.add(type.displayTitle);
       }
     }
 
@@ -627,7 +627,7 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
 
     for (GroupsFilterType type in GroupsFilterGroup.limits.types) {
       if (types?.contains(type) == true) {
-        descriptionList.add(type.displayHint);
+        descriptionList.add(type.displayTitle);
       }
     }
 
@@ -671,23 +671,23 @@ extension _GroupsFilterTypeContentAttribute on GroupsFilterType {
       case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.title', 'Univerity Managed');
       case GroupsFilterType.administrative: return Localization().getStringEx('model.group.attributes.detail.administrative.title', 'Administrative');
 
-      case GroupsFilterType.admin: return Localization().getStringEx('model.group.attributes.limit.admin.title', 'Groups I administer');
-      case GroupsFilterType.member: return Localization().getStringEx('model.group.attributes.limit.member.title', 'Groups I am member of');
-      case GroupsFilterType.candidate: return Localization().getStringEx('model.group.attributes.limit.candidate.title', 'Groups I\'ve requested to join (pending or denied)');
+      case GroupsFilterType.admin: return Localization().getStringEx('model.group.attributes.limit.admin.title', 'Admin');
+      case GroupsFilterType.member: return Localization().getStringEx('model.group.attributes.limit.member.title', 'Member');
+      case GroupsFilterType.candidate: return Localization().getStringEx('model.group.attributes.limit.candidate.title', 'Pending or Denied');
     }
   }
 
-  String get displayHint {
+  String get displaySelectTitle {
     switch (this) {
-      case GroupsFilterType.public: return Localization().getStringEx('model.group.attributes.detail.public.hint', 'Public');
-      case GroupsFilterType.private: return Localization().getStringEx('model.group.attributes.detail.private.hint', 'Private');
-      case GroupsFilterType.eventAdmin: return Localization().getStringEx('model.group.attributes.detail.event_admins.hint', 'Event Admins');
-      case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.hint', 'Univerity Managed');
-      case GroupsFilterType.administrative: return Localization().getStringEx('model.group.attributes.detail.administrative.hint', 'Administrative');
+      case GroupsFilterType.public: return Localization().getStringEx('model.group.attributes.detail.public.title.select', 'Public');
+      case GroupsFilterType.private: return Localization().getStringEx('model.group.attributes.detail.private.title.select', 'Private');
+      case GroupsFilterType.eventAdmin: return Localization().getStringEx('model.group.attributes.detail.event_admins.title.select', 'Event Admins');
+      case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.title.select', 'Univerity Managed');
+      case GroupsFilterType.administrative: return Localization().getStringEx('model.group.attributes.detail.administrative.title.select', 'Administrative');
 
-      case GroupsFilterType.admin: return Localization().getStringEx('model.group.attributes.limit.admin.hint', 'Admin');
-      case GroupsFilterType.member: return Localization().getStringEx('model.group.attributes.limit.member.hint', 'Member');
-      case GroupsFilterType.candidate: return Localization().getStringEx('model.group.attributes.limit.candidate.hint', 'Requested to Join');
+      case GroupsFilterType.admin: return Localization().getStringEx('model.group.attributes.limit.admin.title.select', 'Groups I administer');
+      case GroupsFilterType.member: return Localization().getStringEx('model.group.attributes.limit.member.title.select', 'Groups I am member of');
+      case GroupsFilterType.candidate: return Localization().getStringEx('model.group.attributes.limit.candidate.title.select', 'Groups I\'ve requested to join (pending or denied)');
     }
   }
 
