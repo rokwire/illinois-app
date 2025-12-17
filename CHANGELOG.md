@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fixed GBV panels analytics feature, handled missing analytics logs in Assistant panel [#5609](https://github.com/rokwire/illinois-app/issues/5609).
+
 ## [7.3.35] - 2025-12-15
 ### Fixed
 - Fixed navigation to Assistant, Academics and Wellness home panels [#5541](https://github.com/rokwire/illinois-app/issues/5541).
