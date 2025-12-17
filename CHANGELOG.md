@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed GBV panels analytics feature, handled missing analytics logs in Assistant panel [#5609](https://github.com/rokwire/illinois-app/issues/5609).
+### Changed
+- Supply group & event names in analytics page attributes, if available [#5611](https://github.com/rokwire/illinois-app/issues/5611).
 
 ## [7.3.35] - 2025-12-15
 ### Fixed
