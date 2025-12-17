@@ -309,6 +309,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                           inlineSyntaxes: [_AssistantMarkdownCustomIconSyntax()],
                                                           styleSheet: MarkdownStyleSheet(p: message.user ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular') : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'), a: TextStyle(decoration: TextDecoration.underline)),
                                                           onTapLink: (text, href, title) {
+                                                            Analytics().logSelect(target: "Link: $text", source: this.widget.runtimeType.toString());
                                                             AppLaunchUrl.launch(url: href, context: context);
                                                           }))
                                                 ]))
@@ -1205,6 +1206,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   void _toggleListening() {
+    Analytics().logSelect(target: 'Assistant: ${StringUtils.capitalize(_listeningStatus.toggled.analyticsAction)} Listening');
     switch (_listeningStatus) {
       case _ListeningStatus.on: _stopListening(showProgress: true); break;
       case _ListeningStatus.off: _startListening(); break;
@@ -1384,3 +1386,21 @@ class _AssistantMarkdownIconBuilder extends MarkdownElementBuilder {
 }
 
 enum _ListeningStatus { on, off, progress }
+
+extension _ListeningStatusImpl on _ListeningStatus {
+  _ListeningStatus get toggled {
+    switch (this) {
+      case _ListeningStatus.on: return _ListeningStatus.off;
+      case _ListeningStatus.off: return _ListeningStatus.on;
+      case _ListeningStatus.progress: return this;
+    }
+  }
+
+  String get analyticsAction {
+    switch (this) {
+      case _ListeningStatus.on: return 'start';
+      case _ListeningStatus.off: return 'stop';
+      case _ListeningStatus.progress: return 'progress';
+    }
+  }
+}
