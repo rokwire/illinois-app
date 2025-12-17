@@ -1028,10 +1028,11 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   Future<void> _onFirebaseEventDetail(Map<String, dynamic>? content) async {
-    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? content.eventEntityId  : null;
+    String? eventName = (content != null) ? JsonUtils.stringValue(content['event_name']) ?? content.eventEntityName  : null;
     if (StringUtils.isNotEmpty(eventId) && context.mounted) {
       //ExplorePanel.presentDetailPanel(context, eventId: eventId);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId, eventName: eventName,)));
     }
   }
 
@@ -1043,9 +1044,10 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   Future<void> _onFirebaseEventSelfCheckIn(Map<String, dynamic>? content) async {
-    String? eventId = (content != null) ? (JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])) : null;
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? content.eventEntityId  : null;
+    String? eventName = (content != null) ? JsonUtils.stringValue(content['event_name']) ?? content.eventEntityName  : null;
     if (StringUtils.isNotEmpty(eventId) && context.mounted) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId, onInitialized: (Event2DetailPanelState state) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId, eventName: eventName, onInitialized: (Event2DetailPanelState state) {
         if ((eventId != null) && eventId.isNotEmpty) {
           state.selfCheckIn(eventId, secret: JsonUtils.stringValue(content?['secret']));
         }
@@ -1054,9 +1056,10 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   void _onFirebaseEventAttendeeSurveyInvitation(Map<String, dynamic>? content) {
-    String? eventId = (content != null) ? JsonUtils.stringValue(content['entity_id']) : null;
+    String? eventId = content?.eventEntityId;
+    String? eventName = content?.eventEntityName;
     if (StringUtils.isNotEmpty(eventId) && context.mounted) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId, eventName: eventName,)));
     }
   }
   
