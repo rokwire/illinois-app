@@ -302,7 +302,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   int get _listSafeContentLength => _contentList?.length ?? 0;
   int get _refreshContentLength => max(_listSafeContentLength, _contentPageLength);
 
-  Future<void> _reloadContent({ int limit = _contentPageLength, String? limitId, bool restoreScrollPosition = false }) async {
+  Future<void> _reloadContent({ int limit = _contentPageLength, String? anchorId, int? anchorOffset, bool restoreScrollPosition = false }) async {
     if ((_contentActivity != _ContentActivity.reload) && mounted) {
       double scrollPosition = _scrollController.hasClients ? _scrollController.offset : 0;
 
@@ -311,7 +311,9 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       });
 
       GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
-        filter: _filter?.authValidated, offset: 0, limit: limit, limitId: limitId,
+        filter: _filter?.authValidated,
+        offset: 0, limit: limit,
+        anchorId: anchorId, anchorOffset: anchorOffset,
       ));
       List<Group>? contentList = contentResult?.groups;
       int? totalContentLength = contentResult?.totalCount;
@@ -429,7 +431,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
         _cardKeys[groupId] = GlobalKey();
         _filter = null;
       });
-      _reloadContent(limit: max(_totalSafeContentLength, _refreshContentLength) + 1).then((_){
+      _reloadContent(anchorId: groupId, anchorOffset: _contentPageLength ~/ 2).then((_){
         if (mounted) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             BuildContext? cardContext = _cardKeys[groupId]?.currentContext;
