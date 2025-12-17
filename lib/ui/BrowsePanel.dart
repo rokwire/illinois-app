@@ -44,6 +44,7 @@ import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/gbv/GBVPathwaysPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:illinois/ui/widgets/FocusableSemanticsWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -178,22 +179,24 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> with Notifica
   Widget build(BuildContext context) {
     List<Widget> sectionsList = <Widget>[];
     if (_contentCodes != null) {
+      int focusOrderNumber = 0;
       for (String code in _contentCodes!) {
         List<String>? entryCodes = _BrowseSection.buildBrowseEntryCodes(sectionId: code);
         if ((entryCodes != null) && entryCodes.isNotEmpty) {
-          sectionsList.add(_BrowseSection(
+          focusOrderNumber++;
+          sectionsList.add(FocusTraversalOrder(order: NumericFocusOrder(focusOrderNumber.toDouble()), child: _BrowseSection(
             sectionId: code,
             entryCodes: entryCodes,
             expanded: _isExpanded(code),
-            onExpand: () => _toggleExpanded(code),)
+            onExpand: () => _toggleExpanded(code),))
           );
         }
       }
     }
 
-    return Padding(padding: EdgeInsets.all(16), child:
+    return FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Padding(padding: EdgeInsets.all(16), child:
       Column(children: sectionsList,),
-    ) ;
+    )) ;
   }
 
   void _updateContentCodes() {
@@ -281,11 +284,11 @@ class _BrowseSection extends StatelessWidget {
     List<Widget> contentList = <Widget>[];
     contentList.add(_buildHeading(context));
     contentList.add(_buildEntries(context));
-    return Column(children: contentList,);
+    return FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Column(children: contentList,));
   }
 
   Widget _buildHeading(BuildContext context) {
-    return Padding(padding: EdgeInsets.only(bottom: (expanded ? 0 : 4)), child:
+    return FocusTraversalOrder(order: NumericFocusOrder(1), child: Padding(padding: EdgeInsets.only(bottom: (expanded ? 0 : 4)), child:
       InkWell(onTap: () => _onTapHeading(context), child:
         Container(
           decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
@@ -298,11 +301,11 @@ class _BrowseSection extends StatelessWidget {
                 )
               ),
               Opacity(opacity: _hasFavoriteContent ? 1 : 0, child:
-                Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
+                FocusTraversalOrder(order: NumericFocusOrder(2), child: Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
                   InkWell(onTap: () => _onTapSectionFavorite(context), child:
                     FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,)
                   ),
-                ),
+                )),
               ),
             ],),
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
@@ -311,7 +314,7 @@ class _BrowseSection extends StatelessWidget {
                   Text(_description, style: Styles().textStyles.getTextStyle("widget.info.regular.thin"))
                 )
               ),
-              Semantics(
+              FocusTraversalOrder(order: NumericFocusOrder(3), child: FocusableSemanticsWidget(child: Semantics(
                 label: expanded ? Localization().getStringEx('panel.browse.section.status.colapse.title', 'Colapse') : Localization().getStringEx('panel.browse.section.status.expand.title', 'Expand'),
                 hint: expanded ? Localization().getStringEx('panel.browse.section.status.colapse.hint', 'Tap to colapse section content') : Localization().getStringEx('panel.browse.section.status.expand.hint', 'Tap to expand section content'),
                 button: true, child:
@@ -322,12 +325,12 @@ class _BrowseSection extends StatelessWidget {
                       ),
                     )
                   ),
-              ),
+              ))),
             ],)
           ],)
         ),
       ),
-    );
+    ));
   }
 
   Widget? get _headingIcon {
@@ -351,16 +354,18 @@ class _BrowseSection extends StatelessWidget {
       List<Widget> entriesList = <Widget>[];
       int browseEntriesCount = expanded ? (_browseEntriesCodes?.length ?? 0) : 0;
       if (1 < browseEntriesCount) {
+        int focusNumber = 0;
         for (String code in _browseEntriesCodes!) {
-          entriesList.add(_BrowseEntry(
+          focusNumber++;
+          entriesList.add(FocusTraversalOrder(order: NumericFocusOrder(focusNumber.toDouble()), child: _BrowseEntry(
             sectionId: sectionId,
             entryId: code,
             favorite: _favorite(code),
-          ));
+          )));
         }
       }
-      return entriesList.isNotEmpty ? Padding(padding: EdgeInsets.only(left: 24), child:
-        Padding(padding: EdgeInsets.only(bottom: 4), child: Column(children: entriesList))
+      return entriesList.isNotEmpty ? FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Padding(padding: EdgeInsets.only(left: 24), child:
+        Padding(padding: EdgeInsets.only(bottom: 4), child: Column(children: entriesList)))
       ) : Container();
   }
 
