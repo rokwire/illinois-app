@@ -1,9 +1,11 @@
+import 'package:collection/collection.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -311,22 +313,17 @@ abstract class CheckList with Service, NotificationsListener implements ContentI
       return;
     }
     
-    Groups().searchGroups(groupName, includeHidden: true ).then((foundGroups){
-      if(CollectionUtils.isEmpty(foundGroups)){
-        Log.d("Unable to Join approval group: Unable to find group with name $groupName");
-      }
-      var group;
-      try {
-        group = foundGroups?.firstWhere((element) => element.title == groupName);
-      } catch (e){print(e);}
+    Groups().loadGroupsV3(GroupsQuery(searchText: groupName, includeHidden: true)).then((GroupsLoadResult? result){
+      Group? group = result?.groups?.firstWhereOrNull((Group group) => group.title == groupName);
       String? groupId = group?.id;
       if(StringUtils.isEmpty(groupId)){
         Log.d("Unable to Join approval group: Unable to find group with id $groupId");
       }
-      
-      Groups().requestMembership(group, []).then((value){
-        Log.d("Requesting group finished with status: ${value? "Success": "Failed"}");
-      });
+      else {
+        Groups().requestMembership(group, []).then((value){
+          Log.d("Requesting group finished with status: ${value? "Success": "Failed"}");
+        });
+      }
     });
   }
 
