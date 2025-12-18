@@ -55,6 +55,7 @@ import 'package:web/web.dart' as web;
 class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
   final Event2? event;
   final String? eventId;
+  final String? eventName;
   final Event2? superEvent;
   final Survey? survey;
   final Group? group;
@@ -64,14 +65,16 @@ class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
   final void Function(Event2DetailPanelState)? onInitialized;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.timeFilter, this.eventSelector, this.onInitialized, this.analyticsFeature});
+  Event2DetailPanel({ this.event, this.eventId, this.eventName, this.superEvent, this.survey, this.group, this.userLocation, this.timeFilter, this.eventSelector, this.onInitialized, this.analyticsFeature});
   
   @override
   State<StatefulWidget> createState() => Event2DetailPanelState();
 
   // AnalyticsInfo
   @override
-  Map<String, dynamic>? get analyticsPageAttributes => event?.analyticsAttributes;
+  Map<String, dynamic>? get analyticsPageAttributes => event?.analyticsAttributes ?? _analyticsEvent?.analyticsAttributes;
+
+  Event2? get _analyticsEvent => (eventId != null) ? Event2(id: eventId, name: eventName) : null;
 }
 
 class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> with NotificationsListener {

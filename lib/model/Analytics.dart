@@ -106,7 +106,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   Profile                        = AnalyticsFeature("Profile");
   static const AnalyticsFeature   Radio                          = AnalyticsFeature("Radio Stations", key: "Radio");
   static const AnalyticsFeature   Recent                         = AnalyticsFeature("Recent");
-  static const AnalyticsFeature   Safety                         = AnalyticsFeature("Safety");
+  static const AnalyticsFeature   Safety                         = AnalyticsFeature("Safety", key: 'GBV');
   static const AnalyticsFeature   Settings                       = AnalyticsFeature("Settings", priority: -1);
 
   static const AnalyticsFeature   Unknown                        = AnalyticsFeature("Unknown");
