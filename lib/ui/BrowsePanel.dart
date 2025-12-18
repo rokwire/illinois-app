@@ -527,8 +527,8 @@ class _BrowseEntry extends StatelessWidget {
                   Text(_title, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
                 ),
               ),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                  child: _iconWidget),
+              FocusableSemanticsWidget(child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  child: _iconWidget)),
             ],),
         )
     );
