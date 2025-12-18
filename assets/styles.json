@@ -191,6 +191,7 @@
     "widget.message.tiny": {"font_family": "regular", "size": 12.0, "color": "fillColorPrimary"},
     "widget.message.tiny.fat": {"extends": "widget.message.tiny", "font_family": "bold"},
     "widget.message.light.regular": {"font_family": "regular", "size": 16.0, "color": "mediumGray"},
+    "widget.message.light.variant.regular": {"font_family": "regular", "size": 16.0, "color": "mediumGray2"},
     "widget.message.light.variant.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray2"},
     "widget.message.dark.regular": {"font_family": "regular", "size": 16.0, "color": "textBackground"},
 
@@ -1043,6 +1044,7 @@
 
     "retry-gray": {"src": "0xf2f9", "type": "fa.icon", "weight": "solid", "size": 18.0, "color": "mediumGray"},
     "circle-outline-gray": {"src": "images/oval-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
+    "circle-inside-gray": {"src": "images/oval-inside-gray.png", "type": "flutter.asset", "color": "mediumGray2", "size": 24},
     "chevron-up-gray": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 10, "todo": "size issue?"},
     "chevron-down-gray": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 10, "todo": "size issue?"},
     "chevron-right-gray": {"src": "images/chevron-right-gray.png", "type": "flutter.asset", "color": "mediumGray", "size": 14, "todo": "size issue?"},

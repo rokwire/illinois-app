@@ -589,7 +589,11 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
     widget: ContentAttributeWidget.dropdown,
     scope: <String>{ Groups.groupsContentAttributesScope },
     values: List<ContentAttributeValue>.from(GroupsFilterGroup.details.types.map((GroupsFilterType value) => ContentAttributeValue(
-      value: value, label: value.displayTitle, selectLabel: value.displaySelectTitle, group: Localization().getStringEx('model.group.attributes.details.group.visibility', 'Visibility'),
+      value: value,
+      label: value.displayTitle,
+      selectLabel: value.displaySelectTitle,
+      enabled: value.authValid,
+      group: Localization().getStringEx('model.group.attributes.details.group.visibility', 'Visibility'),
     ))),
   );
 
@@ -601,7 +605,10 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
     widget: ContentAttributeWidget.dropdown,
     scope: <String>{ Groups.groupsContentAttributesScope },
     values: List<ContentAttributeValue>.from(GroupsFilterGroup.limits.types.map((GroupsFilterType value) => ContentAttributeValue(
-      value: value, label: value.displayTitle, selectLabel: value.displaySelectTitle,
+      value: value,
+      label: value.displayTitle,
+      selectLabel: value.displaySelectTitle,
+      enabled: value.authValid,
     ))),
   );
   
@@ -693,6 +700,8 @@ extension _GroupsFilterTypeContentAttribute on GroupsFilterType {
     }
   }
 
+  bool get authValid => (Auth2().isLoggedIn || (GroupsFilterAuthTypes.isAuthType(this) != true));
+
   static Set<GroupsFilterType>? setFromAttributesSelection(dynamic attributeSelection) {
     if (attributeSelection is List) {
       return SetUtils.from(JsonUtils.listCastValue<GroupsFilterType>(attributeSelection));
@@ -729,6 +738,8 @@ extension GroupsFilterAuthTypes on Set<GroupsFilterType> {
   static const Set<GroupsFilterType> _authTypes = <GroupsFilterType> {
     GroupsFilterType.eventAdmin, GroupsFilterType.admin, GroupsFilterType.member, GroupsFilterType.candidate,
   };
+
+  static bool isAuthType(GroupsFilterType filterType) => _authTypes.contains(filterType);
 
   Set<GroupsFilterType> get noAuthTypes => this.difference(_authTypes);
 }
