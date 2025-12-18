@@ -2320,12 +2320,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     String? eventId = widget.event?.id;
     if (eventId != null) {
       _loadingEventGroups = true;
-      _initialGroupIds = _selectedGroupIds = widget.event!.groupIds;
-      Groups().loadGroupsByIds(groupIds: widget.event!.groupIds).then((List<Group>? groups) {
-          setStateIfMounted(() {
-            _loadingEventGroups = false;
-            _eventGroups = groups;
-          });
+      _initialGroupIds = _selectedGroupIds = widget.event?.groupIds;
+      Groups().loadGroupsV3(GroupsQuery(ids: widget.event?.groupIds)).then((GroupsLoadResult? result){
+        setStateIfMounted(() {
+          _loadingEventGroups = false;
+          _eventGroups = result?.groups;
+        });
       });
     }
     else {
