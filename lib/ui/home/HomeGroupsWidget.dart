@@ -211,7 +211,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
 
   Widget get _groupsContentWidget {
     Widget? contentWidget;
-    List<Group>? visibleGroups = _visibleGroups(_groups);
+    List<Group>? visibleGroups = _groups;
     int visibleCount = visibleGroups?.length ?? 0;
 
     if (1 < visibleCount) {
@@ -395,19 +395,6 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
     }
 
     return groups;
-  }
-
-  List<Group>? _visibleGroups(List<Group>? groups) {
-    List<Group>? visibleGroups;
-    if (groups != null) {
-      visibleGroups = <Group>[];
-      for (Group group in groups) {
-        if ((group.id != null) && group.isVisible) {
-          visibleGroups.add(group);
-        }
-      }
-    }
-    return visibleGroups;
   }
 
   // Event Handlers

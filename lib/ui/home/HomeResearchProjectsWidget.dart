@@ -203,7 +203,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
   Widget get _researchProjectsContentWidget {
 
     Widget? contentWidget;
-    List<Group>? visibleResearchProjects = _visibleResearchProjects(_researchProjects);
+    List<Group>? visibleResearchProjects = _researchProjects;
     int visibleCount = visibleResearchProjects?.length ?? 0;
 
     if (1 < visibleCount) {
@@ -397,19 +397,6 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
     }
 
     return researchProjects;
-  }
-
-  List<Group>? _visibleResearchProjects(List<Group>? researchProjects) {
-    List<Group>? visibleResearchProjects;
-    if (researchProjects != null) {
-      visibleResearchProjects = <Group>[];
-      for (Group researchProject in researchProjects) {
-        if ((researchProject.id != null) && researchProject.isVisible) {
-          visibleResearchProjects.add(researchProject);
-        }
-      }
-    }
-    return visibleResearchProjects;
   }
 
   // Event Handlers

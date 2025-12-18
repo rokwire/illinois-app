@@ -419,15 +419,13 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
     GroupCardDisplayType cardDisplayType = (_selectedContentType == ResearchProjectsContentType.my) ? GroupCardDisplayType.myGroup : GroupCardDisplayType.allGroups;
     if (CollectionUtils.isNotEmpty(_researchProjects)) {
       for (Group researchProject in _researchProjects!) {
-        if (researchProject.isVisible) {
-          widgets.add(Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(researchProject,
-              displayType: cardDisplayType,
-              onImageTap: () => _onTapImage(researchProject)
-            ,),
-          ));
-        }
+        widgets.add(Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: GroupCard(researchProject,
+            displayType: cardDisplayType,
+            onImageTap: () => _onTapImage(researchProject)
+          ,),
+        ));
       }
       widgets.add(Container(height: 8,));
     }
