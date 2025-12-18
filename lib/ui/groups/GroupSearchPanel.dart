@@ -16,6 +16,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -57,8 +58,11 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
     _searchLabel = _searchHint;
 
     NotificationService().subscribe(this, [
-      Auth2.notifyLoginSucceeded,
-      Auth2.notifyLogout,
+      Groups.notifyGroupCreated,
+      Groups.notifyGroupUpdated,
+      Groups.notifyGroupDeleted,
+      Groups.notifyUserGroupsUpdated,
+      Auth2.notifyLoginChanged,
     ]);
   }
 
@@ -73,13 +77,17 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
   // NotificationsListener
 
   void onNotification(String name, dynamic param){
-    if ((name == Auth2.notifyLoginSucceeded) ||  (name == Auth2.notifyLogout)) {
-      // Reload content with some delay, do not unmount immidately GroupsCard that could have updated the login state.
-      Future.delayed(Duration(microseconds: 300), () {
-        if (mounted) {
-          _refreshSearch();
-        }
-      });
+    if ((name == Groups.notifyGroupCreated) || (name == Groups.notifyUserGroupsUpdated)) {
+      _refreshSearch();
+    }
+    else if ((name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted))  {
+      String? groupId = JsonUtils.stringValue(param);
+      if (mounted && ((groupId == null) || (_groups?.containsGroupId(groupId) == true))) {
+        _refreshSearch();
+      }
+    }
+    else if (name == Auth2.notifyLoginChanged) {
+      _refreshSearch();
     }
   }
 
@@ -231,7 +239,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
       Groups().loadGroupsV3(GroupsQuery(searchText: search));
 
   void _refreshSearch() {
-    if (StringUtils.isNotEmpty(_searchValue)) {
+    if (StringUtils.isNotEmpty(_searchValue) && mounted) {
       setState(() { _loading = true; });
       _searchGroups(_searchValue).then((GroupsLoadResult? result) {
         if (mounted) {
