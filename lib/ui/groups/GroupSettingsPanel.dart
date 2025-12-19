@@ -655,8 +655,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   Widget _buildAdministrative() { // Administrative cannot be updated
     return Padding(padding: EdgeInsets.all(16), child: Container(child:
     _buildSwitch(
-      title: Localization().getStringEx('panel.groups.common.administrative.switch.label', 'Is this an administrative group?'),
-      subject: Localization().getStringEx('panel.groups.common.administrative.switch.subject', 'Administrative Group'),
+      title: Localization().getStringEx('panel.groups.common.administrative.switch.label', 'Is this group an admin team for managing Illinois app events?'),
+      subject: Localization().getStringEx('panel.groups.common.administrative.switch.subject', 'Admin Team Group'),
       value: _group?.administrative,
       enabled: false
     )));

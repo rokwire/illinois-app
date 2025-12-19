@@ -784,9 +784,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   Widget _buildAdminTeamsSection() {
     String title = Localization().getStringEx('panel.event2.create.section.admin.teams.title', 'ADMIN TEAMS');
     String description = Localization().getStringEx('panel.event2.create.section.admin.teams.description',
-        ' (grant admin access to the members of your private administrative groups in the {{app_title}} app)')
+        '(grant admin access to the members of private, administrative {{app_title}} app groups)')
         .replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
-    String semanticsLabel = title + description;
+    String semanticsLabel = '$title $description';
     return Event2CreatePanel.buildSectionWidget(
       heading: Padding(padding: Event2CreatePanel.sectionHeadingPadding, child:
         Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
@@ -794,7 +794,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
             Expanded(child:
               RichText(textScaler: MediaQuery.of(context).textScaler, text:
                 TextSpan(text: title, style: Event2CreatePanel.headingTextStype,  children: <InlineSpan>[
-                  TextSpan(text: description, style: Styles().textStyles.getTextStyle('widget.item.small.thin'),),
+                  TextSpan(text: ' $description', style: Styles().textStyles.getTextStyle('widget.item.small.thin'),),
                 ])
               )
             ),
@@ -802,19 +802,19 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         )
       ),
       body: Stack(alignment: Alignment.center, children: [
-        Container(
-            decoration: Event2CreatePanel.sectionDecoration,
-            child: Padding(
-                padding: EdgeInsets.only(left: 12, right: 8, top: 5, bottom: 5),
-                child: DropdownButtonHideUnderline(
-                    child: DropdownButton<Group>(
-                        dropdownColor: Styles().colors.white,
-                        icon: Styles().images.getImage('chevron-down'),
-                        isExpanded: true,
-                        style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                        hint: Row(children: [Expanded(child: Text(_selectedAdminGroupNamesText, maxLines: 2, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('widget.message.regular')))]),
-                        items: _buildAdminGroupsDropDownItems(),
-                        onChanged: _onGroupSelected)))),
+        Container(decoration: Event2CreatePanel.sectionDecoration, padding: EdgeInsets.only(left: 12, right: 8, top: 5, bottom: 5), child:
+          DropdownButtonHideUnderline(child:
+            DropdownButton<Group>(
+              dropdownColor: Styles().colors.white,
+              icon: Styles().images.getImage('chevron-down', color: _hasAdminGroups ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent),
+              isExpanded: true,
+              style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+              hint: Text(_hasAdminGroups ? _selectedAdminGroupNamesText : _noAdminGroupsHint, maxLines: 2, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle(_hasAdminGroups ? 'widget.message.regular' : 'panel.create_event.dropdown_button.title.regular')),
+              items: _buildAdminGroupsDropDownItems(),
+              onChanged: _onGroupSelected
+            )
+          )
+        ),
         Visibility(visible: _loadingAdminGroups, child: SizedBox(height: 25, width: 25, child: CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary)))
       ]),
     );
@@ -859,6 +859,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       Expanded(child: Text(group.title ?? '', overflow: TextOverflow.ellipsis, style: Event2CreatePanel.headingTextStype))
     ]));
   }
+
+  bool get _hasAdminGroups =>
+    (_adminGroups?.isNotEmpty == true);
+
+  String get _noAdminGroupsHint =>
+    Localization().getStringEx("panel.event2.create.section.admin.teams.empty.content.hint", "No private event admin groups");
 
   String get _selectedAdminGroupNamesText {
     if ((_adminGroups != null) && (_adminGroups?.isNotEmpty ?? false) &&
@@ -2314,12 +2320,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     String? eventId = widget.event?.id;
     if (eventId != null) {
       _loadingEventGroups = true;
-      _initialGroupIds = _selectedGroupIds = widget.event!.groupIds;
-      Groups().loadGroupsByIds(groupIds: widget.event!.groupIds).then((List<Group>? groups) {
-          setStateIfMounted(() {
-            _loadingEventGroups = false;
-            _eventGroups = groups;
-          });
+      _initialGroupIds = _selectedGroupIds = widget.event?.groupIds;
+      Groups().loadGroupsV3(GroupsQuery(ids: widget.event?.groupIds)).then((GroupsLoadResult? result){
+        setStateIfMounted(() {
+          _loadingEventGroups = false;
+          _eventGroups = result?.groups;
+        });
       });
     }
     else {
@@ -2331,7 +2337,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   void _initAdminGroups() {
     _selectedAdminGroupIds = widget.event?.authorizationContext?.externalAdmins?.groupIds;
     _loadingAdminGroups = true;
-    Groups().loadGroups(contentType: GroupsContentType.my, administrative: true).then((List<Group>? groups) {
+    Groups().loadAdminUserGroupsV3().then((List<Group>? groups) {
       setStateIfMounted(() {
         _loadingAdminGroups = false;
         _adminGroups = groups;

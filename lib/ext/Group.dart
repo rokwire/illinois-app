@@ -16,6 +16,7 @@
 
 import 'dart:ui';
 
+import 'package:collection/collection.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -317,4 +318,10 @@ extension GroupsExt on Groups {
       ]
     });
   }
+}
+
+extension GroupsIterableUtils on Iterable<Group> {
+
+  bool containsGroupId(String? groupId) => (groupId != null) && (this.firstWhereOrNull((Group group) => (group.id == groupId)) != null);
+
 }
