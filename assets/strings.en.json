@@ -4421,7 +4421,12 @@
     "model.group.updated.date": "Updated on %s",
 
     "model.group.attributes.filters.header.title": "Group Filters",
-    "model.group.attributes.filters.header.description": "Choose at least one attribute to filter the groups and tap Apply to save.",
+    "model.group.attributes.filters.header.description.regular": "Choose at least one attribute to filter the groups and tap Apply to save.",
+    "model.group.attributes.filters.header.description.special": "Choose at least one attribute to filter the groups and tap Apply to save.{{asterisk}}",
+    "model.group.attributes.filters.header.description.special.info": "{{asterisk}} Some attributes are not available when you are not logged in. To enable them, {{link.login}} with your NetID and set your {{link.privacy}} to 4 or 5.",
+    "model.group.attributes.filters.header.description.special.link.login": "sign in",
+    "model.group.attributes.filters.header.description.special.link.privacy": "privacy level",
+    "model.group.attributes.filters.header.description.special.asterisk": "\u20f0",
     "model.group.attributes.filters.description.title": "Filter",
 
     "model.group.attributes.details.title": "Group Details",

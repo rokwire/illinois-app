@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -13,6 +14,8 @@ import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -506,9 +509,11 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
       inputSelection[_detailsContentAttributeId] = _detailsContentAttributes;
       inputSelection[_limitsContentAttributeId] = _limitsContentAttributes;
 
+      Map<String, GestureRecognizer> recognizers = <String, GestureRecognizer>{};
+
       dynamic result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
         title: Localization().getStringEx('model.group.attributes.filters.header.title', 'Group Filters'),
-        description: Localization().getStringEx('model.group.attributes.filters.header.description', 'Choose at least one attribute to filter the groups and tap Apply to save.'),
+        descriptionBuilder: (context) => _descriptionBuilder(context, recognizers: recognizers),
         contentAttributes: contentAttributes,
         selection: inputSelection,
 
@@ -518,6 +523,7 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
         countAttributeValues: _countAttributeValues,
       )));
 
+      recognizers.values.forEach((recognizer) => recognizer.dispose);
       Map<String, dynamic>? outputSelection = JsonUtils.mapValue(result);
       return (outputSelection != null) ? _fromAttributesSelection(outputSelection) : null;
     } else {
@@ -642,6 +648,87 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
 
     return descriptionList;
   }
+
+  Widget _descriptionBuilder(BuildContext context, { Map<String, GestureRecognizer>? recognizers }) =>
+    Padding(padding: _desciptionPadding, child: Auth2().isLoggedIn ?
+      _loggedInDescriptionBuilder(context) : _loggedOutDescriptionBuilder(context, recognizers: recognizers),
+    );
+
+  Widget _loggedInDescriptionBuilder(BuildContext context) =>
+    Text(_descriptionRegularTitle, style: _descriptionRegularTitleTextStyle);
+
+  Widget _loggedOutDescriptionBuilder(BuildContext context, { Map<String, GestureRecognizer>? recognizers }) {
+    final String asteriskMacro = "{{asterisk}}";
+    final String linkLoginMacro = "{{link.login}}";
+    final String linkPrivacyMacro = "{{link.privacy}}";
+
+    String titleTemplate = Localization().getStringEx('model.group.attributes.filters.header.description.special', 'Choose at least one attribute to filter the groups and tap Apply to save.$asteriskMacro Some attributes are not available when you are not logged in. To enable them, $linkLoginMacro');
+    List<InlineSpan> titleSpanList = StringUtils.split<InlineSpan>(titleTemplate, macros: [asteriskMacro], builder: (String entry) {
+      if (entry == asteriskMacro) {
+        String title = Localization().getStringEx('model.group.attributes.filters.header.description.special.asterisk', '\u20f0');
+        return TextSpan(text: title, style: _descriptionSpecialTitleAsteriskTextStyle,);
+      }
+      else {
+        return TextSpan(text: entry);
+      }
+    });
+
+    String infoTemplate = Localization().getStringEx('model.group.attributes.filters.header.description.special.info', '$asteriskMacro Some attributes are not available when you are not logged in. To enable them, $linkLoginMacro with your NetID and set your linkPrivacyMacro to 4 or 5.');
+    List<InlineSpan> infoSpanList = StringUtils.split<InlineSpan>(infoTemplate, macros: [linkLoginMacro, linkPrivacyMacro, asteriskMacro], builder: (String entry) {
+      if (entry == linkLoginMacro) {
+        String title = Localization().getStringEx('model.group.attributes.filters.header.description2.link.login', 'sign in');
+        GestureRecognizer? signInRecognizer = (recognizers != null) ? (recognizers[linkLoginMacro] ??= TapGestureRecognizer()..onTap = () => _onTapSignIn(context)) : null;
+        return TextSpan(text: title, recognizer: signInRecognizer, style: _descriptionSpecialInfoLinkTextStyle,);
+      }
+      else if (entry == linkPrivacyMacro) {
+        String title = Localization().getStringEx('model.group.attributes.filters.header.description2.link.privacy', 'privacy level');
+        GestureRecognizer? privacyRecognizer = (recognizers != null) ? (recognizers[linkPrivacyMacro] ??= TapGestureRecognizer()..onTap = () => _onTapProfile(context)) : null;
+        return TextSpan(text: title, recognizer: privacyRecognizer, style: _descriptionSpecialInfoLinkTextStyle,);
+      }
+      else if (entry == asteriskMacro) {
+        String title = Localization().getStringEx('model.group.attributes.filters.header.description.special.asterisk', '\u20f0');
+        return TextSpan(text: title, style: _descriptionSpecialInfoAsteriskTextStyle,);
+      }
+      else {
+        return TextSpan(text: entry);
+      }
+    });
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: _descriptionSpecialTitleTextStyle, children: titleSpanList)
+      ),
+      Padding(padding: EdgeInsets.only(top: 8), child:
+        RichText(textAlign: TextAlign.left, text:
+          TextSpan(style: _descriptionSpecialInfoTextStyle, children: infoSpanList)
+        ),
+      )
+    ],);
+  }
+
+  void _onTapSignIn(BuildContext context) {
+    Analytics().logSelect(target: 'sign in');
+    NotificationService().notify(ProfileHomePanel.notifySelectContent, ProfileContentType.login);
+  }
+
+  void _onTapProfile(BuildContext context) {
+    Analytics().logSelect(target: 'Privacy Level');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
+  }
+
+  EdgeInsetsGeometry get _desciptionPadding => const EdgeInsets.only(top: 16, bottom: 8);
+
+  String get _descriptionRegularTitle => Localization().getStringEx('model.group.attributes.filters.header.description.regular', 'Choose at least one attribute to filter the groups and tap Apply to save.');
+
+  TextStyle? get _descriptionRegularTitleTextStyle => Styles().textStyles.getTextStyle("widget.description.regular");
+
+  TextStyle? get _descriptionSpecialTitleTextStyle => Styles().textStyles.getTextStyle("widget.description.regular");
+  TextStyle? get _descriptionSpecialTitleAsteriskTextStyle => Styles().textStyles.getTextStyle("widget.description.regular.highlight2");
+
+  TextStyle? get _descriptionSpecialInfoTextStyle => Styles().textStyles.getTextStyle("widget.item.small.thin");
+  TextStyle? get _descriptionSpecialInfoLinkTextStyle => Styles().textStyles.getTextStyle("widget.item.small.thin.underline2");
+  TextStyle? get _descriptionSpecialInfoAsteriskTextStyle => Styles().textStyles.getTextStyle("widget.item.small.thin.highlight2");
+
 }
 
 enum GroupsFilterGroup { details, limits }
