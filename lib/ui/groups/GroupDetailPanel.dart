@@ -296,7 +296,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       AppLivecycle.notifyStateChanged,
       Connectivity.notifyStatusChanged,
       FlexUI.notifyChanged,
-      Groups.notifyUserMembershipUpdated,
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
       Groups.notifyGroupStatsUpdated,
@@ -571,10 +570,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Groups.notifyUserMembershipUpdated) {
-      setStateIfMounted(() {});
-    }
-    else if (name == Groups.notifyGroupStatsUpdated) {
+    if (name == Groups.notifyGroupStatsUpdated) {
       _updateGroupStats();
     }
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {

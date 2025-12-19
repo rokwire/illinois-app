@@ -218,16 +218,21 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
   Widget _buildAttributeValueWidget(ContentAttributeValue attributeValue) {
     bool isSelected = _selection.contains(attributeValue.value);
-    
+
     String? title = StringUtils.isNotEmpty(attributeValue.selectLabel) ?
       widget.attribute.displayString(attributeValue.selectLabel) :
       Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear');
 
-    TextStyle? titleStyle = (attributeValue.value != null) ?
-      Styles().textStyles.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected") :
-      Styles().textStyles.getTextStyle("widget.label.regular.thin");
+    String? titleStyleKey = (attributeValue.value != null) ?
+      (attributeValue.isEnabled ?
+        (isSelected ?
+          'widget.group.dropdown_button.item.selected' :
+          'widget.group.dropdown_button.item.not_selected'
+        ) : 'widget.message.light.variant.regular'
+      ) : 'widget.label.regular.thin';
+    TextStyle? titleStyle = Styles().textStyles.getTextStyle(titleStyleKey);
 
-    String? count = (title != null) ?
+    String? count = ((title != null) /* && attributeValue.isEnabled*/) ?
       _attributeValueCountText(attributeValue.value) : null;
 
     TextStyle? countStyle = (attributeValue.value != null) ?
@@ -238,7 +243,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       widget.attribute.displayString(attributeValue.info) : null;
 
     bool multipleSelection = _isGroupMultipleSelection(group: attributeValue.group);
-    String? imageAsset = (attributeValue.value != null) ?
+    String? imageAssetKey = ((attributeValue.value != null) && attributeValue.isEnabled) ?
       (multipleSelection ?
         (isSelected ? "check-box-filled" : "box-outline-gray") :
         (isSelected ? "check-circle-filled" : "circle-outline-gray")
@@ -268,7 +273,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
                   )
                 ),
 
-                Styles().images.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
+                Styles().images.getImage(imageAssetKey, excludeFromSemantics: true) ?? Container()
               ]),
             ]),
           )
@@ -291,7 +296,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         }
       });
     }
-    else {
+    else if (attributeValue.isEnabled) {
       _processTapAttributeValue(attributeValue);
     }
   }
@@ -329,9 +334,9 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   }
 
   Future<Map<dynamic, int?>?> _evalAttributeValuesCounts() async {
-    final List<ContentAttributeValue>? attributeValues = widget.attributeValues;
+    final List<ContentAttributeValue>? attributeValues = widget.attributeValues?.enabled;
     final AttributeCountsCallback? countAttributeValues = widget.countAttributeValues;
-    return ((attributeValues != null) && (countAttributeValues != null)) ? await countAttributeValues(attribute: widget.attribute, attributeValues: attributeValues) : null;
+    return ((attributeValues != null) && attributeValues.isNotEmpty && (countAttributeValues != null)) ? await countAttributeValues(attribute: widget.attribute, attributeValues: attributeValues) : null;
   }
 
   void _onHeaderBack() {
@@ -348,3 +353,9 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 }
 
 enum _ContentItem { spacing, separator, groupSeparator }
+
+extension _ContentAttributeValueList on List<ContentAttributeValue> {
+  
+  List<ContentAttributeValue> get enabled =>
+    List.from(where((ContentAttributeValue attrbibuteValue) => attrbibuteValue.isEnabled));
+}

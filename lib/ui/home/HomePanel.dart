@@ -54,7 +54,6 @@ import 'package:illinois/ui/home/HomeWordleWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -265,7 +264,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
       if (title) {
         return HomeGroupsWidget.title;
       } else if (handle) {
-        return HomeGroupsWidget.handle(key: ValueKey(GroupsContentType.my), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeGroupsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeGroupsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
