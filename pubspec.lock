@@ -954,7 +954,7 @@ packages:
     description:
       path: "packages/google_maps_flutter/google_maps_flutter"
       ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
+      resolved-ref: "6356469fd47eb2536bfae5be7a58bafc39cfe95c"
       url: "https://github.com/rokwire/packages.git"
     source: git
     version: "2.9.0"
@@ -963,7 +963,7 @@ packages:
     description:
       path: "packages/google_maps_flutter/google_maps_flutter_android"
       ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
+      resolved-ref: "6356469fd47eb2536bfae5be7a58bafc39cfe95c"
       url: "https://github.com/rokwire/packages.git"
     source: git
     version: "2.13.0"
@@ -972,7 +972,7 @@ packages:
     description:
       path: "packages/google_maps_flutter/google_maps_flutter_ios"
       ref: "google_maps_flutter/add-poi-tap-callback-2.9.0"
-      resolved-ref: bbc04e0e6fe0c702cf129f31dabf44061977eeaf
+      resolved-ref: "6356469fd47eb2536bfae5be7a58bafc39cfe95c"
       url: "https://github.com/rokwire/packages.git"
     source: git
     version: "2.12.0"
