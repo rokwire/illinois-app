@@ -2884,6 +2884,7 @@
     "panel.group_detail.button.group.delete.title": "Delete Group",
     "panel.group_detail.button.group.edit.title": "Group Settings",
     "panel.group_detail.button.group.add_event.title": "Add Existing Event",
+    "panel.group_detail.button.group.create_poll.title": "Create a Poll",
     "panel.group_detail.button.group.create_event.title": "Create New Event",
     "panel.group_detail.button.all_events.title": "See all events",
     "panel.group_detail.button.all_polls.title": "See all polls",

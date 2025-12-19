@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed odd spacing on new Group creation panel [#5585](https://github.com/rokwire/illinois-app/issues/5585).
 - Fixed Google Maps Accessibility for android [#5498](https://github.com/rokwire/illinois-app/issues/5498).
 - Fixed Settings dropdown menu scroll [#5614](https://github.com/rokwire/illinois-app/issues/5614).
+- Fixed create options command titles in Group detail panel [#5619](https://github.com/rokwire/illinois-app/issues/5619).
 ### Changed
 - Supply group & event names in analytics page attributes, if available [#5611](https://github.com/rokwire/illinois-app/issues/5611).
 - UI Clean Up: Switched to new Groups Home panel, use standard content attributes UI for group filters [#5353](https://github.com/rokwire/illinois-app/issues/5353).
