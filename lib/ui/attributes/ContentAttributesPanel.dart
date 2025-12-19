@@ -545,7 +545,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   }
 
   String _headerBackLoosePromptText({String? language}) =>
-    Localization().getStringEx('panel.content.attributes.prompt.loose_changes.title', 'Loose your changes?', language: language);
+    Localization().getStringEx('panel.content.attributes.prompt.loose_changes.title', 'Lose your changes?', language: language);
 
   String _headerBackApplyPromptText({String? language}) =>
     Localization().getStringEx('panel.content.attributes.prompt.apply_changes.title', 'Apply your changes?', language: language);

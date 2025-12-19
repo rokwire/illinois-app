@@ -21,13 +21,13 @@ import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
+import 'package:illinois/ui/groups/GroupHome2Panel.dart';
 import 'package:illinois/ui/illini/WordlePanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
-import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
@@ -755,7 +755,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapGroups(BuildContext context) {
     Analytics().logSelect(target: "Groups");
-    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel()));
+    GroupHome2Panel.push(context);
   }
 
   static void _onTapResearchProjects(BuildContext context) {

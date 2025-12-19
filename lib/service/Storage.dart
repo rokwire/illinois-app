@@ -387,7 +387,6 @@ class Storage extends rokwire.Storage with NotificationsListener {
     setStringWithName(_groupMemberSelectionTableKey, JsonUtils.encode(selection));
   }
 
-
   // On Campus
   String get onCampusRegionIdKey => 'edu.illinois.rokwire.on_campus.region_id';
   String? get onCampusRegionId => getStringWithName(onCampusRegionIdKey);
