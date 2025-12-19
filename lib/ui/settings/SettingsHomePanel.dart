@@ -94,6 +94,7 @@ class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
 }
 
 class _SettingsHomePanelState extends State<SettingsHomePanel> with NotificationsListener {
+  final GlobalKey _innerContentKey = GlobalKey();
   late List<SettingsContentType> _contentTypes;
   late SettingsContentType? _selectedContentType;
   bool _contentValuesVisible = false;
@@ -214,7 +215,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
   }
 
   Widget _buildContent() {
-    return Stack(children: [
+    return Stack(key: _innerContentKey, children: [
       Padding(padding: EdgeInsets.all(16), child:
         _contentWidget ?? Container()
       ),
@@ -227,25 +228,25 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
       Container /* Positioned.fill*/ (child:
         Stack(children: <Widget>[
           _dropdownDismissLayer,
-          _dropdownList
+          Positioned.fill(child: _dropdownList),
         ])));
   }
 
-  Widget get _dropdownDismissLayer {
-    return Container /* Positioned.fill */ (
-        child: BlockSemantics(
-            child: Semantics(excludeSemantics: true,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _contentValuesVisible = false;
-                  });
-                },
-                child: Container(
-                  color: Styles().colors.blackTransparent06,
-                  height: MediaQuery.of(context).size.height,
-                  
-                )))));
+  Widget get _dropdownDismissLayer =>
+    BlockSemantics( child:
+      Semantics(excludeSemantics: true, child:
+        GestureDetector(onTap: () => setState(() { _contentValuesVisible = false;}), child:
+          Container(color: Styles().colors.blackTransparent06, height: _innserContentHeight,)
+        )
+      )
+    );
+
+  double get _innserContentHeight {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final RenderObject? renderObj = _innerContentKey.currentContext?.findRenderObject();
+    final RenderBox? renderBox = (renderObj is RenderBox) ? renderObj : null;
+    Offset? position = renderBox?.localToGlobal(Offset.zero);
+    return (position != null) ? (screenHeight - position.dy) : screenHeight;
   }
 
   Widget get _dropdownList {
@@ -261,7 +262,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
         onTap: () => _onTapDropdownItem(contentType)
       ));
     }
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: sectionList)));
+    sectionList.add(Container(height: 32,));
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      SingleChildScrollView(child:
+        Column(children: sectionList)
+      )
+    );
   }
 
   void _onTapContentDropdown() {
