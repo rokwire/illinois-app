@@ -53,7 +53,6 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/places.dart';
-import 'package:rokwire_plugin/service/Log.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -170,8 +169,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   Position? _currentLocation;
   Map<String, dynamic>? _mapStyles;
 
-  bool _needHeadingAccessibilityFocus = false;
-
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -196,10 +193,9 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     _initSelectNotificationFilters(widget._initialSelectParam);
     _initMapStyles();
     _initExplores();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _accessibilityFocusHeading();
-      _needHeadingAccessibilityFocus = true;
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        _accessibilityFocusHeading());
+
     super.initState();
   }
 
@@ -536,16 +532,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
           }
         }
       }
-    }
-  }
-
-  @override
-  onMapCreated(GoogleMapController controller){
-    super.onMapCreated(controller);
-    if(_needHeadingAccessibilityFocus){
-      Log.d("_accessibilityFocusHeading");
-      _accessibilityFocusHeading();
-      _needHeadingAccessibilityFocus = false;
     }
   }
 
@@ -2146,8 +2132,6 @@ extension _Map2Accessibility on _Map2HomePanelState{
   String get _amenitiesSemanticsValue => _campusBuildingsFilterIfExists?.amenitiesNameToIds.keys.toString() ?? '';
 
   void _accessibilityFocusHeading() {
-    AppSemantics.triggerAccessibilityFocus(_rootHeaderBarTitleKey); //When already on this tab
-    WidgetsBinding.instance.addPostFrameCallback((_) => //When coming from other tab
-      AppSemantics.triggerAccessibilityFocus(_rootHeaderBarTitleKey, delay: Duration(microseconds: 200))); // Delay so we can determine properly if it's already focused so we can avoid second pronunciation
+    AppSemantics.triggerAccessibilityFocus(_rootHeaderBarTitleKey, delay: Duration(milliseconds: 500)); //When already on this tab
   }
 }

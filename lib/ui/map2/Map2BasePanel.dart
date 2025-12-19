@@ -142,8 +142,6 @@ class Map2BasePanelState<T extends StatefulWidget> extends State<T> {
         applyCameraUpdate();
       }
     }
-
-    onAccessibilityMapCreated();
   }
 
   @protected
@@ -694,11 +692,4 @@ extension _Map2Accessibility on Map2BasePanelState{
       }
     }
   }
-
-  void onAccessibilityMapCreated() =>
-      //Setting that will reduce the need of the workaround (refreshAccessibility) Deprecated in version 2.7.0
-      // mapsImplementation.forceAccessibilityEnabled = true;
-      AppSemantics.isAccessibilityEnabled(context) ?
-        AppSemantics.triggerAccessibilityHardResetWorkaround(context) :
-        null;
 }
