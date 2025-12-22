@@ -284,13 +284,12 @@ class _BrowseSection extends StatelessWidget {
     List<Widget> contentList = <Widget>[];
     contentList.add(_buildHeading(context));
     contentList.add(_buildEntries(context));
-    return FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Column(children: contentList,));
+    return Column(children: contentList,);
   }
 
   Widget _buildHeading(BuildContext context) {
-    return FocusTraversalOrder(order: NumericFocusOrder(1), child: Padding(padding: EdgeInsets.only(bottom: (expanded ? 0 : 4)), child:
-      InkWell(onTap: () => _onTapHeading(context), child:
-        Container(
+    return Padding(padding: EdgeInsets.only(bottom: (expanded ? 0 : 4)), child:
+        Semantics(container: true, explicitChildNodes: true, label: '$_title: $_description', child: Container(
           decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.only(left: 16),
           child: Column(children: [
@@ -300,13 +299,8 @@ class _BrowseSection extends StatelessWidget {
                   Text(_title, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))
                 )
               ),
-              Opacity(opacity: _hasFavoriteContent ? 1 : 0, child:
-                FocusTraversalOrder(order: NumericFocusOrder(2), child: Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-                  InkWell(onTap: () => _onTapSectionFavorite(context), child:
-                    FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,)
-                  ),
-                )),
-              ),
+              if (_hasFavoriteContent)
+                IconButton(onPressed: () => _onTapSectionFavorite(context), icon: FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,), tooltip: 'Favorite' /* TBD: Localization */,),
             ],),
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Expanded(child:
@@ -314,23 +308,23 @@ class _BrowseSection extends StatelessWidget {
                   Text(_description, style: Styles().textStyles.getTextStyle("widget.info.regular.thin"))
                 )
               ),
-              FocusTraversalOrder(order: NumericFocusOrder(3), child: FocusableSemanticsWidget(child: Semantics(
-                label: expanded ? Localization().getStringEx('panel.browse.section.status.colapse.title', 'Colapse') : Localization().getStringEx('panel.browse.section.status.expand.title', 'Expand'),
-                hint: expanded ? Localization().getStringEx('panel.browse.section.status.colapse.hint', 'Tap to colapse section content') : Localization().getStringEx('panel.browse.section.status.expand.hint', 'Tap to expand section content'),
-                button: true, child:
-                  Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-                    SizedBox(width: 18, height: 18, child:
-                      Center(child:
-                        _headingIcon
-                      ),
-                    )
-                  ),
-              ))),
+              IconButton(
+                tooltip: expanded
+                    ? Localization().getStringEx('panel.browse.section.status.colapse.title', 'Colapse')
+                    : Localization().getStringEx('panel.browse.section.status.expand.title', 'Expand'),
+                onPressed: () => _onTapHeading(context),
+                icon: Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+                  SizedBox(width: 18, height: 18, child:
+                    Center(child:
+                      _headingIcon
+                    ),
+                  )
+                ),
+              )
             ],)
           ],)
-        ),
-      ),
-    ));
+        )),
+    );
   }
 
   Widget? get _headingIcon {
@@ -354,14 +348,12 @@ class _BrowseSection extends StatelessWidget {
       List<Widget> entriesList = <Widget>[];
       int browseEntriesCount = expanded ? (_browseEntriesCodes?.length ?? 0) : 0;
       if (1 < browseEntriesCount) {
-        int focusNumber = 0;
         for (String code in _browseEntriesCodes!) {
-          focusNumber++;
-          entriesList.add(FocusTraversalOrder(order: NumericFocusOrder(focusNumber.toDouble()), child: _BrowseEntry(
+          entriesList.add(_BrowseEntry(
             sectionId: sectionId,
             entryId: code,
             favorite: _favorite(code),
-          )));
+          ));
         }
       }
       return entriesList.isNotEmpty ? FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Padding(padding: EdgeInsets.only(left: 24), child:
@@ -513,21 +505,30 @@ class _BrowseEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(onTap: () => _onTap(context), child:
+    return Semantics(label: _title, container: true, explicitChildNodes: true, child:
         Container(
           decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.zero,
           child:
             Row(children: [
-              Opacity(opacity: (favorite != null) ? 1 : 0, child:
-                HomeFavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, prompt: true,),
+              Visibility(
+                visible: (favorite != null),
+                maintainSize: true,
+                maintainState: false,
+                child: ExcludeFocus(
+                    excluding: (favorite == null),
+                    child: HomeFavoriteButton(
+                      favorite: favorite,
+                      style: FavoriteIconStyle.Button,
+                      prompt: true,
+                    )),
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
                   Text(_title, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
                 ),
               ),
-              FocusableSemanticsWidget(child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+              IconButton(tooltip: 'Expand', onPressed: () => _onTap(context), icon: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                   child: _iconWidget)),
             ],),
         )
