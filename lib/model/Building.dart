@@ -42,9 +42,12 @@ class Building with Explore implements Favorite {
   });
 
   static Building? fromJson(Map<String, dynamic>? json) {
+    String? rawName = JsonUtils.stringValue(MapUtils.get2(json, ['name', 'Name']));
+    String? shortName = JsonUtils.stringValue(MapUtils.get2(json, ['shortName', 'ShortName']));
+    String? name = (rawName != null && shortName != null) ? '$rawName ($shortName)' : rawName ?? shortName;
     return (json != null) ? Building(
       id: JsonUtils.stringValue(MapUtils.get2(json, ['id', 'ID'])),
-      name: JsonUtils.stringValue(MapUtils.get2(json, ['name', 'Name'])),
+      name: name,
       number: JsonUtils.stringValue(MapUtils.get2(json, ['number', 'Number'])),
 
       fullAddress: JsonUtils.stringValue(MapUtils.get2(json, ['fullAddress', 'FullAddress'])),
