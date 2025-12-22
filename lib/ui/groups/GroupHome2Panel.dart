@@ -95,7 +95,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     _commandBar,
     Expanded(child:
       RefreshIndicator(onRefresh: _onRefresh, child:
-        SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
+        SingleChildScrollView(controller: _scrollController, physics: BouncingScrollPhysics(), child:
           _bodyContent,
         )
       )
@@ -295,7 +295,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   void _scrollListener() {
     double scrollOffset = _scrollController.offset;
     double scrollMaxExtent = _scrollController.position.maxScrollExtent;
-    if ((scrollOffset > scrollMaxExtent) && (_hasMoreContent != false) && (_contentActivity == null)) {
+    if ((scrollOffset >= scrollMaxExtent) && (_hasMoreContent != false) && (_contentActivity == null)) {
       _extendContent();
     }
   }
