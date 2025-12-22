@@ -303,7 +303,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
 
   void _onTapDisplaySettings() {
     Analytics().logSelect(target: 'Appointments display settings');
-    SettingsHomePanel.present(context, content: SettingsContentType.appointments);
+    SettingsHomePanel.present(context, content: SettingsContentType.appointments_and_events);
   }
 
   void _initAppointments() {

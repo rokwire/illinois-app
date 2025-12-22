@@ -44,6 +44,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 enum AssistantContentType { google, grok, perplexity, openai, all, faqs }
 
 class AssistantHomePanel extends StatefulWidget {
+  static const String _routeName = 'AssistantHomePanel';
+  static const String _notifySelectContent = "edu.illinois.rokwire.assistant.content.select";
+  static const AssistantContentType _defaultContentType = AssistantContentType.openai;
+
   final AssistantContentType? contentType;
   final String? initialQuestion;
 
@@ -52,27 +56,31 @@ class AssistantHomePanel extends StatefulWidget {
   @override
   _AssistantHomePanelState createState() => _AssistantHomePanelState();
 
-  static String pageRuntimeTypeName = 'AssistantHomePanel';
 
-  static final AssistantContentType _defaultContentType = AssistantContentType.openai;
-
-  static void present(BuildContext context, {AssistantContentType? content, String? initialQuestion}) {
+  static void present(BuildContext context, { AssistantContentType? content, String? initialQuestion}) {
     if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(
-          context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
-    } else if (!Auth2().isOidcLoggedIn && (Auth2().prefs?.isProspective != true)) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
+    }
+    else if (!Auth2().isOidcLoggedIn && (Auth2().prefs?.isProspective != true)) {
       showDialog(context: context, builder: (context) => _AssistantSignInInfoPopup());
-    } else if (!Assistant().hasUserAcceptedTerms()) {
+    }
+    else if (!Assistant().hasUserAcceptedTerms()) {
       showDialog(context: context, builder: (context) => _AssistantTermsPopup());
-    } else {
-      MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
-      double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
-      showModalBottomSheet(
+    }
+    else {
+      if (hasState) {
+        Navigator.of(context).popUntil((route) => (route.settings.name == _routeName) || (route.isFirst));
+        NotificationService().notify(_notifySelectContent, _SelectContentParam(contentType: content, initialQuestion: initialQuestion));
+      }
+      else if (ModalRoute.of(context)?.settings.name != _routeName) {
+        MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
+        double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
+        showModalBottomSheet(
           context: context,
           isScrollControlled: true,
           isDismissible: true,
           useRootNavigator: true,
-          routeSettings: RouteSettings(),
+          routeSettings: RouteSettings(name: _routeName),
           clipBehavior: Clip.antiAlias,
           backgroundColor: Styles().colors.background,
           constraints: BoxConstraints(maxHeight: height, minHeight: height),
@@ -80,7 +88,22 @@ class AssistantHomePanel extends StatefulWidget {
           builder: (context) {
             return AssistantHomePanel._(contentType: content, initialQuestion: initialQuestion);
           });
+      }
     }
+  }
+
+  static bool get hasState => (state != null);
+
+  static _AssistantHomePanelState? get state {
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(AssistantHomePanel._notifySelectContent);
+    if (subscribers != null) {
+      for (NotificationsListener subscriber in subscribers) {
+        if ((subscriber is _AssistantHomePanelState) && subscriber.mounted) {
+          return subscriber;
+        }
+      }
+    }
+    return null;
   }
 }
 
@@ -103,6 +126,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
       Assistant.notifySettingsChanged,
+      AssistantHomePanel._notifySelectContent,
     ]);
 
     _contentTypes = _buildContentTypes();
@@ -134,9 +158,15 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   @override
   void onNotification(String name, param) {
-    if (name == Auth2.notifyLoginChanged ||
-        name == Assistant.notifySettingsChanged) {
+    if (name == Auth2.notifyLoginChanged || name == Assistant.notifySettingsChanged) {
       _checkAvailable();
+    }
+    else if (name == AssistantHomePanel._notifySelectContent) {
+      _SelectContentParam? contentParam = (param is _SelectContentParam) ? param : null;
+      AssistantContentType? contentType = contentParam?.contentType;
+      if (mounted && (contentType != null) && (_contentTypes.contains(contentType)) && (contentType != _selectedContentType)) {
+        _selectContentItem(contentType, initialQuestion: contentParam?.initialQuestion);
+      }
     }
     else if (name == FlexUI.notifyChanged) {
       _updateContentTypes();
@@ -240,12 +270,14 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   void _onTapContentItem(AssistantContentType contentItem) {
     Analytics().logSelect(target: contentItem.toString(), source: widget.runtimeType.toString());
+    _selectContentItem(contentItem);
+  }
+
+  void _selectContentItem(AssistantContentType contentItem, {String? initialQuestion }) {
     setState(() {
       Storage()._assistantContentType = _selectedContentType = contentItem;
-      _contentValuesVisible = !_contentValuesVisible;
-      if (_initialQuestion != null) {
-        _initialQuestion = null;
-      }
+      _initialQuestion = initialQuestion;
+      _contentValuesVisible = false;
     });
   }
 
@@ -590,6 +622,12 @@ extension AssistantContentTypeImpl on AssistantContentType {
 
   AssistantContentType? _ensure({ List<AssistantContentType>? availableTypes }) =>
       (availableTypes?.contains(this) != false) ? this : null;
+}
+
+class _SelectContentParam {
+  final AssistantContentType? contentType;
+  final String? initialQuestion;
+  _SelectContentParam({this.contentType, this.initialQuestion});
 }
 
 extension _AssistantContentTypeList on List<AssistantContentType> {

@@ -168,7 +168,7 @@ extension Auth2UserProfileDisplayText on Auth2UserProfile {
     }
   }
 
-  String get displayUniversityName => Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign', language: 'en');
+  String get displayUniversityName => Localization().getStringEx('app.university_long_name', 'University of Illinois Urbana-Champaign', language: 'en');
 }
 
 extension Auth2AccountEx on Auth2Account {

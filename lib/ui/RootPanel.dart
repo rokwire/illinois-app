@@ -25,6 +25,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/FirebaseMessaging.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart' as uiuc;
 import 'package:illinois/service/Canvas.dart';
@@ -513,13 +514,13 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       _onFirebaseSettingsNotification(settingsContent: SettingsContentType.assessments);
     }
     else if (name == FirebaseMessaging.notifySettingsCalendarNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.calendar);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.appointments_and_events);
     }
     else if (name == FirebaseMessaging.notifySettingsAppointmentsNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.appointments);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.appointments_and_events);
     }
     else if (name == FirebaseMessaging.notifySettingsMapsNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.maps);
+      // _onFirebaseSettingsNotification(settingsContent: SettingsContentType.maps);
     }
     else if (name == FirebaseMessaging.notifySettingsAboutNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContentType.about);
@@ -1027,10 +1028,11 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   Future<void> _onFirebaseEventDetail(Map<String, dynamic>? content) async {
-    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? content.eventEntityId  : null;
+    String? eventName = (content != null) ? JsonUtils.stringValue(content['event_name']) ?? content.eventEntityName  : null;
     if (StringUtils.isNotEmpty(eventId) && context.mounted) {
       //ExplorePanel.presentDetailPanel(context, eventId: eventId);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId, eventName: eventName,)));
     }
   }
 
@@ -1042,9 +1044,10 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   Future<void> _onFirebaseEventSelfCheckIn(Map<String, dynamic>? content) async {
-    String? eventId = (content != null) ? (JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])) : null;
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? content.eventEntityId  : null;
+    String? eventName = (content != null) ? JsonUtils.stringValue(content['event_name']) ?? content.eventEntityName  : null;
     if (StringUtils.isNotEmpty(eventId) && context.mounted) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId, onInitialized: (Event2DetailPanelState state) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId, eventName: eventName, onInitialized: (Event2DetailPanelState state) {
         if ((eventId != null) && eventId.isNotEmpty) {
           state.selfCheckIn(eventId, secret: JsonUtils.stringValue(content?['secret']));
         }
@@ -1053,9 +1056,10 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   void _onFirebaseEventAttendeeSurveyInvitation(Map<String, dynamic>? content) {
-    String? eventId = (content != null) ? JsonUtils.stringValue(content['entity_id']) : null;
+    String? eventId = content?.eventEntityId;
+    String? eventName = content?.eventEntityName;
     if (StringUtils.isNotEmpty(eventId) && context.mounted) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId, eventName: eventName,)));
     }
   }
   
@@ -1089,26 +1093,27 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   void _onFirebaseGroupsNotification(param) {
     if (param is Map<String, dynamic>) {
-      String? groupId = JsonUtils.stringValue(param["entity_id"]);
-      _presentGroupDetailPanel(groupId: groupId);
+      _presentGroupDetailPanel(groupId: param.groupEntityId, groupName: param.groupEntityName);
     }
   }
 
   void _onFirebaseGroupPostNotification(param) {
     if (param is Map<String, dynamic>) {
-      String? groupId = JsonUtils.stringValue(param["entity_id"]);
+      String? groupId = param.groupEntityId;
+      String? groupName = param.groupEntityName;
       String? groupPostId = JsonUtils.stringValue(param["post_id"]);
       String? commentId = JsonUtils.stringValue(param["comment_id"]);
-      _presentGroupDetailPanel(groupId: groupId, groupPostId: groupPostId, commentId: commentId);
+      _presentGroupDetailPanel(groupId: groupId, groupName: groupName, groupPostId: groupPostId, commentId: commentId);
     }
   }
 
   void _onFirebaseGroupPostReactionNotification(param) {
     if (param is Map<String, dynamic>) {
-      String? groupId =JsonUtils.stringValue(param["group_id"]);
+      String? groupId = JsonUtils.stringValue(param["group_id"]) ?? param.groupEntityId;
+      String? groupName = JsonUtils.stringValue(param['group_name']) ?? param.groupEntityName;
       String? groupPostId = JsonUtils.stringValue(param["post_id"]);
       String? commentId = JsonUtils.stringValue(param["comment_id"]);
-      _presentGroupDetailPanel(groupId: groupId, groupPostId: groupPostId, commentId: commentId);
+      _presentGroupDetailPanel(groupId: groupId, groupName: groupName, groupPostId: groupPostId, commentId: commentId);
     }
   }
 
@@ -1120,10 +1125,13 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
-  void _presentGroupDetailPanel({String? groupId, String? groupPostId, String? commentId, String? eventId}) {
+  void _presentGroupDetailPanel({String? groupId, String? groupName, String? groupPostId, String? commentId, String? eventId}) {
     if (context.mounted) {
       if (StringUtils.isNotEmpty(groupId)) {
-        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId, groupPostCommentId: commentId, groupEventId: eventId)));
+        GroupDetailPanel.push(context,
+          groupId: groupId, groupName: groupName,
+          groupPostId: groupPostId, groupPostCommentId: commentId, groupEventId: eventId,
+        );
       } else {
         AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
       }
@@ -1273,29 +1281,24 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   void _onFirebaseAcademicsNotification(AcademicsContentType content) {
     if (context.mounted) {
-      if (AcademicsHomePanel.hasState) {
-        NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
-      } else {
-        AcademicsHomePanel.push(context, content);
-      }
+      AcademicsHomePanel.present(context, content);
     }
   }
 
   void _onFirebaseWellnessNotification(WellnessContentType content) {
     if (context.mounted) {
-      if (WellnessHomePanel.hasState) {
-        NotificationService().notify(WellnessHomePanel.notifySelectContent, content);
-      } else {
-        WellnessHomePanel.push(context, content);
-      }
+      WellnessHomePanel.present(context, content);
     }
   }
 
   // Service Notifications
 
-  Future<void> _onGroupDetail(Map<String, dynamic>? content) async {
-    String? groupId = (content != null) ? JsonUtils.stringValue(content['group_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
-    _presentGroupDetailPanel(groupId: groupId);
+  Future<void> _onGroupDetail(param) async {
+    if (param is Map<String, dynamic>) {
+      String? groupId = JsonUtils.stringValue(param['group_id']) ?? param.groupEntityId;
+      String? groupName = JsonUtils.stringValue(param['group_name']) ?? param.groupEntityName;
+      _presentGroupDetailPanel(groupId: groupId, groupName: groupName);
+    }
   }
 
   Future<void> _onSocialMessageDetail(Map<String, dynamic>? content) async {

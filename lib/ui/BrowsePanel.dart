@@ -21,13 +21,13 @@ import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
+import 'package:illinois/ui/groups/GroupHome2Panel.dart';
 import 'package:illinois/ui/illini/WordlePanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
-import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
@@ -754,7 +754,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapGroups(BuildContext context) {
     Analytics().logSelect(target: "Groups");
-    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel()));
+    GroupHome2Panel.push(context);
   }
 
   static void _onTapResearchProjects(BuildContext context) {
@@ -837,16 +837,11 @@ class _BrowseEntry extends StatelessWidget {
     }
   }
 
-  static void _onTapSexualMisconduct(BuildContext context, {String? analyticsTarget}) {
-    Analytics().logSelect(target: analyticsTarget ?? "Sexual Misconduct Resources");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVPathwaysPanel()));
-  }
-
   static void _onTapSafeRides(BuildContext context) {
     Analytics().logSelect(target: "SafeRides (MTD)");
     Map<String, dynamic>? safeRidesGuideEntry = Guide().entryById(Config().safeRidesGuideId);
     if (safeRidesGuideEntry != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntry: safeRidesGuideEntry)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntry: safeRidesGuideEntry, analyticsFeature: AnalyticsFeature.Safety,)));
     }
     else {
       AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.saferides.not_available.text", "SafeRides feature is not currently available."));
@@ -862,11 +857,17 @@ class _BrowseEntry extends StatelessWidget {
         contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
         contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
         favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
+        analyticsFeature: AnalyticsFeature.Safety,
       )));
     }
     else {
       AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safety_resources.not_available.text", "Safety Resources are not currently available."));
     }
+  }
+
+  static void _onTapSexualMisconduct(BuildContext context, {String? analyticsTarget}) {
+    Analytics().logSelect(target: analyticsTarget ?? "Sexual Misconduct Resources");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVPathwaysPanel()));
   }
 
   static void _onTapWellnessRings(BuildContext context) {

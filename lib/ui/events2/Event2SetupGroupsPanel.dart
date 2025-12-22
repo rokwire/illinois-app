@@ -119,7 +119,7 @@ class _Event2SetupGroupsState extends State<Event2SetupGroups> {
         _loadingGroups = true;
         _refreshingGroups = false;
       });
-      Groups().loadAdminUserGroups().then((List<Group>? result) {
+      Groups().loadAdminUserGroupsV3().then((List<Group>? result) {
         if (mounted) {
           setState(() {
             _loadingGroups = false;
@@ -135,7 +135,7 @@ class _Event2SetupGroupsState extends State<Event2SetupGroups> {
       setState(() {
         _refreshingGroups = true;
       });
-      List<Group>? result = await Groups().loadAdminUserGroups();
+      List<Group>? result = await Groups().loadAdminUserGroupsV3();
       if (mounted && _refreshingGroups) {
         setState(() {
           _refreshingGroups = false;

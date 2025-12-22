@@ -387,20 +387,6 @@ class Storage extends rokwire.Storage with NotificationsListener {
     setStringWithName(_groupMemberSelectionTableKey, JsonUtils.encode(selection));
   }
 
-
-  // On Campus
-  String get onCampusRegionIdKey => 'edu.illinois.rokwire.on_campus.region_id';
-  String? get onCampusRegionId => getStringWithName(onCampusRegionIdKey);
-  set onCampusRegionId(String? value) => setStringWithName(onCampusRegionIdKey, value);
-
-  String get onCampusRegionMonitorEnabledKey => 'edu.illinois.rokwire.on_campus.region_monitor.enabled';
-  bool? get onCampusRegionMonitorEnabled => getBoolWithName(onCampusRegionMonitorEnabledKey);
-  set onCampusRegionMonitorEnabled(bool? value) => setBoolWithName(onCampusRegionMonitorEnabledKey, value);
-
-  String get onCampusRegionManualInsideKey => 'edu.illinois.rokwire.on_campus.region_manual.inside';
-  bool? get onCampusRegionManualInside => getBoolWithName(onCampusRegionManualInsideKey);
-  set onCampusRegionManualInside(bool? value) => setBoolWithName(onCampusRegionManualInsideKey, value);
-
   // Home Tout
   String get homeToutImageUrlKey => 'edu.illinois.rokwire.home.tout.image.url';
   String? get homeToutImageUrl => getStringWithName(homeToutImageUrlKey);

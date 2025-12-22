@@ -49,7 +49,6 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
@@ -166,7 +165,6 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Canvas(),
       CustomCourses(),
       Rewards(),
-      OnCampus(),
       Wellness(),
       WellnessRings(),
       RadioPlayer(),

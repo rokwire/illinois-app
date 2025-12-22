@@ -89,14 +89,34 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static const String notifyMemberImageLoaded  = "edu.illinois.rokwire.group_detail.image.loaded";
 
   final Group? group;
-  final String? groupIdentifier;
+  final String? _groupId;
+  final String? _groupName;
   final String? groupPostId; //Preload post
   final String? groupPostCommentId; //Preload post comment
   final String? groupEventId; //Preload event
   final AnalyticsFeature? _analyticsFeature;
 
-  GroupDetailPanel({this.group, this.groupIdentifier, this.groupPostId, AnalyticsFeature? analyticsFeature, this.groupPostCommentId, this.groupEventId}) :
+  GroupDetailPanel({this.group,
+    String? groupId, String? groupName,
+    this.groupPostId, this.groupPostCommentId, this.groupEventId,
+    AnalyticsFeature? analyticsFeature
+  }) :
+    _groupId = groupId,
+    _groupName = groupName,
     _analyticsFeature = analyticsFeature;
+
+  static Future<void> push(BuildContext context, {Group? group,
+    String? groupId, String? groupName,
+    String? groupPostId, String? groupPostCommentId, String? groupEventId,
+    AnalyticsFeature? analyticsFeature
+  }) =>
+    Navigator.push(context, CupertinoPageRoute(
+      settings: RouteSettings(name: routeName),
+      builder: (context) => GroupDetailPanel(
+        group: group, groupId: groupId, groupName: groupName,
+        groupPostId: groupPostId, groupPostCommentId: groupPostCommentId, groupEventId: groupEventId,
+      )
+    ));
 
   @override
  _GroupDetailPanelState createState() => _GroupDetailPanelState();
@@ -106,12 +126,14 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes =>
-    _theGroup?.analyticsAttributes;
+      _analyticsGroup?.analyticsAttributes;
 
-  String? get groupId => group?.id ?? groupIdentifier;
-  Group? get _theGroup => _GroupDetailPanelState.instance?._group ?? group ?? ((groupIdentifier != null) ? Group(id: groupIdentifier) : null);
+  String? get groupId => group?.id ?? _groupId;
+  Group? get _analyticsGroup => _GroupDetailPanelState.instance?._group ?? group ?? _defaultAnalyticsGroup;
+  Group? get _defaultAnalyticsGroup => (_groupId != null) ?  Group(id: _groupId, title: _groupName,) : null;
 
-  AnalyticsFeature? get _defaultAnalyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+  AnalyticsFeature? get _defaultAnalyticsFeature => (group?.researchProject == true) ?
+    AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 }
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsListener, TickerProviderStateMixin  {
@@ -274,7 +296,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       AppLivecycle.notifyStateChanged,
       Connectivity.notifyStatusChanged,
       FlexUI.notifyChanged,
-      Groups.notifyUserMembershipUpdated,
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
       Groups.notifyGroupStatsUpdated,
@@ -400,7 +421,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         _onGroupLoaded(group, loadEvents: loadEvents);
       });
     } else {
-      _onGroupLoaded(widget.group, loadEvents: loadEvents);
+      _onGroupLoaded(widget._analyticsGroup, loadEvents: loadEvents);
     }
   }
 
@@ -549,10 +570,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Groups.notifyUserMembershipUpdated) {
-      setStateIfMounted(() {});
-    }
-    else if (name == Groups.notifyGroupStatsUpdated) {
+    if (name == Groups.notifyGroupStatsUpdated) {
       _updateGroupStats();
     }
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
@@ -885,7 +903,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
 
   List<Widget> _buildAttributes() {
     List<Widget> attributesList = <Widget>[];
-    Map<String, dynamic>? groupAttributes = widget.group?.attributes;
+    Map<String, dynamic>? groupAttributes = _group?.attributes;
     List<ContentAttribute>? attributes = _contentAttributes?.attributes;
     if ((groupAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
@@ -1248,7 +1266,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canCreatePost,
                     child: RibbonButton(
                         leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("panel.group_detail.button.create_post.title", "Post"),
+                        title: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
                         onTap: () {
                           Navigator.of(context).pop();
                           _onTapCreatePost();
@@ -1257,7 +1275,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canCreateMessage,
                     child: RibbonButton(
                         leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("panel.group_detail.button.create_message.title", "Message"),//localize tbd
+                        title: Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message"),//localize tbd
                         onTap: () {
                           Navigator.of(context).pop();
                           _onTapCreatePost(type: PostType.direct_message);
@@ -1266,7 +1284,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canAddEvent,
                     child: RibbonButton(
                         leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("_panel.group_detail.button.group.create_event.title", "New event"),
+                        title: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create New Event"),
                         onTap: (){
                           Navigator.pop(context);
                           _onTapCreateEvent();
@@ -1275,7 +1293,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canAddEvent,
                     child: RibbonButton(
                         leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("_panel.group_detail.button.group.add_event.title", "Existing event"),//localize
+                        title: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add Existing Event"),
                         onTap: (){
                           Navigator.pop(context);
                           _onTapBrowseEvents();
@@ -1284,7 +1302,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canCreatePoll,
                     child: RibbonButton(
                         leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Poll"), //tbd localize
+                        title: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Create a Poll"), //tbd localize
                         onTap: (){
                           Navigator.pop(context);
                           _onTapCreatePoll();
@@ -1329,7 +1347,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
       border: Border.all(color: Styles().colors.textSurface, width: 1),
       alignment: Alignment.center,
-      //infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
+      //infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.university_name', 'University of Illinois')),
       //infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin'),
       infoTextWidget: _policyInfoTextWidget,
       closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
@@ -1345,7 +1363,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     TextStyle? linkTextStyle = Styles().textStyles.getTextStyle('widget.description.regular.thin.link');
 
     String infoText = Localization().getStringEx('panel.group.detail.policy.text', 'The $universityMacro takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of $studentCodeMacro $externalLinkMacro to the Office of the Dean of Students.\n\nYour activity in this group is not viewable outside of the group.').
-      replaceAll(universityMacro, Localization().getStringEx('app.univerity_name', 'University of Illinois'));
+      replaceAll(universityMacro, Localization().getStringEx('app.university_name', 'University of Illinois'));
 
     String studentCodeText = Localization().getStringEx('panel.group.detail.policy.text.student_code', 'Student Code');
 

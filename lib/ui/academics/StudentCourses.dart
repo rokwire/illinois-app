@@ -408,7 +408,8 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
 
                   Container(height: 32),
                   
-                  _buildMapButton(),
+                  if (widget.course?.section?.isInPerson == true)
+                    _buildInPersonMapButton(),
                   
                 ])
               )
@@ -493,7 +494,7 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
       )
     );
 
-  Widget _buildMapButton() =>
+  Widget _buildInPersonMapButton() =>
     Padding(padding: EdgeInsets.symmetric(horizontal: 18 + 8), child:
       RoundedButton(
         label: Localization().getStringEx('panel.student_courses.map.button.title', 'View In-Person Courses on Map'),
