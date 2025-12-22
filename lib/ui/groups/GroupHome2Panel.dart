@@ -95,7 +95,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     _commandBar,
     Expanded(child:
       RefreshIndicator(onRefresh: _onRefresh, child:
-        SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
+        SingleChildScrollView(controller: _scrollController, physics: BouncingScrollPhysics(), child:
           _bodyContent,
         )
       )
@@ -295,7 +295,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   void _scrollListener() {
     double scrollOffset = _scrollController.offset;
     double scrollMaxExtent = _scrollController.position.maxScrollExtent;
-    if ((scrollOffset > scrollMaxExtent) && (_hasMoreContent != false) && (_contentActivity == null)) {
+    if ((scrollOffset >= scrollMaxExtent) && (_hasMoreContent != false) && (_contentActivity == null)) {
       _extendContent();
     }
   }
@@ -737,9 +737,8 @@ extension _GroupsFilterGroupContentAttribute on GroupsFilterGroup {
   static const Map<GroupsFilterType, GroupsFilterGroup> _typeGroups = <GroupsFilterType, GroupsFilterGroup> {
     GroupsFilterType.public: GroupsFilterGroup.details,
     GroupsFilterType.private: GroupsFilterGroup.details,
-  //TBD: GroupsFilterType.eventAdmin: GroupsFilterGroup.details,
+    GroupsFilterType.administrative: GroupsFilterGroup.details,
     GroupsFilterType.managed: GroupsFilterGroup.details,
-  //NA: GroupsFilterType.administrative:
 
     GroupsFilterType.admin: GroupsFilterGroup.limits,
     GroupsFilterType.member: GroupsFilterGroup.limits,
@@ -763,9 +762,8 @@ extension _GroupsFilterTypeContentAttribute on GroupsFilterType {
     switch (this) {
       case GroupsFilterType.public: return Localization().getStringEx('model.group.attributes.detail.public.title', 'Public');
       case GroupsFilterType.private: return Localization().getStringEx('model.group.attributes.detail.private.title', 'Private');
-      case GroupsFilterType.eventAdmin: return Localization().getStringEx('model.group.attributes.detail.event_admins.title', 'Event Admins');
-      case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.title', 'Univerity Managed');
-      case GroupsFilterType.administrative: return Localization().getStringEx('model.group.attributes.detail.administrative.title', 'Administrative');
+      case GroupsFilterType.administrative: return Localization().getStringEx('model.group.attributes.detail.administrative.title', 'Event Admins');
+      case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.title', 'University Managed');
 
       case GroupsFilterType.admin: return Localization().getStringEx('model.group.attributes.limit.admin.title', 'Admin');
       case GroupsFilterType.member: return Localization().getStringEx('model.group.attributes.limit.member.title', 'Member');
@@ -777,9 +775,8 @@ extension _GroupsFilterTypeContentAttribute on GroupsFilterType {
     switch (this) {
       case GroupsFilterType.public: return Localization().getStringEx('model.group.attributes.detail.public.title.select', 'Public');
       case GroupsFilterType.private: return Localization().getStringEx('model.group.attributes.detail.private.title.select', 'Private');
-      case GroupsFilterType.eventAdmin: return Localization().getStringEx('model.group.attributes.detail.event_admins.title.select', 'Event Admins');
-      case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.title.select', 'Univerity Managed');
-      case GroupsFilterType.administrative: return Localization().getStringEx('model.group.attributes.detail.administrative.title.select', 'Administrative');
+      case GroupsFilterType.administrative: return Localization().getStringEx('model.group.attributes.detail.administrative.title.select', 'Event Admins');
+      case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.title.select', 'University Managed');
 
       case GroupsFilterType.admin: return Localization().getStringEx('model.group.attributes.limit.admin.title.select', 'Groups I administer');
       case GroupsFilterType.member: return Localization().getStringEx('model.group.attributes.limit.member.title.select', 'Groups I am member of');
@@ -823,7 +820,7 @@ extension _ContentActivityImpl on _ContentActivity {
 
 extension GroupsFilterAuthTypes on Set<GroupsFilterType> {
   static const Set<GroupsFilterType> _authTypes = <GroupsFilterType> {
-    GroupsFilterType.eventAdmin, GroupsFilterType.admin, GroupsFilterType.member, GroupsFilterType.candidate,
+    GroupsFilterType.admin, GroupsFilterType.member, GroupsFilterType.candidate,
   };
 
   static bool isAuthType(GroupsFilterType filterType) => _authTypes.contains(filterType);

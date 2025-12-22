@@ -350,7 +350,7 @@ class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCar
           Padding(padding: EdgeInsets.only(top: 12), child:
             Align(alignment: Alignment.centerLeft, child:
               Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign'), style: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),),
+                Text(Localization().getStringEx('app.university_long_name', 'University of Illinois Urbana-Champaign'), style: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),),
                 DirectoryProfileDetails(_profile),
               ]),
             )

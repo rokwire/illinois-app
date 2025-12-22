@@ -1,7 +1,7 @@
 {
 	"app.title":"Illinois",
 	"app.team_name":"Illinois",
-	"app.univerity_name":"伊利諾伊大學",
+	"app.university_name":"伊利諾伊大學",
 
 	"dialog.yes.title":"确认退出",
 	"dialog.yes.hint":"",
@@ -4427,12 +4427,10 @@
 	"model.group.attributes.detail.public.title.select": "Public",
 	"model.group.attributes.detail.private.title": "Private",
 	"model.group.attributes.detail.private.title.select": "Private",
-	"model.group.attributes.detail.event_admins.title": "Event Admins",
-	"model.group.attributes.detail.event_admins.title.select": "Event Admins",
-	"model.group.attributes.detail.managed.title": "Univerity Managed",
-	"model.group.attributes.detail.managed.title.select": "Univerity Managed",
-	"model.group.attributes.detail.administrative.title": "Administrative",
-	"model.group.attributes.detail.administrative.title.select": "Administrative",
+	"model.group.attributes.detail.administrative.title": "Event Admins",
+	"model.group.attributes.detail.administrative.title.select": "Event Admins",
+	"model.group.attributes.detail.managed.title": "University Managed",
+	"model.group.attributes.detail.managed.title.select": "University Managed",
 
 	"model.group.attributes.limits.title": "Limit Results To",
 	"model.group.attributes.limits.header.description": "Choose from the below options and tap the back button.",
