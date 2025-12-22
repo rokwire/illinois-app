@@ -32,7 +32,6 @@ import 'package:illinois/ui/settings/SettingsCalendarPage.dart';
 import 'package:illinois/ui/settings/SettingsAboutPage.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersPage.dart';
 import 'package:illinois/ui/settings/SettingsLanguagePage.dart';
-import 'package:illinois/ui/settings/SettingsMapsPage.dart';
 import 'package:illinois/ui/settings/SettingsNotificationPreferencesPage.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPage.dart';
 import 'package:illinois/ui/settings/SettingsRecentItemsPage.dart';
@@ -48,7 +47,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum SettingsContentType { food_filters, sports, favorites, assessments, calendar, recent_items, appointments, language, about, maps, research, privacy, notifications, accessibility }
+enum SettingsContentType { food_filters, sports, favorites, assessments, calendar, recent_items, appointments, language, about, research, privacy, notifications, accessibility }
 
 class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'settings_home_content_panel';
@@ -305,7 +304,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
       case SettingsContentType.assessments: return SettingsAssessmentsPage();
       case SettingsContentType.language: return SettingsLanguagePage();
       case SettingsContentType.about: return SettingsAboutPage();
-      case SettingsContentType.maps: return SettingsMapsPage();
       case SettingsContentType.research: return SettingsResearchPage(parentRouteName: SettingsHomePanel.routeName);
       case SettingsContentType.privacy: return SettingsPrivacyCenterPage();
       case SettingsContentType.notifications: return SettingsNotificationPreferencesPage();
@@ -392,7 +390,6 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case SettingsContentType.assessments: return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments', language: language);
       case SettingsContentType.language: return Localization().getStringEx('panel.settings.home.settings.sections.language.label', 'My Language', language: language);
       case SettingsContentType.about: return Localization().getStringEx('panel.settings.home.settings.sections.about.label', 'About the App', language: language);
-      case SettingsContentType.maps: return Localization().getStringEx('panel.settings.home.settings.sections.maps.label', 'Maps & Wayfinding', language: language);
       case SettingsContentType.research: return Localization().getStringEx('panel.settings.home.settings.sections.research.label', 'My Participation in Research', language: language);
       case SettingsContentType.privacy: return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings', language: language);
       case SettingsContentType.notifications: return Localization().getStringEx('panel.settings.home.settings.sections.notifications.label', 'My Notification Preferences', language: language);
@@ -411,7 +408,6 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case SettingsContentType.assessments: return 'assessments';
       case SettingsContentType.language: return 'language';
       case SettingsContentType.about: return 'about';
-      case SettingsContentType.maps: return 'maps';
       case SettingsContentType.research: return 'research';
       case SettingsContentType.privacy: return 'privacy';
       case SettingsContentType.notifications: return 'notifications';
@@ -430,7 +426,6 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case 'assessments': return SettingsContentType.assessments;
       case 'language': return SettingsContentType.language;
       case 'about': return SettingsContentType.about;
-      case 'maps': return SettingsContentType.maps;
       case 'research': return SettingsContentType.research;
       case 'privacy': return SettingsContentType.privacy;
       case 'notifications': return SettingsContentType.notifications;
