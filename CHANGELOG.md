@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Settings: removed maps section, appointments and calendar merged into single section [#5614](https://github.com/rokwire/illinois-app/issues/5614).
+
 ## [7.3.36] - 2025-12-19
 ### Fixed
 - Fixed GBV panels analytics feature, handled missing analytics logs in Assistant panel [#5609](https://github.com/rokwire/illinois-app/issues/5609).
