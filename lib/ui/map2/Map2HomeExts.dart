@@ -89,6 +89,8 @@ extension Map2ContentTypeImpl on Map2ContentType {
   };
   bool get supportsManualFilters => _manualFiltersTypes.contains(this);
 
+  bool get supportsEditing => (this == Map2ContentType.MyLocations);
+
   bool supportsSortType(Map2SortType sortType) =>
     (sortType != Map2SortType.dateTime) || (this == Map2ContentType.Events2);
 

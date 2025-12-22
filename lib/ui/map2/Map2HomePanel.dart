@@ -864,7 +864,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
               _exploresProgress = null;
               mapKey = UniqueKey(); // force map rebuild
 
-              if ((exploreContentType?.supportsManualFilters == true) && (validExplores?.isNotEmpty != true)) {
+              if ((validExplores?.isNotEmpty != true) && (exploreContentType?.supportsManualFilters == true) && (exploreContentType?.supportsEditing != true)) {
                 _selectedContentType = null; // Unselect content type if there is nothing to show.
               }
             });
@@ -1432,7 +1432,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     return buttons;
   }
 
-  List<Widget> get _myLocationsFilterButtons => <Widget>[
+  List<Widget> get _myLocationsFilterButtons => (_explores?.isNotEmpty == true) ? <Widget>[
     Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
@@ -1440,7 +1440,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       Padding(padding: _filterButtonsLastPadding, child:
         _sortFilterButton,
       ),
-  ];
+  ] : <Widget>[];
 
   // Search Filter Button
 
