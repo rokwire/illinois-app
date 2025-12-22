@@ -864,7 +864,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
               _exploresProgress = null;
               mapKey = UniqueKey(); // force map rebuild
 
-              if ((exploreContentType?.supportsManualFilters == true) && (validExplores?.isNotEmpty != true)) {
+              if ((validExplores?.isNotEmpty != true) && (exploreContentType?.supportsManualFilters == true) && (exploreContentType?.supportsEditing != true)) {
                 _selectedContentType = null; // Unselect content type if there is nothing to show.
               }
             });
