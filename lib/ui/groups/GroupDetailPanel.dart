@@ -1347,7 +1347,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
       border: Border.all(color: Styles().colors.textSurface, width: 1),
       alignment: Alignment.center,
-      //infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
+      //infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.university_name', 'University of Illinois')),
       //infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin'),
       infoTextWidget: _policyInfoTextWidget,
       closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
@@ -1363,7 +1363,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     TextStyle? linkTextStyle = Styles().textStyles.getTextStyle('widget.description.regular.thin.link');
 
     String infoText = Localization().getStringEx('panel.group.detail.policy.text', 'The $universityMacro takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of $studentCodeMacro $externalLinkMacro to the Office of the Dean of Students.\n\nYour activity in this group is not viewable outside of the group.').
-      replaceAll(universityMacro, Localization().getStringEx('app.univerity_name', 'University of Illinois'));
+      replaceAll(universityMacro, Localization().getStringEx('app.university_name', 'University of Illinois'));
 
     String studentCodeText = Localization().getStringEx('panel.group.detail.policy.text.student_code', 'Student Code');
 
