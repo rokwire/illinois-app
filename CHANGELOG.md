@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Settings: removed maps section, appointments and calendar merged into single section [#5614](https://github.com/rokwire/illinois-app/issues/5614).
 - Merged eventAdmin and administrative GroupFilterTypes [#5353](https://github.com/rokwire/illinois-app/issues/5353).
+- Hide "Speakers & Seminars" from Academics dropdown menu [#5607](https://github.com/rokwire/illinois-app/issues/5607).
 ### Fixed
 - Fixed paging in GroupHome2Panel on Android [#5353](https://github.com/rokwire/illinois-app/issues/5353).
 - Fixed "University" typo [#5353](https://github.com/rokwire/illinois-app/issues/5353).

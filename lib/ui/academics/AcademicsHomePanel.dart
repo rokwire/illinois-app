@@ -263,8 +263,10 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContentType.gies_canvas_courses;
     } else if (contentTypes?.contains(AcademicsContentType.student_courses) == true) {
       return AcademicsContentType.student_courses;
-    } else {
+    } else if (contentTypes?.contains(AcademicsContentType.events) == true) {
       return AcademicsContentType.events;
+    } else {
+      return AcademicsContentType.appointments;
     }
   }
 
