@@ -2886,6 +2886,7 @@
 	"panel.group_detail.button.group.delete.title": "删除群组",
 	"panel.group_detail.button.group.edit.title": "群组设定",
 	"panel.group_detail.button.group.add_event.title": "新增现有的活动",
+	"panel.group_detail.button.group.create_poll.title": "創建投票",
 	"panel.group_detail.button.group.create_event.title": "创建新活动",
 	"panel.group_detail.button.all_events.title": "查看全部活动",
 	"panel.group_detail.button.all_polls.title": "查看全部投票",

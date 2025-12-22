@@ -2909,6 +2909,7 @@
     "panel.group_detail.button.group.delete.title": "Eliminar el Grupo",
     "panel.group_detail.button.group.edit.title": "Configuración del Grupo",
     "panel.group_detail.button.group.add_event.title": "Agregar un Evento Existente",
+    "panel.group_detail.button.group.create_poll.title": "Crear una encuesta",
     "panel.group_detail.button.group.create_event.title": "Crear un Evento Nuevo",
     "panel.group_detail.button.all_events.title": "Ver Todos los Eventos",
     "panel.group_detail.button.all_polls.title": "Ver Todas las Encuestas",

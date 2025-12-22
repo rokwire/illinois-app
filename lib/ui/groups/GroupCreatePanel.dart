@@ -354,7 +354,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             controller: _groupTitleController,
             onChanged: (text) => setState((){_group?.title = text;}) ,
             maxLines: 1,
-            decoration: _textFieldDecoration,
+            decoration: _textFieldDecorationEx(label: AppSemantics.textFieldSemanticsLabel(label: fieldTitle, hint: fieldHint)),
             style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
           )
         ],
@@ -363,7 +363,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     );
   }
 
-  InputDecoration get _textFieldDecoration => _textFieldDecorationEx();
+  // InputDecoration get _textFieldDecoration => _textFieldDecorationEx();
 
   InputDecoration _textFieldDecorationEx({Widget? label, String? hintText}) => InputDecoration(
     label: label, hintText: hintText,
@@ -399,7 +399,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           controller: _groupDescriptionController,
           onChanged: (text) {_group?.description = text; setStateIfMounted(() { });},
           maxLines: 5,
-          decoration: _textFieldDecoration,
+          decoration: _textFieldDecorationEx(label: AppSemantics.textFieldSemanticsLabel(label: fieldTitle, hint: fieldHint)),
           style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
         ),
       ],),

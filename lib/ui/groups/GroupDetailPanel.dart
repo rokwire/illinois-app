@@ -1268,7 +1268,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canCreatePost,
                     child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("panel.group_detail.button.create_post.title", "Post"),
+                        title: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
                         onTap: () {
                           Navigator.of(context).pop();
                           _onTapCreatePost();
@@ -1277,7 +1277,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canCreateMessage,
                     child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("panel.group_detail.button.create_message.title", "Message"),//localize tbd
+                        title: Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message"),//localize tbd
                         onTap: () {
                           Navigator.of(context).pop();
                           _onTapCreatePost(type: PostType.direct_message);
@@ -1286,7 +1286,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canAddEvent,
                     child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("_panel.group_detail.button.group.create_event.title", "New event"),
+                        title: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create New Event"),
                         onTap: (){
                           Navigator.pop(context);
                           _onTapCreateEvent();
@@ -1295,7 +1295,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canAddEvent,
                     child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("_panel.group_detail.button.group.add_event.title", "Existing event"),//localize
+                        title: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add Existing Event"),
                         onTap: (){
                           Navigator.pop(context);
                           _onTapBrowseEvents();
@@ -1304,7 +1304,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canCreatePoll,
                     child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Poll"), //tbd localize
+                        title: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Create a Poll"), //tbd localize
                         onTap: (){
                           Navigator.pop(context);
                           _onTapCreatePoll();
