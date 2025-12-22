@@ -37,14 +37,14 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchPage> {
     Column(children:<Widget>[
       Row(children: [
         Expanded(child:
-        Text(Localization().getStringEx('panel.settings.home.calendar.research.title', 'Research Participation'), style:
+        Text(Localization().getStringEx('panel.settings.home.research.title', 'Research Participation'), style:
         Styles().textStyles.getTextStyle("widget.title.large.fat")
         ),
         ),
       ]),
       Container(height: 4),
       ToggleRibbonButton(
-          title: Localization().getStringEx('panel.settings.home.calendar.research.toggle.title', 'Participate in research'),
+          title: Localization().getStringEx('panel.settings.home.research.toggle.title', 'Participate in research'),
           border: Border.all(color: Styles().colors.surfaceAccent),
           borderRadius: BorderRadius.all(Radius.circular(4)),
           toggled: Questionnaires().participateInResearch == true,
@@ -54,7 +54,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchPage> {
       RibbonButton(
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4)),
-          title: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
+          title: Localization().getStringEx("panel.settings.home.research.questionnaire.title", "Research interest form"),
           textStyle:  (Questionnaires().participateInResearch == true) ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
           rightIconKey: Questionnaires().participateInResearch ?? false ? 'chevron-right-bold' : 'chevron-right-gray',
           onTap: _onResearchQuestionnaireClicked
@@ -91,7 +91,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchPage> {
     String promptEn = 'Please confirm that you wish to no longer participate in Research Projects. All information filled out in your questionnaire will be deleted.';
     return await AppAlert.showCustomDialog(context: context,
         contentWidget:
-        Text(Localization().getStringEx('panel.settings.home.calendar.research.prompt.title', promptEn),
+        Text(Localization().getStringEx('panel.settings.home.research.prompt.title', promptEn),
           style: Styles().textStyles.getTextStyle("widget.message.regular"),
         ),
         actions: [
