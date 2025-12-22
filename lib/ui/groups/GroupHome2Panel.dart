@@ -763,7 +763,7 @@ extension _GroupsFilterTypeContentAttribute on GroupsFilterType {
       case GroupsFilterType.public: return Localization().getStringEx('model.group.attributes.detail.public.title', 'Public');
       case GroupsFilterType.private: return Localization().getStringEx('model.group.attributes.detail.private.title', 'Private');
       case GroupsFilterType.administrative: return Localization().getStringEx('model.group.attributes.detail.administrative.title', 'Event Admins');
-      case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.title', 'Univerity Managed');
+      case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.title', 'University Managed');
 
       case GroupsFilterType.admin: return Localization().getStringEx('model.group.attributes.limit.admin.title', 'Admin');
       case GroupsFilterType.member: return Localization().getStringEx('model.group.attributes.limit.member.title', 'Member');
@@ -776,7 +776,7 @@ extension _GroupsFilterTypeContentAttribute on GroupsFilterType {
       case GroupsFilterType.public: return Localization().getStringEx('model.group.attributes.detail.public.title.select', 'Public');
       case GroupsFilterType.private: return Localization().getStringEx('model.group.attributes.detail.private.title.select', 'Private');
       case GroupsFilterType.administrative: return Localization().getStringEx('model.group.attributes.detail.administrative.title.select', 'Event Admins');
-      case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.title.select', 'Univerity Managed');
+      case GroupsFilterType.managed: return Localization().getStringEx('model.group.attributes.detail.managed.title.select', 'University Managed');
 
       case GroupsFilterType.admin: return Localization().getStringEx('model.group.attributes.limit.admin.title.select', 'Groups I administer');
       case GroupsFilterType.member: return Localization().getStringEx('model.group.attributes.limit.member.title.select', 'Groups I am member of');

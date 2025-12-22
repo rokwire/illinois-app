@@ -89,12 +89,12 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
   static Set<_ProfileField> _phoneLoginTypeFieldAvailabilities = _defaultLoginTypeFieldAvailabilities.union(<_ProfileField>{ _ProfileField.phone});
   Set<_ProfileField>? get fieldLoginTypeAvailability => fieldLoginTypeAvailabilities[widget.authType?.loginType];
 
-  final Map<String, Set<_ProfileField>> fieldUniverityRoleUnavailabilities = <String, Set<_ProfileField>>{
+  final Map<String, Set<_ProfileField>> fieldUniversityRoleUnavailabilities = <String, Set<_ProfileField>>{
     Auth2UserProfile.universityRoleFacultyStaff : _facultyStuffUniversityRoleFieldUnavailabilities,
   };
   static Set<_ProfileField> _facultyStuffUniversityRoleFieldUnavailabilities = <_ProfileField>{ _ProfileField.major, _ProfileField.major2 };
   static Set<_ProfileField> _otherUniversityRoleFieldUnavailabilities = <_ProfileField>{ _ProfileField.address, _ProfileField.address2, _ProfileField.poBox, _ProfileField.city, _ProfileField.zip, _ProfileField.state, _ProfileField.country };
-  Set<_ProfileField> get _universityRoleFieldUnavailability => fieldUniverityRoleUnavailabilities[widget.profile?.universityRole] ?? _otherUniversityRoleFieldUnavailabilities;
+  Set<_ProfileField> get _universityRoleFieldUnavailability => fieldUniversityRoleUnavailabilities[widget.profile?.universityRole] ?? _otherUniversityRoleFieldUnavailabilities;
 
   static const double _buttonIconSize = 16;
   static const double _dropdownItemInnerIconPaddingX = 6;

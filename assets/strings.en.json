@@ -1,8 +1,8 @@
 {
     "app.title":"Illinois",
     "app.team_name":"Illinois",
-    "app.univerity_name":"University of Illinois",
-    "app.univerity_long_name":"University of Illinois Urbana-Champaign",
+    "app.university_name":"University of Illinois",
+    "app.university_long_name":"University of Illinois Urbana-Champaign",
 
     "dialog.yes.title":"Yes",
     "dialog.yes.hint":"",
@@ -4435,8 +4435,8 @@
    	"model.group.attributes.detail.private.title.select": "Private",
     "model.group.attributes.detail.administrative.title": "Event Admins",
     "model.group.attributes.detail.administrative.title.select": "Event Admins",
-    "model.group.attributes.detail.managed.title": "Univerity Managed",
-   	"model.group.attributes.detail.managed.title.select": "Univerity Managed",
+    "model.group.attributes.detail.managed.title": "University Managed",
+   	"model.group.attributes.detail.managed.title.select": "University Managed",
 
     "model.group.attributes.limits.title": "Limit Results To",
     "model.group.attributes.limits.header.description": "Choose from the below options and tap the back button.",
