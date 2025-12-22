@@ -514,13 +514,13 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       _onFirebaseSettingsNotification(settingsContent: SettingsContentType.assessments);
     }
     else if (name == FirebaseMessaging.notifySettingsCalendarNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.calendar);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.appointments_and_events);
     }
     else if (name == FirebaseMessaging.notifySettingsAppointmentsNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.appointments);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.appointments_and_events);
     }
     else if (name == FirebaseMessaging.notifySettingsMapsNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.maps);
+      // _onFirebaseSettingsNotification(settingsContent: SettingsContentType.maps);
     }
     else if (name == FirebaseMessaging.notifySettingsAboutNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContentType.about);

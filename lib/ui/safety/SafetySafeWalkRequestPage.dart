@@ -1,4 +1,5 @@
 
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -17,7 +18,6 @@ import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/map2/Map2LocationPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -223,7 +223,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
 
   void _onTapLocationSettings(BuildContext context) {
     Analytics().logSelect(target: Localization().getStringEx('panel.safewalks_request.detail.settings.text', 'My Location Settings', language: 'en'));
-    SettingsHomePanel.present(context, content: SettingsContentType.maps);
+    AppSettings.openAppSettings();
   }
 
   static bool _launchUrl(String url, { required BuildContext context, String? analyticsTarget, bool launchInternal = false }) =>

@@ -73,14 +73,11 @@
 
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 	
-			"settings": ["food_filters", "sports", "favorites", "assessments", "calendar", "recent_items", "appointments", "language", "about", "maps", "research", "privacy", "notifications", "accessibility"],
+			"settings": ["food_filters", "sports", "favorites", "assessments", "recent_items", "appointments_and_events", "language", "about", "research", "privacy", "notifications", "accessibility"],
 			"settings.assessments": ["skills_self_evaluation", "health_screener"],
 			"settings.assessments.skills_self_evaluation": ["save"],
 			"settings.assessments.health_screener": ["save"],
 
-			"calendar": ["settings"],
-			"calendar.settings": ["prompt"],
-			
 			"roles.regular": ["student", "employee", "parent", "fan", "alumni", "visitor"],
 			"roles.standalone": ["prospective"],
 
