@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Settings: removed maps section, appointments and calendar merged into single section [#5614](https://github.com/rokwire/illinois-app/issues/5614).
+### Fixed
+- Fixed paging in GroupHome2Panel on Android [#5353](https://github.com/rokwire/illinois-app/issues/5353).
 
 ## [7.3.36] - 2025-12-19
 ### Fixed
