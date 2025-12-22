@@ -1432,7 +1432,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     return buttons;
   }
 
-  List<Widget> get _myLocationsFilterButtons => <Widget>[
+  List<Widget> get _myLocationsFilterButtons => (_explores?.isNotEmpty == true) ? <Widget>[
     Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
@@ -1440,7 +1440,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       Padding(padding: _filterButtonsLastPadding, child:
         _sortFilterButton,
       ),
-  ];
+  ] : <Widget>[];
 
   // Search Filter Button
 
