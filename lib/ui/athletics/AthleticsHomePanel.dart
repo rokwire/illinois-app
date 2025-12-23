@@ -129,9 +129,9 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                       backgroundColor: Styles().colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                       border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                      rightIconKey: (_contentValuesVisible ? 'icon-up-orange' : 'icon-down-orange'),
+                      rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
                       title: _selectedContentType?.displayTitle ?? '',
-                      onTap: _changeSettingsContentValuesVisibility))),
+                      onTap: _onTapRibbonButton))),
           Expanded(
               child: Stack(children: [
                 Container(child: _contentWidget),
@@ -143,9 +143,14 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   Widget _buildContentValuesContainer() {
-    return Visibility(
-        visible: _contentValuesVisible,
-        child: Positioned.fill(child: Stack(children: <Widget>[_buildContentDismissLayer(), _buildContentValuesWidget()])));
+    return Visibility(visible: _contentValuesVisible, child:
+      Positioned.fill(child:
+        Stack(children: <Widget>[
+          _buildContentDismissLayer(),
+          _buildContentValuesWidget()
+        ])
+      )
+    );
   }
 
   Widget _buildContentDismissLayer() {
@@ -187,6 +192,11 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
       Storage()._athleticsContentType = _selectedContentType = contentItem;
       _starred = null;
     });
+  }
+
+  void _onTapRibbonButton() {
+    Analytics().logSelect(target: 'Toggle Dropdown');
+    _changeSettingsContentValuesVisibility();
   }
 
   void _changeSettingsContentValuesVisibility() {
