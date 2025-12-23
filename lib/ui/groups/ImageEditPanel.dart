@@ -346,9 +346,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         &&  (result.imageUrl != null || widget.isUserPic)
         && _imageDescriptionData != null){
       String? url = result.imageUrl ?? (widget.isUserPic ? Content().getUserPhotoUrl(accountId: Auth2().accountId) : null);
-      Content().uploadImageMetaData(
-          url: url,
-          metaData: _imageDescriptionData?.toMetaData).then((metaDataResult){
+      Content().uploadImageMetaData(url: url, metaData: _imageDescriptionData?.toMetaData).then((metaDataResult){
         if (mounted) {
           setState(() {
             _saving = false;
