@@ -218,6 +218,7 @@
 				"map.types.appointments"                  : false,
 				"settings.sports"                         : false,
 				"settings.favorites"                      : false,
+				"academics.academics_events"              : false,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
 				"onboarding2.video_tutorial"              : [["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"], "AND", "${app.storage.onBoarding2ShowTutorial}"],
 				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
