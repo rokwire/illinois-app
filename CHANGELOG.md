@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Building Names now show abbreviated short names too [#5476](https://github.com/rokwire/illinois-app/issues/5476).
+### Fixed
+- Fix image update from preloaded webp [#5571](https://github.com/rokwire/illinois-app/issues/5571).
 
 ## [7.3.37] - 2025-12-22
 ### Changed
