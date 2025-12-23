@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
@@ -28,6 +29,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/ImageDescriptionInput.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 import 'package:rokwire_plugin/model/content.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -374,12 +376,38 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
       if(_imageBytes != null) {
         _imageName = basename(widget.preloadImageUrl!);
         _contentType = mime(_imageName);
+
+        if(_contentType == null){ // Try to determine the type from the bytes
+          _contentType = lookupMimeType("", headerBytes: _imageBytes);
+        }
+
+        //We do not support webp, but we can convert it
+        if (_contentType == 'image/webp') {
+          Uint8List? pngBytes = await _convertWebpToPng(_imageBytes!);
+          if (pngBytes != null) {
+            _imageBytes = pngBytes;
+            _contentType = 'image/png';
+            _imageName = _imageName?.replaceAll('.webp', '.png');
+          }
+        }
       }
     } else if(widget.isUserPic){
       ImageMetaData? metaData = await _loadImageMetaData(Content().getUserPhotoUrl(accountId: Auth2().accountId));
       _imageDescriptionData = metaData != null ? ImageDescriptionDataExt.fromMetaData(metaData) : ImageDescriptionData();
     }
     _hideLoader();
+  }
+
+  static Future<Uint8List?> _convertWebpToPng(Uint8List webpBytes) async {
+    try {
+      ui.Codec codec = await ui.instantiateImageCodec(webpBytes);
+      ui.FrameInfo fi = await codec.getNextFrame();
+      ByteData? byteData = await fi.image.toByteData(format: ui.ImageByteFormat.png);
+      return byteData?.buffer.asUint8List();
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
   }
 
   Future<ImageMetaData?> _loadImageMetaData(String? imageUrl) async => imageUrl != null ?
