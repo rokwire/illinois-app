@@ -41,35 +41,30 @@ class Building with Explore implements Favorite {
     this.features, this.entrances, this.floors,
   });
 
-  static Building? fromJson(Map<String, dynamic>? json) {
-    String? rawName = JsonUtils.stringValue(MapUtils.get2(json, ['name', 'Name']));
-    String? shortName = JsonUtils.stringValue(MapUtils.get2(json, ['shortName', 'ShortName']));
-    String? name = (rawName != null && shortName != null) ? '$rawName ($shortName)' : rawName ?? shortName;
-    return (json != null) ? Building(
-      id: JsonUtils.stringValue(MapUtils.get2(json, ['id', 'ID'])),
-      name: name,
-      number: JsonUtils.stringValue(MapUtils.get2(json, ['number', 'Number'])),
+  static Building? fromJson(Map<String, dynamic>? json) => (json != null) ? Building(
+    id: JsonUtils.stringValue(MapUtils.get2(json, ['id', 'ID'])),
+    name: JsonUtils.stringValue(MapUtils.get2(json, ['name', 'Name'])),
+    number: JsonUtils.stringValue(MapUtils.get2(json, ['number', 'Number'])),
 
-      fullAddress: JsonUtils.stringValue(MapUtils.get2(json, ['fullAddress', 'FullAddress'])),
-      address1: JsonUtils.stringValue(MapUtils.get2(json, ['address1', 'Address1'])),
-      address2: JsonUtils.stringValue(MapUtils.get2(json, ['address2', 'Address2'])),
+    fullAddress: JsonUtils.stringValue(MapUtils.get2(json, ['fullAddress', 'FullAddress'])),
+    address1: JsonUtils.stringValue(MapUtils.get2(json, ['address1', 'Address1'])),
+    address2: JsonUtils.stringValue(MapUtils.get2(json, ['address2', 'Address2'])),
 
-      city: JsonUtils.stringValue(MapUtils.get2(json, ['city', 'ZipCode'])),
-      state: JsonUtils.stringValue(MapUtils.get2(json, ['state', 'State'])),
-      zipCode: JsonUtils.stringValue(MapUtils.get2(json, ['zipCode', 'Address2'])),
+    city: JsonUtils.stringValue(MapUtils.get2(json, ['city', 'ZipCode'])),
+    state: JsonUtils.stringValue(MapUtils.get2(json, ['state', 'State'])),
+    zipCode: JsonUtils.stringValue(MapUtils.get2(json, ['zipCode', 'Address2'])),
 
-      imageURL: JsonUtils.stringValue(MapUtils.get2(json, ['imageURL', 'ImageURL'])),
-      mailCode: JsonUtils.stringValue(MapUtils.get2(json, ['mailCode', 'MailCode'])),
-      shortName: JsonUtils.stringValue(MapUtils.get2(json, ['shortName', 'ShortName'])),
+    imageURL: JsonUtils.stringValue(MapUtils.get2(json, ['imageURL', 'ImageURL'])),
+    mailCode: JsonUtils.stringValue(MapUtils.get2(json, ['mailCode', 'MailCode'])),
+    shortName: JsonUtils.stringValue(MapUtils.get2(json, ['shortName', 'ShortName'])),
 
-      latitude: JsonUtils.doubleValue(MapUtils.get2(json, ['latitude', 'Latitude'])),
-      longitude: JsonUtils.doubleValue(MapUtils.get2(json, ['longitude', 'Longitude'])),
+    latitude: JsonUtils.doubleValue(MapUtils.get2(json, ['latitude', 'Latitude'])),
+    longitude: JsonUtils.doubleValue(MapUtils.get2(json, ['longitude', 'Longitude'])),
 
-      features: BuildingFeature.listFromJson(JsonUtils.listValue(MapUtils.get2(json, ['Features']))),
-      entrances: BuildingEntrance.listFromJson(JsonUtils.listValue(MapUtils.get2(json, ['entrances', 'Entrances']))),
-      floors: JsonUtils.listStringsValue(MapUtils.get2(json, ['floors', 'Floors'])),
-    ) : null;
-  }
+    features: BuildingFeature.listFromJson(JsonUtils.listValue(MapUtils.get2(json, ['Features']))),
+    entrances: BuildingEntrance.listFromJson(JsonUtils.listValue(MapUtils.get2(json, ['entrances', 'Entrances']))),
+    floors: JsonUtils.listStringsValue(MapUtils.get2(json, ['floors', 'Floors'])),
+  ) : null;
 
   toJson() => {
     'id': id,
@@ -151,18 +146,22 @@ class Building with Explore implements Favorite {
     DeepCollectionEquality().hash(floors);
 
   // Accessories
+
   BuildingEntrance? nearstEntrance(Position? position, {bool requireAda = false}) =>
     BuildingEntrance.nearstEntrance(entrances, position, requireAda: requireAda);
+
+  String? get displayName =>
+    (name?.isNotEmpty == true) ? ((shortName?.isNotEmpty == true) ? '$name ($shortName)' : name) : shortName;
 
   // Explore implementation
 
   @override String? get exploreId => id;
-  @override String? get exploreTitle => name;
+  @override String? get exploreTitle => displayName;
   @override String? get exploreDescription => null;
   @override DateTime? get exploreDateTimeUtc => null;
   @override String? get exploreImageURL => imageURL;
   @override ExploreLocation? get exploreLocation => ExploreLocation(
-    building : name,
+    building : displayName,
     fullAddress: fullAddress,
     address : address1,
     city : city,
