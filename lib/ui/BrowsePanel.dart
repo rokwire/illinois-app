@@ -300,7 +300,7 @@ class _BrowseSection extends StatelessWidget {
                 )
               ),
               if (_hasFavoriteContent)
-                IconButton(onPressed: () => _onTapSectionFavorite(context), icon: FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,), tooltip: 'Favorite' /* TBD: Localization */,),
+                IconButton(onPressed: () => _onTapSectionFavorite(context), icon: FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,), tooltip: 'Favorite' /* TBD: Localization */, splashColor: Colors.transparent, highlightColor: Colors.transparent, hoverColor: Colors.transparent, focusColor: Colors.transparent,),
             ],),
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Expanded(child:
@@ -309,6 +309,7 @@ class _BrowseSection extends StatelessWidget {
                 )
               ),
               IconButton(
+                splashColor: Colors.transparent, highlightColor: Colors.transparent, hoverColor: Colors.transparent, focusColor: Colors.transparent,
                 tooltip: expanded
                     ? Localization().getStringEx('panel.browse.section.status.colapse.title', 'Colapse')
                     : Localization().getStringEx('panel.browse.section.status.expand.title', 'Expand'),
@@ -529,7 +530,7 @@ class _BrowseEntry extends StatelessWidget {
                 ),
               ),
               IconButton(tooltip: 'Expand', onPressed: () => _onTap(context), icon: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                  child: _iconWidget)),
+                  child: _iconWidget), splashColor: Colors.transparent, highlightColor: Colors.transparent, hoverColor: Colors.transparent, focusColor: Colors.transparent,),
             ],),
         )
     );
