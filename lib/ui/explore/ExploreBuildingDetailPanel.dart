@@ -131,7 +131,7 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Expanded(child:
           Padding(padding: EdgeInsets.only(left: 16, top: 12, bottom: 12), child:
-            Text(_building?.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.large.fat")),
+            Text(_building?.displayName ?? "", style: Styles().textStyles.getTextStyle("widget.title.large.fat")),
           ),
         ),
         Auth2().canFavorite ? _favoriteButton : _rightTitleSpacing,
@@ -153,7 +153,7 @@ class _ExploreBuildingDetailPanelState extends State<ExploreBuildingDetailPanel>
   Widget get _rightTitleSpacing => Padding(padding: EdgeInsets.only(right: 16));
 
   void _onTapFavorite() {
-    Analytics().logSelect(target: "Favorite: ${_building?.name}");
+    Analytics().logSelect(target: "Favorite: ${_building?.displayName}");
     Auth2().prefs?.toggleFavorite(_building);
   }
 
