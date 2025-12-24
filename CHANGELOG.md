@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [7.3.38] - 2025-12-23
+### Changed
+- Building Names now show abbreviated short names too [#5476](https://github.com/rokwire/illinois-app/issues/5476).
+- UI Cleanup: Dropdown Menu [#5603](https://github.com/rokwire/illinois-app/issues/5603).
+### Fixed
+- Fix image update from preloaded webp [#5571](https://github.com/rokwire/illinois-app/issues/5571).
+
 ## [7.3.37] - 2025-12-22
 ### Changed
 - Settings: removed maps section, appointments and calendar merged into single section [#5614](https://github.com/rokwire/illinois-app/issues/5614).
