@@ -80,6 +80,7 @@ dependencies:
   mime: ^1.0.0
   universal_html: ^2.2.3
   flutter_file_dialog: ^3.0.1
+  screen_brightness: ^2.1.7
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:

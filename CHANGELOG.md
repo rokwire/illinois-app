@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added "notification" analytics event [#5611](https://github.com/rokwire/illinois-app/issues/5611).
 ### Changed
 - Don't display menu options for group tabs that don't display [#5618](https://github.com/rokwire/illinois-app/issues/5618).
+- Auto-increase brightness when viewing wallet [#5587](https://github.com/rokwire/illinois-app/issues/5587).
 
 ## [7.3.38] - 2025-12-23
 ### Changed

@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/wallet/WalletAddIlliniCashPage.dart';
@@ -33,6 +34,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 
 enum WalletContentType { illiniId, busPass, libraryCard, mealPlan, illiniCash, addIlliniCash }
 
@@ -145,6 +147,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
   late List<WalletContentType> _contentTypes;
   WalletContentType? _selectedContentType;
   bool _contentValuesVisible = false;
+  _WalletBrightnessHighlight? _brightnessHighlight; 
   Map<WalletContentType, GlobalKey> _pageKeys = <WalletContentType, GlobalKey>{};
 
   @override
@@ -156,14 +159,17 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
       FlexUI.notifyChanged,
       WalletIlliniCashPage.notifyAddIlliniCash,
     ]);
+    
+    _brightnessHighlight = _WalletBrightnessHighlight.fromAppConfig();
 
     _contentTypes = widget.contentTypes ?? WalletHomePanel._buildContentTypes();
-    _selectedContentType = WalletHomePanel._targetContentType(contentType: widget.contentType, contentTypes: _contentTypes);
+    _selectContentType(WalletHomePanel._targetContentType(contentType: widget.contentType, contentTypes: _contentTypes));
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _brightnessHighlight?.restoreAppBrightness();
     super.dispose();
   }
 
@@ -306,11 +312,31 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
         _contentTypes = contentTypes;
         _contentValuesVisible = false;
         if (!_contentTypes.contains(_selectedContentType)) {
-          _selectedContentType = _contentTypes.isNotEmpty ? _contentTypes.first : null;
+          _selectContentType(_contentTypes.isNotEmpty ? _contentTypes.first : null);
         }
       });
     }
   }
+
+  void _selectContentType(WalletContentType? contentType, { bool updateStorage = false }) {
+    if (_selectedContentType != contentType) {
+      bool didHighlightBrighness = (_brightnessHighlight?.isHighlightType(_selectedContentType) == true);
+      _selectedContentType = contentType;
+      if (updateStorage) {
+        Storage()._waletContentType = contentType;
+      }
+      bool willHighlightBrighness = (_brightnessHighlight?.isHighlightType(_selectedContentType) == true);
+
+      if (didHighlightBrighness != willHighlightBrighness) {
+        if (willHighlightBrighness) {
+          _brightnessHighlight?.setAppBrightness();
+        } else {
+          _brightnessHighlight?.restoreAppBrightness();
+        }
+      }
+    }
+  }
+
 
   void _onTapDropdownItem(WalletContentType contentType) {
     Analytics().logSelect(target: contentType.displayTitleEn, source: widget.runtimeType.toString());
@@ -322,7 +348,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
       }
       else if (_contentTypes.contains(contentType)) {
         setState(() {
-          Storage()._waletContentType = _selectedContentType = contentType;
+          _selectContentType(contentType, updateStorage: true);
           _contentValuesVisible = false;
         });
         Analytics().logPageWidget(_contentPage);
@@ -407,8 +433,25 @@ extension WalletContentTypeImpl on WalletContentType {
   }
 }
 
-extension _WalletContentTypeList on List<WalletContentType> {
+extension WalletContentTypeList on List<WalletContentType> {
+  
+  static List<WalletContentType>? fromJson(List<dynamic>? json) => (json != null) ?
+    _fromJsonList(json) : null;
+  
+  static List<WalletContentType> _fromJsonList(List<dynamic> jsonList) {
+    List<WalletContentType> valueList = <WalletContentType>[];
+    for (dynamic jsonEntry in jsonList) {
+      ListUtils.add(valueList, WalletContentTypeImpl.fromJsonString(JsonUtils.stringValue(jsonEntry)));
+    }
+    return valueList;
+  }
+
   void sortAlphabetical() => sort((WalletContentType t1, WalletContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
+}
+
+extension WalletContentTypeSet on Set<WalletContentType> {
+  static Set<WalletContentType>? fromJson(List<dynamic>? json) => (json != null) ?
+    WalletContentTypeList._fromJsonList(json).toSet() : null;
 }
 
 extension _StorageWalletExt on Storage {
@@ -418,4 +461,42 @@ extension _StorageWalletExt on Storage {
 
 mixin class WalletHomePage {
   Color get backgroundColor => Styles().colors.white;
+}
+
+class _WalletBrightnessHighlight {
+  final double? value;
+  final Set<WalletContentType>? types;
+  
+  _WalletBrightnessHighlight({this.value, this.types});
+  
+  static _WalletBrightnessHighlight? fromJson(Map<String, dynamic>? json) => (json != null) ? _WalletBrightnessHighlight(
+    types: WalletContentTypeSet.fromJson(JsonUtils.listValue(json['types'])),
+    value: JsonUtils.doubleValue(json['value']),
+  ) : null;
+  
+  static _WalletBrightnessHighlight? fromAppConfig() =>
+    fromJson(JsonUtils.mapValue(Config().walletSettings?['brightnessHighlight']));
+
+  bool isHighlightType(WalletContentType? type) =>
+    (type != null) && (types?.contains(type) == true);
+
+  Future<void> setAppBrightness() async {
+    if (value != null) {
+      try {
+        await ScreenBrightness.instance.setApplicationScreenBrightness(value ?? 1);
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    }
+  }
+
+  Future<void> restoreAppBrightness() async {
+    if (value != null) {
+      try {
+        await ScreenBrightness.instance.resetApplicationScreenBrightness();
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    }
+  }
 }
