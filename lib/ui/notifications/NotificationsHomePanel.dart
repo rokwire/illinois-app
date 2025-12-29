@@ -17,6 +17,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -67,7 +68,8 @@ class NotificationsHomePanel extends StatefulWidget {
     }
   }
 
-  static void launchMessageDetail(InboxMessage message) {
+  static void launchMessageDetail(InboxMessage message, { AnalyticsFeature? analyticsFeature } ) {
+    Analytics().logNotification(message, feature: analyticsFeature);
     if (message.isRead == false) {
       Inbox().readMessage(message.messageId);
     }
@@ -648,7 +650,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
 
   void _onTapMessage(InboxMessage message) {
     Analytics().logSelect(target: message.subject);
-    NotificationsHomePanel.launchMessageDetail(message);
+    NotificationsHomePanel.launchMessageDetail(message, analyticsFeature: AnalyticsFeature.Notifications);
   }
 
   void _setMarkAllAsReadLoading(bool loading) {

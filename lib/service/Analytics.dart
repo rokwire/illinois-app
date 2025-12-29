@@ -25,6 +25,7 @@ import 'package:illinois/model/wellness/WellnessToDo.dart' as wellness;
 import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -195,6 +196,16 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
   // Widget Favorite Event
   // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
   static const String   LogWidgetFavoriteEventName          = "widget_favorite";
+
+  // Notification Event
+  // {  "event" : { "name":"notification", "action":"open", "target":"...", "sender": {}, "payload":{} }}
+  static const String   LogNotificationEventName             = "notification";
+  static const String   LogNotificationPayloadFieldName      = "payload";
+  static const String   LogNotificationActionFieldName       = "action";
+  static const String   LogNotificationOpenActionName        = "open";
+  static const String   LogNotificationSenderFieldName       = "sender";
+  static const String   LogNotificationSenderTypeFieldName   = "type";
+  static const String   LogNotificationSenderNameFieldName   = "name";
 
   // Reaction Event
   // {  "event" : { "name":"reaction", "action":"on/off", "target":"...", "source":"..." }}
@@ -984,6 +995,18 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
     });
   }
 
+  void logNotification(InboxMessage message, { String? action = LogNotificationOpenActionName, AnalyticsFeature? feature = AnalyticsFeature.Notifications, Map<String, dynamic>? attributes }) =>
+    logEvent({
+      LogEventName          : LogNotificationEventName,
+      LogReactionActionName : action,
+      LogNotificationPayloadFieldName   : message.data,
+      LogNotificationSenderFieldName : message.sender?.toAnalyticsJson(),
+      if (feature != null)
+        LogReactionFeatureName: feature.name,
+      if (attributes != null)
+        ...attributes
+    });
+
   void logReaction(Reaction? reaction, { String? target, AnalyticsFeature? feature, Map<String, dynamic>? attributes }) =>
     logEvent({
       LogEventName          : LogReactionEventName,
@@ -1288,4 +1311,12 @@ extension _AnalyticsIllordleEventStatus on AnalyticsIllordleEventStatus {
       case AnalyticsIllordleEventStatus.fail: return 'lost';
     }
   }
+}
+
+extension _AnalyticsInboxSender on InboxSender {
+  Map<String, dynamic> toAnalyticsJson() => <String, dynamic> {
+    Analytics.LogNotificationSenderTypeFieldName: inboxSenderTypeToString(type),
+    if (type == InboxSenderType.system)
+      Analytics.LogNotificationSenderNameFieldName: user?.name,
+  };
 }
