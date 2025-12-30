@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Wordle.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Wordle.dart';
+import 'package:illinois/ui/illini/WordleKeyboard.dart';
 import 'package:illinois/ui/illini/WordleWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -83,6 +84,10 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
               _bodyContent
             ),
           ),
+          if (_isDataAvailable)
+            Padding(padding: EdgeInsets.only(bottom: 16), child:
+              _keyboardWidget
+            ),
         ],)
     )
   );
@@ -102,6 +107,9 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
       );
     }
   }
+
+  Widget get _keyboardWidget =>
+    WordleKeyboard();
 
   Widget get _loadingContent => Center(child:
     SizedBox(width: 32, height: 32, child:
@@ -167,6 +175,8 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
     }
 
   }
+
+  bool get _isDataAvailable => (_dailyWord != null) && (_loadProgress == false);
 
   // Analytics
 
