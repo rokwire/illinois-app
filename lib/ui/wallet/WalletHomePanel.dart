@@ -16,9 +16,9 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/BrightnessHighlight.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/wallet/WalletAddIlliniCashPage.dart';
@@ -34,7 +34,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:screen_brightness/screen_brightness.dart';
 
 enum WalletContentType { illiniId, busPass, libraryCard, mealPlan, illiniCash, addIlliniCash }
 
@@ -147,7 +146,8 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
   late List<WalletContentType> _contentTypes;
   WalletContentType? _selectedContentType;
   bool _contentValuesVisible = false;
-  _WalletBrightnessHighlight? _brightnessHighlight; 
+  BrightnessHighlight? _brightnessHighlight;
+  bool _brightnessHighlightOn = false;
   Map<WalletContentType, GlobalKey> _pageKeys = <WalletContentType, GlobalKey>{};
 
   @override
@@ -160,7 +160,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
       WalletIlliniCashPage.notifyAddIlliniCash,
     ]);
     
-    _brightnessHighlight = _WalletBrightnessHighlight.fromAppConfig();
+    _brightnessHighlight = BrightnessHighlight.fromAppConfig();
 
     _contentTypes = widget.contentTypes ?? WalletHomePanel._buildContentTypes();
     _selectContentType(WalletHomePanel._targetContentType(contentType: widget.contentType, contentTypes: _contentTypes));
@@ -169,7 +169,9 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _brightnessHighlight?.restoreAppBrightness();
+    if (_brightnessHighlightOn) {
+      _brightnessHighlight?.restoreAppBrightness();
+    }
     super.dispose();
   }
 
@@ -320,15 +322,16 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
 
   void _selectContentType(WalletContentType? contentType, { bool updateStorage = false }) {
     if (_selectedContentType != contentType) {
-      bool didHighlightBrighness = (_brightnessHighlight?.isHighlightType(_selectedContentType) == true);
+      bool hadHighlightBrighness = (_brightnessHighlight?.isHighlightObjective(_selectedContentType?.brightnessHighlightObjective) == true);
       _selectedContentType = contentType;
       if (updateStorage) {
         Storage()._waletContentType = contentType;
       }
-      bool willHighlightBrighness = (_brightnessHighlight?.isHighlightType(_selectedContentType) == true);
+      bool hasHighlightBrighness = (_brightnessHighlight?.isHighlightObjective(_selectedContentType?.brightnessHighlightObjective) == true);
 
-      if (didHighlightBrighness != willHighlightBrighness) {
-        if (willHighlightBrighness) {
+      if (hasHighlightBrighness != hadHighlightBrighness) {
+        _brightnessHighlightOn = hasHighlightBrighness;
+        if (_brightnessHighlightOn) {
           _brightnessHighlight?.setAppBrightness();
         } else {
           _brightnessHighlight?.restoreAppBrightness();
@@ -431,27 +434,12 @@ extension WalletContentTypeImpl on WalletContentType {
       default: return null;
     }
   }
+
+  String get brightnessHighlightObjective => 'wallet.$jsonString';
 }
 
 extension WalletContentTypeList on List<WalletContentType> {
-  
-  static List<WalletContentType>? fromJson(List<dynamic>? json) => (json != null) ?
-    _fromJsonList(json) : null;
-  
-  static List<WalletContentType> _fromJsonList(List<dynamic> jsonList) {
-    List<WalletContentType> valueList = <WalletContentType>[];
-    for (dynamic jsonEntry in jsonList) {
-      ListUtils.add(valueList, WalletContentTypeImpl.fromJsonString(JsonUtils.stringValue(jsonEntry)));
-    }
-    return valueList;
-  }
-
   void sortAlphabetical() => sort((WalletContentType t1, WalletContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
-}
-
-extension WalletContentTypeSet on Set<WalletContentType> {
-  static Set<WalletContentType>? fromJson(List<dynamic>? json) => (json != null) ?
-    WalletContentTypeList._fromJsonList(json).toSet() : null;
 }
 
 extension _StorageWalletExt on Storage {
@@ -463,40 +451,3 @@ mixin class WalletHomePage {
   Color get backgroundColor => Styles().colors.white;
 }
 
-class _WalletBrightnessHighlight {
-  final double? value;
-  final Set<WalletContentType>? types;
-  
-  _WalletBrightnessHighlight({this.value, this.types});
-  
-  static _WalletBrightnessHighlight? fromJson(Map<String, dynamic>? json) => (json != null) ? _WalletBrightnessHighlight(
-    types: WalletContentTypeSet.fromJson(JsonUtils.listValue(json['types'])),
-    value: JsonUtils.doubleValue(json['value']),
-  ) : null;
-  
-  static _WalletBrightnessHighlight? fromAppConfig() =>
-    fromJson(JsonUtils.mapValue(Config().walletSettings?['brightnessHighlight']));
-
-  bool isHighlightType(WalletContentType? type) =>
-    (type != null) && (types?.contains(type) == true);
-
-  Future<void> setAppBrightness() async {
-    if (value != null) {
-      try {
-        await ScreenBrightness.instance.setApplicationScreenBrightness(value ?? 1);
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    }
-  }
-
-  Future<void> restoreAppBrightness() async {
-    if (value != null) {
-      try {
-        await ScreenBrightness.instance.resetApplicationScreenBrightness();
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    }
-  }
-}

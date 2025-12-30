@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/BrightnessHighlight.dart';
 import 'package:illinois/model/Building.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -202,17 +203,29 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 }
 
 class _QrCodePanelState extends State<QrCodePanel> {
-  static final int _imageSize = 1024;
+  static const int _imageSize = 1024;
   Uint8List? _qrCodeBytes;
+
+  static const String _brightnessHighlightObjective = 'general.qr_code';
+  BrightnessHighlight? _brightnessHighlight;
 
   @override
   void initState() {
     super.initState();
+    _brightnessHighlight = BrightnessHighlight.forObjective(_brightnessHighlightObjective);
+    _brightnessHighlight?.setAppBrightness();
+
     _loadQrImageBytes().then((imageBytes) {
       setStateIfMounted(() {
         _qrCodeBytes = imageBytes;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _brightnessHighlight?.restoreAppBrightness();
+    super.dispose();
   }
 
   @override
