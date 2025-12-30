@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/model/BrightnessHighlight.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:pdf/pdf.dart';
@@ -99,10 +100,21 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
   String get _saveFileName =>
     'Check-In PDF "${widget.event.name}" - ${DateTimeUtils.localDateTimeFileStampToString(DateTime.now())}.pdf';
 
+  static const String _brightnessHighlightObjective = 'event2.self_checkin';
+  BrightnessHighlight? _brightnessHighlight;
+  bool _brightnessHighlightOn = false;
+
   @override
   void initState() {
+    _brightnessHighlight = BrightnessHighlight.forObjective(_brightnessHighlightObjective);
     _initData();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _restoreBrightnessHighlight();
+    super.dispose();
   }
 
   @override
@@ -223,7 +235,22 @@ class _Event2ShareSelfCheckInPdfPanelState extends State<Event2ShareSelfCheckInP
       ),
     );
 
-    return pdf.save();
+    Uint8List result = await pdf.save();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _ensureBrightnessHighlight());
+    return result;
+  }
+
+  void _ensureBrightnessHighlight() {
+    if (_brightnessHighlightOn != true) {
+      _brightnessHighlight?.setAppBrightness();
+      _brightnessHighlightOn = true;
+    }
+  }
+
+  void _restoreBrightnessHighlight() {
+    if (_brightnessHighlightOn == true) {
+      _brightnessHighlight?.restoreAppBrightness();
+    }
   }
 
   // Other Content Types
