@@ -3,12 +3,15 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Wordle.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/service/Wordle.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/illini/WordlePanel.dart';
+import 'package:illinois/ui/illini/WordleWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -212,8 +215,8 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
       });
 
       List<dynamic> results = await Future.wait([
-        WordleGame.loadDailyWord(),
-        WordleGame.loadDictionary(),
+        WordleGameData.loadDailyWord(),
+        WordleGameData.loadDictionary(),
       ]);
 
       WordleGame? game = WordleGame.fromStorage();
@@ -242,7 +245,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
       });
 
       WordleGame? game = WordleGame.fromStorage();
-      WordleDailyWord? dailyWord = await WordleGame.loadDailyWord();
+      WordleDailyWord? dailyWord = await WordleGameData.loadDailyWord();
       if ((dailyWord != null) && ((game == null) || (game.word != dailyWord.word))) {
         game = WordleGame(dailyWord.word);
       }

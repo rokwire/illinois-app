@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Wordle.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/illini/WordlePanel.dart';
+import 'package:illinois/service/Wordle.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -143,7 +144,7 @@ class _DebugWordlePanelState extends State<DebugWordlePanel>  {
       setState(() {
         _loadingDailtyWord = true;
       });
-      WordleDailyWord? todaysWord = await WordleGame.loadDailyWordFromNet();
+      WordleDailyWord? todaysWord = await WordleGameData.loadDailyWordFromNet();
       if (mounted) {
         setState(() {
           _loadingDailtyWord = false;
