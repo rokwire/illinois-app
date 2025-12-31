@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Wordle.dart';
 import 'package:illinois/model/Wordle.dart';
@@ -207,25 +208,31 @@ class WordleGameWidget extends StatefulWidget {
 class _WordleGameWidgetState extends State<WordleGameWidget> {
 
   static const String _textFieldValue = ' ';
-  final TextEditingController _textController = TextEditingController(text: _textFieldValue);
-  final FocusNode _textFocusNode = FocusNode();
+  TextEditingController? _textController;
+  FocusNode? _textFocusNode;
 
   late List<String> _moves;
   String _rack = '';
 
   @override
   void initState() {
-    _textController.addListener(_onTextChanged);
-    _moves = List<String>.from(widget.game.moves);
+    if (_manualTextInputSupported) {
+      _textController = TextEditingController(text: _textFieldValue);
+      _textController?.addListener(_onTextChanged);
+      _textFocusNode = FocusNode();
+    }
+
     widget.keyboardController?.stream.listen(_onKeyboardKey);
+
+    _moves = List<String>.from(widget.game.moves);
     super.initState();
   }
 
   @override
   void dispose() {
-    _textController.removeListener(_onTextChanged);
-    _textController.dispose();
-    _textFocusNode.dispose();
+    _textController?.removeListener(_onTextChanged);
+    _textController?.dispose();
+    _textFocusNode?.dispose();
     super.dispose();
   }
 
@@ -241,7 +248,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   @override
   Widget build(BuildContext context) =>
     Stack(children: [
-      if (widget.enabled)
+      if (widget.enabled && _manualTextInputSupported)
         Positioned.fill(child: _textFieldWidget),
       _wordleWidget,
     ],);
@@ -369,6 +376,8 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
 
   // Keyboard
 
+  bool get _manualTextInputSupported => kIsWeb || (widget.keyboardController == null);
+
   Widget get _textFieldWidget => TextField(
     style: Styles().textStyles.getTextStyle('widget.heading.extra_small'),
     decoration: InputDecoration(border: InputBorder.none),
@@ -390,8 +399,8 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   );
 
   void _onTextChanged() {
-    if (_textController.text.isNotEmpty) {
-      String textContent = _textController.text.trim();
+    if (_textController?.text.isNotEmpty == true) {
+      String textContent = _textController?.text.trim() ?? '';
       if (textContent.isNotEmpty) {
         _onKeyCharacter(textContent.substring(0, 1));
       }
@@ -399,8 +408,8 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     else {
       _onBackward();
     }
-    if (_textController.text != _textFieldValue) {
-      _textController.text = _textFieldValue;
+    if (_textController?.text != _textFieldValue) {
+      _textController?.text = _textFieldValue;
     }
   }
 
@@ -412,11 +421,11 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     Container();
 
   void _onTapWordle() {
-    if (_textFocusNode.hasFocus) {
-      _textFocusNode.unfocus();
+    if (_textFocusNode?.hasFocus == true) {
+      _textFocusNode?.unfocus();
     }
     else {
-      _textFocusNode.requestFocus();
+      _textFocusNode?.requestFocus();
     }
   }
 
@@ -445,7 +454,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
         _rack = _rack + character.toUpperCase();
       });
     }
-    _textFocusNode.requestFocus(); // show again
+    _textFocusNode?.requestFocus(); // show again
   }
 
   void _onBackward() {
@@ -455,7 +464,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
         _rack = _rack.substring(0, _rack.length - 1);
       });
     }
-    _textFocusNode.requestFocus(); // show again
+    _textFocusNode?.requestFocus(); // show again
   }
 
   void _onSubmitWord() {
@@ -464,7 +473,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
       if ((widget.dictionary?.isNotEmpty == true) && (Storage().debugWordleIgnoreDictionary != true) && (widget.dictionary?.contains(_rack) != true)) {
         _logAnalytics(_rack, _moves.length + 1, status: AnalyticsIllordleEventStatus.notInDictionary);
         AppToast.showMessage(Localization().getStringEx('widget.wordle.move.invalid.text', 'Not in word list'), gravity: ToastGravity.CENTER, duration: Duration(milliseconds: 1000));
-        _textFocusNode.requestFocus(); // show again
+        _textFocusNode?.requestFocus(); // show again
       }
       else if (_moves.length < widget.game.numberOfWords) {
         setState(() {
@@ -486,15 +495,15 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
         else {
           _logAnalytics(_moves.last, _moves.length);
           NotificationService().notify(WordleGameWidget.notifyGameProgress, game);
-          _textFocusNode.requestFocus(); // show again
+          _textFocusNode?.requestFocus(); // show again
         }
       }
       else {
-        _textFocusNode.requestFocus(); // show again
+        _textFocusNode?.requestFocus(); // show again
       }
     }
     else {
-      _textFocusNode.requestFocus(); // show again
+      _textFocusNode?.requestFocus(); // show again
     }
   }
 

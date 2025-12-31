@@ -133,7 +133,6 @@ class WordleKeyboard extends StatelessWidget {
   TextStyle? get _letterTextStyle => Styles().textStyles.getTextStyle('widget.title.medium.fat');
 
   static const double _letterAspectRatio = 0.66;
-  static const double _keyAspectRatio = 1.0;
   static const double _flexPrecision = 1000;
 
   double get _gutterRatio => gutterRatio;
