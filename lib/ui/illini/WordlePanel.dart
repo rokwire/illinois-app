@@ -100,7 +100,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
   Widget get _bodyContent {
     if (_loadProgress) {
       return _loadingContent;
-    } else if (_dailyWord == null) {
+    } else if (_game == null) {
       return _errorContent;
     } else {
       return _wordleWidget;
@@ -109,7 +109,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
 
   Widget get _wordleWidget =>
     WordleWidget(
-      game: _game ??= WordleGame(_dailyWord?.word ?? ''),
+      game: _theGame,
       dailyWord: _dailyWord!,
       dictionary: _dictionary,
       keyboardController: _keyboardController,
@@ -119,7 +119,10 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
   //_keyboardController
 
   Widget get _keyboardWidget =>
-    WordleKeyboard(_keyboardController);
+    WordleKeyboard(
+      game: _theGame,
+      controller: _keyboardController,
+    );
 
   Widget get _loadingContent => Center(child:
     SizedBox(width: 32, height: 32, child:
@@ -168,7 +171,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
       }
     }
 
-    WordleGame? game = widget.game ??  WordleGame.fromStorage();
+    WordleGame? game = widget.game ?? WordleGame.fromStorage();
     if ((dailyWord != null) && ((game == null) || (game.word != dailyWord.word))) {
       game = WordleGame(dailyWord.word);
     }
@@ -187,6 +190,8 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
   }
 
   bool get _isDataAvailable => (_dailyWord != null) && (_loadProgress == false);
+
+  WordleGame get _theGame => _game ??= WordleGame(_dailyWord?.word ?? '');
 
   // Analytics
 
