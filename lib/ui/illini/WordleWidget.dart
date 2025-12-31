@@ -7,6 +7,7 @@ import 'package:illinois/ext/Wordle.dart';
 import 'package:illinois/model/Wordle.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/illini/WordleKeyboard.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -19,6 +20,7 @@ class WordleWidget extends StatefulWidget {
 
   final WordleGame game;
   final WordleDailyWord dailyWord;
+  final WordleKeyboardController? keyboardController;
   final Set<String>? dictionary;
   final bool autofocus;
   final bool hintMode;
@@ -27,6 +29,7 @@ class WordleWidget extends StatefulWidget {
   WordleWidget({super.key,
     required this.game,
     required this.dailyWord,
+    this.keyboardController,
     this.dictionary,
     this.autofocus = false,
     this.hintMode = false,
@@ -53,7 +56,7 @@ class _WordleWidgetState extends State<WordleWidget> {
   Widget build(BuildContext context) => widget.game.isFinished ?
     _gameStatusContent : _wordleGameContent;
 
-  Widget get _wordleGameContent => WordleGameWidget(widget.game, dictionary: widget.dictionary, autofocus: widget.autofocus, hintMode: widget.hintMode, gutterRatio: widget.gutterRatio);
+  Widget get _wordleGameContent => WordleGameWidget(widget.game, dictionary: widget.dictionary, keyboardController: widget.keyboardController, autofocus: widget.autofocus, hintMode: widget.hintMode, gutterRatio: widget.gutterRatio);
   Widget get _wordlePreviewContent => WordleGameWidget(widget.game, enabled: false, gutterRatio: widget.gutterRatio);
   Widget get _wordlePreviewLayer =>  Container(color: Styles().colors.blackTransparent018,);
 
@@ -181,6 +184,7 @@ class WordleGameWidget extends StatefulWidget {
 
   final WordleGame game;
   final Set<String>? dictionary;
+  final WordleKeyboardController? keyboardController;
   final bool enabled;
   final bool autofocus;
   final bool hintMode;
@@ -188,6 +192,7 @@ class WordleGameWidget extends StatefulWidget {
 
   WordleGameWidget(this.game, { super.key,
     this.dictionary,
+    this.keyboardController,
     this.enabled = true,
     this.autofocus = false,
     this.hintMode = false,
@@ -212,6 +217,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   void initState() {
     _textController.addListener(_onTextChanged);
     _moves = List<String>.from(widget.game.moves);
+    widget.keyboardController?.stream.listen(_onKeyboardKey);
     super.initState();
   }
 
@@ -416,6 +422,18 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
 
   void _onLongPressWordle() {
 
+  }
+
+  void _onKeyboardKey(String key) {
+    if (key == SpecialKey.Back.asciiCode) {
+      _onBackward();
+    }
+    else if (key == SpecialKey.Return.asciiCode) {
+      _onSubmitWord();
+    }
+    else if (key.isNotEmpty) {
+      _onKeyCharacter(key.substring(0, 1));
+    }
   }
 
   // Rack

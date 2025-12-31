@@ -1,5 +1,7 @@
 
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Wordle.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -31,6 +33,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
   Set<String>? _dictionary;
   bool _loadProgress = false;
   bool _hintMode = false;
+  final WordleKeyboardController _keyboardController = WordleKeyboardController();
 
   @override
   void initState() {
@@ -46,6 +49,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _keyboardController.close();
     super.dispose();
   }
 
@@ -99,18 +103,23 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
     } else if (_dailyWord == null) {
       return _errorContent;
     } else {
-      return WordleWidget(
-        game: _game ??= WordleGame(_dailyWord!.word),
-        dailyWord: _dailyWord!,
-        dictionary: _dictionary,
-        autofocus: true,
-        hintMode: _hintMode,
-      );
+      return _wordleWidget;
     }
   }
 
+  Widget get _wordleWidget =>
+    WordleWidget(
+      game: _game ??= WordleGame(_dailyWord?.word ?? ''),
+      dailyWord: _dailyWord!,
+      dictionary: _dictionary,
+      keyboardController: _keyboardController,
+      autofocus: true,
+      hintMode: _hintMode,
+    );
+  //_keyboardController
+
   Widget get _keyboardWidget =>
-    WordleKeyboard();
+    WordleKeyboard(_keyboardController);
 
   Widget get _loadingContent => Center(child:
     SizedBox(width: 32, height: 32, child:
