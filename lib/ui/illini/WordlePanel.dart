@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Wordle.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Wordle.dart';
 import 'package:illinois/ui/illini/WordleKeyboard.dart';
 import 'package:illinois/ui/illini/WordleWidget.dart';
@@ -88,7 +89,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
               _bodyContent
             ),
           ),
-          if (_isDataAvailable)
+          if ((_game != null) && (_game?.isFinished != true))
             Padding(padding: EdgeInsets.only(top: 8), child:
               _keyboardWidget
             ),
@@ -188,8 +189,6 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
     }
 
   }
-
-  bool get _isDataAvailable => (_dailyWord != null) && (_loadProgress == false);
 
   WordleGame get _theGame => _game ??= WordleGame(_dailyWord?.word ?? '');
 
