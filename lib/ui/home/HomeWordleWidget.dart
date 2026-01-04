@@ -10,6 +10,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Wordle.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/illini/WordleKeyboard.dart';
 import 'package:illinois/ui/illini/WordlePanel.dart';
 import 'package:illinois/ui/illini/WordleWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -53,6 +54,8 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   DateTime? _pausedDateTime;
   FavoriteContentStatus _contentStatus = FavoriteContentStatus.none;
 
+  final WordleKeyboardController _keyboardController = WordleKeyboardController();
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -76,6 +79,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _keyboardController.close();
     super.dispose();
   }
 
@@ -100,7 +104,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   @override
   Widget build(BuildContext context) =>
     HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, titleBuilder: _titleBuilder, child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         VisibilityDetector(
           key: _visibilityDetectorKey,
           onVisibilityChanged: _onVisibilityChanged,
@@ -112,26 +116,41 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   Widget get _contentWidget {
     if (_loadingData) {
       return _loadingContent;
-    } else if (_dailyWord == null) {
+    } else if (_game == null) {
       return _errorContent;
     } else {
       return Column(mainAxisSize: MainAxisSize.min, children: [
-        _woddleWidget,
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+          _wordleWidget,
+        ),
+        if (_game?.isFinished != true)
+          Padding(padding: EdgeInsets.only(top: 8), child:
+            _keyboardWidget
+          ),
         _viewButton,
       ],);
     }
   }
 
-  Widget get _woddleWidget =>
+  WordleGame get _theGame => _game ??= WordleGame(_dailyWord?.word ?? '');
+
+  Widget get _wordleWidget =>
     AspectRatio(aspectRatio: _dailyWord?.asectRatio ?? 1.0, child:
       WordleWidget(
-        game: _game ??= WordleGame(_dailyWord!.word),
+        game: _theGame,
         dailyWord: _dailyWord!,
         dictionary: _dictionary,
+        keyboardController: _keyboardController,
         autofocus: false,
         hintMode: _hintMode,
         gutterRatio: 0.0875,
       ),
+    );
+
+  Widget get _keyboardWidget =>
+    WordleKeyboard(
+      game: _theGame,
+      controller: _keyboardController,
     );
 
   Widget get _loadingContent =>

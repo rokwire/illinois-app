@@ -117,7 +117,6 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
       autofocus: true,
       hintMode: _hintMode,
     );
-  //_keyboardController
 
   Widget get _keyboardWidget =>
     WordleKeyboard(
