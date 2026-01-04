@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Wordle.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Wordle.dart';
 import 'package:illinois/ui/illini/WordleKeyboard.dart';
 import 'package:illinois/ui/illini/WordleWidget.dart';
@@ -34,7 +33,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
   Set<String>? _dictionary;
   bool _loadProgress = false;
   bool _hintMode = false;
-  final WordleKeyboardController _keyboardController = WordleKeyboardController();
+  final WordleKeyboardController _keyboardController = WordleKeyboardController.broadcast();
 
   @override
   void initState() {

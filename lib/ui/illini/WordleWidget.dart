@@ -211,8 +211,11 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   TextEditingController? _textController;
   FocusNode? _textFocusNode;
 
+  WordleKeyboardSubscription? _keyboardSubscription;
+
   late List<String> _moves;
   String _rack = '';
+
 
   @override
   void initState() {
@@ -222,7 +225,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
       _textFocusNode = FocusNode();
     }
 
-    widget.keyboardController?.stream.listen(_onKeyboardKey);
+    _keyboardSubscription = widget.keyboardController?.stream.listen(_onKeyboardKey);
 
     _moves = List<String>.from(widget.game.moves);
     super.initState();
@@ -230,6 +233,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
 
   @override
   void dispose() {
+    _keyboardSubscription?.cancel();
     _textController?.removeListener(_onTextChanged);
     _textController?.dispose();
     _textFocusNode?.dispose();

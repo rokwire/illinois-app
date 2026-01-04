@@ -54,7 +54,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   DateTime? _pausedDateTime;
   FavoriteContentStatus _contentStatus = FavoriteContentStatus.none;
 
-  final WordleKeyboardController _keyboardController = WordleKeyboardController();
+  final WordleKeyboardController _keyboardController = WordleKeyboardController.broadcast();
 
   @override
   void initState() {
@@ -131,8 +131,6 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
       ],);
     }
   }
-
-  WordleGame get _theGame => _game ??= WordleGame(_dailyWord?.word ?? '');
 
   Widget get _wordleWidget =>
     AspectRatio(aspectRatio: _dailyWord?.asectRatio ?? 1.0, child:
@@ -225,6 +223,8 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   }
 
   // Data
+
+  WordleGame get _theGame => _game ??= WordleGame(_dailyWord?.word ?? '');
 
   Future<void> _loadData() async {
     if ((_loadingData == false) && mounted) {

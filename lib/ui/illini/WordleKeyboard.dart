@@ -12,6 +12,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 typedef WordleKeyboardController = StreamController<String>;
+typedef WordleKeyboardSubscription = StreamSubscription<String>;
 
 class WordleKeyboard extends StatefulWidget {
 
