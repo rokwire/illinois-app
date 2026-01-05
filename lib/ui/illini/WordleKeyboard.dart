@@ -22,18 +22,20 @@ class WordleKeyboard extends StatefulWidget {
   final double gutterRatio;
   final WordleGame? game;
   final WordleKeyboardController? controller;
+  final bool autofocus;
 
   WordleKeyboard({ super.key,
     this.controller,
     this.game,
+    this.autofocus = false,
     this.gutterRatio = 0.125
   });
 
   @override
-  State<StatefulWidget> createState() => _WordleKeyboardState();
+  State<StatefulWidget> createState() => WordleKeyboardState();
 }
 
-class _WordleKeyboardState extends State<WordleKeyboard> with NotificationsListener {
+class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListener {
 
   static List<List<String>> _letters = <List<String>>[
     <String>['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
@@ -47,6 +49,10 @@ class _WordleKeyboardState extends State<WordleKeyboard> with NotificationsListe
 
   static int _standardLettersLength = _letters.first.length;
 
+  static const String _textFieldValue = ' ';
+  TextEditingController? _textController;
+  FocusNode? _textFocusNode;
+
   late _LetterStatusMap _letterStatuses;
 
   @override
@@ -54,12 +60,22 @@ class _WordleKeyboardState extends State<WordleKeyboard> with NotificationsListe
     NotificationService().subscribe(this, [
       Storage.notifySettingChanged,
     ]);
+
+    if (_manualTextInputSupported) {
+      _textController = TextEditingController(text: _textFieldValue);
+      _textController?.addListener(_onTextChanged);
+      _textFocusNode = FocusNode();
+    }
+
     _letterStatuses = widget.game?.lettersStatuses ?? <String, WordleLetterStatus>{};
     super.initState();
   }
 
   @override
   void dispose() {
+    _textController?.removeListener(_onTextChanged);
+    _textController?.dispose();
+    _textFocusNode?.dispose();
     super.dispose();
   }
 
@@ -72,6 +88,13 @@ class _WordleKeyboardState extends State<WordleKeyboard> with NotificationsListe
 
   @override
   Widget build(BuildContext context) =>
+    Stack(children: [
+      if (_manualTextInputSupported)
+        Positioned.fill(child: _textFieldWidget),
+      _keyboardPanel,
+    ],);
+
+  Widget get _keyboardPanel =>
     Container(decoration: _keyboardDecoration, padding: _keyboardPadding, child:
       Column(mainAxisSize: MainAxisSize.min, children: _keyboardLines,),
     );
@@ -157,12 +180,75 @@ class _WordleKeyboardState extends State<WordleKeyboard> with NotificationsListe
   void _onWodleGameChanged() {
     WordleGame? storedGame = WordleGame.fromStorage();
     _LetterStatusMap? letterStatuses = storedGame?.lettersStatuses;
-    if ((letterStatuses != null) && !DeepCollectionEquality().equals(_letterStatuses, letterStatuses) && mounted) {
+    if ((letterStatuses != null) && !DeepCollectionEquality().equals(_letterStatuses, letterStatuses)) {
       setState(() {
         _letterStatuses = letterStatuses;
       });
     }
   }
+
+  // Manual Input
+
+  bool get _manualTextInputSupported =>
+    true; /* WebUtils.isDesktopDeviceWeb() */
+
+  Widget get _textFieldWidget => TextField(
+    style: Styles().textStyles.getTextStyle('widget.heading.extra_small'),
+    decoration: InputDecoration(border: InputBorder.none),
+    controller: _textController,
+    focusNode: _textFocusNode,
+    keyboardType: TextInputType.text,
+    textInputAction: TextInputAction.go,
+    textCapitalization: TextCapitalization.characters,
+    maxLines: null,
+    maxLength: 2,
+    expands: true,
+    showCursor: false,
+    autocorrect: false,
+    enableSuggestions: false,
+    enableInteractiveSelection: false,
+    autofocus: widget.autofocus,
+    onSubmitted: _onTextSubmit,
+    contextMenuBuilder: _onBuildTextContextMenu,
+  );
+
+  void _onTextChanged() {
+    if (_textController?.text.isNotEmpty == true) {
+      String textContent = _textController?.text.trim() ?? '';
+      if (textContent.isNotEmpty) {
+        String character = textContent.substring(0, 1).toUpperCase();
+        if (character.isWordleAlpha) {
+          widget.controller?.add(character);
+        }
+      }
+    }
+    else {
+      widget.controller?.add(WordleKeyboard.Back);
+    }
+    if (_textController?.text != _textFieldValue) {
+      _textController?.text = _textFieldValue;
+    }
+    _textFocusNode?.requestFocus(); // show again
+  }
+
+  void _onTextSubmit(String text) {
+    widget.controller?.add(WordleKeyboard.Return);
+    _textFocusNode?.requestFocus(); // show again
+  }
+
+  Widget _onBuildTextContextMenu(BuildContext context, EditableTextState editableTextState) =>
+    Container();
+
+  void toggleFocus() {
+    if (_textFocusNode?.hasFocus == true) {
+      _textFocusNode?.unfocus();
+    }
+    else {
+      _textFocusNode?.requestFocus();
+    }
+  }
+
+  // Constants
 
   BoxDecoration get _keyboardDecoration => BoxDecoration(
     color: Styles().colors.backgroundVariant,

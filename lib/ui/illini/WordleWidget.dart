@@ -2,7 +2,6 @@
 
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Wordle.dart';
 import 'package:illinois/model/Wordle.dart';
@@ -22,6 +21,7 @@ class WordleWidget extends StatefulWidget {
   final WordleGame game;
   final WordleDailyWord dailyWord;
   final WordleKeyboardController? keyboardController;
+  final WordleTapCallback? onTap;
   final Set<String>? dictionary;
   final bool autofocus;
   final bool hintMode;
@@ -31,6 +31,7 @@ class WordleWidget extends StatefulWidget {
     required this.game,
     required this.dailyWord,
     this.keyboardController,
+    this.onTap,
     this.dictionary,
     this.autofocus = false,
     this.hintMode = false,
@@ -57,9 +58,24 @@ class _WordleWidgetState extends State<WordleWidget> {
   Widget build(BuildContext context) => widget.game.isFinished ?
     _gameStatusContent : _wordleGameContent;
 
-  Widget get _wordleGameContent => WordleGameWidget(widget.game, dictionary: widget.dictionary, keyboardController: widget.keyboardController, autofocus: widget.autofocus, hintMode: widget.hintMode, gutterRatio: widget.gutterRatio);
-  Widget get _wordlePreviewContent => WordleGameWidget(widget.game, enabled: false, gutterRatio: widget.gutterRatio);
-  Widget get _wordlePreviewLayer =>  Container(color: Styles().colors.blackTransparent018,);
+  Widget get _wordleGameContent => WordleGameWidget(
+    widget.game,
+    dictionary: widget.dictionary,
+    keyboardController: widget.keyboardController,
+    onTap: widget.onTap,
+    autofocus: widget.autofocus,
+    hintMode: widget.hintMode,
+    gutterRatio: widget.gutterRatio
+  );
+
+  Widget get _wordlePreviewContent => WordleGameWidget(
+    widget.game,
+    enabled: false,
+    gutterRatio: widget.gutterRatio
+  );
+
+  Widget get _wordlePreviewLayer =>
+    Container(color: Styles().colors.blackTransparent018,);
 
   Widget get _gameStatusContent =>
     Stack(children: [
@@ -186,6 +202,7 @@ class WordleGameWidget extends StatefulWidget {
   final WordleGame game;
   final Set<String>? dictionary;
   final WordleKeyboardController? keyboardController;
+  final WordleTapCallback? onTap;
   final bool enabled;
   final bool autofocus;
   final bool hintMode;
@@ -194,6 +211,7 @@ class WordleGameWidget extends StatefulWidget {
   WordleGameWidget(this.game, { super.key,
     this.dictionary,
     this.keyboardController,
+    this.onTap,
     this.enabled = true,
     this.autofocus = false,
     this.hintMode = false,
@@ -377,10 +395,9 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   int get _gutterFlex => (widget.gutterRatio * _gutterPrec).toInt();
   int get _cellFlex => ((1 - widget.gutterRatio) * _gutterPrec).toInt();
 
-
   // Keyboard
 
-  bool get _manualTextInputSupported => kIsWeb || (widget.keyboardController == null);
+  bool get _manualTextInputSupported => false; /* WebUtils.isMobileDeviceWeb() || (widget.keyboardController == null) */
 
   Widget get _textFieldWidget => TextField(
     style: Styles().textStyles.getTextStyle('widget.heading.extra_small'),
@@ -415,17 +432,23 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     if (_textController?.text != _textFieldValue) {
       _textController?.text = _textFieldValue;
     }
+    _textFocusNode?.requestFocus(); // show again
   }
 
   void _onTextSubmit(String text) {
-    _onSubmitWord();
+    WordleGame? game = _onSubmitWord();
+    if (game?.isFinished != true)
+      _textFocusNode?.requestFocus(); // show again
   }
 
   Widget _onBuildTextContextMenu(BuildContext context, EditableTextState editableTextState) =>
     Container();
 
   void _onTapWordle() {
-    if (_textFocusNode?.hasFocus == true) {
+    if (widget.onTap != null) {
+      widget.onTap?.call();
+    }
+    else if (_textFocusNode?.hasFocus == true) {
       _textFocusNode?.unfocus();
     }
     else {
@@ -458,7 +481,6 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
         _rack = _rack + character.toUpperCase();
       });
     }
-    _textFocusNode?.requestFocus(); // show again
   }
 
   void _onBackward() {
@@ -468,10 +490,9 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
         _rack = _rack.substring(0, _rack.length - 1);
       });
     }
-    _textFocusNode?.requestFocus(); // show again
   }
 
-  void _onSubmitWord() {
+  WordleGame? _onSubmitWord() {
     //debugPrint('Submit');
     if (_rack.length == widget.game.wordLength) {
       if ((widget.dictionary?.isNotEmpty == true) && (Storage().debugWordleIgnoreDictionary != true) && (widget.dictionary?.contains(_rack) != true)) {
@@ -499,16 +520,11 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
         else {
           _logAnalytics(_moves.last, _moves.length);
           NotificationService().notify(WordleGameWidget.notifyGameProgress, game);
-          _textFocusNode?.requestFocus(); // show again
         }
-      }
-      else {
-        _textFocusNode?.requestFocus(); // show again
+        return game;
       }
     }
-    else {
-      _textFocusNode?.requestFocus(); // show again
-    }
+    return null;
   }
 
   void _logAnalytics(String guess, int attempt, { AnalyticsIllordleEventStatus? status }) =>
@@ -523,3 +539,4 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
 
 enum _WordleLetterDisplay { move, rack, }
 
+typedef WordleTapCallback = void Function();

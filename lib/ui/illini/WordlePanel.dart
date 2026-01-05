@@ -34,6 +34,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
   bool _loadProgress = false;
   bool _hintMode = false;
   final WordleKeyboardController _keyboardController = WordleKeyboardController.broadcast();
+  final GlobalKey<WordleKeyboardState> _keyboardKey = GlobalKey<WordleKeyboardState>();
 
   @override
   void initState() {
@@ -113,6 +114,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
       dailyWord: _dailyWord!,
       dictionary: _dictionary,
       keyboardController: _keyboardController,
+      onTap: _onTapWordle,
       autofocus: true,
       hintMode: _hintMode,
     );
@@ -120,6 +122,8 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
   Widget get _keyboardWidget =>
     WordleKeyboard(
       game: _theGame,
+      key: _keyboardKey,
+      autofocus: true,
       controller: _keyboardController,
     );
 
@@ -202,6 +206,10 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
 
   // Game
 
+  void _onTapWordle() {
+    _keyboardKey.currentState?.toggleFocus();
+  }
+
   void _onGameOver(WordleGame? game) {
     if ((game != null) && mounted) {
       _logFinishedAlert(game);
@@ -210,7 +218,6 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
       });
     }
   }
-
 
   void _onLongPressLogo() {
     if (_dailyWord != null) {
