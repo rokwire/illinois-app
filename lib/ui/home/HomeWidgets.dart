@@ -23,6 +23,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 
 enum CardDisplayMode { home, browse, }
 enum FavoriteContentType { my, all }
