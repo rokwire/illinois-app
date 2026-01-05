@@ -186,7 +186,7 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
   // Manual Input
 
   bool get _manualTextInputSupported =>
-    false; /* WebUtils.isDesktopDeviceWeb() */
+    WebUtils.isDesktopDeviceWeb();
 
   Widget get _textFieldWidget => TextField(
     style: Styles().textStyles.getTextStyle('widget.heading.extra_small'),
