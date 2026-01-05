@@ -44,7 +44,6 @@ import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/gbv/GBVPathwaysPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
-import 'package:illinois/ui/widgets/FocusableSemanticsWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:illinois/utils/AppUtils.dart';

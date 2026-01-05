@@ -12,7 +12,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
-import 'package:illinois/ui/widgets/FocusableSemanticsWidget.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';

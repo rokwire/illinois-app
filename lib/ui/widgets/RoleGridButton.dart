@@ -17,7 +17,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:illinois/ui/widgets/FocusableSemanticsWidget.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';

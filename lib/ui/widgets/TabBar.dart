@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/widgets/FocusableSemanticsWidget.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/ui/widgets/tab_bar.dart' as rokwire;
