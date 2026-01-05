@@ -111,7 +111,7 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
   Widget get _wordleWidget =>
     WordleWidget(
       game: _theGame,
-      dailyWord: _dailyWord!,
+      dailyWord: _dailyWord ?? WordleDailyWord(word: _theGame.word),
       dictionary: _dictionary,
       keyboardController: _keyboardController,
       onTap: _onTapWordle,

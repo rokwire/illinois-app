@@ -50,8 +50,8 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
   static int _standardLettersLength = _letters.first.length;
 
   static const String _textFieldValue = ' ';
-  TextEditingController? _textController;
-  FocusNode? _textFocusNode;
+  TextEditingController _textController = TextEditingController(text: _textFieldValue);
+  FocusNode _textFocusNode = FocusNode();
 
   late _LetterStatusMap _letterStatuses;
 
@@ -61,11 +61,7 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
       Storage.notifySettingChanged,
     ]);
 
-    if (_manualTextInputSupported) {
-      _textController = TextEditingController(text: _textFieldValue);
-      _textController?.addListener(_onTextChanged);
-      _textFocusNode = FocusNode();
-    }
+    _textController.addListener(_onTextChanged);
 
     _letterStatuses = widget.game?.lettersStatuses ?? <String, WordleLetterStatus>{};
     super.initState();
@@ -73,9 +69,9 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
 
   @override
   void dispose() {
-    _textController?.removeListener(_onTextChanged);
-    _textController?.dispose();
-    _textFocusNode?.dispose();
+    _textController.removeListener(_onTextChanged);
+    _textController.dispose();
+    _textFocusNode.dispose();
     super.dispose();
   }
 
@@ -190,7 +186,7 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
   // Manual Input
 
   bool get _manualTextInputSupported =>
-    true; /* WebUtils.isDesktopDeviceWeb() */
+    false; /* WebUtils.isDesktopDeviceWeb() */
 
   Widget get _textFieldWidget => TextField(
     style: Styles().textStyles.getTextStyle('widget.heading.extra_small'),
@@ -213,8 +209,8 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
   );
 
   void _onTextChanged() {
-    if (_textController?.text.isNotEmpty == true) {
-      String textContent = _textController?.text.trim() ?? '';
+    if (_textController.text.isNotEmpty == true) {
+      String textContent = _textController.text.trim();
       if (textContent.isNotEmpty) {
         String character = textContent.substring(0, 1).toUpperCase();
         if (character.isWordleAlpha) {
@@ -225,26 +221,26 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
     else {
       widget.controller?.add(WordleKeyboard.Back);
     }
-    if (_textController?.text != _textFieldValue) {
-      _textController?.text = _textFieldValue;
+    if (_textController.text != _textFieldValue) {
+      _textController.text = _textFieldValue;
     }
-    _textFocusNode?.requestFocus(); // show again
+    _textFocusNode.requestFocus(); // show again
   }
 
   void _onTextSubmit(String text) {
     widget.controller?.add(WordleKeyboard.Return);
-    _textFocusNode?.requestFocus(); // show again
+    _textFocusNode.requestFocus(); // show again
   }
 
   Widget _onBuildTextContextMenu(BuildContext context, EditableTextState editableTextState) =>
     Container();
 
   void toggleFocus() {
-    if (_textFocusNode?.hasFocus == true) {
-      _textFocusNode?.unfocus();
+    if (_textFocusNode.hasFocus == true) {
+      _textFocusNode.unfocus();
     }
     else {
-      _textFocusNode?.requestFocus();
+      _textFocusNode.requestFocus();
     }
   }
 

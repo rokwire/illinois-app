@@ -226,8 +226,8 @@ class WordleGameWidget extends StatefulWidget {
 class _WordleGameWidgetState extends State<WordleGameWidget> {
 
   static const String _textFieldValue = ' ';
-  TextEditingController? _textController;
-  FocusNode? _textFocusNode;
+  TextEditingController _textController = TextEditingController(text: _textFieldValue);
+  FocusNode _textFocusNode = FocusNode();
 
   WordleKeyboardSubscription? _keyboardSubscription;
 
@@ -237,11 +237,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
 
   @override
   void initState() {
-    if (_manualTextInputSupported) {
-      _textController = TextEditingController(text: _textFieldValue);
-      _textController?.addListener(_onTextChanged);
-      _textFocusNode = FocusNode();
-    }
+    _textController.addListener(_onTextChanged);
 
     _keyboardSubscription = widget.keyboardController?.stream.listen(_onKeyboardKey);
 
@@ -252,9 +248,9 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   @override
   void dispose() {
     _keyboardSubscription?.cancel();
-    _textController?.removeListener(_onTextChanged);
-    _textController?.dispose();
-    _textFocusNode?.dispose();
+    _textController.removeListener(_onTextChanged);
+    _textController.dispose();
+    _textFocusNode.dispose();
     super.dispose();
   }
 
@@ -397,7 +393,7 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
 
   // Keyboard
 
-  bool get _manualTextInputSupported => false; /* WebUtils.isMobileDeviceWeb() || (widget.keyboardController == null) */
+  bool get _manualTextInputSupported => false; /* WebUtils.isDesktopDeviceWeb() || (widget.keyboardController == null) */
 
   Widget get _textFieldWidget => TextField(
     style: Styles().textStyles.getTextStyle('widget.heading.extra_small'),
@@ -420,8 +416,8 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   );
 
   void _onTextChanged() {
-    if (_textController?.text.isNotEmpty == true) {
-      String textContent = _textController?.text.trim() ?? '';
+    if (_textController.text.isNotEmpty == true) {
+      String textContent = _textController.text.trim();
       if (textContent.isNotEmpty) {
         _onKeyCharacter(textContent.substring(0, 1));
       }
@@ -429,16 +425,16 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     else {
       _onBackward();
     }
-    if (_textController?.text != _textFieldValue) {
-      _textController?.text = _textFieldValue;
+    if (_textController.text != _textFieldValue) {
+      _textController.text = _textFieldValue;
     }
-    _textFocusNode?.requestFocus(); // show again
+    _textFocusNode.requestFocus(); // show again
   }
 
   void _onTextSubmit(String text) {
     WordleGame? game = _onSubmitWord();
     if (game?.isFinished != true)
-      _textFocusNode?.requestFocus(); // show again
+      _textFocusNode.requestFocus(); // show again
   }
 
   Widget _onBuildTextContextMenu(BuildContext context, EditableTextState editableTextState) =>
@@ -448,11 +444,11 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
     if (widget.onTap != null) {
       widget.onTap?.call();
     }
-    else if (_textFocusNode?.hasFocus == true) {
-      _textFocusNode?.unfocus();
+    else if (_textFocusNode.hasFocus == true) {
+      _textFocusNode.unfocus();
     }
     else {
-      _textFocusNode?.requestFocus();
+      _textFocusNode.requestFocus();
     }
   }
 
@@ -498,7 +494,6 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
       if ((widget.dictionary?.isNotEmpty == true) && (Storage().debugWordleIgnoreDictionary != true) && (widget.dictionary?.contains(_rack) != true)) {
         _logAnalytics(_rack, _moves.length + 1, status: AnalyticsIllordleEventStatus.notInDictionary);
         AppToast.showMessage(Localization().getStringEx('widget.wordle.move.invalid.text', 'Not in word list'), gravity: ToastGravity.CENTER, duration: Duration(milliseconds: 1000));
-        _textFocusNode?.requestFocus(); // show again
       }
       else if (_moves.length < widget.game.numberOfWords) {
         setState(() {
