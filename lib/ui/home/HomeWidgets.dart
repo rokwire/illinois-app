@@ -1200,8 +1200,8 @@ class HomeFavTabBarBtn extends StatelessWidget {
   });
   
   @override
-  Widget build(BuildContext context) => Semantics(label: _semanticsLabel, hint: _semanticsHint, selected: selected, button: true, excludeSemantics: true, child:
-    InkWell(onTap: onTap, child:
+  Widget build(BuildContext context) => Semantics(label: _semanticsLabel, hint: _semanticsHint, selected: selected, button: true, child:
+    WebBareSemanticsButton(onTap: onTap, child:
       Container(
         decoration: BoxDecoration(color: _frameColor, border: _frameBorder, borderRadius: _frameBorderRadius,),
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),

@@ -244,6 +244,9 @@ class AccessibleDropDownMenuItem <T> extends DropdownMenuItem <T>{
   ));
 }
 
+/**
+ * Used to explicitly focus widgets for web accessibility
+ */
 class WebFocusableSemanticsWidget extends StatelessWidget {
   final Widget child;
   final Function? onSelect;
@@ -263,5 +266,36 @@ class WebFocusableSemanticsWidget extends StatelessWidget {
           }),
         },
         child: child);
+  }
+}
+
+/**
+ * Used in web for accessible buttons because InkWell and GestureDetector break the accessibility focus and pronunciation in web.
+ */
+class WebBareSemanticsButton extends StatelessWidget {
+  final VoidCallback? onTap;
+  final Widget child;
+
+  const WebBareSemanticsButton({super.key, this.onTap, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onTap ?? () => {},
+      style: const ButtonStyle(
+        padding: WidgetStatePropertyAll(EdgeInsets.zero),
+        minimumSize: WidgetStatePropertyAll(Size.zero),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        elevation: WidgetStatePropertyAll(0),
+        shadowColor: WidgetStatePropertyAll(Colors.transparent),
+        backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+        overlayColor: WidgetStatePropertyAll(Colors.transparent),
+        shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+          side: BorderSide.none,
+        )),
+      ),
+      child: child,
+    );
   }
 }
