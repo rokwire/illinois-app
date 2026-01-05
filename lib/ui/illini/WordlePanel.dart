@@ -206,10 +206,6 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
 
   // Game
 
-  void _onTapWordle() {
-    _keyboardKey.currentState?.toggleFocus();
-  }
-
   void _onGameOver(WordleGame? game) {
     if ((game != null) && mounted) {
       _logFinishedAlert(game);
@@ -217,6 +213,10 @@ class _WordlePanelState extends State<WordlePanel> with NotificationsListener {
         _game = game;
       });
     }
+  }
+
+  void _onTapWordle() {
+    _keyboardKey.currentState?.toggleFocus();
   }
 
   void _onLongPressLogo() {

@@ -55,6 +55,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   FavoriteContentStatus _contentStatus = FavoriteContentStatus.none;
 
   final WordleKeyboardController _keyboardController = WordleKeyboardController.broadcast();
+  final GlobalKey<WordleKeyboardState> _keyboardKey = GlobalKey<WordleKeyboardState>();
 
   @override
   void initState() {
@@ -73,6 +74,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
     }
 
     _loadDataIfVisible();
+
     super.initState();
   }
 
@@ -139,6 +141,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
         dailyWord: _dailyWord ?? WordleDailyWord(word: _theGame.word),
         dictionary: _dictionary,
         keyboardController: _keyboardController,
+        onTap: _onTapWordle,
         autofocus: false,
         hintMode: _hintMode,
         gutterRatio: 0.0875,
@@ -148,6 +151,8 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   Widget get _keyboardWidget =>
     WordleKeyboard(
       game: _theGame,
+      key: _keyboardKey,
+      autofocus: false,
       controller: _keyboardController,
     );
 
@@ -316,6 +321,10 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
         _game = game;
       });
     }
+  }
+
+  void _onTapWordle() {
+    _keyboardKey.currentState?.toggleFocus();
   }
 
   void _onLongPressLogo() {
