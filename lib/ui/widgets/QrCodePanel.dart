@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/BrightnessHighlight.dart';
 import 'package:illinois/model/Building.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -130,8 +131,8 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
   factory QrCodePanel.fromBuilding(Building? building, {Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
     key: key,
     deepLinkUrl: '${Gateway.buildingDetailUrl}?building_number=${building?.number}',
-    saveFileName: 'Location - ${building?.name}',
-    saveWatermarkText: building?.name,
+    saveFileName: 'Location - ${building?.displayName}',
+    saveWatermarkText: building?.displayName,
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.building.title', 'Share this location'),
     description: Localization().getStringEx('panel.qr_code.building.description.label', 'Want to invite other Illinois app users to view this location? Use one of the sharing options below.'),
@@ -205,17 +206,29 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 }
 
 class _QrCodePanelState extends State<QrCodePanel> {
-  static final double _imageSize = 1024;
+  static const double _imageSize = 1024;
   Uint8List? _qrCodeBytes;
+
+  static const String _brightnessHighlightObjective = 'general.qr_code';
+  BrightnessHighlight? _brightnessHighlight;
 
   @override
   void initState() {
     super.initState();
+    _brightnessHighlight = BrightnessHighlight.forObjective(_brightnessHighlightObjective);
+    _brightnessHighlight?.setAppBrightness();
+
     _loadQrImageBytes().then((imageBytes) {
       setStateIfMounted(() {
         _qrCodeBytes = imageBytes;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _brightnessHighlight?.restoreAppBrightness();
+    super.dispose();
   }
 
   @override

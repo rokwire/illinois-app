@@ -5,6 +5,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Extend auto-increase brightness feature to QR Code and Event Self-Checkin PDF panels [#5587](https://github.com/rokwire/illinois-app/issues/5587).
+
+## [7.3.39] - 2025-12-29
+### Added
+- Added "notification" analytics event [#5611](https://github.com/rokwire/illinois-app/issues/5611).
+### Changed
+- Don't display menu options for group tabs that don't display [#5618](https://github.com/rokwire/illinois-app/issues/5618).
+- Auto-increase brightness when viewing wallet [#5587](https://github.com/rokwire/illinois-app/issues/5587).
+
+## [7.3.38] - 2025-12-23
+### Changed
+- Building Names now show abbreviated short names too [#5476](https://github.com/rokwire/illinois-app/issues/5476).
+- UI Cleanup: Dropdown Menu [#5603](https://github.com/rokwire/illinois-app/issues/5603).
+### Fixed
+- Fix image update from preloaded webp [#5571](https://github.com/rokwire/illinois-app/issues/5571).
+
 ## [7.3.37] - 2025-12-22
 ### Changed
 - Settings: removed maps section, appointments and calendar merged into single section [#5614](https://github.com/rokwire/illinois-app/issues/5614).

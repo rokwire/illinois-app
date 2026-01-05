@@ -618,7 +618,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   void _onTapBuildingItem(Building building) {
-    Analytics().logSelect(target: 'Assistant: Building Item "${building.name}"');
+    Analytics().logSelect(target: 'Assistant: Building Item "${building.displayName}"');
     building.exploreLaunchDetail(context);
   }
 

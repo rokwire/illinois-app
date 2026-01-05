@@ -74,30 +74,8 @@ class SavedPanel extends StatefulWidget with AnalyticsInfo {
   _SavedPanelState createState() => _SavedPanelState();
 
   @override
-  AnalyticsFeature? get analyticsFeature {
-    String? favoriteCategory = (favoriteCategories.length == 1) ? favoriteCategories.first : null;
-    if (favoriteCategory == Event2.favoriteKeyName) {
-      return AnalyticsFeature.Events;
-    }
-    else if (favoriteCategory == Dining.favoriteKeyName) {
-      return AnalyticsFeature.Dining;
-    }
-    else if ((favoriteCategory == Game.favoriteKeyName) || (favoriteCategory == News.favoriteKeyName)) {
-      return AnalyticsFeature.Athletics;
-    }
-    else if (favoriteCategory == LaundryRoom.favoriteKeyName) {
-      return AnalyticsFeature.Laundry;
-    }
-    else if ((favoriteCategory == MTDStop.favoriteKeyName) || (favoriteCategory == ExplorePOI.favoriteKeyName)) {
-      return AnalyticsFeature.MTD;
-    }
-    else if (favoriteCategory == GuideFavorite.favoriteKeyName) {
-      return AnalyticsFeature.Guide;
-    }
-    else {
-      return AnalyticsFeature.Unknown;
-    }
-  }
+  AnalyticsFeature? get analyticsFeature =>
+    _SavedAnalyticsFeature.fromFavoriteCategory((favoriteCategories.length == 1) ? favoriteCategories.first : null);
 }
 
 class _SavedPanelState extends State<SavedPanel> with NotificationsListener {
@@ -221,6 +199,7 @@ class _SavedPanelState extends State<SavedPanel> with NotificationsListener {
       for (String favoriteCategory in widget.favoriteCategories) {
         contentList.add(_SavedItemsList(headingTitle: _favoriteCategoryTitle(favoriteCategory),
           headingIconKey: _favoriteCategoryIconKey(favoriteCategory),
+          analyticsFeature: widget.analyticsFeature,
           items: _favorites[favoriteCategory],
           onTapFavorite: widget.onTapFavorite,
         ),);
@@ -233,7 +212,7 @@ class _SavedPanelState extends State<SavedPanel> with NotificationsListener {
       if (0 < (favorites?.length ?? 0)) {
         for (int index = 0; index < favorites!.length; index++) {
           contentList.add(Padding(padding: EdgeInsets.only(top: (0 < index) ? 8 : 0), child:
-            _SavedItem.buildCard(favorite: favorites[index], onTap: widget.onTapFavorite,)
+            _SavedItem.buildCard(favorites[index], onTap: widget.onTapFavorite, analyticsFeature: widget.analyticsFeature)
           ));
         }
         contentList.add(LinkButton(
@@ -457,10 +436,11 @@ class _SavedItemsList extends StatefulWidget {
   final String? headingIconKey;
   final String slantImageKey;
   final Color? slantColor;
+  final AnalyticsFeature? analyticsFeature;
   final void Function(Favorite favorite)? onTapFavorite;
 
   // ignore: unused_element_parameter
-  _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconKey, this.slantImageKey = 'slant-dark', this.slantColor, this.onTapFavorite});
+  _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconKey, this.slantImageKey = 'slant-dark', this.slantColor, this.analyticsFeature, this.onTapFavorite});
 
   _SavedItemsListState createState() => _SavedItemsListState();
 }
@@ -497,7 +477,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       int itemsCount = widget.items!.length;
       int visibleCount = (((widget.limit <= 0) || _showAll) ? itemsCount : min(widget.limit, itemsCount));
       for (int i = 0; i < visibleCount; i++) {
-        widgets.add(_SavedItem.buildCard(favorite: widget.items![i], onTap: widget.onTapFavorite, forceDefaultCard: true));
+        widgets.add(_SavedItem.buildCard(widget.items![i], onTap: widget.onTapFavorite, analyticsFeature: widget.analyticsFeature, forceDefaultCard: true));
         if (i < (visibleCount - 1)) {
           widgets.add(Container(height: 12,));
         }
@@ -526,17 +506,22 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 class _SavedItem extends StatelessWidget {
   final Favorite favorite;
   final void Function(Favorite favorite)? onTap;
+  final AnalyticsFeature? analyticsFeature;
 
-  _SavedItem({required this.favorite, this.onTap});
+  _SavedItem(this.favorite, { this.analyticsFeature, this.onTap, });
 
-  static Widget buildCard( {required Favorite favorite, void Function(Favorite favorite)? onTap, bool forceDefaultCard = false}) {
+  static Widget buildCard( Favorite favorite, {
+    AnalyticsFeature? analyticsFeature,
+    void Function(Favorite favorite)? onTap,
+    bool forceDefaultCard = false
+  }) {
     if(forceDefaultCard == false) {
       if (favorite is Dining) {
         return DiningCard(favorite, onTap: (BuildContext context) =>
-          onTap!=null ? onTap(favorite) : favorite.favoriteLaunchDetail(context));
+          onTap!=null ? onTap(favorite) : favorite.favoriteLaunchDetail(context, analyticsFeature: analyticsFeature));
       }
     }
-    return _SavedItem(favorite: favorite, onTap: onTap,);
+    return _SavedItem(favorite, analyticsFeature: analyticsFeature, onTap: onTap);
   }
 
   @override
@@ -610,7 +595,34 @@ class _SavedItem extends StatelessWidget {
       onTap?.call(favorite);
     }
     else {
-      favorite.favoriteLaunchDetail(context);
+      favorite.favoriteLaunchDetail(context, analyticsFeature: analyticsFeature);
+    }
+  }
+}
+
+extension _SavedAnalyticsFeature on AnalyticsFeature {
+
+  static AnalyticsFeature fromFavoriteCategory(String? favoriteCategory) {
+    if (favoriteCategory == Event2.favoriteKeyName) {
+      return AnalyticsFeature.Events;
+    }
+    else if (favoriteCategory == Dining.favoriteKeyName) {
+      return AnalyticsFeature.Dining;
+    }
+    else if ((favoriteCategory == Game.favoriteKeyName) || (favoriteCategory == News.favoriteKeyName)) {
+      return AnalyticsFeature.Athletics;
+    }
+    else if (favoriteCategory == LaundryRoom.favoriteKeyName) {
+      return AnalyticsFeature.Laundry;
+    }
+    else if ((favoriteCategory == MTDStop.favoriteKeyName) || (favoriteCategory == ExplorePOI.favoriteKeyName)) {
+      return AnalyticsFeature.MTD;
+    }
+    else if (favoriteCategory == GuideFavorite.favoriteKeyName) {
+      return AnalyticsFeature.Guide;
+    }
+    else {
+      return AnalyticsFeature.Unknown;
     }
   }
 }

@@ -91,7 +91,7 @@ class _DisplayFloorPlanPanelState extends State<DisplayFloorPlanPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: ' ${widget.building?.name ?? ''}'),
+      appBar: HeaderBar(title: ' ${widget.building?.displayName ?? ''}'),
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),

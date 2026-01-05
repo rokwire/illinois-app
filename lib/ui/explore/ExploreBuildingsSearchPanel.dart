@@ -202,7 +202,7 @@ class _ExploreBuildingsSearchPanelState extends State<ExploreBuildingsSearchPane
   double get _screenHeight => MediaQuery.of(context).size.height;
 
   void _onTapBuilding(Building building) {
-    Analytics().logSelect(target: 'Building: ${building.name}');
+    Analytics().logSelect(target: 'Building: ${building.displayName}');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(
       building: building,
       selectLocationBuilder: widget.selectLocationBuilder,

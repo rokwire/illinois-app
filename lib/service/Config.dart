@@ -261,6 +261,8 @@ class Config extends rokwire.Config {
   int? get assistantQueryRequestTimeout           => JsonUtils.intValue(assistantSettings['queryRequestTimeout']);
 
   Map<String, dynamic>? get map2Settings          => JsonUtils.mapValue(settings['map2']);
+  Map<String, dynamic>? get walletSettings        => JsonUtils.mapValue(settings['wallet']);
+  Map<String, dynamic>? get brightnessHighlight   => JsonUtils.mapValue(settings['brightnessHighlight']);
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;
