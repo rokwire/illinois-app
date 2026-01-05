@@ -54,6 +54,7 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
   FocusNode _textFocusNode = FocusNode();
 
   late _LetterStatusMap _letterStatuses;
+  _KeyHighlightMap _keyHighlights = <String, int>{};
 
   @override
   void initState() {
@@ -146,11 +147,13 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
 
   Widget _keyboardLetter(String letter, {WordleLetterStatus? status} ) =>
     AspectRatio(aspectRatio: _letterAspectRatio, child:
-      Container(decoration: _keyDecoration(status), child:
-        Material(color: status?.color ?? _defaultKeyBackColor, child:
-          InkWell(onTap: () => _onKeyboardKey(letter), child:
-            Center(child:
-              Text(letter, style: (status != null) ? _statusLetterTextStyle : _defaultLetterTextStyle,)
+      Container(decoration: _keyDecoration(status: status, highlighted: _isKeyHighlighted(letter)), child:
+        ClipRRect(borderRadius: _keyBorderRadius, child:
+          Material(color: status?.color ?? _defaultKeyBackColor, child:
+            InkWell(onTap: () => _onKeyboardKey(letter), child:
+              Center(child:
+                Text(letter, style: (status != null) ? _statusLetterTextStyle : _defaultLetterTextStyle,)
+              )
             )
           )
         )
@@ -159,11 +162,13 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
 
   Widget _keyboardSpecialKey(SpecialKey specialKey, { required double aspectRatio }) =>
     AspectRatio(aspectRatio: aspectRatio, child:
-      Container(decoration: _keyDecoration(), child:
-        Material(color: _defaultKeyBackColor, child:
-          InkWell(onTap: () => _onKeyboardKey(specialKey.asciiCode), child:
-            Center(child:
-              specialKey.iconWidget ?? Container()
+      Container(decoration: _keyDecoration(highlighted: _isKeyHighlighted(specialKey.asciiCode)), child:
+        ClipRRect(borderRadius: _keyBorderRadius, child:
+          Material(color: _defaultKeyBackColor, child:
+            InkWell(onTap: () => _onKeyboardKey(specialKey.asciiCode), child:
+              Center(child:
+                specialKey.iconWidget ?? Container()
+              )
             )
           )
         )
@@ -214,11 +219,13 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
       if (textContent.isNotEmpty) {
         String character = textContent.substring(0, 1).toUpperCase();
         if (character.isWordleAlpha) {
+          _highlightKey(character);
           widget.controller?.add(character);
         }
       }
     }
     else {
+      _highlightKey(WordleKeyboard.Back);
       widget.controller?.add(WordleKeyboard.Back);
     }
     if (_textController.text != _textFieldValue) {
@@ -228,6 +235,7 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
   }
 
   void _onTextSubmit(String text) {
+    _highlightKey(WordleKeyboard.Return);
     widget.controller?.add(WordleKeyboard.Return);
     _textFocusNode.requestFocus(); // show again
   }
@@ -244,6 +252,42 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
     }
   }
 
+  // Key Highlight
+
+  Future<void> _highlightKey(String key) async {
+    if (mounted) {
+      setState(() {
+        _addHighlightKey(key);
+      });
+
+      await Future.delayed(Duration(milliseconds: 300));
+
+      if (mounted) {
+        setState(() {
+          _removeHighlightKey(key);
+        });
+      }
+    }
+  }
+
+  bool _isKeyHighlighted(String key) =>
+    (0 < (_keyHighlights[key] ?? 0));
+
+  void _addHighlightKey(String key) =>
+    _keyHighlights[key] = (_keyHighlights[key] ?? 0) + 1;
+
+  void _removeHighlightKey(String key) {
+    int? count = _keyHighlights[key];
+    if (count != null) {
+      if (1 < count) {
+        _keyHighlights[key] = (count - 1);
+      }
+      else {
+        _keyHighlights.remove(key);
+      }
+    }
+  }
+
   // Constants
 
   BoxDecoration get _keyboardDecoration => BoxDecoration(
@@ -255,13 +299,17 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
   EdgeInsetsGeometry get _keyboardPadding => EdgeInsets.symmetric(horizontal: 8, vertical: 8);
   EdgeInsetsGeometry get _keyboardSpacing => EdgeInsets.only(top: 6);
 
-  BoxDecoration _keyDecoration([WordleLetterStatus? status]) => BoxDecoration(
+  BoxDecoration _keyDecoration({WordleLetterStatus? status, bool? highlighted}) => BoxDecoration(
     color: status?.color ?? _defaultKeyBackColor,
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-    borderRadius: BorderRadius.all(Radius.circular(4)),
+    border: (highlighted == true) ? _highlightKeyBorder : _defaultKeyBorder,
+    borderRadius: _keyBorderRadius,
   );
 
   Color get _defaultKeyBackColor => Styles().colors.surface;
+  BoxBorder get _defaultKeyBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
+  BoxBorder get _highlightKeyBorder => Border.all(color: Styles().colors.fillColorSecondary, width: 2);
+
+  static const _keyBorderRadius = const BorderRadius.all(Radius.circular(4));
 
   TextStyle? get _defaultLetterTextStyle => Styles().textStyles.getTextStyle('widget.title.medium.fat');
   TextStyle? get _statusLetterTextStyle => Styles().textStyles.getTextStyle('widget.title.light.medium.fat');
@@ -313,6 +361,7 @@ extension _WordleKeyboardLetterStatus on WordleLetterStatus {
 }
 
 typedef _LetterStatusMap = Map<String, WordleLetterStatus>;
+typedef _KeyHighlightMap = Map<String, int>;
 
 extension _WordleGameKeyboard on WordleGame {
   _LetterStatusMap get lettersStatuses {
