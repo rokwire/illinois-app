@@ -16,6 +16,9 @@ typedef WordleKeyboardSubscription = StreamSubscription<String>;
 
 class WordleKeyboard extends StatefulWidget {
 
+  static const String Back = '\u0008';
+  static const String Return = '\u000d';
+
   final double gutterRatio;
   final WordleGame? game;
   final WordleKeyboardController? controller;
@@ -199,7 +202,7 @@ enum SpecialKey { Back, Return }
 
 typedef _SpecialKeyPair = Pair<SpecialKey, SpecialKey>;
 
-extension SpecialKeyImpl on SpecialKey {
+extension _SpecialKeyImpl on SpecialKey {
 
   Widget? get iconWidget {
     switch(this) {
@@ -210,8 +213,8 @@ extension SpecialKeyImpl on SpecialKey {
 
   String get asciiCode {
     switch(this) {
-      case SpecialKey.Back: return '\u0008';
-      case SpecialKey.Return: return '\u000d';
+      case SpecialKey.Back: return WordleKeyboard.Back;
+      case SpecialKey.Return: return WordleKeyboard.Return;
     }
   }
 }

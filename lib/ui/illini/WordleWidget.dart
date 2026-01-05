@@ -438,10 +438,10 @@ class _WordleGameWidgetState extends State<WordleGameWidget> {
   }
 
   void _onKeyboardKey(String key) {
-    if (key == SpecialKey.Back.asciiCode) {
+    if (key == WordleKeyboard.Back) {
       _onBackward();
     }
-    else if (key == SpecialKey.Return.asciiCode) {
+    else if (key == WordleKeyboard.Return) {
       _onSubmitWord();
     }
     else if (key.isNotEmpty) {
