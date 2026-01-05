@@ -30,7 +30,7 @@ class TabBar extends rokwire.TabBar {
   @override
   Widget? buildTab(BuildContext context, String code, int index) {
     if (code == 'home') {
-      return FocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
+      return WebFocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.home.title', 'Home'),
         hint: Localization().getStringEx('tabbar.home.hint', ''),
         iconKey: 'home-gray',
@@ -40,7 +40,7 @@ class TabBar extends rokwire.TabBar {
       ));
     }
     else if (code == 'favorites') {
-      return FocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
+      return WebFocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.favorites.title', 'Favorites'),
         hint: Localization().getStringEx('tabbar.favorites.hint', ''),
         iconKey: 'star-outline-gray',
@@ -50,7 +50,7 @@ class TabBar extends rokwire.TabBar {
       ));
     }
     else if (code == 'explore') {
-      return FocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
+      return WebFocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.explore.title', 'Explore'),
         hint: Localization().getStringEx('tabbar.explore.hint', ''),
         iconKey: 'compass-gray',
@@ -60,7 +60,7 @@ class TabBar extends rokwire.TabBar {
       ));
     }
     else if (code == 'browse') {
-      return FocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
+      return WebFocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.browse.title', 'Browse'),
         hint: Localization().getStringEx('tabbar.browse.hint', ''),
         iconKey: 'browse-outline-gray',
@@ -70,7 +70,7 @@ class TabBar extends rokwire.TabBar {
       ));
     }
     else if (code == 'map') {
-      return FocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
+      return WebFocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.map.title', 'Map'),
         hint: Localization().getStringEx('tabbar.map.hint', 'Map Page'),
         iconKey: 'location-outline-gray',
@@ -80,7 +80,7 @@ class TabBar extends rokwire.TabBar {
       ));
     }
     else if (code == 'academics') {
-      return FocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
+      return WebFocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.academics.title', 'Academics'),
         hint: Localization().getStringEx('tabbar.academics.hint', ''),
         iconKey: 'academics-gray',
@@ -90,7 +90,7 @@ class TabBar extends rokwire.TabBar {
       ));
     }
     else if (code == 'wellness') {
-      return FocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
+      return WebFocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.wellness.title', 'Wellness'),
         hint: Localization().getStringEx('tabbar.wellness.hint', ''),
         iconKey: 'wellness-gray',
@@ -100,7 +100,7 @@ class TabBar extends rokwire.TabBar {
       ));
     }
     else if (code == 'wallet') {
-      return FocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
+      return WebFocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.wallet.title', 'Wallet'),
         hint: Localization().getStringEx('tabbar.wallet.hint', 'Wallet Page'),
         iconKey: 'wallet-gray',
@@ -109,7 +109,7 @@ class TabBar extends rokwire.TabBar {
       ));
     }
     else if (code == 'assistant') {
-      return FocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
+      return WebFocusableSemanticsWidget(onSelect: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget), child: rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.assistant.title', 'Assistant'),
         hint: Localization().getStringEx('tabbar.assistant.hint', 'Illinois Assistant Page'),
         iconKey: 'assistant-outline-gray',

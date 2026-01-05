@@ -91,7 +91,7 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
   @override
   Widget build(BuildContext context) =>
     Visibility(visible: _isWidgetVisible, child:
-      FocusableSemanticsWidget(child: HomeCardWidget(
+      WebFocusableSemanticsWidget(child: HomeCardWidget(
         title: Localization().getStringEx("widget.home.welcome.title.text", 'Tailor Your App Experience'),
         onClose: _isCloseVisible ? _onClose : null,
         child: HtmlWidget(_messageHtml,

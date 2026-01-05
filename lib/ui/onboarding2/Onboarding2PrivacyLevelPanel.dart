@@ -67,7 +67,7 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
                       FocusTraversalOrder(order: NumericFocusOrder(1), child: Onboarding2BackButton(padding: const EdgeInsets.all(16), imageColor: Styles().colors.white, onTap: _onTapBack,)),
                       FocusTraversalOrder(order: NumericFocusOrder(2), child: Expanded(child:
                         Align(alignment: Alignment.centerRight, child:
-                          FocusableSemanticsWidget(child: Semantics(
+                          WebFocusableSemanticsWidget(child: Semantics(
                             label: Localization().getStringEx('panel.onboarding2.privacy.level.button.privacy_policy.title', "Privacy Notice "),
                             hint: Localization().getStringEx('panel.onboarding2.privacy.level.button.privacy_policy.hint', ''),
                             button: true,
@@ -111,7 +111,7 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
                 ),
 
                 Padding(padding: EdgeInsets.symmetric(vertical:24, horizontal: 20), child:
-                  FocusableSemanticsWidget(child: Semantics(focusable: true, child: PrivacyLevelSlider(initialValue: _privacyLevel.toDouble(), readOnly: true, color: Styles().colors.background,))),
+                  WebFocusableSemanticsWidget(child: Semantics(focusable: true, child: PrivacyLevelSlider(initialValue: _privacyLevel.toDouble(), readOnly: true, color: Styles().colors.background,))),
                 ),
               ]),
             )

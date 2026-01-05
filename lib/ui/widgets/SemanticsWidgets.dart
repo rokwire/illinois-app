@@ -244,11 +244,11 @@ class AccessibleDropDownMenuItem <T> extends DropdownMenuItem <T>{
   ));
 }
 
-class FocusableSemanticsWidget extends StatelessWidget {
+class WebFocusableSemanticsWidget extends StatelessWidget {
   final Widget child;
   final Function? onSelect;
 
-  FocusableSemanticsWidget({required this.child, this.onSelect});
+  WebFocusableSemanticsWidget({required this.child, this.onSelect});
 
   @override
   Widget build(BuildContext context) {

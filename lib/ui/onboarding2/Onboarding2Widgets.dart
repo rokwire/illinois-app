@@ -92,7 +92,7 @@ class Onboarding2ToggleButton extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return FocusableSemanticsWidget(onSelect: () {
+    return WebFocusableSemanticsWidget(onSelect: () {
           onTap!();
           anaunceChange();
         },
