@@ -23,6 +23,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 
 enum CardDisplayMode { home, browse, }
 enum FavoriteContentType { my, all }
@@ -1200,8 +1201,8 @@ class HomeFavTabBarBtn extends StatelessWidget {
   });
   
   @override
-  Widget build(BuildContext context) => Semantics(label: _semanticsLabel, hint: _semanticsHint, selected: selected, button: true, excludeSemantics: true, child:
-    InkWell(onTap: onTap, child:
+  Widget build(BuildContext context) => Semantics(label: _semanticsLabel, hint: _semanticsHint, selected: selected, button: true, child:
+    WebBareSemanticsButton(onTap: onTap, child:
       Container(
         decoration: BoxDecoration(color: _frameColor, border: _frameBorder, borderRadius: _frameBorderRadius,),
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),

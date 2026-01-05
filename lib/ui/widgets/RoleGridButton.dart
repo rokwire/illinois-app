@@ -17,7 +17,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:illinois/ui/widgets/FocusableSemanticsWidget.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -85,7 +85,7 @@ class RoleGridButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-    FocusableSemanticsWidget(onSelect: _onTap, child: GestureDetector(onTap: _onTap, child:
+    WebFocusableSemanticsWidget(onSelect: _onTap, child: GestureDetector(onTap: _onTap, child:
         Semantics(label: title, excludeSemantics: true, sortKey: _semanticsSortKey, value: _semanticsValue, child:
           selected ? Stack(children: [
             _contentWidget,

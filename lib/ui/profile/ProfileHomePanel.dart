@@ -159,24 +159,21 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
             Text(Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
           )
         ),
-        Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
-          Semantics(label: "debug", child:
-            InkWell(onTap : _onTapDebug, child:
-              Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
-                Styles().images.getImage('bug', excludeFromSemantics: true),
-              ),
-            ),
+        Visibility(
+              visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)),
+              child: IconButton(
+                tooltip: 'debug',
+                padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16),
+                onPressed: _onTapDebug,
+                icon: Styles().images.getImage('bug', excludeFromSemantics: true) ?? Container(),
+              )),
+          IconButton(
+            tooltip: Localization().getStringEx('dialog.close.title', 'Close'),
+            padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
+            onPressed: _onTapClose,
+            icon: Styles().images.getImage('close-circle', excludeFromSemantics: true) ?? Container(),
           )
-        ),
-        Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-          InkWell(onTap : _onTapClose, child:
-            Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-              Styles().images.getImage('close-circle', excludeFromSemantics: true),
-            ),
-          ),
-        ),
-
-      ],),
+        ],),
     );
   }
 

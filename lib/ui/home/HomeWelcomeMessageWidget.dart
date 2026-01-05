@@ -12,7 +12,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
-import 'package:illinois/ui/widgets/FocusableSemanticsWidget.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -91,7 +91,7 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
   @override
   Widget build(BuildContext context) =>
     Visibility(visible: _isWidgetVisible, child:
-      FocusableSemanticsWidget(child: HomeCardWidget(
+      WebFocusableSemanticsWidget(child: HomeCardWidget(
         title: Localization().getStringEx("widget.home.welcome.title.text", 'Tailor Your App Experience'),
         onClose: _isCloseVisible ? _onClose : null,
         child: HtmlWidget(_messageHtml,

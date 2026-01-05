@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Extend auto-increase brightness feature to QR Code and Event Self-Checkin PDF panels [#5587](https://github.com/rokwire/illinois-app/issues/5587).
+### Fixed
+- WEB: Ongoing Accessibility improvements [#5136](https://github.com/rokwire/illinois-app/issues/5136).
 
 ## [7.3.39] - 2025-12-29
 ### Added
