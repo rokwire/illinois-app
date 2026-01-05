@@ -230,52 +230,36 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     }
   }
 
-  bool get _canAddEvent {
-    return _isAdmin;
-  }
+  bool get _canAddEvent => _containsTab(DetailTab.Events) && _canUserAddEvent;
+  bool get _canUserAddEvent => _isAdmin;
 
-  bool get _canCreatePost {
-    return _isAdmin || (_isMember && _group?.isMemberAllowedToCreatePost == true && FlexUI().isSharingAvailable);
-  }
+  bool get _canCreatePost => _containsTab(DetailTab.Posts) && _canUserCreatePost;
+  bool get _canUserCreatePost => _isAdmin || (_isMember && _group?.isMemberAllowedToCreatePost == true && FlexUI().isSharingAvailable);
 
-  bool get _canCreateMessage =>
-      _isAdmin || (_isMember && _group?.isMemberAllowedToPostToSpecificMembers == true && FlexUI().isSharingAvailable);
+  bool get _canCreateMessage => _containsTab(DetailTab.Messages) && _canUserCreateMessage;
+  bool get _canUserCreateMessage => _isAdmin || (_isMember && _group?.isMemberAllowedToPostToSpecificMembers == true && FlexUI().isSharingAvailable);
 
-  bool get _canCreatePoll {
-    return _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && FlexUI().isSharingAvailable);
-  }
-
-  bool get _canManageMembers => _isAdmin;
-
-  bool get _isResearchProject {
-    return (_group?.researchProject == true);
-  }
-
-  bool get _canViewMembers {
-    return _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
-  }
-
-  bool get _canViewPendingMembers => _isAdmin;
-
-  bool get _hasOptions =>
-      _canReportAbuse || _canNotificationSettings || _canShareSettings || _canAboutSettings ||
-          _canLeaveGroup || _canDeleteGroup || _canEditGroup;
+  bool get _canCreatePoll => _containsTab(DetailTab.Polls) && _canUserCreatePoll;
+  bool get _canUserCreatePoll => _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && FlexUI().isSharingAvailable);
 
   bool get _hasCreateOptions => _canCreatePost || _canCreateMessage || _canAddEvent || _canCreatePoll;
 
+  bool get _canManageMembers => _isAdmin;
+  bool get _canViewMembers => _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
+  bool get _canViewPendingMembers => _isAdmin;
+
+  bool get _hasOptions =>
+    _canReportAbuse || _canNotificationSettings || _canShareSettings || _canAboutSettings ||
+    _canLeaveGroup || _canDeleteGroup || _canEditGroup;
+
   bool get _hasIconOptionButtons => _hasOptions || _hasCreateOptions || _showPolicyIcon;
 
-  bool get _isLoading {
-    return _progress > 0;
-  }
+  bool get _isLoading => _progress > 0;
 
-  bool get _showMembershipBadge {
-    return _isMemberOrAdmin || _isPending;
-  }
+  bool get _isResearchProject => (_group?.researchProject == true);
 
-  bool get _showPolicyIcon {
-    return _isResearchProject != true;
-  }
+  bool get _showMembershipBadge => _isMemberOrAdmin || _isPending;
+  bool get _showPolicyIcon => _isResearchProject != true;
 
   ContentAttributes? get _contentAttributes => Groups().contentAttributes(researchProject: _isResearchProject);
 
@@ -859,7 +843,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   }
 
   int _indexOfTab(DetailTab? tab) => _tabs?.indexOf(tab) ?? 0;
-  
+  bool _containsTab(DetailTab tab) => (_tabs?.contains(tab) == true);
+
   DetailTab? _tabAtIndex(int index) {
     try {
       return _tabs?.elementAt(index);
@@ -1258,57 +1243,49 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         isDismissible: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
         builder: (context) {
-          return Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                Container(
-                  height: 24,
-                ),
-                Visibility(
-                    visible: _canCreatePost,
-                    child: PointerInterceptor(child: RibbonButton(
-                        leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          _onTapCreatePost();
-                        }))),
-                Visibility(
-                    visible: _canCreateMessage,
-                    child: PointerInterceptor(child: RibbonButton(
-                        leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message"),//localize tbd
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          _onTapCreatePost(type: PostType.direct_message);
-                        }))),
-                Visibility(
-                    visible: _canAddEvent,
-                    child: PointerInterceptor(child: RibbonButton(
-                        leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create New Event"),
-                        onTap: (){
-                          Navigator.pop(context);
-                          _onTapCreateEvent();
-                        }))),
-                Visibility(
-                    visible: _canAddEvent,
-                    child: PointerInterceptor(child: RibbonButton(
-                        leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add Existing Event"),
-                        onTap: (){
-                          Navigator.pop(context);
-                          _onTapBrowseEvents();
-                        }))),
-                Visibility(
-                    visible: _canCreatePoll,
-                    child: PointerInterceptor(child: RibbonButton(
-                        leftIconKey: "plus-circle",
-                        title: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Create a Poll"), //tbd localize
-                        onTap: (){
-                          Navigator.pop(context);
-                          _onTapCreatePoll();
-                        }))),
+          return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17), child:
+            Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Container(height: 24,),
+                Visibility(visible: _canCreatePost, child:
+                  RibbonButton(
+                    leftIconKey: "plus-circle",
+                    title: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _onTapCreatePost();
+                    })),
+                Visibility(visible: _canCreateMessage, child:
+                  RibbonButton(
+                    leftIconKey: "plus-circle",
+                    title: Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message"),//localize tbd
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _onTapCreatePost(type: PostType.direct_message);
+                    })),
+                Visibility(visible: _canAddEvent, child:
+                  RibbonButton(
+                    leftIconKey: "plus-circle",
+                    title: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create New Event"),
+                    onTap: (){
+                      Navigator.pop(context);
+                      _onTapCreateEvent();
+                    })),
+                Visibility(visible: _canAddEvent, child:
+                  RibbonButton(
+                    leftIconKey: "plus-circle",
+                    title: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add Existing Event"),
+                    onTap: (){
+                      Navigator.pop(context);
+                      _onTapBrowseEvents();
+                    })),
+                Visibility(visible: _canCreatePoll, child:
+                  RibbonButton(
+                    leftIconKey: "plus-circle",
+                    title: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Create a Poll"), //tbd localize
+                    onTap: (){
+                      Navigator.pop(context);
+                      _onTapCreatePoll();
+                    })),
               ]));
         });
   }
