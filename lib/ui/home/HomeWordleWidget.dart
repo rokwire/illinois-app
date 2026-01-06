@@ -3,12 +3,16 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Wordle.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/service/Wordle.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/illini/WordleKeyboard.dart';
 import 'package:illinois/ui/illini/WordlePanel.dart';
+import 'package:illinois/ui/illini/WordleWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -50,6 +54,9 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   DateTime? _pausedDateTime;
   FavoriteContentStatus _contentStatus = FavoriteContentStatus.none;
 
+  final WordleKeyboardController _keyboardController = WordleKeyboardController.broadcast();
+  final GlobalKey<WordleKeyboardState> _keyboardKey = GlobalKey<WordleKeyboardState>();
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -67,12 +74,14 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
     }
 
     _loadDataIfVisible();
+
     super.initState();
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _keyboardController.close();
     super.dispose();
   }
 
@@ -97,7 +106,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   @override
   Widget build(BuildContext context) =>
     HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, titleBuilder: _titleBuilder, child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         VisibilityDetector(
           key: _visibilityDetectorKey,
           onVisibilityChanged: _onVisibilityChanged,
@@ -109,26 +118,42 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   Widget get _contentWidget {
     if (_loadingData) {
       return _loadingContent;
-    } else if (_dailyWord == null) {
+    } else if (_game == null) {
       return _errorContent;
     } else {
       return Column(mainAxisSize: MainAxisSize.min, children: [
-        _woddleWidget,
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+          _wordleWidget,
+        ),
+        if (_game?.isFinished != true)
+          Padding(padding: EdgeInsets.only(top: 8), child:
+            _keyboardWidget
+          ),
         _viewButton,
       ],);
     }
   }
 
-  Widget get _woddleWidget =>
+  Widget get _wordleWidget =>
     AspectRatio(aspectRatio: _dailyWord?.asectRatio ?? 1.0, child:
       WordleWidget(
-        game: _game ??= WordleGame(_dailyWord!.word),
-        dailyWord: _dailyWord!,
+        game: _theGame,
+        dailyWord: _dailyWord ?? WordleDailyWord(word: _theGame.word),
         dictionary: _dictionary,
+        keyboardController: _keyboardController,
+        onTap: _onTapWordle,
         autofocus: false,
         hintMode: _hintMode,
         gutterRatio: 0.0875,
       ),
+    );
+
+  Widget get _keyboardWidget =>
+    WordleKeyboard(
+      game: _theGame,
+      key: _keyboardKey,
+      autofocus: false,
+      controller: _keyboardController,
     );
 
   Widget get _loadingContent =>
@@ -204,6 +229,8 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
 
   // Data
 
+  WordleGame get _theGame => _game ??= WordleGame(_dailyWord?.word ?? '');
+
   Future<void> _loadData() async {
     if ((_loadingData == false) && mounted) {
       setState(() {
@@ -212,8 +239,8 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
       });
 
       List<dynamic> results = await Future.wait([
-        WordleGame.loadDailyWord(),
-        WordleGame.loadDictionary(),
+        WordleGameData.loadDailyWord(),
+        WordleGameData.loadDictionary(),
       ]);
 
       WordleGame? game = WordleGame.fromStorage();
@@ -242,7 +269,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
       });
 
       WordleGame? game = WordleGame.fromStorage();
-      WordleDailyWord? dailyWord = await WordleGame.loadDailyWord();
+      WordleDailyWord? dailyWord = await WordleGameData.loadDailyWord();
       if ((dailyWord != null) && ((game == null) || (game.word != dailyWord.word))) {
         game = WordleGame(dailyWord.word);
       }
@@ -294,6 +321,10 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
         _game = game;
       });
     }
+  }
+
+  void _onTapWordle() {
+    _keyboardKey.currentState?.toggleFocus();
   }
 
   void _onLongPressLogo() {

@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.3.40] - 2026-01-05
+### Added
+- Added ILLordle / Wordle keyboard [#5615](https://github.com/rokwire/illinois-app/issues/5615).
 ### Changed
 - Extend auto-increase brightness feature to QR Code and Event Self-Checkin PDF panels [#5587](https://github.com/rokwire/illinois-app/issues/5587).
 ### Fixed
