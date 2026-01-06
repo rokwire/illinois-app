@@ -12,6 +12,8 @@ extension WordleLetterStatusUi on WordleLetterStatus {
       case WordleLetterStatus.outOfUse: return Styles().colors.getColor('illordle.gray') ?? const Color(0xFF7A7A7A);
     }
   }
+
+  Color get highlightBorderColor => Styles().colors.accentColor1;
 }
 
 extension WordleString on String {

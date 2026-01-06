@@ -260,7 +260,7 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
         _addHighlightKey(key);
       });
 
-      await Future.delayed(Duration(milliseconds: 300));
+      await Future.delayed(_highlightKeyDuration);
 
       if (mounted) {
         setState(() {
@@ -301,13 +301,15 @@ class WordleKeyboardState extends State<WordleKeyboard> with NotificationsListen
 
   BoxDecoration _keyDecoration({WordleLetterStatus? status, bool? highlighted}) => BoxDecoration(
     color: status?.color ?? _defaultKeyBackColor,
-    border: (highlighted == true) ? _highlightKeyBorder : _defaultKeyBorder,
+    border: (highlighted == true) ? _highlightKeyBorder(status) : _defaultKeyBorder,
     borderRadius: _keyBorderRadius,
   );
 
   Color get _defaultKeyBackColor => Styles().colors.surface;
   BoxBorder get _defaultKeyBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
-  BoxBorder get _highlightKeyBorder => Border.all(color: Styles().colors.fillColorSecondary, width: 2);
+  BoxBorder _highlightKeyBorder([WordleLetterStatus? status]) => Border.all(color: status?.highlightBorderColor ?? Styles().colors.fillColorPrimary, width: 2);
+
+  static const Duration _highlightKeyDuration = const Duration(milliseconds: 300);
 
   static const _keyBorderRadius = const BorderRadius.all(Radius.circular(4));
 
