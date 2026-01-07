@@ -35,6 +35,7 @@ import 'package:illinois/ui/settings/SettingsNotificationPreferencesPage.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPage.dart';
 import 'package:illinois/ui/settings/SettingsRecentItemsPage.dart';
 import 'package:illinois/ui/settings/SettingsResearchPage.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -191,7 +192,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
             Container(color: Styles().colors.background, child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-                  Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child:
+                  WebFocusableSemanticsWidget(onSelect: _onTapContentDropdown, child: Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), label: _selectedContentType?.displayTitle ?? '', button: true, child:
                     RibbonButton(
                       textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
                       backgroundColor: Styles().colors.white,
@@ -201,7 +202,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
                       title: _selectedContentType?.displayTitle ?? '',
                       onTap: _onTapContentDropdown
                     )
-                  )
+                  ))
                 ),
                 _buildContent()
               ]),
