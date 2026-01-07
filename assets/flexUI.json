@@ -206,6 +206,7 @@
 				"attributes.groups.rso"                   : [{ "accountPermission": "${config.settings.auth.permissions.rso_group_admin}" }, "OR", { "accountRole": "${config.settings.auth.roles.rso_group_admin}" }]
 			},
 			"platform":{
+				"illordle"                                : { "web": false }
 			},
 			"illini_cash": {
 				"laundry"                                 : { "housingResidenceStatus": true },
