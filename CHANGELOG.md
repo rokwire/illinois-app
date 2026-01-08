@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - AssistantHomePanel large font issues [#5610](https://github.com/rokwire/illinois-app/issues/5610).
+- GroupCards large font issues [#5610](https://github.com/rokwire/illinois-app/issues/5610).
 
 ## [7.3.42] - 2026-01-07
 ### Changed
