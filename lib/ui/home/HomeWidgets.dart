@@ -328,17 +328,15 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
     return Padding(padding: _headerPadding, child:
       Row(children: [
         Expanded(child:
-          Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, children: [
-            _titleWidget(rightPadding: titleRightPadding),
-
-            if ((actions != null) && actions.isNotEmpty)
-              Padding(padding: EdgeInsets.only(right: actionsRightPadding), child:
-                Row(mainAxisSize: MainAxisSize.min, children:
-                  actions,
-                )
-              ),
-          ],)
+          _titleWidget(rightPadding: titleRightPadding)
         ),
+
+        if ((actions != null) && actions.isNotEmpty)
+          Padding(padding: EdgeInsets.only(right: actionsRightPadding), child:
+            Row(mainAxisSize: MainAxisSize.min, children:
+              actions,
+            )
+          ),
 
         if (favoriteId != null)
           HomeFavoriteButton(
@@ -358,12 +356,13 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
     Widget? dropdownIcon = _dropdownIcon;
     Widget titleTextWidget = _titleTextWidget(dropdownIcon: dropdownIcon, rightPadding: rightPadding);
     return InkWell(onTap : _onToggleExoanded, child:
-      Row(mainAxisSize: MainAxisSize.min, children: [
+      Row(children: [
         if (dropdownIcon != null)
           Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
             dropdownIcon
           ),
-        widget.titleBuilder?.call(titleTextWidget) ?? titleTextWidget
+        Expanded(child: widget.titleBuilder?.call(titleTextWidget) ?? titleTextWidget
+        )
       ],)
     );
   }
