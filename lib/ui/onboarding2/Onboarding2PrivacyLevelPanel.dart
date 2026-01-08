@@ -254,7 +254,7 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
   void _onboardingBack() => Navigator.of(context).pop();
   void _onboardingNext() {
     Auth2().prefs?.privacyLevel = _privacyLevel;
-    Storage().privacyUpdateVersion = Config().appVersion;
+    Storage().privacyUpdateVersion = Config().appPrivacyVersion;
     Onboarding2().next(context, widget);
   }
 }
