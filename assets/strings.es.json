@@ -4397,6 +4397,11 @@
     "widget.essential_skills_coach.history.score_chart.self_management.label": "Self-\nManagement\nSkills",
     "widget.essential_skills_coach.history.score_chart.social_engagement.label": "Social\nEngagement\nSkills",
 
+    "widget.privacy_update.alert.title": "The {{app_title}} app has been updated",
+    "widget.privacy_update.alert.description.optional": "Some privacy details have changed. Would you like to review your privacy settings?",
+    "widget.privacy_update.alert.description.required": "Some privacy details have changed. Please review your privacy settings.",
+    "widget.privacy_update.alert.button.review.title": "Set My Privacy",
+
     "model.group.updated.now": "Actualizado ahora",
     "model.group.updated.minute": "Actualizado hace un minuto",
     "model.group.updated.minutes": "Actualizado hace %s minutos",
