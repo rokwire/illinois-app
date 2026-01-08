@@ -247,24 +247,47 @@ class AccessibleDropDownMenuItem <T> extends DropdownMenuItem <T>{
 /**
  * Used to explicitly focus widgets for web accessibility
  */
-class WebFocusableSemanticsWidget extends StatelessWidget {
+class WebFocusableSemanticsWidget extends StatefulWidget {
   final Widget child;
   final Function? onSelect;
 
   WebFocusableSemanticsWidget({required this.child, this.onSelect});
 
   @override
+  State<WebFocusableSemanticsWidget> createState() => _WebFocusableSemanticsWidgetState();
+}
+
+class _WebFocusableSemanticsWidgetState extends State<WebFocusableSemanticsWidget> {
+
+  late final FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode(canRequestFocus: true);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FocusableActionDetector(
-        focusNode: FocusNode(),
+        focusNode: _focusNode,
         actions: <Type, Action<Intent>>{
           ActivateIntent: CallbackAction<Intent>(onInvoke: (_) {
-            if (onSelect != null) {
-              onSelect?.call();
+            if (widget.onSelect != null) {
+              widget.onSelect?.call();
             }
+
+            // Bring back the focus
+            _focusNode.requestFocus();
             return null;
           }),
         },
-        child: child);
+        child: widget.child);
   }
 }
