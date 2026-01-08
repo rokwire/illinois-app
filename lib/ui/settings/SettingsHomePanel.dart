@@ -150,7 +150,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
 
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
-    return Column(children: [
+    return Semantics(container: true, label: Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'), child: Column(children: [
         Container(color: Styles().colors.white, child:
           Row(children: [
             Expanded(child:
@@ -183,7 +183,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
         Expanded(child:
           _buildPage(context),
         )
-      ],);
+      ],));
   }
 
   Widget _buildPage(BuildContext context) {
@@ -269,7 +269,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
     sectionList.add(Container(height: 32,));
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       SingleChildScrollView(child:
-        Column(children: sectionList)
+        FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Column(children: sectionList))
       )
     );
   }

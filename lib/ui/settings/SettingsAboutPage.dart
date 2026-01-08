@@ -5,6 +5,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -26,6 +27,8 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
   final String _contactWebsite = "m.illinois.edu";
   late GestureRecognizer _contactWebsiteGestureRecognizer;
 
+  final FocusNode _entryFocusNode = FocusNode();
+
   @override
   void initState() {
     _contactEmailGestureRecognizer = TapGestureRecognizer()..onTap = () => _processUrl("mailto:$_contactEmail");
@@ -42,26 +45,30 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Column(
       children: [
-        _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.help_desk.title", "CONTACT HELP DESK"),
+        _buildAccessibleWidget(focusNode: _entryFocusNode, onSelect: _onFeedback, child: _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.help_desk.title", "CONTACT HELP DESK"),
             onTap: _onFeedback,
-            borderRadius: _topRounding),
-        _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.share_idea.title", "SHARE AN IDEA"),
-            onTap: _onIdea),
-        _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.develop_code.title", "DEVELOP CODE WITH ROKWIRE"),
-            onTap: _onFeedback),
-        _buildLinkButton(label: Localization().getStringEx("panel.settings.partners.button.help_desk.title", "PARTNER WITH US"),
-          onTap: _onIdea),
-        _buildLinkButton(label: Localization().getStringEx("panel.settings.review.button.help_desk.title", "REVIEW APP"),
+            borderRadius: _topRounding)),
+        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.share_idea.title", "SHARE AN IDEA"),
+            onTap: _onIdea), onSelect: _onIdea),
+        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.develop_code.title", "DEVELOP CODE WITH ROKWIRE"),
+            onTap: _onFeedback), onSelect: _onFeedback),
+        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.partners.button.help_desk.title", "PARTNER WITH US"),
+          onTap: _onIdea), onSelect: _onIdea),
+        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.review.button.help_desk.title", "REVIEW APP"),
             onTap: _onReviewClicked,
-            borderRadius: _bottomRounding,),
+            borderRadius: _bottomRounding,), onSelect: _onReviewClicked),
         _feedbackDescriptionWidget,
         _dividerWidget,
         _contactInfoWidget,
         _appVersionWidget
       ],
-    );
+    ));
+  }
+
+  Widget _buildAccessibleWidget({required Widget child, FocusNode? focusNode, Function? onSelect}) {
+    return WebFocusableSemanticsWidget(child: child, focusNode: focusNode, onSelect: onSelect);
   }
 
   Widget _buildLinkButton({String? label, Function? onTap, BorderRadius? borderRadius}) =>

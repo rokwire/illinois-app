@@ -250,8 +250,9 @@ class AccessibleDropDownMenuItem <T> extends DropdownMenuItem <T>{
 class WebFocusableSemanticsWidget extends StatefulWidget {
   final Widget child;
   final Function? onSelect;
+  final FocusNode? focusNode;
 
-  WebFocusableSemanticsWidget({required this.child, this.onSelect});
+  WebFocusableSemanticsWidget({required this.child, this.onSelect, this.focusNode});
 
   @override
   State<WebFocusableSemanticsWidget> createState() => _WebFocusableSemanticsWidgetState();
@@ -264,7 +265,7 @@ class _WebFocusableSemanticsWidgetState extends State<WebFocusableSemanticsWidge
   @override
   void initState() {
     super.initState();
-    _focusNode = FocusNode(canRequestFocus: true);
+    _focusNode = widget.focusNode ?? FocusNode(canRequestFocus: true);
   }
 
   @override
