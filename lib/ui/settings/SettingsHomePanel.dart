@@ -98,6 +98,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
   late SettingsContentType? _selectedContentType;
   bool _contentValuesVisible = false;
 
+  final FocusNode _dropdownFocusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -224,11 +226,13 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
 
   Widget _buildContentValuesContainer() {
     return Visibility(visible: _contentValuesVisible, child:
-      Container /* Positioned.fill*/ (child:
-        Stack(children: <Widget>[
-          _dropdownDismissLayer,
-          Positioned.fill(child: _dropdownList),
-        ])));
+        Focus(focusNode: _dropdownFocusNode, canRequestFocus: true, child:
+          Semantics(container: true, liveRegion: true, explicitChildNodes: true, child:
+            Container /* Positioned.fill*/ (child:
+              Stack(children: <Widget>[
+                _dropdownDismissLayer,
+                Positioned.fill(child: _dropdownList),
+        ])))));
   }
 
   Widget get _dropdownDismissLayer =>
@@ -252,14 +256,15 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (SettingsContentType contentType in _contentTypes) {
-      sectionList.add(RibbonButton(
-        backgroundColor: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
-        rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
-        title: contentType.displayTitle,
-        onTap: () => _onTapDropdownItem(contentType)
-      ));
+      sectionList.add(WebFocusableSemanticsWidget(onSelect:() => _onTapDropdownItem(contentType), child: Semantics(button: true, label: contentType.displayTitle, child:
+        RibbonButton(
+          backgroundColor: Styles().colors.white,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
+          rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
+          title: contentType.displayTitle,
+          onTap: () => _onTapDropdownItem(contentType)
+      ))));
     }
     sectionList.add(Container(height: 32,));
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
@@ -272,6 +277,10 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
   void _onTapContentDropdown() {
     Analytics().logSelect(target: 'Content Dropdown');
     _changeSettingsContentValuesVisibility();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _dropdownFocusNode.requestFocus();
+    });
   }
 
   void _onTapDropdownItem(SettingsContentType contentType) {
@@ -289,6 +298,11 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
     if (mounted) {
       setState(() {
         _contentValuesVisible = !_contentValuesVisible;
+      });
+    }
+    if (!_contentValuesVisible) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _dropdownFocusNode.requestFocus();
       });
     }
   }
