@@ -35,6 +35,7 @@ import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
@@ -58,15 +59,19 @@ import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/widgets/InAppNotificationToast.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
+import 'package:illinois/ui/widgets/PrivacyUpdateAlert.dart';
 import 'package:rokwire_plugin/model/actions.dart';
+import 'package:rokwire_plugin/model/auth2.dart' show Auth2UserPrefs;
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -102,6 +107,7 @@ import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:quick_actions/quick_actions.dart';
+import 'package:uuid/uuid.dart';
 
 enum RootTab { Home, Favorites, Browse, Map, Academics, Wellness, Wallet, Assistant }
 
@@ -126,14 +132,20 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   late TabController _tabBarController;
   int _currentTabIndex = 0;
 
+  DateTime? _pausedDateTime;
+
   late QuickActions _quickActions;
   late List<ShortcutItem> _quickActionItems;
 
+  String? _privacyReviewStatus;
+  static const String _privacyReviewActiveStatus = 'ACTIVE';
+  static const Duration _privacyReviewTimeout = const Duration(milliseconds: 3000);
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
+      // FirebaseMessaging Notifications
       FirebaseMessaging.notifyForegroundMessage,
       FirebaseMessaging.notifyPopupMessage,
       FirebaseMessaging.notifyEventsNotification,
@@ -214,9 +226,8 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifySettingsPrivacyNotification,
       FirebaseMessaging.notifySettingsNotificationsNotification,
       FirebaseMessaging.notifyGuideArticleDetailNotification,
-      LocalNotifications.notifyLocalNotificationTapped,
-      Alerts.notifyAlert,
-      ActionBuilder.notifyShowPanel,
+
+      // Detail & Query Notifications
       Events.notifyEventDetail,
       Events2.notifyLaunchDetail,
       Events2.notifyLaunchQuery,
@@ -229,26 +240,44 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       Social.notifyMessageDetail,
       Appointments.notifyAppointmentDetail,
       Canvas.notifyCanvasEventDetail,
-      SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
       Gateway.notifyBuildingDetail,
       Safety.notifySafeWalkDetail,
       Places.notifyPlacesDetail,
+
+      // Misc
       Guide.notifyGuide,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
       Wellness.notifyCategorySelect,
-      Localization.notifyStringsUpdated,
-      Styles.notifyChanged,
-      FlexUI.notifyChanged,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
+
+      // Select
       HomePanel.notifySelect,
       HomeFavoritesPanel.notifySelect,
       BrowsePanel.notifySelect,
       Map2.notifySelect,
-      Auth2.notifyLogout,
-
       uiuc.TabBar.notifySelectionChanged,
+
+      // Rokmetro
+      Alerts.notifyAlert,
+      ActionBuilder.notifyShowPanel,
+      SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
+      LocalNotifications.notifyLocalNotificationTapped,
+
+      // Custom Alerts
+      Auth2.notifyLogout,
+      Auth2.notifyLoginChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
+      Storage.notifySettingChanged,
+      Config.notifyConfigChanged,
+
+      // System
+      AppLivecycle.notifyStateChanged,
+      Localization.notifyStringsUpdated,
+      Styles.notifyChanged,
+      FlexUI.notifyChanged,
+
     ]);
 
     RootTab rootTab = _defaultTab ?? RootTab.Home;
@@ -267,6 +296,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     Services().initUI();
 
     _showPresentPoll();
+    _schedulePrivacyReview();
     _checkDidNotificationLaunch().then((action) {
       action?.call();
     });
@@ -282,13 +312,10 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Alerts.notifyAlert) {
-      Alerts.handleNotification(context, param);
-    }
-    else if (name == ActionBuilder.notifyShowPanel) {
-      _showPanel(param);
-    }
-    else if (name == FirebaseMessaging.notifyForegroundMessage){
+
+    // FirebaseMessaging Notifications
+
+    if (name == FirebaseMessaging.notifyForegroundMessage){
       _onFirebaseForegroundMessage(param);
     }
     else if (name == FirebaseMessaging.notifyPopupMessage) {
@@ -317,9 +344,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
     else if(name == FirebaseMessaging.notifyAthleticsGameStarted) {
       _onAthleticsGameDetail(param);
-    }
-    else if (name == LocalNotifications.notifyLocalNotificationTapped) {
-      _onLocalNotification(param);
     }
     else if (name == FirebaseMessaging.notifyGroupsNotification) {
       _onFirebaseGroupsNotification(param);
@@ -537,6 +561,9 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == FirebaseMessaging.notifyGuideArticleDetailNotification) {
       _onFirebaseGuideArticleNotification(param);
     }
+
+    // Detail & Query Notifications
+
     else if (name == Events.notifyEventDetail) {
       _onFirebaseEventDetail(param);
     }
@@ -567,6 +594,21 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == Appointments.notifyAppointmentDetail) {
       _onAppointmentDetail(param);
     }
+    else if (name == Canvas.notifyCanvasEventDetail) {
+      _onCanvasEventDetail(param);
+    }
+    else if (name == Gateway.notifyBuildingDetail) {
+      _onGatewayBuildingDetail(param);
+    }
+    else if (name == Safety.notifySafeWalkDetail) {
+      _onSafetySafeWalkDetail(param);
+    }
+    else if (name == Places.notifyPlacesDetail) {
+      _onPlaceDetail(param);
+    }
+
+    // Misc
+
     else if (name == Guide.notifyGuide) {
       _onGuide();
     }
@@ -579,37 +621,15 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == Wellness.notifyCategorySelect) {
       _onWellnessCategorySelect(param);
     }
-    else if (name == Canvas.notifyCanvasEventDetail) {
-      _onCanvasEventDetail(param);
-    }
-    else if (name == SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation) {
-      _onFirebaseAcademicsNotification(AcademicsContentType.skills_self_evaluation);
-    }
-    else if (name == Gateway.notifyBuildingDetail) {
-      _onGatewayBuildingDetail(param);
-    }
-    else if (name == Safety.notifySafeWalkDetail) {
-      _onSafetySafeWalkDetail(param);
-    }
-    else if (name == Places.notifyPlacesDetail) {
-      _onPlaceDetail(param);
-    }
-    else if (name == Localization.notifyStringsUpdated) {
-        setStateIfMounted(() { });
-    }
-    else if (name == Styles.notifyChanged) {
-      setStateIfMounted(() { });
-    }
-    else if (name == FlexUI.notifyChanged) {
-      _updateTabsContent();
-      _updateQuickActionItems();
-    }
     else if (name == Polls.notifyPresentVote) {
       _presentPollVote(param);
     }
     else if (name == Polls.notifyPresentResult) {
       _presentPollResult(param);
     }
+
+    // Select
+
     else if (name == HomePanel.notifySelect) {
       _onSelectHome(param);
     }
@@ -622,15 +642,63 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == Map2.notifySelect) {
       _onSelectMaps2(param);
     }
-    else if (name == Auth2.notifyLogout) {
-      _alertLogout(JsonUtils.cast(param));
-    }
-
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
     }
-  }
 
+    // Rokmetro
+
+    else if (name == Alerts.notifyAlert) {
+      Alerts.handleNotification(context, param);
+    }
+    else if (name == ActionBuilder.notifyShowPanel) {
+      _showPanel(param);
+    }
+    else if (name == SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation) {
+      _onFirebaseAcademicsNotification(AcademicsContentType.skills_self_evaluation);
+    }
+    else if (name == LocalNotifications.notifyLocalNotificationTapped) {
+      _onLocalNotification(param);
+    }
+
+    // Custom Alerts
+
+    else if (name == Auth2.notifyLogout) {
+      _alertLogout(JsonUtils.cast(param));
+    }
+    else if (name == Auth2.notifyLoginChanged) {
+      _schedulePrivacyReview();
+    }
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
+      _schedulePrivacyReview();
+    }
+    else if (name == Storage.notifySettingChanged) {
+      if (param == Storage.privacyUpdateVersionKey) {
+        _schedulePrivacyReview();
+      }
+    }
+    else if (name == Config.notifyConfigChanged) {
+      _schedulePrivacyReview();
+    }
+
+    // System
+
+
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+    else if (name == Localization.notifyStringsUpdated) {
+      setStateIfMounted(() { });
+    }
+    else if (name == Styles.notifyChanged) {
+      setStateIfMounted(() { });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateTabsContent();
+      _updateQuickActionItems();
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -826,75 +894,34 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
-  Widget _buildExitDialog(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(8)),
-      child: Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    color: Styles().colors.fillColorPrimary,
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Center(
-                        child: Text(
-                          Localization().getStringEx("app.title", "Illinois"),
-                          style: Styles().textStyles.getTextStyle("widget.dialog.message.regular"),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Container(height: 26,),
-            Text(
-              Localization().getStringEx(
-                  "common.message.exit_app", "Are you sure you want to exit?"),
-              textAlign: TextAlign.center,
-              style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.regular.fat")
-            ),
-            Container(height: 26,),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  RoundedButton(
-                      onTap: () {
-                        Analytics().logAlert(
-                            text: "Exit", selection: "Yes");
-                        Navigator.of(context).pop(true);
-                      },
-                      backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors.fillColorSecondary,
-                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                      label: Localization().getStringEx("dialog.yes.title", 'Yes')),
-                  Container(height: 10,),
-                  RoundedButton(
-                      onTap: () {
-                        Analytics().logAlert(
-                            text: "Exit", selection: "No");
-                        Navigator.of(context).pop(false);
-                      },
-                      backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors.fillColorSecondary,
-                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                      label: Localization().getStringEx("dialog.no.title", 'No'))
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  Widget _buildExitDialog(BuildContext context) => _ExitPrompt();
+
+  // Privacy Alert
+
+  bool get _needsPrivacyReview => _privacyReviewRequired || _privacyReviewRecommended;
+  bool get _privacyReviewRequired => (Auth2().prefs?.privacyLevel == null);
+  bool get _privacyReviewRecommended => ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0));
+
+  Future<void> _schedulePrivacyReview() async {
+    if (mounted && _needsPrivacyReview && (_privacyReviewStatus != _privacyReviewActiveStatus)) {
+      String uuid = Uuid().v1();
+      _privacyReviewStatus = uuid;
+      await Future.delayed(_privacyReviewTimeout);
+      if (mounted && (_privacyReviewStatus == uuid)) {
+        if (_needsPrivacyReview) {
+          _privacyReviewStatus = _privacyReviewActiveStatus;
+          bool? result = await PrivacyUpdateAlert.present(context, updateRequired: _privacyReviewRequired);
+          Storage().privacyUpdateVersion = Config().appPrivacyVersion;
+          if (result == true) {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
+          }
+          _privacyReviewStatus = null;
+        }
+        else {
+          _privacyReviewStatus = null;
+        }
+      }
+    }
   }
 
   // Quick Actions
@@ -960,6 +987,21 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     switch (content['panel']) {
       case "GuideDetailPanel":
         _onGuideDetail(content);
+    }
+  }
+
+  // App Livecycle
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    } else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _schedulePrivacyReview();
+        }
+      }
     }
   }
 
@@ -1513,3 +1555,57 @@ RootTab? rootTabFromString(String? value) {
   return null;
 }
 
+class _ExitPrompt extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+      Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
+        Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          Row(children: <Widget>[
+            Expanded(child:
+              Container(color: Styles().colors.fillColorPrimary, child:
+                Padding(padding: EdgeInsets.all(8), child:
+                  Center(child:
+                    Text(Localization().getStringEx("app.title", "Illinois"), style: Styles().textStyles.getTextStyle("widget.dialog.message.regular"),),
+                  ),
+                ),
+              ),
+            ),
+          ],),
+
+          Container(height: 26,),
+
+          Text(Localization().getStringEx("common.message.exit_app", "Are you sure you want to exit?"), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.regular.fat")),
+
+          Container(height: 26,),
+
+          Padding(padding: const EdgeInsets.all(8.0), child:
+            Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+              RoundedButton(
+                onTap: () {
+                  Analytics().logAlert(text: "Exit", selection: "Yes");
+                  Navigator.of(context).pop(true);
+                },
+                backgroundColor: Colors.transparent,
+                borderColor: Styles().colors.fillColorSecondary,
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                label: Localization().getStringEx("dialog.yes.title", 'Yes')
+              ),
+              Container(height: 10,),
+              RoundedButton(
+                onTap: () {
+                  Analytics().logAlert(text: "Exit", selection: "No");
+                  Navigator.of(context).pop(false);
+                },
+                backgroundColor: Colors.transparent,
+                borderColor: Styles().colors.fillColorSecondary,
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                label: Localization().getStringEx("dialog.no.title", 'No')
+              )
+            ],),
+          ),
+        ],),
+      ),
+    );
+  }
+}
