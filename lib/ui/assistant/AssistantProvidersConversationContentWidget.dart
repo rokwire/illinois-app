@@ -615,7 +615,8 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
         child: Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Row(mainAxisSize: MainAxisSize.min, children: [
+              // Row(mainAxisSize: MainAxisSize.min, children: [
+              Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
                 Container(
                   height: _evaluatingQueryLimit ? 12 : 10,
                   width: _evaluatingQueryLimit ? 12 : 10,

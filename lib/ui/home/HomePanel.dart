@@ -638,7 +638,7 @@ class _HomeContentTab extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: selected ? Styles().colors.fillColorSecondary : Styles().colors.white, width: 3))),
         child: Center(child:
-          Row(mainAxisSize: MainAxisSize.min, children: [
+          Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
             _iconWidget,
             Semantics(excludeSemantics: true, child:
               _textWidget,

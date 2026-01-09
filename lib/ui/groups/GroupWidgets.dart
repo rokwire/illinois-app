@@ -2984,18 +2984,20 @@ class _GroupMemberProfileInfoState extends State<GroupMemberProfileInfoWidget> {
             SizedBox(width: 34, height: 34,
               child: _buildProfileImage),
             Container(width: 8),
-            Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-                  Text(widget.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")),
-                  Container(width: 8),
-                  Visibility(visible: widget.isAdmin == true,
-                    child: Text("ADMIN", style: Styles().textStyles.getTextStyle("widget.label.tiny.fat"),),
-                  )
-                ]),
-                Visibility(visible: StringUtils.isNotEmpty(widget.additionalInfo),
-                child: Text(widget.additionalInfo?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny")))
-            ],)
+            Expanded(child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Wrap(children: [
+                    Text(widget.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")),
+                    Container(width: 8),
+                    Visibility(visible: widget.isAdmin == true,
+                      child: Text("ADMIN", style: Styles().textStyles.getTextStyle("widget.label.tiny.fat"),),
+                    )
+                  ]),
+                  Visibility(visible: StringUtils.isNotEmpty(widget.additionalInfo),
+                  child: Text(widget.additionalInfo?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny")))
+              ],)
+            )
           ]),
       );
 
