@@ -118,6 +118,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _dropdownFocusNode.dispose();
     super.dispose();
   }
 

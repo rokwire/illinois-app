@@ -71,6 +71,7 @@ class _SettingsPrivacyCenterPageState extends State<SettingsPrivacyCenterPage> w
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _entryFocusNode.dispose();
     super.dispose();
   }
 

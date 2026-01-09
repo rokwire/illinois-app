@@ -40,6 +40,7 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
   void dispose() {
     _contactEmailGestureRecognizer.dispose();
     _contactWebsiteGestureRecognizer.dispose();
+    _entryFocusNode.dispose();
     super.dispose();
   }
 

@@ -28,6 +28,12 @@ class SettingsAccessibilityPageState extends State<SettingsAccessibilityPage> wi
   }
 
   @override
+  void dispose() {
+    _entryFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => Container(padding: EdgeInsets.only(top: 16), child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _favoritesSection,
