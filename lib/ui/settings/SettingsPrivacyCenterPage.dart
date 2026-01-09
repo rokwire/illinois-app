@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/PrivacyData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -45,6 +46,8 @@ class SettingsPrivacyCenterPage extends StatefulWidget{
 class _SettingsPrivacyCenterPageState extends State<SettingsPrivacyCenterPage> with NotificationsListener {
   PrivacyData? _privacyData;
   bool _loadingPrivacyData = false;
+
+  final FocusNode _entryFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -129,14 +132,14 @@ class _SettingsPrivacyCenterPageState extends State<SettingsPrivacyCenterPage> w
               style: Styles().textStyles.getTextStyle("panel.settings.privacy_center.title.regular")
             ),
             SizedBox(height: 16,),
-            Semantics(explicitChildNodes: true,
+            WebFocusableSemanticsWidget(focusNode: (_showFinishSetupWidget ? _entryFocusNode : null), onSelect: _onTapVerifyIdentity, child: Semantics(explicitChildNodes: true,
               child: RibbonButton(
               title: Localization().getStringEx("panel.settings.privacy_center.button.verify_identity.title", "Verify your Identity"),
               leftIconKey: "user-check",
               borderRadius: BorderRadius.circular(4),
               borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.15), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
               onTap: () => _onTapVerifyIdentity(),
-            )),
+            ))),
             SizedBox(height: 24,),
           ],
       ),
@@ -200,7 +203,7 @@ class _SettingsPrivacyCenterPageState extends State<SettingsPrivacyCenterPage> w
   }
 
   Widget _buildManagePrivacyWidget(){
-    return Row(children: <Widget>[
+    return WebFocusableSemanticsWidget(onSelect: _onTapManagePrivacy, child: Row(children: <Widget>[
         Expanded(
           child: GestureDetector(
             onTap: _onTapManagePrivacy,
@@ -244,11 +247,11 @@ class _SettingsPrivacyCenterPageState extends State<SettingsPrivacyCenterPage> w
             )),
           ),
         )
-      ]);
+      ]));
   }
 
   Widget _buildPrivacyPolicyButton() {
-    return Padding(
+    return WebFocusableSemanticsWidget(onSelect: _onTapPrivacyPolicy, child: Padding(
       padding: EdgeInsets.only(top: 20),
       child: Semantics( button: true,
         child: GestureDetector(
@@ -256,7 +259,7 @@ class _SettingsPrivacyCenterPageState extends State<SettingsPrivacyCenterPage> w
           child: Text(
             Localization().getStringEx("panel.settings.privacy_center.button.privacy_policy.title", "Privacy Statement"),
             style: Styles().textStyles.getTextStyle("panel.settings.privacy_center.button.underline")
-        ))));
+        )))));
   }
 
   Widget _buildDeleteButton(){
