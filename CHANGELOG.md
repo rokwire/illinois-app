@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - AssistantHomePanel large font issues [#5610](https://github.com/rokwire/illinois-app/issues/5610).
 - GroupCards large font issues [#5610](https://github.com/rokwire/illinois-app/issues/5610).
+- PollCard large font issues [#5610](https://github.com/rokwire/illinois-app/issues/5610).
 - HomePanel large font issues  [#5610](https://github.com/rokwire/illinois-app/issues/5610).
 - Health Screener notifications [#4481](https://github.com/rokwire/illinois-app/issues/4481).
 ### Changed

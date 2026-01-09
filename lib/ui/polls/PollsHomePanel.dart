@@ -827,24 +827,25 @@ class _PollCardState extends State<PollCard> {
             ]),
           ),
         ),
-        Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus", child:
-          Padding(padding: EdgeInsets.only(bottom: 12, right: (canDeletePoll && (widget.group == null)) ? 24 : 0), child:
-            Row(children: <Widget>[
-              Text(StringUtils.ensureNotEmpty(pollVotesStatus), style:Styles().textStyles.getTextStyle("widget.card.detail.tiny.fat")
+        Row(mainAxisSize: MainAxisSize.max, children: [
+          Expanded(child:
+            Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus", child:
+              Padding(padding: EdgeInsets.only(bottom: 12, right: (canDeletePoll && (widget.group == null)) ? 24 : 0), child:
+                Wrap(alignment: WrapAlignment.spaceBetween, children: [
+                  Wrap(children: <Widget>[
+                    Text(StringUtils.ensureNotEmpty(pollVotesStatus), style:Styles().textStyles.getTextStyle("widget.card.detail.tiny.fat")),
+                    Text('  ', style:Styles().textStyles.getTextStyle("widget.card.detail.tiny")),
+                    Text((pollStatus ?? ''), style:
+                      Styles().textStyles.getTextStyle("widget.card.detail.tiny"),
+                    ),
+                    // Flexible(child: Container()),
+                  ],),
+                  Text(pin, style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.fat"),)
+                ])
               ),
-              Text('  ', style:Styles().textStyles.getTextStyle("widget.card.detail.tiny")
-              ),
-              Expanded(child:
-                Text(pollStatus ?? '', style:
-                Styles().textStyles.getTextStyle("widget.card.detail.tiny"),
-                ),
-              ),
-              Expanded(child: Container()),
-              Text(pin, style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.fat"),
-              )
-            ],),
-          ),
-        ),
+            ),
+          )
+        ]),
         Row(children: <Widget>[
           Expanded(child: Container(),)
         ],),
