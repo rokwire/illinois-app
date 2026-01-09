@@ -83,7 +83,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(_title1 ?? '', style: Styles().textStyles.getTextStyle("widget.home_tout.text.greeting")),
                   Visibility(visible: StringUtils.isNotEmpty(title2), child:
-                    Row(children: [
+                    Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
                       Text(title2 ?? '', style: Styles().textStyles.getTextStyle("widget.home_tout.text.title")),
                       Semantics(label: Localization().getStringEx("widget.home.tout.button.info.label", "Info"), hint: Localization().getStringEx("widget.home.tout.button.info.hint", "Tap for more info"), child:
                         InkWell(onTap: _onInfo, child:
