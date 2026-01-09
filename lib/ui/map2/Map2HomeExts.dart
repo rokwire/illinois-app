@@ -3,7 +3,9 @@
 import 'dart:collection';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:illinois/ext/Building.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/Building.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Config.dart';
@@ -348,21 +350,47 @@ extension Map2BuildingSelectedAmenities on LinkedHashSet<String> {
 
 extension Map2BuildingFilterAmenitiesFromJson on Map<String, dynamic> {
 
-  LinkedHashMap<String, Set<String>> toAmenityNameToIds() {
-    LinkedHashMap<String, Set<String>> nameToIds = LinkedHashMap<String, Set<String>>();
-    for (String amenityName in keys) {
-      Set<String>? amenityIds = SetUtils.from(JsonUtils.listStringsValue(this[amenityName]));
-      if (amenityIds != null) {
-        nameToIds[amenityName] = amenityIds;
+  Map<String, BuildingFeature> toAmenitiesMap() {
+    Map<String, BuildingFeature> amenitiesMap = <String, BuildingFeature>{};
+    for (String featureKey in keys) {
+      BuildingFeature? feature = BuildingFeature.fromJson(JsonUtils.mapValue(this[featureKey]));
+      if (feature != null) {
+        amenitiesMap[featureKey] = feature;
       }
     }
-    return nameToIds;
+    return amenitiesMap;
   }
-
 }
 
-extension Map2BuildingFilterAmenitiesToJson on LinkedHashMap<String, Set<String>> {
-  Map<String, dynamic> toJson() => map((String key, Set<String> value) => MapEntry(key, value.toList()));
+// on BuildingFeature
+extension Map2BuildingFilterAmenitiesMap on Map<String, BuildingFeature> {
+  Map<String, dynamic> toJson() => map((String key, BuildingFeature value) => MapEntry(key, value.toJson()));
+
+  Map<String, Set<String>> get categoryToKeysMap {
+    Map<String, Set<String>> categoryToKeysMap = <String, Set<String>>{};
+    for (BuildingFeature feature in values) {
+      String? featureKey = feature.key;
+      String? featureCategory = feature.filterCategory;
+      if ((featureKey != null) && (featureCategory != null)) {
+        Set<String>? categoryKeys = categoryToKeysMap[featureCategory];
+        if (categoryKeys != null) {
+          categoryKeys.add(featureKey);
+        }
+        else {
+          categoryToKeysMap[featureCategory] = <String>{featureKey};
+        }
+      }
+    }
+    return categoryToKeysMap;
+  }
+
+  /*Set<String> get amenityIds {
+    Set<String> amenityIds = <String>{};
+    for (Set<String> categoryAmenityIds in values) {
+      amenityIds.addAll(categoryAmenityIds);
+    }
+    return amenityIds;
+  }*/
 }
 
 class Map2FilterEvents2Param {

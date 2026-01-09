@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Health Screener notifications [#4481](https://github.com/rokwire/illinois-app/issues/4481).
 ### Changed
 - Updated Privacy Update review alert [#4698](https://github.com/rokwire/illinois-app/issues/4698).
+- Rework Amenities filter logic in Map2 [#5646](https://github.com/rokwire/illinois-app/issues/5646).
 
 ## [7.3.42] - 2026-01-07
 ### Changed
