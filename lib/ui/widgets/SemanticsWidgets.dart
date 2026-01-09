@@ -243,28 +243,3 @@ class AccessibleDropDownMenuItem <T> extends DropdownMenuItem <T>{
       super.build(context)
   ));
 }
-
-/**
- * Used to explicitly focus widgets for web accessibility
- */
-class WebFocusableSemanticsWidget extends StatelessWidget {
-  final Widget child;
-  final Function? onSelect;
-
-  WebFocusableSemanticsWidget({required this.child, this.onSelect});
-
-  @override
-  Widget build(BuildContext context) {
-    return FocusableActionDetector(
-        focusNode: FocusNode(),
-        actions: <Type, Action<Intent>>{
-          ActivateIntent: CallbackAction<Intent>(onInvoke: (_) {
-            if (onSelect != null) {
-              onSelect?.call();
-            }
-            return null;
-          }),
-        },
-        child: child);
-  }
-}
