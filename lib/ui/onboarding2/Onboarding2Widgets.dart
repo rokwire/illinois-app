@@ -1,11 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 
 class Onboarding2TitleWidget extends StatelessWidget{
   final String? title;

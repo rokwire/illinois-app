@@ -5,10 +5,10 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsAboutPage extends StatefulWidget{

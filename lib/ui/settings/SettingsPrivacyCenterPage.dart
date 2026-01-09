@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/PrivacyData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -35,6 +34,7 @@ import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsPrivacyCenterPage extends StatefulWidget{

@@ -35,7 +35,6 @@ import 'package:illinois/ui/settings/SettingsNotificationPreferencesPage.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPage.dart';
 import 'package:illinois/ui/settings/SettingsRecentItemsPage.dart';
 import 'package:illinois/ui/settings/SettingsResearchPage.dart';
-import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -45,6 +44,7 @@ import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum SettingsContentType { food_filters, sports, favorites, assessments, recent_items, appointments_and_events, language, about, research, privacy, notifications, accessibility }
