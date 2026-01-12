@@ -1,6 +1,5 @@
 
-import 'dart:io';
-
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Auth2.dart';
@@ -21,7 +20,6 @@ import 'package:illinois/ui/map2/Map2HomeExts.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -37,8 +35,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:share_plus/share_plus.dart';
 
 class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
-  //final Event2? event;
-  //const Event2QrCodePanel({required this.event});
 
   final String? deepLinkUrl;
   final String? digitalCardQrCode;
@@ -205,6 +201,7 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 class _QrCodePanelState extends State<QrCodePanel> {
   static const int _imageSize = 1024;
   Uint8List? _qrCodeBytes;
+  Uri? _deepLinkUri;
 
   static const String _brightnessHighlightObjective = 'general.qr_code';
   BrightnessHighlight? _brightnessHighlight;
@@ -212,8 +209,10 @@ class _QrCodePanelState extends State<QrCodePanel> {
   @override
   void initState() {
     super.initState();
+
     _brightnessHighlight = BrightnessHighlight.forObjective(_brightnessHighlightObjective);
     _brightnessHighlight?.setAppBrightness();
+    _deepLinkUri = _getDeepLinkUri();
 
     _loadQrImageBytes().then((imageBytes) {
       setStateIfMounted(() {
@@ -318,7 +317,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
     Styles().colors.white : Styles().colors.background;
 
   Future<Uint8List?> _loadQrImageBytes() async {
-    String? content = _promotionUrl ?? widget.digitalCardQrCode;
+    String? content = _getDeepLinkUrl() ?? widget.digitalCardQrCode;
     return (content != null) ? await NativeCommunicator().getBarcodeImageData(content,
       format: 'qrCode',
       width: _imageSize,
@@ -363,7 +362,12 @@ class _QrCodePanelState extends State<QrCodePanel> {
     _saveQrCode();
   }
 
-  String? get _promotionUrl {
+  Uri? _getDeepLinkUri() {
+    String? deepLinkUrl = _getDeepLinkUrl();
+    return (deepLinkUrl != null) ? Uri.tryParse( deepLinkUrl) : null;
+  }
+
+  String? _getDeepLinkUrl() {
     if (widget.deepLinkUrl?.isNotEmpty == true) {
       String? redirectUrl = Config().deepLinkRedirectUrl;
       return ((redirectUrl != null) && redirectUrl.isNotEmpty) ? UrlUtils.buildWithQueryParameters(redirectUrl, <String, String>{
@@ -375,29 +379,24 @@ class _QrCodePanelState extends State<QrCodePanel> {
     }
   }
 
-  bool get _canShareLink => (widget.deepLinkUrl?.isNotEmpty == true);
+  bool get _canShareLink => (_deepLinkUri?.isValid == true);
 
   void _onTapShareLink() {
     Analytics().logSelect(target: 'Share QR Code');
-    String? promotionUrl = _promotionUrl;
-    if (promotionUrl != null) {
-      Share.share(promotionUrl);
+    if (_deepLinkUri?.isValid == true) {
+      SharePlus.instance.share(ShareParams(uri: _deepLinkUri!));
     }
   }
 
   bool get _canShareDigitalCard => (widget.digitalCardShare?.isNotEmpty == true);
 
-  void _onTapShareDigitalCard() async {
+  void _onTapShareDigitalCard() {
     Analytics().logSelect(target: 'Share Digital Card');
-    final String dir = (await getApplicationDocumentsDirectory()).path;
-    final String fullPath = '$dir/${widget.saveFileName}.vcf';
-    File capturedFile = File(fullPath);
-    await capturedFile.writeAsString(widget.digitalCardShare ?? '');
-    if (mounted) {
-      Share.shareXFiles([XFile(fullPath, mimeType: 'text/vcard',)],
-        text: widget.saveWatermarkText,
-      );
-    }
+    SharePlus.instance.share(ShareParams(
+      files: [XFile.fromData(utf8.encode(widget.digitalCardShare ?? ''), mimeType: 'text/vcard')],
+      fileNameOverrides: ['${widget.saveFileName}.vcf'],
+      text: widget.saveWatermarkText,
+    ));
   }
 
   void _onTapClose() {
