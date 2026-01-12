@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Gbv resource tappable area issue [#5529](https://github.com/rokwire/illinois-app/issues/5529).
 - Acknowledged returning user selection when logging user during onboarding [#4698](https://github.com/rokwire/illinois-app/issues/4698).
+- Fixed Map2 buildings search by short name [#5654](https://github.com/rokwire/illinois-app/issues/5654).
 
 ## [7.3.43] - 2026-01-09
 ### Fixed

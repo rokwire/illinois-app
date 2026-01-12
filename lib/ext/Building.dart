@@ -7,6 +7,7 @@ extension BuildingFilter on Building {
   bool matchSearchTextLowerCase(String searchLowerCase) =>
     (searchLowerCase.isNotEmpty && (
       (name?.toLowerCase().contains(searchLowerCase) == true) ||
+      (shortName?.toLowerCase().contains(searchLowerCase) == true) ||
       (fullAddress?.toLowerCase().contains(searchLowerCase) == true) ||
       (address1?.toLowerCase().contains(searchLowerCase) == true) ||
       (address2?.toLowerCase().contains(searchLowerCase) == true) ||
