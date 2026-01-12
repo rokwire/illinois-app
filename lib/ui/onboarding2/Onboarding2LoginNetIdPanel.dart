@@ -144,7 +144,7 @@ class _Onboarding2LoginNetIdPanelState extends State<Onboarding2LoginNetIdPanel>
     if (_progress != true) {
       setState(() { _loginProgress = true; });
       web.Window? webWindow = WebUtils.createIosWebWindow();
-      Auth2().authenticateWithOidc(iosWebWindow: webWindow).then((Auth2OidcAuthenticateResult? result) {
+      Auth2().authenticateWithOidc(iosWebWindow: webWindow, scope: Onboarding2().loginScope).then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           if (result == Auth2OidcAuthenticateResult.succeeded) {
             FlexUI().update().then((_) {
