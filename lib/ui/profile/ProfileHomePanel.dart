@@ -30,6 +30,7 @@ import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 
 enum ProfileContentType { login, profile, share, who_are_you, }
 
@@ -89,6 +90,8 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
 
   final Map<ProfileContentType?, Map<String, dynamic>?> _contentParams = <ProfileContentType?, Map<String, dynamic>?>{};
 
+  final FocusNode _dropdownFocusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -109,6 +112,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _dropdownFocusNode.dispose();
     super.dispose();
   }
 
@@ -139,7 +143,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
   Widget _buildSheet() {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return PopScopeFix(onClose: _closeSheet, child:
-      Padding(padding: MediaQuery.of(context).viewInsets, child:
+      Semantics(container: true, label: Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile'), child: Padding(padding: MediaQuery.of(context).viewInsets, child:
         Column(children: [
           _buildHeaderBar(),
           Container(color: Styles().colors.surfaceAccent, height: 1,),
@@ -148,7 +152,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
           )
         ],),
       ),
-    );
+    ));
   }
 
   Widget _buildHeaderBar() {
@@ -184,7 +188,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
           SingleChildScrollView(controller: _scrollController, physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Padding(key: _pageHeadingKey, padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-                Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child:
+                WebFocusableSemanticsWidget(onSelect: _onTapContentSwitch, child: Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), button: true, child:
                   RibbonButton(
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
                     backgroundColor: Styles().colors.white,
@@ -195,7 +199,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
                     onTap: _onTapContentSwitch
                   )
                 )
-              ),
+              )),
               _buildContent(),
             ])
           )
@@ -216,11 +220,11 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
   Widget _buildContentValuesContainer() {
     return Visibility(visible: _contentValuesVisible, child:
       Positioned.fill(child:
-        Stack(children: <Widget>[
+        Focus(focusNode: _dropdownFocusNode, canRequestFocus: true, child: Semantics(container: true, liveRegion: true, explicitChildNodes: true, child: Stack(children: <Widget>[
           _dropdownDismissLayer,
           _dropdownList,
         ])
-      )
+      )))
     );
   }
 
@@ -240,18 +244,18 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
     List<Widget> contentList = <Widget>[];
     contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (ProfileContentType contentType in _contentTypes) {
-      contentList.add(RibbonButton(
+      contentList.add(WebFocusableSemanticsWidget(onSelect: () => _onTapDropdownItem(contentType), child: Semantics(button: true, label: contentType.displayTitle, child: RibbonButton(
           backgroundColor: Styles().colors.white,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
           rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
           title: contentType.displayTitle,
-          onTap: () => _onTapDropdownItem(contentType))
-      );
+          onTap: () => _onTapDropdownItem(contentType)))
+      ));
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       SingleChildScrollView(child:
-        Column(children: contentList)
+        FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Column(children: contentList))
       )
     );
   }
@@ -273,6 +277,9 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
     else {
       setState(() { _contentValuesVisible = false; });
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _dropdownFocusNode.requestFocus();
+    });
   }
 
   void _onTapDebug() {
@@ -297,6 +304,9 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
   void _onTapContentSwitch() {
     setState(() {
       _contentValuesVisible = !_contentValuesVisible;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _dropdownFocusNode.requestFocus();
     });
   }
 
