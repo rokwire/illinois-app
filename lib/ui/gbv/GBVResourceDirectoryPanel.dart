@@ -104,13 +104,13 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
         Column(children:
           List.from(
               resource.directoryContent.where((detail) => detail.type != GBVResourceDetailType.external_link)
-                .map((detail) => GBVDetailContentWidget(resourceDetail: detail))
+                .map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false))
           )
         )
       )
       : Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(children:
-          List.from(resource.directoryContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail)))
+          List.from(resource.directoryContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
         )
       );
     return
