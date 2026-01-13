@@ -22,6 +22,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 
 //TBD Update content
 class SettingsAppointmentsAndEventsPage extends StatefulWidget {
@@ -33,24 +34,24 @@ class SettingsAppointmentsAndEventsPage extends StatefulWidget {
 class _SettingsAppointmentsAndEventsPageState extends State<SettingsAppointmentsAndEventsPage> {
   @override
   Widget build(BuildContext context) =>
-    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(height: 16),
       ... _appointmentsSettings,
       Container(height: 32),
       ... _calendarSettings,
       Container(height: 32),
-    ]);
+    ]));
 
   List<Widget> get _appointmentsSettings => <Widget>[
     Text(_appointmentsSectionTitle, style: _sectionTextStyle),
     Container(height: 4),
-    ToggleRibbonButton(
+    WebFocusableSemanticsWidget(onSelect: _onToggleAppointmentsMcKinley, child: ToggleRibbonButton(
       title: _appointmentsSettingTitle,
       toggled: Storage().appointmentsCanDisplay ?? false,
       border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
       borderRadius: BorderRadius.all(Radius.circular(4)),
       onTap: _onToggleAppointmentsMcKinley
-    )
+    ))
   ];
 
   String get _appointmentsSectionTitle =>
@@ -62,13 +63,13 @@ class _SettingsAppointmentsAndEventsPageState extends State<SettingsAppointments
   List<Widget> get _calendarSettings => <Widget>[
     Text(_calendarSectionTitle, style: _sectionTextStyle),
     Container(height: 4),
-    ToggleRibbonButton(
+    WebFocusableSemanticsWidget(onSelect: _onToggleCalendarPrompt, child: ToggleRibbonButton(
       title: _calendarSettingTitle,
       toggled: Storage().calendarShouldPrompt,
       border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
       borderRadius: BorderRadius.all(Radius.circular(4)),
       onTap: _onToggleCalendarPrompt
-    )
+    ))
   ];
 
   String get _calendarSectionTitle =>

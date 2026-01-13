@@ -741,8 +741,8 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(container: true, child:
-      GestureDetector(onTap: () => _onTapCard(context), child:
+    return Semantics(label: '', hint: '', button: true, child:
+      InkWell(onTap: () => _onTapCard(context), child: Semantics(child:
         Padding(padding: widget.margin, child:
           Container(padding: EdgeInsets.all(16), decoration: _cardDecoration, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -769,7 +769,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
             ]),
           )
         )
-      )
+      ))
     );
   }
 

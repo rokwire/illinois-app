@@ -293,20 +293,20 @@ class _BrowseSection extends StatelessWidget {
           padding: EdgeInsets.only(left: 16),
           child: Column(children: [
             Row(children: [
-              Expanded(child:
-                Padding(padding: EdgeInsets.only(top: 16), child:
+              Expanded(child: GestureDetector(onTap: () => _onTapHeading(context), child:
+              Padding(padding: EdgeInsets.only(top: 16), child:
                   Text(_title, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))
                 )
-              ),
+              )),
               if (_hasFavoriteContent)
                 IconButton(onPressed: () => _onTapSectionFavorite(context), icon: FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,), tooltip: 'Favorite' /* TBD: Localization */, splashColor: Colors.transparent, highlightColor: Colors.transparent, hoverColor: Colors.transparent, focusColor: Colors.transparent,),
             ],),
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Expanded(child:
+              Expanded(child: GestureDetector(onTap: () => _onTapHeading(context), child:
                 Padding(padding: EdgeInsets.only(bottom: 16), child:
                   Text(_description, style: Styles().textStyles.getTextStyle("widget.info.regular.thin"))
                 )
-              ),
+              )),
               IconButton(
                 splashColor: Colors.transparent, highlightColor: Colors.transparent, hoverColor: Colors.transparent, focusColor: Colors.transparent,
                 tooltip: expanded
@@ -524,9 +524,9 @@ class _BrowseEntry extends StatelessWidget {
                     )),
               ),
               Expanded(child:
-                Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
+                GestureDetector(onTap: () => _onTap(context), child: Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
                   Text(_title, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
-                ),
+                )),
               ),
               IconButton(tooltip: 'Expand', onPressed: () => _onTap(context), icon: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                   child: _iconWidget), splashColor: Colors.transparent, highlightColor: Colors.transparent, hoverColor: Colors.transparent, focusColor: Colors.transparent,),

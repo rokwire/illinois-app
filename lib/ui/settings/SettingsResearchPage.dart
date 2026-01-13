@@ -7,6 +7,7 @@ import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.da
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 
 import '../../utils/AppUtils.dart';
 
@@ -24,13 +25,13 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchPage> {
 
   @override
   Widget build(BuildContext context) =>
-    Column(
+    FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         _buildQuestionnaireOptions()
       ],
-    );
+    ));
 
   Widget _buildQuestionnaireOptions() =>
    Padding(padding: EdgeInsets.only(top: 25), child:
@@ -43,22 +44,22 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchPage> {
         ),
       ]),
       Container(height: 4),
-      ToggleRibbonButton(
+      WebFocusableSemanticsWidget(onSelect: _onResearchQuestionnaireToggled, child: ToggleRibbonButton(
           title: Localization().getStringEx('panel.settings.home.research.toggle.title', 'Participate in research'),
           border: Border.all(color: Styles().colors.surfaceAccent),
           borderRadius: BorderRadius.all(Radius.circular(4)),
           toggled: Questionnaires().participateInResearch == true,
           onTap: _onResearchQuestionnaireToggled
-      ),
+      )),
       Container(height: 4),
-      RibbonButton(
+      WebFocusableSemanticsWidget(onSelect: _onResearchQuestionnaireClicked, child: RibbonButton(
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4)),
           title: Localization().getStringEx("panel.settings.home.research.questionnaire.title", "Research interest form"),
           textStyle:  (Questionnaires().participateInResearch == true) ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
           rightIconKey: Questionnaires().participateInResearch ?? false ? 'chevron-right-bold' : 'chevron-right-gray',
           onTap: _onResearchQuestionnaireClicked
-      ),
+      )),
     ]),
   );
 
