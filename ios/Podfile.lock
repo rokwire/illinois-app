@@ -424,7 +424,7 @@ SPEC CHECKSUMS:
   FirebaseMessaging: 487b634ccdf6f7b7ff180fdcb2a9935490f764e8
   FirebaseRemoteConfigInterop: 710954a00e956c5fe5144a8e46164f0361389203
   FirebaseSessions: c4d40a97f88f9eaff2834d61b4fea0a522d62123
-  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_barcode_scanner: c5aa9f51c150a6242fa392386bd52b64bb27fcb5
   flutter_email_sender: aa1e9772696691d02cd91fea829856c11efb8e58
   flutter_exif_rotation: 5406455759acacf1f7b1b83e85dbb545340d6e9c
