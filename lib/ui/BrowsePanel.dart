@@ -524,9 +524,9 @@ class _BrowseEntry extends StatelessWidget {
                     )),
               ),
               Expanded(child:
-                Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
+                GestureDetector(onTap: () => _onTap(context), child: Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
                   Text(_title, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
-                ),
+                )),
               ),
               IconButton(tooltip: 'Expand', onPressed: () => _onTap(context), icon: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                   child: _iconWidget), splashColor: Colors.transparent, highlightColor: Colors.transparent, hoverColor: Colors.transparent, focusColor: Colors.transparent,),
