@@ -197,10 +197,10 @@ class AppSemantics {
         MediaQuery.of(context).accessibleNavigation :
         false;
 
-    static void announceMessage(BuildContext? context, String message) =>
+    static void announceMessage(BuildContext? context, String message, [int viewId = 0]) =>
         context?.findRenderObject()?.
           sendSemanticsEvent(
-            AnnounceSemanticsEvent(message,TextDirection.ltr));
+            AnnounceSemanticsEvent(message,TextDirection.ltr, viewId));
 
     static void triggerAccessibilityTap(GlobalKey? groupKey) =>
         groupKey?.currentContext?.findRenderObject()?.
