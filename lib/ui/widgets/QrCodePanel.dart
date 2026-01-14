@@ -388,22 +388,66 @@ class _QrCodePanelState extends State<QrCodePanel> {
 
   bool get _canShareLink => (_deepLinkUri?.isValid == true);
 
-  void _onTapShareLink() {
+  Future<void> _onTapShareLink() async {
     Analytics().logSelect(target: 'Share QR Code');
+    String? message;
     if (_deepLinkUri?.isValid == true) {
-      SharePlus.instance.share(ShareParams(uri: _deepLinkUri!));
+      try {
+        ShareResult result = await SharePlus.instance.share(ShareParams(uri: _deepLinkUri!));
+        /* if ((result.status == ShareResultStatus.success) && mounted) {
+          Navigator.of(context).pop();
+        } else */
+        if (result.status == ShareResultStatus.unavailable) {
+          message = Localization().getStringEx('panel.qr_code.alert.share.unable.msg', 'Unable to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareQrCodeTarget);
+        }
+      }
+      catch (e) {
+        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareQrCodeTarget);
+      }
+    }
+    else {
+      message = Localization().getStringEx('panel.qr_code.alert.share.unavailable.msg', 'Share not available.');
+    }
+
+    if (mounted && (message != null)) {
+      AppAlert.showTextMessage(context, message);
     }
   }
 
+  static const String _shareTargetMacro = '{{target}}';
+  String get _shareQrCodeTarget => Localization().getStringEx('panel.qr_code.alert.share.target.qr', 'QR code');
+  String get _shareVCardTarget => Localization().getStringEx('panel.qr_code.alert.share.target.vcard', 'Digital Business Card');
+
   bool get _canShareDigitalCard => (widget.digitalCardShare?.isNotEmpty == true);
 
-  void _onTapShareDigitalCard() {
+  Future<void> _onTapShareDigitalCard() async {
     Analytics().logSelect(target: 'Share Digital Card');
-    SharePlus.instance.share(ShareParams(
-      files: [XFile.fromData(utf8.encode(widget.digitalCardShare ?? ''), mimeType: 'text/vcard')],
-      fileNameOverrides: ['${widget.saveFileName}.vcf'],
-      text: widget.saveWatermarkText,
-    ));
+    String? message;
+    if (widget.digitalCardShare?.isNotEmpty == true) {
+      try {
+        ShareResult result = await SharePlus.instance.share(ShareParams(
+          files: [XFile.fromData(utf8.encode(widget.digitalCardShare ?? ''), mimeType: 'text/vcard')],
+          fileNameOverrides: ['${widget.saveFileName}.vcf'],
+          text: widget.saveWatermarkText,
+        ));
+        if ((result.status == ShareResultStatus.success) && mounted) {
+          Navigator.of(context).pop();
+        }
+        else if (result.status == ShareResultStatus.unavailable) {
+          message = Localization().getStringEx('panel.qr_code.alert.share.unable.msg', 'Unable to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareVCardTarget);
+        }
+      }
+      catch (e) {
+        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareVCardTarget);
+      }
+    }
+    else {
+      message = Localization().getStringEx('panel.qr_code.alert.share.unavailable.msg', 'Share not available.');
+    }
+
+    if (mounted && (message != null)) {
+      AppAlert.showTextMessage(context, message);
+    }
   }
 
   void _onTapClose() {
