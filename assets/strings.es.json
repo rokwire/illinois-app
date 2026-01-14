@@ -3503,6 +3503,7 @@
 
     "panel.student_courses.header.title": "Mis cursos",
     "panel.student_courses.instructor.title": "Instructor: %s",
+    "panel.student_courses.room.title": "Room",
     "panel.student_courses.map.button.title": "View In-Person Courses on Map",
     "panel.student_courses.empty.content.msg": "No parece estar inscrito en ningún curso para el término seleccionado.",
     "panel.student_courses.load.failed.error.msg": "Parece que no tiene cursos registrados para el término seleccionado.",
