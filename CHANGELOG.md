@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Report errors if SharePlus plugin fails [#5653](https://github.com/rokwire/illinois-app/issues/5653).
+### Fixed
+- Make sure not to show Floor Plans and Amenities for online courses [#5519](https://github.com/rokwire/illinois-app/issues/5519).
 
 ## [7.3.44] - 2026-01-12
 ### Fixed
