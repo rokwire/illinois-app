@@ -49,7 +49,6 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
@@ -69,7 +68,6 @@ import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
-import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:illinois/utils/AppUtils.dart';
 
@@ -89,7 +87,6 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/app_notification.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/http_proxy.dart';
@@ -166,7 +163,6 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Canvas(),
       CustomCourses(),
       Rewards(),
-      OnCampus(),
       Wellness(),
       WellnessRings(),
       RadioPlayer(),
@@ -252,16 +248,14 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
 
     NotificationService().subscribe(this, [
       Onboarding2.notifyFinished,
-      Localization.notifyLocaleChanged,
       Config.notifyUpgradeAvailable,
       Config.notifyUpgradeRequired,
       Config.notifyOnboardingRequired,
       Content.notifyContentAlertChanged,
-      Storage.notifySettingChanged,
-      Auth2.notifyUserDeleted,
-      Auth2UserPrefs.notifyPrivacyLevelChanged,
       OnboardingConfigAlertPanel.notifyCheckAgain,
       AppLivecycle.notifyStateChanged,
+      Localization.notifyLocaleChanged,
+      Auth2.notifyUserDeleted,
     ]);
 
     _initializeError = widget.initializeError;
@@ -332,12 +326,6 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
     }
     else if (Storage().onBoardingPassed != true) {
       return Onboarding2().first ?? Container();
-    }
-    else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
-      return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);
-    }
-    else if (Auth2().prefs?.privacyLevel == null) {
-      return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
     }
     else if ((Storage().participateInResearchPrompted != true) && (Questionnaires().participateInResearch == null) && Auth2().isOidcLoggedIn) {
       return Onboarding2ResearchQuestionnairePromptPanel(
@@ -498,27 +486,17 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
     else if (name == Content.notifyContentAlertChanged) {
       _updateContentAlert();
     }
-    else if (name == Auth2.notifyUserDeleted) {
-      _resetUI();
+    else if (name == OnboardingConfigAlertPanel.notifyCheckAgain) {
+      setStateIfMounted(() {});
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
     }
     else if (name == Localization.notifyLocaleChanged) {
       _resetUI();
     }
-    else if (name == Storage.notifySettingChanged) {
-      if (param == Storage.privacyUpdateVersionKey) {
-        setStateIfMounted(() {});
-      }
-    }
-    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      setStateIfMounted(() { });
-    }
-    else if (name == OnboardingConfigAlertPanel.notifyCheckAgain) {
-      setStateIfMounted(() {
-
-      });
-    }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == Auth2.notifyUserDeleted) {
+      _resetUI();
     }
   }
 

@@ -7,6 +7,7 @@ extension BuildingFilter on Building {
   bool matchSearchTextLowerCase(String searchLowerCase) =>
     (searchLowerCase.isNotEmpty && (
       (name?.toLowerCase().contains(searchLowerCase) == true) ||
+      (shortName?.toLowerCase().contains(searchLowerCase) == true) ||
       (fullAddress?.toLowerCase().contains(searchLowerCase) == true) ||
       (address1?.toLowerCase().contains(searchLowerCase) == true) ||
       (address2?.toLowerCase().contains(searchLowerCase) == true) ||
@@ -19,11 +20,14 @@ extension BuildingFilter on Building {
       (floors?.firstWhereOrNull((String floor) => floor.toLowerCase().contains(searchLowerCase)) != null)
     ));
 
-  bool matchAmenityIds(Iterable<Set<String>> amenityIdsList) {
-    if (amenityIdsList.isNotEmpty) {
-      for (Set<String> amenityIds in amenityIdsList) {
-        if (features?.firstWhereOrNull((BuildingFeature feature) => amenityIds.contains(feature.key)) == null) {
-          return false; // No feature matches this set of amenities
+  bool matchAmenityCategoryToKeys(Map<String, Set<String>> categoryToKeysMap) {
+    if (categoryToKeysMap.isNotEmpty) {
+      for (String category in categoryToKeysMap.keys) {
+        Set<String>? categoryKeys = categoryToKeysMap[category];
+        if ((categoryKeys != null) && categoryKeys.isNotEmpty) {
+          if (features?.firstWhereOrNull((BuildingFeature feature) => categoryKeys.contains(feature.key)) == null) {
+            return false;
+          }
         }
       }
     }
@@ -63,6 +67,22 @@ extension BuildingsListSearch on Iterable<Building>  {
     }
     return nameToIds;
   }
+
+  Map<String, BuildingFeature> get amenitiesMap {
+    Map<String, BuildingFeature> amenitiesMap = <String, BuildingFeature>{};
+    for (Building building in this) {
+      List<BuildingFeature>? features = building.features;
+      if (features != null) {
+        for (BuildingFeature feature in features) {
+          String? featureKey = feature.key;
+          if ((featureKey != null) && !amenitiesMap.containsKey(featureKey)) {
+            amenitiesMap[featureKey] = feature;
+          }
+        }
+      }
+    }
+    return amenitiesMap;
+  }
 }
 
 extension BuildingEntranceSearch on BuildingEntrance {
@@ -72,6 +92,29 @@ extension BuildingEntranceSearch on BuildingEntrance {
 
 extension BuildingFeatureSearch on BuildingFeature {
   bool matchSearchTextLowerCase(String searchLowerCase) => value?.matchSearchTextLowerCase(searchLowerCase) == true;
+
+  String? get filterCategory {
+    String? category = key;
+    while (category != null) {
+      String strippedCategory = category;
+      if (category.endsWith(_adaSuffix)) {
+        strippedCategory = category.substring(0, category.length - _adaSuffix.length);
+      }
+      else if (category.endsWith(_allSuffix)) {
+        strippedCategory = category.substring(0, category.length - _allSuffix.length);
+      }
+      if (strippedCategory.length < category.length) {
+        category = strippedCategory;
+      }
+      else {
+        return category;
+      }
+    }
+    return null;
+  }
+
+  static const String _adaSuffix = '-ADA';
+  static const String _allSuffix = '-ALL';
 }
 
 extension BuildingFeatureValueSearch on BuildingFeatureValue {

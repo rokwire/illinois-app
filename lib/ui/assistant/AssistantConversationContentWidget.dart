@@ -72,6 +72,7 @@ class AssistantConversationContentWidget extends StatefulWidget {
 class _AssistantConversationContentWidgetState extends State<AssistantConversationContentWidget>
     with NotificationsListener, WidgetsBindingObserver, AutomaticKeepAliveClientMixin<AssistantConversationContentWidget> {
   static final String resourceName = 'assistant';
+  static final double _defaultHorizontalPaddingValue = 16;
 
   TextEditingController _inputController = TextEditingController();
   final GlobalKey _chatBarKey = GlobalKey();
@@ -83,7 +84,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   bool _shouldScrollToBottom = false;
   bool _shouldSemanticFocusToLastBubble = false;
 
-  bool _listening = false;
+  _ListeningStatus _listeningStatus = _ListeningStatus.off;
 
   bool _loadingResponse = false;
   Message? _feedbackMessage;
@@ -147,6 +148,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     _structsPageControllers?.values.forEach((controller) {
       controller.dispose();
     });
+    _ensureNotListening(updateStatus: false);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -173,9 +175,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
         (name == Styles.notifyChanged)) {
       setStateIfMounted((){});
     } else if (name == SpeechToText.notifyError) {
-      setState(() {
-        _listening = false;
-      });
+      Future.delayed(Duration(), _stopListening);
     } else if (name == LocationServices.notifyStatusChanged) {
       if (param == null) {
         _loadLocationStatus();
@@ -209,7 +209,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                       SingleChildScrollView(
                           controller: _scrollController,
                           physics: AlwaysScrollableScrollPhysics(),
-                          child: Padding(padding: EdgeInsets.all(16), child:
+                          child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
                           Container(
                               child: Semantics(/*liveRegion: true, */child:
                               Column(children:
@@ -239,9 +239,10 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     if (_provider == null) {
       return Container();
     }
+    final double horizontalPadding = 116;
     bool isNegativeFeedbackFormVisible = (message.feedbackResponseType == FeedbackResponseType.negative);
     bool isPositiveFeedbackFormVisible = (message.feedbackResponseType == FeedbackResponseType.positive);
-    EdgeInsets bubblePadding = message.user ? EdgeInsets.only(left: 100.0) : EdgeInsets.only(right: 100);
+    EdgeInsets bubblePadding = message.user ? EdgeInsets.only(left: horizontalPadding, right: _defaultHorizontalPaddingValue) : EdgeInsets.only(left: _defaultHorizontalPaddingValue, right: horizontalPadding);
     String answer = message.isAnswerUnknown
         ? Localization()
             .getStringEx('panel.assistant.unknown.answer.value', "I wasn’t able to find an answer from an official university source.")
@@ -308,6 +309,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                                                           inlineSyntaxes: [_AssistantMarkdownCustomIconSyntax()],
                                                           styleSheet: MarkdownStyleSheet(p: message.user ? Styles().textStyles.getTextStyle('widget.assistant.bubble.message.user.regular') : Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'), a: TextStyle(decoration: TextDecoration.underline)),
                                                           onTapLink: (text, href, title) {
+                                                            Analytics().logSelect(target: "Link: $text", source: this.widget.runtimeType.toString());
                                                             AppLaunchUrl.launch(url: href, context: context);
                                                           }))
                                                 ]))
@@ -405,7 +407,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
     return Visibility(
         visible: additionalControlsVisible,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: _defaultHorizontalPaddingValue), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Visibility(
                 visible: feedbackControlsVisible,
@@ -462,7 +464,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                             padding: EdgeInsets.only(top: 15),
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: webLinkWidgets)))
                   ])))
-        ]));
+        ])));
   }
 
   void _onTapLinksLabel(Message message) {
@@ -490,7 +492,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     }
     PageController? currentController = _structsPageControllers![messageId];
     if (currentController == null) {
-      const int pageSpacing = 8;
+      const int pageSpacing = 4;
       double screenWidth = MediaQuery.of(context).size.width - (2 * pageSpacing);
       double pageViewport = (screenWidth - 2 * pageSpacing) / screenWidth;
       currentController = PageController(viewportFraction: pageViewport);
@@ -514,14 +516,14 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       }
 
       if (elementCard != null) {
-        pages.add(Padding(padding: EdgeInsets.only(right: 18, bottom: 8), child: elementCard));
+        pages.add(Padding(padding: EdgeInsets.only(right: 8, bottom: 8), child: elementCard));
       }
     }
     return Container(
         padding: EdgeInsets.only(top: 10),
         child: Column(children: <Widget>[
-          ExpandablePageView(allowImplicitScrolling: true, controller: currentController, children: pages, padEnds: false,),
-          AccessibleViewPagerNavigationButtons(controller: currentController, pagesCount: () => elementsCount),
+          Padding(padding: EdgeInsets.symmetric(horizontal: _defaultHorizontalPaddingValue), child: ExpandablePageView(allowImplicitScrolling: true, controller: currentController, children: pages, padEnds: false,)),
+          AccessibleViewPagerNavigationButtons(controller: currentController, pagesCount: () => elementsCount,),
         ]));
   }
 
@@ -536,7 +538,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
 
   void _onTapDiningLocation(Dining dining) {
     Analytics().logSelect(target: 'Assistant: Dining Location "${dining.title}"');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: dining)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining)));
   }
 
   void _onTapDiningProductItem(DiningProductItem item) {
@@ -566,7 +568,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   }
 
   void _onTapBuildingItem(Building building) {
-    Analytics().logSelect(target: 'Assistant: Building Item "${building.name}"');
+    Analytics().logSelect(target: 'Assistant: Building Item "${building.displayName}"');
     building.exploreLaunchDetail(context);
   }
 
@@ -667,7 +669,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildTypingChatBubble() {
     return Align(
         alignment: AlignmentDirectional.centerStart,
-        child: Semantics(focused: true, label: "Loading", child: SizedBox(
+        child: Semantics(focused: true, label: "Loading", child: Padding(padding: EdgeInsets.symmetric(horizontal: _defaultHorizontalPaddingValue), child: SizedBox(
             width: 100,
             height: 50,
             child: Material(
@@ -676,7 +678,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                 child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: TypingIndicator(
-                        flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent))))));
+                        flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent)))))));
   }
 
   List<Widget> _buildWebLinkWidgets(List<SourceDataEntry>? sourceDataEntries) {
@@ -720,7 +722,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
   Widget _buildDeepLinksWidget(Message message) {
     List<Link>? deepLinks = message.links;
     bool hasDeepLinks = CollectionUtils.isNotEmpty(deepLinks);
-    return Visibility(visible: hasDeepLinks, child: Padding(padding: EdgeInsets.only(top: 10), child: _buildDeepLinkWidgets(deepLinks)));
+    return Visibility(visible: hasDeepLinks, child: Padding(padding: EdgeInsets.only(left: _defaultHorizontalPaddingValue, top: 10, right: _defaultHorizontalPaddingValue), child: _buildDeepLinkWidgets(deepLinks)));
   }
 
   Widget _buildDeepLinkWidgets(List<Link>? links) {
@@ -823,25 +825,23 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
             icon: Icon(Icons.send, color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor, semanticLabel: "",),
             onPressed: ((_provider != null) && enabled)
                 ? () {
-              _submitMessage(message: _inputController.text, provider: _provider!);
+              _ensureNotListening().then((_){
+                if (mounted) {
+                  _submitMessage(message: _inputController.text, provider: _provider!);
+                }
+              });
             }
                 : null)));
     } else {
-      return Visibility(
-          visible: enabled && SpeechToText().isEnabled,
-          child: MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Speech to text"),
-            child:IconButton(
-              splashRadius: 24,
-              icon: _listening ? Icon(Icons.stop_circle_outlined, color: Styles().colors.fillColorSecondary, semanticLabel: "Stop",) : Icon(Icons.mic, color: Styles().colors.fillColorSecondary, semanticLabel: "microphone",),
-              onPressed: enabled
-                  ? () {
-                if (_listening) {
-                  _stopListening();
-                } else {
-                  _startListening();
-                }
-              }
-                  : null))));
+      return Visibility(visible: enabled && SpeechToText().isEnabled, child:
+        MergeSemantics(child: Semantics(label: Localization().getStringEx('', "Speech to text"), child:
+          IconButton(
+            splashRadius: 24,
+            icon: _listeningIcon,
+            onPressed: enabled ? _toggleListening : null
+          )
+        ))
+      );
     }
   }
 
@@ -854,7 +854,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Row(mainAxisSize: MainAxisSize.min, children: [
+          Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
             Container(
                 height: _evaluatingQueryLimit ? 12 : 10,
                 width: _evaluatingQueryLimit ? 12 : 10,
@@ -1160,28 +1160,72 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
     }
   }
 
-  void _startListening() {
-    SpeechToText().listen(onResult: _onSpeechResult);
-    setState(() {
-      _listening = true;
-    });
+  void _startListening() async {
+    if ((_listeningStatus == _ListeningStatus.off) && mounted) {
+      setState(() {
+        _listeningStatus = _ListeningStatus.progress;
+      });
+      bool? result = await SpeechToText().listen(onResult: _onSpeechResult);
+      if (mounted) {
+        setState(() {
+          _listeningStatus = (result == true) ? _ListeningStatus.on : _ListeningStatus.off;
+        });
+      }
+    }
   }
 
-  void _stopListening() async {
+  Future<void> _stopListening({bool updateStatus = true, bool showProgress = false }) async {
+    if ((_listeningStatus == _ListeningStatus.on) && mounted && updateStatus && showProgress) {
+      setState(() {
+        _listeningStatus = _ListeningStatus.progress;
+      });
+    }
     await SpeechToText().stopListening();
-    setState(() {
-      _listening = false;
-    });
+    if (mounted && updateStatus) {
+      setState(() {
+        _listeningStatus = _ListeningStatus.off;
+      });
+    }
+  }
+
+  Future<void> _ensureNotListening({bool updateStatus = true }) async {
+    if (_listeningStatus == _ListeningStatus.on) {
+      await _stopListening(updateStatus: updateStatus, showProgress: false);
+    }
   }
 
   void _onSpeechResult(String result, bool finalResult) {
-    setState(() {
-      _inputController.text = result;
-      if (finalResult) {
-        _listening = false;
-      }
-    });
+    if ((_listeningStatus == _ListeningStatus.on) && mounted) {
+      setState(() {
+        _inputController.text = result;
+      });
+    }
+    if (finalResult) {
+      Future.delayed(Duration(), _stopListening);
+    }
   }
+
+  void _toggleListening() {
+    Analytics().logSelect(target: 'Assistant: ${StringUtils.capitalize(_listeningStatus.toggled.analyticsAction)} Listening');
+    switch (_listeningStatus) {
+      case _ListeningStatus.on: _stopListening(showProgress: true); break;
+      case _ListeningStatus.off: _startListening(); break;
+      default: break;
+    }
+  }
+
+  Widget get _listeningIcon {
+    switch(_listeningStatus) {
+      case _ListeningStatus.on: return Icon(Icons.stop_circle_outlined, color: Styles().colors.fillColorSecondary, semanticLabel: "Stop Listening",);
+      case _ListeningStatus.off: return Icon(Icons.mic, color: Styles().colors.fillColorSecondary, semanticLabel: "Start Listening",);
+      case _ListeningStatus.progress: return _listeningProgress;
+    }
+  }
+
+  Widget get _listeningProgress =>
+      SizedBox(width: 16, height: 16, child:
+          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
+      );
 
   Future<void> _onPullToRefresh() async {
     if (mounted && (_evaluatingQueryLimit == false)) {
@@ -1338,5 +1382,25 @@ class _AssistantMarkdownIconBuilder extends MarkdownElementBuilder {
   @override
   Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     return RichText(text: TextSpan(children: [WidgetSpan(child: Icon(icon, color: color, size: size), alignment: PlaceholderAlignment.middle)]));
+  }
+}
+
+enum _ListeningStatus { on, off, progress }
+
+extension _ListeningStatusImpl on _ListeningStatus {
+  _ListeningStatus get toggled {
+    switch (this) {
+      case _ListeningStatus.on: return _ListeningStatus.off;
+      case _ListeningStatus.off: return _ListeningStatus.on;
+      case _ListeningStatus.progress: return this;
+    }
+  }
+
+  String get analyticsAction {
+    switch (this) {
+      case _ListeningStatus.on: return 'start';
+      case _ListeningStatus.off: return 'stop';
+      case _ListeningStatus.progress: return 'progress';
+    }
   }
 }

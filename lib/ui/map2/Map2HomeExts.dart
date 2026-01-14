@@ -3,11 +3,13 @@
 import 'dart:collection';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:illinois/ext/Building.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/Building.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/map2/Map2HomeFilters.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -46,14 +48,8 @@ extension Map2ContentTypeImpl on Map2ContentType {
     }
   }
 
-  static const Map2ContentType _defaultType = Map2ContentType.CampusBuildings;
-
-  static Map2ContentType? initialType({ dynamic initialSelectParam, Iterable<Map2ContentType>? availableTypes }) => (
-    (selectParamType(initialSelectParam)?._ensure(availableTypes: availableTypes)) ??
-    (Storage().storedMap2ContentType?._ensure(availableTypes: availableTypes)) ??
-    (_defaultType._ensure(availableTypes: availableTypes)) ??
-    ((availableTypes?.isNotEmpty == true) ? availableTypes?.first : null)
-  );
+  static Map2ContentType? initialType({ dynamic initialSelectParam, Iterable<Map2ContentType>? availableTypes }) =>
+    selectParamType(initialSelectParam)?._ensure(availableTypes: availableTypes);
 
   static Map2ContentType? selectParamType(dynamic param) {
     if (param is Map2ContentType) {
@@ -94,6 +90,8 @@ extension Map2ContentTypeImpl on Map2ContentType {
     Map2ContentType.StoriedSites, Map2ContentType.MyLocations,
   };
   bool get supportsManualFilters => _manualFiltersTypes.contains(this);
+
+  bool get supportsEditing => (this == Map2ContentType.MyLocations);
 
   bool supportsSortType(Map2SortType sortType) =>
     (sortType != Map2SortType.dateTime) || (this == Map2ContentType.Events2);
@@ -298,14 +296,6 @@ extension Map2SortOrderImpl on Map2SortOrder {
   }
 }
 
-extension Map2StorageContentType on Storage {
-  static const String _nullContentTypeJson = 'null';
-
-  Map2ContentType? get storedMap2ContentType => Map2ContentTypeImpl.fromJson(Storage().selectedMap2ContentType);
-  set storedMap2ContentType(Map2ContentType? value) => Storage().selectedMap2ContentType = value?.toJson() ?? _nullContentTypeJson;
-
-}
-
 extension ExplorePOIImpl on ExplorePOI {
 
   static ExplorePOI fromMapPOI(PointOfInterest poi) =>
@@ -360,21 +350,47 @@ extension Map2BuildingSelectedAmenities on LinkedHashSet<String> {
 
 extension Map2BuildingFilterAmenitiesFromJson on Map<String, dynamic> {
 
-  LinkedHashMap<String, Set<String>> toAmenityNameToIds() {
-    LinkedHashMap<String, Set<String>> nameToIds = LinkedHashMap<String, Set<String>>();
-    for (String amenityName in keys) {
-      Set<String>? amenityIds = SetUtils.from(JsonUtils.listStringsValue(this[amenityName]));
-      if (amenityIds != null) {
-        nameToIds[amenityName] = amenityIds;
+  Map<String, BuildingFeature> toAmenitiesMap() {
+    Map<String, BuildingFeature> amenitiesMap = <String, BuildingFeature>{};
+    for (String featureKey in keys) {
+      BuildingFeature? feature = BuildingFeature.fromJson(JsonUtils.mapValue(this[featureKey]));
+      if (feature != null) {
+        amenitiesMap[featureKey] = feature;
       }
     }
-    return nameToIds;
+    return amenitiesMap;
   }
-
 }
 
-extension Map2BuildingFilterAmenitiesToJson on LinkedHashMap<String, Set<String>> {
-  Map<String, dynamic> toJson() => map((String key, Set<String> value) => MapEntry(key, value.toList()));
+// on BuildingFeature
+extension Map2BuildingFilterAmenitiesMap on Map<String, BuildingFeature> {
+  Map<String, dynamic> toJson() => map((String key, BuildingFeature value) => MapEntry(key, value.toJson()));
+
+  Map<String, Set<String>> get categoryToKeysMap {
+    Map<String, Set<String>> categoryToKeysMap = <String, Set<String>>{};
+    for (BuildingFeature feature in values) {
+      String? featureKey = feature.key;
+      String? featureCategory = feature.filterCategory;
+      if ((featureKey != null) && (featureCategory != null)) {
+        Set<String>? categoryKeys = categoryToKeysMap[featureCategory];
+        if (categoryKeys != null) {
+          categoryKeys.add(featureKey);
+        }
+        else {
+          categoryToKeysMap[featureCategory] = <String>{featureKey};
+        }
+      }
+    }
+    return categoryToKeysMap;
+  }
+
+  /*Set<String> get amenityIds {
+    Set<String> amenityIds = <String>{};
+    for (Set<String> categoryAmenityIds in values) {
+      amenityIds.addAll(categoryAmenityIds);
+    }
+    return amenityIds;
+  }*/
 }
 
 class Map2FilterEvents2Param {
@@ -429,15 +445,33 @@ class Map2FilterDeepLinkParam {
   };
 }
 
-/* class Map2FilterDeepLinkParam0 {
-  final Map<String, dynamic>? params;
-  Map2FilterDeepLinkParam(this.params);
+extension Map2AppConfig on Config {
 
-  Map2ContentType? get contentType => Map2ContentTypeImpl.fromJson(params?['contentType']);
-  Map2Filter? get filter => Map2Filter.fromJson(JsonUtils.decodeMap(params?['filter']), contentType: contentType);
+  CameraPosition? get defaultCameraPosition {
+    LatLng? target = defaultCameraTarget;
+    return (target != null) ? CameraPosition(
+      target: target,
+      bearing: defaultCameraBearing ?? 0,
+      tilt: defaultCameraTilt ?? 0,
+      zoom: defaultCameraZoom ?? 0,
+    ) : null;
+  }
 
-  static Map<String, String?> buildUrlParam({Map2ContentType? contentType, Map2Filter? filter}) => <String, String?>{
-    'contentType': contentType?.toJson(),
-    'filter': JsonUtils.encode(filter?.toJson()),
-  };
-}*/
+  LatLng? get defaultCameraTarget =>
+    _LatLngAppConfig.fromConfigJson(JsonUtils.mapValue(_initialCameraPosition?['target']));
+
+  double? get defaultCameraBearing => JsonUtils.doubleValue(_initialCameraPosition?['bearing']);
+  double? get defaultCameraTilt => JsonUtils.doubleValue(_initialCameraPosition?['tilt']);
+  double? get defaultCameraZoom => JsonUtils.doubleValue(_initialCameraPosition?['zoom']);
+
+  double? get markersUpdateZoomDelta => JsonUtils.doubleValue(map2Settings?['markers_update_zoom_delta']);
+  Map<String, dynamic>? get _initialCameraPosition => JsonUtils.mapValue(map2Settings?['initial_camera_position']);
+}
+
+extension _LatLngAppConfig on LatLng {
+  static LatLng? fromConfigJson(Map<String, dynamic>? json) {
+    double? latitude = JsonUtils.doubleValue(json?['latitude']);
+    double? longitude = JsonUtils.doubleValue(json?['longitude']);
+    return ((latitude != null) && (longitude != null)) ? LatLng(latitude, longitude) : null;
+  }
+}

@@ -574,7 +574,7 @@ class AppTextUtils {
   static const String universityNameMacro = "{{university_name}}";
   static String get universityName => universityNameEx();
   static String universityNameEx({String? language}) =>
-    Localization().getStringEx('app.univerity_name', 'University of Illinois', language: language);
+    Localization().getStringEx('app.university_name', 'University of Illinois', language: language);
 
   static String appUniversityNameString(String key, String defaults, {String? language}) =>
     Localization().getStringEx(key, defaults, language: language).replaceAll(universityNameMacro, universityNameEx(language: language));
@@ -584,7 +584,7 @@ class AppTextUtils {
   static const String universityLongNameMacro = "{{university_long_name}}";
   static String get universityLongName => universityLongNameEx();
   static String universityLongNameEx({String? language}) =>
-    Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign', language: language);
+    Localization().getStringEx('app.university_long_name', 'University of Illinois Urbana-Champaign', language: language);
 
   static String appUniversityLongNameString(String key, String defaults, {String? language}) =>
     Localization().getStringEx(key, defaults, language: language).replaceAll(universityLongNameMacro, universityLongNameEx(language: language));

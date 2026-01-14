@@ -174,41 +174,41 @@ extension FavoriteExt on Favorite {
   }
 
 
-  void favoriteLaunchDetail(BuildContext context) {
+  void favoriteLaunchDetail(BuildContext context, { AnalyticsFeature? analyticsFeature }) {
     if (this is Event2) {
       Event2 event2 = (this as Event2);
       if (event2.hasGame) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event2.game, event: event2)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event2.game, event: event2, analyticsFeature: analyticsFeature,)));
       } else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event2)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event2, analyticsFeature: analyticsFeature)));
       }
     }
     else if (this is Dining) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(this as Dining, analyticsFeature: analyticsFeature,)));
     }
     else if (this is Game) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: this as Game,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: this as Game, analyticsFeature: analyticsFeature,)));
     }
     else if (this is News) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: this as News,)));
     }
     else if (this is LaundryRoom) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: this as LaundryRoom,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: this as LaundryRoom, analyticsFeature: analyticsFeature,)));
     }
     else if (this is MTDStop) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: this as MTDStop,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: this as MTDStop, analyticsFeature: analyticsFeature)));
     }
     else if (this is GuideFavorite) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as GuideFavorite).id, analyticsFeature: AnalyticsFeature.Guide,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as GuideFavorite).id, analyticsFeature: analyticsFeature,)));
     }
     else if (this is Appointment) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: (this as Appointment),)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: (this as Appointment), analyticsFeature: analyticsFeature)));
     }
     else if (this is ExplorePOI) {
       (this as ExplorePOI).launchDirections();
     }
     else if (this is InboxMessage) {
-      NotificationsHomePanel.launchMessageDetail(this as InboxMessage);
+      NotificationsHomePanel.launchMessageDetail(this as InboxMessage, analyticsFeature: analyticsFeature);
     }
   }
   

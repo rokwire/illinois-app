@@ -5,6 +5,106 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [7.3.45] - 2026-01-14
+### Changed
+- Report errors if SharePlus plugin fails [#5653](https://github.com/rokwire/illinois-app/issues/5653).
+### Fixed
+- Make sure not to show Floor Plans and Amenities for online courses [#5519](https://github.com/rokwire/illinois-app/issues/5519).
+
+## [7.3.44] - 2026-01-12
+### Fixed
+- Gbv resource tappable area issue [#5529](https://github.com/rokwire/illinois-app/issues/5529).
+- Acknowledged returning user selection when logging user during onboarding [#4698](https://github.com/rokwire/illinois-app/issues/4698).
+- Fixed Map2 buildings search by short name [#5654](https://github.com/rokwire/illinois-app/issues/5654).
+### Changed
+- Upgraded SharePlus plugin, more precise detection is share is available [#5653](https://github.com/rokwire/illinois-app/issues/5653).
+
+## [7.3.43] - 2026-01-09
+### Fixed
+- AssistantHomePanel large font issues [#5610](https://github.com/rokwire/illinois-app/issues/5610).
+- GroupCards large font issues [#5610](https://github.com/rokwire/illinois-app/issues/5610).
+- PollCard large font issues [#5610](https://github.com/rokwire/illinois-app/issues/5610).
+- HomePanel large font issues  [#5610](https://github.com/rokwire/illinois-app/issues/5610).
+- Health Screener notifications [#4481](https://github.com/rokwire/illinois-app/issues/4481).
+### Changed
+- Updated Privacy Update review alert [#4698](https://github.com/rokwire/illinois-app/issues/4698).
+- Rework Amenities filter logic in Map2 [#5646](https://github.com/rokwire/illinois-app/issues/5646).
+
+## [7.3.42] - 2026-01-07
+### Changed
+- Hide ILLordle / Wordle widget for the web app [#5615](https://github.com/rokwire/illinois-app/issues/5615).
+
+## [7.3.41] - 2026-01-06
+### Changed
+- Upgrade to http package 1.4.0 [#5562](https://github.com/rokwire/illinois-app/issues/5562).
+
+## [7.3.40] - 2026-01-05
+### Added
+- Added ILLordle / Wordle keyboard [#5615](https://github.com/rokwire/illinois-app/issues/5615).
+### Changed
+- Extend auto-increase brightness feature to QR Code and Event Self-Checkin PDF panels [#5587](https://github.com/rokwire/illinois-app/issues/5587).
+
+## [7.3.39] - 2025-12-29
+### Added
+- Added "notification" analytics event [#5611](https://github.com/rokwire/illinois-app/issues/5611).
+### Changed
+- Don't display menu options for group tabs that don't display [#5618](https://github.com/rokwire/illinois-app/issues/5618).
+- Auto-increase brightness when viewing wallet [#5587](https://github.com/rokwire/illinois-app/issues/5587).
+
+## [7.3.38] - 2025-12-23
+### Changed
+- Building Names now show abbreviated short names too [#5476](https://github.com/rokwire/illinois-app/issues/5476).
+- UI Cleanup: Dropdown Menu [#5603](https://github.com/rokwire/illinois-app/issues/5603).
+### Fixed
+- Fix image update from preloaded webp [#5571](https://github.com/rokwire/illinois-app/issues/5571).
+
+## [7.3.37] - 2025-12-22
+### Changed
+- Settings: removed maps section, appointments and calendar merged into single section [#5614](https://github.com/rokwire/illinois-app/issues/5614).
+- Merged eventAdmin and administrative GroupFilterTypes [#5353](https://github.com/rokwire/illinois-app/issues/5353).
+- Hide "Speakers & Seminars" from Academics dropdown menu [#5607](https://github.com/rokwire/illinois-app/issues/5607).
+### Fixed
+- Fixed paging in GroupHome2Panel on Android [#5353](https://github.com/rokwire/illinois-app/issues/5353).
+- Fixed "University" typo [#5353](https://github.com/rokwire/illinois-app/issues/5353).
+- Fixed text fields layout in GroupCreatePanel [#5585](https://github.com/rokwire/illinois-app/issues/5585).
+- Fixed Map2 / My Locations selection when there are no stored locations yet [#5586](https://github.com/rokwire/illinois-app/issues/5586).
+
+## [7.3.36] - 2025-12-19
+### Fixed
+- Fixed GBV panels analytics feature, handled missing analytics logs in Assistant panel [#5609](https://github.com/rokwire/illinois-app/issues/5609).
+- Fixed odd spacing on new Group creation panel [#5585](https://github.com/rokwire/illinois-app/issues/5585).
+- Fixed Google Maps Accessibility for android [#5498](https://github.com/rokwire/illinois-app/issues/5498).
+- Fixed Settings dropdown menu scroll [#5614](https://github.com/rokwire/illinois-app/issues/5614).
+- Fixed create options command titles in Group detail panel [#5619](https://github.com/rokwire/illinois-app/issues/5619).
+### Changed
+- Supply group & event names in analytics page attributes, if available [#5611](https://github.com/rokwire/illinois-app/issues/5611).
+- UI Clean Up: Switched to new Groups Home panel, use standard content attributes UI for group filters [#5353](https://github.com/rokwire/illinois-app/issues/5353).
+- Updated GBV section description [#5604](https://github.com/rokwire/illinois-app/issues/5604).
+
+## [7.3.35] - 2025-12-15
+### Fixed
+- Fixed navigation to Assistant, Academics and Wellness home panels [#5541](https://github.com/rokwire/illinois-app/issues/5541).
+- Do not show "View In-Person Courses on Map" for online courses [#5583](https://github.com/rokwire/illinois-app/issues/5583).
+### Added
+- Add accessibility semantics for GBV widgets [#5414](https://github.com/rokwire/illinois-app/issues/5414).
+
+## [7.3.34] - 2025-12-12
+### Fixed
+- ILLordle: Fixed daily word processing [#5442](https://github.com/rokwire/illinois-app/issues/5442).
+- Assistant: increase UI fragments width and fix paddings [#5542](https://github.com/rokwire/illinois-app/issues/5542).
+- Preload profile photo when editing [#5571](https://github.com/rokwire/illinois-app/issues/5571).
+- Sort dining schedules by time [#5577](https://github.com/rokwire/illinois-app/issues/5577).
+- Accessibility for unlabeled buttons [#5573](https://github.com/rokwire/illinois-app/issues/5573).
+- ProfileInfoEditPanel Improved accessibility for buttons with same label [#4874](https://github.com/rokwire/illinois-app/issues/4874).
+- Image Alt text is required [#4836](https://github.com/rokwire/illinois-app/issues/4836).
+- Image Alt text for GameDetails [#5553](https://github.com/rokwire/illinois-app/issues/5553).
+- Improve accessibility focus for map panel [#5500](https://github.com/rokwire/illinois-app/issues/5500).
+- Improved speech to text management in Assistant panel for iOS [#4364](https://github.com/rokwire/illinois-app/issues/4364).
+### Changed
+- Removed default map selection to Campus Buildings [#5580](https://github.com/rokwire/illinois-app/issues/5580).
+- Show Map2 without last selected content [#5580](https://github.com/rokwire/illinois-app/issues/5580).
+- Load default camera position from app config [#5580](https://github.com/rokwire/illinois-app/issues/5580).
+- Improved usability of Student Courses detail panel [#5583](https://github.com/rokwire/illinois-app/issues/5583).
 
 ## [7.3.33] - 2025-12-01
 ### Added

@@ -303,7 +303,7 @@ class Guide with Service, NotificationsListener {
   }
 
   // Returns the date in:
-  // A) if universityLocation exits => in Univerity timezone;
+  // A) if universityLocation exits => in University timezone;
   // B) otherwise => in local timezone.
   DateTime? reminderDate(Map<String, dynamic>? entry) {
     DateTime? dateUtc = DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(entryValue(entry, 'date')), format: "yyyy-MM-dd", isUtc: true);
@@ -343,7 +343,7 @@ class Guide with Service, NotificationsListener {
     if (_contentList != null) {
 
       // midnight's timezone is:
-      // A) if universityLocation exits => the Univerity timezone;
+      // A) if universityLocation exits => the University timezone;
       // B) otherwise => the local timezone.
       Location? universityLocation = AppDateTime().universityLocation;
       DateTime now = (universityLocation != null) ? TZDateTime.from(DateTime.now().toUtc(), universityLocation) : DateTime.now();

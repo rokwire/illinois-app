@@ -25,6 +25,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/FirebaseMessaging.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart' as uiuc;
 import 'package:illinois/service/Canvas.dart';
@@ -34,6 +35,7 @@ import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
@@ -48,7 +50,6 @@ import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePlaceDetailPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
-import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
@@ -58,15 +59,19 @@ import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/widgets/InAppNotificationToast.dart';
 import 'package:illinois/ui/widgets/PopScopeFix.dart';
+import 'package:illinois/ui/widgets/PrivacyUpdateAlert.dart';
 import 'package:rokwire_plugin/model/actions.dart';
+import 'package:rokwire_plugin/model/auth2.dart' show Auth2UserPrefs;
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -102,13 +107,16 @@ import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:quick_actions/quick_actions.dart';
+import 'package:uuid/uuid.dart';
 
-enum RootTab { Home, Favorites, Browse, Map0, Map, Academics, Wellness, Wallet, Assistant }
+enum RootTab { Home, Favorites, Browse, Map, Academics, Wellness, Wallet, Assistant }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
 
-  static const String notifyTabChanged    = "edu.illinois.rokwire.root.tab.changed";
+  static const String notifyTabPresent    = "edu.illinois.rokwire.root.tab.present";
+  static const String notifyTabAppear     = "edu.illinois.rokwire.root.tab.appear";
+  static const String notifyTabDisappear  = "edu.illinois.rokwire.root.tab.disappear";
 
   RootPanel() : super(key: stateKey);
 
@@ -121,18 +129,23 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   List<RootTab>  _tabs = [];
   Map<RootTab, Widget?> _panels = {};
 
-  TabController?  _tabBarController;
-  int            _currentTabIndex = 0;
+  late TabController _tabBarController;
+  int _currentTabIndex = 0;
+
+  DateTime? _pausedDateTime;
 
   late QuickActions _quickActions;
   late List<ShortcutItem> _quickActionItems;
 
-  _RootPanelState();
+  String? _privacyReviewStatus;
+  static const String _privacyReviewActiveStatus = 'ACTIVE';
+  static const Duration _privacyReviewTimeout = const Duration(milliseconds: 3000);
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
+      // FirebaseMessaging Notifications
       FirebaseMessaging.notifyForegroundMessage,
       FirebaseMessaging.notifyPopupMessage,
       FirebaseMessaging.notifyEventsNotification,
@@ -213,9 +226,8 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifySettingsPrivacyNotification,
       FirebaseMessaging.notifySettingsNotificationsNotification,
       FirebaseMessaging.notifyGuideArticleDetailNotification,
-      LocalNotifications.notifyLocalNotificationTapped,
-      Alerts.notifyAlert,
-      ActionBuilder.notifyShowPanel,
+
+      // Detail & Query Notifications
       Events.notifyEventDetail,
       Events2.notifyLaunchDetail,
       Events2.notifyLaunchQuery,
@@ -228,30 +240,50 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       Social.notifyMessageDetail,
       Appointments.notifyAppointmentDetail,
       Canvas.notifyCanvasEventDetail,
-      SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
       Gateway.notifyBuildingDetail,
       Safety.notifySafeWalkDetail,
       Places.notifyPlacesDetail,
+
+      // Misc
       Guide.notifyGuide,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
       Wellness.notifyCategorySelect,
-      Localization.notifyStringsUpdated,
-      Styles.notifyChanged,
-      FlexUI.notifyChanged,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
+
+      // Select
       HomePanel.notifySelect,
       HomeFavoritesPanel.notifySelect,
       BrowsePanel.notifySelect,
       Map2.notifySelect,
-      Auth2.notifyLogout,
-
       uiuc.TabBar.notifySelectionChanged,
+
+      // Rokmetro
+      Alerts.notifyAlert,
+      ActionBuilder.notifyShowPanel,
+      SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation,
+      LocalNotifications.notifyLocalNotificationTapped,
+
+      // Custom Alerts
+      Auth2.notifyLogout,
+      Auth2.notifyLoginChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
+      Storage.notifySettingChanged,
+      Config.notifyConfigChanged,
+
+      // System
+      AppLivecycle.notifyStateChanged,
+      Localization.notifyStringsUpdated,
+      Styles.notifyChanged,
+      FlexUI.notifyChanged,
+
     ]);
 
+    RootTab rootTab = _defaultTab ?? RootTab.Home;
+
     _tabs = _getTabs();
-    _currentTabIndex = _defaultTabIndex ?? _getIndexByRootTab(RootTab.Home) ?? 0;
+    _currentTabIndex = _getIndexByRootTab(rootTab) ?? 0;
     _tabBarController = TabController(length: _tabs.length, initialIndex: _currentTabIndex, animationDuration: Duration.zero, vsync: this);
     _updateTabPanels(_tabs);
 
@@ -259,10 +291,12 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     _quickActions.initialize(_onQuickAction);
     _quickActions.setShortcutItems(_quickActionItems = _buildQuickActionItems());
 
-    Analytics().logPageWidget(_getTabPanelAtIndex(_currentTabIndex));
+    NotificationService().notify(RootPanel.notifyTabAppear, rootTab);
 
     Services().initUI();
+
     _showPresentPoll();
+    _schedulePrivacyReview();
     _checkDidNotificationLaunch().then((action) {
       action?.call();
     });
@@ -278,13 +312,10 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Alerts.notifyAlert) {
-      Alerts.handleNotification(context, param);
-    }
-    else if (name == ActionBuilder.notifyShowPanel) {
-      _showPanel(param);
-    }
-    else if (name == FirebaseMessaging.notifyForegroundMessage){
+
+    // FirebaseMessaging Notifications
+
+    if (name == FirebaseMessaging.notifyForegroundMessage){
       _onFirebaseForegroundMessage(param);
     }
     else if (name == FirebaseMessaging.notifyPopupMessage) {
@@ -313,9 +344,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
     else if(name == FirebaseMessaging.notifyAthleticsGameStarted) {
       _onAthleticsGameDetail(param);
-    }
-    else if (name == LocalNotifications.notifyLocalNotificationTapped) {
-      _onLocalNotification(param);
     }
     else if (name == FirebaseMessaging.notifyGroupsNotification) {
       _onFirebaseGroupsNotification(param);
@@ -510,13 +538,13 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       _onFirebaseSettingsNotification(settingsContent: SettingsContentType.assessments);
     }
     else if (name == FirebaseMessaging.notifySettingsCalendarNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.calendar);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.appointments_and_events);
     }
     else if (name == FirebaseMessaging.notifySettingsAppointmentsNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.appointments);
+      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.appointments_and_events);
     }
     else if (name == FirebaseMessaging.notifySettingsMapsNotification) {
-      _onFirebaseSettingsNotification(settingsContent: SettingsContentType.maps);
+      // _onFirebaseSettingsNotification(settingsContent: SettingsContentType.maps);
     }
     else if (name == FirebaseMessaging.notifySettingsAboutNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContentType.about);
@@ -533,6 +561,9 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == FirebaseMessaging.notifyGuideArticleDetailNotification) {
       _onFirebaseGuideArticleNotification(param);
     }
+
+    // Detail & Query Notifications
+
     else if (name == Events.notifyEventDetail) {
       _onFirebaseEventDetail(param);
     }
@@ -563,6 +594,21 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == Appointments.notifyAppointmentDetail) {
       _onAppointmentDetail(param);
     }
+    else if (name == Canvas.notifyCanvasEventDetail) {
+      _onCanvasEventDetail(param);
+    }
+    else if (name == Gateway.notifyBuildingDetail) {
+      _onGatewayBuildingDetail(param);
+    }
+    else if (name == Safety.notifySafeWalkDetail) {
+      _onSafetySafeWalkDetail(param);
+    }
+    else if (name == Places.notifyPlacesDetail) {
+      _onPlaceDetail(param);
+    }
+
+    // Misc
+
     else if (name == Guide.notifyGuide) {
       _onGuide();
     }
@@ -575,37 +621,15 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == Wellness.notifyCategorySelect) {
       _onWellnessCategorySelect(param);
     }
-    else if (name == Canvas.notifyCanvasEventDetail) {
-      _onCanvasEventDetail(param);
-    }
-    else if (name == SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation) {
-      _onFirebaseAcademicsNotification(AcademicsContentType.skills_self_evaluation);
-    }
-    else if (name == Gateway.notifyBuildingDetail) {
-      _onGatewayBuildingDetail(param);
-    }
-    else if (name == Safety.notifySafeWalkDetail) {
-      _onSafetySafeWalkDetail(param);
-    }
-    else if (name == Places.notifyPlacesDetail) {
-      _onPlaceDetail(param);
-    }
-    else if (name == Localization.notifyStringsUpdated) {
-        setStateIfMounted(() { });
-    }
-    else if (name == Styles.notifyChanged) {
-      setStateIfMounted(() { });
-    }
-    else if (name == FlexUI.notifyChanged) {
-      _updateTabsContent();
-      _updateQuickActionItems();
-    }
     else if (name == Polls.notifyPresentVote) {
       _presentPollVote(param);
     }
     else if (name == Polls.notifyPresentResult) {
       _presentPollResult(param);
     }
+
+    // Select
+
     else if (name == HomePanel.notifySelect) {
       _onSelectHome(param);
     }
@@ -618,15 +642,63 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == Map2.notifySelect) {
       _onSelectMaps2(param);
     }
-    else if (name == Auth2.notifyLogout) {
-      _alertLogout(JsonUtils.cast(param));
-    }
-
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
     }
-  }
 
+    // Rokmetro
+
+    else if (name == Alerts.notifyAlert) {
+      Alerts.handleNotification(context, param);
+    }
+    else if (name == ActionBuilder.notifyShowPanel) {
+      _showPanel(param);
+    }
+    else if (name == SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation) {
+      _onFirebaseAcademicsNotification(AcademicsContentType.skills_self_evaluation);
+    }
+    else if (name == LocalNotifications.notifyLocalNotificationTapped) {
+      _onLocalNotification(param);
+    }
+
+    // Custom Alerts
+
+    else if (name == Auth2.notifyLogout) {
+      _alertLogout(JsonUtils.cast(param));
+    }
+    else if (name == Auth2.notifyLoginChanged) {
+      _schedulePrivacyReview();
+    }
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
+      _schedulePrivacyReview();
+    }
+    else if (name == Storage.notifySettingChanged) {
+      if (param == Storage.privacyUpdateVersionKey) {
+        _schedulePrivacyReview();
+      }
+    }
+    else if (name == Config.notifyConfigChanged) {
+      _schedulePrivacyReview();
+    }
+
+    // System
+
+
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+    else if (name == Localization.notifyStringsUpdated) {
+      setStateIfMounted(() { });
+    }
+    else if (name == Styles.notifyChanged) {
+      setStateIfMounted(() { });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateTabsContent();
+      _updateQuickActionItems();
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -656,7 +728,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
     RootTab? rootTab = getRootTabByIndex(tabIndex);
 
-    //Treat Assistant tab differently because it is modal bottom sheet
     if (rootTab == RootTab.Assistant) {
       AssistantHomePanel.present(context);
     }
@@ -664,29 +735,15 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       WalletHomePanel.present(context);
     }
     else if ((0 <= tabIndex) && (tabIndex < _tabs.length) && (tabIndex != _currentTabIndex)) {
-      _tabBarController!.animateTo(tabIndex);
+      NotificationService().notify(RootPanel.notifyTabDisappear, getRootTabByIndex(_currentTabIndex));
 
-      if (getRootTabByIndex(_currentTabIndex) == RootTab.Map) {
-        Analytics().logMapHide();
-      }
+      _tabBarController.animateTo(tabIndex);
 
-      if (mounted) {
-        setState(() {
-          _currentTabIndex = tabIndex;
-        });
-      }
-      else {
+      setState(() {
         _currentTabIndex = tabIndex;
-      }
+      });
 
-      Widget? tabPanel = _getTabPanelAtIndex(tabIndex);
-      Analytics().logPageWidget(tabPanel);
-
-      if (getRootTabByIndex(_currentTabIndex) == RootTab.Map) {
-        Analytics().logMapShow();
-      }
-
-      NotificationService().notify(RootPanel.notifyTabChanged, rootTab);
+      NotificationService().notify(RootPanel.notifyTabAppear, rootTab);
     }
   }
 
@@ -743,9 +800,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (rootTab == RootTab.Map) {
       return Map2HomePanel();
     }
-    else if (rootTab == RootTab.Map0) {
-      return ExploreMapPanel();
-    }
     else if (rootTab == RootTab.Academics) {
       return AcademicsHomePanel(rootTabDisplay: true,);
     }
@@ -763,33 +817,26 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
-  int? get _defaultTabIndex {
-    dynamic defaultTabCode = FlexUI()['tabbar.default'];
-    return (defaultTabCode is String) ? _getIndexByRootTab(rootTabFromString(defaultTabCode)) : null;
-  }
+  RootTab? get _defaultTab =>
+    rootTabFromString(JsonUtils.stringValue(ListUtils.entry(FlexUI()['tabbar.default'], 0)));
 
   void _updateTabsContent() {
     List<RootTab> tabs = _getTabs();
-    if (!DeepCollectionEquality().equals(_tabs, tabs)) {
+    if (mounted & !DeepCollectionEquality().equals(_tabs, tabs)) {
       _updateTabPanels(tabs);
 
       RootTab? currentRootTab = getRootTabByIndex(_currentTabIndex);
-      if (mounted) {
-        setState(() {
-          _tabs = tabs;
-          _currentTabIndex = (currentRootTab != null) ? (_getIndexByRootTab(currentRootTab) ?? 0)  : 0;
 
-          // Do not initialize _currentTabIndex as initialIndex because we get empty panel content.
-          // Initialize TabController with initialIndex = 0 and then manually animate to desired tab index.
-          _tabBarController = TabController(length: _tabs.length, animationDuration: Duration.zero, vsync: this);
-        });
-        _tabBarController!.animateTo(_currentTabIndex);
-      }
-      else {
+      setState(() {
         _tabs = tabs;
         _currentTabIndex = (currentRootTab != null) ? (_getIndexByRootTab(currentRootTab) ?? 0)  : 0;
-        _tabBarController = TabController(length: _tabs.length, initialIndex: _currentTabIndex, animationDuration: Duration.zero, vsync: this);
-      }
+
+        // Do not initialize _currentTabIndex as initialIndex because we get empty panel content.
+        // Initialize TabController with initialIndex = 0 and then manually animate to desired tab index.
+        _tabBarController = TabController(length: _tabs.length, animationDuration: Duration.zero, vsync: this);
+      });
+
+      _tabBarController.animateTo(_currentTabIndex);
     }
   }
 
@@ -847,75 +894,34 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
-  Widget _buildExitDialog(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(8)),
-      child: Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    color: Styles().colors.fillColorPrimary,
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Center(
-                        child: Text(
-                          Localization().getStringEx("app.title", "Illinois"),
-                          style: Styles().textStyles.getTextStyle("widget.dialog.message.regular"),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Container(height: 26,),
-            Text(
-              Localization().getStringEx(
-                  "common.message.exit_app", "Are you sure you want to exit?"),
-              textAlign: TextAlign.center,
-              style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.regular.fat")
-            ),
-            Container(height: 26,),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  RoundedButton(
-                      onTap: () {
-                        Analytics().logAlert(
-                            text: "Exit", selection: "Yes");
-                        Navigator.of(context).pop(true);
-                      },
-                      backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors.fillColorSecondary,
-                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                      label: Localization().getStringEx("dialog.yes.title", 'Yes')),
-                  Container(height: 10,),
-                  RoundedButton(
-                      onTap: () {
-                        Analytics().logAlert(
-                            text: "Exit", selection: "No");
-                        Navigator.of(context).pop(false);
-                      },
-                      backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors.fillColorSecondary,
-                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                      label: Localization().getStringEx("dialog.no.title", 'No'))
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  Widget _buildExitDialog(BuildContext context) => _ExitPrompt();
+
+  // Privacy Alert
+
+  bool get _needsPrivacyReview => _privacyReviewRequired || _privacyReviewRecommended;
+  bool get _privacyReviewRequired => (Auth2().prefs?.privacyLevel == null);
+  bool get _privacyReviewRecommended => ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0));
+
+  Future<void> _schedulePrivacyReview() async {
+    if (mounted && _needsPrivacyReview && (_privacyReviewStatus != _privacyReviewActiveStatus)) {
+      String uuid = Uuid().v1();
+      _privacyReviewStatus = uuid;
+      await Future.delayed(_privacyReviewTimeout);
+      if (mounted && (_privacyReviewStatus == uuid)) {
+        if (_needsPrivacyReview) {
+          _privacyReviewStatus = _privacyReviewActiveStatus;
+          bool? result = await PrivacyUpdateAlert.present(context, updateRequired: _privacyReviewRequired);
+          Storage().privacyUpdateVersion = Config().appPrivacyVersion;
+          if (result == true) {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
+          }
+          _privacyReviewStatus = null;
+        }
+        else {
+          _privacyReviewStatus = null;
+        }
+      }
+    }
   }
 
   // Quick Actions
@@ -984,6 +990,21 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
+  // App Livecycle
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    } else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _schedulePrivacyReview();
+        }
+      }
+    }
+  }
+
   // Local Notifications
 
   void _onLocalNotification(dynamic param) {
@@ -1049,10 +1070,11 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   Future<void> _onFirebaseEventDetail(Map<String, dynamic>? content) async {
-    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? content.eventEntityId  : null;
+    String? eventName = (content != null) ? JsonUtils.stringValue(content['event_name']) ?? content.eventEntityName  : null;
     if (StringUtils.isNotEmpty(eventId) && context.mounted) {
       //ExplorePanel.presentDetailPanel(context, eventId: eventId);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId, eventName: eventName,)));
     }
   }
 
@@ -1064,9 +1086,10 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   Future<void> _onFirebaseEventSelfCheckIn(Map<String, dynamic>? content) async {
-    String? eventId = (content != null) ? (JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])) : null;
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? content.eventEntityId  : null;
+    String? eventName = (content != null) ? JsonUtils.stringValue(content['event_name']) ?? content.eventEntityName  : null;
     if (StringUtils.isNotEmpty(eventId) && context.mounted) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId, onInitialized: (Event2DetailPanelState state) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId, eventName: eventName, onInitialized: (Event2DetailPanelState state) {
         if ((eventId != null) && eventId.isNotEmpty) {
           state.selfCheckIn(eventId, secret: JsonUtils.stringValue(content?['secret']));
         }
@@ -1075,9 +1098,10 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   }
 
   void _onFirebaseEventAttendeeSurveyInvitation(Map<String, dynamic>? content) {
-    String? eventId = (content != null) ? JsonUtils.stringValue(content['entity_id']) : null;
+    String? eventId = content?.eventEntityId;
+    String? eventName = content?.eventEntityName;
     if (StringUtils.isNotEmpty(eventId) && context.mounted) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId, eventName: eventName,)));
     }
   }
   
@@ -1097,7 +1121,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   Future<void> _onFirebaseDiningLocationDetail(Map<String, dynamic>? content) async {
     String? diningId = (content != null) ? JsonUtils.stringValue(content['dining_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
     if (StringUtils.isNotEmpty(diningId) && context.mounted) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: Dining(id: diningId)))); // TBD: create better processing
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(Dining(id: diningId)))); // TBD: create better processing
     }
   }
 
@@ -1111,26 +1135,27 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   void _onFirebaseGroupsNotification(param) {
     if (param is Map<String, dynamic>) {
-      String? groupId = JsonUtils.stringValue(param["entity_id"]);
-      _presentGroupDetailPanel(groupId: groupId);
+      _presentGroupDetailPanel(groupId: param.groupEntityId, groupName: param.groupEntityName);
     }
   }
 
   void _onFirebaseGroupPostNotification(param) {
     if (param is Map<String, dynamic>) {
-      String? groupId = JsonUtils.stringValue(param["entity_id"]);
+      String? groupId = param.groupEntityId;
+      String? groupName = param.groupEntityName;
       String? groupPostId = JsonUtils.stringValue(param["post_id"]);
       String? commentId = JsonUtils.stringValue(param["comment_id"]);
-      _presentGroupDetailPanel(groupId: groupId, groupPostId: groupPostId, commentId: commentId);
+      _presentGroupDetailPanel(groupId: groupId, groupName: groupName, groupPostId: groupPostId, commentId: commentId);
     }
   }
 
   void _onFirebaseGroupPostReactionNotification(param) {
     if (param is Map<String, dynamic>) {
-      String? groupId =JsonUtils.stringValue(param["group_id"]);
+      String? groupId = JsonUtils.stringValue(param["group_id"]) ?? param.groupEntityId;
+      String? groupName = JsonUtils.stringValue(param['group_name']) ?? param.groupEntityName;
       String? groupPostId = JsonUtils.stringValue(param["post_id"]);
       String? commentId = JsonUtils.stringValue(param["comment_id"]);
-      _presentGroupDetailPanel(groupId: groupId, groupPostId: groupPostId, commentId: commentId);
+      _presentGroupDetailPanel(groupId: groupId, groupName: groupName, groupPostId: groupPostId, commentId: commentId);
     }
   }
 
@@ -1142,10 +1167,13 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
-  void _presentGroupDetailPanel({String? groupId, String? groupPostId, String? commentId, String? eventId}) {
+  void _presentGroupDetailPanel({String? groupId, String? groupName, String? groupPostId, String? commentId, String? eventId}) {
     if (context.mounted) {
       if (StringUtils.isNotEmpty(groupId)) {
-        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId, groupPostCommentId: commentId, groupEventId: eventId)));
+        GroupDetailPanel.push(context,
+          groupId: groupId, groupName: groupName,
+          groupPostId: groupPostId, groupPostCommentId: commentId, groupEventId: eventId,
+        );
       } else {
         AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
       }
@@ -1295,29 +1323,24 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
 
   void _onFirebaseAcademicsNotification(AcademicsContentType content) {
     if (context.mounted) {
-      if (AcademicsHomePanel.hasState) {
-        NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
-      } else {
-        AcademicsHomePanel.push(context, content);
-      }
+      AcademicsHomePanel.present(context, content);
     }
   }
 
   void _onFirebaseWellnessNotification(WellnessContentType content) {
     if (context.mounted) {
-      if (WellnessHomePanel.hasState) {
-        NotificationService().notify(WellnessHomePanel.notifySelectContent, content);
-      } else {
-        WellnessHomePanel.push(context, content);
-      }
+      WellnessHomePanel.present(context, content);
     }
   }
 
   // Service Notifications
 
-  Future<void> _onGroupDetail(Map<String, dynamic>? content) async {
-    String? groupId = (content != null) ? JsonUtils.stringValue(content['group_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
-    _presentGroupDetailPanel(groupId: groupId);
+  Future<void> _onGroupDetail(param) async {
+    if (param is Map<String, dynamic>) {
+      String? groupId = JsonUtils.stringValue(param['group_id']) ?? param.groupEntityId;
+      String? groupName = JsonUtils.stringValue(param['group_name']) ?? param.groupEntityName;
+      _presentGroupDetailPanel(groupId: groupId, groupName: groupName);
+    }
   }
 
   Future<void> _onSocialMessageDetail(Map<String, dynamic>? content) async {
@@ -1516,9 +1539,6 @@ RootTab? rootTabFromString(String? value) {
     else if (value == 'map') {
       return RootTab.Map;
     }
-    else if (value == 'map0') {
-      return RootTab.Map0;
-    }
     else if (value == 'academics') {
       return RootTab.Academics;
     }
@@ -1535,3 +1555,57 @@ RootTab? rootTabFromString(String? value) {
   return null;
 }
 
+class _ExitPrompt extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+      Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
+        Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          Row(children: <Widget>[
+            Expanded(child:
+              Container(color: Styles().colors.fillColorPrimary, child:
+                Padding(padding: EdgeInsets.all(8), child:
+                  Center(child:
+                    Text(Localization().getStringEx("app.title", "Illinois"), style: Styles().textStyles.getTextStyle("widget.dialog.message.regular"),),
+                  ),
+                ),
+              ),
+            ),
+          ],),
+
+          Container(height: 26,),
+
+          Text(Localization().getStringEx("common.message.exit_app", "Are you sure you want to exit?"), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.regular.fat")),
+
+          Container(height: 26,),
+
+          Padding(padding: const EdgeInsets.all(8.0), child:
+            Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+              RoundedButton(
+                onTap: () {
+                  Analytics().logAlert(text: "Exit", selection: "Yes");
+                  Navigator.of(context).pop(true);
+                },
+                backgroundColor: Colors.transparent,
+                borderColor: Styles().colors.fillColorSecondary,
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                label: Localization().getStringEx("dialog.yes.title", 'Yes')
+              ),
+              Container(height: 10,),
+              RoundedButton(
+                onTap: () {
+                  Analytics().logAlert(text: "Exit", selection: "No");
+                  Navigator.of(context).pop(false);
+                },
+                backgroundColor: Colors.transparent,
+                borderColor: Styles().colors.fillColorSecondary,
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                label: Localization().getStringEx("dialog.no.title", 'No')
+              )
+            ],),
+          ),
+        ],),
+      ),
+    );
+  }
+}

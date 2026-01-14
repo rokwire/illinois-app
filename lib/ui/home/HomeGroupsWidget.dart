@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
-import 'package:illinois/ui/groups/GroupsHomePanel.dart';
+import 'package:illinois/ui/groups/GroupHome2Panel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
@@ -66,7 +66,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> {
 
   Iterable<Widget> get _contentTypeWidgets => FavoriteContentType.values.map((FavoriteContentType contentType) =>
     Visibility(visible: (_contentType == contentType), maintainState: true, child:
-      _HomeGroupsImplWidget(contentType.groupContentType,
+      _HomeGroupsImplWidget(contentType,
         updateController: widget.updateController,
       ),
     ));
@@ -92,7 +92,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> {
 }
 
 class _HomeGroupsImplWidget extends StatefulWidget {
-  final GroupsContentType contentType;
+  final FavoriteContentType contentType;
   final StreamController<String>? updateController;
 
   // ignore: unused_element_parameter
@@ -122,7 +122,6 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
     super.initState();
 
     NotificationService().subscribe(this, [
-      Groups.notifyUserMembershipUpdated,
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
       Groups.notifyGroupDeleted,
@@ -158,7 +157,6 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
     else if ((name == Groups.notifyGroupCreated) ||
       (name == Groups.notifyGroupUpdated) ||
       (name == Groups.notifyGroupDeleted) ||
-      (name == Groups.notifyUserMembershipUpdated) ||
       (name == Connectivity.notifyStatusChanged) ||
       (name == Auth2.notifyLoginChanged)
     ) {
@@ -213,7 +211,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
 
   Widget get _groupsContentWidget {
     Widget? contentWidget;
-    List<Group>? visibleGroups = _visibleGroups(_groups);
+    List<Group>? visibleGroups = _groups;
     int visibleCount = visibleGroups?.length ?? 0;
 
     if (1 < visibleCount) {
@@ -222,7 +220,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
         GlobalKey groupKey = (_groupCardKeys[group.id!] ??= GlobalKey());
         pages.add(Padding(padding: HomeCard.defaultPageMargin, child:
           // Semantics(/*excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ container: true,  child:
-            GroupCard(key: groupKey, group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+            GroupCard(group, key: groupKey, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
           // )
         ));
       }
@@ -246,7 +244,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
     else if (visibleCount == 1) {
       contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ container: true, child:
-          GroupCard(group: visibleGroups!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+          GroupCard(visibleGroups!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
       ));
     }
 
@@ -321,7 +319,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
         _updatingGroups = false;
       });
 
-      List<Group>? groupsList = await Groups().loadGroups(contentType: widget.contentType);
+      List<Group>? groupsList = await Groups().loadGroupsListV3(filter: widget.contentType.groupsFilter);
       List<Group>? groups = ListUtils.from(groupsList);
       _sortGroups(groups);
 
@@ -349,7 +347,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
         _updatingGroups = true;
       });
 
-      List<Group>? groupsList = await Groups().loadGroups(contentType: widget.contentType);
+      List<Group>? groupsList = await Groups().loadGroupsListV3(filter: widget.contentType.groupsFilter);
       List<Group>? groups = ListUtils.from(groupsList);
       _sortGroups(groups);
 
@@ -370,7 +368,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
   }
 
   void _applyUserGroups() {
-    if (widget.contentType == GroupsContentType.my) {
+    if (widget.contentType == FavoriteContentType.my) {
       List<Group>? userGroups = ListUtils.from(Groups().userGroups);
       _sortGroups(userGroups);
       if (mounted) {
@@ -399,24 +397,11 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
     return groups;
   }
 
-  List<Group>? _visibleGroups(List<Group>? groups) {
-    List<Group>? visibleGroups;
-    if (groups != null) {
-      visibleGroups = <Group>[];
-      for (Group group in groups) {
-        if ((group.id != null) && group.isVisible) {
-          visibleGroups.add(group);
-        }
-      }
-    }
-    return visibleGroups;
-  }
-
   // Event Handlers
 
   void _onSeeAll() {
     Analytics().logSelect(target: "View All", source: '${widget.runtimeType}(${widget.contentType})' );
-    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupsHomePanel.routeName), builder: (context) => GroupsHomePanel(contentType: widget.contentType,)));
+    GroupHome2Panel.push(context, filter: widget.contentType.groupsFilter);
   }
 
 }
@@ -429,27 +414,24 @@ extension _FavoriteGroupsContentType on FavoriteContentType {
     }
   }
 
-  GroupsContentType get groupContentType {
-    switch (this) {
-      case FavoriteContentType.my: return GroupsContentType.my;
-      case FavoriteContentType.all: return GroupsContentType.all;
-    }
-  }
-}
-
-extension _GroupsContentTypeImpl on GroupsContentType {
-
   String get emptyContentTitle {
     switch(this) {
-      case GroupsContentType.my: return Localization().getStringEx('common.label.failed', 'Empty');
-      case GroupsContentType.all: return Localization().getStringEx('common.label.failed', 'Failed');
+      case FavoriteContentType.my: return Localization().getStringEx('common.label.failed', 'Empty');
+      case FavoriteContentType.all: return Localization().getStringEx('common.label.failed', 'Failed');
     }
   }
 
   String get emptyContentMessage {
     switch(this) {
-      case GroupsContentType.my: return Localization().getStringEx('widget.home.groups.my.text.empty.description', 'You have not created any groups yet.');
-      case GroupsContentType.all: return Localization().getStringEx('widget.home.groups.all.text.empty.description', 'Failed to load groups.');
+      case FavoriteContentType.my: return Localization().getStringEx('widget.home.groups.my.text.empty.description', 'You have not created any groups yet.');
+      case FavoriteContentType.all: return Localization().getStringEx('widget.home.groups.all.text.empty.description', 'Failed to load groups.');
+    }
+  }
+
+  GroupsFilter? get groupsFilter {
+    switch (this) {
+      case FavoriteContentType.my: return Groups.userGroupsFilter;
+      case FavoriteContentType.all: return Groups.allGroupsFilter;
     }
   }
 }

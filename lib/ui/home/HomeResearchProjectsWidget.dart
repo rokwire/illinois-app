@@ -203,7 +203,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
   Widget get _researchProjectsContentWidget {
 
     Widget? contentWidget;
-    List<Group>? visibleResearchProjects = _visibleResearchProjects(_researchProjects);
+    List<Group>? visibleResearchProjects = _researchProjects;
     int visibleCount = visibleResearchProjects?.length ?? 0;
 
     if (1 < visibleCount) {
@@ -213,7 +213,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
         pages.add(Padding(
           padding: HomeCard.defaultPageMargin,
           child: Semantics(// excludeSemantics: !(_pageController?.page == _researchProjects?.indexOf(researchProject)),
-           child: GroupCard(key: researchProjectKey, group: researchProject, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+           child: GroupCard(researchProject, key: researchProjectKey, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
           )
         ));
       }
@@ -237,7 +237,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
     else if (visibleCount == 1) {
       contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
-         GroupCard(group: visibleResearchProjects!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+         GroupCard(visibleResearchProjects!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
         )
       );
     }
@@ -336,7 +336,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
         _updatingResearchProjects = true;
       });
 
-      List<Group>? researchProjects = await Groups().loadResearchProjects(contentType: widget.contentType);
+      List<Group>? researchProjects = await Groups().loadResearchProjectsListV3(ResearchProjectsFilter(contentType: widget.contentType));
       _sortResearchProjects(researchProjects);
 
       setStateIfMounted(() {
@@ -364,7 +364,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
       });
     }
 
-    List<Group>? researchProjects = await Groups().loadResearchProjects(contentType: widget.contentType);
+    List<Group>? researchProjects = await Groups().loadResearchProjectsListV3(ResearchProjectsFilter(contentType: widget.contentType));
     _sortResearchProjects(researchProjects);
 
     if (mounted && _updatingResearchProjects && (researchProjects != null) && !DeepCollectionEquality().equals(_researchProjects, researchProjects)) {
@@ -397,19 +397,6 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
     }
 
     return researchProjects;
-  }
-
-  List<Group>? _visibleResearchProjects(List<Group>? researchProjects) {
-    List<Group>? visibleResearchProjects;
-    if (researchProjects != null) {
-      visibleResearchProjects = <Group>[];
-      for (Group researchProject in researchProjects) {
-        if ((researchProject.id != null) && researchProject.isVisible) {
-          visibleResearchProjects.add(researchProject);
-        }
-      }
-    }
-    return visibleResearchProjects;
   }
 
   // Event Handlers

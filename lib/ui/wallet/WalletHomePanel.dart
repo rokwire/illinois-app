@@ -16,6 +16,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/BrightnessHighlight.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -145,6 +146,8 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
   late List<WalletContentType> _contentTypes;
   WalletContentType? _selectedContentType;
   bool _contentValuesVisible = false;
+  BrightnessHighlight? _brightnessHighlight;
+  bool _brightnessHighlightOn = false;
   Map<WalletContentType, GlobalKey> _pageKeys = <WalletContentType, GlobalKey>{};
 
   @override
@@ -156,14 +159,19 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
       FlexUI.notifyChanged,
       WalletIlliniCashPage.notifyAddIlliniCash,
     ]);
+    
+    _brightnessHighlight = BrightnessHighlight.fromAppConfig();
 
     _contentTypes = widget.contentTypes ?? WalletHomePanel._buildContentTypes();
-    _selectedContentType = WalletHomePanel._targetContentType(contentType: widget.contentType, contentTypes: _contentTypes);
+    _selectContentType(WalletHomePanel._targetContentType(contentType: widget.contentType, contentTypes: _contentTypes));
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    if (_brightnessHighlightOn) {
+      _brightnessHighlight?.restoreAppBrightness();
+    }
     super.dispose();
   }
 
@@ -306,11 +314,32 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
         _contentTypes = contentTypes;
         _contentValuesVisible = false;
         if (!_contentTypes.contains(_selectedContentType)) {
-          _selectedContentType = _contentTypes.isNotEmpty ? _contentTypes.first : null;
+          _selectContentType(_contentTypes.isNotEmpty ? _contentTypes.first : null);
         }
       });
     }
   }
+
+  void _selectContentType(WalletContentType? contentType, { bool updateStorage = false }) {
+    if (_selectedContentType != contentType) {
+      bool hadHighlightBrighness = (_brightnessHighlight?.isHighlightObjective(_selectedContentType?.brightnessHighlightObjective) == true);
+      _selectedContentType = contentType;
+      if (updateStorage) {
+        Storage()._waletContentType = contentType;
+      }
+      bool hasHighlightBrighness = (_brightnessHighlight?.isHighlightObjective(_selectedContentType?.brightnessHighlightObjective) == true);
+
+      if (hasHighlightBrighness != hadHighlightBrighness) {
+        _brightnessHighlightOn = hasHighlightBrighness;
+        if (_brightnessHighlightOn) {
+          _brightnessHighlight?.setAppBrightness();
+        } else {
+          _brightnessHighlight?.restoreAppBrightness();
+        }
+      }
+    }
+  }
+
 
   void _onTapDropdownItem(WalletContentType contentType) {
     Analytics().logSelect(target: contentType.displayTitleEn, source: widget.runtimeType.toString());
@@ -322,7 +351,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
       }
       else if (_contentTypes.contains(contentType)) {
         setState(() {
-          Storage()._waletContentType = _selectedContentType = contentType;
+          _selectContentType(contentType, updateStorage: true);
           _contentValuesVisible = false;
         });
         Analytics().logPageWidget(_contentPage);
@@ -405,9 +434,11 @@ extension WalletContentTypeImpl on WalletContentType {
       default: return null;
     }
   }
+
+  String get brightnessHighlightObjective => 'wallet.$jsonString';
 }
 
-extension _WalletContentTypeList on List<WalletContentType> {
+extension WalletContentTypeList on List<WalletContentType> {
   void sortAlphabetical() => sort((WalletContentType t1, WalletContentType t2) => t1.displayTitle.compareTo(t2.displayTitle));
 }
 
@@ -419,3 +450,4 @@ extension _StorageWalletExt on Storage {
 mixin class WalletHomePage {
   Color get backgroundColor => Styles().colors.white;
 }
+

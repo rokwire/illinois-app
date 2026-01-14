@@ -387,20 +387,6 @@ class Storage extends rokwire.Storage with NotificationsListener {
     setStringWithName(_groupMemberSelectionTableKey, JsonUtils.encode(selection));
   }
 
-
-  // On Campus
-  String get onCampusRegionIdKey => 'edu.illinois.rokwire.on_campus.region_id';
-  String? get onCampusRegionId => getStringWithName(onCampusRegionIdKey);
-  set onCampusRegionId(String? value) => setStringWithName(onCampusRegionIdKey, value);
-
-  String get onCampusRegionMonitorEnabledKey => 'edu.illinois.rokwire.on_campus.region_monitor.enabled';
-  bool? get onCampusRegionMonitorEnabled => getBoolWithName(onCampusRegionMonitorEnabledKey);
-  set onCampusRegionMonitorEnabled(bool? value) => setBoolWithName(onCampusRegionMonitorEnabledKey, value);
-
-  String get onCampusRegionManualInsideKey => 'edu.illinois.rokwire.on_campus.region_manual.inside';
-  bool? get onCampusRegionManualInside => getBoolWithName(onCampusRegionManualInsideKey);
-  set onCampusRegionManualInside(bool? value) => setBoolWithName(onCampusRegionManualInsideKey, value);
-
   // Home Tout
   String get homeToutImageUrlKey => 'edu.illinois.rokwire.home.tout.image.url';
   String? get homeToutImageUrl => getStringWithName(homeToutImageUrlKey);
@@ -506,16 +492,6 @@ class Storage extends rokwire.Storage with NotificationsListener {
   String get selectedCourseTermIdKey => 'edu.illinois.rokwire.courses.selected.term.id';
   String? get selectedCourseTermId => getStringWithName(selectedCourseTermIdKey);
   set selectedCourseTermId(String? value) => setStringWithName(selectedCourseTermIdKey, value);
-
-  // Explore
-  String get selectedMapExploreTypeKey => 'edu.illinois.rokwire.explore.map.selected.type';
-  String? get selectedMapExploreType => getStringWithName(selectedMapExploreTypeKey);
-  set selectedMapExploreType(String? value) => setStringWithName(selectedMapExploreTypeKey, value);
-
-  // Map2
-  String get selectedMap2ContentTypeKey => 'edu.illinois.rokwire.map2.selected.contnet.type';
-  String? get selectedMap2ContentType => getStringWithName(selectedMap2ContentTypeKey);
-  set selectedMap2ContentType(String? value) => setStringWithName(selectedMap2ContentTypeKey, value);
 
   // Appointments
   String get appointmentsDisplayEnabledKey => 'edu.illinois.rokwire.appointments.display_enabled';

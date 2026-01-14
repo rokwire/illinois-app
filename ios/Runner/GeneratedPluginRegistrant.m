@@ -204,6 +204,12 @@
 @import rokwire_plugin;
 #endif
 
+#if __has_include(<screen_brightness_ios/ScreenBrightnessIosPlugin.h>)
+#import <screen_brightness_ios/ScreenBrightnessIosPlugin.h>
+#else
+@import screen_brightness_ios;
+#endif
+
 #if __has_include(<share_plus/FPPSharePlusPlugin.h>)
 #import <share_plus/FPPSharePlusPlugin.h>
 #else
@@ -294,6 +300,7 @@
   [QuillNativeBridgePlugin registerWithRegistrar:[registry registrarForPlugin:@"QuillNativeBridgePlugin"]];
   [RecordPlugin registerWithRegistrar:[registry registrarForPlugin:@"RecordPlugin"]];
   [RokwirePlugin registerWithRegistrar:[registry registrarForPlugin:@"RokwirePlugin"]];
+  [ScreenBrightnessIosPlugin registerWithRegistrar:[registry registrarForPlugin:@"ScreenBrightnessIosPlugin"]];
   [FPPSharePlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPSharePlusPlugin"]];
   [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];
   [SmsMmsPlugin registerWithRegistrar:[registry registrarForPlugin:@"SmsMmsPlugin"]];

@@ -21,6 +21,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
@@ -50,6 +51,7 @@ class AthleticsNewsArticlePanel extends StatefulWidget {
 class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> with NotificationsListener {
 
   News? _article;
+  Uri? _articleUri;
   bool _loading = false;
 
   @override
@@ -59,6 +61,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
       FlexUI.notifyChanged,
     ]);
     _article = widget.article;
+    _articleUri = (widget.article?.link != null) ? Uri.tryParse(widget.article?.link ?? '') : null;
     if (_article != null) {
       RecentItems().addRecentItem(RecentItem.fromSource(_article));
     }
@@ -95,6 +98,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
     _setLoading(true);
     Sports().loadNewsArticle(widget.articleId).then((article) {
       _article = article;
+      _articleUri = (article?.link != null) ? Uri.tryParse(article?.link ?? '') : null;
       RecentItems().addRecentItem(RecentItem.fromSource(_article));
       _setLoading(false);
     });
@@ -177,15 +181,16 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
                   _buildContentWidgets(context),
                 ),
               ),
-              StringUtils.isNotEmpty(_article?.link) ? Padding(padding: EdgeInsets.only(left: 20, right: 20, bottom: 48), child:
-                RoundedButton(
-                  label: 'Share this article', //TBD localize
-                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                  backgroundColor: Styles().colors.background,
-                  borderColor: Styles().colors.fillColorSecondary,
-                  onTap: _shareArticle,
+              if (_articleUri?.isValid == true)
+                Padding(padding: EdgeInsets.only(left: 20, right: 20, bottom: 48), child:
+                  RoundedButton(
+                    label: Localization().getStringEx('panel.athletics_news_article.button.share.title', 'Share this article'),
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                    backgroundColor: Styles().colors.background,
+                    borderColor: Styles().colors.fillColorSecondary,
+                    onTap: _onShareArticle,
+                  ),
                 ),
-              ) : Container()
             ],)
           ],),
         ),
@@ -194,10 +199,26 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
   ],);
   }
 
-  _shareArticle(){
+  Future<void> _onShareArticle() async {
     Analytics().logSelect(target: "Share Article");
-    if (StringUtils.isNotEmpty(_article?.link)) {
-      Share.share(_article!.link!);
+    String? message;
+    if (_articleUri?.isValid == true) {
+      try {
+        ShareResult result = await SharePlus.instance.share(ShareParams(uri: _articleUri!));
+        if (result.status == ShareResultStatus.unavailable) {
+          message = Localization().getStringEx('panel.athletics_news_article.message.share.unable.text', 'Unable to share article.');
+        }
+      }
+      catch (e) {
+        message = Localization().getStringEx('panel.athletics_news_article.message.share.failed.text', 'Failed to share article.');
+      }
+    }
+    else {
+      message = Localization().getStringEx('panel.athletics_news_article.message.share.unavailable.text', 'Share not available.');
+    }
+
+    if (mounted && (message != null)) {
+      AppAlert.showTextMessage(context, message);
     }
   }
 

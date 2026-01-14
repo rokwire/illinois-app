@@ -68,6 +68,16 @@ class AcademicsHomePanel extends StatefulWidget with AnalyticsInfo {
   @override
   AnalyticsFeature? get analyticsFeature => state?._selectedContentType.analyticsFeature ?? contentType?.analyticsFeature ?? AnalyticsFeature.Academics;
 
+  static void present(BuildContext context, AcademicsContentType content) {
+    if (hasState) {
+      Navigator.of(context).popUntil((route) => (route.settings.name == routeName) || (route.isFirst));
+      NotificationService().notify(notifySelectContent, content);
+    }
+    else {
+      push(context, content);
+    }
+  }
+
   static Future<void> push(BuildContext context, AcademicsContentType content) =>
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(contentType: content), settings: RouteSettings(name: AcademicsHomePanel.routeName)));
 
@@ -176,9 +186,14 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 
   Widget _buildContentValuesContainer() {
-    return Visibility(
-        visible: _contentValuesVisible,
-        child: Positioned.fill(child: Stack(children: <Widget>[_buildContentDismissLayer(), _dropdownList])));
+    return Visibility(visible: _contentValuesVisible, child:
+      Positioned.fill(child:
+        Stack(children: <Widget>[
+          _buildContentDismissLayer(),
+          _dropdownList
+        ])
+      )
+    );
   }
 
   Widget _buildContentDismissLayer() {
@@ -219,9 +234,9 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         Styles().images.getImage('external-link', excludeFromSemantics: true) ?? Container()
       ]);
     }
-    //else if (contentType == _selectedContentType) {
-    //  return Styles().images.getImage('check-accent', excludeFromSemantics: true);
-    //}
+    else if (contentType == _selectedContentType) {
+      return Styles().images.getImage('check-accent', excludeFromSemantics: true);
+    }
     else {
       return null;
     }
@@ -253,8 +268,10 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContentType.gies_canvas_courses;
     } else if (contentTypes?.contains(AcademicsContentType.student_courses) == true) {
       return AcademicsContentType.student_courses;
-    } else {
+    } else if (contentTypes?.contains(AcademicsContentType.events) == true) {
       return AcademicsContentType.events;
+    } else {
+      return AcademicsContentType.appointments;
     }
   }
 

@@ -173,4 +173,6 @@ extension StudentCourseSectionExt on StudentCourseSection {
     return result;
   }
 
+  bool get isInPerson => (buildingId?.isNotEmpty == true) || (building?.hasValidLocation == true);
+
 }

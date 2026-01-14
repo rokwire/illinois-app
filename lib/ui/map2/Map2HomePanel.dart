@@ -35,6 +35,7 @@ import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
 import 'package:illinois/ui/map2/Map2BasePanel.dart';
@@ -61,7 +62,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 import '../widgets/HeaderBar.dart';
 
@@ -122,6 +122,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   final GlobalKey _scaffoldKey = GlobalKey();
   final GlobalKey _contentHeadingBarKey = GlobalKey();
   final GlobalKey _contentTypesBarKey = GlobalKey();
+  final GlobalKey _contentTitleKey = GlobalKey();
   final GlobalKey _traySheetKey = GlobalKey();
   final GlobalKey _traySheetHeaderKey = GlobalKey();
   final GlobalKey _sortButtonKey = GlobalKey();
@@ -132,6 +133,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   final GlobalKey _searchButtonKey = GlobalKey();
   final GlobalKey _paymentTypesButtonKey = GlobalKey();
   final GlobalKey _openNowButtonKey = GlobalKey();
+  final Map<Map2ContentType, GlobalKey> contentTypeKeys = {};
 
 
   final ScrollController _contentTypesScrollController = ScrollController();
@@ -178,7 +180,8 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       Map2ExplorePOICard.notifyPOIUpdated,
       Map2.notifySelect,
       FlexUI.notifyChanged,
-      uiuc.TabBar.notifySelectionChanged,
+      RootPanel.notifyTabAppear,
+      RootPanel.notifyTabDisappear,
     ]);
 
     _availableContentTypes = Map2ContentTypeImpl.availableTypes;
@@ -190,9 +193,9 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     _initSelectNotificationFilters(widget._initialSelectParam);
     _initMapStyles();
     _initExplores();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _accessibilityFocusHeading();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        _accessibilityFocusHeading());
+
     super.initState();
   }
 
@@ -251,10 +254,15 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       _updateAvailableContentTypes();
       updateLocationServicesStatus();
     }
-    else if (name == uiuc.TabBar.notifySelectionChanged){
-      int index = JsonUtils.intValue(param) ?? 0;
-      if(index == 1)  //Index to code ? or pass directly code
+    else if (name == RootPanel.notifyTabAppear){
+      if ((JsonUtils.cast<RootTab>(param) == RootTab.Map) && mounted) {
         _accessibilityFocusHeading();
+      }
+    }
+    else if (name == RootPanel.notifyTabDisappear){
+      if ((JsonUtils.cast<RootTab>(param) == RootTab.Map) && mounted) {
+        _clearContent();
+      }
     }
   }
 
@@ -546,7 +554,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       if (_availableContentTypes.contains(contentType)) {
         entries.add(Padding(
           padding: EdgeInsets.only(left: entries.isNotEmpty ? 8 : 0),
-          child: Map2ContentTypeButton(contentType.displayTitle,
+          child: Map2ContentTypeButton(key: contentTypeKeys[contentType] ??= GlobalKey(), contentType.displayTitle,
             onTap: () => _onTapContentTypeEntry(contentType),
           )
         ));
@@ -577,7 +585,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   void _onContentTypeEntry(Map2ContentType contentType) {
     setState(() {
-      Storage().storedMap2ContentType = _selectedContentType = contentType;
+      _selectedContentType = contentType;
     });
     _initExplores();
   }
@@ -626,18 +634,20 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   // Content Filters
 
   Widget get _contentHeadingBar =>
-    Container(key: _contentHeadingBarKey, decoration: _contentHeadingDecoration, child:
-      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: _searchOn ? <Widget>[
-        _contentFilterSearchBar,
-      ] : <Widget>[
-        _contentTitleBar,
-        if ((_exploresProgress == null) || (_exploresProgress == ExploreProgressType.update))
-          ...[_contentFilterButtonsBar ?? Container(),
-            ...(_contentFilterButtonsExtraBars ?? [])
-          ],
-        if (_exploresProgress == null)
-          _contentFilterDescriptionBar ?? Container(),
-      ],),
+    Semantics(key: _contentHeadingBarKey, child:
+      Container(decoration: _contentHeadingDecoration, child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: _searchOn ? <Widget>[
+          _contentFilterSearchBar,
+        ] : <Widget>[
+          _contentTitleBar,
+          if ((_exploresProgress == null) || (_exploresProgress == ExploreProgressType.update))
+            ...[_contentFilterButtonsBar ?? Container(),
+              ...(_contentFilterButtonsExtraBars ?? [])
+            ],
+          if (_exploresProgress == null)
+            _contentFilterDescriptionBar ?? Container(),
+        ],),
+      )
     );
 
   BoxDecoration get _contentHeadingDecoration =>
@@ -648,7 +658,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     );
 
   Widget get _contentTitleBar =>
-    Semantics(header: true, container: true, child:
+    Semantics(key: _contentTitleKey, header: true, container: true, focused: true, child:
       Row(children: [
         Expanded(child:
           Padding(padding: EdgeInsets.only(left: 16, top: 8, bottom: 8), child:
@@ -668,31 +678,35 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   void _onTapClearContentType() {
     Analytics().logSelect(target: 'Content: Clear');
-    setState(() {
-      Storage().storedMap2ContentType = _selectedContentType = null;
-      _explores = _filteredExplores = null;
-      _selectedExploreGroup = null;
-      _trayExplores = null;
-      _exploresTask = null;
-      _exploresProgress = null;
-
-      _storiedSitesTags = null;
-      _expandedStoriedSitesTag = null;
-
-      markers = null;
-      exploreMapGroups = null;
-      targetCameraUpdate = null;
-      buildMarkersTask = null;
-      lastMapZoom = null;
-      markersProgress = false;
-
-      _pinnedExplore = null;
-      _pinnedMarker = null;
-    });
+    GlobalKey? _lastSelectedContentKey = contentTypeKeys[_selectedContentType];
+    _clearContent();
     WidgetsBinding.instance.addPostFrameCallback((_){
       _updateContentTypesScrollPosition();
+      AppSemantics.triggerAccessibilityFocus(_lastSelectedContentKey);
     });
   }
+
+  void _clearContent() => setState((){
+    _selectedContentType = null;
+    _explores = _filteredExplores = null;
+    _selectedExploreGroup = null;
+    _trayExplores = null;
+    _exploresTask = null;
+    _exploresProgress = null;
+
+    _storiedSitesTags = null;
+    _expandedStoriedSitesTag = null;
+
+    markers = null;
+    exploreMapGroups = null;
+    targetCameraUpdate = null;
+    buildMarkersTask = null;
+    lastMapZoom = null;
+    markersProgress = false;
+
+    _pinnedExplore = null;
+    _pinnedMarker = null;
+  });
 
   // My Locactions Content && Selection
 
@@ -850,7 +864,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
               _exploresProgress = null;
               mapKey = UniqueKey(); // force map rebuild
 
-              if ((exploreContentType?.supportsManualFilters == true) && (validExplores?.isNotEmpty != true)) {
+              if ((validExplores?.isNotEmpty != true) && (exploreContentType?.supportsManualFilters == true) && (exploreContentType?.supportsEditing != true)) {
                 _selectedContentType = null; // Unselect content type if there is nothing to show.
               }
             });
@@ -1186,7 +1200,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
                 onTap: _onTapShareFilter
               )
             )),
-            IndexedSemantics(index: 1, child: Semantics( container: true, child:
+            IndexedSemantics(index: 3, child: Semantics( container: true, child:
               Map2PlainImageButton(imageKey: 'close',
                   label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
                   hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hint', 'Tap to clear current filters'),
@@ -1418,7 +1432,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     return buttons;
   }
 
-  List<Widget> get _myLocationsFilterButtons => <Widget>[
+  List<Widget> get _myLocationsFilterButtons => (_explores?.isNotEmpty == true) ? <Widget>[
     Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
@@ -1426,7 +1440,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
       Padding(padding: _filterButtonsLastPadding, child:
         _sortFilterButton,
       ),
-  ];
+  ] : <Widget>[];
 
   // Search Filter Button
 
@@ -1510,19 +1524,19 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   void _onAmenities() {
     Analytics().logSelect(target: 'Amenities');
     List<Building>? buildings = JsonUtils.listCastValue<Building>(_explores);
-    Map<String, Set<String>> amenitiesNameToIds = buildings?.amenitiesNameToIds ?? <String, Set<String>>{};
-    Navigator.push<LinkedHashMap<String, Set<String>>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
-      amenitiesNameToIds: amenitiesNameToIds,
-      selectedAmenitiesNameToIds: _campusBuildingsFilterIfExists?.amenitiesNameToIds ?? LinkedHashMap<String, Set<String>>(),
+    Map<String, BuildingFeature> amenitiesMap = buildings?.amenitiesMap ?? <String, BuildingFeature>{};
+    Navigator.push<Set<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
+      amenitiesMap: amenitiesMap,
+      selectedKeys: SetUtils.from(_campusBuildingsFilterIfExists?.amenitiesMap.keys) ?? <String>{},
     ),
-    )).then(((LinkedHashMap<String, Set<String>>? amenitiesNameToIds) {
-      if (amenitiesNameToIds != null) {
+    )).then(((Set<String>? selectedKeys) {
+      if (selectedKeys != null) {
         setStateIfMounted(() {
-          _campusBuildingsFilter?.amenitiesNameToIds = amenitiesNameToIds;
+          _campusBuildingsFilter?.amenitiesMap = Map<String, BuildingFeature>.fromEntries(amenitiesMap.entries.where((MapEntry<String, BuildingFeature> entry) => selectedKeys.contains(entry.key)));
         });
         _onFiltersChanged();
         Future.delayed(Duration(milliseconds: 200 + (Platform.isIOS ? 1000 : 0)), () =>
-            AppSemantics.triggerAccessibilityFocus(_amenitiesButtonKey));
+          AppSemantics.triggerAccessibilityFocus(_amenitiesButtonKey));
       }
     }));
   }
@@ -1883,9 +1897,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         _selectedSortOrder = value.right ?? _expectedSortOrder(value.left);
       });
       _onSortChanged();
-      Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
-        AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
-      );
+      AppSemantics.triggerAccessibilityFocus(_sortButtonKey, delay: Duration(seconds: 1));
     }
   }
 
@@ -2117,11 +2129,9 @@ extension _Map2Accessibility on _Map2HomePanelState{
 
   String get _filterButtonHint =>  ". Results in filtering  ${_displayCount ?? 0} from ${_totalCount ?? 0} Buildings";
 
-  String get _amenitiesSemanticsValue => _campusBuildingsFilterIfExists?.amenitiesNameToIds.keys.toString() ?? '';
+  String get _amenitiesSemanticsValue => _campusBuildingsFilterIfExists?.amenitiesMap.keys.toString() ?? '';
 
   void _accessibilityFocusHeading() {
-    AppSemantics.triggerAccessibilityFocus(_rootHeaderBarTitleKey); //When already on this tab
-    WidgetsBinding.instance.addPostFrameCallback((_) => //When coming from other tab
-      AppSemantics.triggerAccessibilityFocus(_rootHeaderBarTitleKey));
+    AppSemantics.triggerAccessibilityFocus(_rootHeaderBarTitleKey, delay: Duration(milliseconds: 500)); //When already on this tab
   }
 }

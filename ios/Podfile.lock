@@ -7,6 +7,9 @@ PODS:
     - Flutter
   - connectivity_plus (0.0.1):
     - Flutter
+  - CwlCatchException (2.2.1):
+    - CwlCatchExceptionSupport (~> 2.2.1)
+  - CwlCatchExceptionSupport (2.2.1)
   - device_calendar (0.0.1):
     - Flutter
   - device_info_plus (0.0.1):
@@ -197,7 +200,9 @@ PODS:
     - Flutter
   - record_darwin (1.0.0):
     - Flutter
-  - rokwire_plugin (1.12.1):
+  - rokwire_plugin (1.12.2):
+    - Flutter
+  - screen_brightness_ios (0.1.0):
     - Flutter
   - SDWebImage (5.21.0):
     - SDWebImage/Core (= 5.21.0)
@@ -209,15 +214,14 @@ PODS:
     - FlutterMacOS
   - sms_mms (0.0.1):
     - Flutter
-  - speech_to_text (0.0.1):
+  - speech_to_text (7.2.0):
+    - CwlCatchException
     - Flutter
     - FlutterMacOS
-    - Try
   - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
   - SwiftyGif (5.4.5)
-  - Try (2.1.1)
   - url_launcher_ios (0.0.1):
     - Flutter
   - video_player_avfoundation (0.0.1):
@@ -267,6 +271,7 @@ DEPENDENCIES:
   - quill_native_bridge_ios (from `.symlinks/plugins/quill_native_bridge_ios/ios`)
   - record_darwin (from `.symlinks/plugins/record_darwin/ios`)
   - rokwire_plugin (from `.symlinks/plugins/rokwire_plugin/ios`)
+  - screen_brightness_ios (from `.symlinks/plugins/screen_brightness_ios/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sms_mms (from `.symlinks/plugins/sms_mms/ios`)
@@ -280,6 +285,8 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - CwlCatchException
+    - CwlCatchExceptionSupport
     - DKImagePickerController
     - DKPhotoGallery
     - Firebase
@@ -300,7 +307,6 @@ SPEC REPOS:
     - PromisesSwift
     - SDWebImage
     - SwiftyGif
-    - Try
     - ZXingObjC
 
 EXTERNAL SOURCES:
@@ -372,6 +378,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/record_darwin/ios"
   rokwire_plugin:
     :path: ".symlinks/plugins/rokwire_plugin/ios"
+  screen_brightness_ios:
+    :path: ".symlinks/plugins/screen_brightness_ios/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
@@ -396,6 +404,8 @@ SPEC CHECKSUMS:
   app_settings: 5127ae0678de1dcc19f2293271c51d37c89428b2
   audio_session: 9bb7f6c970f21241b19f5a3658097ae459681ba0
   connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
+  CwlCatchException: 7acc161b299a6de7f0a46a6ed741eae2c8b4d75a
+  CwlCatchExceptionSupport: 54ccab8d8c78907b57f99717fb19d4cc3bce02dc
   device_calendar: b55b2c5406cfba45c95a59f9059156daee1f74ed
   device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
@@ -443,15 +453,15 @@ SPEC CHECKSUMS:
   quick_actions_ios: 4b07fb49d8d8f3518d7565fbb7a91014067a7d82
   quill_native_bridge_ios: f47af4b14e7757968486641656c5d23250cee521
   record_darwin: fb1f375f1d9603714f55b8708a903bbb91ffdb0a
-  rokwire_plugin: 46cdb69ac19c9ebc7cd059ef8b8f725049b4ac46
+  rokwire_plugin: efe84ce1f5e1b7c80f7809cf443917cfe1342775
+  screen_brightness_ios: 9953fd7da5bd480f1a93990daeec2eb42d4f3b52
   SDWebImage: f84b0feeb08d2d11e6a9b843cb06d75ebf5b8868
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
   shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
   sms_mms: b4f3aca9cc8105b1c5ad66afc982df8625223294
-  speech_to_text: 9dc43a5df3cbc2813f8c7cc9bd0fbf94268ed7ac
+  speech_to_text: 3b313d98516d3d0406cea424782ec25470c59d19
   sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
-  Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
   video_player_avfoundation: 2cef49524dd1f16c5300b9cd6efd9611ce03639b
   wakelock_plus: 04623e3f525556020ebd4034310f20fe7fda8b49

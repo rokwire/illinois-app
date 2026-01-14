@@ -685,13 +685,12 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 enum GroupCardDisplayType { myGroup, allGroups, homeGroups }
 
 class GroupCard extends StatefulWidget with AnalyticsInfo {
-  final Group? group;
+  final Group group;
   final GroupCardDisplayType displayType;
-  final EdgeInsets margin;
+  final EdgeInsetsGeometry margin;
   final Function? onImageTap;
 
-  GroupCard({super.key,
-    required this.group,
+  GroupCard(this.group, { super.key,
     this.displayType = GroupCardDisplayType.allGroups,
     this.margin = const EdgeInsets.symmetric(horizontal: 16),
     this.onImageTap,
@@ -700,9 +699,9 @@ class GroupCard extends StatefulWidget with AnalyticsInfo {
   @override
   AnalyticsFeature? get analyticsFeature {
     switch (displayType) {
-      case GroupCardDisplayType.myGroup:    return (group?.isResearchProject != true) ? AnalyticsFeature.GroupsMy : AnalyticsFeature.ResearchProjectMy;
-      case GroupCardDisplayType.allGroups:  return (group?.isResearchProject != true) ? AnalyticsFeature.GroupsAll : AnalyticsFeature.ResearchProjectOpen;
-      case GroupCardDisplayType.homeGroups: return (group?.isResearchProject != true) ? AnalyticsFeature.Groups : AnalyticsFeature.ResearchProject;
+      case GroupCardDisplayType.myGroup:    return (group.isResearchProject != true) ? AnalyticsFeature.GroupsMy : AnalyticsFeature.ResearchProjectMy;
+      case GroupCardDisplayType.allGroups:  return (group.isResearchProject != true) ? AnalyticsFeature.GroupsAll : AnalyticsFeature.ResearchProjectOpen;
+      case GroupCardDisplayType.homeGroups: return (group.isResearchProject != true) ? AnalyticsFeature.Groups : AnalyticsFeature.ResearchProject;
     }
   }
 
@@ -733,7 +732,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == Groups.notifyGroupStatsUpdated) && (widget.group?.id == param)) {
+    if ((name == Groups.notifyGroupStatsUpdated) && (widget.group.id == param)) {
       _updateGroupStats();
     }
   }
@@ -791,19 +790,19 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     
     List<Widget> wrapContent = <Widget>[];
 
-    if (widget.group?.privacy == GroupPrivacy.private) {
+    if (widget.group.privacy == GroupPrivacy.private) {
       wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.private', 'Private')));
     }
 
-    if (widget.group?.authManEnabled ?? false) {
+    if (widget.group.authManEnabled ?? false) {
       wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.authman', 'Managed')));
     }
 
-    if (widget.group?.hiddenForSearch ?? false) {
+    if (widget.group.hiddenForSearch ?? false) {
       wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.hidden', 'Hidden')));
     }
 
-    List<String>? attributesList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, researchProject: widget.group?.researchProject, usage: ContentAttributeUsage.label);
+    List<String>? attributesList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group.attributes, researchProject: widget.group.researchProject, usage: ContentAttributeUsage.label);
     if ((attributesList != null) && attributesList.isNotEmpty) {
       for (String attribute in attributesList) {
         wrapContent.add(_buildHeadingWrapLabel(attribute));
@@ -811,17 +810,17 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     }
 
     // Finally, insert 'Public' if needed
-    if ((widget.group?.privacy == GroupPrivacy.public) && wrapContent.isNotEmpty) {
+    if ((widget.group.privacy == GroupPrivacy.public) && wrapContent.isNotEmpty) {
       wrapContent.insert(0, _buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.public', 'Public')));
     }
 
     List<Widget> rowContent = <Widget>[];
 
-    String? userStatus = widget.group?.currentUserStatusText;
+    String? userStatus = widget.group.currentUserStatusText;
     if (StringUtils.isNotEmpty(userStatus)) {
       rowContent.add(Padding(padding: EdgeInsets.only(right: wrapContent.isNotEmpty ? 8 : 0), child:
         _buildHeadingLabel(userStatus!.toUpperCase(),
-          color: widget.group?.currentUserStatusColor,
+          color: widget.group.currentUserStatusColor,
           semanticsLabel: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [userStatus.toLowerCase()])
         )      
       ));
@@ -838,13 +837,13 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
 
   /*Widget _buildPrivacyStatysBadge(){
     String privacyStatus = '';
-    if (widget.group?.authManEnabled ?? false) {
+    if (widget.group.authManEnabled ?? false) {
       privacyStatus += ' ' + Localization().getStringEx('widget.group_card.status.authman', 'Managed');
     }
-    if (widget.group?.hiddenForSearch ?? false) {
+    if (widget.group.hiddenForSearch ?? false) {
       privacyStatus += ' ' + Localization().getStringEx('widget.group_card.status.hidden', 'Hidden');
     }
-    if (widget.group?.privacy == GroupPrivacy.private) {
+    if (widget.group.privacy == GroupPrivacy.private) {
       privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private') + privacyStatus;
     } else if (StringUtils.isNotEmpty(privacyStatus)) {
       privacyStatus = Localization().getStringEx('widget.group_card.status.public', 'Public') + privacyStatus;
@@ -873,7 +872,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     return Row(children: [
       Expanded(child:
         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups ? 2 : 10, style: _titleTextStyle)
+          Text(widget.group.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups ? 2 : 10, style: _titleTextStyle)
         )
       )
     ]);
@@ -887,7 +886,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   }
 
   Widget _buildCategories() {
-    List<String>? displayList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group?.attributes, researchProject: widget.group?.researchProject, usage: ContentAttributeUsage.category);
+    List<String>? displayList = Groups().displaySelectedContentAttributeLabelsFromSelection(widget.group.attributes, researchProject: widget.group.researchProject, usage: ContentAttributeUsage.category);
     return (displayList?.isNotEmpty ?? false) ? Row(children: [
       Expanded(child:
         Text(displayList?.join(', ') ?? '',
@@ -901,11 +900,11 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
 
   Widget _buildProperties() {
     List<Widget> propertiesList = <Widget>[];
-    Map<String, dynamic>? groupAttributes = widget.group?.attributes;
-    List<ContentAttribute>? attributes = Groups().contentAttributes(researchProject: widget.group?.researchProject)?.attributes;
+    Map<String, dynamic>? groupAttributes = widget.group.attributes;
+    List<ContentAttribute>? attributes = Groups().contentAttributes(researchProject: widget.group.researchProject)?.attributes;
     if ((groupAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        if ((attribute.usage == ContentAttributeUsage.property) && Groups().isContentAttributeEnabled(attribute, researchProject: widget.group?.researchProject)) {
+        if ((attribute.usage == ContentAttributeUsage.property) && Groups().isContentAttributeEnabled(attribute, researchProject: widget.group.researchProject)) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             propertiesList.add(_buildProperty(/*"${attribute.displayTitle}: "*/ "", displayAttributeValues.join(', ')));
@@ -914,7 +913,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       }
     }
 
-    int pendigCount = (widget.group?.currentUserIsAdmin == true) ? (_groupStats?.pendingCount ?? 0) : 0;
+    int pendigCount = (widget.group.currentUserIsAdmin == true) ? (_groupStats?.pendingCount ?? 0) : 0;
     if (pendigCount > 0) {
       String pendingTitle = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), ['']);
       propertiesList.add(_buildProperty(pendingTitle, pendigCount.toString()));
@@ -939,27 +938,27 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     ],);
   }
 
-  Widget _buildImage() => StringUtils.isEmpty(widget.group?.imageURL) ?
+  Widget _buildImage() => StringUtils.isEmpty(widget.group.imageURL) ?
       Container() :
       _imageWidget;
 
   Widget get _imageWidget => widget.onImageTap != null ?
       GestureDetector(
         onTap: ()  => widget.onImageTap?.call(), child:
-          AccessibleImageHolder(imageUrl: widget.group?.imageURL, child:
+          AccessibleImageHolder(imageUrl: widget.group.imageURL, child:
           _rawImageWidget)) :
       AccessibleImageHolder(child:
-        ModalImageHolder(imageUrl: widget.group?.imageURL, child:
+        ModalImageHolder(imageUrl: widget.group.imageURL, child:
           _rawImageWidget));
 
-  Widget get _rawImageWidget => widget.group?.imageURL != null ?
+  Widget get _rawImageWidget => widget.group.imageURL != null ?
       Container(
           padding: EdgeInsets.only(left: 8),
           child: Container(
             constraints: BoxConstraints(maxWidth: _maxImageWidth),
             // width: _smallImageSize,
             height: _smallImageSize,
-            child: Image.network(widget.group?.imageURL ?? "", excludeFromSemantics: true, fit: BoxFit.fill,),),) :
+            child: Image.network(widget.group.imageURL ?? "", excludeFromSemantics: true, fit: BoxFit.fill,),),) :
             Container();
 
 
@@ -973,7 +972,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     ));
   }
 
-  bool get _isResearchProject => widget.group?.researchProject == true;
+  bool get _isResearchProject => widget.group.researchProject == true;
 
   Widget _buildMembersCount() {
     String membersLabel;
@@ -989,7 +988,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
         membersLabel = sprintf("%s members", [count]);
       }
     }
-    else if (widget.group?.currentUserIsAdmin ?? false) {
+    else if (widget.group.currentUserIsAdmin) {
       if (count == 0) {
         membersLabel = "No participants";
       }
@@ -1016,7 +1015,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   }
 
    void _loadGroupStats() {
-    Groups().loadGroupStats(widget.group?.id).then((stats) {
+    Groups().loadGroupStats(widget.group.id).then((stats) {
       if (mounted) {
         setState(() {
           _groupStats = stats;
@@ -1026,7 +1025,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   }
 
   void _updateGroupStats() {
-    GroupStats? cachedGroupStats = Groups().cachedGroupStats(widget.group?.id);
+    GroupStats? cachedGroupStats = Groups().cachedGroupStats(widget.group.id);
     if ((cachedGroupStats != null) && (_groupStats != cachedGroupStats) && mounted) {
       setState(() {
         _groupStats = cachedGroupStats;
@@ -1035,7 +1034,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   }
 
   void _onTapCard(BuildContext context) {
-    Analytics().logSelect(target: "Group: ${widget.group?.title}");
+    Analytics().logSelect(target: "Group: ${widget.group.title}");
     if (!Auth2().privacyMatch(4)) {
       AppAlert.showCustomDialog(context: context, contentWidget: _buildPrivacyAlertWidget(), actions: [
         TextButton(child: Text(Localization().getStringEx('dialog.ok.title', 'OK')), onPressed: _onDismissPopup)
@@ -1088,7 +1087,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   }
 
   String get _timeUpdatedText {
-    return widget.group?.displayUpdateTime ?? '';
+    return widget.group.displayUpdateTime ?? '';
   }
 }
 
@@ -2984,18 +2983,20 @@ class _GroupMemberProfileInfoState extends State<GroupMemberProfileInfoWidget> {
             SizedBox(width: 34, height: 34,
               child: _buildProfileImage),
             Container(width: 8),
-            Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-                  Text(widget.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")),
-                  Container(width: 8),
-                  Visibility(visible: widget.isAdmin == true,
-                    child: Text("ADMIN", style: Styles().textStyles.getTextStyle("widget.label.tiny.fat"),),
-                  )
-                ]),
-                Visibility(visible: StringUtils.isNotEmpty(widget.additionalInfo),
-                child: Text(widget.additionalInfo?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny")))
-            ],)
+            Expanded(child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Wrap(children: [
+                    Text(widget.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")),
+                    Container(width: 8),
+                    Visibility(visible: widget.isAdmin == true,
+                      child: Text("ADMIN", style: Styles().textStyles.getTextStyle("widget.label.tiny.fat"),),
+                    )
+                  ]),
+                  Visibility(visible: StringUtils.isNotEmpty(widget.additionalInfo),
+                  child: Text(widget.additionalInfo?? "", style: Styles().textStyles.getTextStyle("widget.title.tiny")))
+              ],)
+            )
           ]),
       );
 

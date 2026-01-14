@@ -45,7 +45,7 @@ class WellnessBuilding with Explore, AnalyticsInfo {
   //  JsonUtils.stringValue(Guide().entryValue(guideEntry, 'image'));
 
   String? get id => Guide().entryId(guideEntry);
-  String? get title => _guideMapTitle ?? building.name;
+  String? get title => _guideMapTitle ?? building.displayName;
   String? get detail => _guideMapDescription ?? building.address1;
   String? get imageUrl => /* _guideMapImageUrl ?? */ building.imageURL;
 

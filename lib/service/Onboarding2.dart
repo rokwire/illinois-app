@@ -21,6 +21,8 @@ import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPa
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2VideoTutorialPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2AuthNotificationsPanel.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -29,6 +31,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class Onboarding2 with Service, NotificationsListener {
 
   static const String notifyFinished  = "edu.illinois.rokwire.onboarding.finished";
+
+  static const Auth2AccountScope returningUserLoginScope = const Auth2AccountScope(
+    prefs: { Auth2UserPrefsScope.roles }
+  );
 
   // Singleton Factory
   Onboarding2._internal();
@@ -117,6 +123,7 @@ class Onboarding2 with Service, NotificationsListener {
   }
 
   // Privacy Selection
+
   bool get showTutorial => Storage().onBoarding2ShowTutorial == true;
   set showTutorial(bool value) => Storage().onBoarding2ShowTutorial = value;
 
@@ -132,7 +139,10 @@ class Onboarding2 with Service, NotificationsListener {
   bool get  privacyShareActivitySelection => Storage().onBoarding2PrivacyShareActivitySelection == true;
   set privacyShareActivitySelection(bool value) => Storage().onBoarding2PrivacyShareActivitySelection = value;
 
+  Auth2AccountScope get loginScope => privacyReturningUser ? returningUserLoginScope : Auth2.defaultLoginScope;
+
   // Video Tutorials
+
   Map<String, dynamic>? _videoTutorials;
   Map<String, dynamic>? get videoTutorials => _videoTutorials;
 
