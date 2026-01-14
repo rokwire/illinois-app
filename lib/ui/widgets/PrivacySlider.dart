@@ -1,8 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 
 class PrivacyLevelSlider extends StatefulWidget {
   final double? initialValue;
@@ -81,7 +83,7 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                             //           max(roundedValue - 1,  privacyLevelMinValue).toString(),
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2), //Fix cut off circle
-                                  child: Semantics(label: Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.slider.hint", "Privacy Level"), value: '$roundedValue',
+                                  child: WebFocusableSemanticsWidget(onSelect: _increaseSemanticsSliderValue, child: Semantics(label: Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.slider.hint", "Privacy Level"), value: '$roundedValue',
                                     enabled: (widget.readOnly == false),
                                           increasedValue: widget.readOnly || (roundedValue >= privacyLevelMaxValue) ? null :
                                             Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.slider.increase", "increased to") +
@@ -111,7 +113,7 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                                           }
                                         },
                                       ))))
-                                    )
+                                    ))
                   ]),
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 18, vertical: 11),
@@ -178,6 +180,34 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
               Container(height: 5,)
             ]
         ));
+  }
+
+  void _increaseSemanticsSliderValue() {
+    if (mounted && !widget.readOnly) {
+      double oldValue = _discreteValue ?? 1.0;
+      setState(() {
+        if (_discreteValue == 5.0) {
+          _discreteValue = 1;
+        } else {
+          _discreteValue = (_discreteValue ?? 0.0) + 1.0;
+        }
+        if (widget.onValueChanged != null) {
+          widget.onValueChanged!(_discreteValue);
+        }
+        _announceValue(oldValue: oldValue, newValue: _discreteValue!);
+      });
+    }
+  }
+
+  void _announceValue({required double oldValue, required double newValue}) {
+    String newValueString = newValue.toString();
+    String announcement = (oldValue < newValue) ?
+      Localization().getStringEx('panel.settings.privacy.privacy.button.set_privacy.slider.increase', 'increased to') + newValueString :
+      Localization().getStringEx('panel.settings.privacy.privacy.button.set_privacy.slider.decrease', 'decreased to') + newValueString;
+    SemanticsService.announce(
+      '${Localization().getStringEx('panel.settings.privacy.privacy.button.set_privacy.slider.hint', 'Privacy Level')} $announcement',
+      TextDirection.ltr,
+    );
   }
 
   int? get _currentLevel{
