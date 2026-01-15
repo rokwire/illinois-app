@@ -2337,7 +2337,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   void _initAdminGroups() {
     _selectedAdminGroupIds = widget.event?.authorizationContext?.externalAdmins?.groupIds;
     _loadingAdminGroups = true;
-    Groups().loadAdminUserGroupsV3().then((List<Group>? groups) {
+    Groups().loadAdministrativeUserGroupsV3().then((List<Group>? groups) {
       setStateIfMounted(() {
         _loadingAdminGroups = false;
         _adminGroups = groups;
