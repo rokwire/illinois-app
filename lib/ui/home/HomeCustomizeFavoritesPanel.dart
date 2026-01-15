@@ -206,11 +206,12 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
     return HomeDropTargetWidget(favoriteId: favoriteId, dragAndDropHost: this, dropAnchorAlignment: dropAnchorAlignment, childBuilder: (BuildContext context, { bool? dropTarget, CrossAxisAlignment? dropAnchorAlignment }) {
       return Column(children: [
           Container(height: 2, color: ((dropTarget == true) && (dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors.fillColorSecondary : Colors.transparent,),
-          Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-              Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.medium_large.extra_fat")),
+          Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Flexible(child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.medium_large.extra_fat")),
+              )
             ),
-            Expanded(child: Container()),
             Visibility(visible: (onTapLinkButton != null), child: InkWell(onTap: onTapLinkButton, child: 
               Padding(padding: EdgeInsets.only(left: 5, top: 5, bottom: 5, right: 16), child:
                 Text(StringUtils.ensureNotEmpty(linkButtonTitle), style: Styles().textStyles.getTextStyle("widget.home.link_button.regular.accent.underline")))
