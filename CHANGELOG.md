@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Group Poll issues [#5519](https://github.com/rokwire/illinois-app/issues/5514).
+- Fixed groups loading in Event2SetupGroupsPanel [#5666](https://github.com/rokwire/illinois-app/issues/5666).
+### Changed
 - Updated button text in Image Edit Panel, load button texts from app resources [#5665](https://github.com/rokwire/illinois-app/issues/5665).
 
 ## [7.3.45] - 2026-01-14
