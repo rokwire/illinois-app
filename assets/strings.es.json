@@ -3843,6 +3843,11 @@
     "panel.image_edit.alt_text.description": "Add a one to two sentence description of the image. Do not include \"Image of . . .\"",
     "panel.image_edit.alt_text.title": "Alt Text",
     "panel.image_edit.alt_text.hint":"required",
+    "panel.image_edit.button.edit.title":"Edit Image",
+    "panel.image_edit.button.replace.title":"Replace Image",
+    "panel.image_edit.button.upload.title":"Choose Image",
+    "panel.image_edit.button.gallery.title":"Gallery",
+    "panel.image_edit.button.camera.title":"Gallery",
 
     "panel.wordle.header.title": "ILLordle",
     "panel.wordle.heading.info.text": "Presented by The Daily Illini",
