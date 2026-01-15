@@ -361,7 +361,7 @@ class StudentCourseDetailPanel extends StatefulWidget with AnalyticsInfo {
   _StudentCourseDetailPanelState createState() => _StudentCourseDetailPanelState();
 }
 class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
-  bool _roomExpanded = false;
+  bool _floorsPlansExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -400,11 +400,11 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
                   if (widget.course?.section?.displaySchedule.isNotEmpty == true)
                     _buildScheduleDetail(),
 
-                  if (widget.course?.section?.building?.fullAddress?.isNotEmpty == true)
+                  if ((widget.course?.section?.isInPerson == true) && (widget.course?.section?.building?.fullAddress?.isNotEmpty == true))
                     _buildLocation(),
 
-                  if ((widget.course?.section?.room?.isNotEmpty == true) || (widget.course?.section?.building?.floors?.isNotEmpty == true))
-                    _buildRoom(),
+                  if ((widget.course?.section?.isInPerson == true) && (widget.course?.section?.building?.floors?.isNotEmpty == true))
+                    _buildFloorPlans(),
 
                   Container(height: 32),
                   
@@ -455,20 +455,21 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
     );
 
 
-  Widget _buildRoom() {
-    String room = widget.course?.section?.room ?? 'Room';
+  Widget _buildFloorPlans() {
+    String? room = widget.course?.section?.room;
+    String displayRoom = ((room != null) && room.isNotEmpty) ? room : Localization().getStringEx('panel.student_courses.room.title', 'Room');
     List<String> floors = widget.course?.section?.building?.floors ?? [];
     return Padding(padding: EdgeInsets.symmetric(), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        InkWell(onTap: _onRoom, child:
+        InkWell(onTap: _onFloorsPlans, child:
           Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
             Row(children: [
-              _buildDetailIcon(_roomExpanded ? 'chevron-up' : 'chevron-down'),
-              Text("Room ${room}", style: Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline"))
+              _buildDetailIcon(_floorsPlansExpanded ? 'chevron-up' : 'chevron-down'),
+              Text("Room ${displayRoom}", style: Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline"))
             ]),
           ),
         ),
-        Visibility(visible: _roomExpanded, child:
+        Visibility(visible: _floorsPlansExpanded, child:
           Row(children: [
             _buildDetailIcon(),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -514,10 +515,10 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => DisplayFloorPlanPanel(building: widget.course?.section?.building, startingFloor: floor)));
   }
 
-  void _onRoom() {
+  void _onFloorsPlans() {
     Analytics().logSelect(target: "Toggle Floor Plan & Amenities");
     setState(() {
-      _roomExpanded = !_roomExpanded;
+      _floorsPlansExpanded = !_floorsPlansExpanded;
     });
   }
 

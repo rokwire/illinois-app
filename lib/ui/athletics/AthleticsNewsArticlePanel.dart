@@ -21,6 +21,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
@@ -183,7 +184,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
               if (_articleUri?.isValid == true)
                 Padding(padding: EdgeInsets.only(left: 20, right: 20, bottom: 48), child:
                   RoundedButton(
-                    label: 'Share this article', //TBD localize
+                    label: Localization().getStringEx('panel.athletics_news_article.button.share.title', 'Share this article'),
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                     backgroundColor: Styles().colors.background,
                     borderColor: Styles().colors.fillColorSecondary,
@@ -198,10 +199,26 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
   ],);
   }
 
-  void _onShareArticle() {
+  Future<void> _onShareArticle() async {
     Analytics().logSelect(target: "Share Article");
+    String? message;
     if (_articleUri?.isValid == true) {
-      SharePlus.instance.share(ShareParams(uri: _articleUri!));
+      try {
+        ShareResult result = await SharePlus.instance.share(ShareParams(uri: _articleUri!));
+        if (result.status == ShareResultStatus.unavailable) {
+          message = Localization().getStringEx('panel.athletics_news_article.message.share.unable.text', 'Unable to share article.');
+        }
+      }
+      catch (e) {
+        message = Localization().getStringEx('panel.athletics_news_article.message.share.failed.text', 'Failed to share article.');
+      }
+    }
+    else {
+      message = Localization().getStringEx('panel.athletics_news_article.message.share.unavailable.text', 'Share not available.');
+    }
+
+    if (mounted && (message != null)) {
+      AppAlert.showTextMessage(context, message);
     }
   }
 

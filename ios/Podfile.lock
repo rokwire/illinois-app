@@ -200,7 +200,7 @@ PODS:
     - Flutter
   - record_darwin (1.0.0):
     - Flutter
-  - rokwire_plugin (1.12.1):
+  - rokwire_plugin (1.12.2):
     - Flutter
   - screen_brightness_ios (0.1.0):
     - Flutter
@@ -453,7 +453,7 @@ SPEC CHECKSUMS:
   quick_actions_ios: 4b07fb49d8d8f3518d7565fbb7a91014067a7d82
   quill_native_bridge_ios: f47af4b14e7757968486641656c5d23250cee521
   record_darwin: fb1f375f1d9603714f55b8708a903bbb91ffdb0a
-  rokwire_plugin: 46cdb69ac19c9ebc7cd059ef8b8f725049b4ac46
+  rokwire_plugin: efe84ce1f5e1b7c80f7809cf443917cfe1342775
   screen_brightness_ios: 9953fd7da5bd480f1a93990daeec2eb42d4f3b52
   SDWebImage: f84b0feeb08d2d11e6a9b843cb06d75ebf5b8868
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
