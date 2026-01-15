@@ -18,6 +18,7 @@ import 'dart:async';
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:universal_io/io.dart';
 
+import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -2205,7 +2206,7 @@ class _GroupPollsState extends State<_GroupPollsContent> with NotificationsListe
   }
 
   void _onPollUpdated(String? pollId) {
-    if ((pollId != null) && (_groupPolls != null) && (_groupPolls?.firstWhere((element) => (pollId == element.pollId)) != null)) { //This is Group poll
+    if ((pollId != null) && (_groupPolls != null) && (_groupPolls?.firstWhereOrNull((element) => (pollId == element.pollId)) != null)) { //This is Group poll
 
       Poll? poll = Polls().getPoll(pollId: pollId);
       if (poll != null) {
