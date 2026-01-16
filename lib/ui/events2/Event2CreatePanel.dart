@@ -1159,6 +1159,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     showTimePicker(
       context: context,
+      barrierDismissible: false,
       initialTime: _startTime ?? TimeOfDay(hour: 0, minute: 0),
       builder: (context, child) => _timePickerTransitionBuilder(context, child!),
     ).then((TimeOfDay? result) {
@@ -1199,6 +1200,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     showTimePicker(
         context: context,
+        barrierDismissible: false,
         initialTime: _endTime ?? TimeOfDay(hour: 0, minute: 0),
         builder: (context, child) => _timePickerTransitionBuilder(context, child!),
     ).then((TimeOfDay? result) {
