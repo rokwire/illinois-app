@@ -214,7 +214,8 @@ class AppSemantics {
             FocusSemanticEvent()) :
         null);
 
-    static bool isAccessibilityFocused(GlobalKey? key) => extractSemanticsNote(key)?.hasFlag(SemanticsFlag.isFocused) ?? false;
+    static bool isAccessibilityFocused(GlobalKey? key) =>
+      (extractSemanticsNote(key)?.flagsCollection.isFocused.toBoolOrNull()) ?? false;
 
     static SemanticsNode? extractSemanticsNote(GlobalKey? groupKey) =>
         groupKey?.currentContext?.mounted == true ? groupKey?.currentContext?.findRenderObject()?.debugSemantics : null;
