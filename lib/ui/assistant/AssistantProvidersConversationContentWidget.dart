@@ -615,8 +615,8 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
         child: Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              // Row(mainAxisSize: MainAxisSize.min, children: [
-              Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
+              Row(mainAxisSize: MainAxisSize.min, children: [
+              // Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
                 Container(
                   height: _evaluatingQueryLimit ? 12 : 10,
                   width: _evaluatingQueryLimit ? 12 : 10,
@@ -631,13 +631,18 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                   ) : null,
                 ),
                 SizedBox(width: 8),
-                Text(_evaluatingQueryLimit ?
-                Localization()
-                    .getStringEx('panel.assistant.label.queries.evaluating.title', "Evaluating remaining questions today") :
-                Localization()
-                    .getStringEx('panel.assistant.label.queries.remaining.title', "{{query_limit}} questions remaining today")
-                    .replaceAll('{{query_limit}}', queryLimit.toString()),
-                    style: Styles().textStyles.getTextStyle('widget.title.small'))
+                Expanded(child:
+                  Text(_evaluatingQueryLimit ?
+                  Localization()
+                      .getStringEx('panel.assistant.label.queries.evaluating.title', "Evaluating remaining questions today") :
+                  Localization()
+                      .getStringEx('panel.assistant.label.queries.remaining.title', "{{query_limit}} questions remaining today")
+                      .replaceAll('{{query_limit}}', queryLimit.toString()),
+                      style: Styles().textStyles.getTextStyle('widget.title.small'),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  )
+                )
               ]),
               Padding(
                   padding: EdgeInsets.only(top: 5),
@@ -647,7 +652,8 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                       style: Styles().textStyles.getTextStyle('widget.info.tiny'),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
-                      maxLines: 5))
+                      maxLines: 2,
+                  ))
             ])));
   }
 
