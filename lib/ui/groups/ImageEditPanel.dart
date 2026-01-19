@@ -138,10 +138,14 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
               ),
               Container(height: 10,),
                 _imageName!=null?
-                RoundedButton(label: "Edit Image", onTap: _onEdit)
+                RoundedButton(label: Localization().getStringEx('panel.image_edit.button.edit.title', 'Edit Image'), onTap: _onEdit)
                     : Container(),
               Container(height: 10,),
-              RoundedButton(label: _imageName!=null? "Upload New Image" : "Choose Image", onTap: showImagePickerDialog),
+              RoundedButton(
+                label: _imageName!=null?
+                  Localization().getStringEx('panel.image_edit.button.replace.title', 'Replace Image') :
+                  Localization().getStringEx('panel.image_edit.button.upload.title', 'Choose Image'),
+                onTap: showImagePickerDialog),
               Container(height: 10),
               Row(
                 children: [
@@ -204,21 +208,21 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 AppDialogButton(
-                  buttonTitle: "Camera",
+                  buttonTitle: Localization().getStringEx('panel.image_edit.button.camera.title', 'Camera'),
                   onPressed: () {
                     _closeDialog();
                     _openImagePicker(ImageSource.camera);
                   },
                 ),
                 AppDialogButton(
-                  buttonTitle: "Gallery",
+                  buttonTitle: Localization().getStringEx('panel.image_edit.button.gallery.title', 'Gallery'),
                   onPressed: () {
                     _closeDialog();
                     _openImagePicker(ImageSource.gallery);
                   },
                 ),
                 AppDialogButton(
-                  buttonTitle: "Cancel",
+                  buttonTitle: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
                   onPressed: () {
                     _closeDialog();
                     _closeDialog();// close panel

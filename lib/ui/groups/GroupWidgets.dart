@@ -2550,33 +2550,41 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
         ),
         child: Padding(padding: EdgeInsets.all(12), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Row(children: [
+            Row(mainAxisSize: MainAxisSize.min, children: [
               Visibility(visible: widget.poll?.creatorUserUuid != null,
-                  child: GroupMemberProfileInfoWidget(
+                  child: Flexible(child: GroupMemberProfileInfoWidget(
                     key: ValueKey(widget.poll?.pollId),
                     name: widget.poll?.creatorUserName,
                     userId: widget.poll?.creatorUserUuid,
                     isAdmin: widget.isAdmin,
                     additionalInfo: _pollDateText
                     // updateController: widget.updateController,
-                  ))
+                  )))
             ],),
-            Row(children: <Widget>[
-              Text(pollVotesStatus, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat'),),
-              Container(width: 8,),
-              Text(pollStatus ?? "", style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),),
-              Expanded(child: Container()),
-              Text(pin, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat')),
-              Visibility(visible: _GroupPollOptionsState._hasPollOptions(widget), child:
-                Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
-                  GestureDetector(onTap: _onPollOptionsTap, child:
-                    Padding(padding: EdgeInsets.all(10), child:
-                    Styles().images.getImage('more'),
-                    ),
-                  ),
-                ),
+            Row(mainAxisSize: MainAxisSize.max, children: [
+              Expanded(child:
+                Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, children: <Widget>[
+                  Wrap(children: [
+                    Text(pollVotesStatus, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat'),),
+                    Container(width: 8,),
+                    Text(pollStatus ?? "", style: Styles().textStyles.getTextStyle('widget.card.detail.tiny'),),
+                  ],),
+                  // Expanded(child: Container()),
+                  Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
+                    Text(pin, style: Styles().textStyles.getTextStyle('widget.card.detail.tiny.fat')),
+                    Visibility(visible: _GroupPollOptionsState._hasPollOptions(widget), child:
+                      Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
+                        GestureDetector(onTap: _onPollOptionsTap, child:
+                          Padding(padding: EdgeInsets.all(10), child:
+                          Styles().images.getImage('more'),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],)
+                ]),
               )
-            ]),
+            ],),
             Padding(padding: EdgeInsets.only(right: 16), child:
               Column(children: [
                 Container(height: 12,),
@@ -2606,9 +2614,18 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
   }
 
 
-  String? get _pollDateText =>
-      sprintf(Localization().getStringEx('panel.polls_home.card.updated_quick_poll.label', 'Quick Poll, Updated %s'),
-          ['${widget.poll?.displayUpdateTime}']);
+  String get _pollDateText {
+
+    String quickPollLabel = Localization().getStringEx('panel.polls_home.card.quick_poll.label', 'Quick Poll');
+    String? updateTime = widget.poll?.displayUpdateTime;
+    if ((updateTime != null) && updateTime.isNotEmpty) {
+      String updateTimeLabel = sprintf(Localization().getStringEx('panel.polls_home.card.updated.label', 'Updated %s'), [updateTime]);
+      return '$quickPollLabel, $updateTimeLabel';
+    }
+    else {
+      return quickPollLabel;
+    }
+  }
 
   List<Widget> _buildCheckboxOptions() {
     bool isClosed = widget.poll!.status == PollStatus.closed;
