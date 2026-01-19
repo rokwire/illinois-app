@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Group Poll issues [#5519](https://github.com/rokwire/illinois-app/issues/5514).
 - Fixed groups loading in Event2SetupGroupsPanel [#5666](https://github.com/rokwire/illinois-app/issues/5666).
 - WEB: Fixed selecting start and end time [#5675](https://github.com/rokwire/illinois-app/issues/5675).
+- WEB: Fixed typing in Group Post - disable semantics [#5673](https://github.com/rokwire/illinois-app/issues/5673).
 ### Changed
 - Updated button text in Image Edit Panel, load button texts from app resources [#5665](https://github.com/rokwire/illinois-app/issues/5665).
 

@@ -205,9 +205,11 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
 
     runApp(App(initializeError: serviceError));
 
-    if (kIsWeb) {
-      SemanticsBinding.instance.ensureSemantics();
-    }
+    // TBD: DDWEB - do not enable semantics for the web by default. It breaks quill text editor in PostInputField - #5673
+    // Ref: https://github.com/singerdmx/flutter-quill/issues/2531
+    // if (kIsWeb) {
+    //   SemanticsBinding.instance.ensureSemantics();
+    // }
   }, FirebaseCrashlytics().handleZoneError);
 }
 
