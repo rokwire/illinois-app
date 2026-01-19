@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/ContentAttributes.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -86,6 +86,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   ContentAttributes? _initialContentAttributes;
 
   int get requirementsScope => widget.filtersMode ? contentAttributeRequirementsFunctionalScopeFilter : contentAttributeRequirementsFunctionalScopeCreate;
+
+  bool _isPushing = false;
 
   @override
   void initState() {
@@ -250,12 +252,17 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   }
 
   void _onAttributeDropdownTap({required ContentAttribute attribute, List<ContentAttributeValue>? attributeValues}) {
+    if (_isPushing) {
+      return;
+    }
+    _isPushing = true;
+
     Analytics().logSelect(target: attribute.title);
 
     String? attributeId = attribute.id;
     LinkedHashSet<dynamic>? attributeRawValues = _selection[attributeId];
 
-    Navigator.push<LinkedHashSet<dynamic>?>(context, CupertinoPageRoute(builder: (context) => ContentAttributesCategoryPanel(
+    Navigator.push<LinkedHashSet<dynamic>?>(context, MaterialPageRoute(builder: (context) => ContentAttributesCategoryPanel(
       attribute: attribute,
       attributeValues: attributeValues,
       contentAttributes: widget.contentAttributes,
@@ -264,6 +271,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       handleAttributeValue: widget.handleAttributeValue,
       countAttributeValues: (widget.countAttributeValues != null) ? _countAttributeValues : null,
     ),)).then(((LinkedHashSet<dynamic>? selection) {
+      _isPushing = false;
       if ((selection != null) && (attributeId != null)) {
         if ((attribute.nullValue is String) && selection.contains(attribute.nullValue)) {
           selection.remove(attribute.nullValue);

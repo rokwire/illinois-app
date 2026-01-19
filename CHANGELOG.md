@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WEB: Fixed selecting start and end time [#5675](https://github.com/rokwire/illinois-app/issues/5675).
 - WEB: Fixed typing in Group Post - disable semantics [#5673](https://github.com/rokwire/illinois-app/issues/5673).
 - WEB: Fixed scrolling in Sections - remove RefreshIndicator [#5676](https://github.com/rokwire/illinois-app/issues/5676).
+- WEB: Pushing twice ContentAttributesCategoryPanel [#5674](https://github.com/rokwire/illinois-app/issues/5674).
 ### Changed
 - Updated button text in Image Edit Panel, load button texts from app resources [#5665](https://github.com/rokwire/illinois-app/issues/5665).
 
