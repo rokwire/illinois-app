@@ -94,7 +94,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
 
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.browse.label.title', 'Browse')),
-      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
+      body: /*RefreshIndicator(onRefresh: _onPullToRefresh, child: */
         Column(children: <Widget>[
           Expanded(child:
             SingleChildScrollView(child:
@@ -105,12 +105,13 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
             )
           ),
         ]),
-      ),
+      // ),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: null,
     );
   }
 
+  // ignore: unused_element
   Future<void> _onPullToRefresh() async {
     _updateController.add(BrowsePanel.notifyRefresh);
     if (mounted) {
