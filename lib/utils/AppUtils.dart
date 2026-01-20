@@ -198,10 +198,10 @@ class AppSemantics {
         MediaQuery.of(context).accessibleNavigation :
         false;
 
-    static void announceMessage(BuildContext? context, String message) =>
+    static void announceMessage(BuildContext? context, String message, [int viewId = 0]) =>
         context?.findRenderObject()?.
           sendSemanticsEvent(
-            AnnounceSemanticsEvent(message,TextDirection.ltr));
+            AnnounceSemanticsEvent(message,TextDirection.ltr, viewId));
 
     static void triggerAccessibilityTap(GlobalKey? groupKey) =>
         groupKey?.currentContext?.findRenderObject()?.
@@ -215,7 +215,8 @@ class AppSemantics {
             FocusSemanticEvent()) :
         null);
 
-    static bool isAccessibilityFocused(GlobalKey? key) => extractSemanticsNote(key)?.hasFlag(SemanticsFlag.isFocused) ?? false;
+    static bool isAccessibilityFocused(GlobalKey? key) =>
+      (extractSemanticsNote(key)?.flagsCollection.isFocused.toBoolOrNull()) ?? false;
 
     static SemanticsNode? extractSemanticsNote(GlobalKey? groupKey) =>
         groupKey?.currentContext?.mounted == true ? groupKey?.currentContext?.findRenderObject()?.debugSemantics : null;

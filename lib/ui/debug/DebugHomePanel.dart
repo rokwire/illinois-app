@@ -296,24 +296,26 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
           Text('Config Environment: ', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: 20 )),
         ),
         Container(height: 1, color: Styles().colors.surfaceAccent ,),
-        ListView.separated(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          separatorBuilder: (context, index) => Divider(color: Styles().colors.surfaceAccent),
-          itemCount: rokwire.ConfigEnvironment.values.length,
-          itemBuilder: (context, index) {
-            rokwire.ConfigEnvironment environment = rokwire.ConfigEnvironment.values[index];
-            RadioListTile widget = RadioListTile(
-              title: Text(rokwire.configEnvToString(environment) ?? '',
-              style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: 16 )),
-              value: environment,
-              dense: true,
-              groupValue: _selectedEnv,
-              contentPadding: EdgeInsets.symmetric(horizontal: 16),
-              onChanged: _onConfigChanged
-            );
-            return widget;
-          },
+        RadioGroup<rokwire.ConfigEnvironment>(
+          groupValue: _selectedEnv,
+          onChanged: _onConfigChanged,
+          child: ListView.separated(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            separatorBuilder: (context, index) => Divider(color: Styles().colors.surfaceAccent),
+            itemCount: rokwire.ConfigEnvironment.values.length,
+            itemBuilder: (context, index) {
+              rokwire.ConfigEnvironment environment = rokwire.ConfigEnvironment.values[index];
+              RadioListTile widget = RadioListTile<rokwire.ConfigEnvironment>(
+                title: Text(rokwire.configEnvToString(environment) ?? '',
+                style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: 16 )),
+                value: environment,
+                dense: true,
+                contentPadding: EdgeInsets.symmetric(horizontal: 16),
+              );
+              return widget;
+            },
+          ),
         ),
         Container(height: 1, color: Styles().colors.surfaceAccent ,),
       ],);

@@ -15,8 +15,6 @@
  */
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart' as rokwire;
