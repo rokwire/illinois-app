@@ -78,8 +78,8 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
       (imageUrl != null) ? _buildImageWidget(imageUrl) : Container(),
       Visibility(visible: (widget.contentType == HomeContentType.favorites), child:
         Container(padding: EdgeInsets.only(bottom: 8,), color: Styles().colors.white, child:
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Expanded(child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Flexible(flex: 3, child:
               Padding(padding: EdgeInsets.only(left: 16, top: 16), child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(_title1 ?? '', style: Styles().textStyles.getTextStyle("widget.home_tout.text.greeting")),
@@ -98,17 +98,21 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
                 ],),
               )
             ),
-            InkWell(onTap: _onCustomize, child:
-              Padding(padding: EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 16), child:
-                Row(mainAxisSize: MainAxisSize.min, children: [
-                  Padding(padding: EdgeInsets.only(right: 4), child:
-                    Styles().images.getImage('edit-dark-blue', size: 14, excludeFromSemantics: true) ?? Container(),
-                  ),
-                  Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
-                    style: Styles().textStyles.getTextStyle("widget.home_tout.button.link"))
-                ],),
+            Flexible(flex: 2, child:
+              InkWell(onTap: _onCustomize, child:
+                Padding(padding: EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 16), child:
+                  Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end, children: [
+                    Padding(padding: EdgeInsets.only(right: 4), child:
+                      Styles().images.getImage('edit-dark-blue', size: 14, excludeFromSemantics: true) ?? Container(),
+                    ),
+                    Flexible(child:
+                      Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
+                        style: Styles().textStyles.getTextStyle("widget.home_tout.button.link"))
+                    )
+                  ],),
+                ),
               ),
-            ),
+            )
           ],)
         )
       ),

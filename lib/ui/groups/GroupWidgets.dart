@@ -2615,9 +2615,18 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
   }
 
 
-  String? get _pollDateText =>
-      sprintf(Localization().getStringEx('panel.polls_home.card.updated_quick_poll.label', 'Quick Poll, Updated %s'),
-          ['${widget.poll?.displayUpdateTime}']);
+  String get _pollDateText {
+
+    String quickPollLabel = Localization().getStringEx('panel.polls_home.card.quick_poll.label', 'Quick Poll');
+    String? updateTime = widget.poll?.displayUpdateTime;
+    if ((updateTime != null) && updateTime.isNotEmpty) {
+      String updateTimeLabel = sprintf(Localization().getStringEx('panel.polls_home.card.updated.label', 'Updated %s'), [updateTime]);
+      return '$quickPollLabel, $updateTimeLabel';
+    }
+    else {
+      return quickPollLabel;
+    }
+  }
 
   List<Widget> _buildCheckboxOptions() {
     bool isClosed = widget.poll!.status == PollStatus.closed;
