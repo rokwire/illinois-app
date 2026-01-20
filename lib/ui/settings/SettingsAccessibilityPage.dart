@@ -5,6 +5,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 
 import '../../service/Storage.dart';
 import '../widgets/RibbonButton.dart';
@@ -17,11 +18,19 @@ class SettingsAccessibilityPage extends StatefulWidget{
 
 class SettingsAccessibilityPageState extends State<SettingsAccessibilityPage> with NotificationsListener {
 
+  final FocusNode _entryFocusNode = FocusNode();
+
   @override
   void initState() {
     NotificationService().subscribe(this, [Storage.notifySettingChanged]);
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _entryFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -43,13 +52,13 @@ class SettingsAccessibilityPageState extends State<SettingsAccessibilityPage> wi
         )
       ]),
       Container(height: 4),
-      ToggleRibbonButton(
-        label: Localization().getStringEx('panel.settings.home.accessibility.reduce_motion.label', 'Reduce motion'),
+      WebFocusableSemanticsWidget(focusNode: _entryFocusNode, onSelect: _onTapMotionSetting, child: ToggleRibbonButton(
+        title: Localization().getStringEx('panel.settings.home.accessibility.reduce_motion.label', 'Reduce motion'),
         toggled: Storage().accessibilityReduceMotion == true,
         border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
         borderRadius: BorderRadius.all(Radius.circular(4)),
         onTap: _onTapMotionSetting
-      )
+      ))
     ]);
 
   void _onTapMotionSetting(){
@@ -70,13 +79,13 @@ class SettingsAccessibilityPageState extends State<SettingsAccessibilityPage> wi
         ),
       ]),
       Container(height: 4),
-       ToggleRibbonButton(
-        label: Localization().getStringEx('panel.settings.home.accessibility.ada_navigation.label', 'Navigate to ADA-accessible building entrances for My Courses'),
+       WebFocusableSemanticsWidget(onSelect: _onRequireAdaToggled, child: ToggleRibbonButton(
+        title: Localization().getStringEx('panel.settings.home.accessibility.ada_navigation.label', 'Navigate to ADA-accessible building entrances for My Courses'),
         toggled: StudentCourses().requireAda == true,
         border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
         borderRadius: BorderRadius.all(Radius.circular(4)),
         onTap: _onRequireAdaToggled
-      )
+      ))
     ]);
 
   void _onRequireAdaToggled() {

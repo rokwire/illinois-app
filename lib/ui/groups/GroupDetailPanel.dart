@@ -18,6 +18,7 @@ import 'dart:async';
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:universal_io/io.dart';
 
+import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -91,14 +92,34 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static const String notifyMemberImageLoaded  = "edu.illinois.rokwire.group_detail.image.loaded";
 
   final Group? group;
-  final String? groupIdentifier;
+  final String? _groupId;
+  final String? _groupName;
   final String? groupPostId; //Preload post
   final String? groupPostCommentId; //Preload post comment
   final String? groupEventId; //Preload event
   final AnalyticsFeature? _analyticsFeature;
 
-  GroupDetailPanel({this.group, this.groupIdentifier, this.groupPostId, AnalyticsFeature? analyticsFeature, this.groupPostCommentId, this.groupEventId}) :
+  GroupDetailPanel({this.group,
+    String? groupId, String? groupName,
+    this.groupPostId, this.groupPostCommentId, this.groupEventId,
+    AnalyticsFeature? analyticsFeature
+  }) :
+    _groupId = groupId,
+    _groupName = groupName,
     _analyticsFeature = analyticsFeature;
+
+  static Future<void> push(BuildContext context, {Group? group,
+    String? groupId, String? groupName,
+    String? groupPostId, String? groupPostCommentId, String? groupEventId,
+    AnalyticsFeature? analyticsFeature
+  }) =>
+    Navigator.push(context, CupertinoPageRoute(
+      settings: RouteSettings(name: routeName),
+      builder: (context) => GroupDetailPanel(
+        group: group, groupId: groupId, groupName: groupName,
+        groupPostId: groupPostId, groupPostCommentId: groupPostCommentId, groupEventId: groupEventId,
+      )
+    ));
 
   @override
  _GroupDetailPanelState createState() => _GroupDetailPanelState();
@@ -108,12 +129,14 @@ class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
 
   @override
   Map<String, dynamic>? get analyticsPageAttributes =>
-    _theGroup?.analyticsAttributes;
+      _analyticsGroup?.analyticsAttributes;
 
-  String? get groupId => group?.id ?? groupIdentifier;
-  Group? get _theGroup => _GroupDetailPanelState.instance?._group ?? group ?? ((groupIdentifier != null) ? Group(id: groupIdentifier) : null);
+  String? get groupId => group?.id ?? _groupId;
+  Group? get _analyticsGroup => _GroupDetailPanelState.instance?._group ?? group ?? _defaultAnalyticsGroup;
+  Group? get _defaultAnalyticsGroup => (_groupId != null) ?  Group(id: _groupId, title: _groupName,) : null;
 
-  AnalyticsFeature? get _defaultAnalyticsFeature => (group?.researchProject == true) ? AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
+  AnalyticsFeature? get _defaultAnalyticsFeature => (group?.researchProject == true) ?
+    AnalyticsFeature.ResearchProject : AnalyticsFeature.Groups;
 }
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsListener, TickerProviderStateMixin  {
@@ -208,52 +231,36 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     }
   }
 
-  bool get _canAddEvent {
-    return _isAdmin;
-  }
+  bool get _canAddEvent => _containsTab(DetailTab.Events) && _canUserAddEvent;
+  bool get _canUserAddEvent => _isAdmin;
 
-  bool get _canCreatePost {
-    return _isAdmin || (_isMember && _group?.isMemberAllowedToCreatePost == true && FlexUI().isSharingAvailable);
-  }
+  bool get _canCreatePost => _containsTab(DetailTab.Posts) && _canUserCreatePost;
+  bool get _canUserCreatePost => _isAdmin || (_isMember && _group?.isMemberAllowedToCreatePost == true && FlexUI().isSharingAvailable);
 
-  bool get _canCreateMessage =>
-      _isAdmin || (_isMember && _group?.isMemberAllowedToPostToSpecificMembers == true && FlexUI().isSharingAvailable);
+  bool get _canCreateMessage => _containsTab(DetailTab.Messages) && _canUserCreateMessage;
+  bool get _canUserCreateMessage => _isAdmin || (_isMember && _group?.isMemberAllowedToPostToSpecificMembers == true && FlexUI().isSharingAvailable);
 
-  bool get _canCreatePoll {
-    return _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && FlexUI().isSharingAvailable);
-  }
-
-  bool get _canManageMembers => _isAdmin;
-
-  bool get _isResearchProject {
-    return (_group?.researchProject == true);
-  }
-
-  bool get _canViewMembers {
-    return _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
-  }
-
-  bool get _canViewPendingMembers => _isAdmin;
-
-  bool get _hasOptions =>
-      _canReportAbuse || _canNotificationSettings || _canShareSettings || _canAboutSettings ||
-          _canLeaveGroup || _canDeleteGroup || _canEditGroup;
+  bool get _canCreatePoll => _containsTab(DetailTab.Polls) && _canUserCreatePoll;
+  bool get _canUserCreatePoll => _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && FlexUI().isSharingAvailable);
 
   bool get _hasCreateOptions => _canCreatePost || _canCreateMessage || _canAddEvent || _canCreatePoll;
 
+  bool get _canManageMembers => _isAdmin;
+  bool get _canViewMembers => _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
+  bool get _canViewPendingMembers => _isAdmin;
+
+  bool get _hasOptions =>
+    _canReportAbuse || _canNotificationSettings || _canShareSettings || _canAboutSettings ||
+    _canLeaveGroup || _canDeleteGroup || _canEditGroup;
+
   bool get _hasIconOptionButtons => _hasOptions || _hasCreateOptions || _showPolicyIcon;
 
-  bool get _isLoading {
-    return _progress > 0;
-  }
+  bool get _isLoading => _progress > 0;
 
-  bool get _showMembershipBadge {
-    return _isMemberOrAdmin || _isPending;
-  }
+  bool get _isResearchProject => (_group?.researchProject == true);
 
-  bool get _showPolicyIcon {
-    return _isResearchProject != true;
-  }
+  bool get _showMembershipBadge => _isMemberOrAdmin || _isPending;
+  bool get _showPolicyIcon => _isResearchProject != true;
 
   ContentAttributes? get _contentAttributes => Groups().contentAttributes(researchProject: _isResearchProject);
 
@@ -276,7 +283,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       AppLivecycle.notifyStateChanged,
       Connectivity.notifyStatusChanged,
       FlexUI.notifyChanged,
-      Groups.notifyUserMembershipUpdated,
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
       Groups.notifyGroupStatsUpdated,
@@ -402,7 +408,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         _onGroupLoaded(group, loadEvents: loadEvents);
       });
     } else {
-      _onGroupLoaded(widget.group, loadEvents: loadEvents);
+      _onGroupLoaded(widget._analyticsGroup, loadEvents: loadEvents);
     }
   }
 
@@ -551,10 +557,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Groups.notifyUserMembershipUpdated) {
-      setStateIfMounted(() {});
-    }
-    else if (name == Groups.notifyGroupStatsUpdated) {
+    if (name == Groups.notifyGroupStatsUpdated) {
       _updateGroupStats();
     }
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
@@ -625,7 +628,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     return StringUtils.isNotEmpty(_group?.imageURL) ?
       Container(height: 200, color: Styles().colors.background, child:
         Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-            Positioned.fill(child: ModalImageHolder(child: AccessibleImageHolder(emptySemanticsLabel: "Group image", prefixSemanticsLabel: "Group image", child: WebNetworkImage(imageUrl: _group?.imageURL, excludeFromSemantics: true, fit: BoxFit.cover)))),
+            Positioned.fill(child: AccessibleImageHolder(child: ModalImageHolder(child: WebNetworkImage(imageUrl: _group?.imageURL, excludeFromSemantics: true, fit: BoxFit.cover)))),
             CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
               Container(height: 53,),
             ),
@@ -841,7 +844,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   }
 
   int _indexOfTab(DetailTab? tab) => _tabs?.indexOf(tab) ?? 0;
-  
+  bool _containsTab(DetailTab tab) => (_tabs?.contains(tab) == true);
+
   DetailTab? _tabAtIndex(int index) {
     try {
       return _tabs?.elementAt(index);
@@ -874,7 +878,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
 
   Widget _buildWebsiteLinkCommand() {
     return RibbonButton(
-        label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
+        title: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
         rightIconKey: 'external-link',
         leftIconKey: 'web',
         padding: EdgeInsets.symmetric(vertical: 12),
@@ -887,7 +891,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
 
   List<Widget> _buildAttributes() {
     List<Widget> attributesList = <Widget>[];
-    Map<String, dynamic>? groupAttributes = widget.group?.attributes;
+    Map<String, dynamic>? groupAttributes = _group?.attributes;
     List<ContentAttribute>? attributes = _contentAttributes?.attributes;
     if ((groupAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
@@ -1152,7 +1156,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canAboutSettings,
                     child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "info",
-                        label: Localization().getStringEx("panel.group_detail.button.group.about.title", "About this group"),//TBD localize
+                        title: Localization().getStringEx("panel.group_detail.button.group.about.title", "About this group"),//TBD localize
                         onTap: () {
                           Analytics().logSelect(target: "Group About", attributes: _group?.analyticsAttributes);
                           GroupAboutContentWidget.showPanel(context: context, group: _group, admins: _groupAdmins);
@@ -1161,7 +1165,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canEditGroup,
                     child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "settings",
-                        label: _isResearchProject ? 'Research project settings' : Localization().getStringEx("_panel.group_detail.button.group.edit.title", "Group admin settings"),//TBD localize
+                        title: _isResearchProject ? 'Research project settings' : Localization().getStringEx("_panel.group_detail.button.group.edit.title", "Group admin settings"),//TBD localize
                         onTap: () {
                           Navigator.pop(context);
                           _onTapSettings();
@@ -1170,13 +1174,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canManageMembers,
                     child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "person-circle",
-                        label: _isResearchProject ? 'Manage participants' : Localization().getStringEx("", "Manage members"),
+                        title: _isResearchProject ? 'Manage participants' : Localization().getStringEx("", "Manage members"),
                         onTap: _onTapMembers))),
                 Visibility(
                     visible: _canNotificationSettings,
                     child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "reminder",
-                        label: Localization().getStringEx("panel.group_detail.button.group.notifications.title", "Notification Preferences"),//TBD localize
+                        title: Localization().getStringEx("panel.group_detail.button.group.notifications.title", "Notification Preferences"),//TBD localize
                         onTap: () {
                           Navigator.pop(context);
                           _onTapNotifications();
@@ -1185,7 +1189,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canShareSettings, //TBD do we restrict sharing?
                     child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "share-nodes",
-                        label: Localization().getStringEx("panel.group_detail.button.group.share.title", "Share group"),//TBD localize
+                        title: Localization().getStringEx("panel.group_detail.button.group.share.title", "Share group"),//TBD localize
                         onTap: () {
                           Navigator.pop(context);
                           _onTapShare();
@@ -1194,7 +1198,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canLeaveGroup,
                     child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "trash",
-                        label: _isResearchProject ? 'Leave project' : Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
+                        title: _isResearchProject ? 'Leave project' : Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
                         onTap: () {
                           Analytics().logSelect(target: "Leave group", attributes: _group?.analyticsAttributes);
                           showDialog(
@@ -1210,7 +1214,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     visible: _canDeleteGroup,
                     child: PointerInterceptor(child: RibbonButton(
                         leftIconKey: "trash",
-                        label: _isResearchProject ? 'Delete research project' : Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
+                        title: _isResearchProject ? 'Delete research project' : Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
                         onTap: () {
                           Analytics().logSelect(target: "Delete group", attributes: _group?.analyticsAttributes);
                           showDialog(
@@ -1223,7 +1227,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                         }))),
                 Visibility(visible: _canReportAbuse, child: PointerInterceptor(child: RibbonButton(
                   leftIconKey: "report",
-                  label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                  title: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
                   onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true)   ),
                 ))),
               ]));
@@ -1240,57 +1244,49 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         isDismissible: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
         builder: (context) {
-          return Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                Container(
-                  height: 24,
-                ),
-                Visibility(
-                    visible: _canCreatePost,
-                    child: PointerInterceptor(child: RibbonButton(
-                        leftIconKey: "plus-circle",
-                        label: Localization().getStringEx("panel.group_detail.button.create_post.title", "Post"),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          _onTapCreatePost();
-                        }))),
-                Visibility(
-                    visible: _canCreateMessage,
-                    child: PointerInterceptor(child: RibbonButton(
-                        leftIconKey: "plus-circle",
-                        label: Localization().getStringEx("panel.group_detail.button.create_message.title", "Message"),//localize tbd
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          _onTapCreatePost(type: PostType.direct_message);
-                        }))),
-                Visibility(
-                    visible: _canAddEvent,
-                    child: PointerInterceptor(child: RibbonButton(
-                        leftIconKey: "plus-circle",
-                        label: Localization().getStringEx("_panel.group_detail.button.group.create_event.title", "New event"),
-                        onTap: (){
-                          Navigator.pop(context);
-                          _onTapCreateEvent();
-                        }))),
-                Visibility(
-                    visible: _canAddEvent,
-                    child: PointerInterceptor(child: RibbonButton(
-                        leftIconKey: "plus-circle",
-                        label: Localization().getStringEx("_panel.group_detail.button.group.add_event.title", "Existing event"),//localize
-                        onTap: (){
-                          Navigator.pop(context);
-                          _onTapBrowseEvents();
-                        }))),
-                Visibility(
-                    visible: _canCreatePoll,
-                    child: PointerInterceptor(child: RibbonButton(
-                        leftIconKey: "plus-circle",
-                        label: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Poll"), //tbd localize
-                        onTap: (){
-                          Navigator.pop(context);
-                          _onTapCreatePoll();
-                        }))),
+          return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17), child:
+            Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Container(height: 24,),
+                Visibility(visible: _canCreatePost, child:
+                  RibbonButton(
+                    leftIconKey: "plus-circle",
+                    title: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _onTapCreatePost();
+                    })),
+                Visibility(visible: _canCreateMessage, child:
+                  RibbonButton(
+                    leftIconKey: "plus-circle",
+                    title: Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message"),//localize tbd
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _onTapCreatePost(type: PostType.direct_message);
+                    })),
+                Visibility(visible: _canAddEvent, child:
+                  RibbonButton(
+                    leftIconKey: "plus-circle",
+                    title: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create New Event"),
+                    onTap: (){
+                      Navigator.pop(context);
+                      _onTapCreateEvent();
+                    })),
+                Visibility(visible: _canAddEvent, child:
+                  RibbonButton(
+                    leftIconKey: "plus-circle",
+                    title: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add Existing Event"),
+                    onTap: (){
+                      Navigator.pop(context);
+                      _onTapBrowseEvents();
+                    })),
+                Visibility(visible: _canCreatePoll, child:
+                  RibbonButton(
+                    leftIconKey: "plus-circle",
+                    title: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Create a Poll"), //tbd localize
+                    onTap: (){
+                      Navigator.pop(context);
+                      _onTapCreatePoll();
+                    })),
               ]));
         });
   }
@@ -1331,7 +1327,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
       border: Border.all(color: Styles().colors.textSurface, width: 1),
       alignment: Alignment.center,
-      //infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
+      //infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.university_name', 'University of Illinois')),
       //infoTextStyle: Styles().textStyles.getTextStyle('widget.description.regular.thin'),
       infoTextWidget: _policyInfoTextWidget,
       closeIcon: Styles().images.getImage('close-circle', excludeFromSemantics: true),
@@ -1347,7 +1343,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     TextStyle? linkTextStyle = Styles().textStyles.getTextStyle('widget.description.regular.thin.link');
 
     String infoText = Localization().getStringEx('panel.group.detail.policy.text', 'The $universityMacro takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of $studentCodeMacro $externalLinkMacro to the Office of the Dean of Students.\n\nYour activity in this group is not viewable outside of the group.').
-      replaceAll(universityMacro, Localization().getStringEx('app.univerity_name', 'University of Illinois'));
+      replaceAll(universityMacro, Localization().getStringEx('app.university_name', 'University of Illinois'));
 
     String studentCodeText = Localization().getStringEx('panel.group.detail.policy.text.student_code', 'Student Code');
 
@@ -2210,7 +2206,7 @@ class _GroupPollsState extends State<_GroupPollsContent> with NotificationsListe
   }
 
   void _onPollUpdated(String? pollId) {
-    if ((pollId != null) && (_groupPolls != null) && (_groupPolls?.firstWhere((element) => (pollId == element.pollId)) != null)) { //This is Group poll
+    if ((pollId != null) && (_groupPolls != null) && (_groupPolls?.firstWhereOrNull((element) => (pollId == element.pollId)) != null)) { //This is Group poll
 
       Poll? poll = Polls().getPoll(pollId: pollId);
       if (poll != null) {
@@ -2313,7 +2309,7 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with Notification
               ObjectKey(message),
             post: message,
             group: _group!,
-            isAdmin: widget.groupAdmins?.map((Member admin) => admin.userId == message.creatorId).isNotEmpty,
+            isAdmin: message.creator?.findAsMember(groupMembers: widget.groupAdmins)?.isAdmin,
             analyticsFeature: widget.analyticsFeature,
             // creator: _getMessageCreatorAsMember(message),
             // updateController: widget.updateController,

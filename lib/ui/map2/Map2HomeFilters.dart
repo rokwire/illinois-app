@@ -192,10 +192,10 @@ class Map2Filter {
 }
 
 class Map2CampusBuildingsFilter extends Map2Filter {
-  LinkedHashMap<String, Set<String>> amenitiesNameToIds;
+  Map<String, BuildingFeature> amenitiesMap;
 
   Map2CampusBuildingsFilter._({
-    required this.amenitiesNameToIds,
+    required this.amenitiesMap,
 
     String searchText = '',
     bool starred = false,
@@ -209,25 +209,25 @@ class Map2CampusBuildingsFilter extends Map2Filter {
   );
 
   factory Map2CampusBuildingsFilter.defaultFilter() => Map2CampusBuildingsFilter._(
-    amenitiesNameToIds: LinkedHashMap<String, Set<String>>(),
+    amenitiesMap: <String, BuildingFeature>{},
   );
 
   factory Map2CampusBuildingsFilter.emptyFilter() => Map2CampusBuildingsFilter._(
-    amenitiesNameToIds: LinkedHashMap<String, Set<String>>(),
+    amenitiesMap: <String, BuildingFeature>{},
   );
 
   Map2CampusBuildingsFilter._fromJson(Map<String, dynamic> json) :
-    amenitiesNameToIds = JsonUtils.mapValue(json['amenities'])?.toAmenityNameToIds() ?? LinkedHashMap<String, Set<String>>(),
+    amenitiesMap = JsonUtils.mapValue(json['amenities'])?.toAmenitiesMap() ?? <String, BuildingFeature>{},
     super._fromJson(json);
 
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'amenities': amenitiesNameToIds.toJson(),
+    'amenities': amenitiesMap.toJson(),
     ...super.toJson(),
   };
 
   @override
-  bool get hasFilter => amenitiesNameToIds.isNotEmpty || super.hasFilter;
+  bool get hasFilter => amenitiesMap.isNotEmpty || super.hasFilter;
 
   @override
   bool get _needsFilter => hasFilter;
@@ -235,12 +235,13 @@ class Map2CampusBuildingsFilter extends Map2Filter {
   @override
   List<Explore> _filter(List<Explore> explores) {
     String? searchLowerCase = searchText.trim().toLowerCase();
+    Map<String, Set<String>> categoryToKeysMap = amenitiesMap.categoryToKeysMap;
     List<Explore> filtered = <Explore>[];
     for (Explore explore in explores) {
       if ((explore is Building) &&
           ((searchLowerCase.isNotEmpty != true) || (explore.matchSearchTextLowerCase(searchLowerCase))) &&
           ((starred != true) || (Auth2().prefs?.isFavorite(explore as Favorite) == true)) &&
-          ((amenitiesNameToIds.isNotEmpty != true) || (explore.matchAmenityIds(amenitiesNameToIds.values)))
+          ((categoryToKeysMap.isNotEmpty != true) || (explore.matchAmenityCategoryToKeys(categoryToKeysMap)))
         ) {
         filtered.add(explore);
       }
@@ -255,9 +256,9 @@ class Map2CampusBuildingsFilter extends Map2Filter {
       String searchKey = Localization().getStringEx('panel.map2.filter.search.text', 'Search');
       descriptionMap[searchKey] = <String>[searchText];
     }
-    if (amenitiesNameToIds.isNotEmpty) {
+    if (amenitiesMap.isNotEmpty) {
       String amenitiesKey = Localization().getStringEx('panel.map2.filter.amenities.text', 'Amenities');
-      descriptionMap[amenitiesKey] = List<String>.from(amenitiesNameToIds.keys);
+      descriptionMap[amenitiesKey] = List<String>.from(amenitiesMap.values.map<String>((BuildingFeature feature) => feature.value?.name ?? ''));
     }
     if (starred) {
       String starredKey = Localization().getStringEx('panel.map2.filter.starred.text', 'Starred');
@@ -360,10 +361,17 @@ class Map2DiningLocationsFilter extends Map2Filter {
   factory Map2DiningLocationsFilter.defaultFilter() => Map2DiningLocationsFilter._();
   factory Map2DiningLocationsFilter.emptyFilter() => Map2DiningLocationsFilter._();
 
+  factory Map2DiningLocationsFilter.fromFilterParam(Map2FilterDiningsLocationsParam param) => Map2DiningLocationsFilter._(
+    searchText: param.searchText, paymentType: param.paymentType,
+    onlyOpened: param.openNow, starred: param.starred,
+    sortType: param.sortType, sortOrder: param.sortOrder,
+  );
+
   Map2DiningLocationsFilter._fromJson(Map<String, dynamic> json) :
     onlyOpened = JsonUtils.boolValue(json['onlyOpened']) ?? false,
     paymentType = PaymentTypeImpl.fromJson(JsonUtils.stringValue(json['paymentType'])),
     super._fromJson(json);
+
 
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -403,7 +411,7 @@ class Map2DiningLocationsFilter extends Map2Filter {
       descriptionMap[searchKey] = <String>[searchText];
     }
     if (paymentType != null) {
-      String? paymentTypeValue = PaymentTypeHelper.paymentTypeToDisplayString(paymentType);
+      String? paymentTypeValue = paymentType?.displayTitle;
       if ((paymentTypeValue != null) && paymentTypeValue.isNotEmpty) {
         String paymentTypeKey = Localization().getStringEx('panel.map2.filter.payment_type.text', 'Payment Type');
         descriptionMap[paymentTypeKey] = <String>[paymentTypeValue];

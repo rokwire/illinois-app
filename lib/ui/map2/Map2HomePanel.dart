@@ -35,7 +35,7 @@ import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
-import 'package:illinois/ui/dining/DiningHomePanel.dart';
+import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
 import 'package:illinois/ui/map2/Map2BasePanel.dart';
@@ -62,8 +62,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:visibility_detector/visibility_detector.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 import '../widgets/HeaderBar.dart';
 
@@ -119,11 +117,12 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   with NotificationsListener, SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<Map2HomePanel>
 {
 
-  final GlobalKey _headerBarKey = GlobalKey();
-  final GlobalKey _headerBarTitleKey = GlobalKey();
+  final GlobalKey _rootHeaderBarKey = GlobalKey();
+  final GlobalKey _rootHeaderBarTitleKey = GlobalKey();
   final GlobalKey _scaffoldKey = GlobalKey();
   final GlobalKey _contentHeadingBarKey = GlobalKey();
   final GlobalKey _contentTypesBarKey = GlobalKey();
+  final GlobalKey _contentTitleKey = GlobalKey();
   final GlobalKey _traySheetKey = GlobalKey();
   final GlobalKey _traySheetHeaderKey = GlobalKey();
   final GlobalKey _sortButtonKey = GlobalKey();
@@ -134,6 +133,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   final GlobalKey _searchButtonKey = GlobalKey();
   final GlobalKey _paymentTypesButtonKey = GlobalKey();
   final GlobalKey _openNowButtonKey = GlobalKey();
+  final Map<Map2ContentType, GlobalKey> contentTypeKeys = {};
 
 
   final ScrollController _contentTypesScrollController = ScrollController();
@@ -147,7 +147,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   final Map<Map2ContentType, Map2Filter> _filters = <Map2ContentType, Map2Filter>{};
   bool _searchOn = false;
-  bool _mapDisabled = false;// Accessibility workaround value
   double? _sortDropdownWidth;
   double? _termsDropdownWidth;
   double? _paymentTypesDropdownWidth;
@@ -181,22 +180,22 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       Map2ExplorePOICard.notifyPOIUpdated,
       Map2.notifySelect,
       FlexUI.notifyChanged,
-      uiuc.TabBar.notifySelectionChanged,
+      RootPanel.notifyTabAppear,
+      RootPanel.notifyTabDisappear,
     ]);
 
     _availableContentTypes = Map2ContentTypeImpl.availableTypes;
     _selectedContentType = widget._evalInitialContentTypeEx(availableTypes: _availableContentTypes);
 
     _contentTypesScrollController.addListener(_onContentTypesScroll);
-    _traySheetController.addListener(_onSheetDragChanged);
 
     //updateLocationServicesStatus(updateCamera: true);
     _initSelectNotificationFilters(widget._initialSelectParam);
     _initMapStyles();
     _initExplores();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _accessibilityFocusHeading();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        _accessibilityFocusHeading());
+
     super.initState();
   }
 
@@ -255,10 +254,15 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       _updateAvailableContentTypes();
       updateLocationServicesStatus();
     }
-    else if (name == uiuc.TabBar.notifySelectionChanged){
-      int index = JsonUtils.intValue(param) ?? 0;
-      if(index == 1)  //Index to code ? or pass directly code
+    else if (name == RootPanel.notifyTabAppear){
+      if ((JsonUtils.cast<RootTab>(param) == RootTab.Map) && mounted) {
         _accessibilityFocusHeading();
+      }
+    }
+    else if (name == RootPanel.notifyTabDisappear){
+      if ((JsonUtils.cast<RootTab>(param) == RootTab.Map) && mounted) {
+        _clearContent();
+      }
     }
   }
 
@@ -307,24 +311,23 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     Stack(key: _scaffoldKey, children: [
 
       Positioned.fill(child:
-        _accessibilityWorkaroundWrapMap(child:
-          Visibility(visible: (_exploresProgress == null), child:
-            mapView
-          )
+        Visibility(visible: (_exploresProgress == null), child:
+          mapView
         )
       ),
 
       Positioned.fill(child:
         Column(children: [
-          RootHeaderBar(key: _headerBarKey, titleKey: _headerBarTitleKey, title: Localization().getStringEx("panel.map2.header.title", "Map2")),
+          _scaffoldHeaderBar,
+
+          Visibility(visible: (_selectedContentType == null), child:
+            _contentTypesBar
+          ),
+
           Visibility(visible: (_selectedContentType != null), child:
             _contentHeadingBar,
           ),
-          Visibility(visible: (_selectedContentType == null), child:
-            Align(alignment: Alignment.topCenter, child:
-              _contentTypesBar
-            ),
-          ),
+
           Expanded(child:
             Visibility(visible: (_exploresProgress == null) && (_trayExplores?.isNotEmpty == true), child:
               _traySheet,
@@ -348,6 +351,12 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
         ),
     ],);
 
+
+  Widget get _scaffoldHeaderBar => RootHeaderBar(
+    key: _rootHeaderBarKey,
+    titleKey: _rootHeaderBarTitleKey,
+    title: Localization().getStringEx("panel.map2.header.title", "Map2"),
+  );
 
   Widget get _mapProgressIndicator =>
     SizedBox(width: 24, height: 24, child:
@@ -376,17 +385,26 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   @override
   double? get mapTopSiblingsHeight {
-    double? headerBarHeight = _headerBarKey.renderBoxSize?.height;
-    if (headerBarHeight != null) {
-      headerBarHeight += _contentHeadingBarKey.renderBoxSize?.height ?? 0;
+    double? topSiblingsHeight;
+
+    double? rootHeaderBarHeight = _rootHeaderBarKey.renderBoxSize?.height;
+    if (rootHeaderBarHeight != null) {
+      topSiblingsHeight = (topSiblingsHeight ?? 0) + rootHeaderBarHeight;
+    }
+
+    double? contentHeadingBarHeight = _contentHeadingBarKey.renderBoxSize?.height;
+    if (contentHeadingBarHeight != null) {
+      topSiblingsHeight = (topSiblingsHeight ?? 0) + contentHeadingBarHeight;
+
       if (_exploresProgress == ExploreProgressType.init) {
-        headerBarHeight += _defaultContentFilterButtonsBarHeight;
+        topSiblingsHeight += _defaultContentFilterButtonsBarHeight;
       }
       if ((_exploresProgress != null) && (_selectedFilterIfExists?.hasFilter == true)) {
-        headerBarHeight += _defaultContentFilterDescriptionBarHeight;
+        topSiblingsHeight += _defaultContentFilterDescriptionBarHeight;
       }
     }
-    return headerBarHeight;
+
+    return topSiblingsHeight;
   }
 
   @override
@@ -536,7 +554,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
       if (_availableContentTypes.contains(contentType)) {
         entries.add(Padding(
           padding: EdgeInsets.only(left: entries.isNotEmpty ? 8 : 0),
-          child: Map2ContentTypeButton(contentType.displayTitle,
+          child: Map2ContentTypeButton(key: contentTypeKeys[contentType] ??= GlobalKey(), contentType.displayTitle,
             onTap: () => _onTapContentTypeEntry(contentType),
           )
         ));
@@ -567,7 +585,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
 
   void _onContentTypeEntry(Map2ContentType contentType) {
     setState(() {
-      Storage().storedMap2ContentType = _selectedContentType = contentType;
+      _selectedContentType = contentType;
     });
     _initExplores();
   }
@@ -596,6 +614,9 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
         searchText: param.searchText
       );
     }
+    else if (param is Map2FilterDiningsLocationsParam) {
+      _filters[Map2ContentType.DiningLocations] = Map2DiningLocationsFilter.fromFilterParam(param);
+    }
     else if (param is Map2FilterBusStopsParam) {
       _filters[Map2ContentType.BusStops] = Map2BusStopsFilter.defaultFilter(
         searchText: param.searchText,
@@ -613,18 +634,20 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   // Content Filters
 
   Widget get _contentHeadingBar =>
-    Container(key: _contentHeadingBarKey, decoration: _contentHeadingDecoration, child:
-      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: _searchOn ? <Widget>[
-        _contentFilterSearchBar,
-      ] : <Widget>[
-        _contentTitleBar,
-        if ((_exploresProgress == null) || (_exploresProgress == ExploreProgressType.update))
-          ...[_contentFilterButtonsBar ?? Container(),
-            ...(_contentFilterButtonsExtraBars ?? [])
-          ],
-        if (_exploresProgress == null)
-          _contentFilterDescriptionBar ?? Container(),
-      ],),
+    Semantics(key: _contentHeadingBarKey, child:
+      Container(decoration: _contentHeadingDecoration, child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: _searchOn ? <Widget>[
+          _contentFilterSearchBar,
+        ] : <Widget>[
+          _contentTitleBar,
+          if ((_exploresProgress == null) || (_exploresProgress == ExploreProgressType.update))
+            ...[_contentFilterButtonsBar ?? Container(),
+              ...(_contentFilterButtonsExtraBars ?? [])
+            ],
+          if (_exploresProgress == null)
+            _contentFilterDescriptionBar ?? Container(),
+        ],),
+      )
     );
 
   BoxDecoration get _contentHeadingDecoration =>
@@ -635,50 +658,55 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     );
 
   Widget get _contentTitleBar =>
-    Semantics(header: true, container: true, child:
+    Semantics(key: _contentTitleKey, header: true, container: true, focused: true, child:
       Row(children: [
         Expanded(child:
           Padding(padding: EdgeInsets.only(left: 16, top: 8, bottom: 8), child:
             Text(_selectedContentType?.displayTitle ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
           ),
         ),
-      Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), button: true, excludeSemantics: true, container: true, child:
-        InkWell(onTap : _onTapClearContentType, child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
-          ),
-        )
+      Semantics(button: true, excludeSemantics: true, container: true,
+        label: Localization().getStringEx('dialog.close.title', 'Close'),
+        hint: Localization().getStringEx('panel.map2.button.close.hint', 'Double tap to clear {{content_type}} filter').replaceAll('{{content_type}}', _selectedContentType?.displayTitle ?? ''), child:
+          InkWell(onTap : _onTapClearContentType, child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+              Styles().images.getImage('close-circle-small', excludeFromSemantics: true)
+            ),
+          )
         ),
       ],));
 
   void _onTapClearContentType() {
     Analytics().logSelect(target: 'Content: Clear');
-    setState(() {
-      Storage().storedMap2ContentType = _selectedContentType = null;
-      _explores = _filteredExplores = null;
-      _selectedExploreGroup = null;
-      _trayExplores = null;
-      _exploresTask = null;
-      _exploresProgress = null;
-
-      _storiedSitesTags = null;
-      _expandedStoriedSitesTag = null;
-
-      markers = null;
-      exploreMapGroups = null;
-      targetCameraUpdate = null;
-      buildMarkersTask = null;
-      lastMapZoom = null;
-      markersProgress = false;
-
-      _pinnedExplore = null;
-      _pinnedMarker = null;
-    });
+    GlobalKey? _lastSelectedContentKey = contentTypeKeys[_selectedContentType];
+    _clearContent();
     WidgetsBinding.instance.addPostFrameCallback((_){
       _updateContentTypesScrollPosition();
-     _onAccessibilityExploresUpdated();
+      AppSemantics.triggerAccessibilityFocus(_lastSelectedContentKey);
     });
   }
+
+  void _clearContent() => setState((){
+    _selectedContentType = null;
+    _explores = _filteredExplores = null;
+    _selectedExploreGroup = null;
+    _trayExplores = null;
+    _exploresTask = null;
+    _exploresProgress = null;
+
+    _storiedSitesTags = null;
+    _expandedStoriedSitesTag = null;
+
+    markers = null;
+    exploreMapGroups = null;
+    targetCameraUpdate = null;
+    buildMarkersTask = null;
+    lastMapZoom = null;
+    markersProgress = false;
+
+    _pinnedExplore = null;
+    _pinnedMarker = null;
+  });
 
   // My Locactions Content && Selection
 
@@ -836,7 +864,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
               _exploresProgress = null;
               mapKey = UniqueKey(); // force map rebuild
 
-              if ((exploreContentType?.supportsManualFilters == true) && (validExplores?.isNotEmpty != true)) {
+              if ((validExplores?.isNotEmpty != true) && (exploreContentType?.supportsManualFilters == true) && (exploreContentType?.supportsEditing != true)) {
                 _selectedContentType = null; // Unselect content type if there is nothing to show.
               }
             });
@@ -868,7 +896,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
           _pinnedMarker = null;
         });
       }
-      _onAccessibilityExploresUpdated();
     }
   }
 
@@ -927,7 +954,6 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
           }
         }
       }
-      _onAccessibilityExploresUpdated();
     }
   }
 
@@ -955,7 +981,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
   }
 
   Future<List<Explore>?> _loadDiningLocations() async =>
-    Dinings().loadBackendDinings(false, null, null);
+    Dinings().loadDinings();
 
   Future<List<Explore>?> _loadEvents2() async =>
     Events2().loadEventsList(await _event2QueryParam());
@@ -1168,16 +1194,16 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
             ),
             IndexedSemantics(index: 2, child: Semantics( container: true, child:
               Map2PlainImageButton(imageKey: 'share-nodes',
-                label: Localization().getStringEx('panel.events2.home.bar.button.share.title', 'Share Event Set'),
-                hint: Localization().getStringEx('panel.events2.home.bar.button.share.hinr', 'Tap to share current event set'),
+                label: Localization().getStringEx('panel.map2.button.share.title"', 'Share Locations'),
+                hint: Localization().getStringEx('panel.map2.button.share.hint', 'Tap to share current locations'),
                 padding: EdgeInsets.only(left: 16, right: (8 + 2), top: 12, bottom: 12),
                 onTap: _onTapShareFilter
               )
             )),
-            IndexedSemantics(index: 1, child: Semantics( container: true, child:
+            IndexedSemantics(index: 3, child: Semantics( container: true, child:
               Map2PlainImageButton(imageKey: 'close',
                   label: Localization().getStringEx('panel.events2.home.bar.button.clear.title', 'Clear Filters'),
-                  hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hinr', 'Tap to clear current filters'),
+                  hint: Localization().getStringEx('panel.events2.home.bar.button.clear.hint', 'Tap to clear current filters'),
                 padding: EdgeInsets.only(left: 8 + 2, right: 16 + 2, top: 12, bottom: 12),
                 onTap: _onTapClearFilter
               ),
@@ -1204,10 +1230,10 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     Map2FilterImageButton.defaultHeight + 2 * 8;
 
   EdgeInsetsGeometry get _contentFilterButtonsBarPadding =>
-    EdgeInsets.only(left: 16, top: 8, bottom: 8);
+    EdgeInsets.symmetric(vertical: 8);
 
   EdgeInsetsGeometry get _contentFilterExtraButtonsBarPadding =>
-    EdgeInsets.only(left: 16, bottom: 8);
+    EdgeInsets.only(bottom: 8);
 
   EdgeInsetsGeometry get _contentFilterDescriptionBarPadding =>
     EdgeInsets.only(left: 16);
@@ -1235,7 +1261,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   }
 
   List<Widget> get _campusBuildingsFilterButtons => <Widget>[
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
     if (_isSortAvailable)
@@ -1245,26 +1271,24 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     Padding(padding: _filterButtonsPadding, child:
       _starredFilterButton,
     ),
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsLastPadding, child:
       _amenitiesBuildingsFilterButton,
     ),
-    _filterButtonsEdgeSpacing,
   ];
 
   List<Widget> get _studentCoursesFilterButtons => <Widget>[
     if (_isSortAvailable)
-      Padding(padding: _filterButtonsPadding, child:
+      Padding(padding: _filterButtonsFirstPadding, child:
         _sortFilterButton,
       ),
     if (StudentCourses().terms?.isNotEmpty == true)
-      Padding(padding: _filterButtonsPadding, child:
+      Padding(padding: _isSortAvailable ? _filterButtonsLastPadding : _filterButtonsFirstPadding, child:
         _termsButton,
       ),
-    _filterButtonsEdgeSpacing,
   ];
 
   List<Widget> get _diningLocationsFilterButtons => <Widget>[
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
     if (_isSortAvailable)
@@ -1277,57 +1301,53 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
     Padding(padding: _filterButtonsPadding, child:
       _openNowDiningLocationsFilterButton,
     ),
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsLastPadding, child:
       _paymentTypesDiningLocationsFilterButton,
     ),
-    _filterButtonsEdgeSpacing,
   ];
 
   List<Widget> get _events2FilterButtons => <Widget>[
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
     if (_isSortAvailable)
       Padding(padding: _filterButtonsPadding, child:
         _sortFilterButton,
       ),
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsLastPadding, child:
       _filtersFilterButton,
     ),
-    _filterButtonsEdgeSpacing,
   ];
 
   List<Widget> get _laundryRoomsFilterButtons => <Widget>[
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
     if (_isSortAvailable)
       Padding(padding: _filterButtonsPadding, child:
         _sortFilterButton,
       ),
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsLastPadding, child:
       _starredFilterButton,
     ),
-    _filterButtonsEdgeSpacing,
   ];
 
   List<Widget> get _busStopsFilterButtons => <Widget>[
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
     if (_isSortAvailable)
       Padding(padding: _filterButtonsPadding, child:
         _sortFilterButton,
       ),
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsLastPadding, child:
       _starredFilterButton,
     ),
-    _filterButtonsEdgeSpacing,
   ];
 
 
   List<Widget> get _storiedSitesFilterButtons => <Widget>[
-    Padding(padding: _filterButtonsPadding, child:
+    Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
     if (_isSortAvailable)
@@ -1368,42 +1388,59 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   }
 
   List<Widget> _storiedSitesTagButtons(LinkedHashMap<String, dynamic> tags, { String? tagPrefix }) {
-    List<Widget> buttons = <Widget>[];
 
-    // First add simple tag buttons
+    // 1. Build display tags as they should appear in the bar
+    List<String> displayTags = <String>[];
+
+    // 1.1. First add simple tag buttons
     for (String tagEntry in tags.keys) {
       LinkedHashMap? tagValue = JsonUtils.cast(tags[tagEntry]);
       if (tagValue?.isNotEmpty != true) {
-        String tag = (tagPrefix?.isNotEmpty == true) ? "$tagPrefix.$tagEntry" : tagEntry;
-        buttons.add(Padding(padding: _filterButtonsPadding, child:
-          _storiedSiteSimpleTagButton(tag, title: tagEntry),
-        ));
+        displayTags.add(tagEntry);
       }
     }
 
-    // Then add compound tag buttons after the single
+    // 1.2. Then add compound tag buttons after the single
     for (String tagEntry in tags.keys) {
       LinkedHashMap? tagValue = JsonUtils.cast(tags[tagEntry]);
       if (tagValue?.isNotEmpty == true) {
-        String tag = (tagPrefix?.isNotEmpty == true) ? "$tagPrefix.$tagEntry" : tagEntry;
-        buttons.add(Padding(padding: _filterButtonsPadding, child:
-          _storiedSiteCompoundTagButton(tag, title: tagEntry),
-        ));
+        displayTags.add(tagEntry);
       }
     }
+
+    // 2. Build button widgets for display tags
+    List<Widget> buttons = <Widget>[];
+    for (String tagEntry in displayTags) {
+
+      LinkedHashMap? tagValue = JsonUtils.cast(tags[tagEntry]);
+      String tag = (tagPrefix?.isNotEmpty == true) ? "$tagPrefix.$tagEntry" : tagEntry;
+
+      EdgeInsetsGeometry padding;
+      if (buttons.isEmpty && (tagPrefix?.isNotEmpty == true)) {
+        padding = _filterButtonsFirstPadding;
+      } else if ((buttons.length + 1) == displayTags.length) {
+        padding = _filterButtonsLastPadding;
+      } else {
+        padding = _filterButtonsPadding;
+      }
+
+      buttons.add(Padding(padding: padding, child: (tagValue?.isNotEmpty == true) ?
+        _storiedSiteCompoundTagButton(tag, title: tagEntry) : _storiedSiteSimpleTagButton(tag, title: tagEntry),
+      ));
+    }
+
     return buttons;
   }
 
-  List<Widget> get _myLocationsFilterButtons => <Widget>[
-    Padding(padding: _filterButtonsPadding, child:
+  List<Widget> get _myLocationsFilterButtons => (_explores?.isNotEmpty == true) ? <Widget>[
+    Padding(padding: _filterButtonsFirstPadding, child:
       _searchFilterButton,
     ),
     if (_isSortAvailable)
-      Padding(padding: _filterButtonsPadding, child:
+      Padding(padding: _filterButtonsLastPadding, child:
         _sortFilterButton,
       ),
-    _filterButtonsEdgeSpacing,
-  ];
+  ] : <Widget>[];
 
   // Search Filter Button
 
@@ -1487,19 +1524,19 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   void _onAmenities() {
     Analytics().logSelect(target: 'Amenities');
     List<Building>? buildings = JsonUtils.listCastValue<Building>(_explores);
-    Map<String, Set<String>> amenitiesNameToIds = buildings?.amenitiesNameToIds ?? <String, Set<String>>{};
-    Navigator.push<LinkedHashMap<String, Set<String>>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
-      amenitiesNameToIds: amenitiesNameToIds,
-      selectedAmenitiesNameToIds: _campusBuildingsFilterIfExists?.amenitiesNameToIds ?? LinkedHashMap<String, Set<String>>(),
+    Map<String, BuildingFeature> amenitiesMap = buildings?.amenitiesMap ?? <String, BuildingFeature>{};
+    Navigator.push<Set<String>?>(context, CupertinoPageRoute(builder: (context) => Map2FilterBuildingAmenitiesPanel(
+      amenitiesMap: amenitiesMap,
+      selectedKeys: SetUtils.from(_campusBuildingsFilterIfExists?.amenitiesMap.keys) ?? <String>{},
     ),
-    )).then(((LinkedHashMap<String, Set<String>>? amenitiesNameToIds) {
-      if (amenitiesNameToIds != null) {
+    )).then(((Set<String>? selectedKeys) {
+      if (selectedKeys != null) {
         setStateIfMounted(() {
-          _campusBuildingsFilter?.amenitiesNameToIds = amenitiesNameToIds;
+          _campusBuildingsFilter?.amenitiesMap = Map<String, BuildingFeature>.fromEntries(amenitiesMap.entries.where((MapEntry<String, BuildingFeature> entry) => selectedKeys.contains(entry.key)));
         });
         _onFiltersChanged();
         Future.delayed(Duration(milliseconds: 200 + (Platform.isIOS ? 1000 : 0)), () =>
-            AppSemantics.triggerAccessibilityFocus(_amenitiesButtonKey));
+          AppSemantics.triggerAccessibilityFocus(_amenitiesButtonKey));
       }
     }));
   }
@@ -1524,7 +1561,6 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         isExpanded: false,
         items: _buildTermsDropdownItems(),
         onChanged: _onSelectTerm,
-        onMenuStateChange: _onMenuVisibilityChanged,
       )
     )),
   );
@@ -1538,15 +1574,14 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         String itemTitle = term.name ?? '';
         TextStyle? itemTextStyle = (term.id == displayTermId) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
         Widget? itemIcon = (term.id == displayTermId) ? Styles().images.getImage('check', size: 18, color: Styles().colors.fillColorPrimary) : null;
-        items.add(AccessibleDropDownMenuItem<StudentCourseTerm>(key: ObjectKey(term), value: term,
-          child: Semantics(label: itemTitle, button: true, container: true, inMutuallyExclusiveGroup: true,
+        items.add(AccessibleDropDownMenuItem<StudentCourseTerm>(key: ObjectKey(term), value: term, semanticsLabel: itemTitle,
             child: Row(children: [
               Expanded(child:
                 Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
               ),
               if (itemIcon != null)
                 Padding(padding: EdgeInsets.only(left: 4), child: itemIcon,) ,
-            ],) )));
+            ],) ));
       }
     }
     return items;
@@ -1615,7 +1650,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
               padding: EdgeInsets.zero
             ),
         customButton: Map2FilterTextButton(
-          title: _selectedPaymentType?.displayTitle ?? Localization().getStringEx('panel.map2.button.payment_type.title', 'Payment Type'),
+          title: _selectedPaymentType?.displayTitle ?? PaymentTypeUtils.displayTitleAll,
           hint: Localization().getStringEx('panel.map2.button.payment_type.hint', 'Tap to select a payment type') + " $_filterButtonHint",
           rightIcon: Styles().images.getImage('chevron-down'),
           //onTap: _onPaymentType,
@@ -1623,57 +1658,56 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         isExpanded: false,
         items: _buildPaymentTypesDropdownItems(),
         onChanged: _onSelectPaymentType,
-        onMenuStateChange: _onMenuVisibilityChanged,
       )
     )),
   );
 
-  List<DropdownMenuItem<PaymentType>> _buildPaymentTypesDropdownItems() {
-    List<DropdownMenuItem<PaymentType>> items = <DropdownMenuItem<PaymentType>>[];
-    for (PaymentType paymentType in PaymentType.values) {
-      String itemTitle = paymentType.displayTitle;
-      TextStyle? itemTextStyle = (paymentType == _selectedPaymentType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
-      Widget? itemIcon = (paymentType == _selectedPaymentType) ? Styles().images.getImage('check', size: 18, color: Styles().colors.fillColorPrimary) : null;
-      items.add(AccessibleDropDownMenuItem<PaymentType>(key: ObjectKey(paymentType), value: paymentType,
-        child: Semantics(label: itemTitle, button: true, container: true, inMutuallyExclusiveGroup: true,
-          child: Row(children: [
-            Expanded(child:
-              Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
-            ),
-            if (itemIcon != null)
-              Padding(padding: EdgeInsets.only(left: 4), child: itemIcon,) ,
-          ],) )));
-    }
-    return items;
+  List<DropdownMenuItem<PaymentType>> _buildPaymentTypesDropdownItems() => [
+    _buildPaymentTypesDropdownItem(null),
+    ...PaymentType.values.map((paymentType) => _buildPaymentTypesDropdownItem(paymentType)),
+  ];
+
+  DropdownMenuItem<PaymentType> _buildPaymentTypesDropdownItem(PaymentType? paymentType) {
+    String itemTitle = paymentType?.displayTitle ?? PaymentTypeUtils.displayTitleAll;
+    TextStyle? itemTextStyle = (paymentType == _selectedPaymentType) ? _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
+    Widget? itemIcon = (paymentType == _selectedPaymentType) ? Styles().images.getImage('check', size: 18, color: Styles().colors.fillColorPrimary) : null;
+    return AccessibleDropDownMenuItem<PaymentType>(key: ObjectKey(paymentType), value: paymentType, semanticsLabel: itemTitle, child:
+      Row(children: [
+        Expanded(child:
+          Text(itemTitle, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,),
+        ),
+        if (itemIcon != null)
+          Padding(padding: EdgeInsets.only(left: 4), child: itemIcon,) ,
+      ])
+    );
   }
 
   double _evaluatePaymentTypesDropdownWidth() {
-    double width = 0;
+    double width = _evaluatePaymentTypeDropdownWidth(null);
     for (PaymentType paymentType in PaymentType.values) {
-      final Size sizeFull = (TextPainter(
-          text: TextSpan(
-            text: paymentType.displayTitle,
-            style: _dropdownEntrySelectedTextStyle,
-          ),
-          textScaler: MediaQuery.of(context).textScaler,
-          textDirection: TextDirection.ltr,
-        )..layout()).size;
-      if (width < sizeFull.width) {
-        width = sizeFull.width;
+      final double itemWidth = _evaluatePaymentTypeDropdownWidth(paymentType);
+      if (width < itemWidth) {
+        width = itemWidth;
       }
     }
-    return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width / 2); // add horizontal padding
+    return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width * 2 / 3); // add horizontal padding
   }
+
+  double _evaluatePaymentTypeDropdownWidth(PaymentType? paymentType) => (
+    TextPainter(
+      text: TextSpan(
+        text: paymentType?.displayTitle ?? PaymentTypeUtils.displayTitleAll,
+        style: _dropdownEntrySelectedTextStyle,
+      ),
+      textScaler: MediaQuery.of(context).textScaler,
+      textDirection: TextDirection.ltr,
+    )..layout()
+  ).size.width;
 
   void _onSelectPaymentType(PaymentType? value) {
     Analytics().logSelect(target: 'Payment Type: ${value?.displayTitle}');
     setStateIfMounted(() {
-      if (_selectedPaymentType != value) {
-        _selectedPaymentType = value;
-      }
-      else {
-        _selectedPaymentType = null;
-      }
+      _selectedPaymentType = value; // (_selectedPaymentType != value) ? value : null;
     });
     _onFiltersChanged();
     Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
@@ -1793,7 +1827,6 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         isExpanded: false,
         items: _buildSortDropdownItems(),
         onChanged: _onSelectSortType,
-        onMenuStateChange: _onMenuVisibilityChanged,
       )
     )),
   );
@@ -1813,15 +1846,14 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
             bool isSortOrderSelected = sortType.isDropdownListEntrySelected(sortOrder) ?? (_selectedSortOrder == sortOrder);
             TextStyle? itemTextStyle = ((_selectedSortType == sortType) && isSortOrderSelected) ?
               _dropdownEntrySelectedTextStyle : _dropdownEntryNormalTextStyle;
-            items.add(AccessibleDropDownMenuItem<Pair<Map2SortType, Map2SortOrder?>>(key: ObjectKey(Pair(sortType, sortOrder)), value: Pair(sortType, sortOrder), child:
-              Semantics(label: sortType.displayTitle, button: true, container: true, inMutuallyExclusiveGroup: true, child:
+            items.add(AccessibleDropDownMenuItem<Pair<Map2SortType, Map2SortOrder?>>(key: ObjectKey(Pair(sortType, sortOrder)), value: Pair(sortType, sortOrder), semanticsLabel: sortType.displayTitle, child:
                 Row(children: [
                   Expanded(child:
                     Text(itemText, overflow: TextOverflow.ellipsis, semanticsLabel: '', style: itemTextStyle,)
                   ),
                 ],)
               )
-            ));
+            );
           }
         }
       }
@@ -1865,9 +1897,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
         _selectedSortOrder = value.right ?? _expectedSortOrder(value.left);
       });
       _onSortChanged();
-      Future.delayed(Duration(seconds: Platform.isIOS ? 1 : 0), () =>
-        AppSemantics.triggerAccessibilityFocus(_sortButtonKey)
-      );
+      AppSemantics.triggerAccessibilityFocus(_sortButtonKey, delay: Duration(seconds: 1));
     }
   }
 
@@ -1882,9 +1912,8 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   TextStyle? get _dropdownEntrySelectedTextStyle => Styles().textStyles.getTextStyle("widget.message.regular.fat");
 
   static const EdgeInsetsGeometry _filterButtonsPadding = EdgeInsets.only(right: 6);
-
-  Widget get _filterButtonsEdgeSpacing =>
-    SizedBox(width: 18,);
+  static const EdgeInsetsGeometry _filterButtonsFirstPadding = EdgeInsets.only(left: 16, right: 6);
+  static const EdgeInsetsGeometry _filterButtonsLastPadding = EdgeInsets.only(right: 16);
 
   Map2Filter? get _selectedFilter => _getFilter(_selectedContentType, ensure: true);
   Map2Filter? get _selectedFilterIfExists => _getFilter(_selectedContentType, ensure: false);
@@ -2100,81 +2129,9 @@ extension _Map2Accessibility on _Map2HomePanelState{
 
   String get _filterButtonHint =>  ". Results in filtering  ${_displayCount ?? 0} from ${_totalCount ?? 0} Buildings";
 
-  String get _amenitiesSemanticsValue => _campusBuildingsFilterIfExists?.amenitiesNameToIds.keys.toString() ?? '';
+  String get _amenitiesSemanticsValue => _campusBuildingsFilterIfExists?.amenitiesMap.keys.toString() ?? '';
 
   void _accessibilityFocusHeading() {
-    AppSemantics.triggerAccessibilityFocus(_headerBarTitleKey); //When already on this tab
-    WidgetsBinding.instance.addPostFrameCallback((_) => //When coming from other tab
-      AppSemantics.triggerAccessibilityFocus(_headerBarTitleKey));
+    AppSemantics.triggerAccessibilityFocus(_rootHeaderBarTitleKey, delay: Duration(milliseconds: 500)); //When already on this tab
   }
-}
-
-// Map2 Accessibility Workaround
-
-extension _Map2AccessibilityWorkaround on _Map2HomePanelState{  //Additional functionality and UI changes that will improve the Maps accessibility. Execute it only if needed
-  bool get _resizeWorkaroundEnabled => false;
-  bool get _visibilityWorkaroundEnabled => _resizeWorkaroundEnabled;
-
-  bool get _needAccessibilityWorkaround => (_scaffoldKey.currentContext?.mounted == true) &&
-      AppSemantics.isAccessibilityEnabled(context) == true;
-
-  Widget _accessibilityWorkaroundWrapMap({Widget? child}) => //child;
-    VisibilityDetector(key: const Key('map2_location_panel_detector'),
-        onVisibilityChanged: _onMapVisibilityChanged, child:
-        Padding(padding: _resizeWorkaroundEnabled ? _accessibilityWorkaroundMapPadding : EdgeInsets.zero, child:
-         (_mapDisabled == true ? //Get disabled only if accessibility workaround is required
-            Container(child: Center(child: Text("Map is disabled"))) : //Workaround to make DropDownMenuItems clickable. They go over MapView and do not get tap actions
-              child))
-    );//Workaround to make sheet and heading tappable. We resize the map so they don't go over the map
-
-  EdgeInsets get _accessibilityWorkaroundMapPadding {//Workaround for the Maps Accessibility. Even when Map is at the bottom layer of the stack it takes the Tap gestures.
-    if(_needAccessibilityWorkaround == false)
-      return EdgeInsets.zero;
-
-    double sheetHeight = mapBottomSiblingsHeight ?? 0;
-
-    double headerBarHeight =  mapTopSiblingsHeight ?? 0;
-    headerBarHeight += _selectedContentType == null ? _contentTypesBarKey.renderBoxSize?.height ?? 0 : 0;
-
-    return EdgeInsets.only(top: headerBarHeight, bottom: sheetHeight);
-  }
-
-  void _onSheetDragChanged() {
-    if(_resizeWorkaroundEnabled)
-      _doAccessibilityWorkaround(()=>
-          setStateIfMounted());
-  }
-
-  void _onMenuVisibilityChanged(bool visible) => _visibilityWorkaroundEnabled ?
-  _doAccessibilityWorkaround(() =>
-      setStateIfMounted((){
-        _mapDisabled= visible;
-      })) : null;
-
-  void _onMapVisibilityChanged(VisibilityInfo info){
-    if(_visibilityWorkaroundEnabled) {
-      if (info.visibleFraction == 0) {
-        if (_mapDisabled == false)
-          _doAccessibilityWorkaround(
-                  () => setStateIfMounted(() => _mapDisabled = true));
-      } else {
-        if (_mapDisabled == true)
-          _doAccessibilityWorkaround(
-                  () => setStateIfMounted(() => _mapDisabled = false));
-      }
-    }
-  }
-
-  void _onAccessibilityExploresUpdated(){
-    _doAccessibilityWorkaround(()=>
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_resizeWorkaroundEnabled)
-            setStateIfMounted();
-        }
-        )
-    );
-  }
-
-  void _doAccessibilityWorkaround(Function? fn) => (_needAccessibilityWorkaround && fn != null) ?
-  fn() : null;
 }

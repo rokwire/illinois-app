@@ -44,6 +44,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 enum AssistantContentType { google, grok, perplexity, openai, all, faqs }
 
 class AssistantHomePanel extends StatefulWidget {
+  static const String _routeName = 'AssistantHomePanel';
+  static const String _notifySelectContent = "edu.illinois.rokwire.assistant.content.select";
+  static const AssistantContentType _defaultContentType = AssistantContentType.openai;
+
   final AssistantContentType? contentType;
   final String? initialQuestion;
 
@@ -52,27 +56,31 @@ class AssistantHomePanel extends StatefulWidget {
   @override
   _AssistantHomePanelState createState() => _AssistantHomePanelState();
 
-  static String pageRuntimeTypeName = 'AssistantHomePanel';
 
-  static final AssistantContentType _defaultContentType = AssistantContentType.openai;
-
-  static void present(BuildContext context, {AssistantContentType? content, String? initialQuestion}) {
+  static void present(BuildContext context, { AssistantContentType? content, String? initialQuestion}) {
     if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(
-          context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
-    } else if (!Auth2().isOidcLoggedIn && (Auth2().prefs?.isProspective != true)) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.assistant.offline.label', 'The Illinois Assistant is not available while offline.'));
+    }
+    else if (!Auth2().isOidcLoggedIn && (Auth2().prefs?.isProspective != true)) {
       showDialog(context: context, builder: (context) => _AssistantSignInInfoPopup());
-    } else if (!Assistant().hasUserAcceptedTerms()) {
+    }
+    else if (!Assistant().hasUserAcceptedTerms()) {
       showDialog(context: context, builder: (context) => _AssistantTermsPopup());
-    } else {
-      MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
-      double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
-      showModalBottomSheet(
+    }
+    else {
+      if (hasState) {
+        Navigator.of(context).popUntil((route) => (route.settings.name == _routeName) || (route.isFirst));
+        NotificationService().notify(_notifySelectContent, _SelectContentParam(contentType: content, initialQuestion: initialQuestion));
+      }
+      else if (ModalRoute.of(context)?.settings.name != _routeName) {
+        MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
+        double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
+        showModalBottomSheet(
           context: context,
           isScrollControlled: true,
           isDismissible: true,
           useRootNavigator: true,
-          routeSettings: RouteSettings(),
+          routeSettings: RouteSettings(name: _routeName),
           clipBehavior: Clip.antiAlias,
           backgroundColor: Styles().colors.background,
           constraints: BoxConstraints(maxHeight: height, minHeight: height),
@@ -80,7 +88,22 @@ class AssistantHomePanel extends StatefulWidget {
           builder: (context) {
             return AssistantHomePanel._(contentType: content, initialQuestion: initialQuestion);
           });
+      }
     }
+  }
+
+  static bool get hasState => (state != null);
+
+  static _AssistantHomePanelState? get state {
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(AssistantHomePanel._notifySelectContent);
+    if (subscribers != null) {
+      for (NotificationsListener subscriber in subscribers) {
+        if ((subscriber is _AssistantHomePanelState) && subscriber.mounted) {
+          return subscriber;
+        }
+      }
+    }
+    return null;
   }
 }
 
@@ -103,6 +126,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
       Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
       Assistant.notifySettingsChanged,
+      AssistantHomePanel._notifySelectContent,
     ]);
 
     _contentTypes = _buildContentTypes();
@@ -134,9 +158,15 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   @override
   void onNotification(String name, param) {
-    if (name == Auth2.notifyLoginChanged ||
-        name == Assistant.notifySettingsChanged) {
+    if (name == Auth2.notifyLoginChanged || name == Assistant.notifySettingsChanged) {
       _checkAvailable();
+    }
+    else if (name == AssistantHomePanel._notifySelectContent) {
+      _SelectContentParam? contentParam = (param is _SelectContentParam) ? param : null;
+      AssistantContentType? contentType = contentParam?.contentType;
+      if (mounted && (contentType != null) && (_contentTypes.contains(contentType)) && (contentType != _selectedContentType)) {
+        _selectContentItem(contentType, initialQuestion: contentParam?.initialQuestion);
+      }
     }
     else if (name == FlexUI.notifyChanged) {
       _updateContentTypes();
@@ -150,35 +180,42 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   Widget _buildSheet(BuildContext context) {
     bool clearAllVisible = (_selectedContentType != null) && (_selectedContentType != AssistantContentType.all) && (_selectedContentType != AssistantContentType.faqs);
-    return Column(children: [
-      Container(color: Styles().colors.white, child:
-        Row(children: [
-          Expanded(child:
-            Semantics(container: true, child:
-              Padding(padding: EdgeInsets.only(left: 16), child:
-                Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))
+    return
+      Column(children: [
+        Container(color: Styles().colors.white, child:
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Expanded(child:
+              Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                Semantics(container: true, child:
+                  Padding(padding: EdgeInsets.only(left: 16), child:
+                    Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"), maxLines: 1, overflow: TextOverflow.ellipsis,)
+                  )
+                ),
+                Padding(padding: EdgeInsets.only(left: 16), child:
+                  Wrap(children: [
+                    Visibility(visible: clearAllVisible, child:
+                      LinkButton(onTap: _onTapClearSession, title: Localization().getStringEx('panel.assistant.reset_session.label', 'Reset Memory'), fontSize: 14, padding: EdgeInsets.zero,)
+                    ),
+                    SizedBox(width: 8,),
+                    Visibility(visible: clearAllVisible, child:
+                      LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14, padding: EdgeInsets.zero)
+                    ),
+                  ],)
+                )
+              ])
+            ),
+            Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+              InkWell(onTap: _onTapClose, child:
+                Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+                    Styles().images.getImage('close-circle', excludeFromSemantics: true)
+                )
               )
             )
-          ),
-          Visibility(visible: clearAllVisible, child:
-            LinkButton(onTap: _onTapClearSession, title: Localization().getStringEx('panel.assistant.reset_session.label', 'Reset Memory'), fontSize: 14, padding: EdgeInsets.symmetric(vertical: 16),)
-          ),
-          SizedBox(width: 8,),
-          Visibility(visible: clearAllVisible, child:
-            LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14, padding: EdgeInsets.symmetric(vertical: 16))
-          ),
-          Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-            InkWell(onTap: _onTapClose, child:
-              Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                Styles().images.getImage('close-circle', excludeFromSemantics: true)
-              )
-            )
-          )
-        ])
-      ),
-      Container(color: Styles().colors.surfaceAccent, height: 1),
-      Expanded(child: _buildPage(context))
-    ]);
+          ])
+        ),
+        Container(color: Styles().colors.surfaceAccent, height: 1),
+        Expanded(child: _buildPage(context))
+      ]);
   }
 
   Widget _buildPage(BuildContext context) {
@@ -190,12 +227,15 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
                       key: _pageHeadingKey,
                       padding: EdgeInsets.only(left: 16, top: 16, right: 16),
                       child: Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child: RibbonButton(
-                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                          textWidget: Text( _selectedContentType?.displayTitle ?? '',
+                            style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           backgroundColor: Styles().colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                           rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                          label: _selectedContentType?.displayTitle ?? '',
                           onTap: _onTapContentSwitch))),
                 _buildContent(),
               ]))
@@ -231,7 +271,7 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
-        label: contentType.displayTitle,
+        title: contentType.displayTitle,
         onTap: () => _onTapContentItem(contentType)
       ));
     }
@@ -240,12 +280,14 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
 
   void _onTapContentItem(AssistantContentType contentItem) {
     Analytics().logSelect(target: contentItem.toString(), source: widget.runtimeType.toString());
+    _selectContentItem(contentItem);
+  }
+
+  void _selectContentItem(AssistantContentType contentItem, {String? initialQuestion }) {
     setState(() {
       Storage()._assistantContentType = _selectedContentType = contentItem;
-      _contentValuesVisible = !_contentValuesVisible;
-      if (_initialQuestion != null) {
-        _initialQuestion = null;
-      }
+      _initialQuestion = initialQuestion;
+      _contentValuesVisible = false;
     });
   }
 
@@ -590,6 +632,12 @@ extension AssistantContentTypeImpl on AssistantContentType {
 
   AssistantContentType? _ensure({ List<AssistantContentType>? availableTypes }) =>
       (availableTypes?.contains(this) != false) ? this : null;
+}
+
+class _SelectContentParam {
+  final AssistantContentType? contentType;
+  final String? initialQuestion;
+  _SelectContentParam({this.contentType, this.initialQuestion});
 }
 
 extension _AssistantContentTypeList on List<AssistantContentType> {

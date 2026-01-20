@@ -121,7 +121,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
           borderRadius: BorderRadius.all(Radius.circular(5)),
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
-          label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : 'Select a provider',
+          title: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : 'Select a provider',
           onTap: _onProvidersDropdown
         )
       )
@@ -159,7 +159,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
           backgroundColor: Styles().colors.white,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: null,
-          label: provider.name,
+          title: provider.name,
           onTap: () => _onTapProvider(provider)
         ));
       }

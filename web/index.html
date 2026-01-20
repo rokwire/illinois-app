@@ -57,6 +57,18 @@
 
   <!-- styles -->
   <style>
+
+    #video-container {
+      pointer-events: auto;
+      z-index: 9999;
+    }
+
+    #video-container.hidden {
+      opacity: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
     video {
       position: fixed;
       top: 0;
@@ -64,15 +76,134 @@
       width: 100vw;
       height: 100vh;
       object-fit: cover;
-      z-index: -1;
+      z-index: 1;
+    }
+
+    .visually-hidden {
+      position: absolute !important;
+      height: 1px; width: 1px;
+      overflow: hidden;
+      clip: rect(1px, 1px, 1px, 1px);
+      white-space: nowrap;
+    }
+
+    #toggleVideoButton {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+
+      font-size: 1rem;
+      font-weight: 500;
+      z-index: 2;
+    }
+
+    #toggleVideoButton:hover {
+      background: rgba(0, 0, 0, 0.75);
+    }
+
+    #toggleVideoButton:focus {
+      outline: 0px solid #000000;
     }
   </style>
 
 </head>
 <body>
-    <video preload="auto" autoplay muted loop playsinline>
-      <source src="assets/media/intro-web.webm" type='video/webm'>
-    </video>
+    <header role="banner">
+      <h1 class="visually-hidden">Illinois</h1>
+    </header>
+
+    <main>
+      <div id="video-container">
+        <video id="loadingVideo" preload="auto" autoplay muted loop playsinline aria-label="Loading animation">
+          <source src="assets/media/intro-web.webm" type="video/webm">
+        </video>
+
+        <button id="toggleVideoButton" aria-label="Pause loading animation">
+          <!-- Pause icon -->
+          <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24">
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </svg>
+
+          <!-- Play icon -->
+          <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24" style="display: none;">
+            <polygon points="8,5 19,12 8,19"></polygon>
+          </svg>
+        </button>
+
+        <div id="loadingAnnouncement" aria-live="assertive" class="visually-hidden">
+          Page loading, please wait.
+        </div>
+      </div>
+    </main>
   <script src="flutter_bootstrap.js" async></script>
+
+  <script>
+      const video = document.getElementById('loadingVideo');
+      const button = document.getElementById('toggleVideoButton');
+      const playIcon = document.getElementById('playIcon');
+      const pauseIcon = document.getElementById('pauseIcon');
+      const container = document.getElementById('video-container');
+      const loadingAnnouncement = document.getElementById('loadingAnnouncement');
+
+      let isPaused = false;
+
+      window.addEventListener('load', () => {
+        button.focus();
+        loadingAnnouncement.textContent = 'Page loading, please wait.';
+      });
+
+      // change play / pause video button
+      button.addEventListener('click', () => {
+        if (isPaused) {
+          video.play();
+          playIcon.style.display = 'none';
+          pauseIcon.style.display = 'block';
+          button.setAttribute('aria-label', 'Pause loading animation');
+        } else {
+          video.pause();
+          playIcon.style.display = 'block';
+          pauseIcon.style.display = 'none';
+          button.setAttribute('aria-label', 'Play loading animation');
+        }
+        isPaused = !isPaused;
+      });
+
+      // hide video containers
+      window.addEventListener('flutter-first-frame', () => {
+        container.classList.add('hidden');
+
+        container.setAttribute('aria-hidden', 'true');
+        document.querySelector('main').setAttribute('aria-hidden', 'true');
+
+        if (document.activeElement === button) {
+          button.blur();
+        }
+        button.setAttribute('tabindex', '-1');
+        button.setAttribute('aria-hidden', 'true');
+        button.disabled = true;
+      });
+
+      // remove role="dialog" from the semantics tree. It breaks the assistive tools.
+      const observer = new MutationObserver(() => {
+        document
+          .querySelectorAll('flt-semantics[role="dialog"]')
+          .forEach(el => el.removeAttribute('role'));
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true
+      });
+  </script>
 </body>
 </html>

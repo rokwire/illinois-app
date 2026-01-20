@@ -30,6 +30,7 @@ import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/groups/GroupsContentSettingsPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -306,8 +307,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(url)
-              ? Positioned.fill(child: ModalImageHolder(child:
-                  AccessibleImageHolder(child:
+              ? Positioned.fill(child: AccessibleImageHolder(child:
+                  ModalImageHolder(child:
                     WebNetworkImage(imageUrl: url, excludeFromSemantics: true, fit: BoxFit.cover))))
               : Container(),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
@@ -346,33 +347,64 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     String? fieldTitle = Localization().getStringEx("panel.groups_create.name.field", "NAME FIELD");
     String? fieldHint = Localization().getStringEx("panel.groups_create.name.field.hint", "");
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-         GroupSectionTitle(title: title, requiredMark: true),
-          Container(
-            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
-            child: Semantics(
-                label: fieldTitle,
-                hint: fieldHint,
-                textField: true,
-                excludeSemantics: true,
-                value: _groupTitleController.text,
-                child: TextField(
-                  controller: _groupTitleController,
-                  onChanged: (text) => setState((){_group?.title = text;}) ,
-                  maxLines: 1,
-                  decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
-                  style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
-                )),
-          ),
-        ],
-      ),
-
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        GroupSectionTitle(title: title, requiredMark: true),
+        _buildTextField(_groupTitleController, semanticsLabel: fieldTitle, semanticsHint: fieldHint,
+          onChanged: (text) => setState((){_group?.title = text;}) ,
+        )
+      ],),
     );
   }
+
+  Widget _buildTextField(TextEditingController controller, {
+    FocusNode? focusNode,
+    TextInputType? keyboardType,
+    int? maxLines = 1,
+    int? minLines,
+    bool autocorrect = false,
+    void Function(String)? onChanged,
+    String? semanticsLabel,
+    String? semanticsHint,
+  }) =>
+    Semantics(
+      label: semanticsLabel,
+      hint: semanticsHint,
+      textField: true,
+      excludeSemantics: true,
+      value: controller.text,
+      child: TextField(
+        controller: controller,
+        focusNode: focusNode,
+        decoration: _textFieldDecoration,
+        style: _textFieldTextStyle,
+        maxLines: maxLines,
+        minLines: minLines,
+        keyboardType: keyboardType,
+        autocorrect: autocorrect,
+        onChanged: onChanged,
+    ));
+
+  InputDecoration get _textFieldDecoration => InputDecoration(
+    fillColor: Styles().colors.surface, filled: true,
+    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+    border: _textFieldBorder,
+    enabledBorder: _textFieldBorder,
+    focusedBorder: _textFieldFocusBorder,
+  );
+
+  InputBorder get _textFieldBorder => OutlineInputBorder(
+    borderSide: BorderSide(color: Styles().colors.surfaceAccent, width: 1),
+    //borderRadius: BorderRadius.circular(0)
+  );
+
+  InputBorder get _textFieldFocusBorder => OutlineInputBorder(
+    borderSide: BorderSide(color: Styles().colors.fillColorPrimary, width: 1),
+    //borderRadius: BorderRadius.circular(0)
+  );
+
+  TextStyle? get _textFieldTextStyle =>
+    Styles().textStyles.getTextStyle("widget.item.regular.thin");
 
   //Description
   //Name
@@ -390,36 +422,15 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Localization().getStringEx("panel.groups_create.description.project.field.hint", "") :
       Localization().getStringEx("panel.groups_create.description.group.field.hint", "");
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          GroupSectionTitle(title: title, description: description),
-          Container(height: 5,),
-          Container(
-            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
-            child:
-            Row(children: [
-              Expanded(child:
-                Semantics(
-                    label: fieldTitle,
-                    hint: fieldHint,
-                    textField: true,
-                    excludeSemantics: true,
-                    value: _groupDescriptionController.text,
-                    child: TextField(
-                      onChanged: (text) {_group?.description = text; setStateIfMounted(() { });},
-                      controller: _groupDescriptionController,
-                      maxLines: 5,
-                      decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                      style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
-                    )),
-            )],)
-          ),
-        ],
-      ),
-
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        GroupSectionTitle(title: title, description: description),
+        //Container(height: 5,),
+        _buildTextField(_groupDescriptionController, semanticsLabel: fieldTitle, semanticsHint: fieldHint,
+          onChanged: (text) {_group?.description = text; setStateIfMounted(() { });},
+          maxLines: 5,
+        ),
+      ],),
     );
   }
   //
@@ -432,58 +443,28 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Localization().getStringEx("panel.groups_settings,project.link.title.hint", "") :
       Localization().getStringEx("panel.groups_settings.link.title.hint","");
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child:Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-        Semantics(label:labelTitle,
-          hint: labelHint, textField: true, excludeSemantics: true, value:  _group!.webURL,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(bottom: 8, top:24),
-                  child: Text(
-                    labelTitle,
-                    style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 15),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                            color: Styles().colors.fillColorPrimary,
-                            width: 1)),
-                    child: TextField(
-                      controller: _linkController,
-                      decoration: InputDecoration(
-                          hintText:  Localization().getStringEx("panel.groups_settings.link.hint", "Add URL"),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
-                      style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
-                      onChanged: (link){ _group!.webURL = link; setStateIfMounted(() {});},
-                      maxLines: 1,
-                    ),
-                  ),
-                ),
-              ]
-          )
-      ),
-      Semantics(label:Localization().getStringEx("panel.groups_settings.link.button.confirm.link",'Confirm website URL'),
-          hint: Localization().getStringEx("panel.groups_settings.link.button.confirm.link.hint",""), button: true, excludeSemantics: true, child:
-          GestureDetector(
-            onTap: _onTapConfirmLinkUrl,
-            child: Text(
-              Localization().getStringEx("panel.groups_settings.link.button.confirm.link.title",'Confirm URL'),
-              style: Styles().textStyles.getTextStyle("widget.button.title.medium.underline")
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column( crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Padding(padding: EdgeInsets.only(bottom: 8, top: 24), child:
+            Text(labelTitle, style: Styles().textStyles.getTextStyle("widget.title.tiny.fat")),
+          ),
+          Padding(padding: EdgeInsets.only(bottom: 15), child:
+            _buildTextField(_linkController, semanticsLabel: labelTitle, semanticsHint: labelHint,
+              onChanged: (link){ setState(() { _group!.webURL = link; });},
             ),
+          ),
+        ]),
+        Semantics(
+          label:Localization().getStringEx("panel.groups_settings.link.button.confirm.link",'Confirm website URL'),
+          hint: Localization().getStringEx("panel.groups_settings.link.button.confirm.link.hint",""), button: true, excludeSemantics: true,
+          child: GestureDetector( onTap: _onTapConfirmLinkUrl, child:
+            Text(Localization().getStringEx("panel.groups_settings.link.button.confirm.link.title",'Confirm URL'), style: Styles().textStyles.getTextStyle("widget.button.title.medium.underline")),
           )
-      ),
-      Container(height: 15)
-    ],));
+        ),
+        Container(height: 15)
+      ],)
+    );
   }
 
   void _onTapConfirmLinkUrl() {
@@ -500,84 +481,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       }
     }
   }
-
-  //
-  //Research Description
-  /*Widget _buildResearchConsentDetailsField() {
-    String? title = "PROJECT DETAILS";
-    String? fieldTitle = "PROJECT DETAILS FIELD";
-    String? fieldHint = "";
-
-    return Visibility(visible: _isResearchProject, child:
-      Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          GroupSectionTitle(title: title),
-          Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white), child:
-            Row(children: [
-              Expanded(child:
-                Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, value: _researchConsentDetailsController.text, child:
-                  TextField(
-                      controller: _researchConsentDetailsController,
-                      maxLines: 15,
-                      decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                      style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
-                      onChanged: (text){ _group?.researchConsentDetails = text; setStateIfMounted(() { });},
-                  )
-                ),
-              )
-            ])
-          ),
-        ],),
-      ),
-    );
-  }*/
-  //
-  // Research Confirmation
-  // #2626: Hide consent checkbox and edit control.
-  /* Widget _buildResearchConfirmationLayout() {
-    String? title = "PARTICIPANT CONSENT";
-    String? fieldTitle = "PARTICIPANT CONSENT FIELD";
-    String? fieldHint = "";
-
-    return Container(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
-      Column(children: [
-        _buildSwitch(
-          title: "Require participant consent",
-          value: _researchRequiresConsentConfirmation,
-          onTap: _onTapResearchConfirmation
-        ),
-        Visibility(visible: _researchRequiresConsentConfirmation, child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            GroupSectionTitle(title: title),
-            Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white), child:
-              Row(children: [
-                Expanded(child:
-                  Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
-                    TextField(
-                        controller: _researchConsentStatementController,
-                        maxLines: 5,
-                        decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                        style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-                        onChanged: (text) => setState(() { _group?.researchConsentStatement = text; }),
-                    )
-                  ),
-                )
-              ])
-            ),
-          ],),
-        ),
-
-      ],)
-    );
-  }
-
-  void _onTapResearchConfirmation() {
-    if (mounted) {
-      setState(() {
-        _researchRequiresConsentConfirmation = !_researchRequiresConsentConfirmation;
-      });
-    }
-  }*/
 
   //Content Sections
   Widget _buildContentSectionsLayout(){
@@ -738,6 +641,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               Container(
                   child: _buildSwitch(
                       title: Localization().getStringEx("panel.groups.common.private.search.hidden.label", "Make Group Hidden"),
+                      subject: Localization().getStringEx("panel.groups.common.private.search.hidden.subject", "Hidden Group"),
                       value: _group?.hiddenForSearch,
                       onTap: _onTapHiddenForSearch)),
               Semantics(
@@ -760,8 +664,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   Widget _buildAdministrative() {
     return Padding(padding: EdgeInsets.all(16), child: Container(child:
-      _buildSwitch(title: Localization().getStringEx('panel.groups.common.administrative.switch.label', 'Is this an administrative group?'),
-          value: _group?.administrative, onTap: _onTapAdministrative)));
+      _buildSwitch(
+        title: Localization().getStringEx('panel.groups.common.administrative.switch.label', 'Is this group an admin team for managing Illinois app events?'),
+        subject: Localization().getStringEx('panel.groups.common.administrative.switch.subject', 'Admin Team Group'),
+        value: _group?.administrative,
+        onTap: _onTapAdministrative
+      )));
   }
 
   void _onTapAdministrative() {
@@ -916,31 +824,30 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   // AuthMan Group
   Widget _buildAuthManLayout() {
-    return Padding(
-        padding: EdgeInsets.only(left: 16, top: 12, right: 16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _buildSwitch(title: Localization().getStringEx("panel.groups_create.authman.enabled.label", "Is this a managed membership group?"),
-              value: _isAuthManGroup,
-              onTap: _onTapAuthMan
-          ),
-          Visibility(
-              visible: _isAuthManGroup,
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                GroupSectionTitle(
-                  title: Localization().getStringEx("panel.groups_create.authman.group.name.label", "Membership name"),
-                  requiredMark: true
-                ),
-                Container(
-                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white),
-                    child: TextField(
-                      onChanged: _onAuthManGroupNameChanged,
-                      controller: _authManGroupNameController,
-                      maxLines: 5,
-                      decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                      style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
-                    ))
-              ]))
-        ]));
+    String fieldTitle = Localization().getStringEx("panel.groups_create.authman.enabled.label", "Is this a managed membership group?");
+
+    return Padding(padding: EdgeInsets.only(left: 16, top: 12, right: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        _buildSwitch(
+          title: fieldTitle,
+          subject: Localization().getStringEx("panel.groups_create.authman.enabled.subject", "Managed Membership Group"),
+          value: _isAuthManGroup,
+          onTap: _onTapAuthMan
+        ),
+        Visibility(visible: _isAuthManGroup, child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            GroupSectionTitle(
+              title: Localization().getStringEx("panel.groups_create.authman.group.name.label", "Membership name"),
+              requiredMark: true
+            ),
+            _buildTextField(_authManGroupNameController,
+              onChanged: _onAuthManGroupNameChanged,
+              maxLines: 5,
+            )
+          ])
+        )
+      ])
+    );
   }
 
   void _onTapAuthMan() {
@@ -985,8 +892,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child:  RibbonButton(
-          label: Localization().getStringEx('panel.groups_settings.button.advanced_settings.title', 'Advanced Settings'), //Localize
-          hint: Localization().getStringEx('panel.groups_settings.button.advanced_settings.hint', ''),
+          title: Localization().getStringEx('panel.groups_settings.button.advanced_settings.title', 'Advanced Settings'), //Localize
+          semanticsHint: Localization().getStringEx('panel.groups_settings.button.advanced_settings.hint', ''),
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.circular(4),
           onTap: (){
@@ -1004,11 +911,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //ProjectSettings
 /*  Widget _buildProjectSettingsLayout() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-      EnabledToggleButton(
+      ToggleRibbonButton(
         label: Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants'),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        enabled: true,
         toggled: _group?.canJoinAutomatically == true,
         onTap: _onTapJoinAutomatically
       )
@@ -1059,7 +965,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   Future<bool?> _showCreateGroupPrompt() {
-    String prompt = Localization().getStringEx("panel.groups_create.prompt.msg.title", "The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.").replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois'));
+    String prompt = Localization().getStringEx("panel.groups_create.prompt.msg.title", "The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.").replaceAll('{{app_university}}', Localization().getStringEx('app.university_name', 'University of Illinois'));
     return AppAlert.showCustomDialog(context: context,
       contentWidget: Text(prompt),
       actions: <Widget>[
@@ -1144,24 +1050,20 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //
   // AdminSection
   Widget _buildAdminSettingsSection() {
+    String title =  'NETIDS (comma separated)'; //TBD localize
+    String fieldTitle = 'NET ids';
+    String fieldHint = '';
     return Visibility(visible: true, child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Expanded(child:
-              GroupSectionTitle(title: 'NETIDS (comma separated)', requiredMark: false)
+              GroupSectionTitle(title: title, requiredMark: false)
             )
           ]),
           Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: [
             Expanded(child:
-              Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white), child:
-                TextField(
-                  controller: _groupNetIdsController,
-                  maxLines: 1,
-                  decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
-                  style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
-                )
-              ),
+              _buildTextField(_groupNetIdsController, semanticsLabel: fieldTitle, semanticsHint: fieldHint)
             ),
             Padding(padding: EdgeInsets.only(left: /*AppScreen.isLarge(context) ? 30 : */6), child:
               _adminStatusDropdown
@@ -1174,18 +1076,22 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
 
   Widget get _adminStatusDropdown =>
-    DropdownButtonHideUnderline(child:
-      DropdownButton2<GroupMemberStatus>(
-        dropdownStyleData: DropdownStyleData(
-          width: _membersStatusDropdownItemsWidth ??= _evalMembersStatusDropdownItemsWidth(),
-          direction: DropdownDirection.left,
-          decoration: _dropdownDecoration,
-        ),
-        customButton: _adminStatusDropdownButton(),
-        isExpanded: false,
-        items: _adminStatusDropdownItems(),
-        onChanged: _onAdminStatusDropdownSelected,
-      ),
+    MergeSemantics(key: GlobalKey(), child:
+      Semantics(label: "Select Status", child:
+        DropdownButtonHideUnderline(child:
+          DropdownButton2<GroupMemberStatus>(
+            dropdownStyleData: DropdownStyleData(
+              width: _membersStatusDropdownItemsWidth ??= _evalMembersStatusDropdownItemsWidth(),
+              direction: DropdownDirection.left,
+              decoration: _dropdownDecoration,
+            ),
+            customButton: _adminStatusDropdownButton(),
+            isExpanded: false,
+            items: _adminStatusDropdownItems(),
+            onChanged: _onAdminStatusDropdownSelected,
+          ),
+        )
+      )
     );
 
   void _onAdminStatusDropdownSelected(GroupMemberStatus? status) {
@@ -1198,7 +1104,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   Widget _adminStatusDropdownButton() =>
     Container(decoration: _dropdownDecoration, child:
-      Padding(padding: EdgeInsets.only(left: 12, right: 6, top: 12, bottom: 12), child:
+      Padding(padding: EdgeInsets.only(left: 12, right: 6, top: 15, bottom: 15), child:
         Row(mainAxisSize: MainAxisSize.min, children: [
           Text(groupMemberStatusToString(_selectedMembersStatus) ?? '', style: Styles().textStyles.getTextStyle('widget.group.dropdown_button.value') ,),
           Padding(padding: EdgeInsets.only(left: 8), child:
@@ -1216,7 +1122,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     List.from(_adminsStatusItems.map((status) => _adminStatusDropdownItem(status, selected: _selectedMembersStatus == status)));
 
   DropdownMenuItem<GroupMemberStatus> _adminStatusDropdownItem(GroupMemberStatus status, { bool selected = false,}) =>
-      DropdownMenuItem<GroupMemberStatus>(
+      AccessibleDropDownMenuItem<GroupMemberStatus>(
+        semanticsLabel: status.name,
         value: status,
         child: Row(mainAxisSize: MainAxisSize.max, children: [
           Expanded(child:
@@ -1275,9 +1182,14 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     );
   }
 
-  Widget _buildSwitch({String? title, bool? value, void Function()? onTap}){
-    String semanticsValue = (value == true) ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked");
-    return Semantics(label: title, value: semanticsValue, button: true, child:
+  Widget _buildSwitch({required String title, String? subject, bool? value, void Function()? onTap}){
+    bool toggled = (value == true);
+    String semanticsValue = AppSemantics.toggleValue(toggled);
+    String semanticsHint = AppSemantics.toggleHint(toggled,
+      subject: subject ?? title,
+    );
+
+    return Semantics(label: title, hint: semanticsHint, value: semanticsValue, button: true, child:
       Container(
         decoration: BoxDecoration(
             color: Styles().colors.white,
@@ -1288,7 +1200,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Expanded(child:
-              Text(title ?? "", semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))
+              Text(title, semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))
             ),
             GestureDetector(
               onTap: ((onTap != null)) ?() {

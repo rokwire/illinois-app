@@ -22,31 +22,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
 import 'package:flutter/foundation.dart';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/ImageDescriptionInput.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 import 'package:rokwire_plugin/model/content.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:image_cropping/image_cropping.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:mime_type/mime_type.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class ImageEditPanel extends StatefulWidget {
   final String? storagePath;
   final int? width;
   final bool isUserPic;
+  final Map<String, String>? photoUrlHeaders;
 
   final String? preloadImageUrl;
 
-  const ImageEditPanel({Key? key, this.storagePath, this.width = 1080, this.isUserPic = false, this.preloadImageUrl}) : super(key: key);
+  const ImageEditPanel({Key? key, this.storagePath, this.width = 1080, this.isUserPic = false, this.preloadImageUrl, this.photoUrlHeaders}) : super(key: key);
 
   _ImageEditState createState() => _ImageEditState();
 }
@@ -126,16 +133,21 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
               Container(height: 10,),
               ImageDescriptionInput(
                   imageDescriptionData: _imageDescriptionData,
-                  onChanged: (data)=> setStateIfMounted(
-                      () => _imageDescriptionData = data ?? _imageDescriptionData
+                  onChanged: (data)=>
+                      setStateIfMounted(() =>
+                        _imageDescriptionData = data ?? _imageDescriptionData
                   )
               ),
               Container(height: 10,),
                 _imageName!=null?
-                RoundedButton(label: "Edit Image", onTap: _onEdit)
+                RoundedButton(label: Localization().getStringEx('panel.image_edit.button.edit.title', 'Edit Image'), onTap: _onEdit)
                     : Container(),
               Container(height: 10,),
-              RoundedButton(label: _imageName!=null? "Upload New Image" : "Choose Image", onTap: showImagePickerDialog),
+              RoundedButton(
+                label: _imageName!=null?
+                  Localization().getStringEx('panel.image_edit.button.replace.title', 'Replace Image') :
+                  Localization().getStringEx('panel.image_edit.button.upload.title', 'Choose Image'),
+                onTap: showImagePickerDialog),
               Container(height: 10),
               Row(
                 children: [
@@ -144,9 +156,9 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                     RoundedButton(label: "Ok",
                       onTap: _onFinish,
                       progress: _saving,
-                      progressSize: 24,)
-                      // enabled: _imageDescriptionData?.isValidated == true,
-                      // borderColor: _imageDescriptionData?.isValidated == true? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,),
+                      progressSize: 24,
+                      enabled: _imageDescriptionData?.isValidated == true,
+                      borderColor: _imageDescriptionData?.isValidated == true? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColor,),
                   ),
                   Container(width: 16,),
                   Expanded(
@@ -202,21 +214,21 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 AppDialogButton(
-                  buttonTitle: "Camera",
+                  buttonTitle: Localization().getStringEx('panel.image_edit.button.camera.title', 'Camera'),
                   onPressed: () {
                     _closeDialog();
                     _openImagePicker(ImageSource.camera);
                   },
                 ),
                 AppDialogButton(
-                  buttonTitle: "Gallery",
+                  buttonTitle: Localization().getStringEx('panel.image_edit.button.gallery.title', 'Gallery'),
                   onPressed: () {
                     _closeDialog();
                     _openImagePicker(ImageSource.gallery);
                   },
                 ),
                 AppDialogButton(
-                  buttonTitle: "Cancel",
+                  buttonTitle: Localization().getStringEx('dialog.cancel.title', 'Cancel'),
                   onPressed: () {
                     _closeDialog();
                     _closeDialog();// close panel
@@ -346,6 +358,11 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   }
 
   void _onFinish() async{
+    if(_imageDescriptionData?.isValidated != true){
+      AppAlert.showTextMessage(this.context, Localization().getStringEx("panel.image_edit.alt_text.validation.msg", "Please provide image alt text."));
+      return;
+    }
+
     if(widget.storagePath!=null || widget.isUserPic){
       if (_saving != true) {
         setState(() {
@@ -365,11 +382,11 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   }
 
   void _onImageUploaded(ImagesResult result) {
-    if(result.resultType == ImagesResultType.succeeded &&
-        result.imageUrl != null && _imageDescriptionData != null){
-      Content().uploadImageMetaData(
-          url: result.imageUrl,
-          metaData: _imageDescriptionData?.toMetaData).then((metaDataResult){
+    if(result.resultType == ImagesResultType.succeeded
+        &&  (result.imageUrl != null || widget.isUserPic)
+        && _imageDescriptionData != null){
+      String? url = result.imageUrl ?? (widget.isUserPic ? Content().getUserPhotoUrl(accountId: Auth2().accountId) : null);
+      Content().uploadImageMetaData(url: url, metaData: _imageDescriptionData?.toMetaData).then((metaDataResult){
         if (mounted) {
           setState(() {
             _saving = false;
@@ -390,35 +407,57 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   Future<void> _preloadImageFromUrl() async {
     _showLoader();
     if(widget.preloadImageUrl != null){
-      _imageBytes = await readNetworkImage(widget.preloadImageUrl!);
-      ImageMetaData? metaData = await _loadImageMetaData(widget.preloadImageUrl!);
+      _imageBytes = await readNetworkImage(widget.preloadImageUrl!, headers: widget.photoUrlHeaders);
+      ImageMetaData? metaData = await _loadImageMetaData(widget.isUserPic ? UrlUtils.stripQueryParameters(widget.preloadImageUrl) : widget.preloadImageUrl);
       _imageDescriptionData = metaData != null ? ImageDescriptionDataExt.fromMetaData(metaData) : ImageDescriptionData();
 
       if(_imageBytes != null) {
         _imageName = basename(widget.preloadImageUrl!);
         _contentType = mime(_imageName);
+
+        if(_contentType == null){ // Try to determine the type from the bytes
+          _contentType = lookupMimeType("", headerBytes: _imageBytes);
+        }
+
+        //We do not support webp, but we can convert it
+        if (_contentType == 'image/webp') {
+          Uint8List? pngBytes = await _convertWebpToPng(_imageBytes!);
+          if (pngBytes != null) {
+            _imageBytes = pngBytes;
+            _contentType = 'image/png';
+            _imageName = _imageName?.replaceAll('.webp', '.png');
+          }
+        }
       }
+    } else if(widget.isUserPic){
+      ImageMetaData? metaData = await _loadImageMetaData(Content().getUserPhotoUrl(accountId: Auth2().accountId));
+      _imageDescriptionData = metaData != null ? ImageDescriptionDataExt.fromMetaData(metaData) : ImageDescriptionData();
     }
     _hideLoader();
+  }
+
+  static Future<Uint8List?> _convertWebpToPng(Uint8List webpBytes) async {
+    try {
+      ui.Codec codec = await ui.instantiateImageCodec(webpBytes);
+      ui.FrameInfo fi = await codec.getNextFrame();
+      ByteData? byteData = await fi.image.toByteData(format: ui.ImageByteFormat.png);
+      return byteData?.buffer.asUint8List();
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
   }
 
   Future<ImageMetaData?> _loadImageMetaData(String? imageUrl) async => imageUrl != null ?
     (await Content().loadImageMetaData(url: imageUrl)).imageMetaData :
     null;
 
-  //Utils: TBD move to Utils file if we keeps it
-  // Reading bytes from a network image
-  static Future<Uint8List?> readNetworkImage(String imageUrl) async {
-    try {
-      final ByteData data = await NetworkAssetBundle(Uri.parse(imageUrl))
-          .load(imageUrl);
-      final Uint8List bytes = data.buffer.asUint8List();
-      return bytes;
-    } catch (e){
-      return null;
-    }
+  static Future<Uint8List?> readNetworkImage(String imageUrl, {Map<String, String>? headers}) async {
+    Response? response = await Network().get(imageUrl, headers: headers);
+    int? responseCode = response?.statusCode;
+    return ((responseCode != null) && (responseCode >= 200) && (responseCode <= 301)) ?
+       response?.bodyBytes : null;
   }
-
 }
 
 /// class for dialog button

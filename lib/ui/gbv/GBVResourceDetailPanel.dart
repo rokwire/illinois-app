@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -7,6 +9,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/model/GBV.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class GBVResourceDetailPanel extends StatefulWidget {
   final GBVResource resource;
@@ -44,9 +47,13 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
                 Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                 Container(height: 1, color: Styles().colors.surfaceAccent)
                 ),
-                Padding(padding: EdgeInsets.only(bottom: 32), child: (
-                    Text(widget.resource.description ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"))
-                )),
+                Padding(padding: EdgeInsets.only(bottom: 32), child:
+                    HtmlWidget(widget.resource.description ?? '',
+                        textStyle: Styles().textStyles.getTextStyle("widget.detail.regular"),
+                        customStylesBuilder: (element) => (element.localName == "a") ? _htmlLinkStyle : null,
+                        onTapUrl: _onTapHtmlLink,
+                    )
+                ),
                 Container(decoration:
                   BoxDecoration(
                   color: Styles().colors.white,
@@ -110,4 +117,21 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
     });
   }
 
+  Map<String, String> get _htmlLinkStyle => <String, String>{
+    // 'color': _htmlLinkColor,
+    'text-decoration-color': _htmlLinkColor,
+  };
+
+  String get _htmlLinkColor =>
+      ColorUtils.toHex(Styles().colors.fillColorSecondary);
+
+  bool _onTapHtmlLink(String url)  {
+    Analytics().logSelect(target: 'Link: $url');
+    if (DeepLink().isAppUrl(url)) {
+      DeepLink().launchUrl(url);
+    } else {
+      AppLaunchUrl.launch(context: context, url: url, tryInternal: false);
+    }
+    return true;
+  }
 }

@@ -372,10 +372,11 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> with Notificati
 }
 
 class AthleticsTeamsFilterWidget extends StatefulWidget {
-  final bool? favoritesMode;
-  final bool? hideFilterDescription;
+  final bool? starred;
+  final void Function()? onStarred;
+  final bool showFilterDescription;
 
-  AthleticsTeamsFilterWidget({this.favoritesMode, this.hideFilterDescription});
+  AthleticsTeamsFilterWidget({this.starred, this.onStarred, this.showFilterDescription = true});
 
   @override
   State<AthleticsTeamsFilterWidget> createState() => _AthleticsTeamsFilterWidgetState();
@@ -396,52 +397,50 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
-          color: _showFilterDescription ? Styles().colors.white : null,
-          decoration: !_showFilterDescription ? _filterDecoration : null,
-          child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(children: [
-                InkWell(
-                    splashColor: Colors.transparent,
-                    onTap: () => _onTapTeamsFilter(context),
-                    child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
-                            borderRadius: BorderRadius.circular(16)),
-                        child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                            child: Row(children: [
-                              Styles().images.getImage('filters') ?? Container(),
-                              Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 5),
-                                  child: Text(Localization().getStringEx('panel.athletics.content.common.filter.teams.label', 'Teams'),
-                                      style: Styles().textStyles.getTextStyle('widget.button.title.small.fat'))),
-                              Styles().images.getImage('chevron-right-gray') ?? Container()
-                            ])))),
-                Expanded(child: Container())
-              ]))),
-      Visibility(
-          visible: _showFilterDescription,
-          child: Column(children: [
-            Divider(thickness: 1, color: Styles().colors.lightGray, height: 1),
-            Container(
-                decoration: _showFilterDescription ? _filterDecoration : null,
-                child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    child: Row(children: [
-                      Expanded(
-                          child: Text(StringUtils.ensureNotEmpty(_teamsFilterLabel),
-                              style: Styles().textStyles.getTextStyle('widget.button.title.small'),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1))
-                    ])))
-          ]))
+        color: _showFilterDescription ? Styles().colors.white : null,
+        decoration: !_showFilterDescription ? _filterDecoration : null,
+        child: Padding( padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10), child:
+          Row(children: [
+            Expanded(child:
+              Wrap(spacing: 8, children: [
+                AthleticsTeamsFilterButton(
+                  title: Localization().getStringEx('panel.athletics.content.common.filter.teams.label', 'Teams'),
+                  leftIcon: Styles().images.getImage('filters'),
+                  rightIcon: Styles().images.getImage('chevron-right-gray'),
+                  onTap: _onTapTeamsFilter,
+                ),
+                if (widget.starred != null)
+                  AthleticsTeamsFilterButton(
+                    title: Localization().getStringEx('panel.athletics.content.common.filter.starred.label', 'Starred'),
+                    leftIcon: Styles().images.getImage('star-filled', size: 14),
+                    toggled: _isStarredSelected,
+                    onTap: widget.onStarred,
+                  ),
+              ]),
+            )
+          ],),
+        )
+      ),
+      Visibility(visible: _showFilterDescription, child:
+        Column(children: [
+          Divider(thickness: 1, color: Styles().colors.lightGray, height: 1),
+          Container(decoration: _showFilterDescription ? _filterDecoration : null, child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10), child:
+              Row(children: [
+                Expanded(child:
+                  Text(StringUtils.ensureNotEmpty(_teamsFilterLabel), style: Styles().textStyles.getTextStyle('widget.button.title.small'), overflow: TextOverflow.ellipsis, maxLines: 1)
+                )
+              ])
+            )
+          )
+        ])
+      )
     ]);
   }
 
-  void _onTapTeamsFilter(BuildContext context) {
+  void _onTapTeamsFilter() {
     Analytics().logSelect(target: 'Teams');
     AthleticsMyTeamsPanel.present(context);
   }
@@ -459,23 +458,25 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
         }
       }
       teamsFilterDisplayString = sports.map((team) => team.name).toList().join(', ');
-      if (_favoritesMode) {
+      if (_isStarredSelected) {
         teamsFilterDisplayString +=
             ', ' + Localization().getStringEx('panel.athletics.content.common.filter.value.starred.label', 'Starred');
       }
-    } else if (_favoritesMode) {
+    } else if (_isStarredSelected) {
       teamsFilterDisplayString = Localization().getStringEx('panel.athletics.content.common.filter.value.starred.label', 'Starred');
     }
     return '$filterPrefix $teamsFilterDisplayString';
   }
 
-  bool get _favoritesMode => (widget.favoritesMode == true);
-
-  bool get _showFilterDescription => (_filterApplied || (widget.hideFilterDescription != true));
+  bool get _isStarredSelected => (widget.starred == true);
+  bool get _showFilterDescription => (_filterApplied || widget.showFilterDescription);
 
   bool get _filterApplied => CollectionUtils.isNotEmpty(Auth2().prefs?.sportsInterests);
 
-  BoxDecoration get _filterDecoration => BoxDecoration(color: Styles().colors.white, boxShadow: kElevationToShadow[2]);
+  BoxDecoration get _filterDecoration => BoxDecoration(
+    color: Styles().colors.white,
+    boxShadow: kElevationToShadow[2]
+  );
 
   // Notifications Listener
 
@@ -485,4 +486,49 @@ class _AthleticsTeamsFilterWidgetState extends State<AthleticsTeamsFilterWidget>
       setStateIfMounted(() {});
     }
   }
+}
+
+class AthleticsTeamsFilterButton extends StatelessWidget {
+  final String? title;
+  final String? label;
+  final String? hint;
+  final Widget? leftIcon;
+  final Widget? rightIcon;
+  final bool? toggled;
+  final void Function()? onTap;
+  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry leftIconPadding;
+  final EdgeInsetsGeometry rightIconPadding;
+
+  AthleticsTeamsFilterButton({super.key, this.title, this.label, this.hint, this.leftIcon, this.rightIcon, this.onTap,
+    this.toggled /*= false*/, //Dont mark all buttons as toggle buttons. Used for Accessibility and colour
+    this.padding = const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+    this.leftIconPadding = const EdgeInsets.only(right: 5),
+    this.rightIconPadding = const EdgeInsets.only(left: 5),
+  });
+
+  @override
+  Widget build(BuildContext context) =>
+    Semantics(label: label ?? title, hint: hint, button: true, toggled: toggled, child:
+      InkWell(onTap: onTap, child:
+        Container(decoration: _decoration, padding: padding, child:
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            if (leftIcon != null)
+              Padding(padding: leftIconPadding, child: leftIcon,),
+            ExcludeSemantics(child: Text(title ?? '', style: _titleTextStyle,)),
+            if (rightIcon != null)
+              Padding(padding: rightIconPadding, child: rightIcon,),
+          ],)
+        )
+      )
+    );
+
+  BoxDecoration get _decoration => BoxDecoration(
+    color: _backColor,
+    border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
+    borderRadius: BorderRadius.circular(18),
+  );
+
+  Color? get _backColor => toggled == true ? Styles().colors.fillColorPrimary : Styles().colors.surface;
+  TextStyle? get _titleTextStyle => toggled == true ? Styles().textStyles.getTextStyle('widget.title.light.small.fat') : Styles().textStyles.getTextStyle('widget.button.title.small.fat');
 }

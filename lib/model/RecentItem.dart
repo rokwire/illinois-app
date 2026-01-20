@@ -16,6 +16,7 @@
 
 import 'dart:collection';
 import 'package:collection/collection.dart';
+import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';

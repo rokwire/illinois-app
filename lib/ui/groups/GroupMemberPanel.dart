@@ -17,7 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/ui/groups/GroupsHomePanel.dart';
+import 'package:illinois/ui/groups/GroupHome2Panel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -187,9 +187,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(65),
             child: Container(width: 65, height: 65, child:
-              Semantics(label: "user image", hint: "Double tap to zoom", child:
                 GroupMemberProfileImage(userId: _member?.userId))
-            ),
           ),
         ),
         Container(width: 16,),
@@ -229,7 +227,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                   children: [
                     ToggleRibbonButton(
                         borderRadius: BorderRadius.circular(4),
-                        label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
+                        title: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
                         toggled: _isAdmin,
                         onTap: _updateMemberStatus
                     ),
@@ -407,7 +405,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                             Groups().deleteGroup(_group?.id).then((success) {
                               if(success){
                                 Navigator.of(context).popUntil((Route route){
-                                  return route.settings.name == GroupsHomePanel.routeName;
+                                  return route.settings.name == GroupHome2Panel.routeName;
                                 });
                               } else {
                                 Navigator.pop(context);

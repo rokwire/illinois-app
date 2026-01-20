@@ -7,6 +7,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 
 
 class SettingsRecentItemsPage extends StatefulWidget{
@@ -47,7 +48,7 @@ class _SettingsRecentItemsPageState extends State<SettingsRecentItemsPage> with 
 
   @override
   Widget build(BuildContext context) =>
-    Column(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.start, children: [
+    FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Column(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(top: 25), child:
         Column(children:<Widget>[
           /* Row(children: [
@@ -58,13 +59,13 @@ class _SettingsRecentItemsPageState extends State<SettingsRecentItemsPage> with 
             ),
           ]),
           Container(height: 4), */
-          ToggleRibbonButton(
-              label: Localization().getStringEx('panel.settings.home.recent_items.enable.toggle.title', 'Display recently viewed app content'),
+          WebFocusableSemanticsWidget(onSelect: _onRecentItemsEnabeldToggled, child: ToggleRibbonButton(
+              title: Localization().getStringEx('panel.settings.home.recent_items.enable.toggle.title', 'Display recently viewed app content'),
               border: Border.all(color: Styles().colors.surfaceAccent),
               borderRadius: BorderRadius.all(Radius.circular(4)),
               toggled: RecentItems().recentItemsEnabled,
               onTap: _onRecentItemsEnabeldToggled
-          ),
+          )),
           Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
             Text(Localization().getStringEx("panel.settings.home.recent_items.enable.toggle.info", "When enabled, the Illinois app will display the items you recently viewed under Home > Sections > Visited Recently. For quick access, star the Visited Recently section to add it to your Favorites."),
               style: Styles().textStyles.getTextStyle('widget.item.regular.thin'),
@@ -72,7 +73,7 @@ class _SettingsRecentItemsPageState extends State<SettingsRecentItemsPage> with 
           ),
         ]),
       ),
-    ],);
+    ],));
 
 
   void _onRecentItemsEnabeldToggled() {

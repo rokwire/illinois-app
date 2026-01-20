@@ -112,15 +112,17 @@ class _GroupPostReportAbusePanelState extends State<GroupPostReportAbusePanel> {
         Stack(children: [
           Container(
             decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white),
-            child: Semantics(textField: true, excludeSemantics: true,
+            child:
+            /* WEB: Unable to type in web TextField with Semantics*
+            Semantics(textField: true, excludeSemantics: true,
               label: Localization().getStringEx('panel.group.detail.post.report_abuse.comment.label', 'Comment Label'),
               hint: Localization().getStringEx('panel.group.detail.post.report_abuse.comment.hint', ''),
-              child: TextField(controller: _commentController, maxLines: 10,
+              child:*/ TextField(controller: _commentController, maxLines: 10,
                 onChanged: _onCommentChanged,
                 style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                 decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.only(left: 8, right: 20, top: 4, bottom: 4)),
               )
-            )
+            // )
           ),
           Align(alignment: Alignment.topRight, child:
             Visibility(visible:  _hasComment, child:
@@ -179,7 +181,7 @@ class _GroupPostReportAbusePanelState extends State<GroupPostReportAbusePanel> {
       padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
       border: Border.all(color: Styles().colors.textSurface, width: 1),
       alignment: Alignment.topRight,
-      infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
+      infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.university_name', 'University of Illinois')),
       infoTextStyle: Styles().textStyles.getTextStyle("widget.title.regular.medium_fat"),
       closeIcon: Styles().images.getImage('close-circle'),
     ),);

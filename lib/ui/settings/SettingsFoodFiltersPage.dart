@@ -21,6 +21,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
@@ -71,7 +72,7 @@ class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
 
   @override
   Widget build(BuildContext context) =>
-    Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+    FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Container(height: 20,),
 
       Container(decoration: _sectionDecoration, child:
@@ -105,7 +106,7 @@ class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
       _buildFoodIngredients(),
 
       Container(height: 20,),
-    ],);
+    ],));
 
   Widget _buildFoodTypes(){
     List<Widget> list = [];
@@ -113,7 +114,7 @@ class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
     if (foodTypes != null) {
       for (String foodType in foodTypes) {
         list.add(ToggleRibbonButton(
-          label: Dinings().getLocalizedString(foodType),
+          title: Dinings().getLocalizedString(foodType),
           toggled: _includedFoodTypes.contains(foodType),
           onTap: () => _onFoodTypePrefTapped(foodType),
         ));
@@ -128,11 +129,11 @@ class _SettingsFoodFiltersPageState extends State<SettingsFoodFiltersPage> {
     List<String>? foodIngredients = Dinings().foodIngredients;
     if (foodIngredients != null) {
       for(String foodIngredient in foodIngredients) {
-        list.add(ToggleRibbonButton(
-          label: Dinings().getLocalizedString(foodIngredient),
+        list.add(WebFocusableSemanticsWidget(onSelect: () => _onFoodIngredientPrefTapped(foodIngredient), child: ToggleRibbonButton(
+          title: Dinings().getLocalizedString(foodIngredient),
           toggled: _excludedFoodIngredients.contains(foodIngredient),
           onTap: () => _onFoodIngredientPrefTapped(foodIngredient),
-        ));
+        )));
       }
     }
 

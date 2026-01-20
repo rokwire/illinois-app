@@ -208,14 +208,17 @@ class AppSemantics {
           sendSemanticsEvent(
             TapSemanticEvent());
 
-    static void triggerAccessibilityFocus(GlobalKey? groupKey) => groupKey?.currentContext?.mounted == true ?
-      groupKey?.currentContext?.findRenderObject()?.
-        sendSemanticsEvent(
-          FocusSemanticEvent()) :
-      null;
+    static void triggerAccessibilityFocus(GlobalKey? groupKey, {Duration? delay}) => Future.delayed(delay ?? Duration.zero, ()=>
+      groupKey?.currentContext?.mounted == true && isAccessibilityFocused(groupKey) == false ?
+        groupKey?.currentContext?.findRenderObject()?.
+          sendSemanticsEvent(
+            FocusSemanticEvent()) :
+        null);
+
+    static bool isAccessibilityFocused(GlobalKey? key) => extractSemanticsNote(key)?.hasFlag(SemanticsFlag.isFocused) ?? false;
 
     static SemanticsNode? extractSemanticsNote(GlobalKey? groupKey) =>
-        groupKey?.currentContext?.findRenderObject()?.debugSemantics;
+        groupKey?.currentContext?.mounted == true ? groupKey?.currentContext?.findRenderObject()?.debugSemantics : null;
 
     static String getIosHintLongPress(String? hint) => Platform.isIOS ? "Double tap and hold to  $hint" : "";
 
@@ -246,6 +249,59 @@ class AppSemantics {
         }
       });
     }
+
+    static String toggleValue(bool value) => value ?
+      Localization().getStringEx('model.accessability.switch.on.value', 'Switched On') :
+      Localization().getStringEx('model.accessability.switch.off.value', 'Switched Off');
+
+    static String toggleHint(bool value, {bool enabled = true, String subject = '' }) => enabled ?
+      _toggleValueHintSrc(value).replaceAll(_subjectMacro, subject) :
+      _toggleEnabledHintSrc(enabled).replaceAll(_subjectMacro, subject);
+
+    static String toggleAnnouncement(bool value, { String subject = '' }) =>
+      _toggleAnnouncementSrc(value).replaceAll(_subjectMacro, subject);
+
+    static String toggleFailedAnnouncement(bool value, { String subject = '' }) =>
+        _toggleFailedAnnouncementSrc(value).replaceAll(_subjectMacro, subject);
+
+    static String progressHint({String subject = '' }) =>
+      _progressHintSrc.replaceAll(_subjectMacro, subject);
+
+    static String selectHint({ String subject = '' }) =>
+      _selectHintSrc.replaceAll(_subjectMacro, subject);
+
+    static const String _subjectMacro = '{{subject}}';
+
+    static String _toggleValueHintSrc(bool value) => value ?
+      Localization().getStringEx('model.accessability.switch.on.hint', 'Double tap to switch $_subjectMacro off') :
+      Localization().getStringEx('model.accessability.switch.off.hint', 'Double tap to switch $_subjectMacro on');
+
+    static String _toggleAnnouncementSrc(bool value) => value ?
+      Localization().getStringEx('model.accessability.switch.on.announcement', '$_subjectMacro switched on') :
+      Localization().getStringEx('model.accessability.switch.off.announcement', '$_subjectMacro switched off');
+
+    static String _toggleFailedAnnouncementSrc(bool value) => value ?
+      Localization().getStringEx('model.accessability.switch.on.failed.announcement', 'Failed to switch $_subjectMacro off') :
+      Localization().getStringEx('model.accessability.switch.off.failed.announcement', 'Failed to switch $_subjectMacro on');
+
+    static String _toggleEnabledHintSrc(bool enabled) => enabled ?
+      Localization().getStringEx('model.accessability.enabled.hint', '$_subjectMacro enabled') :
+      Localization().getStringEx('model.accessability.disabled.hint', '$_subjectMacro disabled');
+
+    static String get _progressHintSrc =>
+      Localization().getStringEx('model.accessability.progress.updating.label', 'Updating $_subjectMacro');
+
+    static String get _selectHintSrc =>
+      Localization().getStringEx('model.accessability.button.select.hint', 'Double tap to select $_subjectMacro');
+
+    static Widget textFieldSemanticsLabel({String? label, String? hint, String? value}) =>
+      Semantics(
+        label: label,
+        hint: hint,
+        child: Container(),
+      );
+
+
 // final SemanticsNode? semanticsNode = renderObject.debugSemantics;
 // final SemanticsOwner? owner = renderObject.owner!.semanticsOwner;
 // Send a SemanticsActionEvent with the tap action
@@ -519,7 +575,7 @@ class AppTextUtils {
   static const String universityNameMacro = "{{university_name}}";
   static String get universityName => universityNameEx();
   static String universityNameEx({String? language}) =>
-    Localization().getStringEx('app.univerity_name', 'University of Illinois', language: language);
+    Localization().getStringEx('app.university_name', 'University of Illinois', language: language);
 
   static String appUniversityNameString(String key, String defaults, {String? language}) =>
     Localization().getStringEx(key, defaults, language: language).replaceAll(universityNameMacro, universityNameEx(language: language));
@@ -529,7 +585,7 @@ class AppTextUtils {
   static const String universityLongNameMacro = "{{university_long_name}}";
   static String get universityLongName => universityLongNameEx();
   static String universityLongNameEx({String? language}) =>
-    Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign', language: language);
+    Localization().getStringEx('app.university_long_name', 'University of Illinois Urbana-Champaign', language: language);
 
   static String appUniversityLongNameString(String key, String defaults, {String? language}) =>
     Localization().getStringEx(key, defaults, language: language).replaceAll(universityLongNameMacro, universityLongNameEx(language: language));

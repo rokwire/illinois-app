@@ -25,6 +25,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 
 class SettingsAssessmentsPage extends StatefulWidget {
   @override
@@ -58,7 +59,7 @@ class _SettingsAssessmentsPageState extends State<SettingsAssessmentsPage> with 
 
   @override
   Widget build(BuildContext context) {
-    return _buildContent();
+    return FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: _buildContent());
   }
 
   Widget _buildContent() {
@@ -97,12 +98,12 @@ class _SettingsAssessmentsPageState extends State<SettingsAssessmentsPage> with 
     List<Widget> contentList = [];
     for (String code in codes) {
       if (code == 'save') {
-        contentList.add(ToggleRibbonButton(
-            label: Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_results.label', 'Save my results to compare to future results'),
+        contentList.add(WebFocusableSemanticsWidget(onSelect: () => _onSave(name), child: ToggleRibbonButton(
+            title: Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_results.label', 'Save my results to compare to future results'),
             toggled: Storage().assessmentsSaveResultsMap?[name] ?? Auth2().privacyMatch(4),
             border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4)),
-            onTap: () => _onSave(name)));
+            onTap: () => _onSave(name))));
       } else if (code == 'save_progress') {
         contentList.add(Text(
             Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_progress.description', 'Progress on an evaluation that you started will be saved automatically until you cancel or complete it.'),

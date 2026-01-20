@@ -28,6 +28,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -349,7 +350,7 @@ class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCar
           Padding(padding: EdgeInsets.only(top: 12), child:
             Align(alignment: Alignment.centerLeft, child:
               Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(Localization().getStringEx('app.univerity_long_name', 'University of Illinois Urbana-Champaign'), style: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),),
+                Text(Localization().getStringEx('app.university_long_name', 'University of Illinois Urbana-Champaign'), style: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),),
                 DirectoryProfileDetails(_profile),
               ]),
             )
@@ -576,27 +577,29 @@ class _DirectoryProfilePhotoState extends State<DirectoryProfilePhoto> {
   Widget build(BuildContext context) {
     ImageProvider<Object>? decorationImage = _decorationImage;
     return (decorationImage != null) ?
-      Container(
-        width: widget.imageSize + widget.borderSize, height: widget.imageSize + widget.borderSize,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Styles().colors.white,
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        ),
-        child: Center(
-          child: Container(
-            width: widget.imageSize, height: widget.imageSize,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Styles().colors.background,
-              image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: decorationImage
+      AccessibleImageHolder(imageUrl: UrlUtils.stripQueryParameters(widget.photoUrl), child:
+        Container(
+          width: widget.imageSize + widget.borderSize, height: widget.imageSize + widget.borderSize,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Styles().colors.white,
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+          ),
+          child: Center(
+            child: Container(
+              width: widget.imageSize, height: widget.imageSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Styles().colors.background,
+                image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: decorationImage
+                ),
               ),
-            ),
-          )
-        ),
-      ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: widget.imageSize + widget.borderSize) ?? Container());
+            )
+          ),
+        )
+      ): (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: widget.imageSize + widget.borderSize) ?? Container());
   }
 
   ImageProvider<Object>? get _decorationImage {
@@ -665,8 +668,10 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
 
   @override
   Widget build(BuildContext context) =>
-    InkWell(onTap: _onPronunciation, child:
-      _pronunciationButtonContent
+    Semantics(label: "Pronounce", hint: "Play the pronouncement", button: true, child:
+      InkWell(onTap: _onPronunciation, child:
+        _pronunciationButtonContent
+      )
     );
 
     Widget? get _pronunciationButtonContent =>

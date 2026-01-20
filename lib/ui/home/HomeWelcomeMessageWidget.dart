@@ -17,6 +17,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeWelcomeMessageWidget extends StatefulWidget {
@@ -90,7 +91,7 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
   @override
   Widget build(BuildContext context) =>
     Visibility(visible: _isWidgetVisible, child:
-      HomeCardWidget(
+      WebFocusableSemanticsWidget(child: HomeCardWidget(
         title: Localization().getStringEx("widget.home.welcome.title.text", 'Tailor Your App Experience'),
         onClose: _isCloseVisible ? _onClose : null,
         child: HtmlWidget(_messageHtml,
@@ -98,7 +99,7 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
           textStyle:  Styles().textStyles.getTextStyle("widget.description.small.semi_fat"),
           customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
         ),
-      ),
+      )),
     );
 
   void _refresh() {

@@ -34,7 +34,6 @@ import "package:illinois/ui/onboarding/OnboardingBackButton.dart";
 import "package:illinois/ui/widgets/HeaderBar.dart";
 import 'package:illinois/ui/widgets/PrivacySlider.dart';
 import "package:rokwire_plugin/ui/widgets/rounded_button.dart";
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import "package:rokwire_plugin/utils/utils.dart";
 import "package:rokwire_plugin/service/styles.dart";
 
@@ -128,7 +127,6 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> with Notifi
         : null,
       body: _loading ? _buildLoadingWidget() : _buildContentWidget(),
       backgroundColor: Styles().colors.background,
-      bottomNavigationBar: (widget.mode == SettingsPrivacyPanelMode.regular) ? uiuc.TabBar() : null,
     );
   }
 
@@ -355,7 +353,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> with Notifi
 
   void _save() {
     Auth2().prefs?.privacyLevel = _sliderIntValue!;
-    Storage().privacyUpdateVersion = Config().appVersion;
+    Storage().privacyUpdateVersion = Config().appPrivacyVersion;
 
     if (widget.mode == SettingsPrivacyPanelMode.regular) {
       Navigator.pop(context);
@@ -571,43 +569,29 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.only(top: 10,),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 22),
-                child: Text(Localization().getStringEx("panel.settings.privacy.label.description.title", "Features and Data Collection"),
-                  style:  Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.description.large")),
-              ),
-              Container(height: 7,),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 22),
-                child: Text(Localization().getStringEx("panel.settings.privacy.label.description.info", "Learn more about specific features, and use dropdown for more information about how data is being used."),
-                  style: Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.label.regular")),
-              ),
-              Container(height: 12,),
-              Container(
-                alignment: Alignment.centerRight,
-                padding: EdgeInsets.symmetric(horizontal: 18),
-                child:
-                Semantics(
-                  button: true,
-                  child: Container(
-                    decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Styles().colors.fillColorSecondary))),
-                    child: GestureDetector(
-                      onTap: _onTapExpandAll,
-                      child: Text(
-                        _canClose? Localization().getStringEx("panel.settings.privacy.button.close_all.title","Close All") : Localization().getStringEx("panel.settings.privacy.button.expand_all.title","Expand All"),
-                        style: Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.label.regular")
-                      ),
-                    )
-                  )
-                )
-              ),
-              Container(height: 12),
-              Column(children: _buildCategories(),)
-            ]));
+    return Padding(padding: EdgeInsets.only(top: 10,), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(padding: EdgeInsets.symmetric(horizontal: 22), child:
+          Text(Localization().getStringEx("panel.settings.privacy.label.description.title", "Features and Data Collection"), style:  Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.description.large")),
+        ),
+        Container(height: 7,),
+        Container(padding: EdgeInsets.symmetric(horizontal: 22), child:
+          Text(Localization().getStringEx("panel.settings.privacy.label.description.info", "Learn more about specific features, and use dropdown for more information about how data is being used."), style: Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.label.regular")),
+        ),
+        Container(height: 12,),
+        Container(alignment: Alignment.centerRight, padding: EdgeInsets.symmetric(horizontal: 18), child:
+          Semantics(button: true, child:
+            Container(decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Styles().colors.fillColorSecondary))), child:
+              GestureDetector(onTap: _onTapExpandAll, child:
+                Text(_canClose ? Localization().getStringEx("panel.settings.privacy.button.close_all.title","Close All") : Localization().getStringEx("panel.settings.privacy.button.expand_all.title","Expand All"), style: Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.label.regular")),
+              )
+            )
+          )
+        ),
+        Container(height: 12),
+        Column(children: _buildCategories(),)
+      ])
+    );
   }
 
   List<Widget> _buildCategories() {
@@ -634,40 +618,45 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
     if(expanded){
       _controller.forward();
     }
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Container(
         decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
         padding: EdgeInsets.symmetric(horizontal: 0),
-        child: Theme(data: ThemeData(/*accentColor: Styles().colors.white,*/
-            /*backgroundColor: Styles().colors.white,*/
-            dividerColor: Colors.white,
+        child: Theme(
+          data: ThemeData(/*accentColor: Styles().colors.white, backgroundColor: Styles().colors.white,*/ dividerColor: Colors.white,),
+          child: ExpansionTile(
+            key: expansionTileKey,
+            initiallyExpanded: expanded,
+            backgroundColor: Styles().colors.fillColorPrimary,
+            trailing: RotationTransition(turns: _iconTurns, child:
+              Icon(Icons.arrow_drop_down, color: Styles().colors.white,)
             ),
-            child: ExpansionTile(
-              key: expansionTileKey,
-              initiallyExpanded: expanded,
-              title:
-              Semantics(label: Localization().getString(category.titleKey, defaults: category.title),
-                  hint: Localization().getStringEx("panel.settings.privacy.label.hint","Double tap to ") + (expanded ? "Hide" : "Show") + " information",
-                  excludeSemantics:true,child:
-                  Container(child: Text(Localization().getString(category.titleKey, defaults:category.title) ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.fat")))),
-              backgroundColor: Styles().colors.fillColorPrimary,
-              children: _buildCategoryEntries(category),
-              trailing: RotationTransition(
-                  turns: _iconTurns,
-                  child: Icon(Icons.arrow_drop_down, color: Styles().colors.white,)),
-              onExpansionChanged: (bool expand) {
-                if (expand) {
-                  _controller.forward();
-                } else {
-                  _controller.reverse();
-                }
-                if (category.title != null) {
-                  expansionState[category.title!] = expand;
-                }
-                setState(() {});
-              },
-            ))));
+            title: Semantics(
+              label: Localization().getString(category.titleKey, defaults: category.title),
+              hint: Localization().getStringEx("panel.settings.privacy.label.hint","Double tap to ") + (expanded ? "Hide" : "Show") + " information",
+              value: expanded ? Localization().getStringEx("model.accessability.expandable.expanded.value", "Expanded")  : Localization().getStringEx("model.accessability.expandable.collapsed.value", "Collapsed"),
+              //UPD: excludeSemantics: true,
+              excludeSemantics: true,
+              child: Container(child:
+                Text(Localization().getString(category.titleKey, defaults:category.title) ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.fat"))
+              )
+            ),
+            onExpansionChanged: (bool expand) {
+              if (expand) {
+                _controller.forward();
+              } else {
+                _controller.reverse();
+              }
+              if (category.title != null) {
+                expansionState[category.title!] = expand;
+              }
+              setState(() {});
+            },
+            children: _buildCategoryEntries(category),
+          )
+        )
+      )
+    );
   }
 
   List<Widget> _buildCategoryEntries(PrivacyCategory category){
@@ -744,38 +733,39 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
     if ((data != null) && (title != null) && (iconKey != null) && (iconKeyOff != null) && (minLevel != null) && (hidden != true)) {
       bool isEnabled = widget.currentPrivacyLevel!>=minLevel;
 
-      return
-        Semantics( container: true,
-          child: Container(
-          padding: EdgeInsets.only(top: 14, bottom: 19, left: 14, right: 24),
-          color: Styles().colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(top: 4),
-                child: PrivacyIcon(enabledIconKey: iconKey, disabledIconKey: iconKeyOff, minPrivacyLevel: minLevel, currentPrivacyLevel: widget.currentPrivacyLevel,)),
-              Container(width: 10,),
-              Expanded(
-               child: Column(
-                 mainAxisAlignment: MainAxisAlignment.start,
-                 crossAxisAlignment: CrossAxisAlignment.start,
-                 children: <Widget>[
-                   Padding(padding: EdgeInsets.only(right: 20), child: Text(title,
-                    style:  isEnabled?  Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.title.enabled") : Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.title.disabled"),
-                   )),
-                   Container(height: 2,),
-                   Semantics( explicitChildNodes: false,
-                    child: _buildInfo(data.displayDescription, data.displayDataUsageInfo, minLevel, false)),
-                   Container(height: (data.displayAdditionalDescription?.isNotEmpty ?? false) ? 26: 0),
-                   Semantics( explicitChildNodes: false,
-                    child: _buildInfo(data.displayAdditionalDescription, data.displayAdditionalDataUsageInfo, data.additionalDataMinLevel, true))
-                 ],
-               ),
-             ),
-            ],
-          ),
+      return Semantics(/*UPD: container: true,*/ explicitChildNodes: true, child:
+        Container(padding: EdgeInsets.only(top: 14, bottom: 19, left: 14, right: 24), color: Styles().colors.white, child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Container(padding: EdgeInsets.only(top: 4), child:
+              PrivacyIcon(enabledIconKey: iconKey, disabledIconKey: iconKeyOff, minPrivacyLevel: minLevel, currentPrivacyLevel: widget.currentPrivacyLevel,)
+            ),
+            Container(width: 10,),
+            Expanded(child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Padding(padding: EdgeInsets.only(right: 20), child:
+                  Semantics(/*label: title, */ explicitChildNodes: true, child:
+                    Text(title, style: isEnabled ? Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.title.enabled") : Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.title.disabled"),)
+                  ),
+                ),
+                Container(height: 2,),
+                Semantics( /*UPD:*/ explicitChildNodes: true, child: _buildInfo(
+                  section: title,
+                  description: data.displayDescription,
+                  dataUsageInfo: data.displayDataUsageInfo,
+                  minLevel: minLevel,
+                  additionalInfo: false
+                 )),
+                Container(height: (data.displayAdditionalDescription?.isNotEmpty ?? false) ? 26: 0),
+                Semantics( /*UPD:*/ explicitChildNodes: true, child: _buildInfo(
+                  section: title,
+                  description: data.displayAdditionalDescription,
+                  dataUsageInfo: data.displayAdditionalDataUsageInfo,
+                  minLevel: data.additionalDataMinLevel,
+                  additionalInfo: true
+                ))
+              ],),
+            ),
+          ],),
         )
       );
     }
@@ -784,60 +774,64 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
     }
   }
 
-  _buildInfo(String? description, String? dataUsageInfo, int? minLevel, bool additionalInfo){
-    final Animatable<double> _halfTween = Tween<double>(begin: 0.0, end: 0.5);
-    final Animatable<double> _easeInTween = CurveTween(curve: Curves.easeIn);
-    Animation<double> _iconTurns = additionalInfo? _additionalInfoController!.drive(_halfTween.chain(_easeInTween)) : _infoController!.drive(_halfTween.chain(_easeInTween));
-    bool infoExpanded = additionalInfo? _additionalDataUsageExpanded : _dataUsageExpanded;
-
+  _buildInfo({String? section, String? description, String? dataUsageInfo, int? minLevel, bool additionalInfo = false}){
     if(description?.isEmpty ?? true)
       return Container();
 
-    bool isEnabled = widget.currentPrivacyLevel!>=minLevel!;
+    final Animatable<double> _halfTween = Tween<double>(begin: 0.0, end: 0.5);
+    final Animatable<double> _easeInTween = CurveTween(curve: Curves.easeIn);
+    Animation<double> _iconTurns = additionalInfo? _additionalInfoController!.drive(_halfTween.chain(_easeInTween)) : _infoController!.drive(_halfTween.chain(_easeInTween));
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(padding: EdgeInsets.only(right: 20), child: Text(description!,
-          style: isEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")
-        )),
-        Semantics( explicitChildNodes: true,
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () => _onTapInfo(additionalInfo),
-            child: Container(
-                padding: EdgeInsets.only(top: 8, bottom: 6),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(child:
-                      Text(Localization().getStringEx("panel.settings.privacy.button.expand_data.title","See Data Usage"),
-                        style: isEnabled? Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.info.enabled") : Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.info.disabled")
-                      )
-                    ),
-                    Container(width: 9,),
-                    Container(padding: EdgeInsets.only(right: 20), child: RotationTransition(
-                        turns: _iconTurns,
-                        child: Styles().images.getImage(isEnabled? "chevron-down": "chevron-down-gray", excludeFromSemantics: true))),
-                  ],
-                )))),
-        !infoExpanded? Container():
-        Semantics( explicitChildNodes: true,
-          child:
-            Container(
-              padding: EdgeInsets.only(bottom: 8, right: 20),
-              child: Container(
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(left: 8),
-                decoration: BoxDecoration(
-                    border: Border(left: BorderSide(width: 1, color: Styles().colors.fillColorSecondary))
-                ),
-                child: Text(dataUsageInfo!,
-                    style: isEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")),
+    bool infoExpanded = additionalInfo? _additionalDataUsageExpanded : _dataUsageExpanded;
+    bool isEnabled = widget.currentPrivacyLevel! >= minLevel!;
+
+    const String sectionMacro = '{{section}}';
+    String dataUsageTitle = Localization().getStringEx("panel.settings.privacy.button.expand_data.title","See Data Usage");
+    String dataUsageLabel = Localization().getStringEx("panel.settings.privacy.button.expand_data.label","See $sectionMacro Data Usage").replaceAll(sectionMacro, section ?? '');
+    String dataUsageHint = infoExpanded ?
+      Localization().getStringEx("model.accessability.expandable.expanded.hint", "Double tap to collapse") :
+      Localization().getStringEx("model.accessability.expandable.collapsed.hint", "Double tap to expand");
+    String dataUsageValue = infoExpanded ?
+      Localization().getStringEx("model.accessability.expandable.expanded.value", "Expanded") :
+      Localization().getStringEx("model.accessability.expandable.collapsed.value", "Collapsed");
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Padding(padding: EdgeInsets.only(right: 20), child:
+        Text(description ?? '', style: isEnabled? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled"))
+      ),
+
+      Semantics( /*UPD:*/ label: dataUsageLabel, hint: dataUsageHint, value: dataUsageValue, excludeSemantics: true, child:
+        GestureDetector(behavior: HitTestBehavior.translucent, onTap: () => _onTapInfo(additionalInfo), child:
+          Container(padding: EdgeInsets.only(top: 8, bottom: 6), child:
+            Row(children: <Widget>[
+              Expanded(child:
+                Text(dataUsageTitle, style:
+                  isEnabled? Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.info.enabled") : Styles().textStyles.getTextStyle("panel.settings.privacy_panel.privacy.entry.info.disabled")
+                )
               ),
-            )
+              Container(width: 9,),
+              Container(padding: EdgeInsets.only(right: 20), child:
+                RotationTransition(turns: _iconTurns, child:
+                  Styles().images.getImage(isEnabled? "chevron-down": "chevron-down-gray", excludeFromSemantics: true)
+                )
+              ),
+            ],)
+          )
         )
-      ],
-    );
+      ),
+
+      if (infoExpanded)
+        Semantics( /*UPD:*/ explicitChildNodes: true, child:
+          Container(padding: EdgeInsets.only(bottom: 8, right: 20), child:
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.only(left: 8),
+              decoration: BoxDecoration(border: Border(left: BorderSide(width: 1, color: Styles().colors.fillColorSecondary))),
+              child: Text(dataUsageInfo ?? '', style: isEnabled ? Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")),
+            ),
+          )
+        )
+    ],);
   }
 
   void _onTapInfo(bool additionalInfo) {

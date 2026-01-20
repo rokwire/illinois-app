@@ -319,13 +319,13 @@ class Event2CreatePanel extends StatefulWidget {
     String? semanticsLabel,
     String? semanticsHint,
   }) =>
-    Semantics(
-      label: semanticsLabel,
+      /* WEB: Unable to type in web TextField with Semantics*
+      Semantics(label: semanticsLabel,
       hint: semanticsHint,
       textField: true,
       excludeSemantics: true,
       value: controller.text,
-      child: TextField(
+      child: */TextField(
         controller: controller,
         focusNode: focusNode,
         decoration: textEditDecoration(padding: padding),
@@ -335,7 +335,7 @@ class Event2CreatePanel extends StatefulWidget {
         keyboardType: keyboardType,
         autocorrect: autocorrect,
         onChanged: (onChanged != null) ? ((_) => onChanged) : null,
-    ));
+    );
 
   static Widget buildInnerTextEditWidget(TextEditingController controller, {
     FocusNode? focusNode,
@@ -784,9 +784,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   Widget _buildAdminTeamsSection() {
     String title = Localization().getStringEx('panel.event2.create.section.admin.teams.title', 'ADMIN TEAMS');
     String description = Localization().getStringEx('panel.event2.create.section.admin.teams.description',
-        ' (grant admin access to the members of your private administrative groups in the {{app_title}} app)')
+        '(grant admin access to the members of private, administrative {{app_title}} app groups)')
         .replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
-    String semanticsLabel = title + description;
+    String semanticsLabel = '$title $description';
     return Event2CreatePanel.buildSectionWidget(
       heading: Padding(padding: Event2CreatePanel.sectionHeadingPadding, child:
         Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
@@ -794,7 +794,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
             Expanded(child:
               RichText(textScaler: MediaQuery.of(context).textScaler, text:
                 TextSpan(text: title, style: Event2CreatePanel.headingTextStype,  children: <InlineSpan>[
-                  TextSpan(text: description, style: Styles().textStyles.getTextStyle('widget.item.small.thin'),),
+                  TextSpan(text: ' $description', style: Styles().textStyles.getTextStyle('widget.item.small.thin'),),
                 ])
               )
             ),
@@ -802,19 +802,19 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
         )
       ),
       body: Stack(alignment: Alignment.center, children: [
-        Container(
-            decoration: Event2CreatePanel.sectionDecoration,
-            child: Padding(
-                padding: EdgeInsets.only(left: 12, right: 8, top: 5, bottom: 5),
-                child: DropdownButtonHideUnderline(
-                    child: DropdownButton<Group>(
-                        dropdownColor: Styles().colors.white,
-                        icon: Styles().images.getImage('chevron-down'),
-                        isExpanded: true,
-                        style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
-                        hint: Row(children: [Expanded(child: Text(_selectedAdminGroupNamesText, maxLines: 2, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle('widget.message.regular')))]),
-                        items: _buildAdminGroupsDropDownItems(),
-                        onChanged: _onGroupSelected)))),
+        Container(decoration: Event2CreatePanel.sectionDecoration, padding: EdgeInsets.only(left: 12, right: 8, top: 5, bottom: 5), child:
+          DropdownButtonHideUnderline(child:
+            DropdownButton<Group>(
+              dropdownColor: Styles().colors.white,
+              icon: Styles().images.getImage('chevron-down', color: _hasAdminGroups ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent),
+              isExpanded: true,
+              style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+              hint: Text(_hasAdminGroups ? _selectedAdminGroupNamesText : _noAdminGroupsHint, maxLines: 2, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle(_hasAdminGroups ? 'widget.message.regular' : 'panel.create_event.dropdown_button.title.regular')),
+              items: _buildAdminGroupsDropDownItems(),
+              onChanged: _onGroupSelected
+            )
+          )
+        ),
         Visibility(visible: _loadingAdminGroups, child: SizedBox(height: 25, width: 25, child: CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary)))
       ]),
     );
@@ -859,6 +859,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       Expanded(child: Text(group.title ?? '', overflow: TextOverflow.ellipsis, style: Event2CreatePanel.headingTextStype))
     ]));
   }
+
+  bool get _hasAdminGroups =>
+    (_adminGroups?.isNotEmpty == true);
+
+  String get _noAdminGroupsHint =>
+    Localization().getStringEx("panel.event2.create.section.admin.teams.empty.content.hint", "No private event admin groups");
 
   String get _selectedAdminGroupNamesText {
     if ((_adminGroups != null) && (_adminGroups?.isNotEmpty ?? false) &&
@@ -1104,17 +1110,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   // ignore: unused_element
-  Widget _buildAllDayToggle() => Semantics(toggled: _allDay, excludeSemantics: true, 
-    label:Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
-    hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""),
-    child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
+  Widget _buildAllDayToggle() => ToggleRibbonButton(
+      title: Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
       padding: _togglePadding,
       toggled: _allDay,
       onTap: _onTapAllDay,
       border: _toggleBorder,
       borderRadius: _toggleBorderRadius,
-    ));
+    );
 
   EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
   BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
@@ -1156,6 +1159,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     showTimePicker(
       context: context,
+      barrierDismissible: false,
       initialTime: _startTime ?? TimeOfDay(hour: 0, minute: 0),
       builder: (context, child) => _timePickerTransitionBuilder(context, child!),
     ).then((TimeOfDay? result) {
@@ -1196,6 +1200,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     Event2CreatePanel.hideKeyboard(context);
     showTimePicker(
         context: context,
+        barrierDismissible: false,
         initialTime: _endTime ?? TimeOfDay(hour: 0, minute: 0),
         builder: (context, child) => _timePickerTransitionBuilder(context, child!),
     ).then((TimeOfDay? result) {
@@ -1930,17 +1935,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _buildCostInnerSection(),
   ]);
     
-  Widget _buildFreeToggle() => Semantics(toggled: _free, excludeSemantics: true, 
-    label: Localization().getStringEx("panel.event2.create.free.toggle.title", "List event as free"),
-    hint: Localization().getStringEx("panel.event2.create.free.toggle.hint", ""),
-    child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.create.free.toggle.title", "List event as free"),
+  Widget _buildFreeToggle() => ToggleRibbonButton(
+      title: Localization().getStringEx("panel.event2.create.free.toggle.title", "List event as free"),
       padding: _togglePadding,
       toggled: _free,
       onTap: _onTapFree,
       border: _toggleBorder,
       borderRadius: _toggleBorderRadius,
-    ));
+    );
 
   Widget _buildCostInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: _buildCostInnerSectionHeadingWidget(),
@@ -2320,12 +2322,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     String? eventId = widget.event?.id;
     if (eventId != null) {
       _loadingEventGroups = true;
-      _initialGroupIds = _selectedGroupIds = widget.event!.groupIds;
-      Groups().loadGroupsByIds(groupIds: widget.event!.groupIds).then((List<Group>? groups) {
-          setStateIfMounted(() {
-            _loadingEventGroups = false;
-            _eventGroups = groups;
-          });
+      _initialGroupIds = _selectedGroupIds = widget.event?.groupIds;
+      Groups().loadGroupsV3(GroupsQuery(ids: widget.event?.groupIds)).then((GroupsLoadResult? result){
+        setStateIfMounted(() {
+          _loadingEventGroups = false;
+          _eventGroups = result?.groups;
+        });
       });
     }
     else {
@@ -2337,7 +2339,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   void _initAdminGroups() {
     _selectedAdminGroupIds = widget.event?.authorizationContext?.externalAdmins?.groupIds;
     _loadingAdminGroups = true;
-    Groups().loadGroups(contentType: GroupsContentType.my, administrative: true).then((List<Group>? groups) {
+    Groups().loadAdministrativeUserGroupsV3().then((List<Group>? groups) {
       setStateIfMounted(() {
         _loadingAdminGroups = false;
         _adminGroups = groups;
@@ -2429,17 +2431,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   Widget _buildPublishedSection() => Padding(padding: Event2CreatePanel.sectionPadding, child: _buildPublishedToggle());
 
-  Widget _buildPublishedToggle() => Semantics(toggled: _published, excludeSemantics: true,
-    label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish this event"),
-    hint: Localization().getStringEx("panel.event2.create.published.toggle.hint", ""),
-    child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish this event"),
+  Widget _buildPublishedToggle() => ToggleRibbonButton(
+      title: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish this event"),
       padding: _togglePadding,
       toggled: _published,
       onTap: _onTapPublished,
       border: _toggleBorder,
       borderRadius: _toggleBorderRadius,
-    ));
+    );
 
 
   void _onTapPublished() {
@@ -2454,18 +2453,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   Widget _buildSuperEventSection() =>  Visibility(visible: widget.event?.isSuperEvent == true, child:
     Padding(padding: Event2CreatePanel.sectionPadding, child: _buildPublishSubEventsToggle()));
 
-  Widget _buildPublishSubEventsToggle() => Semantics(toggled: _publishSubEvents, excludeSemantics: true,
-      label: Localization().getStringEx("panel.event2.create.publish_sub_events.toggle", "Publish All Linked Sub-Events"),
-      hint: Localization().getStringEx("panel.event2.create.publish_sub_events.toggle.hint", ""),
-      child: ToggleRibbonButton(
-        label: Localization().getStringEx("panel.event2.create.publish_sub_events.toggle", "Publish All Linked Sub-Events"),
+  Widget _buildPublishSubEventsToggle() => ToggleRibbonButton(
+        title: Localization().getStringEx("panel.event2.create.publish_sub_events.toggle", "Publish All Linked Sub-Events"),
         textStyle: _publishSubEventsEnabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
         padding: _togglePadding,
         toggled: _publishSubEvents && _publishSubEventsEnabled,// show as untoggled when disabled ,
         onTap: _publishSubEventsEnabled ? _onTapPublishSubEvents : (){},
         border: _toggleBorder,
         borderRadius: _toggleBorderRadius,
-      ));
+      );
 
   void _onTapPublishSubEvents(){
     Analytics().logSelect(target: "Toggle publish sub events");

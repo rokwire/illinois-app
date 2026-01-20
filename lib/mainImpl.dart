@@ -16,6 +16,9 @@
 
 import 'dart:async';
 import 'dart:collection';
+// import 'package:flutter/rendering.dart';
+import 'package:illinois/ui/web/WebRestrictedMobileDevicesPanel.dart';
+import 'package:web/web.dart' as web;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,7 +52,6 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
@@ -61,7 +63,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/RadioPlayer.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/service/WellnessRings.dart';
-import 'package:illinois/ui/WebLoginNetIdPanel.dart';
+import 'package:illinois/ui/web/WebLoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingAlertPanel.dart';
 
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
@@ -70,7 +72,6 @@ import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
-import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/cache_image.dart';
@@ -91,7 +92,6 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/app_notification.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/http_proxy.dart';
@@ -172,7 +172,6 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Canvas(),
       CustomCourses(),
       Rewards(),
-      OnCampus(),
       Wellness(),
       WellnessRings(),
       RadioPlayer(),
@@ -205,6 +204,12 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     await WebCacheImageService().init();
 
     runApp(App(initializeError: serviceError));
+
+    // TBD: DDWEB - do not enable semantics for the web by default. It breaks quill text editor in PostInputField - #5673
+    // Ref: https://github.com/singerdmx/flutter-quill/issues/2531
+    // if (kIsWeb) {
+    //   SemanticsBinding.instance.ensureSemantics();
+    // }
   }, FirebaseCrashlytics().handleZoneError);
 }
 
@@ -263,16 +268,14 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
 
     NotificationService().subscribe(this, [
       Onboarding2.notifyFinished,
-      Localization.notifyLocaleChanged,
       Config.notifyUpgradeAvailable,
       Config.notifyUpgradeRequired,
       Config.notifyOnboardingRequired,
       Content.notifyContentAlertChanged,
-      Storage.notifySettingChanged,
-      Auth2.notifyUserDeleted,
-      Auth2UserPrefs.notifyPrivacyLevelChanged,
       OnboardingConfigAlertPanel.notifyCheckAgain,
       AppLivecycle.notifyStateChanged,
+      Localization.notifyLocaleChanged,
+      Auth2.notifyUserDeleted,
     ]);
 
     _initializeError = widget.initializeError;
@@ -292,6 +295,9 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       NativeCommunicator().dismissLaunchScreen().then((_) {
         _presentLaunchPopup();
       });
+      if (kIsWeb) {
+        _removeEnableAccessibilityButton();
+      }
     });
 
     super.initState();
@@ -342,19 +348,21 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       title: Localization().getStringEx('app.title', 'Illinois'),
       theme: _appTheme,
-      home: _homePanel,
+      home: _homePanel
     );
   }
 
   Widget get _homePanel {
-
-    if (_initializeError != null) {
+    if (WebUtils.isMobileDeviceWeb()) {
+      return WebRestrictedMobileDevicesPanel();
+    }
+    else if (_initializeError != null) {
       return OnboardingErrorPanel(error: _initializeError, retryHandler: _retryInitialze);
     }
-    else if (_upgradeRequiredVersion != null) {
+    else if (!kIsWeb && _upgradeRequiredVersion != null) {
       return OnboardingUpgradePanel(requiredVersion:_upgradeRequiredVersion);
     }
-    else if (_upgradeAvailableVersion != null) {
+    else if (!kIsWeb && _upgradeAvailableVersion != null) {
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
     }
     else if (_contentAlert?.isCurrent == true) {
@@ -362,13 +370,6 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
     }
     else if (Storage().onBoardingPassed != true) {
       return Onboarding2().first ?? Container();
-    }
-    else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
-      return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);
-    }
-    else if (Auth2().prefs?.privacyLevel == null) {
-      _showWebSignInPanel = kIsWeb;
-      return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
     }
     else if (_showWebSignInPanel && !Auth2().isOidcLoggedIn) {
       _showWebSignInPanel = false;
@@ -534,27 +535,17 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
     else if (name == Content.notifyContentAlertChanged) {
       _updateContentAlert();
     }
-    else if (name == Auth2.notifyUserDeleted) {
-      _resetUI();
+    else if (name == OnboardingConfigAlertPanel.notifyCheckAgain) {
+      setStateIfMounted(() {});
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
     }
     else if (name == Localization.notifyLocaleChanged) {
       _resetUI();
     }
-    else if (name == Storage.notifySettingChanged) {
-      if (param == Storage.privacyUpdateVersionKey) {
-        setStateIfMounted(() {});
-      }
-    }
-    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      setStateIfMounted(() { });
-    }
-    else if (name == OnboardingConfigAlertPanel.notifyCheckAgain) {
-      setStateIfMounted(() {
-
-      });
-    }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == Auth2.notifyUserDeleted) {
+      _resetUI();
     }
   }
 
@@ -590,6 +581,21 @@ class _AppState extends State<App> with NotificationsListener, TickerProviderSta
       setState(() {
         _contentAlert = contentAlert;
       });
+    }
+  }
+
+  void _removeEnableAccessibilityButton() {
+    final nodeList = web.document.querySelectorAll(
+      'flt-semantics-placeholder[aria-label="Enable accessibility"]',
+    );
+    int nodesCount = nodeList.length;
+    if (nodesCount > 0) {
+      for (var i = 0; i < nodesCount; i++) {
+        final node = nodeList.item(i);
+        if (node != null && node.parentNode != null) {
+          node.parentNode!.removeChild(node);
+        }
+      }
     }
   }
 }

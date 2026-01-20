@@ -50,10 +50,12 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:universal_io/io.dart';
+import 'package:web/web.dart' as web;
 
 class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
   final Event2? event;
   final String? eventId;
+  final String? eventName;
   final Event2? superEvent;
   final Survey? survey;
   final Group? group;
@@ -63,14 +65,16 @@ class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
   final void Function(Event2DetailPanelState)? onInitialized;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.group, this.userLocation, this.timeFilter, this.eventSelector, this.onInitialized, this.analyticsFeature});
+  Event2DetailPanel({ this.event, this.eventId, this.eventName, this.superEvent, this.survey, this.group, this.userLocation, this.timeFilter, this.eventSelector, this.onInitialized, this.analyticsFeature});
   
   @override
   State<StatefulWidget> createState() => Event2DetailPanelState();
 
   // AnalyticsInfo
   @override
-  Map<String, dynamic>? get analyticsPageAttributes => event?.analyticsAttributes;
+  Map<String, dynamic>? get analyticsPageAttributes => event?.analyticsAttributes ?? _analyticsEvent?.analyticsAttributes;
+
+  Event2? get _analyticsEvent => (eventId != null) ? Event2(id: eventId, name: eventName) : null;
 }
 
 class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> with NotificationsListener {
@@ -951,7 +955,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
   Widget _buildSettingButton({required String title, VoidCallback? onTap}) =>
     Padding(padding: EdgeInsets.only(bottom: 6),
       child: RibbonButton(
-        label: title,
+        title: title,
         onTap: () {
           Navigator.of(context).pop();
           onTap?.call();
@@ -1109,7 +1113,8 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
     }
     else if (_authLoading != true) {
       setState(() { _authLoading = true; });
-      Auth2().authenticateWithOidc().then((pluginAuth.Auth2OidcAuthenticateResult? result) {
+      web.Window? webWindow = WebUtils.createIosWebWindow();
+      Auth2().authenticateWithOidc(iosWebWindow: webWindow).then((pluginAuth.Auth2OidcAuthenticateResult? result) {
         setStateIfMounted(() { _authLoading = false; });
           if (result != pluginAuth.Auth2OidcAuthenticateResult.succeeded) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));

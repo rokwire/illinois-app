@@ -50,29 +50,26 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:universal_io/io.dart';
 
 class ExploreDiningDetailPanel extends StatefulWidget with AnalyticsInfo {
-  final Dining? dining;
+  final Dining dining;
   final Core.Position? initialLocationData;
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
-  ExploreDiningDetailPanel({this.dining, this.initialLocationData, this.analyticsFeature});
+  ExploreDiningDetailPanel(this.dining, { this.initialLocationData, this.analyticsFeature});
 
   @override
-  _DiningDetailPanelState createState() => _DiningDetailPanelState(dining);
+  _DiningDetailPanelState createState() => _DiningDetailPanelState();
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes => dining?.analyticsAttributes;
+  Map<String, dynamic>? get analyticsPageAttributes => dining.analyticsAttributes;
 }
 
 class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with NotificationsListener {
 
-  Dining? _dining;
+  late Dining _dining;
   bool _isDiningLoading = false;
 
   DiningFeedback? _diningFeedback;
   bool _isDiningFeedbackLoading = false;
-
-  _DiningDetailPanelState(Dining? dining) :
-    _dining = dining;
 
   //Maps
   Core.Position? _locationData;
@@ -95,6 +92,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged
     ]);
+    
+    _dining = widget.dining;
 
     _reloadDiningIfNeed();
     _loadDiningFeedback();
@@ -146,7 +145,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
         Expanded(child:
           CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
             SliverToutHeaderBar(
-              flexImageUrl: _dining?.exploreImageUrl,
+              flexImageUrl: _dining.exploreImageUrl,
               flexRightToLeftTriangleColor: Styles().colors.white,
             ),
             SliverList(delegate: SliverChildListDelegate([
@@ -179,7 +178,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
     return Padding(padding: EdgeInsets.only(top: 8), child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Expanded(child:
-          Text(_dining?.exploreTitle ?? '', style: Styles().textStyles.getTextStyle("common.panel.title")),
+          Text(_dining.exploreTitle ?? '', style: Styles().textStyles.getTextStyle("common.panel.title")),
         ),
         Visibility(visible: starVisible, child:
           GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onFavorite, child:
@@ -225,17 +224,17 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
 
   Widget? _explorePaymentTypes() {
     List<Widget>? details;
-    List<PaymentType>? paymentTypes = _dining?.paymentTypes;
+    List<PaymentType>? paymentTypes = _dining.paymentTypes;
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
       details = [];
-      for (PaymentType? paymentType in paymentTypes) {
-        Widget? image = PaymentTypeHelper.paymentTypeIcon(paymentType);
+      for (PaymentType paymentType in paymentTypes) {
+        Widget? image = paymentType.iconWidget;
         if (image != null) {
           details.add(Padding(padding: EdgeInsets.only(right: 6), child:
             Row(children: <Widget>[
               image,
               _diningPaymentTypesExpanded ? Container(width: 5,) : Container(),
-              _diningPaymentTypesExpanded ? Text(PaymentTypeHelper.paymentTypeToDisplayString(paymentType)!) : Container()
+              _diningPaymentTypesExpanded ? Text(paymentType.displayTitle) : Container()
             ],)
           ));
         }
@@ -280,7 +279,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
   }
 
   Widget? _exploreOrderOnline() {
-    Map<String, dynamic>? onlineOrder = _dining?.onlineOrder;
+    Map<String, dynamic>? onlineOrder = _dining.onlineOrder;
     if (onlineOrder == null) {
       return null;
     }
@@ -335,7 +334,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
   }
 
   Widget? _exploreLocationDetail() {
-    String? locationText = _dining?.getLongDisplayLocation(_locationData);
+    String? locationText = _dining.getLongDisplayLocation(_locationData);
     String? locationHint = Localization().getStringEx('panel.explore_detail.button.directions.hint', '');
     if ((locationText != null) && locationText.isNotEmpty) {
       return GestureDetector(onTap: _onLoacationDetailTapped, child:
@@ -358,8 +357,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
   }
 
   Widget? _exploreWorktimeDetail() {
-    bool hasAdditionalInformation = _dining?.diningSchedules != null && (_dining?.diningSchedules?.isNotEmpty ?? false) && (_dining?.firstOpeningDateSchedules.isNotEmpty?? false);
-    String? displayTime = _dining?.displayWorkTime;
+    bool hasAdditionalInformation = _dining.diningSchedules != null && (_dining.diningSchedules?.isNotEmpty ?? false) && (_dining.firstOpeningDateSchedules.isNotEmpty);
+    String? displayTime = _dining.displayWorkTime;
     String displayHint = hasAdditionalInformation ? Localization().getStringEx("panel.explore_detail.button.wirking_detail.hint","activate to show more details") : "";
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Padding(padding: EdgeInsets.only(bottom: 8), child:
@@ -396,10 +395,10 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
   }
 
   Widget _exploreWorktimeFullDetail() {
-    if (_dining?.diningSchedules != null && _dining!.diningSchedules!.isNotEmpty && _diningWorktimeExpanded) {
+    if (_dining.diningSchedules != null && _dining.diningSchedules!.isNotEmpty && _diningWorktimeExpanded) {
 
       List<Widget> widgets = [];
-      List<DiningSchedule> schedules = _dining!.firstOpeningDateSchedules;
+      List<DiningSchedule> schedules = _dining.firstOpeningDateSchedules;
       if (schedules.isNotEmpty) {
 
         for (DiningSchedule schedule in schedules) {
@@ -435,10 +434,10 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
   }
 
   Widget? _exploreAdditionalLocationDetail() {
-    bool hasAdditionalInformation = _dining?.diningSchedules != null && (_dining?.diningSchedules?.isNotEmpty ?? false) && (_dining?.firstOpeningDateSchedules.isNotEmpty?? false);
+    bool hasAdditionalInformation = _dining.diningSchedules != null && (_dining.diningSchedules?.isNotEmpty ?? false) && (_dining.firstOpeningDateSchedules.isNotEmpty);
     String? title = "More about this location";
     String displayHint = hasAdditionalInformation ? Localization().getStringEx("panel.explore_detail.button.wirking_detail.hint","activate to show more details") : "";
-    if (StringUtils.isNotEmpty(_dining?.description)) {
+    if (StringUtils.isNotEmpty(_dining.description)) {
       return Padding(padding: EdgeInsets.only(bottom: 0), child:
       Semantics(container: true, child:
       Column(children: <Widget>[
@@ -481,7 +480,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
   }
 
   Widget _exploreDescription() {
-    String? description = _dining?.description;
+    String? description = _dining.description;
     bool showDescription = StringUtils.isNotEmpty(description);
     return showDescription ? Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
       HtmlWidget(
@@ -501,7 +500,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
           )
         )
       )
-    ],) : _DiningDetail(dining: _dining);
+    ],) : _DiningDetail(_dining);
   }
 
   Widget _buildDiningFeedback() {
@@ -551,28 +550,29 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
     }
   }
 
-  void _reloadDiningIfNeed() {
-    if (_dining?.hasDiningSchedules != true) {
-      _isDiningLoading = true;
-
-      Dinings().loadBackendDinings(false, null, _locationData).then((List<Dining>? dinings) {
-        if (mounted && (dinings != null)) {
-          Dining? foundDining = Dining.entryInList(dinings, id: _dining?.id);
-          if (foundDining != null) {
-            setState(() {
-              _dining = foundDining;
-              _isDiningLoading = false;
-            });
-          }
-        }
+  Future<void> _reloadDiningIfNeed() async {
+    if ((_dining.hasDiningSchedules != true) && mounted) {
+      setState(() {
+        _isDiningLoading = true;
       });
+
+      List<Dining>? dinings = await Dinings().loadFilteredDinings(location: _locationData);
+      if (mounted) {
+        setState(() {
+          Dining? foundDining = DiningUtils.entryInList(dinings, id: _dining.id);
+          if (foundDining != null) {
+            _dining = foundDining;
+          }
+          _isDiningLoading = false;
+        });
+      }
     }
   }
 
   void _loadDiningFeedback() {
-    if (_dining?.id != null) {
+    if (_dining.id != null) {
       _isDiningFeedbackLoading = true;
-      Dinings().loadDiningFeedback(diningId: widget.dining?.id).then((DiningFeedback? diningFeedback) {
+      Dinings().loadDiningFeedback(diningId: widget.dining.id).then((DiningFeedback? diningFeedback) {
         if (mounted) {
           setState(() {
             _diningFeedback = diningFeedback;
@@ -599,7 +599,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
   }
 
   void _onFavorite() {
-    Analytics().logSelect(target: "Favorite: ${_dining?.title}");
+    Analytics().logSelect(target: "Favorite: ${_dining.title}");
     Auth2().prefs?.toggleFavorite(_dining);
   }
 
@@ -626,7 +626,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
 
   void _onLoacationDetailTapped() {
     Analytics().logSelect(target: "Location Directions");
-    _dining?.launchDirections();
+    _dining.launchDirections();
   }
 
   void _onTapOrderOnline(Map<String, dynamic>? orderOnlineDetails) async {
@@ -695,32 +695,33 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
           url: url,
           tryInternal: UrlUtils.canLaunchInternal(url),
           analyticsName: analyticsName,
-          analyticsSource: widget.dining?.analyticsAttributes);
+          analyticsSource: widget.dining.analyticsAttributes);
     }
   }
 }
 
 class _DiningDetail extends StatefulWidget {
 
-  final Dining? dining;
+  final Dining dining;
 
-  _DiningDetail({required this.dining });
+  _DiningDetail(this.dining);
 
   _DiningDetailState createState() => _DiningDetailState();
 }
 
 class _DiningDetailState extends State<_DiningDetail> with NotificationsListener {
 
-  List<DiningSpecial>? _specials;
+  late List<DateTime> _filterDates;
+  late Map<String, List<DiningSchedule>> _displayDateScheduleMapping;
 
-  List<DiningSchedule>? __schedules;
+  late List<DiningSchedule> _schedules;
   int _selectedScheduleIndex = -1;
 
-  List<String>? _displayDates;
-  List<DateTime>? _filterDates;
+  late List<String> _displayDates;
   int _selectedDateFilterIndex = 0;
 
   List<DiningProductItem>? _productItems;
+  List<DiningSpecial>? _specials;
 
   bool _isLoading = false;
 
@@ -728,14 +729,13 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
   void initState() {
     NotificationService().subscribe(this, Auth2UserPrefs.notifyFoodChanged);
 
-    _displayDates = widget.dining?.displayScheduleDates;
-    _filterDates = widget.dining?.filterScheduleDates;
+    _displayDates = widget.dining.displayScheduleDates;
+    _filterDates = widget.dining.filterScheduleDates;
+    _displayDateScheduleMapping = widget.dining.displayDateScheduleMapping;
 
-    _findTodayFilter();
-
-    bool hasDisplayDates = (_displayDates != null && _displayDates!.isNotEmpty);
-    String? currentDate = hasDisplayDates ? _displayDates![_selectedDateFilterIndex] : null;
-    _schedules = (hasDisplayDates && (currentDate != null)) ? widget.dining!.displayDateScheduleMapping[currentDate] : [];
+    _selectedDateFilterIndex = _getTodayFilterIndex();
+    _schedules = _buildCurrentSchedule();
+    _selectedScheduleIndex = _getCurrentScheduleIndex();
 
     _loadProductItems();
     _loadOffers();
@@ -774,7 +774,9 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
     return hasMenuData ? Container(color: Styles().colors.background, child:
       Column(children: <Widget>[
         Container(color: Styles().colors.background, height: 1,),
-        HorizontalDiningSpecials(locationId: widget.dining!.id, specials: _specials,),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+          HorizontalDiningSpecials(locationId: widget.dining.id, specials: _specials,),
+        ),
         // Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
           // Row(children: <Widget>[
           //   Expanded(flex: 2, child:
@@ -815,7 +817,7 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
             Expanded(child:
                 Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                  Text((_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : '',style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
+                  Text(ListUtils.entry(_displayDates, _selectedDateFilterIndex) ?? '', style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),),
                   Semantics(button: false, label: filtersLabel, hint: filtersHint, child:
                         GestureDetector(onTap: _onFoodFilersTapped, child:
                           Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center,
@@ -878,8 +880,8 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
 
   List<Widget> _buildScheduleTabs() {
     List<Widget> tabs = [];
-    for (int i = 0; i < _schedules!.length; i++) {
-      DiningSchedule schedule = _schedules![i];
+    for (int i = 0; i < _schedules.length; i++) {
+      DiningSchedule schedule = _schedules[i];
       tabs.add(Padding(padding: EdgeInsets.only(right: 8), child: RoundedTab(title: schedule.meal, tabIndex: i, onTap: _onTapTab, selected: (i == _selectedScheduleIndex))));
     }
 
@@ -889,14 +891,13 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
   List<Widget> _buildStations() {
     List<Widget> list = [];
     if(_productItems != null && _productItems!.isNotEmpty && _selectedScheduleIndex > -1) {
-      List<DiningProductItem> mealProducts = DiningUtils.getProductsForScheduleId(
+      List<DiningProductItem> mealProducts = DiningProductItemUtils.filter(
           _productItems,
-          _schedules![_selectedScheduleIndex].scheduleId,
+          ListUtils.entry(_schedules, _selectedScheduleIndex)?.scheduleId,
           Auth2().prefs?.includedFoodTypes,
           Auth2().prefs?.excludedFoodIngredients
       );
-      Map<String, List<DiningProductItem>> productStationMapping = DiningUtils
-          .getCategoryGroupedProducts(mealProducts);
+      Map<String, List<DiningProductItem>> productStationMapping = DiningProductItemUtils.productsByCategory(mealProducts);
 
       if (_productItems != null && _productItems!.isNotEmpty) {
         List<String> stations = productStationMapping.keys.toList();
@@ -936,9 +937,8 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
   }
 
   Widget _buildScheduleWorkTime() {
-    String workTimeDisplayText = (_selectedScheduleIndex > -1 && __schedules != null && __schedules!.length >= _selectedScheduleIndex)
-        ? (__schedules![_selectedScheduleIndex].displayWorkTime)
-        : "";
+    DiningSchedule? selectedSchedule = ListUtils.entry(_schedules, _selectedScheduleIndex);
+    String workTimeDisplayText = selectedSchedule?.displayWorkTime ?? '';
     return workTimeDisplayText.isNotEmpty ? Column(children: <Widget>[
       Center(child:
         Text(workTimeDisplayText, style: Styles().textStyles.getTextStyle("widget.title.small")),
@@ -947,76 +947,76 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
     ],) : Container();
   }
 
-  void _findTodayFilter() {
+  int _getTodayFilterIndex() {
     DateTime nowUtc = DateTime.now().toUtc();
-    if (_displayDates != null) {
-      for (String dateString in _displayDates!) {
-        List<DiningSchedule> schedules = widget.dining!.displayDateScheduleMapping[dateString]!;
-        for (DiningSchedule schedule in schedules) {
-          if (nowUtc.isBefore(schedule.endTimeUtc!)) {
-            _selectedDateFilterIndex = _displayDates!.indexOf(dateString);
-            return;
-          }
+    for (String dateString in _displayDates) {
+      List<DiningSchedule> schedules = _displayDateScheduleMapping[dateString]!;
+      for (DiningSchedule schedule in schedules) {
+        if (nowUtc.isBefore(schedule.endTimeUtc!)) {
+          return _displayDates.indexOf(dateString);
         }
       }
     }
-    _selectedDateFilterIndex = 0;
+    return 0;
   }
 
-  void _findCurrentSchedule() {
-    if(__schedules != null && __schedules!.isNotEmpty) {
+  int _getCurrentScheduleIndex() {
+    if(_schedules.isNotEmpty) {
       var nowUtc = DateTime.now().toUtc();
-      bool found = false;
-      for(int i = 0; i < __schedules!.length; i++) {
-        DiningSchedule schedule = __schedules![i];
+      for (int i = 0; i < _schedules.length; i++) {
+        DiningSchedule schedule = _schedules[i];
         if(nowUtc.isBefore(schedule.startTimeUtc!) || nowUtc.isBefore(schedule.endTimeUtc!)) {
-          _selectedScheduleIndex = i;
-          found = true;
-          break;
+          return i;
         }
       }
-
-      if(!found) {
-        _selectedScheduleIndex = 0;
-      }
+      return 0;
     }
     else{
-      _selectedScheduleIndex = -1;
+      return -1;
     }
+  }
+
+  List<DiningSchedule> _buildCurrentSchedule() {
+    String? displayDate = ListUtils.entry(_displayDates, _selectedDateFilterIndex);
+    List<DiningSchedule>? schedules = _displayDateScheduleMapping[displayDate];
+    return (schedules != null) ? ListUtils.sort(schedules, _compareSchedules) : <DiningSchedule>[];
+  }
+
+  static int _compareSchedules(DiningSchedule ds1, DiningSchedule ds2) {
+    int order = SortUtils.compare(ds1.startTimeUtc, ds2.startTimeUtc);
+    if (order != 0) {
+      order = SortUtils.compare(ds1.endTimeUtc, ds2.endTimeUtc);
+    }
+    if (order == 0) {
+      order = SortUtils.compare(ds1.meal, ds2.meal);
+    }
+    return order;
   }
 
   bool get hasMenuData{
-    return _filterDates != null && _filterDates!.isNotEmpty && _schedules != null && _schedules!.isNotEmpty;
+    return _filterDates.isNotEmpty && _schedules.isNotEmpty;
   }
 
-  void _loadOffers() {
-    Dinings().loadDiningSpecials().then((List<DiningSpecial>? offers) {
-      if (mounted && offers != null && offers.isNotEmpty) {
-        setState(() {
-          _specials = offers.where((entry)=>entry.locationIds!.contains(widget.dining!.id)).toList();
-        });
-      }
-    });
+  Future<void> _loadOffers() async {
+    List<DiningSpecial>? offers = await Dinings().loadDiningSpecials();
+    if (mounted && offers != null && offers.isNotEmpty) {
+      setState(() {
+        _specials = offers.where((entry)=>entry.locationIds!.contains(widget.dining.id)).toList();
+      });
+    }
   }
 
-  void _loadProductItems() {
-    if (hasMenuData) {
-      _isLoading = true;
-      DateTime? filterDate = _filterDates![_selectedDateFilterIndex];
-      Dinings().loadMenuItemsForDate(widget.dining!.id, filterDate).then((List<DiningProductItem>? items) {
-        Map<String, DiningProductItem> itemsMapping = <String, DiningProductItem>{};
-        items!.forEach((DiningProductItem item) {
-          if (item.itemID != null) {
-            itemsMapping[item.itemID!] = item;
-          }
-        });
-
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-            _productItems = items;
-          });
-        }
+  Future<void> _loadProductItems() async {
+    if (hasMenuData && mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+      String? diningId = widget.dining.id;
+      DateTime? filterDate = ListUtils.entry(_filterDates, _selectedDateFilterIndex);
+      List<DiningProductItem>? items = ((diningId != null) && (filterDate != null)) ? await Dinings().loadMenuItemsForDate(diningId: diningId, date: filterDate) : null;
+      setStateIfMounted(() {
+        _isLoading = false;
+        _productItems = items;
       });
     }
   }
@@ -1041,43 +1041,29 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
     });
   }
 
-  List<DiningSchedule>? get _schedules{
-    return __schedules;
-  }
-
-  set _schedules(List<DiningSchedule>? schedules) {
-    __schedules = schedules;
-    _findCurrentSchedule();
-  }
-
   void incrementDateFilter() {
     Analytics().logSelect(target: "Increment Date filter");
-    if(_selectedDateFilterIndex < _filterDates!.length - 1) {
-      _selectedDateFilterIndex++;
-
-      String? displayDate = (_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : null;
-      _schedules = widget.dining!.displayDateScheduleMapping[displayDate];
+    if (_selectedDateFilterIndex < _filterDates.length - 1) {
+      setState(() {
+        _selectedDateFilterIndex++;
+        _schedules = _buildCurrentSchedule();
+        _selectedScheduleIndex = _getCurrentScheduleIndex();
+      });
 
       _loadProductItems();
-
-      if (mounted) {
-        setState(() {});
-      }
     }
   }
 
   void decrementDateFilter() {
     Analytics().logSelect(target: "Decrement Date filter");
-    if(_selectedDateFilterIndex > 0) {
-      _selectedDateFilterIndex--;
-
-      String? displayDate = (_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : null;
-      _schedules = widget.dining!.displayDateScheduleMapping[displayDate];
+    if (_selectedDateFilterIndex > 0) {
+      setState(() {
+        _selectedDateFilterIndex--;
+        _schedules = _buildCurrentSchedule();
+        _selectedScheduleIndex = _getCurrentScheduleIndex();
+      });
 
       _loadProductItems();
-      if(mounted) {
-        setState(() {});
-      }
     }
   }
 
@@ -1124,11 +1110,11 @@ class _StationItemState extends State<_StationItem>{
       Semantics(
         label: widget.title,
         hint: expanded
-            ? Localization().getStringEx("widget.food_detail.button.dining_station.expanded.hint","Double tap to collaps")
-            : Localization().getStringEx("widget.food_detail.button.dining_station.collapsed.hint","Double tap to expand"),
+            ? Localization().getStringEx("model.accessability.expandable.expanded.hint", "Double tap to collaps")
+            : Localization().getStringEx("model.accessability.expandable.collapsed.hint", "Double tap to expand"),
         value: expanded
-            ? Localization().getStringEx("widget.food_detail.button.dining_station.value.expanded","Expanded")
-            : Localization().getStringEx("widget.food_detail.button.dining_station.value.collapsed","Collapsed"),
+            ? Localization().getStringEx("model.accessability.expandable.expanded.value", "Expanded")
+            : Localization().getStringEx("model.accessability.expandable.collapsed.value", "Collapsed"),
         button: true,
         excludeSemantics: true,
         child: GestureDetector(onTap: onTap, child:

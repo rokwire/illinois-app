@@ -60,19 +60,21 @@ class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
           padding: EdgeInsets.all(16),
           child: Column(
             children: [
-              ToggleRibbonButton(label: Localization().getStringEx("panel.debug_http_proxy_enable.button.save.title", "Http Proxy Enabled"), toggled: _proxyEnabled ?? false, onTap: (){
+              ToggleRibbonButton(title: Localization().getStringEx("panel.debug_http_proxy_enable.button.save.title", "Http Proxy Enabled"), toggled: _proxyEnabled ?? false, onTap: (){
                 setState(() {
                   _proxyEnabled = (_proxyEnabled != true);
                 });
               }),
               Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
-                  child: Semantics(
+                  child:
+                  /* WEB: Unable to type in web TextField with Semantics*
+                    Semantics(
                     excludeSemantics: true,
                     label: Localization().getStringEx("panel.debug_http_proxy.edit.host.title", "Http Proxy Host"),
                     hint: Localization().getStringEx("panel.debug_http_proxy.edit.host.hint", ""),
                     value: _hostController.text,
-                    child: TextField(
+                    child:*/ TextField(
                       controller: _hostController,
                       autofocus: false,
                       cursorColor: Styles().colors.textBackground,
@@ -93,16 +95,18 @@ class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
                           borderSide: BorderSide(color: Colors.black, width: 2.0),
                         ),
                       ),
-                    ),
+                    // ),
                   )),
               Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
-                  child: Semantics(
+                  child:
+                  /* WEB: Unable to type in web TextField with Semantics*
+                  Semantics(
                     excludeSemantics: true,
                     label: Localization().getStringEx("panel.debug_http_proxy.edit.host.title", "Http Proxy Port"),
                     hint: Localization().getStringEx("panel.debug_http_proxy.edit.host.hint", ""),
                     value: _portController.text,
-                    child: TextField(
+                    child:*/ TextField(
                       controller: _portController,
                       autofocus: false,
                       cursorColor: Styles().colors.textBackground,
@@ -123,7 +127,7 @@ class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
                           borderSide: BorderSide(color: Colors.black, width: 2.0),
                         ),
                       ),
-                    ),
+                    // ),
                   )),
               RoundedButton(
                   label: Localization().getStringEx("panel.debug_http_proxy.button.save.title", "Save"),

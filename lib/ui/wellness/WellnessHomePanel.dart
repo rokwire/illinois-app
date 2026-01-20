@@ -57,6 +57,16 @@ class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
   @override
   AnalyticsFeature? get analyticsFeature => (state?._selectedContentType ?? contentType)?.analyticsFeature;
 
+  static void present(BuildContext context, WellnessContentType content) {
+    if (hasState) {
+      Navigator.of(context).popUntil((route) => (route.settings.name == routeName) || (route.isFirst));
+      NotificationService().notify(notifySelectContent, content);
+    }
+    else {
+      push(context, content);
+    }
+  }
+
   static Future<void> push(BuildContext context, WellnessContentType content) =>
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: content), settings: RouteSettings(name: WellnessHomePanel.routeName)));
 
@@ -146,7 +156,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                   rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                  label: _selectedContentType?.displayTitle ?? '',
+                  title: _selectedContentType?.displayTitle ?? '',
                   onTap: _changeSettingsContentValuesVisibility
               ),
             ),
@@ -196,7 +206,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedContentType == contentType) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedContentType == contentType) ? 'check-accent' : null,
-        label: contentType.displayTitle,
+        title: contentType.displayTitle,
         onTap: () => _onTapDropdownItem(contentType)
         )
       );

@@ -26,7 +26,9 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:web/web.dart' as web;
 
 class SettingsVerifyIdentityPanel extends StatefulWidget{
   @override
@@ -45,18 +47,18 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Scaffold(
       appBar: HeaderBar(
         title: Localization().getStringEx("panel.settings.verify_identity.label.title", "Verify your Identity"),
       ),
       body: SingleChildScrollView(child: _buildContent()),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
-    );
+    ));
   }
 
   Widget _buildContent() {
-    return Stack(alignment: Alignment.center, children: [
+    return Focus(canRequestFocus: false, skipTraversal: true, child: Stack(alignment: Alignment.center, children: [
       // Content Widgets
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,11 +76,11 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           ),
           Container(height: 12,),
           Container(padding: EdgeInsets.symmetric(horizontal: 16),
-              child:RibbonButton(
-                  label: Localization().getStringEx("panel.settings.verify_identity.button.connect_net_id.title", "Connect Your NetID"),
+              child: WebFocusableSemanticsWidget(onSelect: _onTapConnectNetId, child: RibbonButton(
+                  title: Localization().getStringEx("panel.settings.verify_identity.button.connect_net_id.title", "Connect Your NetID"),
                   borderRadius: BorderRadius.circular(4),
                   onTap: _onTapConnectNetId
-              )),
+              ))),
           Container(height: 16,),
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
               child:RichText(
@@ -94,15 +96,15 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           ),
           Container(height: 12,),
           Container(padding: EdgeInsets.symmetric(horizontal: 16),
-              child:RibbonButton(
-                  label: Localization().getStringEx("panel.settings.verify_identity.button.phone_or_phone.title", "Proceed"),
+              child: WebFocusableSemanticsWidget(onSelect: _onTapProceed, child: RibbonButton(
+                  title: Localization().getStringEx("panel.settings.verify_identity.button.phone_or_phone.title", "Proceed"),
                   borderRadius: BorderRadius.circular(4),
                   onTap: _onTapProceed
-              )),
+              ))),
         ],),
       // Loading indicator widgets
       Visibility(visible: (_loading == true), child: CircularProgressIndicator())
-    ]);
+    ]));
   }
 
   Widget get _contentIdDescription {
@@ -142,7 +144,8 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
     }
     else if (_loading != true) {
       _setLoading(true);
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? success) {
+      web.Window? webWindow = WebUtils.createIosWebWindow();
+      Auth2().authenticateWithOidc(iosWebWindow: webWindow).then((Auth2OidcAuthenticateResult? success) {
         if (mounted) {
           _setLoading(false);
           if (success == Auth2OidcAuthenticateResult.succeeded) {

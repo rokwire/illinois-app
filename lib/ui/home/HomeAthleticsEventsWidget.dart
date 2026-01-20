@@ -1,28 +1,20 @@
 
 import 'dart:async';
+import 'dart:collection';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
-import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
-import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
-import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/home/HomeEvent2Widget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:rokwire_plugin/model/event2.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class HomeAthliticsEventsWidget extends StatefulWidget {
 
@@ -36,236 +28,129 @@ class HomeAthliticsEventsWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.athletics_events.text.title', 'Big 10 Events');
+  String get _title => title;
+  static String get title => Localization().getStringEx('widget.home.athletics_events.title', 'Big 10 Events');
 
   State<HomeAthliticsEventsWidget> createState() => _HomeAthleticsEventsWidgetState();
 }
 
-class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> with NotificationsListener {
-
-  List<Event2>? _sportEvents;
-  bool _loadingGames = false;
-  DateTime? _pausedDateTime;
-
-  PageController? _pageController;
-  Key _pageViewKey = UniqueKey();
-  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> {
+  late FavoriteContentType _contentType;
 
   @override
   void initState() {
-
-    NotificationService().subscribe(this, [
-      Connectivity.notifyStatusChanged,
-      AppLivecycle.notifyStateChanged,
-      Config.notifyConfigChanged,
-    ]);
-
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          _refreshGames(showProgress: true);
-        }
-      });
-    }
-
-    if (Connectivity().isNotOffline) {
-      _loadingGames = true;
-      _loadSportEvents().then((List<Event2>? events) {
-        setStateIfMounted(() {
-          _sportEvents = events;
-          _loadingGames = false;
-        });
-      });
-    }
-
+    _contentType = FavoritesContentTypeImpl.fromJson(Storage().getHomeFavoriteSelectedContent(widget.favoriteId)) ?? FavoriteContentType.all;
     super.initState();
   }
 
   @override
-  void dispose() {
-    NotificationService().unsubscribe(this);
-    _pageController?.dispose();
-    super.dispose();
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == Connectivity.notifyStatusChanged) {
-      _refreshGames();
-    }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
-    }
-    else if (name == Config.notifyConfigChanged) {
-      if (mounted) {
-        setState(() {});
-      }
-    }
-  }
-
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      _pausedDateTime = DateTime.now();
-    }
-    else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
-        if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _refreshGames();
-        }
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return HomeFavoriteWidget(favoriteId: widget.favoriteId,
-      title: Localization().getStringEx('widget.home.athletics_events.text.title', 'Big 10 Events'),
-      child: _buildContent(),
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, child:
+      _contentWidget,
     );
   }
 
-  Widget _buildContent() {
-    if (Connectivity().isOffline) {
-      return HomeMessageCard(
-        title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
-        message: Localization().getStringEx("widget.home.athletics_events.text.offline", "Athletics Events are not available while offline"),
-      );
-    }
-    else if (_loadingGames) {
-      return HomeProgressWidget();
-    }
-    else if (CollectionUtils.isEmpty(_sportEvents)) {
-      return HomeMessageCard(
-        message: Localization().getStringEx("widget.home.athletics_events.text.empty.description", "No Athletics Events are available right now."),
-      );
-    }
-    else {
-      return _buildEventsContent();
-    }
+  Widget get _contentWidget => Column(mainAxisSize: MainAxisSize.min, children: [
+    Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 8), child:
+      _contentTypeBar,
+    ),
+    ..._contentTypeWidgets,
+  ],);
 
-  }
+  Widget get _contentTypeBar => Row(children:List<Widget>.from(
+    FavoriteContentType.values.map((FavoriteContentType contentType) => Expanded(child:
+      HomeFavTabBarBtn(contentType.athliticsEventsTitle.toUpperCase(),
+        position: contentType.position,
+        selected: _contentType == contentType,
+        onTap: () => _onContentType(contentType),
+      )
+    )),
+  ));
 
-  Widget _buildEventsContent() {
-    Widget contentWidget;
-    int visibleCount = _sportEvents?.length ?? 0;
-
-    if (1 < visibleCount) {
-      
-      List<Widget> pages = <Widget>[];
-      for (int index = 0; index < visibleCount; index++) {
-        Event2 event = _sportEvents![index];
-        pages.add(Padding(
-          key: _contentKeys[event.id ?? ''] ??= GlobalKey(),
-          padding: HomeCard.defaultPageMargin,
-          child: Event2Card(event, displayMode: Event2CardDisplayMode.page, onTap: () => _onTapEvent(event))
-        ),);
-      }
-
-      if (_pageController == null) {
-        double screenWidth = MediaQuery.of(context).size.width;
-        double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
-        _pageController = PageController(viewportFraction: pageViewport);
-      }
-
-      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        AccessiblePageView(
-          key: _pageViewKey,
-          controller: _pageController,
-          estimatedPageSize: _pageHeight,
-          allowImplicitScrolling : true,
-          children: pages),
-      );
-    }
-    else {
-      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
-        Event2Card(_sportEvents!.first, displayMode: Event2CardDisplayMode.page, onTap: () => _onTapEvent(_sportEvents!.first))
-      );
-    }
-    
-    return Column(children: <Widget>[
-      contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
-        HomeBrowseLinkButton(
-          title: Localization().getStringEx('widget.home.athletics_events.button.all.title', 'View All'),
-          hint: Localization().getStringEx('widget.home.athletics_events.button.all.hint', 'Tap to view all events'),
-          onTap: _onTapSeeAll,
-        ),
-      ),
-    ],);
-  }
-
-
-  void _onTapEvent(Event2 event) {
-    Analytics().logSelect(target: "Event: '${event.name}'" , source: widget.runtimeType.toString());
-    if (Connectivity().isNotOffline) {
-      if (event.hasGame) {
-        Navigator.push(context, CupertinoPageRoute( builder: (context) => AthleticsGameDetailPanel(game: event.game, event: event)));
-      } else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event)));
-      }
-    }
-    else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.game', 'Game detail is not available while offline.'));
-    }
-  }
-
-  void _onTapSeeAll() {
-    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Event2HomePanel.present(context, attributes: Event2HomePanel.athleticsCategoryAttributes, analyticsFeature: AnalyticsFeature.Athletics);
-  }
-
-  void _refreshGames({bool showProgress = false}) {
-    if (Connectivity().isNotOffline) {
-      if (showProgress && mounted) {
-        setState(() {
-          _loadingGames = true;
-        });
-      }
-      _loadSportEvents().then((List<Event2>? events) {
-        if (mounted && !DeepCollectionEquality().equals(_sportEvents, events)) {
-          setState(() {
-            _sportEvents = events;
-            _pageViewKey = UniqueKey();
-            // _pageController = null;
-            if ((_sportEvents?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
-              _pageController?.jumpToPage(0);
-            }
-            _contentKeys.clear();
-          });
-        }
-      }).whenComplete(() {
-        if (mounted && showProgress) {
-          setState(() {
-            _loadingGames = false;
-          });
-        }
+  void _onContentType(FavoriteContentType contentType) {
+    if ((_contentType != contentType) && mounted) {
+      setState(() {
+        _contentType = contentType;
+        Storage().setHomeFavoriteSelectedContent(widget.favoriteId, contentType.toJson());
       });
     }
   }
 
-  Future<List<Event2>?> _loadSportEvents() async {
-    Events2Query query = Events2Query(
-        attributes: Event2HomePanel.athleticsCategoryAttributes,
-        limit: Config().homeAthleticsEventsCount,
-        groupings: Event2Grouping.individualEvents(),
-        sortType: Event2SortType.dateTime);
-    Events2ListResult? result = await Events2().loadEvents(query);
-    return result?.events;
+  Iterable<Widget> get _contentTypeWidgets => FavoriteContentType.values.map((FavoriteContentType contentType) =>
+    Visibility(visible: (_contentType == contentType), maintainState: true, child:
+      HomeEvents2ImplWidget(
+        updateController: widget.updateController,
+        analyticsFeature: _analyticsFeature(contentType),
+        emptyContentBuilder: _emptyContentBuilder(contentType),
+        onViewAll: () => _onViewAll(contentType),
+        filter: _eventFilter(contentType),
+        sortType: Event2SortType.dateTime,
+      ),
+    ));
+
+  // Event2 Filter
+  Event2FilterParam _eventFilter(FavoriteContentType contentType) => Event2FilterParam(
+    timeFilter: Event2TimeFilter.upcoming, customStartTime: null, customEndTime: null,
+    types: LinkedHashSet<Event2TypeFilter>.from((contentType == FavoriteContentType.my) ? [Event2TypeFilter.favorite] : []),
+    attributes: Event2HomePanel.athleticsCategoryAttributes,
+  );
+
+  // Analytics Feature
+  AnalyticsFeature _analyticsFeature(FavoriteContentType contentType) =>
+    AnalyticsFeature.Athletics;
+
+  // View All
+  void _onViewAll(FavoriteContentType contentType) {
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events, starred: (contentType == FavoriteContentType.my),)));
   }
 
-  double get _pageHeight {
-
-    double? minContentHeight;
-    for(GlobalKey contentKey in _contentKeys.values) {
-      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
-      if ((renderBox is RenderBox) && renderBox.hasSize && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
-        minContentHeight = renderBox.size.height;
-      }
+  // Empty Content Builder
+  WidgetBuilder _emptyContentBuilder(FavoriteContentType contentType) {
+    switch (contentType) {
+      case FavoriteContentType.my: return _myEmptyContentBuilder;
+      case FavoriteContentType.all: return _allEmptyContentBuilder;
     }
+  }
 
-    return minContentHeight ?? 0;
+  Widget _allEmptyContentBuilder(BuildContext context) => HomeMessageCard(
+    message: Localization().getStringEx('widget.home.athletics_events.all.empty.description', 'No Athletics Events are available right now.')
+  );
+
+  static const String localScheme = 'local';
+  static const String localAthleticsEventHost = 'athletics_event';
+  static const String localUrlMacro = '{{local_url}}';
+  static const String privacyScheme = 'privacy';
+  static const String privacyLevelHost = 'level';
+  static const String privacyUrlMacro = '{{privacy_url}}';
+
+  Widget _myEmptyContentBuilder(BuildContext context) => HomeMessageHtmlCard(
+    message: Localization().getStringEx("widget.home.athletics_events.my.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Big 10 Events</b></a> for quick access here.  (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
+      .replaceAll(localUrlMacro, '$localScheme://$localAthleticsEventHost')
+      .replaceAll(privacyUrlMacro, '$privacyScheme://$privacyLevelHost'),
+    linkColor: Styles().colors.eventColor,
+    onTapLink : (url) {
+      Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+      if ((uri?.scheme == localScheme) && (uri?.host == localAthleticsEventHost)) {
+        Analytics().logSelect(target: 'Big 10 Events', source: runtimeType.toString());
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events, starred: true,)));
+        //Event2HomePanel.present(context, attributes: Event2HomePanel.athleticsCategoryAttributes, analyticsFeature: AnalyticsFeature.Athletics);
+      }
+      else if ((uri?.scheme == privacyScheme) && (uri?.host == privacyLevelHost)) {
+        Analytics().logSelect(target: 'Privacy Level', source: runtimeType.toString());
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
+      }
+    },
+  );
+}
+
+extension _FavoriteAthliticsEventsContentType on FavoriteContentType {
+  String get athliticsEventsTitle {
+    switch (this) {
+      case FavoriteContentType.my: return Localization().getStringEx('widget.home.athletics_events.my.button.title', 'My Big 10 Events');
+      case FavoriteContentType.all: return Localization().getStringEx('widget.home.athletics_events.all.button.title', 'All Big 10 Events');
+    }
   }
 }
+
+

@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -37,6 +38,7 @@ import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -121,7 +123,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
       scrollDirection: Axis.vertical,
       slivers: <Widget>[
         SliverToutHeaderBar(
-          flexImageUrl: game?.imageUrl,
+          flexImageUrl: (widget.event?.displayImageUrl ?? game?.imageUrl),
           flexBackColor: Styles().colors.fillColorPrimary,
           flexRightToLeftTriangleColor: Styles().colors.fillColorPrimary,
           flexLeftToRightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
@@ -249,10 +251,12 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
       widgets.add(Container(
         height: 200,
         child: SizedBox.expand(
-          child: ModalImageHolder(child: WebNetworkImage(imageUrl: game?.newsImageUrl,
-            semanticLabel: "game",
-            fit: BoxFit.fitWidth,
-          )),
+          child: AccessibleImageHolder(child:
+            ModalImageHolder(child: WebNetworkImage(imageUrl: game!.newsImageUrl!,
+              excludeFromSemantics: true,
+              fit: BoxFit.fitWidth,
+            )),
+          )
         ),
       ));
     }

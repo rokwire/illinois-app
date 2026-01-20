@@ -314,13 +314,11 @@ class _RootHeaderBarState extends State<RootHeaderBar> with NotificationsListene
   }
 
   Widget _buildHeaderHomeButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapHome(),),);
+    return IconButton(icon: Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(), tooltip: Localization().getStringEx('headerbar.home.title', 'Home'), onPressed: () => _onTapHome(),);
   }
 
   Widget _buildHeaderBackButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapBack()));
+    return IconButton(icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), tooltip: Localization().getStringEx('headerbar.back.title', 'Back'), onPressed: () => _onTapBack());
   }
 
   Widget _buildHeaderWidget() {
@@ -355,8 +353,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> with NotificationsListene
   }
 
   Widget _buildHeaderRadioButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.radio.title', 'WPGU 107.1 FM'), hint: Localization().getStringEx('headerbar.radio.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images.getImage('radio-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapRadio(),),);
+    return IconButton(icon: Styles().images.getImage('radio-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapRadio(),);
   }
 
   List<Widget> _buildHeaderActions() {
@@ -368,49 +365,42 @@ class _RootHeaderBarState extends State<RootHeaderBar> with NotificationsListene
   }
 
   Widget _buildHeaderSettingsButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-//    IconButton(icon: Styles().images.getImage('images/settings-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => onTapSettings())
-      InkWell(onTap: () => _onTapSettings(), child:
-        Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: 16, left: 6), child:
-          Styles().images.getImage('settings-white', excludeFromSemantics: true),
-        )
-      )
+    return IconButton(
+      icon: Styles().images.getImage('images/settings-white.png', excludeFromSemantics: true) ?? Container(),
+      padding: EdgeInsets.only(top: 16, bottom: 16, right: 16, left: 6),
+      tooltip: Localization().getStringEx('headerbar.settings.title', 'Settings'),
+      onPressed: () => _onTapSettings(),
     );
   }
 
   Widget _buildHeaderNotificationsButton() {
     int unreadMsgsCount = Inbox().unreadMessagesCount;
-    return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.notifications.hint', ''), button: true, excludeSemantics: true, child:
-//    IconButton(icon: Styles().images.getImage('images/notifications-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapNotifications())
-      InkWell(onTap: () => _onTapNotifications(), child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 2), child:
-          Stack(alignment: Alignment.topRight, children: [
-            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Styles().images.getImage('notification-white', excludeFromSemantics: true,))),
-            Opacity(opacity: (unreadMsgsCount > 0) ? 1 : 0, child:
-              Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(4), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child:
-                Text(unreadMsgsCount.toString(), style: Styles().textStyles.getTextStyle("widget.title.light.tiny")))))
-          ])
-        )
-      )
+    return IconButton(
+      onPressed: () => _onTapNotifications(),
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+      icon: Stack(alignment: Alignment.topRight, children: [
+        Center(
+            child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Styles().images.getImage(
+                      'notification-white',
+                      excludeFromSemantics: true,
+                    ))),
+        Opacity(opacity: (unreadMsgsCount > 0) ? 1 : 0, child: Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(4), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child: Text(unreadMsgsCount.toString(), style: Styles().textStyles.getTextStyle("widget.title.light.tiny")))))
+      ]),
+      tooltip: Localization().getStringEx('headerbar.notifications.title', 'Notifications'),
     );
   }
 
   Widget _buildHeaderPersonalInfoButton() {
-    return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
-//    IconButton(icon: Styles().images.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations())
-      InkWell(onTap: () => _onTapPersonalInformation(), child:
-        CollectionUtils.isNotEmpty(Auth2().profilePicture) ?
-          Padding(padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5), child:
-            Container(width: 20, height: 20, decoration:
-              BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
-                DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().profilePicture!).image)
-              )
-            )
-          ) :
-          Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
-            Styles().images.getImage('person-circle-white', excludeFromSemantics: true),
-          ),
-      )
+    bool hasProfileImage = CollectionUtils.isNotEmpty(Auth2().profilePicture);
+    return IconButton(
+      padding: hasProfileImage ? EdgeInsets.symmetric(vertical: 15, horizontal: 5) : EdgeInsets.symmetric(vertical: 16, horizontal: 6),
+      onPressed: () => _onTapPersonalInformation(),
+      tooltip: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'),
+      icon: hasProfileImage
+          ? Container(width: 20, height: 20, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, image: DecorationImage(fit: BoxFit.cover, image: Image.memory(Auth2().profilePicture!).image)))
+          : (Styles().images.getImage('person-circle-white', excludeFromSemantics: true) ?? Container()),
     );
   }
 

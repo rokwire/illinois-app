@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ext/Auth2.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ProfileInfoPreviewPage extends StatefulWidget {
@@ -52,12 +54,14 @@ class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
         ),
       ),
       Center(child:
-        DirectoryProfilePhoto(
-          photoUrl: _photoImageUrl,
-          photoUrlHeaders: _photoAuthHeaders,
-          photoData: widget.photoImageData,
-          imageSize: _photoImageSize,
-        ),
+        AccessibleImageHolder(imageUrl: Content().getUserPhotoUrl(accountId: Auth2().accountId), child:
+          DirectoryProfilePhoto(
+            photoUrl: _photoImageUrl,
+            photoUrlHeaders: _photoAuthHeaders,
+            photoData: widget.photoImageData,
+            imageSize: _photoImageSize,
+          ),
+        )
       )
     ]);
 

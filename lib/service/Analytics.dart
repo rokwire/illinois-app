@@ -25,6 +25,7 @@ import 'package:illinois/model/wellness/WellnessToDo.dart' as wellness;
 import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -197,6 +198,16 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
   // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
   static const String   LogWidgetFavoriteEventName          = "widget_favorite";
 
+  // Notification Event
+  // {  "event" : { "name":"notification", "action":"open", "target":"...", "sender": {}, "payload":{} }}
+  static const String   LogNotificationEventName             = "notification";
+  static const String   LogNotificationPayloadFieldName      = "payload";
+  static const String   LogNotificationActionFieldName       = "action";
+  static const String   LogNotificationOpenActionName        = "open";
+  static const String   LogNotificationSenderFieldName       = "sender";
+  static const String   LogNotificationSenderTypeFieldName   = "type";
+  static const String   LogNotificationSenderNameFieldName   = "name";
+
   // Reaction Event
   // {  "event" : { "name":"reaction", "action":"on/off", "target":"...", "source":"..." }}
   static const String   LogReactionEventName                 = "reaction";
@@ -332,6 +343,20 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
   static const String   LogEventsAssistantPromptEventName  = "events_assistant_promo";
   static const String   LogEventsAssistantPromptAction     = "action";
 
+  // Assistant Response
+  // { "event" : { "name":"assistant_query_response", "result":"success | fail", "http_response_code":"...", } }
+  static const String   LogAssistantQueryResponseEventName = "assistant_query_response";
+  static const String   LogAssistantResultName             = "result";
+  static const String   LogAssistantResultSuccessValue     = "success";
+  static const String   LogAssistantResultFailValue        = "fail";
+
+  // Illordle
+  static const String   LogIllordleEventName               = "illordle";
+  static const String   LogIllordleWordName                = "word";
+  static const String   LogIllordleGuessName               = "guess";
+  static const String   LogIllordleAttemptName             = "attempt";
+  static const String   LogIllordleStatusName              = "status";
+
   // Attributes
   static const String   LogAttributeUrl                    = "url";
   static const String   LogAttributeSource                 = "source";
@@ -403,7 +428,11 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
       AppLivecycle.notifyStateChanged,
       AppNavigation.notifyEvent,
       LocationServices.notifyStatusChanged,
-      
+
+      RootPanel.notifyTabAppear,
+      RootPanel.notifyTabDisappear,
+      RootPanel.notifyTabPresent,
+
       Auth2UserPrefs.notifyRolesChanged,
       Auth2UserPrefs.notifyFavoriteChanged,
       Auth2.notifyLoginSucceeded,
@@ -474,6 +503,20 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
       _applyLocationServicesStatus(param);
     }
     
+    else if (name == RootPanel.notifyTabAppear) {
+      logPageWidget(RootPanel.stateKey.currentState?.currentTabPanel);
+      if (param == RootTab.Map) {
+        logMapShow();
+      }
+    }
+    else if (name == RootPanel.notifyTabDisappear) {
+      if (param == RootTab.Map) {
+        logMapHide();
+      }
+    }
+    else if (name == RootPanel.notifyTabPresent) {
+    }
+
     else if (name == Auth2UserPrefs.notifyRolesChanged) {
       _updateUserRoles();
     }
@@ -822,20 +865,11 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
         }
       }
 
-      String? panelName;
-      AnalyticsFeature? panelFeature;
-      Map<String, dynamic>? panelAttributes;
-      if (panel is AnalyticsInfo) {
-        panelName = (panel as AnalyticsInfo).analyticsPageName;
-        panelFeature = (panel as AnalyticsInfo).analyticsFeature;
-        panelAttributes = (panel as AnalyticsInfo).analyticsPageAttributes;
-      }
-      if (panelName == null) {
-        panelName = panel.runtimeType.toString();
-      }
-      if (panelFeature == null) {
-        panelFeature = AnalyticsFeature.fromName(panelName);
-      }
+      AnalyticsInfo? analyticsPanelInfo = (panel is AnalyticsInfo) ? (panel as AnalyticsInfo) : null;
+
+      String panelName = analyticsPanelInfo?.analyticsPageName ?? panel.runtimeType.toString();
+      AnalyticsFeature? panelFeature = analyticsPanelInfo?.analyticsFeature ?? AnalyticsFeature.fromName(panelName);
+      Map<String, dynamic>? panelAttributes = analyticsPanelInfo?.analyticsPageAttributes;
 
       logPage(name: panelName, feature: panelFeature, attributes: panelAttributes);
     }
@@ -965,6 +999,18 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
       LogFavoriteTitleName  : title ?? favorite?.favoriteTitle,
     });
   }
+
+  void logNotification(InboxMessage message, { String? action = LogNotificationOpenActionName, AnalyticsFeature? feature = AnalyticsFeature.Notifications, Map<String, dynamic>? attributes }) =>
+    logEvent({
+      LogEventName          : LogNotificationEventName,
+      LogReactionActionName : action,
+      LogNotificationPayloadFieldName   : message.data,
+      LogNotificationSenderFieldName : message.sender?.toAnalyticsJson(),
+      if (feature != null)
+        LogReactionFeatureName: feature.name,
+      if (attributes != null)
+        ...attributes
+    });
 
   void logReaction(Reaction? reaction, { String? target, AnalyticsFeature? feature, Map<String, dynamic>? attributes }) =>
     logEvent({
@@ -1230,6 +1276,27 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
       LogEventsAssistantPromptAction      : action,
     });
   }
+
+  void logAssistantQueryResponse({required bool succeeded, int? httpResponseCode}) {
+    Map<String, dynamic> event = {
+      LogEventName                        : LogAssistantQueryResponseEventName,
+      LogAssistantResultName              : succeeded ? LogAssistantResultSuccessValue : LogAssistantResultFailValue
+    };
+    if (httpResponseCode != null) {
+      event[LogHttpResponseCodeName] = httpResponseCode;
+    }
+    logEvent(event);
+  }
+
+  void logIllordle({ required String word, required String guess, required int attempt, AnalyticsIllordleEventStatus? status }) {
+    logEvent({
+      LogEventName                        : LogIllordleEventName,
+      LogIllordleWordName                 : word,
+      LogIllordleGuessName                : guess,
+      LogIllordleAttemptName              : attempt,
+      LogIllordleStatusName               : status?._attributeString,
+    });
+  }
 }
 
 extension _UriAnalytics on Uri {
@@ -1237,4 +1304,24 @@ extension _UriAnalytics on Uri {
     String value = path;
     return  value.startsWith('/') ? value.substring(1) : value;
   }
+}
+
+enum AnalyticsIllordleEventStatus { notInDictionary, success, fail }
+
+extension _AnalyticsIllordleEventStatus on AnalyticsIllordleEventStatus {
+  String get _attributeString {
+    switch (this) {
+      case AnalyticsIllordleEventStatus.notInDictionary: return 'invalid';
+      case AnalyticsIllordleEventStatus.success: return 'win';
+      case AnalyticsIllordleEventStatus.fail: return 'lost';
+    }
+  }
+}
+
+extension _AnalyticsInboxSender on InboxSender {
+  Map<String, dynamic> toAnalyticsJson() => <String, dynamic> {
+    Analytics.LogNotificationSenderTypeFieldName: inboxSenderTypeToString(type),
+    if (type == InboxSenderType.system)
+      Analytics.LogNotificationSenderNameFieldName: user?.name,
+  };
 }

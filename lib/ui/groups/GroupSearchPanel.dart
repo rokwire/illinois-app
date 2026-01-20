@@ -16,6 +16,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -54,11 +55,14 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
   @override
   void initState() {
     super.initState();
-    _searchLabel = _defaultSearchLabelValue;
+    _searchLabel = _searchHint;
 
     NotificationService().subscribe(this, [
-      Auth2.notifyLoginSucceeded,
-      Auth2.notifyLogout,
+      Groups.notifyGroupCreated,
+      Groups.notifyGroupUpdated,
+      Groups.notifyGroupDeleted,
+      Groups.notifyUserGroupsUpdated,
+      Auth2.notifyLoginChanged,
     ]);
   }
 
@@ -73,13 +77,17 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
   // NotificationsListener
 
   void onNotification(String name, dynamic param){
-    if ((name == Auth2.notifyLoginSucceeded) ||  (name == Auth2.notifyLogout)) {
-      // Reload content with some delay, do not unmount immidately GroupsCard that could have updated the login state.
-      Future.delayed(Duration(microseconds: 300), () {
-        if (mounted) {
-          _refreshSearch();
-        }
-      });
+    if ((name == Groups.notifyGroupCreated) || (name == Groups.notifyUserGroupsUpdated)) {
+      _refreshSearch();
+    }
+    else if ((name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted))  {
+      String? groupId = JsonUtils.stringValue(param);
+      if (mounted && ((groupId == null) || (_groups?.containsGroupId(groupId) == true))) {
+        _refreshSearch();
+      }
+    }
+    else if (name == Auth2.notifyLoginChanged) {
+      _refreshSearch();
     }
   }
 
@@ -110,12 +118,13 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
               children: <Widget>[
                 Flexible(
                     child:
+                    /* WEB: Unable to type in web TextField with Semantics*
                     Semantics(
                       label: Localization().getStringEx('panel.groups_search.field.search.title', 'Search'),
                       hint: Localization().getStringEx('panel.groups_search.field.search.hint', ''),
                       textField: true,
                       excludeSemantics: true,
-                      child: TextField(
+                      child:*/ TextField(
                         controller: _searchController,
                         onChanged: (text) => _onTextChanged(text),
                         onSubmitted: (_) => _onTapSearch(),
@@ -126,7 +135,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
                         decoration: InputDecoration(
                           border: InputBorder.none,
                         ),
-                      ),
+                      // ),
                     )
                 ),
                 Semantics(
@@ -206,7 +215,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
         itemCount: groupsCount,
         itemBuilder: (context, index) {
           Group? group = _groups![index];
-          GroupCard groupCard = GroupCard(group: group);
+          GroupCard groupCard = GroupCard(group);
           return Padding(padding: EdgeInsets.only(top: 16), child: groupCard);
         }
       );
@@ -226,15 +235,19 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
     }
   }
 
+  Future<GroupsLoadResult?> _searchGroups(String? search) => (widget.researchProject) ?
+      Groups().loadResearchProjectsV3(ResearchProjectsQuery(searchText: search)) :
+      Groups().loadGroupsV3(GroupsQuery(searchText: search));
+
   void _refreshSearch() {
-    if (StringUtils.isNotEmpty(_searchValue)) {
+    if (StringUtils.isNotEmpty(_searchValue) && mounted) {
       setState(() { _loading = true; });
-      Groups().searchGroups(_searchValue!, researchProjects: widget.researchProject, researchOpen: widget.researchProject).then((groups) {
+      _searchGroups(_searchValue).then((GroupsLoadResult? result) {
         if (mounted) {
           setState(() {
-            if (groups != null) {
-              _groups = _buildVisibleGroups(groups);
-              _resultsCount = _groups?.length ?? 0;
+            if ((result != null) && (result.groups != null)) {
+              _groups = result.groups;
+              _resultsCount = result.totalCount ?? result.groups?.length ?? 0;
               _resultsCountLabelVisible = true;
               _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ') + _searchController.text;
             }
@@ -259,12 +272,14 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
     }
     Analytics().logSearch(searchValue);
     _setLoading(true);
-    Groups().searchGroups(searchValue, researchProjects: widget.researchProject, researchOpen: widget.researchProject).then((groups) {
-      _groups = _buildVisibleGroups(groups);
-      _searchValue = searchValue;
-      _resultsCount = _groups?.length ?? 0;
-      _resultsCountLabelVisible = true;
-      _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ') + _searchController.text;
+    _searchGroups(searchValue).then((GroupsLoadResult? result) {
+      setState(() {
+        _groups = result?.groups;
+        _resultsCount = result?.totalCount ?? result?.groups?.length ?? 0;
+        _resultsCountLabelVisible = true;
+        _searchValue = searchValue;
+        _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ') + _searchController.text;
+      });
       _setLoading(false);
     });
   }
@@ -275,26 +290,26 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
       Navigator.pop(context);
       return;
     }
-    _groups = null;
-    _searchValue = null;
-    _searchController.clear();
-    _resultsCountLabelVisible = false;
     setState(() {
-      _searchLabel = _defaultSearchLabelValue;
+      _groups = null;
+      _searchValue = null;
+      _searchController.clear();
+      _resultsCountLabelVisible = false;
+      _searchLabel = _searchHint;
     });
   }
 
   void _onTextChanged(String text) {
-    _resultsCountLabelVisible = false;
     setState(() {
-      _searchLabel = _defaultSearchLabelValue;
+      _resultsCountLabelVisible = false;
+      _searchLabel = _searchHint;
     });
   }
 
-  String get _defaultSearchLabelValue {
+  String get _searchHint {
     return widget.researchProject ?
-      'Searching Only Research Project Titles' :
-      Localization().getStringEx('panel.groups_search.label.search_for', 'Searching Only Groups Titles');
+      Localization().getStringEx('panel.groups_search.projects.label.search_for', 'Searching Only Research Project Titles'):
+      Localization().getStringEx('panel.groups_search.groups.label.search_for', 'Searching Only Groups Titles');
   }
 
   void _setLoading(bool loading) {
@@ -303,18 +318,5 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
         _loading = loading;
       });
     }
-  }
-
-  List<Group>? _buildVisibleGroups(List<Group>? allGroups) {
-    List<Group>? visibleGroups;
-    if (allGroups != null) {
-      visibleGroups = <Group>[];
-      for (Group group in allGroups) {
-        if (group.isVisible) {
-          ListUtils.add(visibleGroups, group);
-        }
-      }
-    }
-    return visibleGroups;
   }
 }

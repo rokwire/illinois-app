@@ -86,6 +86,10 @@ class Config extends rokwire.Config {
   Map<String, dynamic>? get dailyIllini   => JsonUtils.mapValue(content['dailyIllini']);
   Map<String, String>?  get dailyIlliniUrlParams => JsonUtils.mapCastValue(dailyIllini?['url_params']);
 
+  Map<String, dynamic>? get illordle      => JsonUtils.mapValue(dailyIllini?['illordle']);
+  String? get illordleDailyWordUrl        => JsonUtils.stringValue(illordle?['dailyWordUrl']);
+  String? get illordleWordsUrl            => JsonUtils.stringValue(illordle?['wordsUrl']);
+
   // Getters: Secret Keys
 
   String? get illiniCashAppKey       => JsonUtils.stringValue(secretIlliniCash['app_key']);
@@ -255,6 +259,10 @@ class Config extends rokwire.Config {
 
   Map<String, dynamic> get assistantSettings      => JsonUtils.mapValue(settings['assistant']) ?? {};
   int? get assistantQueryRequestTimeout           => JsonUtils.intValue(assistantSettings['queryRequestTimeout']);
+
+  Map<String, dynamic>? get map2Settings          => JsonUtils.mapValue(settings['map2']);
+  Map<String, dynamic>? get walletSettings        => JsonUtils.mapValue(settings['wallet']);
+  Map<String, dynamic>? get brightnessHighlight   => JsonUtils.mapValue(settings['brightnessHighlight']);
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;

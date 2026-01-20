@@ -151,12 +151,14 @@ class _GroupTagsState extends State<GroupTagsPanel> {
       child: Row(
         children: <Widget>[
           Flexible(
-            child: Semantics(
+            child:
+              /* WEB: Unable to type in web TextField with Semantics*
+              Semantics(
                 label: Localization().getStringEx("panel.group.tags.search.field.label", "Search for tags"),
                 hint: Localization().getStringEx("panel.group.tags.search.field.hint", "type the tag you are looking for"),
                 textField: true,
                 excludeSemantics: true,
-                child: TextField(
+                child:*/ TextField(
                   controller: _searchController,
                   onChanged: (text) => _onTextChanged(text),
                   onSubmitted: (_) => () {},
@@ -166,7 +168,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                   ),
-                )),
+                ),
           ),
           Semantics(
             label: Localization().getStringEx("panel.group.tags.search.cancel.label", "Cancel"),

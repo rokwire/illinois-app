@@ -21,6 +21,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum RoleGridButtonUsage { regular, standalone }
@@ -84,18 +85,18 @@ class RoleGridButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-    GestureDetector(onTap: _onTap, child:
-      Semantics(label: title, excludeSemantics: true, sortKey: _semanticsSortKey, value: _semanticsValue, child:
-        selected ? Stack(children: [
-          _contentWidget,
-          Positioned.fill(child:
-            Align(alignment: Alignment.topRight, child:
-              _selectionMarker
+    WebFocusableSemanticsWidget(onSelect: _onTap, child: GestureDetector(onTap: _onTap, child:
+        Semantics(label: title, excludeSemantics: true, sortKey: _semanticsSortKey, value: _semanticsValue, child:
+          selected ? Stack(children: [
+            _contentWidget,
+            Positioned.fill(child:
+              Align(alignment: Alignment.topRight, child:
+                _selectionMarker
+              )
             )
-          )
-        ],) : _contentWidget
-     )
-    );
+          ],) : _contentWidget
+        )
+    ));
 
   Widget get _contentWidget => Padding(padding: margin, child:
     Padding(padding: margin, child:

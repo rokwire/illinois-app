@@ -24,6 +24,8 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:web/web.dart' as web;
 
 class WebLoginNetIdPanel extends StatefulWidget {
   WebLoginNetIdPanel();
@@ -49,49 +51,67 @@ class _WebLoginNetIdPanelState extends State<WebLoginNetIdPanel> {
   Widget build(BuildContext context) {
     String titleString = Localization().getStringEx('panel.onboarding.login.netid.label.title', 'Connect your NetID');
     String? skipTitle = Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.title', 'Not Right Now');
-    return Scaffold(backgroundColor: Styles().colors.background, body:
-    Column(children: [
-      Expanded(child:
-      SingleChildScrollView(child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Styles().images.getImage("header-login", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true,) ?? Container(),
-        Container(height: 24,),
-        Semantics(label: titleString, hint: Localization().getStringEx('panel.onboarding.login.netid.label.title.hint', ''), excludeSemantics: true, child:
-        Padding(padding: EdgeInsets.symmetric(horizontal: 18), child:
-        Center(child:
-        Text(titleString, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
-        )
+    return Scaffold(
+      backgroundColor: Styles().colors.background,
+      body: Column(children: [
+        Expanded(
+            child: SingleChildScrollView(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Styles().images.getImage(
+                      "header-login",
+                      fit: BoxFit.fitWidth,
+                      width: MediaQuery.of(context).size.width,
+                      excludeFromSemantics: true,
+                    ) ??
+                Container(),
+            Container(
+              height: 24,
+            ),
+            Semantics(
+              label: titleString,
+              hint: Localization().getStringEx('panel.onboarding.login.netid.label.title.hint', ''),
+              excludeSemantics: true,
+              child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 18),
+                  child: Center(
+                    child: Text(titleString, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
+                  )),
+            ),
+            Container(
+              height: 24,
+            ),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 32), child: Text(Localization().getStringEx('panel.onboarding.login.netid.label.description', 'Sign in with your NetID to view features specific to you such as your Illini ID or your course schedule and locations.'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))),
+            Container(
+              height: 32,
+            ),
+          ]),
+        )),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              RoundedButton(
+                label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign In with NetID'),
+                hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                borderColor: Styles().colors.fillColorSecondary,
+                backgroundColor: Styles().colors.white,
+                progress: _loginProgress,
+                onTap: _onLoginTapped,
+              ),
+              Onboarding2UnderlinedButton(
+                title: skipTitle,
+                hint: Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.hint', 'Skip verification'),
+                onTap: () {
+                  _onSkipTapped();
+                },
+              )
+            ],
+          ),
         ),
-        ),
-        Container(height: 24,),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
-        Text(Localization().getStringEx('panel.onboarding.login.netid.label.description', 'Sign in with your NetID to view features specific to you such as your Illini ID or your course schedule and locations.'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))
-        ),
-        Container(height: 32,),
       ]),
-      )
-      ),
-      Padding(padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8), child:
-      Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-        RoundedButton(
-          label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign In with NetID'),
-          hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
-          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          borderColor: Styles().colors.fillColorSecondary,
-          backgroundColor: Styles().colors.white,
-          progress: _loginProgress,
-          onTap: _onLoginTapped,
-        ),
-        Onboarding2UnderlinedButton(
-          title: skipTitle,
-          hint: Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.hint', 'Skip verification'),
-          onTap: (){_onSkipTapped();},
-        )
-      ],
-      ),
-      ),
-    ]),
     );
   }
 
@@ -121,7 +141,8 @@ class _WebLoginNetIdPanelState extends State<WebLoginNetIdPanel> {
     Analytics().logSelect(target: 'Log in with NetID');
     if (_loginProgress != true) {
       setState(() { _loginProgress = true; });
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+      web.Window? webWindow = WebUtils.createIosWebWindow();
+      Auth2().authenticateWithOidc(iosWebWindow: webWindow).then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           if (result == Auth2OidcAuthenticateResult.succeeded) {
             FlexUI().update().then((_) {

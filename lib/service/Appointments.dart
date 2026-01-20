@@ -406,7 +406,7 @@ class Appointments with Service, NotificationsListener {
   Future<void> _initAccountOnFirstSignIn() async {
     // By Default
     AppointmentsAccount defaultNewAccount = AppointmentsAccount(
-        notificationsAppointmentNew: true, notificationsAppointmentReminderMorning: true, notificationsAppointmentReminderNight: true);
+        notificationsAppointmentNew: false, notificationsAppointmentReminderMorning: false, notificationsAppointmentReminderNight: true);
     Map<String, String> headers = {'Content-Type': 'application/json'};
     String? accountJsonString = JsonUtils.encode(defaultNewAccount.toJson());
     String? url = "${Config().appointmentsUrl}/services/account";

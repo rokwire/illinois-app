@@ -249,12 +249,14 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
           child: Row(
             children: <Widget>[
               Flexible(
-                child: Semantics(
+                child:
+                  /* WEB: Unable to type in web TextField with Semantics*
+                  Semantics(
                     label: Localization().getStringEx("panel.group.members.search.field.label", "Search for Members"),
                     hint: Localization().getStringEx("panel.group.members.search.field.hint", "type the Member you are looking for"),
                     textField: true,
                     excludeSemantics: true,
-                    child: TextField(
+                    child:*/ TextField(
                       controller: _searchController,
                       onChanged: (text) => _onTextChanged(text),
                       onSubmitted: (_) => () {},
@@ -262,7 +264,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                       keyboardType: TextInputType.text,
                       style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                       decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)))
-                    )),
+                    ),
               ),
               Semantics(
                 label: Localization().getStringEx("panel.group.members.search.cancel.label", "Cancel"),

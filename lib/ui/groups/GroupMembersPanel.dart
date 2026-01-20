@@ -202,7 +202,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
             borderRadius: BorderRadius.all(Radius.circular(5)),
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             rightIconKey: _statusValuesVisible ? 'chevron-up' : 'chevron-down',
-            label: _selectedMemberStatusFilterTitle,
+            title: _selectedMemberStatusFilterTitle,
             onTap: _onTapRibbonButton))),
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           Row(
@@ -389,7 +389,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedMemberFilter == statusFilter) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedMemberFilter == statusFilter) ? 'check-accent' : null,
-        label: _memberStatusFilterTitle(statusFilter),
+        title: _memberStatusFilterTitle(statusFilter),
         onTap: () => _onTapStatusFilter(statusFilter)
       ));
     }
@@ -663,8 +663,8 @@ class GroupMemberCard extends StatelessWidget {
           children: <Widget>[
             ClipRRect(
                 borderRadius: BorderRadius.circular(65),
-                child: Semantics(label: "user image", hint: "Double tap to zoom", child:
-                  Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: member?.userId)))),
+                  child: Container(width: 65, height: 65, child: GroupMemberProfileImage(userId: member?.userId))
+            ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 11),

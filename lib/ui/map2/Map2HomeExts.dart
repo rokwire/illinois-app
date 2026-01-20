@@ -3,10 +3,13 @@
 import 'dart:collection';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:illinois/ext/Building.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/Building.dart';
+import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/map2/Map2HomeFilters.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -45,20 +48,16 @@ extension Map2ContentTypeImpl on Map2ContentType {
     }
   }
 
-  static const Map2ContentType _defaultType = Map2ContentType.CampusBuildings;
-
-  static Map2ContentType? initialType({ dynamic initialSelectParam, Iterable<Map2ContentType>? availableTypes }) => (
-    (selectParamType(initialSelectParam)?._ensure(availableTypes: availableTypes)) ??
-    (Storage().storedMap2ContentType?._ensure(availableTypes: availableTypes)) ??
-    (_defaultType._ensure(availableTypes: availableTypes)) ??
-    ((availableTypes?.isNotEmpty == true) ? availableTypes?.first : null)
-  );
+  static Map2ContentType? initialType({ dynamic initialSelectParam, Iterable<Map2ContentType>? availableTypes }) =>
+    selectParamType(initialSelectParam)?._ensure(availableTypes: availableTypes);
 
   static Map2ContentType? selectParamType(dynamic param) {
     if (param is Map2ContentType) {
       return param;
     } else if (param is Map2FilterEvents2Param) {
       return Map2ContentType.Events2;
+    } else if (param is Map2FilterDiningsLocationsParam) {
+      return Map2ContentType.DiningLocations;
     } else if (param is Map2FilterBusStopsParam) {
       return Map2ContentType.BusStops;
     } else if (param is Map) {
@@ -92,6 +91,8 @@ extension Map2ContentTypeImpl on Map2ContentType {
   };
   bool get supportsManualFilters => _manualFiltersTypes.contains(this);
 
+  bool get supportsEditing => (this == Map2ContentType.MyLocations);
+
   bool supportsSortType(Map2SortType sortType) =>
     (sortType != Map2SortType.dateTime) || (this == Map2ContentType.Events2);
 
@@ -114,7 +115,7 @@ extension Map2ContentTypeImpl on Map2ContentType {
   String get displayEmptyContentMessage {
     switch (this) {
       case Map2ContentType.CampusBuildings:      return Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.');
-      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses registered.');
+      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'You do not appear to be registered for any in-person courses.');
       case Map2ContentType.DiningLocations:      return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
       case Map2ContentType.Events2:              return Localization().getStringEx('panel.explore.state.online.empty.events2', 'No events are available.');
       case Map2ContentType.LaundryRooms:         return Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.');
@@ -128,7 +129,7 @@ extension Map2ContentTypeImpl on Map2ContentType {
   String get displayFailedContentMessage {
     switch (this) {
       case Map2ContentType.CampusBuildings:      return Localization().getStringEx('panel.explore.state.failed.buildings', 'Failed to load building locations.');
-      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.state.failed.student_course', 'Failed to load student courses.');
+      case Map2ContentType.StudentCourses:       return Localization().getStringEx('panel.explore.state.failed.student_course', 'You do not appear to be registered for any in-person courses.');
       case Map2ContentType.DiningLocations:      return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
       case Map2ContentType.Events2:              return Localization().getStringEx('panel.explore.state.failed.events2', 'Failed to load all events.');
       case Map2ContentType.LaundryRooms:         return Localization().getStringEx('panel.explore.state.failed.laundry', 'Failed to load laundry locations.');
@@ -295,14 +296,6 @@ extension Map2SortOrderImpl on Map2SortOrder {
   }
 }
 
-extension Map2StorageContentType on Storage {
-  static const String _nullContentTypeJson = 'null';
-
-  Map2ContentType? get storedMap2ContentType => Map2ContentTypeImpl.fromJson(Storage().selectedMap2ContentType);
-  set storedMap2ContentType(Map2ContentType? value) => Storage().selectedMap2ContentType = value?.toJson() ?? _nullContentTypeJson;
-
-}
-
 extension ExplorePOIImpl on ExplorePOI {
 
   static ExplorePOI fromMapPOI(PointOfInterest poi) =>
@@ -357,26 +350,70 @@ extension Map2BuildingSelectedAmenities on LinkedHashSet<String> {
 
 extension Map2BuildingFilterAmenitiesFromJson on Map<String, dynamic> {
 
-  LinkedHashMap<String, Set<String>> toAmenityNameToIds() {
-    LinkedHashMap<String, Set<String>> nameToIds = LinkedHashMap<String, Set<String>>();
-    for (String amenityName in keys) {
-      Set<String>? amenityIds = SetUtils.from(JsonUtils.listStringsValue(this[amenityName]));
-      if (amenityIds != null) {
-        nameToIds[amenityName] = amenityIds;
+  Map<String, BuildingFeature> toAmenitiesMap() {
+    Map<String, BuildingFeature> amenitiesMap = <String, BuildingFeature>{};
+    for (String featureKey in keys) {
+      BuildingFeature? feature = BuildingFeature.fromJson(JsonUtils.mapValue(this[featureKey]));
+      if (feature != null) {
+        amenitiesMap[featureKey] = feature;
       }
     }
-    return nameToIds;
+    return amenitiesMap;
   }
-
 }
 
-extension Map2BuildingFilterAmenitiesToJson on LinkedHashMap<String, Set<String>> {
-  Map<String, dynamic> toJson() => map((String key, Set<String> value) => MapEntry(key, value.toList()));
+// on BuildingFeature
+extension Map2BuildingFilterAmenitiesMap on Map<String, BuildingFeature> {
+  Map<String, dynamic> toJson() => map((String key, BuildingFeature value) => MapEntry(key, value.toJson()));
+
+  Map<String, Set<String>> get categoryToKeysMap {
+    Map<String, Set<String>> categoryToKeysMap = <String, Set<String>>{};
+    for (BuildingFeature feature in values) {
+      String? featureKey = feature.key;
+      String? featureCategory = feature.filterCategory;
+      if ((featureKey != null) && (featureCategory != null)) {
+        Set<String>? categoryKeys = categoryToKeysMap[featureCategory];
+        if (categoryKeys != null) {
+          categoryKeys.add(featureKey);
+        }
+        else {
+          categoryToKeysMap[featureCategory] = <String>{featureKey};
+        }
+      }
+    }
+    return categoryToKeysMap;
+  }
+
+  /*Set<String> get amenityIds {
+    Set<String> amenityIds = <String>{};
+    for (Set<String> categoryAmenityIds in values) {
+      amenityIds.addAll(categoryAmenityIds);
+    }
+    return amenityIds;
+  }*/
 }
 
 class Map2FilterEvents2Param {
   final String searchText;
   Map2FilterEvents2Param([this.searchText = '']);
+}
+
+class Map2FilterDiningsLocationsParam {
+  final PaymentType? paymentType;
+  final String searchText;
+  final bool openNow;
+  final bool starred;
+  final Map2SortType sortType;
+  final Map2SortOrder sortOrder;
+
+  Map2FilterDiningsLocationsParam({
+    this.paymentType,
+    this.searchText = '',
+    this.openNow = false,
+    this.starred = false,
+    this.sortType = Map2SortType.alphabetical,
+    this.sortOrder = Map2SortOrder.ascending,
+  });
 }
 
 class Map2FilterBusStopsParam {
@@ -408,15 +445,33 @@ class Map2FilterDeepLinkParam {
   };
 }
 
-/* class Map2FilterDeepLinkParam0 {
-  final Map<String, dynamic>? params;
-  Map2FilterDeepLinkParam(this.params);
+extension Map2AppConfig on Config {
 
-  Map2ContentType? get contentType => Map2ContentTypeImpl.fromJson(params?['contentType']);
-  Map2Filter? get filter => Map2Filter.fromJson(JsonUtils.decodeMap(params?['filter']), contentType: contentType);
+  CameraPosition? get defaultCameraPosition {
+    LatLng? target = defaultCameraTarget;
+    return (target != null) ? CameraPosition(
+      target: target,
+      bearing: defaultCameraBearing ?? 0,
+      tilt: defaultCameraTilt ?? 0,
+      zoom: defaultCameraZoom ?? 0,
+    ) : null;
+  }
 
-  static Map<String, String?> buildUrlParam({Map2ContentType? contentType, Map2Filter? filter}) => <String, String?>{
-    'contentType': contentType?.toJson(),
-    'filter': JsonUtils.encode(filter?.toJson()),
-  };
-}*/
+  LatLng? get defaultCameraTarget =>
+    _LatLngAppConfig.fromConfigJson(JsonUtils.mapValue(_initialCameraPosition?['target']));
+
+  double? get defaultCameraBearing => JsonUtils.doubleValue(_initialCameraPosition?['bearing']);
+  double? get defaultCameraTilt => JsonUtils.doubleValue(_initialCameraPosition?['tilt']);
+  double? get defaultCameraZoom => JsonUtils.doubleValue(_initialCameraPosition?['zoom']);
+
+  double? get markersUpdateZoomDelta => JsonUtils.doubleValue(map2Settings?['markers_update_zoom_delta']);
+  Map<String, dynamic>? get _initialCameraPosition => JsonUtils.mapValue(map2Settings?['initial_camera_position']);
+}
+
+extension _LatLngAppConfig on LatLng {
+  static LatLng? fromConfigJson(Map<String, dynamic>? json) {
+    double? latitude = JsonUtils.doubleValue(json?['latitude']);
+    double? longitude = JsonUtils.doubleValue(json?['longitude']);
+    return ((latitude != null) && (longitude != null)) ? LatLng(latitude, longitude) : null;
+  }
+}

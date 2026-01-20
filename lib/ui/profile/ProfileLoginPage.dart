@@ -25,7 +25,9 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:web/web.dart' as web;
 
 class ProfileLoginPage extends StatefulWidget {
 
@@ -111,9 +113,9 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
 
     contentList.add(_buildAppInfo());
 
-    return Padding(padding: widget.margin, child:
+    return FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Padding(padding: widget.margin, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList)
-    );
+    ));
   }
 
   // Connect
@@ -132,13 +134,13 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
           contentList.add(Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
             _netIdDescription
           ),);
-          contentList.add(RibbonButton(
+          contentList.add(WebFocusableSemanticsWidget(onSelect: _onConnectNetIdClicked, child: RibbonButton(
             border: _allBorder,
             borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Sign in with your NetID"),
+            title: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Sign in with your NetID"),
             progress: _connectingNetId == true,
             onTap: _onConnectNetIdClicked
-          ),);
+          ),));
       }
       else if (code == 'phone_or_email') {
           contentList.add(Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
@@ -153,12 +155,12 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
               ],),
             ),
           ),);
-          contentList.add(RibbonButton(
+          contentList.add(WebFocusableSemanticsWidget(onSelect: _onPhoneOrEmailLoginClicked, child: RibbonButton(
             borderRadius: _allRounding,
             border: _allBorder,
-            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Sign in with mobile phone or email"),
+            title: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Sign in with mobile phone or email"),
             onTap: _onPhoneOrEmailLoginClicked
-          ),);
+          ),));
       }
     }
 
@@ -176,7 +178,8 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
     }
     else if (_connectingNetId != true) {
       setState(() { _connectingNetId = true; });
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+      web.Window? webWindow = WebUtils.createIosWebWindow();
+      Auth2().authenticateWithOidc(iosWebWindow: webWindow).then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           setState(() { _connectingNetId = false; });
           if (result != Auth2OidcAuthenticateResult.succeeded) {
@@ -289,16 +292,16 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
         contentList.add(Padding(padding: EdgeInsets.only(top: 12), child:
           Row(children: [ Expanded(child:
             Wrap(alignment: WrapAlignment.start, spacing: 8, runSpacing: 8, children: [
-              CompactRoundedButton(
+              WebFocusableSemanticsWidget(onSelect: _onViewProfileClicked, child: CompactRoundedButton(
                 label: Localization().getStringEx("panel.settings.home.net_id.button.profile", "View My Profile"),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                 onTap: _onViewProfileClicked
-              ),
-              CompactRoundedButton(
+              )),
+              WebFocusableSemanticsWidget(onSelect: _onDisconnectNetIdClicked, child: CompactRoundedButton(
                 label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                 onTap: _onDisconnectNetIdClicked
-              ),
+              )),
             ],),
           ),],),
         ));
@@ -332,22 +335,22 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
         ]));
       }
       else if (code == 'verify') {
-        contentList.add(RibbonButton(
+        contentList.add(WebFocusableSemanticsWidget(onSelect: _onDisconnectNetIdClicked, child: RibbonButton(
             border: _allBorder,
             borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Mobile Phone Number"),
-            onTap: _onPhoneOrEmailLoginClicked));
+            title: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Mobile Phone Number"),
+            onTap: _onPhoneOrEmailLoginClicked)));
       }
       else if (code == 'disconnect') {
         contentList.add(Padding(padding: EdgeInsets.only(top: 12), child:
-          RoundedButton(
+          WebFocusableSemanticsWidget(onSelect: _onDisconnectNetIdClicked, child: RoundedButton(
             label: Localization().getStringEx("panel.settings.home.phone_ver.button.disconnect", "Sign Out"),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
             contentWeight: 0.45,
             conentAlignment: MainAxisAlignment.start,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
             onTap: _onDisconnectNetIdClicked
-          )
+          ))
         ));
       }
     }
@@ -378,23 +381,23 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
         ]));
       }
       else if (code == 'login') {
-        contentList.add(RibbonButton(
+        contentList.add(WebFocusableSemanticsWidget(onSelect: _onPhoneOrEmailLoginClicked, child: RibbonButton(
           border: _allBorder,
           borderRadius: _allRounding,
-          label: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
+          title: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
           onTap: _onPhoneOrEmailLoginClicked
-        ));
+        )));
       }
       else if (code == 'disconnect') {
         contentList.add(Padding(padding: EdgeInsets.only(top: 12), child:
-          RoundedButton(
+          WebFocusableSemanticsWidget(onSelect: _onDisconnectNetIdClicked, child: RoundedButton(
             label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect", "Sign Out"),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
             contentWeight: 0.45,
             conentAlignment: MainAxisAlignment.start,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
             onTap: _onDisconnectNetIdClicked
-          )
+          ))
         ));
       }
     }
@@ -581,7 +584,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
             backgroundColor: Styles().colors.white,
             border: _allBorder,
             borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
+            title: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
             progress: (_connectingNetId == true),
             onTap: _onLinkNetIdClicked),
         ));
@@ -592,7 +595,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
             backgroundColor: Styles().colors.white,
             border: _allBorder,
             borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
+            title: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
             onTap: () => _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.phone)),
         ),);
       }
@@ -602,7 +605,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
             backgroundColor: Styles().colors.white,
             border: _allBorder,
             borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
+            title: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
             onTap: () => _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.email)),
         ),);
       }
@@ -639,7 +642,8 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
         progressController(loading: false);
         _popToMe();
         if (result == true) {
-          Auth2().authenticateWithOidc(link: true).then((Auth2OidcAuthenticateResult? result) {
+          web.Window? webWindow = WebUtils.createIosWebWindow();
+          Auth2().authenticateWithOidc(link: true, iosWebWindow: webWindow).then((Auth2OidcAuthenticateResult? result) {
             if (result == Auth2OidcAuthenticateResult.failed) {
               AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to add {{app_title}} NetID.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
             } else if (result == Auth2OidcAuthenticateResult.failedAccountExist) {
@@ -703,7 +707,8 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
 
   Future<bool?> _linkVerifySignIn() async {
     if (Auth2().isOidcLoggedIn) {
-      Auth2OidcAuthenticateResult? result = await Auth2().authenticateWithOidc();
+      web.Window? webWindow = WebUtils.createIosWebWindow();
+      Auth2OidcAuthenticateResult? result = await Auth2().authenticateWithOidc(iosWebWindow: webWindow);
       return (result != null) ? (result == Auth2OidcAuthenticateResult.succeeded) : null;
     }
     else if (Auth2().isEmailLoggedIn) {
@@ -755,12 +760,12 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
   // Debug
 
   Widget _buildDebug() => Padding(padding: EdgeInsets.only(top: 24), child:
-    RibbonButton(
+    WebFocusableSemanticsWidget(onSelect: _onDebugClicked, child: RibbonButton(
       border: _allBorder,
       borderRadius: _allRounding,
-      label: Localization().getStringEx("panel.profile_info.button.debug.title", "Debug"),
+      title: Localization().getStringEx("panel.profile_info.button.debug.title", "Debug"),
       onTap: _onDebugClicked)
-    );
+    ));
 
   void _onDebugClicked() {
     Analytics().logSelect(target: "Debug");

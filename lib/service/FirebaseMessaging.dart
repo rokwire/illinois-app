@@ -53,6 +53,8 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String notifyEventDetail                                = "$notifyBase.event.detail";
   static const String notifyEventSelfCheckIn                           = "$notifyBase.event.self_checkin";
   static const String notifyEventAttendeeSurveyInvitation              = "$notifyBase.event.attendee.survey.invitation";
+  static const String notifyDiningLocationsNotification                = "$notifyBase.dining_locations";
+  static const String notifyDiningLocationDetail                       = "$notifyBase.dining_location.detail";
   static const String notifyGameDetail                                 = "$notifyBase.game.detail";
   static const String notifyAthleticsGameStarted                       = "$notifyBase.athletics_game.started";
   static const String notifyAthleticsNewsUpdated                       = "$notifyBase.athletics.news.updated";
@@ -163,7 +165,8 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   };
 
   static const Map<String, bool> _defaultNotificationSettings = {
-    _pauseNotificationKey : false
+    _pauseNotificationKey : false,
+    _athleticsUpdatesNewsNotificationSetting: false,
   };
 
   //settingKeys
@@ -208,6 +211,8 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String payloadTypeEventDetail = 'event_detail';
   static const String payloadTypeEventSelfCheckIn = 'event.self_checkin';
   static const String payloadTypeEvent = 'event';
+  static const String payloadTypeDiningLocations = 'dining_locations';
+  static const String payloadTypeDiningLocationDetail = 'dining_location_detail';
   static const String payloadTypeGameDetail = 'game_detail';
   static const String payloadTypeAthleticsGameStarted = 'athletics_game_started';
   static const String payloadTypeAthleticsNewDetail = 'athletics_news_detail';
@@ -428,6 +433,12 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
         // Handle 'upcoming_event' and 'event_notification' operations as showing event detail
         NotificationService().notify(notifyEventDetail, data);
       }
+    }
+    else if (type == payloadTypeDiningLocations) {
+      NotificationService().notify(notifyDiningLocationsNotification, data);
+    }
+    else if (type == payloadTypeDiningLocationDetail) {
+      NotificationService().notify(notifyDiningLocationDetail, data);
     }
     else if (type == payloadTypeGameDetail) {
       NotificationService().notify(notifyGameDetail, data);
