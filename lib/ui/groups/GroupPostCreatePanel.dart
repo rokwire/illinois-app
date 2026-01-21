@@ -409,17 +409,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   /// Returns the groups that current user is admin of without the current group
   ///
   Future<List<Group>?> _loadOtherAdminUserGroups() async {
-    List<Group>? userGroups = await Groups().loadUserGroupsV3();
-    List<Group>? userAdminGroups;
-    if (CollectionUtils.isNotEmpty(userGroups)) {
-      userAdminGroups = [];
-      for (Group? group in userGroups!) {
-        if (group!.currentUserIsAdmin && (group.id != _groupId)) {
-          userAdminGroups.add(group);
-        }
-      }
-    }
-    return userAdminGroups;
+    List<Group>? userGroups = await Groups().loadAllAdminUserGroupsV3();
+    return (userGroups != null) ? List.from(userGroups.where((Group group) => (group.id != _groupId))) : null;
   }
 
   void _increaseProgress() {

@@ -507,10 +507,10 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
     if ((_loadingResearchProjects == false) && ((contentType != ResearchProjectsContentType.my) || Auth2().isLoggedIn)) {
       _loadingResearchProjects = _researchProjectsBusy = true;
       
-      Groups().loadResearchProjectsListV3(ResearchProjectsFilter(contentType: contentType)).then((List<Group>? researchProjects) {
+      Groups().loadDisplayResearchProjectsListV3(ResearchProjectsFilter(contentType: contentType)).then((List<Group>? researchProjects) {
         if ((_selectedContentType == null) && (researchProjects != null) && (researchProjects.length == 0)) {
           contentType = ResearchProjectsContentType.open;
-          Groups().loadResearchProjectsListV3(ResearchProjectsFilter(contentType: contentType)).then((List<Group>? researchProjects) {
+          Groups().loadDisplayResearchProjectsListV3(ResearchProjectsFilter(contentType: contentType)).then((List<Group>? researchProjects) {
             if (mounted) {
               setState(() {
                 _loadingResearchProjects = _researchProjectsBusy = false;
@@ -538,7 +538,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
         _loadingResearchProjects = _researchProjectsBusy = true;
       });
 
-      Groups().loadResearchProjectsListV3(ResearchProjectsFilter(
+      Groups().loadDisplayResearchProjectsListV3(ResearchProjectsFilter(
         contentType: _selectedContentType,
         category: ((_selectedContentType == ResearchProjectsContentType.open) && (_selectedCategoryFilter != _allCategories)) ? _selectedCategoryFilter : null,
         tags: ((_selectedContentType == ResearchProjectsContentType.open) && (_selectedTagFilter == _TagFilter.my)) ? Auth2().prefs?.positiveTags : null,
@@ -557,7 +557,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
     if (_loadingResearchProjects == false) {
 
       _loadingResearchProjects = true;
-      List<Group>? researchProjects = await Groups().loadResearchProjectsListV3(ResearchProjectsFilter(
+      List<Group>? researchProjects = await Groups().loadDisplayResearchProjectsListV3(ResearchProjectsFilter(
         contentType: _selectedContentType,
         category: ((_selectedContentType == ResearchProjectsContentType.open) && (_selectedCategoryFilter != _allCategories)) ? _selectedCategoryFilter : null,
         tags: ((_selectedContentType == ResearchProjectsContentType.open) && (_selectedTagFilter == _TagFilter.my)) ? Auth2().prefs?.positiveTags : null,

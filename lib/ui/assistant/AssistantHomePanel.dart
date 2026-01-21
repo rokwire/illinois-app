@@ -188,17 +188,17 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
               Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, children: [
                 Semantics(container: true, child:
                   Padding(padding: EdgeInsets.only(left: 16), child:
-                    Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"), maxLines: 2,)
+                    Text(Localization().getStringEx('panel.assistant.header.title', 'Illinois Assistant'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"), maxLines: 1, overflow: TextOverflow.ellipsis,)
                   )
                 ),
                 Padding(padding: EdgeInsets.only(left: 16), child:
                   Wrap(children: [
                     Visibility(visible: clearAllVisible, child:
-                      LinkButton(onTap: _onTapClearSession, title: Localization().getStringEx('panel.assistant.reset_session.label', 'Reset Memory'), fontSize: 14, padding: EdgeInsets.symmetric(vertical: 16),)
+                      LinkButton(onTap: _onTapClearSession, title: Localization().getStringEx('panel.assistant.reset_session.label', 'Reset Memory'), fontSize: 14, padding: EdgeInsets.zero,)
                     ),
                     SizedBox(width: 8,),
                     Visibility(visible: clearAllVisible, child:
-                      LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14, padding: EdgeInsets.symmetric(vertical: 16))
+                      LinkButton(onTap: _onTapClearAll, title: Localization().getStringEx('panel.assistant.clear_all.label', 'Clear All'), fontSize: 14, padding: EdgeInsets.zero)
                     ),
                   ],)
                 )
@@ -227,12 +227,15 @@ class _AssistantHomePanelState extends State<AssistantHomePanel> with Notificati
                       key: _pageHeadingKey,
                       padding: EdgeInsets.only(left: 16, top: 16, right: 16),
                       child: Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), focused: true, container: true, child: RibbonButton(
-                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                          textWidget: Text( _selectedContentType?.displayTitle ?? '',
+                            style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           backgroundColor: Styles().colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                           border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                           rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                          title: _selectedContentType?.displayTitle ?? '',
                           onTap: _onTapContentSwitch))),
                 _buildContent(),
               ]))

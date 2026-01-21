@@ -235,8 +235,8 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
   }
 
   Future<GroupsLoadResult?> _searchGroups(String? search) => (widget.researchProject) ?
-      Groups().loadResearchProjectsV3(ResearchProjectsQuery(searchText: search)) :
-      Groups().loadGroupsV3(GroupsQuery(searchText: search));
+      Groups().loadResearchProjectsV3(ResearchProjectsQuery(searchText: search, includeHidden: false)) :
+      Groups().loadGroupsV3(GroupsQuery(searchText: search, includeHidden: false,));
 
   void _refreshSearch() {
     if (StringUtils.isNotEmpty(_searchValue) && mounted) {
