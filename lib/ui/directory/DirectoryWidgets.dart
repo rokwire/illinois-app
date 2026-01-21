@@ -954,7 +954,7 @@ class _DirectoryFilterBarState extends State<DirectoryFilterBar> {
     static const String _groupAttributeId = 'group';
 
     ContentAttribute? get _groupAttribute {
-      List<Group>? userGroups = Groups().userGroups;
+      List<Group>? userGroups = Groups().displayUserGroups;
       return ((userGroups != null) && userGroups.isNotEmpty) ?
         ContentAttribute(
           id: _groupAttributeId,

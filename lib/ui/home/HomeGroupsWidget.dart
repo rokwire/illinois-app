@@ -158,12 +158,10 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
       (name == Groups.notifyGroupUpdated) ||
       (name == Groups.notifyGroupDeleted) ||
       (name == Connectivity.notifyStatusChanged) ||
+      (name == Groups.notifyUserGroupsUpdated) ||
       (name == Auth2.notifyLoginChanged)
     ) {
       _loadGroupsIfVisible();
-    }
-    else if (name == Groups.notifyUserGroupsUpdated) {
-      _applyUserGroups();
     }
   }
 
@@ -319,7 +317,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
         _updatingGroups = false;
       });
 
-      List<Group>? groupsList = await Groups().loadGroupsListV3(filter: widget.contentType.groupsFilter);
+      List<Group>? groupsList = await Groups().loadDisplayGroupsListV3(widget.contentType.groupsFilter);
       List<Group>? groups = ListUtils.from(groupsList);
       _sortGroups(groups);
 
@@ -347,7 +345,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
         _updatingGroups = true;
       });
 
-      List<Group>? groupsList = await Groups().loadGroupsListV3(filter: widget.contentType.groupsFilter);
+      List<Group>? groupsList = await Groups().loadDisplayGroupsListV3(widget.contentType.groupsFilter);
       List<Group>? groups = ListUtils.from(groupsList);
       _sortGroups(groups);
 
@@ -362,19 +360,6 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
           if ((_groups?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
             _pageController?.jumpToPage(0);
           }
-        });
-      }
-    }
-  }
-
-  void _applyUserGroups() {
-    if (widget.contentType == FavoriteContentType.my) {
-      List<Group>? userGroups = ListUtils.from(Groups().userGroups);
-      _sortGroups(userGroups);
-      if (mounted) {
-        setState(() {
-          _groups = userGroups;
-          _groupCardKeys.clear();
         });
       }
     }
@@ -428,7 +413,7 @@ extension _FavoriteGroupsContentType on FavoriteContentType {
     }
   }
 
-  GroupsFilter? get groupsFilter {
+  GroupsFilter get groupsFilter {
     switch (this) {
       case FavoriteContentType.my: return Groups.userGroupsFilter;
       case FavoriteContentType.all: return Groups.allGroupsFilter;

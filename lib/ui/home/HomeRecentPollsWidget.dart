@@ -172,7 +172,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
         pages.add(Padding(
           key: _contentKeys[poll.pollId ?? ''] ??= GlobalKey(),
           padding: HomeCard.defaultPageMargin,
-          child: PollCard(poll: poll, group: _getGroup(poll.groupId)),
+          child: PollCard(poll: poll, group: _getPollGroup(poll.groupId)),
         ));
       }
 
@@ -208,7 +208,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
     else {
       Poll? firstPoll = _recentPolls?.first;
       contentWidget = (firstPoll != null) ? Padding(padding: HomeCard.defaultSingleCardMargin, child:
-        PollCard(poll: firstPoll, group: _getGroup(firstPoll.groupId))
+        PollCard(poll: firstPoll, group: _getPollGroup(firstPoll.groupId))
       ) : Container();
     }
 
@@ -230,17 +230,8 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
     }
   }
 
-  Group? _getGroup(String? groupId) {
-    List<Group>? groups = Groups().userGroups;
-    if (StringUtils.isNotEmpty(groupId) && CollectionUtils.isNotEmpty(groups)) {
-      for (Group group in groups!) {
-        if (groupId == group.id) {
-          return group;
-        }
-      }
-    }
-    return null;
-  }
+  Group? _getPollGroup(String? pollGroupId) =>
+    ((pollGroupId != null) && pollGroupId.isNotEmpty) ? Groups().getUserGroup(pollGroupId) : null;
 
   double get _pageHeight {
 
