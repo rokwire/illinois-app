@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed update time display in GroupPollCard [#5672](https://github.com/rokwire/illinois-app/issues/5672).
 - Fixed Large text issues in Assistant panel [#5610](https://github.com/rokwire/illinois-app/issues/5610).
+### Changed
+- Apply includeHidden param in groups / research project APIs [#5666](https://github.com/rokwire/illinois-app/issues/5666).
 
 ## [7.3.46] - 2026-01-15
 ### Fixed

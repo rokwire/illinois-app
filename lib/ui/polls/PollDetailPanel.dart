@@ -107,26 +107,13 @@ class _PollDetailPanelState extends State<PollDetailPanel> with NotificationsLis
     _increaseProgress();
     Polls().loadById(widget.pollId!).then((poll) {
       _poll = poll;
-      _loadGroup();
+      _group = _getPollGroup(poll?.groupId);
       _decreaseProgress();
     });
   }
 
-  void _loadGroup() {
-    if (!(_poll?.hasGroup ?? false)) {
-      return;
-    }
-    String pollGroupId = _poll!.groupId!;
-    List<Group>? userGroups = Groups().userGroups;
-    if (CollectionUtils.isNotEmpty(userGroups)) {
-      for (Group group in userGroups!) {
-        if (group.id == pollGroupId) {
-          _group = group;
-          break;
-        }
-      }
-    }
-  }
+  Group? _getPollGroup(String? pollGroupId) =>
+    ((pollGroupId != null) && pollGroupId.isNotEmpty) ? Groups().getUserGroup(pollGroupId) : null;
 
   void _onPollUpdated(String? pollId) {
     if (pollId == widget.pollId) {
