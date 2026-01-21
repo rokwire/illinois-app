@@ -2321,7 +2321,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     if (eventId != null) {
       _loadingEventGroups = true;
       _initialGroupIds = _selectedGroupIds = widget.event?.groupIds;
-      Groups().loadGroupsV3(GroupsQuery(ids: widget.event?.groupIds)).then((GroupsLoadResult? result){
+      Groups().loadGroupsV3(GroupsQuery(ids: widget.event?.groupIds, includeHidden: true)).then((GroupsLoadResult? result){
         setStateIfMounted(() {
           _loadingEventGroups = false;
           _eventGroups = result?.groups;
@@ -2337,7 +2337,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   void _initAdminGroups() {
     _selectedAdminGroupIds = widget.event?.authorizationContext?.externalAdmins?.groupIds;
     _loadingAdminGroups = true;
-    Groups().loadAdministrativeUserGroupsV3().then((List<Group>? groups) {
+    Groups().loadAllAdministrativeUserGroupsV3().then((List<Group>? groups) {
       setStateIfMounted(() {
         _loadingAdminGroups = false;
         _adminGroups = groups;
