@@ -5,9 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.3.47] - 2026-01-21
 ### Fixed
 - Fixed update time display in GroupPollCard [#5672](https://github.com/rokwire/illinois-app/issues/5672).
 - Fixed Large text issues in Assistant panel [#5610](https://github.com/rokwire/illinois-app/issues/5610).
+### Changed
+- Apply includeHidden param in groups / research project APIs [#5683](https://github.com/rokwire/illinois-app/issues/5683).
 
 ## [7.3.46] - 2026-01-15
 ### Fixed

@@ -315,6 +315,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
       GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
         filter: _filter?.authValidated,
+        includeHidden: false,
         offset: 0, limit: limit,
         anchorId: anchorId, anchorOffset: anchorOffset,
       ));
@@ -346,7 +347,9 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
       int queryLimit = _refreshContentLength;
       GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
-        filter: _filter?.authValidated, offset: 0, limit: queryLimit,
+        filter: _filter?.authValidated,
+        includeHidden: false,
+        offset: 0, limit: queryLimit,
       ));
       List<Group>? contentList = contentResult?.groups;
       int? totalContentLength = contentResult?.totalCount;
@@ -375,7 +378,9 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       int queryOffset = _contentList?.length ?? 0;
       int queryLimit = _contentPageLength;
       GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
-        filter: _filter?.authValidated, offset: queryOffset, limit: queryLimit,
+        filter: _filter?.authValidated,
+        includeHidden: false,
+        offset: queryOffset, limit: queryLimit,
       ));
       List<Group>? contentList = contentResult?.groups;
       int? totalContentLength = contentResult?.totalCount;
@@ -553,7 +558,7 @@ extension _GroupsFilterContentAttributes on GroupsFilter {
         }
       }
 
-      Map<String, int?>? counts = await Groups().countGroupsV3(countFilters, baseFilter: baseFilter, );
+      Map<String, int?>? counts = await Groups().countDisplayGroupsV3(countFilters, baseFilter: baseFilter, );
       return counts?.map<dynamic, int?>((String valueId, int? count) => MapEntry(valueIds[valueId], count));
     }
     return null;

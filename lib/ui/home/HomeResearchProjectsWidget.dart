@@ -336,7 +336,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
         _updatingResearchProjects = true;
       });
 
-      List<Group>? researchProjects = await Groups().loadResearchProjectsListV3(ResearchProjectsFilter(contentType: widget.contentType));
+      List<Group>? researchProjects = await Groups().loadDisplayResearchProjectsListV3(ResearchProjectsFilter(contentType: widget.contentType));
       _sortResearchProjects(researchProjects);
 
       setStateIfMounted(() {
@@ -364,7 +364,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
       });
     }
 
-    List<Group>? researchProjects = await Groups().loadResearchProjectsListV3(ResearchProjectsFilter(contentType: widget.contentType));
+    List<Group>? researchProjects = await Groups().loadDisplayResearchProjectsListV3(ResearchProjectsFilter(contentType: widget.contentType));
     _sortResearchProjects(researchProjects);
 
     if (mounted && _updatingResearchProjects && (researchProjects != null) && !DeepCollectionEquality().equals(_researchProjects, researchProjects)) {
