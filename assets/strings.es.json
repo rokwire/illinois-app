@@ -208,7 +208,7 @@
     "panel.browse.label.browse_all": "Explorar todo",
     "panel.browse.label.offline.sign_in": "Iniciar sesión no disponible sin conexión.",
     "panel.browse.label.offline.verify_phone": "Verifique que su número de teléfono no esté disponible sin conexión.",
-    "panel.browse.label.offline.my_illini": "Mi Illini no está disponible sin conexión.",
+    "panel.browse.label.offline.my_illini": "myIllini no está disponible sin conexión.",
     "panel.browse.label.offline.laundry": "Servicio de lavandería no disponible sin conexión.",
     "panel.browse.label.offline.illini_cash": "Illini Cash no está disponible sin conexión.",
     "panel.browse.label.offline.meal_plan": "El Plan de comidas de la Universidad University no está disponible sin conexión.",
