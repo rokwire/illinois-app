@@ -308,7 +308,7 @@ class _GuideListPanelState extends State<GuideListPanel> with NotificationsListe
       return features.contains('meal_plan') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.meal_plan.title", "Meal Plan"), iconKey: "guide-meal-plan", onTap: _navigateMealPlan,) : null;
     }
     else if (feature == 'my-illini') {
-      return features.contains('my_illini') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.my_illini.title", "My Illini"), iconKey: "guide-student-portal", onTap: _navigateMyIllini) : null;
+      return features.contains('my_illini') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.my_illini.title", "myIllini"), iconKey: "guide-student-portal", onTap: _navigateMyIllini) : null;
     }
     else if (feature == 'quick-polls') {
       return features.contains('quick_polls') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.quick_polls.title", "Quick Polls"), iconKey: "guide-polls", onTap: _navigateQuickPolls) : null;
@@ -373,9 +373,9 @@ class _GuideListPanelState extends State<GuideListPanel> with NotificationsListe
   }
 
   void _navigateMyIllini() {
-    Analytics().logSelect(target: "My Illini");
+    Analytics().logSelect(target: "myIllini");
     if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'myIllini not available while offline.'));
     }
     else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
       Uri? uri = Uri.tryParse(Config().myIlliniUrl!);
