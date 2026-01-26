@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [7.3.48] - 2026-01-26
+### Changed
+- Sections text updates [#5694](https://github.com/rokwire/illinois-app/issues/5694).
+### Fixed
+- Fixed myIllini typo [#5693](https://github.com/rokwire/illinois-app/issues/5693).
+  Do not allow updating a poll twice when the user votes, take care to update date created/updated either [#5672](https://github.com/rokwire/illinois-app/issues/5672).
+
 ## [7.3.47] - 2026-01-21
 ### Fixed
 - Fixed update time display in GroupPollCard [#5672](https://github.com/rokwire/illinois-app/issues/5672).
