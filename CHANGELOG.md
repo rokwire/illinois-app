@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Sections text updates [#5694](https://github.com/rokwire/illinois-app/issues/5694).
+### Fixed
+- Fixed myIllini typo [#5693](https://github.com/rokwire/illinois-app/issues/5693).
 
 ## [7.3.47] - 2026-01-21
 ### Fixed

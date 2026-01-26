@@ -229,7 +229,7 @@
     "panel.browse.section.status.colapse.title": "Collapse",
     "panel.browse.section.status.colapse.hint": "Tap to collapse section content",
 
-    "panel.browse.web_panel.header.schedule_grades_more.title": "My Illini",
+    "panel.browse.web_panel.header.schedule_grades_more.title": "myIllini",
 
     "panel.browse.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you have to sign in only once?",
     "panel.browse.alert.building_access.privacy_level.4.button.label": "Set to 4",
@@ -286,7 +286,7 @@
     "panel.browse.entry.academics.gies_canvas_courses.title": "My Gies Canvas Courses",
     "panel.browse.entry.academics.canvas_courses.title": "My Canvas Courses",
     "panel.browse.entry.academics.student_courses.title": "My Courses",
-    "panel.browse.entry.academics.my_illini.title": "My Illini",
+    "panel.browse.entry.academics.my_illini.title": "myIllini",
     "panel.browse.entry.academics.campus_reminders.title": "Campus Reminders",
     "panel.browse.entry.academics.wellness_todo.title": "To-Do List",
     "panel.browse.entry.academics.due_date_catalog.title": "Due Date Catalog",
@@ -3478,7 +3478,7 @@
     "panel.guide_list.button.library_card.title": "Library Card",
     "panel.guide_list.button.laundry.title": "Laundry",
     "panel.guide_list.button.meal_plan.title": "Meal Plan",
-    "panel.guide_list.button.my_illini.title": "My Illini",
+    "panel.guide_list.button.my_illini.title": "myIllini",
     "panel.guide_list.button.quick_polls.title": "Polls",
     "panel.guide_list.button.saved.title": "Saved",
 
