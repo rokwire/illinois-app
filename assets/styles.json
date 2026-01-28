@@ -1096,6 +1096,7 @@
     "plus-dark": {"src": "images/icons-control-add-blue.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
     "transit-logo-cutout-dark":  {"src": "0xf55e", "type": "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 20},
 
+    "canvas": {"src": "images/icon-canvas.png", "type": "flutter.asset", "size": 16, "todo": "color"},
     "settings-working": {"src": "images/icon-canvas-implemented-working.png", "type": "flutter.asset", "size": 16, "todo": "color issue"},
     "settings-in-progress": {"src": "images/icon-canvas-partially-implemented.png", "type": "flutter.asset", "size": 16, "todo": "color issue"},
 

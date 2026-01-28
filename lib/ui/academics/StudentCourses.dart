@@ -525,7 +525,7 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
           padding: EdgeInsets.only(top: 16),
           child: Row(
             children: [
-              _buildDetailIcon('calendar'),//TBD: DD - show canvas icon
+              _buildDetailIcon('canvas'),
               Expanded(
                 child: Text(label, style: Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline")),
               ),
