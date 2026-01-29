@@ -20,8 +20,6 @@
 
 #import "AppDelegate.h"
 #import "GeneratedPluginRegistrant.h"
-#import "AppKeys.h"
-#import "FlutterCompletion.h"
 
 #import "NSArray+InaTypedValue.h"
 #import "NSDictionary+InaTypedValue.h"
@@ -29,7 +27,6 @@
 #import "CGGeometry+InaUtils.h"
 #import "UIColor+InaParse.h"
 #import "UILabel+InaMeasure.h"
-#import "Security+UIUCUtils.h"
 
 #import <GoogleMaps/GoogleMaps.h>
 #import <Firebase/Firebase.h>
@@ -37,6 +34,7 @@
 
 #import <UserNotifications/UserNotifications.h>
 
+static NSString *const kFlutterMetodChannelName = @"edu.illinois.rokwire/native_call";
 static NSString *const kFIRMessagingFCMTokenNotification = @"com.firebase.iid.notif.fcm-token";
 
 @interface RootNavigationController : UINavigationController
@@ -45,6 +43,12 @@ static NSString *const kFIRMessagingFCMTokenNotification = @"com.firebase.iid.no
 
 @interface LaunchScreenView : UIView
 @property (nonatomic) NSString *statusText;
+@end
+
+typedef void (^FlutterCompletion)(id returnValue);
+
+@protocol FlutterCompletionHandler <NSObject>
+@property (nonatomic) FlutterCompletion completionHandler;
 @end
 
 UIInterfaceOrientation _interfaceOrientationFromString(NSString *value);
@@ -162,15 +166,19 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	return [sharedInstance isKindOfClass:self] ? sharedInstance : nil;
 }
 
-#pragma mark LifeCycle
+#pragma mark - UISceneSession lifecycle
 
--(void)applicationDidEnterForeground:(UIApplication *)application{
-	NSLog(@"applicationDidEnterForeground:");
+/*
+	// FlutterViewController not available in application:didFinishLaunchingWithOptions: if scene overrides exist
+- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession options:(UISceneConnectionOptions *)options {
+	NSLog(@"capplication:onfigurationForConnectingSceneSession:");
+	return [[UISceneConfiguration alloc] initWithName:@"Default Configuration" sessionRole:connectingSceneSession.role];
 }
 
--(void)applicationDidEnterBackground:(UIApplication *)application{
-	NSLog(@"applicationDidEnterBackground:");
-}
+
+- (void)application:(UIApplication *)application didDiscardSceneSessions:(NSSet<UISceneSession *> *)sceneSessions {
+	NSLog(@"application:didDiscardSceneSessions:");
+}*/
 
 #pragma mark Launch Screen
 
@@ -548,7 +556,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	NSString *userInfoString = [[NSString alloc] initWithData:userInfoData encoding:NSUTF8StringEncoding];
 	NSLog(@"UIApplication: UNUserNotificationCenter willPresentNotification:\n%@", userInfoString);
 	
-	completionHandler(UNNotificationPresentationOptionAlert|UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound);
+	completionHandler(UNNotificationPresentationOptionList|UNNotificationPresentationOptionBanner|UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound);
 }
 
 #pragma mark FIRMessagingDelegate
@@ -618,7 +626,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		_imageView.image = [UIImage imageNamed:@"LaunchImage"];
 		[self addSubview:_imageView];
 		
-		_activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+		_activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleLarge];
+		_activityView.color = UIColor.whiteColor;
 		[self addSubview:_activityView];
 		
 		_statusView = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -716,4 +725,3 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		default: return 0;
 	}
 }
-
