@@ -293,7 +293,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   void _onContentItem(AcademicsContentType contentType) {
     String? launchUrl;
     if (contentType == AcademicsContentType.my_illini) {
-      // Open My Illini in an external browser
+      // Open myIllini in an external browser
       //_onMyIlliniSelected();
       launchUrl = Config().myIlliniUrl;
     } else if (contentType == AcademicsContentType.due_date_catalog) {
@@ -327,7 +327,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   /*void _onMyIlliniSelected() {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context,
-          Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
+          Localization().getStringEx('panel.browse.label.offline.my_illini', 'myIllini not available while offline.'));
     } else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
       // Please make this use an external browser
       // Ref: https://github.com/rokwire/illinois-app/issues/1110
@@ -348,7 +348,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       // }
       // else {
       //   String myIlliniPanelTitle = Localization().getStringEx(
-      //       'widget.home.campus_resources.header.my_illini.title', 'My Illini');
+      //       'widget.home.campus_resources.header.my_illini.title', 'myIllini');
       //   Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: myIlliniPanelTitle,)));
       // }
     }

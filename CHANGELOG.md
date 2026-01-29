@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Color issues in To-Do items [#5699](https://github.com/rokwire/illinois-app/issues/5699).
+
+## [7.3.48] - 2026-01-26
+### Changed
+- Sections text updates [#5694](https://github.com/rokwire/illinois-app/issues/5694).
+### Fixed
+- Fixed myIllini typo [#5693](https://github.com/rokwire/illinois-app/issues/5693).
+- Do not allow updating a poll twice when the user votes, take care to update date created/updated either [#5672](https://github.com/rokwire/illinois-app/issues/5672).
+- Unsubscribe from listening notifications in group detail tab pages when disposed.
 
 ## [7.3.47] - 2026-01-21
 ### Fixed
