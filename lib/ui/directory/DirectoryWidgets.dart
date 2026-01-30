@@ -1016,3 +1016,61 @@ class DirectoryFilter {
     (const DeepCollectionEquality().hash(attributes));
 
 }
+
+// DirectoryExpandableSection
+
+class DirectoryExpandableSection extends StatefulWidget{
+  final bool expanded;
+  final String title;
+  final List<Widget>? content;
+
+  const DirectoryExpandableSection({super.key, this.title = "", this.expanded = false, this.content});
+
+  @override
+  State<StatefulWidget> createState() =>
+      _DirectoryExpandableSectionState();
+}
+
+class _DirectoryExpandableSectionState extends State<DirectoryExpandableSection>{
+  bool _expanded = false;
+
+  @override
+  void initState() {
+    _expanded = widget.expanded;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      Padding( padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _sectionHeading(title: widget.title, expanded: _expanded),
+                if (_expanded == true)
+                  ...widget.content ?? []
+              ]
+          )
+      );
+
+  Widget _sectionHeading({required String title, bool? expanded = false}) =>
+      InkWell(
+          onTap: () =>
+              setStateIfMounted(() =>
+                _expanded = !_expanded
+              ),
+          child: Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
+            Row(children: [
+              Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+                Styles().images.getImage(_expanded? 'chevron-up' :'chevron-down',)
+              ),
+              Expanded(child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: 6), child:
+                  Text(title , style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
+              )
+              )
+            ])
+          )
+      );
+}

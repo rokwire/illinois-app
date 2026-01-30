@@ -41,7 +41,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
   Widget get _scaffoldContent =>
     RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
           DirectoryAccountsPage(key: _pageKey, scrollController: _scrollController, onEditProfile: _onEditProfile, onShareProfile: _onShareProfile,),
         )
       )

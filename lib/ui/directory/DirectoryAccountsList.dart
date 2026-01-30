@@ -111,16 +111,23 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     List<Auth2PublicAccount>? accounts = _accounts;
     if ((accounts != null) && accounts.isNotEmpty) {
       String? directoryIndex;
+      List<Widget> sectionContent = <Widget>[];
+      if(accounts.isNotEmpty)
+        contentList.add(Padding(padding: EdgeInsets.only(bottom: 0), child: _sectionSplitter));
+
       for (Auth2PublicAccount account in accounts) {
         String? accountDirectoryIndex = account.directoryKey;
         if ((accountDirectoryIndex != null) && (directoryIndex != accountDirectoryIndex)) {
           if (contentList.isNotEmpty) {
-            contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));
+            contentList.add(Padding(padding: EdgeInsets.only(bottom: 0), child: _sectionSplitter));
           }
-          contentList.add(_sectionHeading(directoryIndex = accountDirectoryIndex));
+          contentList.add(DirectoryExpandableSection(
+            expanded: _expandSections,
+            title: directoryIndex = accountDirectoryIndex,
+            content: sectionContent = <Widget>[],));
         }
-        contentList.add(_sectionSplitter);
-        contentList.add(DirectoryAccountListCard(account,
+        sectionContent.add(_sectionSplitter);
+        sectionContent.add(DirectoryAccountListCard(account,
           displayMode: widget.displayMode,
           photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
           expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
@@ -152,11 +159,6 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     Analytics().logSelect(target: value ? 'Select' : 'Unselect', source: account.id);
     widget.onAccountSelectionChanged?.call(account, value);
   }
-
-  Widget _sectionHeading(String dirEntry) =>
-    Padding(padding: EdgeInsets.zero, child:
-      Text(dirEntry, style: Styles().textStyles.getTextStyle('widget.title.small.semi_fat'),)
-    );
 
   Widget get _sectionSplitter => Container(height: 1, color: Styles().colors.dividerLineAccent,);
 
@@ -254,9 +256,12 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   }
 
   int get _accountsCount => _accounts?.length ?? 0;
+
+  bool get _expandSections => StringUtils.isNotEmpty(widget.searchText);
 }
 
 extension _Auth2PublicAccountUtils on Auth2PublicAccount {
   String? get directoryKey => (profile?.lastName?.isNotEmpty == true) ?
     profile?.lastName?.substring(0, 1).toUpperCase() : null;
 }
+

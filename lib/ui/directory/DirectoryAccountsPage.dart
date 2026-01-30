@@ -111,7 +111,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
       }
     );
 
-    return Padding(padding: EdgeInsets.only(bottom: 16), child:
+    return Padding(padding: EdgeInsets.only(bottom: 16, left: 16, right: 16), child:
       RichText(textAlign: TextAlign.left, text:
         TextSpan(style: Styles().textStyles.getTextStyle("widget.detail.small"), children: spanList)
       )
@@ -129,12 +129,14 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
   }
 
   Widget get _searchBarWidget =>
-    DirectoryFilterBar(
-      key: ValueKey(DirectoryFilter(searchText: _searchText, attributes: _filterAttributes)),
-      searchText: _searchText,
-      onSearchText: _onSearchText,
-      // [#4474] filterAttributes: _filterAttributes,
-      // [#4474] onFilterAttributes: _onFilterAttributes,
+    Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 16), child:
+      DirectoryFilterBar(
+        key: ValueKey(DirectoryFilter(searchText: _searchText, attributes: _filterAttributes)),
+        searchText: _searchText,
+        onSearchText: _onSearchText,
+        // [#4474] filterAttributes: _filterAttributes,
+        // [#4474] onFilterAttributes: _onFilterAttributes,
+      )
     );
 
   void _onSearchText(String text) {
