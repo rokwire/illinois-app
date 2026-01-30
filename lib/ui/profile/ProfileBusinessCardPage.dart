@@ -344,7 +344,13 @@ class _ProfileBusinessCardWidgetState extends State<ProfileBusinessCardWidget> {
         isHTML: false,
       );
 
-      FlutterEmailSender.send(email);
+      FlutterEmailSender.send(email).catchError((e) {
+        if (mounted) {
+          String? exceptionMessage = (e is PlatformException) ? e.message : null;
+          String message = ((exceptionMessage != null) && exceptionMessage.isNotEmpty) ? exceptionMessage : Localization().getStringEx('panel.profile.info.share.command.button.share.email.failed', 'Failed to share via Email');
+          AppAlert.showTextMessage(context, message);
+        }
+      });
     }
   }
 
@@ -358,11 +364,17 @@ class _ProfileBusinessCardWidgetState extends State<ProfileBusinessCardWidget> {
       setState(() {
         _preparingTextMessage = false;
       });
-      SmsMms.send(
-        recipients: [],
-        message: widget.publicProfile?.toDisplayText() ?? '',
-        filePath: imagePath,
-      );
+        SmsMms.send(
+          recipients: [],
+          message: widget.publicProfile?.toDisplayText() ?? '',
+          filePath: imagePath,
+        ).catchError((e){
+          if (mounted) {
+            String? exceptionMessage = (e is PlatformException) ? e.message : null;
+            String message = ((exceptionMessage != null) && exceptionMessage.isNotEmpty) ? exceptionMessage : Localization().getStringEx('panel.profile.info.share.command.button.share.email.failed', 'Failed to share via Email');
+            AppAlert.showTextMessage(context, message);
+          }
+        });
     }
   }
 
