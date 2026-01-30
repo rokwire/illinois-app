@@ -357,7 +357,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
             progress: _disconnectingPhone,
             onTap: _onDisconnectPhoneClicked
           )
-        ));
+        )));
       }
     }
     return contentList;
