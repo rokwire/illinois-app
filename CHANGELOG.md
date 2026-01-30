@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Color issues in To-Do items [#5699](https://github.com/rokwire/illinois-app/issues/5699).
 - Handle & report errors from Share Email/SMS plugins in Profile info [#5700](https://github.com/rokwire/illinois-app/issues/5700).
 ### Changed
-- Reworked refresh token processing in Auth2, added extended Crashlytics logs [#5405]
+- Reworked refresh token processing in Auth2, added extended Crashlytics logs [#5405](https://github.com/rokwire/illinois-app/issues/5405).
 
 ## [7.3.48] - 2026-01-26
 ### Changed
