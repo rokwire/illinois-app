@@ -371,7 +371,7 @@ class _ProfileBusinessCardWidgetState extends State<ProfileBusinessCardWidget> {
         ).catchError((e){
           if (mounted) {
             String? exceptionMessage = (e is PlatformException) ? e.message : null;
-            String message = ((exceptionMessage != null) && exceptionMessage.isNotEmpty) ? exceptionMessage : Localization().getStringEx('panel.profile.info.share.command.button.share.email.failed', 'Failed to share via Email');
+            String message = ((exceptionMessage != null) && exceptionMessage.isNotEmpty) ? exceptionMessage : Localization().getStringEx('panel.profile.info.share.command.button.share.message.failed', 'Failed to share via Text Message');
             AppAlert.showTextMessage(context, message);
           }
         });
