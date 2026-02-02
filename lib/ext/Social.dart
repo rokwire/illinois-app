@@ -129,6 +129,16 @@ extension ConversationExt on Conversation {
     }
     return null;
   }
+
+  String? get displayUpdateTime {
+    if(lastActivityTimeUtc != null) {
+      DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(lastActivityTimeUtc);
+      return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;
+    }
+    else {
+      return null;
+    }
+  }
 }
 
 extension CreatorExt on Creator{

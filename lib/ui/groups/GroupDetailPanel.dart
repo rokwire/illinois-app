@@ -33,6 +33,7 @@ import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupAboutContentWidget.dart';
+import 'package:illinois/ui/groups/GroupDetailMessagesTab.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
@@ -865,7 +866,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       case DetailTab.ScheduledPosts:
         return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Messages:
-        return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
+        //return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
+        return GroupDetailMessagesTab(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Polls:
         return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
 
@@ -2259,6 +2261,7 @@ class _GroupMessagesContent extends StatefulWidget {
   final StreamController<dynamic>? updateController;
   final AnalyticsFeature? analyticsFeature;
 
+  // ignore: unused_element_parameter
   const _GroupMessagesContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature});
 
   String get _emptyText => Localization().getStringEx("", "No messages");
