@@ -1,12 +1,14 @@
 
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart' as illinois;
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
+import 'package:rokwire_plugin/service/Log.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -31,10 +33,11 @@ class DirectoryAccountsList extends StatefulWidget {
 
 class DirectoryAccountsListState extends State<DirectoryAccountsList> with NotificationsListener, AutomaticKeepAliveClientMixin<DirectoryAccountsList>  {
 
-  List<Auth2PublicAccount>? _accounts;
+  Map<String, List<Auth2PublicAccount>>? _accounts;
   bool _loading = false;
   bool _loadingProgress = false;
   bool _extending = false;
+  Map<String, dynamic> _extendingTasks = <String, dynamic>{};
   bool _canExtend = false;
   static const int _pageLength = 32;
 
@@ -108,33 +111,31 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   Widget get _accountsContent {
     List<Widget> contentList = <Widget>[];
 
-    List<Auth2PublicAccount>? accounts = _accounts;
+    Map<String, List<Auth2PublicAccount>>? accounts = _accounts;
     if ((accounts != null) && accounts.isNotEmpty) {
-      String? directoryIndex;
-      List<Widget> sectionContent = <Widget>[];
-      if(accounts.isNotEmpty)
-        contentList.add(Padding(padding: EdgeInsets.only(bottom: 0), child: _sectionSplitter));
+      contentList.add(Padding(padding: EdgeInsets.only(bottom: 0), child: _sectionSplitter));
 
-      for (Auth2PublicAccount account in accounts) {
-        String? accountDirectoryIndex = account.directoryKey;
-        if ((accountDirectoryIndex != null) && (directoryIndex != accountDirectoryIndex)) {
+      for (String index in accounts.keys) {
+        if ((accounts[index]?.isNotEmpty == true)) {
           if (contentList.isNotEmpty) {
             contentList.add(Padding(padding: EdgeInsets.only(bottom: 0), child: _sectionSplitter));
           }
           contentList.add(DirectoryExpandableSection(
-            expanded: _expandSections,
-            title: directoryIndex = accountDirectoryIndex,
-            content: sectionContent = <Widget>[],));
+            expanded: _expandedSections,
+            accountsExtender: _expandedSections ? null : _extend, //TBD Test
+            index: index,
+            accounts: accounts[index],
+            extending: _extendingTasks[index] != null,
+            itemBuilder: (account) => DirectoryAccountListCard(account,
+              displayMode: widget.displayMode,
+              photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
+              expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
+              onToggleExpanded: () => _onToggleAccountExpanded(account),
+              selected: widget.selectedAccountIds?.contains(account.id) == true,
+              onToggleSelected: (value) => _onToggleAccountSelected(account, value),
+            ),
+          ));
         }
-        sectionContent.add(_sectionSplitter);
-        sectionContent.add(DirectoryAccountListCard(account,
-          displayMode: widget.displayMode,
-          photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
-          expanded: (_expandedAccountId != null) && (account.id == _expandedAccountId),
-          onToggleExpanded: () => _onToggleAccountExpanded(account),
-          selected: widget.selectedAccountIds?.contains(account.id) == true,
-          onToggleSelected: (value) => _onToggleAccountSelected(account, value),
-        ));
       }
       if (contentList.isNotEmpty) {
         contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));
@@ -188,7 +189,8 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   void _scrollListener() {
     ScrollController? scrollController = widget.scrollController;
     if ((scrollController != null) && (scrollController.offset >= scrollController.position.maxScrollExtent) && _canExtend && !_loading && !_extending) {
-      _extend();
+      if(_expandedSections)//Extend only if we are  in expandedSections mode
+        _extend();
     }
   }
 
@@ -210,7 +212,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
         _loading = false;
         _loadingProgress = false;
         if (accounts != null) {
-          _accounts = List.from(accounts);
+          _accounts = accounts.groupListsBy((account) => account.directoryKey ?? "");
           _canExtend = (accounts.length >= limit);
         }
         else if (!silent) {
@@ -224,40 +226,61 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   Future<void> refresh() =>
     _load(limit: max(_accountsCount, _pageLength), silent: true);
 
-  Future<void> _extend() async {
-    if (!_loading && !_extending) {
+  Future<void> _extend({String? index, int? offset, int limit = _pageLength}) async {
+    Log.d('DirectoryAccountsListState._extend index: $index');
+    offset ??= _accountsCount;
+    if (!_loading && !_isExtending(index)) {
       setStateIfMounted(() {
+        if(index != null) //We load for single section //TBD test
+          _extendingTasks[index] = true;
+        else
         _extending = true;
       });
-
+      //TBD synchronise extension of multiple sections
       List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+        index: index,
         search: StringUtils.ensureEmpty(widget.searchText),
         attriutes: widget.filterAttributes,
-        offset: _accountsCount,
-        limit: _pageLength
+        offset: offset,
+        limit: limit
       );
 
-      if (mounted && _extending && !_loading) {
+      if (mounted && !_loading && _isExtending(index)) {
         setState(() {
           if (accounts != null) {
             if (_accounts != null) {
-              _accounts?.addAll(accounts);
+              if(index != null){ //We load for single section //TBD test
+                (_accounts?[index] ??= <Auth2PublicAccount>[])?.addAll(accounts);
+              } else {
+                Map<String, List<Auth2PublicAccount>> groupedNewAccounts = accounts.groupListsBy((account) => account.directoryKey ?? "");
+                MapUtils.mergeGroupedListMaps(
+                    _accounts ?? <String, List<Auth2PublicAccount>>{},
+                    groupedNewAccounts);
+              }
             }
             else {
-              _accounts = List.from(accounts);
+              _accounts = accounts.groupListsBy((account) => account.directoryKey ?? "");
             }
 
             _canExtend = (accounts.length >= _pageLength);
           }
           _extending = false;
+          if(index != null)
+            _extendingTasks.remove(index);
         });
       }
     }
   }
 
-  int get _accountsCount => _accounts?.length ?? 0;
+  int get _accountsCount {
+      int count = 0;
+      _accounts?.forEach((key, value) => count += value.length);
+      return count;
+  }
 
-  bool get _expandSections => StringUtils.isNotEmpty(widget.searchText);
+  bool get _expandedSections => StringUtils.isNotEmpty(widget.searchText); //If we show all expanded sections then we load and extend all sections as one. Otherwise each section is extending by itself.
+
+  bool _isExtending(String? index) => (index != null && _extendingTasks[index] != null) || _extending;
 }
 
 extension _Auth2PublicAccountUtils on Auth2PublicAccount {

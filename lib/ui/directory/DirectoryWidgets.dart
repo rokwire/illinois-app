@@ -32,6 +32,7 @@ import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 enum DirectoryDisplayMode { browse, select }
 
@@ -1018,13 +1019,16 @@ class DirectoryFilter {
 }
 
 // DirectoryExpandableSection
-
+typedef DirectoryAccountsProvider = Function({String? index, int? offset, int limit});
 class DirectoryExpandableSection extends StatefulWidget{
   final bool expanded;
-  final String title;
-  final List<Widget>? content;
+  final bool? extending;
+  final String index;
+  final List<Auth2PublicAccount>? accounts;
+  final Widget Function(Auth2PublicAccount) itemBuilder;
+  final DirectoryAccountsProvider? accountsExtender;
 
-  const DirectoryExpandableSection({super.key, this.title = "", this.expanded = false, this.content});
+  const DirectoryExpandableSection({super.key, required this.index, this.accounts, required this.itemBuilder, this.accountsExtender, this.expanded = false, this.extending = false});
 
   @override
   State<StatefulWidget> createState() =>
@@ -1033,6 +1037,7 @@ class DirectoryExpandableSection extends StatefulWidget{
 
 class _DirectoryExpandableSectionState extends State<DirectoryExpandableSection>{
   bool _expanded = false;
+  Key _extendingKey = UniqueKey();
 
   @override
   void initState() {
@@ -1047,9 +1052,15 @@ class _DirectoryExpandableSectionState extends State<DirectoryExpandableSection>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                _sectionHeading(title: widget.title, expanded: _expanded),
+                _sectionHeading(title: widget.index, expanded: _expanded),
                 if (_expanded == true)
-                  ...widget.content ?? []
+                  ...[
+                        ..._accountsContent ?? [],
+                        if(widget.accountsExtender != null)
+                        _extendDetector,
+                        if(widget.extending == true)
+                          _extendingIndicator,
+                  ]
               ]
           )
       );
@@ -1073,4 +1084,30 @@ class _DirectoryExpandableSectionState extends State<DirectoryExpandableSection>
             ])
           )
       );
+
+  Widget get _extendDetector => VisibilityDetector(
+    key: _extendingKey,
+    onVisibilityChanged: (info) {
+      if(info.visibleBounds.isEmpty == false){
+        widget.accountsExtender?.call(index: widget.index, offset: /* TBD test widget.accounts?.length ??*/ 0);
+      }
+    },
+    child: Container(color: Colors.transparent, height: 1)
+  );
+
+  Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
+    Align(alignment: Alignment.center, child:
+      SizedBox(width: 24, height: 24, child:
+        DirectoryProgressWidget()
+      ),
+    ),
+  );
+
+  Widget get _sectionSplitter => Container(height: 1, color: Styles().colors.dividerLineAccent,);
+
+  List<Widget>? get _accountsContent => widget.accounts?.map<Widget>((account) =>
+    Column(children: [
+      _sectionSplitter,
+      widget.itemBuilder(account)
+    ],)).toList();
 }
