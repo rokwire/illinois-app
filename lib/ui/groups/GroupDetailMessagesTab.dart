@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Social.dart';
@@ -195,23 +196,50 @@ class _GroupConversationAvtarWidget extends StatefulWidget {
 }
 
 class _GroupConversationAvtarWidgetState extends State<_GroupConversationAvtarWidget> {
-  static const double _avtarSize = 64;
+  static const double _widgetSize = 48;
+
+  static const double _avtarSize = _widgetSize / 2 - 1;
+  static const double _avtarOffset = _avtarSize * (sqrt2 - 1) / (2 * sqrt2);
+
+  static const double _avtar2Size = _avtarSize * 2 / 3;
+  static const double _avtar2Offset = _avtarOffset + 1;
 
   @override
   Widget build(BuildContext context) {
-    return Container(width: 64, height: 64, decoration: _avtarDecoration, child:
-      Center(child:
-        _membersIcon ?? Container()
-      )
+    return Container(width: _widgetSize, height: _widgetSize, decoration: _avtarDecoration, child:
+      Stack(children: [
+        Positioned.fill(child:
+          Align(alignment: Alignment.topLeft, child:
+            Padding(padding: EdgeInsets.only(left: _avtarOffset, top: _avtarOffset,), child:
+              Container(width: _avtarSize, height: _avtarSize, decoration: _participantDecoration(Colors.blueAccent)),
+            )
+          )
+        ),
+        Positioned.fill(child:
+          Align(alignment: Alignment.bottomRight, child:
+            Padding(padding: EdgeInsets.only(right: _avtarOffset, bottom: _avtarOffset,), child:
+              Container(width: _avtarSize, height: _avtarSize, decoration: _participantDecoration(Colors.yellowAccent)),
+            )
+          )
+        ),
+        Positioned.fill(child:
+          Align(alignment: Alignment.bottomLeft, child:
+            Padding(padding: EdgeInsets.only(left: _avtar2Offset, bottom: _avtar2Offset,), child:
+              Container(width: _avtar2Size, height: _avtar2Size, decoration: _participantDecoration(Colors.greenAccent)),
+            )
+          )
+        ),
+      ],)
+      //Center(child:_membersIcon ?? Container())
     );
   }
 
   Widget? get _membersIcon {
     if (widget.participantsCount > 1) {
-      return Styles().images.getImage('messages-group-dark-blue', size: _avtarSize / 2 );
+      return Styles().images.getImage('messages-group-dark-blue', size: _widgetSize / 2 );
     }
     else if (widget.participantsCount == 1) {
-      return Styles().images.getImage('person-circle-dark-blue', size: _avtarSize / 2);
+      return Styles().images.getImage('person-circle-dark-blue', size: _widgetSize / 2);
     }
     else {
       return null;
@@ -223,4 +251,10 @@ class _GroupConversationAvtarWidgetState extends State<_GroupConversationAvtarWi
     shape: BoxShape.circle,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
   );
+
+  BoxDecoration _participantDecoration(Color color) => BoxDecoration(
+    color: color, shape: BoxShape.circle,
+  );
+
+
 }
