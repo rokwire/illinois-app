@@ -149,7 +149,7 @@ class _GroupConversationCard extends StatelessWidget {
             ],)
           ),
         ),
-        Styles().images.getImage('chevron-right', excludeFromSemantics: true) ?? Container(),
+        Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
       ],)
     );
 
