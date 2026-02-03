@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -32,14 +33,15 @@ class DirectoryAccountsList extends StatefulWidget {
 }
 
 class DirectoryAccountsListState extends State<DirectoryAccountsList> with NotificationsListener, AutomaticKeepAliveClientMixin<DirectoryAccountsList>  {
+  static const int _pageLength = 12;//32;
+  static const String _globalExtendingKey = 'global';
 
   Map<String, List<Auth2PublicAccount>>? _accounts;
   bool _loading = false;
   bool _loadingProgress = false;
-  bool _extending = false;
-  Map<String, dynamic> _extendingTasks = <String, dynamic>{};
-  bool _canExtend = false;
-  static const int _pageLength = 32;
+
+  Map<String, Completer<void>> _extendingTasks = <String, Completer<void>>{};
+  Future<void>? _extensionPipeline;
 
   String? _expandedAccountId;
 
@@ -60,7 +62,6 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     _load();
     super.initState();
   }
-
 
   @override
   void dispose() {
@@ -121,11 +122,11 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
             contentList.add(Padding(padding: EdgeInsets.only(bottom: 0), child: _sectionSplitter));
           }
           contentList.add(DirectoryExpandableSection(
-            expanded: _expandedSections,
-            accountsExtender: _expandedSections ? null : _extend, //TBD Test
+            initExpanded: _expandAllSections,
+            accountsExtender: _isGlobalSectionMode ? null : _extend, //TBD pass when API is done
             index: index,
             accounts: accounts[index],
-            extending: _extendingTasks[index] != null,
+            extending: _isExtending(index),
             itemBuilder: (account) => DirectoryAccountListCard(account,
               displayMode: widget.displayMode,
               photoImageToken: (account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
@@ -142,7 +143,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
       }
     }
 
-    if (_extending) {
+    if (_isExtending(_globalExtendingKey)) {
       contentList.add(_extendingIndicator);
     }
 
@@ -188,18 +189,18 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
   void _scrollListener() {
     ScrollController? scrollController = widget.scrollController;
-    if ((scrollController != null) && (scrollController.offset >= scrollController.position.maxScrollExtent) && _canExtend && !_loading && !_extending) {
-      if(_expandedSections)//Extend only if we are  in expandedSections mode
+    if ((scrollController != null) && (scrollController.offset >= scrollController.position.maxScrollExtent) && _canExtend(_globalExtendingKey) && !_loading && !_isExtending(_globalExtendingKey)) {
+      if(_isGlobalSectionMode)//Extend only if we are  in expandedSections mode
         _extend();
     }
   }
 
   Future<void> _load({ int limit = _pageLength, bool silent = false }) async {
+    //TBD handle Global and Single sections loading
     if (!_loading) {
       setStateIfMounted(() {
         _loading = true;
         _loadingProgress = !silent;
-        _extending = false;
       });
 
       List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
@@ -213,74 +214,88 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
         _loadingProgress = false;
         if (accounts != null) {
           _accounts = accounts.groupListsBy((account) => account.directoryKey ?? "");
-          _canExtend = (accounts.length >= limit);
-        }
-        else if (!silent) {
-          _accounts = null;
-          _canExtend = false;
         }
       });
     }
   }
 
   Future<void> refresh() =>
-    _load(limit: max(_accountsCount, _pageLength), silent: true);
+    _load(limit: max(_getAccountsCount(_globalExtendingKey), _pageLength), silent: true);
 
-  Future<void> _extend({String? index, int? offset, int limit = _pageLength}) async {
-    Log.d('DirectoryAccountsListState._extend index: $index');
-    offset ??= _accountsCount;
-    if (!_loading && !_isExtending(index)) {
-      setStateIfMounted(() {
-        if(index != null) //We load for single section //TBD test
-          _extendingTasks[index] = true;
-        else
-        _extending = true;
-      });
-      //TBD synchronise extension of multiple sections
-      List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
-        index: index,
-        search: StringUtils.ensureEmpty(widget.searchText),
-        attriutes: widget.filterAttributes,
-        offset: offset,
-        limit: limit
-      );
+  Future<void> _extend({String? index, int limit = _pageLength}) async {
+    String taskKey = index ?? _globalExtendingKey;
 
-      if (mounted && !_loading && _isExtending(index)) {
-        setState(() {
-          if (accounts != null) {
-            if (_accounts != null) {
-              if(index != null){ //We load for single section //TBD test
-                (_accounts?[index] ??= <Auth2PublicAccount>[])?.addAll(accounts);
+    if(_loading || _isExtending(taskKey) || !_canExtend(index))
+      return;
+
+    Completer<void> taskCompleter = Completer<void>();
+    Future<void>? previousTask = _extensionPipeline;
+    _extensionPipeline = taskCompleter.future;
+
+    if (previousTask != null)
+      await previousTask;
+
+    try{
+      Log.d("DirectoryAccountsListState._extend() index: $index");
+      int offset = _getAccountsCount(index);
+      if (!_loading) {
+        setStateIfMounted(() {
+          _extendingTasks[taskKey] = taskCompleter;
+        });
+
+        List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+            index: index,
+            search: StringUtils.ensureEmpty(widget.searchText),
+            attriutes: widget.filterAttributes,
+            offset: offset,
+            limit: limit
+        );
+
+        if (mounted && !_loading) {
+          setState(() {
+            if (accounts != null) {
+              if (_accounts != null) {
+                if(index != null){ //We load for single section
+                  (_accounts?[index] ??= <Auth2PublicAccount>[])?.addAll(accounts);
+                } else { //We load Globally
+                  Map<String, List<Auth2PublicAccount>> groupedNewAccounts = accounts.groupListsBy((account) => account.directoryKey ?? "");
+                  MapUtils.mergeGroupedListMaps(
+                      _accounts ?? <String, List<Auth2PublicAccount>>{},
+                      groupedNewAccounts);
+                }
               } else {
-                Map<String, List<Auth2PublicAccount>> groupedNewAccounts = accounts.groupListsBy((account) => account.directoryKey ?? "");
-                MapUtils.mergeGroupedListMaps(
-                    _accounts ?? <String, List<Auth2PublicAccount>>{},
-                    groupedNewAccounts);
+                _accounts = accounts.groupListsBy((account) => account.directoryKey ?? "");
               }
             }
-            else {
-              _accounts = accounts.groupListsBy((account) => account.directoryKey ?? "");
-            }
-
-            _canExtend = (accounts.length >= _pageLength);
-          }
-          _extending = false;
-          if(index != null)
-            _extendingTasks.remove(index);
-        });
+          });
+        }
       }
+
+    } catch(e){
+      Log.d("Extending error: $e");
+    } finally {
+      _extendingTasks.remove(taskKey);
+      taskCompleter.complete();
     }
   }
 
-  int get _accountsCount {
+  bool _isExtending(String? index) => _extendingTasks.containsKey(index ?? _globalExtendingKey) && _extendingTasks[index ?? _globalExtendingKey]?.isCompleted == false;
+
+  bool _canExtend(String? index) => ((index != null || index != _globalExtendingKey) && _getAccountsCount(index) == 0) || //Initial loading of the section //TBD fix, after first extend it's always true
+      _getAccountsCount(index) >= _pageLength;
+
+  int  _getAccountsCount(String? index) {
+    if(index != null && index != _globalExtendingKey)
+      return _accounts?[index]?.length ?? 0;
+    else { //Global
       int count = 0;
       _accounts?.forEach((key, value) => count += value.length);
       return count;
+    }
   }
+  bool get _expandAllSections => StringUtils.isNotEmpty(widget.searchText); //TBD replace with _isGlobalSectionMode when hooked to APIs
 
-  bool get _expandedSections => StringUtils.isNotEmpty(widget.searchText); //If we show all expanded sections then we load and extend all sections as one. Otherwise each section is extending by itself.
-
-  bool _isExtending(String? index) => (index != null && _extendingTasks[index] != null) || _extending;
+  bool get _isGlobalSectionMode => true; //StringUtils.isNotEmpty(widget.searchText); //If we have searchText we treat all sections as one and we load them together. Otherwise each section is extending by itself. TBD use when sections API is done until then treat as single section
 }
 
 extension _Auth2PublicAccountUtils on Auth2PublicAccount {

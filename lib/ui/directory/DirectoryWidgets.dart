@@ -1019,16 +1019,16 @@ class DirectoryFilter {
 }
 
 // DirectoryExpandableSection
-typedef DirectoryAccountsProvider = Function({String? index, int? offset, int limit});
+typedef DirectoryAccountsProvider = Function({String? index, int limit});
 class DirectoryExpandableSection extends StatefulWidget{
-  final bool expanded;
+  final bool initExpanded;
   final bool? extending;
   final String index;
   final List<Auth2PublicAccount>? accounts;
   final Widget Function(Auth2PublicAccount) itemBuilder;
   final DirectoryAccountsProvider? accountsExtender;
 
-  const DirectoryExpandableSection({super.key, required this.index, this.accounts, required this.itemBuilder, this.accountsExtender, this.expanded = false, this.extending = false});
+  const DirectoryExpandableSection({super.key, required this.index, this.accounts, required this.itemBuilder, this.accountsExtender, this.initExpanded = false, this.extending = false});
 
   @override
   State<StatefulWidget> createState() =>
@@ -1041,7 +1041,7 @@ class _DirectoryExpandableSectionState extends State<DirectoryExpandableSection>
 
   @override
   void initState() {
-    _expanded = widget.expanded;
+    _expanded = widget.initExpanded;
     super.initState();
   }
 
@@ -1089,7 +1089,7 @@ class _DirectoryExpandableSectionState extends State<DirectoryExpandableSection>
     key: _extendingKey,
     onVisibilityChanged: (info) {
       if(info.visibleBounds.isEmpty == false){
-        widget.accountsExtender?.call(index: widget.index, offset: /* TBD test widget.accounts?.length ??*/ 0);
+        widget.accountsExtender?.call(index: widget.index,);
       }
     },
     child: Container(color: Colors.transparent, height: 1)
