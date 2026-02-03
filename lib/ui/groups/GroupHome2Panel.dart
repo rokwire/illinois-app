@@ -50,6 +50,7 @@ enum _ContentActivity { reload, refresh, extend }
 class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsListener {
 
   GlobalKey _filtersButtonKey = GlobalKey();
+  GlobalKey _myGroupsFilterButtonKey = GlobalKey();
   Map<String, GlobalKey> _cardKeys = <String, GlobalKey>{};
   ScrollController _scrollController = ScrollController();
 
@@ -59,6 +60,10 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   bool? _lastPageLoadedAll;
   GroupsFilter? _filter;
   static const int _contentPageLength = 16;
+
+  GroupsFilter get _authValidFilter => _filter?.authValidated ?? GroupsFilter();
+  bool get _myGroupsSelected => (_authValidFilter.types?.containsAll(_myGroupsFilterTypes) == true);
+  static const Set<GroupsFilterType> _myGroupsFilterTypes = const <GroupsFilterType> { GroupsFilterType.admin, GroupsFilterType.member };
 
   @override
   void initState() {
@@ -121,17 +126,32 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   Widget get _commandButtonsBar => Row(children: [
     Padding(padding: EdgeInsets.only(left: 16)),
-    Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+    Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
       MergeSemantics(key: _filtersButtonKey, child:
         Semantics(/* TBD: value: _currentFilterParam.descriptionText, hint: _filtersButtonHint,*/ child:
           Event2FilterCommandButton(
             title: Localization().getStringEx('panel.group.home2.bar.button.filter.title', 'Filter'),
+            hint: Localization().getStringEx('panel.group.home2.bar.button.filter.hint', 'Tap to build filter'),
             leftIconKey: 'filters',
             rightIconKey: 'chevron-right',
             onTap: _onFilter,
-          )
-        )
+          ),
+        ),
       ),
+      if (Auth2().isLoggedIn)
+        MergeSemantics(key: _myGroupsFilterButtonKey, child:
+          Semantics(/* TBD: value: _currentFilterParam.descriptionText, hint: _filtersButtonHint,*/ child:
+            Event2FilterCommandButton(
+              title: Localization().getStringEx('panel.group.home2.bar.button.my_groups.title', 'My Groups'),
+              hint: Localization().getStringEx('panel.group.home2.bar.button.my_groups.hint', 'Tap to toggle my groups filter'),
+              titleTextStyleKey: 'widget.button.title.medium',
+              leftIconKey: 'groups',
+              toggled: _myGroupsSelected,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+              onTap: _onMyGroups,
+            ),
+          ),
+        ),
     ])),
     Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, crossAxisAlignment: WrapCrossAlignment.center, verticalDirection: VerticalDirection.up, children: [
       Visibility(visible: Auth2().isOidcLoggedIn, child:
@@ -457,8 +477,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   void _onFilter() {
     Analytics().logSelect(target: 'Filter');
-    GroupsFilter filter = _filter?.authValidated ?? GroupsFilter();
-    filter.edit(context).then((GroupsFilter? filter){
+    _authValidFilter.edit(context).then((GroupsFilter? filter){
       if ((filter != null) && mounted) {
         setState(() {
           _filter = filter;
@@ -469,6 +488,30 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
         );
       }
     });
+  }
+
+
+  void _onMyGroups() {
+    Analytics().logSelect(target: 'My Groups');
+    Set<GroupsFilterType>? currentTypes = _filter?.types;
+    GroupsFilter filter = GroupsFilter(
+      types: ((currentTypes != null) && currentTypes.containsAll(_myGroupsFilterTypes)) ?
+        currentTypes.difference(_myGroupsFilterTypes) : (currentTypes?.union(_myGroupsFilterTypes) ?? Set.from(_myGroupsFilterTypes)),
+      attributes: _filter?.attributes
+    );
+
+    if (_filter != filter) {
+      setState(() {
+        _filter = filter;
+      });
+
+      _reloadContent().then((_) =>
+        AppSemantics.triggerAccessibilityFocus(_myGroupsFilterButtonKey, delay: Duration(seconds: 1))
+      );
+    }
+
+
+
   }
 
   void _onSearch() {

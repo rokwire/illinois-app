@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - About the App text updates [#5730](https://github.com/rokwire/illinois-app/issues/5730).
 ### Added
 - Added Academic Links [#5729](https://github.com/rokwire/illinois-app/issues/5729).
-
+- Added "My Groups" filter button in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
 
 ## [7.3.50] - 2026-02-12
 ### Changed
