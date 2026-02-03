@@ -5,14 +5,18 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+
 
 class GroupDetailMessagesTab extends StatefulWidget {
 
@@ -184,18 +188,7 @@ class _GroupConversationCard extends StatelessWidget {
   static const double _vertPadding = 8;
 }
 
-class _GroupConversationAvtarWidget extends StatefulWidget {
-  final List<ConversationMember>? participants;
-
-  _GroupConversationAvtarWidget(this.participants);
-
-  int get participantsCount => participants?.length ?? 0;
-
-  @override
-  State<StatefulWidget> createState() => _GroupConversationAvtarWidgetState();
-}
-
-class _GroupConversationAvtarWidgetState extends State<_GroupConversationAvtarWidget> {
+class _GroupConversationAvtarWidget extends StatelessWidget {
   static const double _widgetSize = 48;
 
   static const double _avtarSize = _widgetSize / 2 - 1;
@@ -204,8 +197,20 @@ class _GroupConversationAvtarWidgetState extends State<_GroupConversationAvtarWi
   static const double _avtar2Size = _avtarSize * 2 / 3;
   static const double _avtar2Offset = _avtarOffset + 1;
 
+  final List<ConversationMember>? participants;
+
+  _GroupConversationAvtarWidget(this.participants);
+
+  //String _photoImageToken = DirectoryProfilePhotoUtils.newToken;
+  Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
+
+  int get _participantsCount => participants?.length ?? 0;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+    Container(width: _widgetSize, height: _widgetSize, decoration: _avtarDecoration, child: _participantsIcon);
+
+  /*Widget build(BuildContext context) {
     return Container(width: _widgetSize, height: _widgetSize, decoration: _avtarDecoration, child:
       Stack(children: [
         Positioned.fill(child:
@@ -230,20 +235,89 @@ class _GroupConversationAvtarWidgetState extends State<_GroupConversationAvtarWi
           )
         ),
       ],)
-      //Center(child:_membersIcon ?? Container())
     );
-  }
+  }*/
 
-  Widget? get _membersIcon {
-    if (widget.participantsCount > 1) {
-      return Styles().images.getImage('messages-group-dark-blue', size: _widgetSize / 2 );
-    }
-    else if (widget.participantsCount == 1) {
-      return Styles().images.getImage('person-circle-dark-blue', size: _widgetSize / 2);
-    }
-    else {
+  Widget? get _participantsIcon {
+    if (_participantsCount > 1) {
+      return _multipleParticipantsIcon;
+    } else if (_participantsCount == 1) {
+      return _singleParticipantIcon;
+    } else {
       return null;
     }
+  }
+
+  Widget get _singleParticipantIcon =>
+    DirectoryProfilePhoto(
+      photoUrl: Content().getUserPhotoUrl(
+        type: UserProfileImageType.medium,
+        accountId: participants?.firstOrNull?.accountId,
+        //params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken),
+      ),
+      photoSize: _widgetSize,
+      photoUrlHeaders: _photoAuthHeaders,
+    );
+
+  Widget get _multipleParticipantsIcon {
+    ConversationMember? participant1 = ListUtils.entry(participants, 0);
+    ConversationMember? participant2 = ListUtils.entry(participants, 1);
+    ConversationMember? participant3 = ListUtils.entry(participants, 2);
+
+    return Stack(children: [
+
+      if (participant1 != null)
+        Positioned.fill(child:
+          Align(alignment: Alignment.topLeft, child:
+            Padding(padding: EdgeInsets.only(left: _avtarOffset, top: _avtarOffset,), child:
+              DirectoryProfilePhoto(
+                photoUrl: Content().getUserPhotoUrl(
+                  type: UserProfileImageType.small,
+                  accountId: participant1.accountId,
+                  //params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken),
+                ),
+                photoSize: _avtarSize,
+                photoUrlHeaders: _photoAuthHeaders,
+              ),
+            )
+          )
+        ),
+
+      if (participant2 != null)
+        Positioned.fill(child:
+          Align(alignment: Alignment.bottomRight, child:
+            Padding(padding: EdgeInsets.only(right: _avtarOffset, bottom: _avtarOffset,), child:
+              DirectoryProfilePhoto(
+                photoUrl: Content().getUserPhotoUrl(
+                  type: UserProfileImageType.small,
+                  accountId: participant2.accountId,
+                  //params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken),
+                ),
+                photoSize: _avtarSize,
+                photoUrlHeaders: _photoAuthHeaders,
+              ),
+            )
+          )
+        ),
+
+      if (participant3 != null)
+        Positioned.fill(child:
+          Align(alignment: Alignment.bottomLeft, child:
+            Padding(padding: EdgeInsets.only(left: _avtar2Offset, bottom: _avtar2Offset,), child:
+              //Container(width: _avtar2Size, height: _avtar2Size, decoration: _participantDecoration(Colors.greenAccent)),
+              DirectoryProfilePhoto(
+                photoUrl: Content().getUserPhotoUrl(
+                  type: UserProfileImageType.small,
+                  accountId: participant3.accountId,
+                  //params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken),
+                ),
+                photoSize: _avtar2Size,
+                photoUrlHeaders: _photoAuthHeaders,
+              ),
+            )
+          )
+        ),
+    ],);
   }
 
   BoxDecoration get _avtarDecoration => BoxDecoration(
@@ -251,10 +325,5 @@ class _GroupConversationAvtarWidgetState extends State<_GroupConversationAvtarWi
     shape: BoxShape.circle,
     border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
   );
-
-  BoxDecoration _participantDecoration(Color color) => BoxDecoration(
-    color: color, shape: BoxShape.circle,
-  );
-
 
 }
