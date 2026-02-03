@@ -5,11 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [8.0.1] - 2026-02-03
+### Fixed
+- Handle & report errors from Share Email/SMS plugins in Profile info [#5700](https://github.com/rokwire/illinois-app/issues/5700).
+- Adding attendance takers to an event [#5705](https://github.com/rokwire/illinois-app/issues/5705).
+### Added
+- Added "My Groups" filter button in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
+
 ## [8.0.0] - 2026-01-29
 ### Fixed
 - Color issues in To-Do items [#5699](https://github.com/rokwire/illinois-app/issues/5699).
 ### Changed
-- Reworked refresh token processing in Auth2, added extended Crashlytics logs [#5405]
+- Reworked refresh token processing in Auth2, added extended Crashlytics logs [#5405](https://github.com/rokwire/illinois-app/issues/5405).
 
 ## [7.3.48] - 2026-01-26
 ### Changed

@@ -36,6 +36,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class Event2FilterCommandButton extends StatelessWidget {
   final String? title;
+  final String? label;
   final String? hint;
   final String  titleTextStyleKey;
 
@@ -48,20 +49,25 @@ class Event2FilterCommandButton extends StatelessWidget {
   final EdgeInsetsGeometry contentPadding;
   final Decoration? contentDecoration;
 
+  final bool toggled;
+  final Color? borderColor;
   final void Function()? onTap;
 
   Event2FilterCommandButton({Key? key,
-    this.title, this.hint,
+    this.title, this.label, this.hint,
     this.titleTextStyleKey = 'widget.button.title.regular',
+
     this.leftIconKey,
     this.leftIconPadding = const EdgeInsets.only(right: 6),
     
     this.rightIconKey,
     this.rightIconPadding = const EdgeInsets.only(left: 3),
 
-    this.contentPadding = const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+    this.contentPadding = const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
     this.contentDecoration,
 
+    this.toggled = false,
+    this.borderColor,
     this.onTap,
   }) : super(key: key);
 
@@ -78,7 +84,7 @@ class Event2FilterCommandButton extends StatelessWidget {
 
     if (StringUtils.isNotEmpty(title)) {
       contentList.add(
-        Text(title ?? '', style: Styles().textStyles.getTextStyle(titleTextStyleKey), semanticsLabel: "",)
+        Text(title ?? '', style: _titleTextStyle, semanticsLabel: "",)
       );
     }
 
@@ -89,7 +95,7 @@ class Event2FilterCommandButton extends StatelessWidget {
       );
     }
 
-    return Semantics(label: title, hint: hint, button: true, child:
+    return Semantics(label: label ?? title, hint: hint, button: true, child:
       InkWell(onTap: onTap, child: 
         Container(decoration: contentDecoration ?? defaultContentDecoration, child:
           Padding(padding: contentPadding, child:
@@ -101,12 +107,20 @@ class Event2FilterCommandButton extends StatelessWidget {
     );
   }
 
-  static BoxDecoration get defaultContentDecoration => BoxDecoration(
-    color: Styles().colors.white,
-    border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
+  BoxDecoration get defaultContentDecoration => BoxDecoration(
+    color: defaultBackColor,
+    border: Border.all(color: defaultBorderColor, width: 1),
     borderRadius: BorderRadius.circular(16),
   );
 
+  Color get defaultBorderColor =>
+    borderColor ?? Styles().colors.disabledTextColor;
+
+  Color? get defaultBackColor => toggled ?
+    Styles().colors.fillColorPrimary : Styles().colors.surface;
+
+  TextStyle? get _titleTextStyle => toggled ?
+    Styles().textStyles.getTextStyleEx(titleTextStyleKey, color: Styles().colors.textColorPrimary) : Styles().textStyles.getTextStyle(titleTextStyleKey);
 }
 
 //

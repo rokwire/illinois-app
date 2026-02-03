@@ -373,7 +373,13 @@ class _ProfileBusinessCardWidgetState extends State<ProfileBusinessCardWidget> {
           isHTML: false,
         );
 
-        FlutterEmailSender.send(email);
+        FlutterEmailSender.send(email).catchError((e) {
+          if (mounted) {
+            String? exceptionMessage = (e is PlatformException) ? e.message : null;
+            String message = ((exceptionMessage != null) && exceptionMessage.isNotEmpty) ? exceptionMessage : Localization().getStringEx('panel.profile.info.share.command.button.share.email.failed', 'Failed to share via Email');
+            AppAlert.showTextMessage(context, message);
+          }
+        });
       }
     }
   }
@@ -402,14 +408,20 @@ class _ProfileBusinessCardWidgetState extends State<ProfileBusinessCardWidget> {
           launchUrl(emailLaunchUri, mode: LaunchMode.externalNonBrowserApplication);
         } catch (e) {
           print('Failed to sms client. Reason: ${e.toString()}');
-          AppAlert.showDialogResult(context, 'Failed to Share via Text Message');
+          AppAlert.showDialogResult(context, Localization().getStringEx('panel.profile.info.share.command.button.share.message.failed', 'Failed to share via Text Message'));
         }
       } else {
         SmsMms.send(
           recipients: [],
           message: smsBody,
           filePath: imagePath,
-        );
+        ).catchError((e){
+          if (mounted) {
+            String? exceptionMessage = (e is PlatformException) ? e.message : null;
+            String message = ((exceptionMessage != null) && exceptionMessage.isNotEmpty) ? exceptionMessage : Localization().getStringEx('panel.profile.info.share.command.button.share.message.failed', 'Failed to share via Text Message');
+            AppAlert.showTextMessage(context, message);
+          }
+        });
       }
     }
   }
