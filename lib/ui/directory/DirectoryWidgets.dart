@@ -221,7 +221,7 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
       )
     );
 
-  String? get _photoUrl => StringUtils.isNotEmpty(widget.account.profile?.photoUrl) ?
+  String? get _photoUrl => StringUtils.isNotEmpty(widget.account.profile?.photoUrl) /* TMP || true */ ?
     Content().getUserPhotoUrl(type: UserProfileImageType.medium, accountId: widget.account.id, params: DirectoryProfilePhotoUtils.tokenUrlParam(widget.photoImageToken)) : null;
 
   double get _photoImageSize => MediaQuery.of(context).size.width / 3.60;
@@ -555,8 +555,20 @@ class _DirectoryProfilePhotoState extends State<DirectoryProfilePhoto> {
   Uint8List? _photoBytes;
   bool _loadingNetworkPhoto = false;
 
-  double get _progressSizeWidth => (32 < widget.imageSize) ? (widget.imageSize / 5) : (widget.imageSize / 2.5);
-  double get _progressStrokeWidth => (32 < widget.imageSize) ? 2 : 1;
+  static const double _maxProgressSize = 24;
+  static const double _maxProgressImageSize = 120;
+  static const double _minProgressSize = 10;
+  static const double _minProgressImageSize = 20;
+  double get _progressSize {
+    if (_maxProgressImageSize <= widget.imageSize) {
+      return _maxProgressSize;
+    } else if (widget.imageSize <= _minProgressImageSize) {
+      return _minProgressSize;
+    } else {
+      return _minProgressSize + (widget.imageSize - _minProgressImageSize) / (_maxProgressImageSize - _minProgressImageSize) * (_maxProgressSize - _minProgressSize);
+    }
+  }
+  double get _progressStrokeWidth => _progressSize / 12;
 
   @override
   void initState() {
@@ -586,7 +598,7 @@ class _DirectoryProfilePhotoState extends State<DirectoryProfilePhoto> {
                 image: DecorationImage(fit: BoxFit.cover, image: decorationImage),
               )
             ) :
-            SizedBox.square(dimension: _progressSizeWidth, child:
+            SizedBox.square(dimension: _progressSize, child:
               CircularProgressIndicator(strokeWidth: _progressStrokeWidth, color: Styles().colors.fillColorSecondary,)
             )
           ),

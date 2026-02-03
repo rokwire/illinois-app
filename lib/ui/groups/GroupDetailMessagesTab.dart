@@ -191,11 +191,11 @@ class _GroupConversationCard extends StatelessWidget {
 class _GroupConversationAvtarWidget extends StatelessWidget {
   static const double _widgetSize = 48;
 
-  static const double _avtarSize = _widgetSize / 2 - 1;
-  static const double _avtarOffset = _avtarSize * (sqrt2 - 1) / (2 * sqrt2);
+  static const double _avtarSize = _widgetSize / 2;
+  static const double _avtarOffset = _avtarSize * (sqrt2 - 1) / (2 * sqrt2) - 1;
 
   static const double _avtar2Size = _avtarSize * 2 / 3;
-  static const double _avtar2Offset = _avtarOffset + 1;
+  static const double _avtar2Offset = _avtarOffset + 1.5;
 
   final List<ConversationMember>? participants;
 
