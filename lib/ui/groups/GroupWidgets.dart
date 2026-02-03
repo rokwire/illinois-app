@@ -3020,7 +3020,7 @@ class _GroupMemberProfileInfoState extends State<GroupMemberProfileInfoWidget> {
   Widget get _buildProfileImage =>
       DirectoryProfilePhoto(
         photoUrl:  Content().getUserPhotoUrl(type: UserProfileImageType.medium, accountId: widget.userId, params: DirectoryProfilePhotoUtils.tokenUrlParam(photoImageToken)),
-        imageSize: _photoImageSize,
+        photoSize: _photoImageSize,
         photoUrlHeaders: _photoAuthHeaders,
       );
 
