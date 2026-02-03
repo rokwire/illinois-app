@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Handle & report errors from Share Email/SMS plugins in Profile info [#5700](https://github.com/rokwire/illinois-app/issues/5700).
 - Adding attendance takers to an event [#5705](https://github.com/rokwire/illinois-app/issues/5705).
+### Added
+- Added "My Groups" filter button in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
 
 ## [8.0.0] - 2026-01-29
 ### Fixed
