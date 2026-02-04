@@ -620,6 +620,7 @@
     "panel.athletics_news_article.message.share.failed.text": "Failed to share article.",
     "panel.athletics_news_article.message.share.unable.text": "Unable to share article.",
     "panel.athletics_news_article.message.share.unavailable.text": "Share not available.",
+    "panel.athletics_news_article.message.share.reason.format": "Reason: {{reason}}",
 
     "panel.athletics_roster_list.header.title": "Lista",
     "panel.athletics_roster_list.button.by_name.title": "Por nombre",
@@ -2986,6 +2987,7 @@
     "panel.qr_code.alert.share.failed.msg": "Failed to share QR code.",
     "panel.qr_code.alert.share.unable.msg": "Unable to share QR code.",
     "panel.qr_code.alert.share.unavailable.msg": "Share not available.",
+    "panel.qr_code.alert.share.reason.fmt": "Reason: {{reason}}",
     "panel.qr_code.alert.share.target.qr": "QR code",
     "panel.qr_code.alert.share.target.vcard": "Digital Business Card",
     "panel.qr_code.code.hint": "Imagen del código QR",

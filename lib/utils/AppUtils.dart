@@ -81,8 +81,8 @@ class AppAlert {
   static Future<void> showOfflineMessage(BuildContext context, String? message) async =>
     showTextMessage(context, Localization().getStringEx("common.message.offline", "You appear to be offline"));
 
-  static Future<void> showTextMessage(BuildContext context, String? message) =>
-    showWidgetMessage(context, Text(message!, textAlign: TextAlign.center,), analyticsMessage: message);
+  static Future<void> showTextMessage(BuildContext context, String message) =>
+    showWidgetMessage(context, Text(message, textAlign: TextAlign.center,), analyticsMessage: message);
 
   static Future<void> showAuthenticationNAMessage(BuildContext context) async {
     final String linkSettingsMacro = "{{link.settings}}";

@@ -201,7 +201,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
 
   Future<void> _onShareArticle() async {
     Analytics().logSelect(target: "Share Article");
-    String? message;
+    String? message, reason;
     if (_articleUri?.isValid == true) {
       try {
         ShareResult result = await SharePlus.instance.share(ShareParams(uri: _articleUri!));
@@ -210,7 +210,10 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
         }
       }
       catch (e) {
+        final String reasonMacro = '{{reason}}';
         message = Localization().getStringEx('panel.athletics_news_article.message.share.failed.text', 'Failed to share article.');
+        reason = Localization().getStringEx('panel.athletics_news_article.message.share.reason.format', 'Reason: $reasonMacro').
+          replaceAll(reasonMacro, e.toString());
       }
     }
     else {
@@ -218,7 +221,13 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
     }
 
     if (mounted && (message != null)) {
-      AppAlert.showTextMessage(context, message);
+      Widget messageText = (reason != null) ? Column(mainAxisSize: MainAxisSize.min, children: [
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.message.large'),),
+        Padding(padding: EdgeInsets.only(top: 24), child:
+          Text(reason, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle('widget.message.medium.thin'),),
+        ),
+      ],) : Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.message.medium.thin'),);
+      AppAlert.showWidgetMessage(context, messageText, buttonTextStyle: Styles().textStyles.getTextStyle('widget.message.medium.thin'));
     }
   }
 
