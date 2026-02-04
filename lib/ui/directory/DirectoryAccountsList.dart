@@ -33,15 +33,15 @@ class DirectoryAccountsList extends StatefulWidget {
 }
 
 class DirectoryAccountsListState extends State<DirectoryAccountsList> with NotificationsListener, AutomaticKeepAliveClientMixin<DirectoryAccountsList>  {
-  static const int _pageLength = 12;//32;
+  static const int _pageLength = 12;//32; //TBD test
   static const String _globalExtendingKey = 'global';
 
   Map<String, List<Auth2PublicAccount>>? _accounts;
   bool _loading = false;
   bool _loadingProgress = false;
 
+  Map<String, int> _previousExtendingLengths = <String, int>{};
   Map<String, Completer<void>> _extendingTasks = <String, Completer<void>>{};
-  Future<void>? _extensionPipeline;
 
   String? _expandedAccountId;
 
@@ -229,48 +229,40 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
       return;
 
     Completer<void> taskCompleter = Completer<void>();
-    Future<void>? previousTask = _extensionPipeline;
-    _extensionPipeline = taskCompleter.future;
-
-    if (previousTask != null)
-      await previousTask;
-
     try{
       Log.d("DirectoryAccountsListState._extend() index: $index");
-      int offset = _getAccountsCount(index);
-      if (!_loading) {
-        setStateIfMounted(() {
-          _extendingTasks[taskKey] = taskCompleter;
-        });
+      setStateIfMounted(() {
+        _extendingTasks[taskKey] = taskCompleter;
+      });
 
-        List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
-            index: index,
-            search: StringUtils.ensureEmpty(widget.searchText),
-            attriutes: widget.filterAttributes,
-            offset: offset,
-            limit: limit
-        );
+      List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+          index: index,
+          search: StringUtils.ensureEmpty(widget.searchText),
+          attriutes: widget.filterAttributes,
+          offset: _getAccountsCount(index),
+          limit: limit
+      );
 
-        if (mounted && !_loading) {
-          setState(() {
-            if (accounts != null) {
-              if (_accounts != null) {
-                if(index != null){ //We load for single section
-                  (_accounts?[index] ??= <Auth2PublicAccount>[])?.addAll(accounts);
-                } else { //We load Globally
-                  Map<String, List<Auth2PublicAccount>> groupedNewAccounts = accounts.groupListsBy((account) => account.directoryKey ?? "");
-                  MapUtils.mergeGroupedListMaps(
-                      _accounts ?? <String, List<Auth2PublicAccount>>{},
-                      groupedNewAccounts);
-                }
-              } else {
-                _accounts = accounts.groupListsBy((account) => account.directoryKey ?? "");
+      _previousExtendingLengths[taskKey] = accounts?.length ?? 0;
+
+      if (mounted && !_loading) {
+        setState(() {
+          if (accounts != null) {
+            if (_accounts != null) {
+              if(index != null){ //We load for single section
+                (_accounts?[index] ??= <Auth2PublicAccount>[])?.addAll(accounts);
+              } else { //We load Globally
+                Map<String, List<Auth2PublicAccount>> groupedNewAccounts = accounts.groupListsBy((account) => account.directoryKey ?? "");
+                mergeGroupedListMaps(
+                    _accounts ?? <String, List<Auth2PublicAccount>>{},
+                    groupedNewAccounts);
               }
+            } else {
+              _accounts = accounts.groupListsBy((account) => account.directoryKey ?? "");
             }
-          });
-        }
+          }
+        });
       }
-
     } catch(e){
       Log.d("Extending error: $e");
     } finally {
