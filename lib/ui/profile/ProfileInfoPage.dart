@@ -64,6 +64,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
   bool _editing = false;
   bool _updatingDirectoryVisibility = false;
   bool _preparingDeleteAccount = false;
+  bool _signingOut = false;
 
   bool get _showProfileCommands => (widget.onboarding == false);
   bool get _showAccountCommands => (widget.onboarding == false);
@@ -353,20 +354,39 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
     ],),
   );
 
-  Widget get _signOutButton => LinkButton(
-    title: Localization().getStringEx('panel.profile.info.command.link.sign_out.text', 'Sign Out'),
-    textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
-    padding: EdgeInsets.only(top: 16, bottom: 8, left: 16, right: 16),
-    onTap: _onSignOut,
-  );
+  Widget get _signOutButton => Stack(children: [
+    LinkButton(
+      title: Localization().getStringEx('panel.profile.info.command.link.sign_out.text', 'Sign Out'),
+      textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.underline'),
+      padding: EdgeInsets.only(top: 16, bottom: 8, left: 16, right: 16),
+      onTap: _onSignOut,
+    ),
+    if (_signingOut)
+      Positioned.fill(child:
+        Center(child:
+          SizedBox(width: 14, height: 14, child:
+            DirectoryProgressWidget()
+          )
+        )
+      )
+  ],);
 
   void _onSignOut() {
     Analytics().logSelect(target: 'Sign Out');
-    showDialog<bool?>(context: context, builder: (context) => ProfilePromptLogoutWidget()).then((bool? result) {
-      if (result == true) {
-        Auth2().logout();
-      }
-    });
+    if (_signingOut != true) {
+      showDialog<bool?>(context: context, builder: (context) => ProfilePromptLogoutWidget()).then((bool? result) {
+        if (result == true) {
+          setState(() {
+            _signingOut = true;
+          });
+          Auth2().logout().then((_){
+            setStateIfMounted(() {
+              _signingOut = false;
+            });
+          });
+        }
+      });
+    }
   }
 
   Widget get _viewStoredDataButton =>

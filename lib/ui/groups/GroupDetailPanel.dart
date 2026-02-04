@@ -2133,6 +2133,12 @@ class _GroupPollsState extends State<_GroupPollsContent> with NotificationsListe
   }
 
   @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
   bool get wantKeepAlive => true;
 
   Widget build(BuildContext context) {
@@ -2281,6 +2287,12 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with Notification
     _initUpdateListener();
     _loadInitialMessages();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   @override
@@ -2515,6 +2527,12 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
     _initUpdateListener();
     _loadInitialScheduledPosts();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   @override
