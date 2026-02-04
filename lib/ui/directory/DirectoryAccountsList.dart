@@ -59,7 +59,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
     widget.scrollController?.addListener(_scrollListener);
 
-    _load();
+    _isGlobalSectionMode ? _loadIndexes() : _loadAccounts();
     super.initState();
   }
 
@@ -195,8 +195,17 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     }
   }
 
-  Future<void> _load({ int limit = _pageLength, bool silent = false }) async {
-    //TBD handle Global and Single sections loading
+  Future<void> _loadIndexes({ bool silent = false }) async {
+    if(!_loading){
+       setState(() {
+          _loading = true;
+          _loadingProgress = !silent;
+       });
+    }
+    //TBD load only indexes when API is done
+  }
+
+  Future<void> _loadAccounts({ int limit = _pageLength, bool silent = false }) async {
     if (!_loading) {
       setStateIfMounted(() {
         _loading = true;
@@ -209,6 +218,8 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
         limit: limit,
       );
 
+      _previousExtendingLengths[_globalExtendingKey] = accounts?.length ?? 0;
+
       setStateIfMounted(() {
         _loading = false;
         _loadingProgress = false;
@@ -219,8 +230,10 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     }
   }
 
-  Future<void> refresh() =>
-    _load(limit: max(_getAccountsCount(_globalExtendingKey), _pageLength), silent: true);
+  Future<void> refresh() async {//Disable refresh for now. Implement it if requested
+    // return _loadAccounts(limit: max(_getAccountsCount(_globalExtendingKey), _pageLength), silent: true);
+  }
+
 
   Future<void> _extend({String? index, int limit = _pageLength}) async {
     String taskKey = index ?? _globalExtendingKey;
@@ -271,10 +284,11 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
     }
   }
 
-  bool _isExtending(String? index) => _extendingTasks.containsKey(index ?? _globalExtendingKey) && _extendingTasks[index ?? _globalExtendingKey]?.isCompleted == false;
+  bool _isExtending(String? extendingKey) => _extendingTasks.containsKey(extendingKey ?? _globalExtendingKey) &&
+      _extendingTasks[extendingKey ?? _globalExtendingKey]?.isCompleted == false;
 
-  bool _canExtend(String? index) => ((index != null || index != _globalExtendingKey) && _getAccountsCount(index) == 0) || //Initial loading of the section //TBD fix, after first extend it's always true
-      _getAccountsCount(index) >= _pageLength;
+  bool _canExtend(String? extendingKey) => _previousExtendingLengths.containsKey(extendingKey) == false || //First time loading
+      (_previousExtendingLengths[extendingKey] ?? 0) >= _pageLength; //Reached the limit when extending
 
   int  _getAccountsCount(String? index) {
     if(index != null && index != _globalExtendingKey)
@@ -288,6 +302,15 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   bool get _expandAllSections => StringUtils.isNotEmpty(widget.searchText); //TBD replace with _isGlobalSectionMode when hooked to APIs
 
   bool get _isGlobalSectionMode => true; //StringUtils.isNotEmpty(widget.searchText); //If we have searchText we treat all sections as one and we load them together. Otherwise each section is extending by itself. TBD use when sections API is done until then treat as single section
+
+  /// Merges grouped  [newMap] into an [existingMap].
+  static void mergeGroupedListMaps<K, V>(Map<K, List<V>> existingMap, Map<K, List<V>> newMap) {
+    newMap.forEach((key, newList) {
+      // If the key already exists, add the new items to the existing list.
+      // Otherwise, create a new entry with the new list.
+      (existingMap[key] ??= <V>[]).addAll(newList);
+    });
+  }
 }
 
 extension _Auth2PublicAccountUtils on Auth2PublicAccount {
