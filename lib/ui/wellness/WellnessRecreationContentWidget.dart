@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
@@ -16,9 +16,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-import '../../service/Wellness.dart';
 
 class WellnessRecreationContentWidget extends StatefulWidget{
   static const String wellnessCategoryKey = 'recreation';
@@ -195,19 +192,7 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
     );
 
     String? url = JsonUtils.stringValue(command['url']);
-    if (StringUtils.isNotEmpty(url)) {
-      if (DeepLink().isAppUrl(url)) {
-        DeepLink().launchUrl(url);
-      } else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri,
-              mode: DeepLink().isAppUrl(url) ?
-                LaunchMode.platformDefault :
-                LaunchMode.externalApplication);
-        }
-      }
-    }
+    AppLaunchUrl.launchExternal(url: url);
   }
 
   void _initContent() async {

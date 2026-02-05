@@ -1,5 +1,6 @@
 
 import 'package:universal_io/io.dart';
+import 'dart:typed_data';
 
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/foundation.dart';
@@ -17,7 +18,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class WalletLibraryCardPage extends StatefulWidget {
   final double topOffset;
@@ -85,10 +85,7 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
         DeepLink().launchUrl(url);
       }
       else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
-        }
+        AppLaunchUrl.launchExternal(url: url);
       }
     }
   }

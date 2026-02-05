@@ -914,8 +914,7 @@ class _BrowseEntry extends StatelessWidget {
         DeepLink().launchUrl(url);
       }
       else {
-        bool tryInternal = launchInternal && UrlUtils.canLaunchInternal(url);
-        AppLaunchUrl.launch(context: context, url: url, tryInternal: tryInternal);
+        AppLaunchUrl.launch(context: context, url: url, tryInternal: launchInternal);
       }
     }
   }

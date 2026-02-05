@@ -20,7 +20,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomeCustomizeFavoritesPanel extends StatefulWidget {
 
@@ -380,14 +379,8 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
     }
   }
 
-  void _onTapHtmlLink(String? url) {
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri);
-      }
-    }
-  }
+  void _onTapHtmlLink(String? url) =>
+    AppLaunchUrl.launchExternal(url: url);
 
   void _onTapUnstarAll(List<String>? favorites) {
     Analytics().logSelect(source: 'Customize', target: 'Unstar All');

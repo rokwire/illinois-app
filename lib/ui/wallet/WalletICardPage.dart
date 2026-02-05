@@ -33,7 +33,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 //////////////////////////
 // WalletICardPage
@@ -251,10 +250,7 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
         DeepLink().launchUrl(url);
       }
       else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
-        }
+        AppLaunchUrl.launchExternal(url: url);
       }
     }
   }

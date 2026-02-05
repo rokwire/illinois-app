@@ -18,7 +18,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomeToutWidget extends StatefulWidget {
   final String? favoriteId;
@@ -282,11 +281,11 @@ class _InfoDialog extends StatelessWidget {
   void _onTapLink(BuildContext context, String? url) {
     Analytics().logAlert(text: "Info", selection: "Student Self Service");
     if (StringUtils.isNotEmpty(url)) {
-      Navigator.pop(context);
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri);
-      }
+      AppLaunchUrl.launchExternal(url: url).then((bool? result){
+        if ((result == true) && context.mounted) {
+          Navigator.pop(context);
+        }
+      });
     }
   }
 

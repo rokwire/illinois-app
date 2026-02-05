@@ -15,12 +15,12 @@
  */
 
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
-import 'package:universal_io/io.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -30,9 +30,6 @@ import 'package:illinois/model/sport/Coach.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
-
-import 'package:url_launcher/url_launcher.dart';
-
 
 class AthleticsCoachDetailPanel extends StatefulWidget {
 
@@ -98,14 +95,8 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
     );
   }
 
-  void _launchUrl(String? url) {
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
-      }
-    }
-  }
+  void _launchUrl(String? url) =>
+    AppLaunchUrl.launchExternal(url: url);
 }
 
 class _CoachDetailHeading extends StatelessWidget{

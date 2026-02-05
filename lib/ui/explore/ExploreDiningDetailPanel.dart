@@ -636,10 +636,10 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
     }
     bool? appLaunched = await RokwirePlugin.launchApp({"deep_link": deepLink});
     if (appLaunched != true) {
-      String storeUrl = orderOnlineDetails!['store_url'];
-      Uri? storeUri = Uri.tryParse(storeUrl);
+      String? storeUrl = orderOnlineDetails?['store_url'];
+      Uri? storeUri = (storeUrl != null) ? Uri.tryParse(storeUrl) : null;
       if (storeUri != null) {
-        url_launcher.launchUrl(storeUri);
+        url_launcher.launchUrl(storeUri, mode: url_launcher.LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
       }
     }
   }
@@ -684,18 +684,13 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
     url = url.replaceAll('{{body}}', Uri.encodeComponent(body));
     Uri? uri = Uri.tryParse(url);
     if (uri != null) {
-      url_launcher.launchUrl(uri);
+      url_launcher.launchUrl(uri, mode: url_launcher.LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
     }
   }
 
   void _launchUrl(String? url, String analyticsName) {
     if (StringUtils.isNotEmpty(url)) {
-      AppLaunchUrl.launch(
-          context: context,
-          url: url,
-          tryInternal: UrlUtils.canLaunchInternal(url),
-          analyticsName: analyticsName,
-          analyticsSource: widget.dining.analyticsAttributes);
+      AppLaunchUrl.launch(context: context, url: url, analyticsName: analyticsName, analyticsSource: widget.dining.analyticsAttributes);
     }
   }
 }

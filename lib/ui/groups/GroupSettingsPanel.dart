@@ -15,7 +15,6 @@
  */
 
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
-import 'package:universal_io/io.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -450,7 +449,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           _linkController.text = fixedUri.toString();
           uri = fixedUri;
         }
-        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+        launchUrl(uri, mode: LaunchMode.platformDefault).catchError((e) { debugPrint(e.toString()); return false; });
       }
     }
   }

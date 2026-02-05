@@ -2,8 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:illinois/utils/AppUtils.dart';
 
 // Copied from https://pub.dev/packages/link_text
 
@@ -130,16 +129,9 @@ class _LinkTextExState extends State<LinkTextEx> {
     void Function(String)? onLinkTap = widget.onLinkTap;
     if (onLinkTap != null) {
       onLinkTap(url);
-      return;
     }
-
-
-    Uri? uri = Uri.parse(url).fix(scheme: 'https');
-
-    if (uri != null && await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      debugPrint('Could not launch $uri');
+    else {
+      AppLaunchUrl.launchExternal(url: url);
     }
   }
 }

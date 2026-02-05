@@ -193,7 +193,12 @@ class WellnessToDoCategory {
   }
 
   Color get color {
-    return UiColors.fromHex(colorHex) ?? Styles().colors.fillColorPrimary;
+    Color? color;
+    // Handle already created categories with transparent color - transparent color is not a valid color.
+    if ((colorHex != null) && (colorHex != '#00000000')) {
+      color = UiColors.fromHex(colorHex);
+    }
+    return color ?? Styles().colors.fillColorPrimary;
   }
 
   static List<WellnessToDoCategory>? listFromJson(List<dynamic>? jsonList) {

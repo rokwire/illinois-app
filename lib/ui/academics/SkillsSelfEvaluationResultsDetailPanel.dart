@@ -233,8 +233,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
   void _onTapLink(BuildContext context, SkillsSelfEvaluationLink link) {
     switch (link.type) {
       case "web":
-        bool tryInternal = link.internal && UrlUtils.canLaunchInternal(link.url);
-        AppLaunchUrl.launch(context: context, url: link.url, tryInternal: tryInternal);
+        AppLaunchUrl.launch(context: context, url: link.url, tryInternal: link.internal);
         break;
       case "app_panel":
         if (link.panel != null) {

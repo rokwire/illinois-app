@@ -2502,7 +2502,9 @@
 
 	"panel.profile.info.share.command.button.save.text": "Save to Photos",
 	"panel.profile.info.share.command.button.share.email.text": "Share via Email",
+	"panel.profile.info.share.command.button.share.email.failed": "Failed to share via Email",
 	"panel.profile.info.share.command.button.share.message.text": "Share via Text Message",
+	"panel.profile.info.share.command.button.share.message.failed": "Failed to share via Text Message",
 	"panel.profile.info.share.command.button.share.digital_card.text": "Share My QR Code",
 	"panel.profile.info.share.command.button.copy.clipboard.text": "Copy Text to Clipboard",
 	"panel.profile.info.share.command.button.edit.profile.text": "Edit My Info",

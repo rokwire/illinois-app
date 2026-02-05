@@ -48,8 +48,6 @@ import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:universal_io/io.dart';
 import 'package:web/web.dart' as web;
 
 class Event2DetailPanel extends StatefulWidget with AnalyticsInfo {
@@ -989,7 +987,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
         if (updateProgress != null) {
           updateProgress(false);
         }
-        launchUrl(fixedUri ?? uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault).then((bool result) {
+        AppLaunchUrl.launchExternal(uri: fixedUri ?? uri).then((bool? result) {
           if (result == false) {
             Event2Popup.showMessage(context ?? this.context, message: Localization().getStringEx('panel.event2.detail.launch.url.failed.message', 'Failed to launch URL.'));
           }
