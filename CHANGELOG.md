@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [7.3.49] - 2026-02-05
+### Fixed
+- Color issues in To-Do items [#5699](https://github.com/rokwire/illinois-app/issues/5699).
+- Handle & report errors from Share Email/SMS plugins in Profile info [#5700](https://github.com/rokwire/illinois-app/issues/5700).
+- Take care about app tracking status before launching in-app URLs [#5713](https://github.com/rokwire/illinois-app/issues/5713).
+
 ## [7.3.48] - 2026-01-26
 ### Changed
 - Sections text updates [#5694](https://github.com/rokwire/illinois-app/issues/5694).
