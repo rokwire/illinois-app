@@ -33,7 +33,6 @@ import 'package:rokwire_plugin/ui/widgets/section.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class WalletIlliniCashPage extends StatefulWidget with WalletHomePage {
 
@@ -483,12 +482,7 @@ class _WalletIlliniCashPageState extends State<WalletIlliniCashPage> with Notifi
 
   void _onTapLink(BuildContext context, String? url) {
     Analytics().logAlert(text: "Info", selection: "Other Select Services");
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri);
-      }
-    }
+    AppLaunchUrl.launchExternal(url: url);
   }
 
   void _onAddIlliniCashTapped(){

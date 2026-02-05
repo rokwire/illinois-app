@@ -15,7 +15,6 @@
  */
 
 
-import 'dart:io';
 import 'dart:math';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -477,7 +476,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           _linkController.text = fixedUri.toString();
           uri = fixedUri;
         }
-        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+        launchUrl(uri, mode: LaunchMode.platformDefault).catchError((e) { debugPrint(e.toString()); return false; });
       }
     }
   }

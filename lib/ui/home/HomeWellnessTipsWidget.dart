@@ -174,8 +174,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> with No
         DeepLink().launchUrl(url);
       }
       else {
-        bool canLaunchInternal = UrlUtils.canLaunchInternal(url);
-        AppLaunchUrl.launch(context: context, url: url, tryInternal: canLaunchInternal);
+        AppLaunchUrl.launch(context: context, url: url);
       }
     }
   }
