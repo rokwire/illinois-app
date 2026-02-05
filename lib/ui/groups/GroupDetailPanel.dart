@@ -16,7 +16,6 @@
 
 import 'dart:async';
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
-import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
