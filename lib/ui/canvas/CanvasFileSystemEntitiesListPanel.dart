@@ -134,7 +134,7 @@ class _CanvasFileSystemEntitiesListPanelState extends State<CanvasFileSystemEnti
       if (StringUtils.isNotEmpty(url)) {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {
-          launchUrl(uri, mode: LaunchMode.externalApplication);
+          launchUrl(uri, mode: LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
         }
       }
     } else {
