@@ -2,10 +2,12 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
+import 'package:illinois/ui/groups/GroupDetailMessagePanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -66,7 +68,11 @@ class _GroupDetailMessagesTabState extends State<GroupDetailMessagesTab> {
   Widget get _conversationsContent =>
     Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 16), child:
       Column(mainAxisSize: MainAxisSize.min, children: [
-        ..._conversations?.map((Conversation conversation) => Padding(padding: EdgeInsets.only(top: 8), child: _GroupConversationCard(conversation),)) ?? <Widget>[],
+        ..._conversations?.map((Conversation conversation) =>
+          Padding(padding: EdgeInsets.only(top: 8), child:
+            _GroupConversationCard(conversation, onTap: () => _onTapConversation(conversation),),
+          )
+        ) ?? <Widget>[],
         Padding(padding: EdgeInsets.only(top: 8),),
       ],),
     );
@@ -128,29 +134,43 @@ class _GroupDetailMessagesTabState extends State<GroupDetailMessagesTab> {
       return null;
     }
   }
+
+  // Event Handlers
+
+  void _onTapConversation(Conversation conversation) {
+    Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
+      GroupDetailMessagePanel(conversation,
+        group: widget.group,
+        analyticsFeature: widget.analyticsFeature,
+      )
+    ));
+  }
 }
 
 class _GroupConversationCard extends StatelessWidget {
 
   final Conversation conversation;
+  final void Function()? onTap;
 
-  _GroupConversationCard(this.conversation);
+  _GroupConversationCard(this.conversation, { this.onTap });
 
   @override
   Widget build(BuildContext context) =>
-    Container(decoration: _cardDecoration, padding: _cardPadding, child:
-      Row(children: [
-        _GroupConversationAvtarWidget(conversation.members),
-        Expanded(child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-              _participantNamesWidget,
-              _updateTimeWidget,
-            ],)
+    InkWell(onTap: onTap, child:
+      Container(decoration: _cardDecoration, padding: _cardPadding, child:
+        Row(children: [
+          _GroupConversationAvtarWidget(conversation.members),
+          Expanded(child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                _participantNamesWidget,
+                _updateTimeWidget,
+              ],)
+            ),
           ),
-        ),
-        Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
-      ],)
+          Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
+        ],)
+      )
     );
 
   Widget get _participantNamesWidget => Text(conversation.membersString ?? '',
@@ -200,9 +220,6 @@ class _GroupConversationAvtarWidget extends StatelessWidget {
   final List<ConversationMember>? participants;
 
   _GroupConversationAvtarWidget(this.participants);
-
-  //String _photoImageToken = DirectoryProfilePhotoUtils.newToken;
-  Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
   int get _participantsCount => participants?.length ?? 0;
 
@@ -256,7 +273,7 @@ class _GroupConversationAvtarWidget extends StatelessWidget {
         //params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken),
       ),
       photoSize: _widgetSize,
-      photoUrlHeaders: _photoAuthHeaders,
+      photoUrlHeaders: DirectoryProfilePhotoUtils.authHeaders,
     );
 
   Widget get _multipleParticipantsIcon {
@@ -277,7 +294,7 @@ class _GroupConversationAvtarWidget extends StatelessWidget {
                   //params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken),
                 ),
                 photoSize: _avtarSize,
-                photoUrlHeaders: _photoAuthHeaders,
+                photoUrlHeaders: DirectoryProfilePhotoUtils.authHeaders,
               ),
             )
           )
@@ -294,7 +311,7 @@ class _GroupConversationAvtarWidget extends StatelessWidget {
                   //params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken),
                 ),
                 photoSize: _avtarSize,
-                photoUrlHeaders: _photoAuthHeaders,
+                photoUrlHeaders: DirectoryProfilePhotoUtils.authHeaders,
               ),
             )
           )
@@ -312,7 +329,7 @@ class _GroupConversationAvtarWidget extends StatelessWidget {
                   //params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken),
                 ),
                 photoSize: _avtar2Size,
-                photoUrlHeaders: _photoAuthHeaders,
+                photoUrlHeaders: DirectoryProfilePhotoUtils.authHeaders,
               ),
             )
           )
