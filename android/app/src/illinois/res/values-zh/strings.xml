@@ -17,4 +17,11 @@
 
 <resources>
     <string name="app_name">伊利诺伊</string>
+
+    <!-- Mobile Access -->
+    <string name="mobile_access_notif_content_title">移動訪問正在運行</string>
+    <string name="mobile_access_notif_big_content_title">移動訪問正在運行</string>
+    <string name="mobile_access_notif_foreground_service_title">運行前台掃描服務</string>
+    <string name="mobile_access_hce_service_description">移動接入 HCE</string>
+    <string name="mobile_access_hce_service_aid_group_description">Mobile Access AID 組說明</string>
 </resources>

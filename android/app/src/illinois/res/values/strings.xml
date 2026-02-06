@@ -18,4 +18,11 @@
 <resources>
     <string name="app_name">Illinois</string>
     <string name="app_scheme" translatable="false">edu.illinois.rokwire</string>
+
+    <!-- Mobile Access -->
+    <string name="mobile_access_notif_content_title">Mobile Access is running</string>
+    <string name="mobile_access_notif_big_content_title">Mobile Access is running</string>
+    <string name="mobile_access_notif_foreground_service_title">Running foreground scan service</string>
+    <string name="mobile_access_hce_service_description">Mobile Access HCE</string>
+    <string name="mobile_access_hce_service_aid_group_description">Mobile Access AID group description</string>
 </resources>
