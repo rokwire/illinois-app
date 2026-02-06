@@ -23,7 +23,6 @@ import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:illinois/service/Analytics.dart';
 
 
@@ -324,12 +323,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
 
   void _onTapWeCare(BuildContext context) {
     Navigator.pop(context);
-    String? weCareUrl = Config().gbvWeCareUrl;
-    Uri? weCareUri = (weCareUrl != null) ? Uri.tryParse(weCareUrl) : null;
-    if (weCareUri != null) {
-      launchUrl(weCareUri);
-    }
-
+    AppLaunchUrl.launchExternal(url: Config().gbvWeCareUrl);
   }
 
 }

@@ -28,7 +28,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/model/wellness/SuccessTeam.dart';
@@ -200,7 +199,7 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
               ]),
               Row(children: [
                 Padding(padding: EdgeInsets.only(right: 6), child: Styles().images.getImage('external-link', excludeFromSemantics: true) ?? Container()),
-                GestureDetector(onTap: () => launchUrl(Uri.parse(externalLink)), child:
+                GestureDetector(onTap: () => AppLaunchUrl.launchExternal(url: externalLink), child:
                   Text("Schedule an Appointment", style: Styles().textStyles.getTextStyle('widget.description.regular.underline'))
                 )]),
             ]),
@@ -230,7 +229,7 @@ class _WellnessSuccessTeamContentWidgetState extends State<WellnessSuccessTeamCo
         DeepLink().launchUrl(url);
       }
       else {
-        AppLaunchUrl.launch(context: context, url: url, tryInternal: false);
+        AppLaunchUrl.launchExternal(url: url);
       }
     }
     return true;

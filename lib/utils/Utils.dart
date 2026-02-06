@@ -90,19 +90,22 @@ class GeoMapUtils {
   static const String traveModeTransit   = 'transit';
 
   static Future<bool> launchDirections({ dynamic origin, dynamic destination, String? travelMode }) async {
+    try {
+      Uri? googleMapsUri = Uri.tryParse(_googleMapsDirectionsUrl(origin: origin, destination: destination, travelMode: travelMode));
+      if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri) && await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication)) {
+        debugPrint("Map directions: $googleMapsUri");
+        return true;
+      }
 
-    Uri? googleMapsUri = Uri.tryParse(_googleMapsDirectionsUrl(origin: origin, destination: destination, travelMode: travelMode));
-    if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri) && await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication)) {
-      debugPrint("Map directions: $googleMapsUri");
-      return true;
+      Uri? wazeMapsUri = Uri.tryParse(_wazeMapsDirectionsUrl(origin: origin, destination: destination, travelMode: travelMode));
+      if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri) && await launchUrl(wazeMapsUri, mode: LaunchMode.externalApplication)) {
+        debugPrint("Map directions: $wazeMapsUri");
+        return true;
+      }
     }
-
-    Uri? wazeMapsUri = Uri.tryParse(_wazeMapsDirectionsUrl(origin: origin, destination: destination, travelMode: travelMode));
-    if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri) && await launchUrl(wazeMapsUri, mode: LaunchMode.externalApplication)) {
-      debugPrint("Map directions: $wazeMapsUri");
-      return true;
+    catch(e) {
+      debugPrint(e.toString());
     }
-
     return false;
   }
 
@@ -161,18 +164,23 @@ class GeoMapUtils {
 
   static Future<bool> launchLocation(dynamic position) async {
 
-    String? googleMapsUrl = _googleMapsLocationUrl(position);
-    Uri? googleMapsUri = (googleMapsUrl != null) ? Uri.tryParse(googleMapsUrl) : null;
-    if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri) && await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication)) {
-      debugPrint("Map directions: $googleMapsUrl");
-      return true;
-    }
+    try {
+      String? googleMapsUrl = _googleMapsLocationUrl(position);
+      Uri? googleMapsUri = (googleMapsUrl != null) ? Uri.tryParse(googleMapsUrl) : null;
+      if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri) && await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication)) {
+        debugPrint("Map directions: $googleMapsUrl");
+        return true;
+      }
 
-    String? wazeMapsUrl = _wazeMapsLocationUrl(position);
-    Uri? wazeMapsUri = (wazeMapsUrl != null) ? Uri.tryParse(wazeMapsUrl) : null;
-    if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri) && await launchUrl(wazeMapsUri, mode: LaunchMode.externalApplication)) {
-      debugPrint("Map directions: $wazeMapsUrl");
-      return true;
+      String? wazeMapsUrl = _wazeMapsLocationUrl(position);
+      Uri? wazeMapsUri = (wazeMapsUrl != null) ? Uri.tryParse(wazeMapsUrl) : null;
+      if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri) && await launchUrl(wazeMapsUri, mode: LaunchMode.externalApplication)) {
+        debugPrint("Map directions: $wazeMapsUrl");
+        return true;
+      }
+    }
+    catch (e) {
+      debugPrint(e.toString());
     }
 
     return false;
@@ -180,16 +188,21 @@ class GeoMapUtils {
 
   static Future<String?> locationUrl(dynamic position) async {
 
-    String? googleMapsUrl = _googleMapsLocationUrl(position);
-    Uri? googleMapsUri = (googleMapsUrl != null) ? Uri.tryParse(googleMapsUrl) : null;
-    if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri)) {
-      return googleMapsUrl;
-    }
+    try {
+      String? googleMapsUrl = _googleMapsLocationUrl(position);
+      Uri? googleMapsUri = (googleMapsUrl != null) ? Uri.tryParse(googleMapsUrl) : null;
+      if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri)) {
+        return googleMapsUrl;
+      }
 
-    String? wazeMapsUrl = _wazeMapsLocationUrl(position);
-    Uri? wazeMapsUri = (wazeMapsUrl != null) ? Uri.tryParse(wazeMapsUrl) : null;
-    if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri) && await launchUrl(wazeMapsUri, mode: LaunchMode.externalApplication)) {
-      return wazeMapsUrl;
+      String? wazeMapsUrl = _wazeMapsLocationUrl(position);
+      Uri? wazeMapsUri = (wazeMapsUrl != null) ? Uri.tryParse(wazeMapsUrl) : null;
+      if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri) && await launchUrl(wazeMapsUri, mode: LaunchMode.externalApplication)) {
+        return wazeMapsUrl;
+      }
+    }
+    catch (e) {
+      debugPrint(e.toString());
     }
 
     return null;
