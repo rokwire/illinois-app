@@ -5,12 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Changed
-- "Order Online with Order Ahead App" button renamed to "Order Online" in Dining detail panel [#5727](https://github.com/rokwire/illinois-app/issues/5727).
-- About the App text updates [#5730](https://github.com/rokwire/illinois-app/issues/5730).
 ### Added
 - Added Academic Links [#5729](https://github.com/rokwire/illinois-app/issues/5729).
 - Added "My Groups" filter button in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
+### Changed
+- "Order Online with Order Ahead App" button renamed to "Order Online" in Dining detail panel [#5727](https://github.com/rokwire/illinois-app/issues/5727).
+- About the App text updates [#5730](https://github.com/rokwire/illinois-app/issues/5730).
+- Changed "My Groups" filter button text style in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
 
 ## [7.3.50] - 2026-02-12
 ### Changed
