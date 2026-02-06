@@ -183,7 +183,7 @@ class _WordleWidgetState extends State<WordleWidget> {
 
   void _onTapStatusStory(BuildContext context) {
     Analytics().logSelect(target: 'Story Url');
-    AppLaunchUrl.launch(context: context, url: widget.dailyWord.storyUrl, tryInternal: false);
+    AppLaunchUrl.launchExternal(url: widget.dailyWord.storyUrl);
   }
 
   void _onStatusPopupClose() {

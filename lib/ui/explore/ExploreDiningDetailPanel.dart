@@ -47,7 +47,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'package:url_launcher/url_launcher.dart';
 
 class ExploreDiningDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Dining dining;
@@ -634,10 +634,10 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
     }
     bool? appLaunched = await RokwirePlugin.launchApp({"deep_link": deepLink});
     if (appLaunched != true) {
-      String storeUrl = orderOnlineDetails!['store_url'];
-      Uri? storeUri = Uri.tryParse(storeUrl);
+      String? storeUrl = orderOnlineDetails?['store_url'];
+      Uri? storeUri = (storeUrl != null) ? Uri.tryParse(storeUrl) : null;
       if (storeUri != null) {
-        url_launcher.launchUrl(storeUri);
+        launchUrl(storeUri, mode: LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
       }
     }
   }
@@ -682,18 +682,13 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
     url = url.replaceAll('{{body}}', Uri.encodeComponent(body));
     Uri? uri = Uri.tryParse(url);
     if (uri != null) {
-      url_launcher.launchUrl(uri);
+      launchUrl(uri, mode: LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
     }
   }
 
   void _launchUrl(String? url, String analyticsName) {
     if (StringUtils.isNotEmpty(url)) {
-      AppLaunchUrl.launch(
-          context: context,
-          url: url,
-          tryInternal: UrlUtils.canLaunchInternal(url),
-          analyticsName: analyticsName,
-          analyticsSource: widget.dining.analyticsAttributes);
+      AppLaunchUrl.launch(context: context, url: url, analyticsName: analyticsName, analyticsSource: widget.dining.analyticsAttributes);
     }
   }
 }

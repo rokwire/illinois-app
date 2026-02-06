@@ -15,22 +15,22 @@
  */
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/DailyIllini.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DailyIllini.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomeDailyIlliniWidget extends StatefulWidget {
   final String? favoriteId;
@@ -174,15 +174,9 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
     });
   }
 
-  void _onViewAll() async {
-    String? url = Config().dailyIlliniHomepageUrl;
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        LaunchMode launchMode = Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault;
-        launchUrl(uri, mode: launchMode);
-      }
-    }
+  void _onViewAll() {
+    Analytics().logSelect(target: 'View All');
+    AppLaunchUrl.launchExternal(url: Config().dailyIlliniHomepageUrl);
   }
 
   void _setLoading(bool loading) {
@@ -208,8 +202,7 @@ abstract class _StoryWidget extends StatelessWidget {
           uri = UriExt.addQueryParameters(uri, urlParams);
         }
 
-        LaunchMode launchMode = Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault;
-        launchUrl(uri, mode: launchMode);
+        AppLaunchUrl.launchExternal(uri: uri);
       }
     }
   }

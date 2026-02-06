@@ -126,7 +126,7 @@ class GBVDetailContentWidget extends StatelessWidget {
 
   void _onTapEmail (Uri uri) {
     Analytics().logSelect(target: 'Resource Detail - Email');
-    launchUrl(uri);
+    launchUrl(uri, mode: LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
   }
 
   void _onTapExternalLink (BuildContext context, String? url) {
@@ -136,7 +136,7 @@ class GBVDetailContentWidget extends StatelessWidget {
 
   void _onTapPhone (Uri uri) {
     Analytics().logSelect(target: 'Resource Detail - Phone');
-    launchUrl(uri);
+    launchUrl(uri, mode: LaunchMode.externalApplication)..catchError((e) { debugPrint(e.toString()); return false; });
   }
 
   void _onTapButton (BuildContext context, GBVResourceDetail detail) {
@@ -157,7 +157,7 @@ class GBVDetailContentWidget extends StatelessWidget {
     if (DeepLink().isAppUrl(url)) {
       DeepLink().launchUrl(url);
     } else {
-      AppLaunchUrl.launch(context: context, url: url, tryInternal: false);
+      AppLaunchUrl.launchExternal(url: url);
     }
     return true;
   }
