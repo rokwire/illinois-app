@@ -1,6 +1,4 @@
 
-import 'dart:io';
-
 import 'package:collection/collection.dart';
 import 'package:device_calendar/device_calendar.dart';
 import 'package:flutter/cupertino.dart';
@@ -392,13 +390,13 @@ class Event2CreatePanel extends StatefulWidget {
             uri = fixedUri;
           }
           if (uri != null) {
-            launchUrl(uri!, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault).then((bool result) {
+            launchUrl(uri!, mode: LaunchMode.platformDefault).then((bool result) {
               if (result == false) {
                 Event2Popup.showMessage(context, message: Localization().getStringEx('panel.event2.create.confirm_url.failed.message', 'Failed to confirm URL.')).then((_) {
                   focusNode?.requestFocus();
                 });
               }
-            });
+            }).catchError((e) { debugPrint(e.toString()); return null; });
           }
          });
       }

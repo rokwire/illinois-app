@@ -296,7 +296,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
     if (StringUtils.isNotEmpty(url)) {
       Uri? uri = Uri.tryParse(url!);
       if ((uri != null) && (await canLaunchUrl(uri))) {
-        launchUrl(uri, mode: LaunchMode.externalApplication);
+        launchUrl(uri, mode: LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
       }
     }
   }
