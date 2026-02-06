@@ -4,9 +4,9 @@ import 'package:illinois/ui/academics/courses/PDFPanel.dart';
 import 'package:illinois/ui/academics/courses/UnitInfoPanel.dart';
 import 'package:illinois/ui/academics/courses/VideoPanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class EssentialSkillsCoachWidgets {
   static void openPdfContent(BuildContext context, String? resourceName, String? resourceKey, {Function(dynamic)? callback}) {
@@ -22,7 +22,7 @@ class EssentialSkillsCoachWidgets {
   }
 
   static Future<void> openUrlContent(Uri url) async {
-    if (!await launchUrl(url)) {
+    if (await AppLaunchUrl.launchExternal(uri: url) != true) {
       throw Exception('Could not launch $url');
     }
   }

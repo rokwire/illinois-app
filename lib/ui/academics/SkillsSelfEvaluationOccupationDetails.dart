@@ -146,7 +146,7 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
             ),
           ),
           onTap: () {
-            launchUrlString('https://onetonline.org/link/summary/${occupation.code}', mode: LaunchMode.externalApplication);
+            launchUrlString('https://onetonline.org/link/summary/${occupation.code}', mode: LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
           },
         ),),
       ),

@@ -31,7 +31,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 enum DirectoryDisplayMode { browse, select }
 
@@ -522,10 +521,7 @@ class DirectoryProfileDetails extends StatelessWidget {
           DeepLink().launchUrl(url);
         }
         else {
-          Uri? uri = Uri.tryParse(url!);
-          if (uri != null) {
-            launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
-          }
+          AppLaunchUrl.launchExternal(url: url);
         }
       }
     }
