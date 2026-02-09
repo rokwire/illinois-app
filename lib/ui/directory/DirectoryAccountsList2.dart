@@ -16,7 +16,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class DirectoryAccountsList extends StatefulWidget {
+class DirectoryAccountsList2 extends StatefulWidget {
   final DirectoryDisplayMode displayMode;
   final ScrollController? scrollController;
   final String? searchText;
@@ -24,14 +24,14 @@ class DirectoryAccountsList extends StatefulWidget {
   final Set<String>? selectedAccountIds;
   final void Function(Auth2PublicAccount, bool)? onAccountSelectionChanged;
 
-  DirectoryAccountsList({ super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController,
+  DirectoryAccountsList2({ super.key, this.displayMode = DirectoryDisplayMode.browse, this.scrollController,
     this.searchText, this.filterAttributes, this.onAccountSelectionChanged, this.selectedAccountIds});
 
   @override
-  State<StatefulWidget> createState() => DirectoryAccountsListState();
+  State<StatefulWidget> createState() => DirectoryAccountsList2State();
 }
 
-class DirectoryAccountsListState extends State<DirectoryAccountsList> with NotificationsListener, AutomaticKeepAliveClientMixin<DirectoryAccountsList>  {
+class DirectoryAccountsList2State extends State<DirectoryAccountsList2> with NotificationsListener, AutomaticKeepAliveClientMixin<DirectoryAccountsList2>  {
   static const int _pageLength = 32; //TBD test
   static const String _globalExtendingKey = 'global';
 

@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
+import 'package:illinois/ui/directory/DirectoryAccountsList2.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -30,7 +30,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
 
   String _searchText = '';
   Map<String, dynamic> _filterAttributes = <String, dynamic>{};
-  GlobalKey<DirectoryAccountsListState> _accountsListKey = GlobalKey();
+  GlobalKey<DirectoryAccountsList2State> _accountsListKey = GlobalKey();
   GestureRecognizer? _editInfoRecognizer;
   GestureRecognizer? _shareInfoRecognizer;
   GestureRecognizer? _signInRecognizer;
@@ -75,7 +75,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
       _accountsListWidget,
     ]);
 
-  Widget get _accountsListWidget => DirectoryAccountsList(
+  Widget get _accountsListWidget => DirectoryAccountsList2(
     key: _accountsListKey,
     displayMode: DirectoryDisplayMode.browse,
     scrollController: widget.scrollController,
