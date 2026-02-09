@@ -1,6 +1,5 @@
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +32,7 @@ class DirectoryAccountsList extends StatefulWidget {
 }
 
 class DirectoryAccountsListState extends State<DirectoryAccountsList> with NotificationsListener, AutomaticKeepAliveClientMixin<DirectoryAccountsList>  {
-  static const int _pageLength = 12;//32; //TBD test
+  static const int _pageLength = 32; //TBD test
   static const String _globalExtendingKey = 'global';
 
   Map<String, List<Auth2PublicAccount>>? _accounts;
@@ -59,7 +58,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
     widget.scrollController?.addListener(_scrollListener);
 
-    _isGlobalSectionMode ? _loadIndexes() : _loadAccounts();
+    _isGlobalSectionMode ? _loadAccounts() : _loadIndexes();
     super.initState();
   }
 
@@ -117,13 +116,13 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
       contentList.add(Padding(padding: EdgeInsets.only(bottom: 0), child: _sectionSplitter));
 
       for (String index in accounts.keys) {
-        if ((accounts[index]?.isNotEmpty == true)) {
+        // if ((accounts[index]?.isNotEmpty == true)) {
           if (contentList.isNotEmpty) {
             contentList.add(Padding(padding: EdgeInsets.only(bottom: 0), child: _sectionSplitter));
           }
           contentList.add(DirectoryExpandableSection(
             initExpanded: _expandAllSections,
-            accountsExtender: _isGlobalSectionMode ? null : _extend, //TBD pass when API is done
+            accountsExtender: _isGlobalSectionMode ? null : _extend,
             index: index,
             accounts: accounts[index],
             extending: _isExtending(index),
@@ -136,7 +135,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
               onToggleSelected: (value) => _onToggleAccountSelected(account, value),
             ),
           ));
-        }
+        // }
       }
       if (contentList.isNotEmpty) {
         contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child: _sectionSplitter));
@@ -202,7 +201,14 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
           _loadingProgress = !silent;
        });
     }
-    //TBD load only indexes when API is done
+    List<String>? indexes = await Auth2().loadDirectoryAccountsIndexes();
+    setStateIfMounted(() {
+      _loading = false;
+      _loadingProgress = false;
+      if (indexes != null) {
+        _accounts = Map<String, List<Auth2PublicAccount>>.fromIterable(indexes, key: (index) => index, value: (index) => <Auth2PublicAccount>[]);
+      }
+    });
   }
 
   Future<void> _loadAccounts({ int limit = _pageLength, bool silent = false }) async {
@@ -238,7 +244,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   Future<void> _extend({String? index, int limit = _pageLength}) async {
     String taskKey = index ?? _globalExtendingKey;
 
-    if(_loading || _isExtending(taskKey) || !_canExtend(index))
+    if(_loading || _isExtending(taskKey) || !_canExtend(taskKey))
       return;
 
     Completer<void> taskCompleter = Completer<void>();
@@ -301,7 +307,8 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   }
   bool get _expandAllSections => StringUtils.isNotEmpty(widget.searchText); //TBD replace with _isGlobalSectionMode when hooked to APIs
 
-  bool get _isGlobalSectionMode => true; //StringUtils.isNotEmpty(widget.searchText); //If we have searchText we treat all sections as one and we load them together. Otherwise each section is extending by itself. TBD use when sections API is done until then treat as single section
+  bool get _isGlobalSectionMode => //true; //TBD use when sections API is done until then treat as single section
+      StringUtils.isNotEmpty(widget.searchText); //If we have searchText we treat all sections as one and we load them together. Otherwise each section is extending by itself.
 
   /// Merges grouped  [newMap] into an [existingMap].
   static void mergeGroupedListMaps<K, V>(Map<K, List<V>> existingMap, Map<K, List<V>> newMap) {

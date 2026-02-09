@@ -1052,7 +1052,7 @@ class _DirectoryExpandableSectionState extends State<DirectoryExpandableSection>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                _sectionHeading(title: widget.index, expanded: _expanded),
+                _sectionHeading(title: widget.index.toUpperCase(), expanded: _expanded),
                 if (_expanded == true)
                   ...[
                         ..._accountsContent ?? [],
