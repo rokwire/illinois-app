@@ -27,6 +27,7 @@ import 'package:illinois/ui/debug/DebugGuideBrowsePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
 import 'package:illinois/ui/debug/DebugWordlePanel.dart';
+import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/map2/Map2LocationPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
@@ -248,6 +249,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
       RibbonButton(title: 'Rate App', onTap: _onTapRateApp),
       Container(height: 1, color: Styles().colors.surfaceAccent ,),
       RibbonButton(title: 'Review App', onTap: _onTapReviewApp),
+      Container(height: 1, color: Styles().colors.surfaceAccent ,),
+      RibbonButton(title: "Mobile Access Keys", onTap: _onTapMobileAccessKeys),
       Container(height: 1, color: Styles().colors.surfaceAccent ,),
       RibbonButton(title: "Http Proxy", onTap: _onTapHttpProxy),
       Container(height: 1, color: Styles().colors.surfaceAccent ,),
@@ -765,6 +768,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
 
   void _onTapReviewApp() {
     InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
+  }
+
+  void _onTapMobileAccessKeys() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugMobileAccessHomePanel()));
   }
 
   void _onTapHttpProxy() {

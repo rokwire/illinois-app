@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import edu.illinois.rokwire.mobile_access.MobileAccessPlugin;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodCall;
@@ -60,16 +61,24 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private Toast statusToast;
 
+    private MobileAccessPlugin mobileAccessPlugin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         initScreenOrientation();
+        if (mobileAccessPlugin != null) {
+            mobileAccessPlugin.onActivityCreate();
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        if (mobileAccessPlugin != null) {
+            mobileAccessPlugin.onActivityStart();
+        }
     }
 
     @Override
@@ -78,6 +87,9 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
         if (orientationListener != null) {
             orientationListener.disable();
+        }
+        if (mobileAccessPlugin != null) {
+            mobileAccessPlugin.onActivityDestroy();
         }
     }
 
@@ -91,6 +103,9 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         super.configureFlutterEngine(flutterEngine);
         METHOD_CHANNEL = new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), NATIVE_CHANNEL);
         METHOD_CHANNEL.setMethodCallHandler(this);
+
+        mobileAccessPlugin = new MobileAccessPlugin(this);
+        flutterEngine.getPlugins().add(mobileAccessPlugin);
     }
 
     private void initScreenOrientation() {

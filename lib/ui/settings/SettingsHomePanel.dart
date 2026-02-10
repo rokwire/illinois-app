@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
@@ -30,6 +31,7 @@ import 'package:illinois/ui/settings/SettingsAppointmentsAndEventsPage.dart';
 import 'package:illinois/ui/settings/SettingsAssessmentsPage.dart';
 import 'package:illinois/ui/settings/SettingsAboutPage.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersPage.dart';
+import 'package:illinois/ui/settings/SettingsICardPage.dart';
 import 'package:illinois/ui/settings/SettingsLanguagePage.dart';
 import 'package:illinois/ui/settings/SettingsNotificationPreferencesPage.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPage.dart';
@@ -46,7 +48,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum SettingsContentType { food_filters, sports, favorites, assessments, recent_items, appointments_and_events, language, about, research, privacy, notifications, accessibility }
+enum SettingsContentType { food_filters, sports, favorites, assessments, recent_items, appointments_and_events, i_card, language, about, research, privacy, notifications, accessibility }
 
 class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'settings_home_content_panel';
@@ -101,6 +103,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
+      MobileAccess.notifyMobileStudentIdChanged,
       Localization.notifyLocaleChanged,
       FlexUI.notifyChanged,
     ]);
@@ -120,7 +123,10 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Localization.notifyLocaleChanged) {
+    if (name == MobileAccess.notifyMobileStudentIdChanged) {
+      setStateIfMounted(() {});
+    }
+    else if (name == Localization.notifyLocaleChanged) {
       setStateIfMounted(() {});
     }
     else if (name == FlexUI.notifyChanged) {
@@ -304,6 +310,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
       case SettingsContentType.appointments_and_events: return SettingsAppointmentsAndEventsPage();
       case SettingsContentType.favorites: return null;
       case SettingsContentType.assessments: return SettingsAssessmentsPage();
+      case SettingsContentType.i_card: return SettingsICardPage();
       case SettingsContentType.language: return SettingsLanguagePage();
       case SettingsContentType.about: return SettingsAboutPage();
       case SettingsContentType.research: return SettingsResearchPage(parentRouteName: SettingsHomePanel.routeName);
@@ -389,6 +396,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case SettingsContentType.appointments_and_events: return Localization().getStringEx('panel.settings.home.settings.sections.appointments_and_events.label', 'My Appointments & Events', language: language);
       case SettingsContentType.favorites: return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'Customize Favorites', language: language);
       case SettingsContentType.assessments: return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments', language: language);
+      case SettingsContentType.i_card: return Localization().getStringEx('panel.settings.home.settings.sections.i_card.label', 'Illini ID', language: language);
       case SettingsContentType.language: return Localization().getStringEx('panel.settings.home.settings.sections.language.label', 'My Language', language: language);
       case SettingsContentType.about: return Localization().getStringEx('panel.settings.home.settings.sections.about.label', 'About the App', language: language);
       case SettingsContentType.research: return Localization().getStringEx('panel.settings.home.settings.sections.research.label', 'My Participation in Research', language: language);
@@ -406,6 +414,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case SettingsContentType.appointments_and_events: return 'appointments_and_events';
       case SettingsContentType.favorites: return 'favorites';
       case SettingsContentType.assessments: return 'assessments';
+      case SettingsContentType.i_card: return 'i_card';
       case SettingsContentType.language: return 'language';
       case SettingsContentType.about: return 'about';
       case SettingsContentType.research: return 'research';
@@ -423,6 +432,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case 'appointments_and_events': return SettingsContentType.appointments_and_events;
       case 'favorites': return SettingsContentType.favorites;
       case 'assessments': return SettingsContentType.assessments;
+      case 'i_card': return SettingsContentType.i_card;
       case 'language': return SettingsContentType.language;
       case 'about': return SettingsContentType.about;
       case 'research': return SettingsContentType.research;
@@ -430,6 +440,16 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case 'notifications': return SettingsContentType.notifications;
       case 'accessibility': return SettingsContentType.accessibility;
       default: return null;
+    }
+  }
+
+  bool get isAvailable {
+    switch (this) {
+      // Add i_card content only if icard mobile is available
+      case SettingsContentType.i_card:
+        return MobileAccess().isMobileAccessAvailable;
+      default:
+        return true;
     }
   }
 
@@ -446,7 +466,7 @@ extension _SettingsContentTypeList on List<SettingsContentType> {
     if (codes != null) {
       for (String code in codes) {
         SettingsContentType? contentType = SettingsContentTypeImpl.fromJsonString(code);
-        if (contentType != null) {
+        if ((contentType != null) && contentType.isAvailable) {
           contentTypesList.add(contentType);
         }
       }

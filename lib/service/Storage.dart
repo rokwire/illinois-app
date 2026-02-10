@@ -516,6 +516,19 @@ class Storage extends rokwire.Storage with NotificationsListener {
   bool? get participateInResearchPrompted => getBoolWithName(participateInResearchPromptedKey);
   set participateInResearchPrompted(bool? value) => setBoolWithName(participateInResearchPromptedKey, value);
 
+  // Mobile Access
+  static const String mobileAccessBleRssiSensitivityKey = 'mobile_access_ble_rssi_sensitivity';
+  String? get mobileAccessBleRssiSensitivity => getStringWithName(mobileAccessBleRssiSensitivityKey);
+  set mobileAccessBleRssiSensitivity(String? value) => setStringWithName(mobileAccessBleRssiSensitivityKey, value);
+
+  static const String mobileAccessOpenTypeKey = 'mobile_access_open_type';
+  String? get mobileAccessOpenType => getStringWithName(mobileAccessOpenTypeKey);
+  set mobileAccessOpenType(String? value) => setStringWithName(mobileAccessOpenTypeKey, value);
+
+  static const String mobileAccessDeleteTimeoutInMillisKey = 'mobile_access_delete_timeout_millis';
+  int? get mobileAccessDeleteTimeoutUtcInMillis => getIntWithName(mobileAccessDeleteTimeoutInMillisKey);
+  set mobileAccessDeleteTimeoutUtcInMillis(int? value) => setIntWithName(mobileAccessDeleteTimeoutInMillisKey, value);
+
   // Events2
   static const String events2AttributesKey = 'events2_attributes';
   Map<String, dynamic>? get events2Attributes => JsonUtils.decodeMap(getStringWithName(events2AttributesKey));
