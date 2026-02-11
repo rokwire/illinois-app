@@ -13,20 +13,20 @@ import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class GroupDetailMessagePanel extends StatefulWidget {
+class GroupConversationMessagesPanel extends StatefulWidget {
 
 
   final Group? group;
   final Conversation conversation;
   final AnalyticsFeature? analyticsFeature;
 
-  GroupDetailMessagePanel(this.conversation, { super.key, this.group, this.analyticsFeature });
+  GroupConversationMessagesPanel(this.conversation, { super.key, this.group, this.analyticsFeature });
 
   @override
   State<StatefulWidget> createState() => _GroupConversationMessagesPanelState();
 }
 
-class _GroupConversationMessagesPanelState extends State<GroupDetailMessagePanel> {
+class _GroupConversationMessagesPanelState extends State<GroupConversationMessagesPanel> {
 
   @override
   void initState() {
