@@ -23,10 +23,10 @@ class GroupDetailMessagePanel extends StatefulWidget {
   GroupDetailMessagePanel(this.conversation, { super.key, this.group, this.analyticsFeature });
 
   @override
-  State<StatefulWidget> createState() => _GroupDetailMessagePanelState();
+  State<StatefulWidget> createState() => _GroupConversationMessagesPanelState();
 }
 
-class _GroupDetailMessagePanelState extends State<GroupDetailMessagePanel> {
+class _GroupConversationMessagesPanelState extends State<GroupDetailMessagePanel> {
 
   @override
   void initState() {
@@ -46,7 +46,7 @@ class _GroupDetailMessagePanelState extends State<GroupDetailMessagePanel> {
   );
 
   Widget get _bodyWidget => Column(children: [
-    _GroupMessageHeading(widget.conversation, group: widget.group, onDelete: _onDeleteConversation,),
+    _GroupConversationAvtarHeading(widget.conversation, group: widget.group, onDelete: _onDeleteConversation,),
     Expanded(child: Container())
 ,
   ],);
@@ -57,14 +57,14 @@ class _GroupDetailMessagePanelState extends State<GroupDetailMessagePanel> {
   }
 }
 
-class _GroupMessageHeading extends StatelessWidget {
+class _GroupConversationAvtarHeading extends StatelessWidget {
   final Group? group;
   final Conversation conversation;
   final void Function()? onDelete;
 
   static const double _photoSize = 48;
 
-  _GroupMessageHeading(this.conversation, {this.group, this.onDelete});
+  _GroupConversationAvtarHeading(this.conversation, {this.group, this.onDelete});
 
   @override
   Widget build(BuildContext context) => Container(decoration: _headingDecoration, child:

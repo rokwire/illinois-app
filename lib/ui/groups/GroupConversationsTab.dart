@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
-import 'package:illinois/ui/groups/GroupDetailMessagePanel.dart';
+import 'package:illinois/ui/groups/GroupConversationMessagesPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -20,20 +20,20 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 
-class GroupDetailMessagesTab extends StatefulWidget {
+class GroupConversationsTab extends StatefulWidget {
 
   final Group? group;
   final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
   final AnalyticsFeature? analyticsFeature;
 
-  GroupDetailMessagesTab({ super.key, this.group, this.updateController, this.groupAdmins, this.analyticsFeature });
+  GroupConversationsTab({ super.key, this.group, this.updateController, this.groupAdmins, this.analyticsFeature });
 
   @override
-  State<StatefulWidget> createState() => _GroupDetailMessagesTabState();
+  State<StatefulWidget> createState() => _GroupConversationsTabState();
 }
 
-class _GroupDetailMessagesTabState extends State<GroupDetailMessagesTab> {
+class _GroupConversationsTabState extends State<GroupConversationsTab> {
   List<Conversation>? _conversations;
   bool _loadingConversations = false;
 

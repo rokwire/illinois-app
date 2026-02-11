@@ -32,7 +32,7 @@ import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupAboutContentWidget.dart';
-import 'package:illinois/ui/groups/GroupDetailMessagesTab.dart';
+import 'package:illinois/ui/groups/GroupConversationsTab.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
@@ -79,7 +79,7 @@ import 'package:sprintf/sprintf.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum DetailTab { Events, PastEvents, Posts, ScheduledPosts, Messages, Messages2, Polls }
+enum DetailTab { Events, PastEvents, Posts, ScheduledPosts, Messages, Conversations, Polls }
 
 class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'group_detail_content_panel';
@@ -235,13 +235,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   bool get _canUserCreatePost => _isAdmin || (_isMember && _group?.isMemberAllowedToCreatePost == true && FlexUI().isSharingAvailable);
 
   bool get _canCreateMessage => _containsTab(DetailTab.Messages) && _canUserCreateMessage;
-  bool get _canCreateMessage2 => _containsTab(DetailTab.Messages2) && _canUserCreateMessage;
+  bool get _canCreateConversation => _containsTab(DetailTab.Conversations) && _canUserCreateMessage;
   bool get _canUserCreateMessage => _isAdmin || (_isMember && _group?.isMemberAllowedToPostToSpecificMembers == true && FlexUI().isSharingAvailable);
 
   bool get _canCreatePoll => _containsTab(DetailTab.Polls) && _canUserCreatePoll;
   bool get _canUserCreatePoll => _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && FlexUI().isSharingAvailable);
 
-  bool get _hasCreateOptions => _canCreatePost || _canCreateMessage || _canCreateMessage2 || _canAddEvent || _canCreatePoll;
+  bool get _hasCreateOptions => _canCreatePost || _canCreateMessage || _canCreateConversation || _canAddEvent || _canCreatePoll;
 
   bool get _canManageMembers => _isAdmin;
   bool get _canViewMembers => _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
@@ -769,8 +769,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         case DetailTab.Messages:
           title = Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
           break;
-        case DetailTab.Messages2:
-          title = Localization().getStringEx("panel.group_detail.button.messages2.title", 'Messages2');
+        case DetailTab.Conversations:
+          title = Localization().getStringEx("panel.group_detail.button.conversations.title", 'Conversations');
           break;
         case DetailTab.Polls:
           title = Localization().getStringEx("panel.group_detail.button.polls.title", 'Polls');
@@ -869,8 +869,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Messages:
         return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
-      case DetailTab.Messages2:
-        return GroupDetailMessagesTab(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
+      case DetailTab.Conversations:
+        return GroupConversationsTab(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Polls:
         return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
 
@@ -1266,7 +1266,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                       Navigator.of(context).pop();
                       _onTapCreatePost(type: PostType.direct_message);
                     })),
-                Visibility(visible: _canCreateMessage2, child:
+                Visibility(visible: _canCreateConversation, child:
                   RibbonButton(
                     leftIconKey: "plus-circle",
                     title: Localization().getStringEx("panel.group_detail.button.create_message2.title", "Create Direct Message2"),//localize tbd
