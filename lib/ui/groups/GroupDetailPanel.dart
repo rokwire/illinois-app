@@ -1714,7 +1714,6 @@ class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsLi
 
   @override
   Widget build(BuildContext context) {
-    Log.d("_GroupDetailEventsState.build");
     super.build(context);
     return _buildEvents();
   }

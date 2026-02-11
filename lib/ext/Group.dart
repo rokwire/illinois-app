@@ -309,6 +309,17 @@ extension MemberExt on Member {
     }
     return userIds;
   }
+
+  static Member? getMember(List<Member>? members, { String? userId }) {
+    if (members != null) {
+      for (Member member in members) {
+        if ((userId != null) && (member.userId == userId)) {
+          return member;
+        }
+      }
+    }
+    return null;
+  }
 }
 
 extension GroupsExt on Groups {

@@ -97,6 +97,11 @@ extension ReactionExt on Reaction {
 extension MessageExt on Message {
   DateTime? get dateSentLocal =>  AppDateTime().getDeviceTimeFromUtcTime(dateSentUtc);
   String? get dateSentLocalString => DateTimeUtils.localDateTimeToString(dateSentLocal, format: 'MMMM dd, yyyy');
+
+  String? get displayDateTime {
+    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime( dateUpdatedUtc ?? dateSentUtc);
+    return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;
+  }
 }
 
 extension ConversationExt on Conversation {

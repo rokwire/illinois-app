@@ -262,3 +262,6 @@ class NullableValue<T> {
 
   factory  NullableValue.empty() => NullableValue(null);
 }
+
+enum ContentActivity { reload, refresh, extend }
+

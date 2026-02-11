@@ -19,6 +19,7 @@ import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -45,7 +46,6 @@ class GroupHome2Panel extends StatefulWidget with AnalyticsInfo {
   @override
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.Groups;
 }
-enum _ContentActivity { reload, refresh, extend }
 
 class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsListener {
 
@@ -56,7 +56,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   List<Group>? _contentList;
   int? _totalContentLength;
-  _ContentActivity? _contentActivity;
+  ContentActivity? _contentActivity;
   bool? _lastPageLoadedAll;
   GroupsFilter? _filter;
   static const int _contentPageLength = 16;
@@ -84,6 +84,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     super.dispose();
   }
@@ -236,10 +237,10 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   );
 
   Widget get _bodyContent {
-    if (_contentActivity == _ContentActivity.reload) {
+    if (_contentActivity == ContentActivity.reload) {
       return _loadingContent;
     }
-    else if (_contentActivity == _ContentActivity.refresh) {
+    else if (_contentActivity == ContentActivity.refresh) {
       return Container();
     }
     else if (_contentList == null) {
@@ -267,7 +268,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
         ),
       ),);
     }
-    if (_contentActivity == _ContentActivity.extend) {
+    if (_contentActivity == ContentActivity.extend) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 16 : 0), child:
         _extendingIndicator
       ));
@@ -300,7 +301,10 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
     Align(alignment: Alignment.center, child:
       SizedBox(width: 24, height: 24, child:
-        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
+        CircularProgressIndicator(strokeWidth: 3, color: Styles().colors.fillColorSecondary),
+      ),
+    ),
+  );
 
   double get _screenHeight => MediaQuery.of(context).size.height;
 
@@ -325,11 +329,11 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   int get _refreshContentLength => max(_listSafeContentLength, _contentPageLength);
 
   Future<void> _reloadContent({ int limit = _contentPageLength, String? anchorId, int? anchorOffset, bool restoreScrollPosition = false }) async {
-    if ((_contentActivity != _ContentActivity.reload) && mounted) {
+    if ((_contentActivity != ContentActivity.reload) && mounted) {
       double scrollPosition = _scrollController.hasClients ? _scrollController.offset : 0;
 
       setState(() {
-        _contentActivity = _ContentActivity.reload;
+        _contentActivity = ContentActivity.reload;
       });
 
       GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
@@ -341,7 +345,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       List<Group>? contentList = contentResult?.groups;
       int? totalContentLength = contentResult?.totalCount;
 
-      if (mounted && (_contentActivity == _ContentActivity.reload)) {
+      if (mounted && (_contentActivity == ContentActivity.reload)) {
         setState(() {
           _contentList = (contentList != null) ? List<Group>.from(contentList) : null;
           _totalContentLength = totalContentLength;
@@ -359,9 +363,9 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   }
 
   Future<void> _refreshContent() async {
-    if (((_contentActivity != _ContentActivity.reload) && (_contentActivity != _ContentActivity.refresh)) && mounted) {
+    if (((_contentActivity != ContentActivity.reload) && (_contentActivity != ContentActivity.refresh)) && mounted) {
       setState(() {
-        _contentActivity = _ContentActivity.refresh;
+        _contentActivity = ContentActivity.refresh;
       });
 
       int queryLimit = _refreshContentLength;
@@ -373,7 +377,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       List<Group>? contentList = contentResult?.groups;
       int? totalContentLength = contentResult?.totalCount;
 
-      if (mounted && (_contentActivity == _ContentActivity.refresh)) {
+      if (mounted && (_contentActivity == ContentActivity.refresh)) {
         setState(() {
           if (contentList != null) {
             _contentList = List<Group>.from(contentList);
@@ -391,7 +395,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   Future<void> _extendContent() async {
     if ((_contentActivity == null) && mounted) {
       setState(() {
-        _contentActivity = _ContentActivity.extend;
+        _contentActivity = ContentActivity.extend;
       });
 
       int queryOffset = _contentList?.length ?? 0;
@@ -404,7 +408,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       List<Group>? contentList = contentResult?.groups;
       int? totalContentLength = contentResult?.totalCount;
 
-      if (mounted && (_contentActivity == _ContentActivity.extend)) {
+      if (mounted && (_contentActivity == ContentActivity.extend)) {
         setState(() {
           if (contentList != null) {
             if (_contentList != null) {
@@ -861,8 +865,8 @@ extension _ContentAttributeValueImpl on ContentAttributeValue {
   }
 }
 
-extension _ContentActivityImpl on _ContentActivity {
-  bool get _hidesContent => ((this == _ContentActivity.reload) || (this == _ContentActivity.refresh));
+extension _ContentActivityImpl on ContentActivity {
+  bool get _hidesContent => ((this == ContentActivity.reload) || (this == ContentActivity.refresh));
 }
 
 extension GroupsFilterAuthTypes on Set<GroupsFilterType> {

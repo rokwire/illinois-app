@@ -141,6 +141,7 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> {
     Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
       GroupConversationMessagesPanel(conversation,
         group: widget.group,
+        groupAdmins: widget.groupAdmins,
         analyticsFeature: widget.analyticsFeature,
       )
     ));
