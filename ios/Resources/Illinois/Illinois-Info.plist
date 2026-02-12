@@ -68,11 +68,11 @@
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>Your bluetooth will be used for the maps to scan for nearby beacons.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>Save favorite events</string>
+	<string>Allow full access to your default calendar to display, add, and manage events from the Illinois app.</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Save favorite events</string>
+	<string>Allow access to your default calendar to display, add, and manage events from the Illinois app.</string>
 	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
-	<string>Save favorite events</string>
+	<string>Allow calendar access to create events in your default calendar from the Illinois app.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Your camera will be used for scanning QR codes or taking pictures for profile images, group or event touts and posts.</string>
 	<key>NSContactsUsageDescription</key>
@@ -86,7 +86,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location will be used to provide nearby services and events, and display it on the map.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow Illinois to access Microphone.</string>
+	<string>Allow microphone access to record your name pronunciation and ask the Illinois AI Assistant questions using your voice.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>Allow Illinois to access Accelerometer.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
@@ -96,7 +96,7 @@
 	<key>NSRemindersUsageDescription</key>
 	<string>Your calendar will be used to let you set reminders for important events.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Allow Illinois to send data to Apple’s speech recognition servers.</string>
+	<string>Allow speech recognition so the Illinois app can convert your voice to text when using the Illinois AI Assistant and other voice features.</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>Cookies will be used to enhance your experience and improve our marketing efforts.</string>
 	<key>UIBackgroundModes</key>

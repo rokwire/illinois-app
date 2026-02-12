@@ -47,6 +47,10 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
   static Border _allBorder = Border.all(color: Styles().colors.surfaceAccent, width: 1);
 
   bool _connectingNetId = false;
+  bool _disconnectingNetId = false;
+  bool _disconnectingPhone = false;
+  bool _disconnectingEmail = false;
+  bool get _disconnecting => _disconnectingNetId || _disconnectingPhone || _disconnectingEmail;
 
   @override
   void initState() {
@@ -300,6 +304,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
               WebFocusableSemanticsWidget(onSelect: _onDisconnectNetIdClicked, child: CompactRoundedButton(
                 label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
                 textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+                progress: _disconnectingNetId,
                 onTap: _onDisconnectNetIdClicked
               )),
             ],),
@@ -349,7 +354,8 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
             contentWeight: 0.45,
             conentAlignment: MainAxisAlignment.start,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-            onTap: _onDisconnectNetIdClicked
+            progress: _disconnectingPhone,
+            onTap: _onDisconnectPhoneClicked
           ))
         ));
       }
@@ -396,7 +402,8 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
             contentWeight: 0.45,
             conentAlignment: MainAxisAlignment.start,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-            onTap: _onDisconnectNetIdClicked
+            progress: _disconnectingEmail,
+            onTap: _onDisconnectEmailClicked
           ))
         ));
       }
@@ -405,19 +412,31 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
   }
 
   void _onDisconnectNetIdClicked() {
-    Analytics().logSelect(target: 'Sign Out');
-    if (Auth2().isOidcLoggedIn) {
-      Analytics().logSelect(target: "Disconnect netId");
-    } else if (Auth2().isPhoneLoggedIn) {
-      Analytics().logSelect(target: "Disconnect phone");
-    } else if (Auth2().isEmailLoggedIn) {
-      Analytics().logSelect(target: "Disconnect email");
+    Analytics().logSelect(target: 'Sign Out: Disconnect NetId');
+    _logout(progress: (value) => setStateIfMounted(() => _disconnectingNetId = value));
+  }
+
+  void _onDisconnectPhoneClicked() {
+    Analytics().logSelect(target: 'Sign Out: Disconnect Phone');
+    _logout(progress: (value) => setStateIfMounted(() => _disconnectingPhone = value));
+  }
+
+  void _onDisconnectEmailClicked() {
+    Analytics().logSelect(target: 'Sign Out: Disconnect Email');
+    _logout(progress: (value) => setStateIfMounted(() => _disconnectingEmail = value));
+  }
+
+  void _logout({ void Function(bool)? progress }) {
+    if (_disconnecting != true) {
+      showDialog<bool?>(context: context, builder: (context) => ProfilePromptLogoutWidget()).then((bool? result) {
+        if (result == true) {
+          progress?.call(true);
+          Auth2().logout().then((_){
+            progress?.call(false);
+          });
+        }
+      });
     }
-    showDialog<bool?>(context: context, builder: (context) => ProfilePromptLogoutWidget()).then((bool? result) {
-      if (result == true) {
-        Auth2().logout();
-      }
-    });
   }
 
   void _onViewProfileClicked() {
