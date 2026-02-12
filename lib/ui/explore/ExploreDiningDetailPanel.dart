@@ -1231,67 +1231,71 @@ class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
   Widget build(BuildContext context) {
     return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
       Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
-        SingleChildScrollView(child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Row(children: <Widget>[
             Expanded(child:
               Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)),), child:
-                  Row(children: [
-                    Expanded(child:
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-                        Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.dialog.message.regular.fat")),
-                      )
-                    ),
-                    Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), button: true, child:
-                      InkWell(onTap: _onClose, child:
-                        Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
-                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2),), child:
-                            Center(child:
-                              Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large"),semanticsLabel: "", ),
+                Row(children: [
+                  Expanded(child:
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+                      Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.dialog.message.regular.fat")),
+                    )
+                  ),
+                  Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), button: true, child:
+                    InkWell(onTap: _onClose, child:
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16), child:
+                        Styles().images.getImage('close-circle-white'),
+                        /*Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2),), child:
+                          Center(child:
+                            Baseline(baselineType: TextBaseline.alphabetic, baseline: 16, child:
+                              Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large.extra_fat"), semanticsLabel: "", ),
                             ),
                           ),
-                        )
+                        ),*/
                       )
-                    ),
-                  ],),
+                    )
+                  ),
+                ],),
               ),
             ),
           ],),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Row(children: [
-                Expanded(child:
-                  Text(widget.message ?? '', style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),),
-                ),
-              ]),
-              Container(height: 4,),
-              TextField(
-                focusNode: _focusNode,
-                controller: _textController,
-                maxLines: 8,
-                decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)), isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
-                style: Styles().textStyles.getTextStyle("widget.detail.regular")
-              ),
-              Container(height: 16,),
-              Row(children: [
-                Expanded(flex: 1, child: Container()),
-                Expanded(flex: 2, child:
-                  RoundedButton(
-                    label: Localization().getStringEx("dialog.send.title", "Send"),
-                    backgroundColor: Colors.transparent,
-                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                    borderColor: Styles().colors.fillColorSecondary,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    onTap: () => _onSend(),
+          SingleChildScrollView(child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Row(children: [
+                  Expanded(child:
+                    Text(widget.message ?? '', style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),),
                   ),
+                ]),
+                Container(height: 4,),
+                TextField(
+                  focusNode: _focusNode,
+                  controller: _textController,
+                  maxLines: 8,
+                  decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)), isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+                  style: Styles().textStyles.getTextStyle("widget.detail.regular")
                 ),
-                Expanded(flex: 1, child: Container()),
-              ]),
-            ],),
+                Container(height: 16,),
+                Row(children: [
+                  Expanded(flex: 1, child: Container()),
+                  Expanded(flex: 2, child:
+                    RoundedButton(
+                      label: Localization().getStringEx("dialog.send.title", "Send"),
+                      backgroundColor: Colors.transparent,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                      borderColor: Styles().colors.fillColorSecondary,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      onTap: () => _onSend(),
+                    ),
+                  ),
+                  Expanded(flex: 1, child: Container()),
+                ]),
+              ],),
+            ),
           ),
         ]),
       ),
-    ));
+    );
   }
 
   void _onClose() {
