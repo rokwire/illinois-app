@@ -1585,7 +1585,7 @@ packages:
       path: plugin
       relative: true
     source: path
-    version: "1.12.6"
+    version: "1.12.7"
   roundcheckbox:
     dependency: "direct main"
     description:
