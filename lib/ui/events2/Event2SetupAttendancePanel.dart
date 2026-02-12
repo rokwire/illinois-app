@@ -510,12 +510,13 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
         }
       });
 
-      Set<String>? registrants = Event2Person.netIdsFromList(persons?.registrants);
+      List<Event2Person>? registrants = persons?.registrants;
       if ((registrants != null) && registrants.isNotEmpty) {
         List<String> invalidAttendanceTakers = <String>[];
-        for (String attendanceTaker in attendanceTakers) {
-          if (registrants.contains(attendanceTaker)) {
-            invalidAttendanceTakers.add(attendanceTaker);
+        for (Event2Person registrant in registrants) {
+          String? registrantNetId = registrant.identifier?.netId;
+          if ((registrant.role != Event2UserRole.attendanceTaker) && (registrantNetId != null) && attendanceTakers.contains(registrantNetId)) {
+            invalidAttendanceTakers.add(registrantNetId);
           }
         }
         return invalidAttendanceTakers;
