@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Reworked refresh token processing in Auth2, added extended Crashlytics logs [#5405](https://github.com/rokwire/illinois-app/issues/5405).
+### Fixed
+- Fixed dummy usage description strings in app's Info.plist [#5720](https://github.com/rokwire/illinois-app/issues/5720).
 
 ## [7.3.49] - 2026-02-05
 ### Fixed
