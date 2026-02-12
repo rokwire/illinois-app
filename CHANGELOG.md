@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed dummy usage description strings in app's Info.plist [#5720](https://github.com/rokwire/illinois-app/issues/5720).
 - Fixed event groups loading in Update Event panel [#5717](https://github.com/rokwire/illinois-app/issues/5717).
 - Fixed close button image in Dining Text Feedback popup [#5718](https://github.com/rokwire/illinois-app/issues/5718).
+- Fixed аdding attendance takers to an event [#5705](https://github.com/rokwire/illinois-app/issues/5705).
 
 ## [7.3.49] - 2026-02-05
 ### Fixed
