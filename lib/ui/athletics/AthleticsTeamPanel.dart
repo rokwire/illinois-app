@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -47,7 +46,6 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsTeamPanel extends StatefulWidget {
   final SportDefinition? sport;
@@ -663,7 +661,7 @@ class _TeamSocialCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => _onTap(context),
+      onTap: _onTap,
       child: Container(
         width: 66,
         height: 66,
@@ -677,13 +675,8 @@ class _TeamSocialCell extends StatelessWidget {
     );
   }
 
-  void _onTap(BuildContext context) {
-    Analytics().logSelect(target: "Social: " + name!);
-    if (StringUtils.isNotEmpty(webUrl)) {
-      Uri? uri = Uri.tryParse(webUrl!);
-      if (uri != null) {
-        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
-      }
-    }
+  void _onTap() {
+    Analytics().logSelect(target: "Social: $name");
+    AppLaunchUrl.launchExternal(url: webUrl);
   }
 }

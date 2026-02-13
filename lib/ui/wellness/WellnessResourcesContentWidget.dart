@@ -222,7 +222,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
       else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {
-          launchUrl(uri, mode: LaunchMode.externalApplication);
+          launchUrl(uri, mode: LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
         }
       }
     }

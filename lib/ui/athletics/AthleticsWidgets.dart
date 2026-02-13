@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -39,7 +37,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsEventCard extends StatefulWidget {
   final Event2 sportEvent;
@@ -251,15 +248,8 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> with Notificati
     }
   }
 
-  void _showTicketsPanel() {
-    String? url = _game?.links?.tickets;
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
-      }
-    }
-  }
+  void _showTicketsPanel() =>
+    AppLaunchUrl.launchExternal(url: _game?.links?.tickets);
 
   Widget _athleticsDetails() {
     List<Widget> details = [];

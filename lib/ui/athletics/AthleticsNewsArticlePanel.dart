@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/RecentItem.dart';
@@ -36,7 +34,6 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsNewsArticlePanel extends StatefulWidget {
   final String? articleId;
@@ -201,7 +198,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
 
   Future<void> _onShareArticle() async {
     Analytics().logSelect(target: "Share Article");
-    String? message;
+    String? message, reason;
     if (_articleUri?.isValid == true) {
       try {
         ShareResult result = await SharePlus.instance.share(ShareParams(uri: _articleUri!));
@@ -210,7 +207,10 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
         }
       }
       catch (e) {
+        final String reasonMacro = '{{reason}}';
         message = Localization().getStringEx('panel.athletics_news_article.message.share.failed.text', 'Failed to share article.');
+        reason = Localization().getStringEx('panel.athletics_news_article.message.share.reason.format', 'Reason: $reasonMacro').
+          replaceAll(reasonMacro, e.toString());
       }
     }
     else {
@@ -218,7 +218,13 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
     }
 
     if (mounted && (message != null)) {
-      AppAlert.showTextMessage(context, message);
+      Widget messageText = (reason != null) ? Column(mainAxisSize: MainAxisSize.min, children: [
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.message.large'),),
+        Padding(padding: EdgeInsets.only(top: 24), child:
+          Text(reason, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle('widget.message.medium.thin'),),
+        ),
+      ],) : Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.message.medium.thin'),);
+      AppAlert.showWidgetMessage(context, messageText, buttonTextStyle: Styles().textStyles.getTextStyle('widget.message.medium.thin'));
     }
   }
 
@@ -252,14 +258,8 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
     return widgets;
   }
 
-  void _onTapUrl(String? url) {
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
-      }
-    }
-  }
+  void _onTapUrl(String? url) =>
+    AppLaunchUrl.launchExternal(url: url);
 
   void _setLoading(bool loading) {
     _loading = loading;
