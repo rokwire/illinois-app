@@ -13,6 +13,8 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+import 'DirectoryAccountsList.dart';
+
 class DirectoryAccountsPage extends StatefulWidget {
   static const String notifyEditInfo  = "edu.illinois.rokwire.directory.accounts.edit";
 
@@ -75,7 +77,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
       _accountsListWidget,
     ]);
 
-  Widget get _accountsListWidget => DirectoryAccountsList2(
+  Widget get _accountsListWidget => DirectoryAccountsList(
     key: _accountsListKey,
     displayMode: DirectoryDisplayMode.browse,
     scrollController: widget.scrollController,
