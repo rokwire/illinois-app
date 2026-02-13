@@ -19,8 +19,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added "My Groups" filter button in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
 
 ## [8.0.0] - 2026-01-29
+
+## [7.3.50] - 2026-02-12
 ### Changed
 - Reworked refresh token processing in Auth2, added extended Crashlytics logs [#5405](https://github.com/rokwire/illinois-app/issues/5405).
+### Fixed
+- Fixed dummy usage description strings in app's Info.plist [#5720](https://github.com/rokwire/illinois-app/issues/5720).
+- Fixed event groups loading in Update Event panel [#5717](https://github.com/rokwire/illinois-app/issues/5717).
+- Fixed close button image in Dining Text Feedback popup [#5718](https://github.com/rokwire/illinois-app/issues/5718).
+- Fixed аdding attendance takers to an event [#5705](https://github.com/rokwire/illinois-app/issues/5705).
 
 ## [7.3.49] - 2026-02-05
 ### Fixed
