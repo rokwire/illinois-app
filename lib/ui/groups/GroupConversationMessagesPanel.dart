@@ -1,7 +1,11 @@
 
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:flutter_quill/quill_delta.dart';
+import 'package:flutter_quill_delta_from_html/parser/html_to_delta.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -92,7 +96,9 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
         )
       )
     ),
-    _GroupConversationMessageCreateBar(),
+    _GroupConversationMessageEditBar(
+      title: Localization().getStringEx('', 'REPLY'),
+    ),
   ],);
 
   Widget get _listContent {
@@ -119,7 +125,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
       ),);
     }
 
-    return Padding(padding: EdgeInsets.all(16), child:
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
       Column(children:  cardsList,)
     );
   }
@@ -478,18 +484,265 @@ class _GroupConversationMessageHeader extends StatelessWidget {
   static const double _photoSize = 36;
 }
 
-class _GroupConversationMessageCreateBar extends StatefulWidget {
+class _GroupConversationMessageEditBar extends StatefulWidget {
+  final String? title;
+  
+  final String? text;
+  final String? hint;
+  final TextStyle? textStyle;
+  final TextStyle? linkTextStyle;
+
+  final int minLines;
+  final int maxLines;
+  final bool autofocus;
+
+  final EdgeInsetsGeometry padding;
+
+  _GroupConversationMessageEditBar({this.title,
+    this.text, this.hint, this.textStyle, this.linkTextStyle, // ignore: unused_element_parameter
+    this.minLines = 1, this.maxLines = 12, this.autofocus = false, // ignore: unused_element_parameter
+    this.padding = const EdgeInsetsGeometry.only(left: 24, right: 16, bottom: 24), // ignore: unused_element_parameter
+  });
+
+  quill.Document get textDocument {
+    try { return quill.Document.fromDelta(HtmlToDelta().convert(text ?? '')); }
+    catch(e) { return quill.Document()..insert(0, text ?? ''); }
+  }
+
   @override
-  State<StatefulWidget> createState() => _GroupConversationMessageCreateBarState();
+  State<StatefulWidget> createState() => _GroupConversationMessageEditBarState();
 }
 
-class _GroupConversationMessageCreateBarState extends State<_GroupConversationMessageCreateBar> {
+enum _EditBarCommand { bold, italic, underline, link, submit, picture }
+
+class _GroupConversationMessageEditBarState extends State<_GroupConversationMessageEditBar> {
+
+  late quill.QuillController _quillController;
+  late Delta _initialQuillDelta;
+  late FocusNode _focusNode;
+  late TextStyle _textStyle;
+  late TextStyle _linkTextStyle;
+  Set<_EditBarCommand> _selectedCommands = <_EditBarCommand>{};
 
   @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      border: Border.symmetric(horizontal: BorderSide(color: Styles().colors.surfaceAccent))),
-    height: 150,
+  void initState() {
+    _quillController = (widget.text?.isNotEmpty == true) ? quill.QuillController(
+      document: widget.textDocument,
+      selection: const TextSelection.collapsed(offset: 0),
+    ) : quill.QuillController.basic();
+    _quillController.addListener(_onTextChanged);
+    _initialQuillDelta = _quillController.document.toDelta();
+    _focusNode = FocusNode();
+    _textStyle = widget.textStyle ?? Styles().textStyles.getTextStyle('widget.message.regular') ?? _defaultTextStyle;
+    _linkTextStyle = widget.linkTextStyle ?? _textStyle.apply(color: _linkTextColor, decoration: TextDecoration.underline, decorationColor: _linkTextColor);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _quillController.removeListener(_onTextChanged);
+    _quillController.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+    Padding(padding: widget.padding, child:
+      Column(mainAxisSize: MainAxisSize.min, children: [
+        _commandBar,
+        Padding(padding: EdgeInsetsGeometry.only(right: 8), child: _textBar),
+      ],),
+    );
+
+  Widget get _textBar =>
+      Container(decoration: _textDecoration, child:
+        Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Expanded(child:
+            Padding(padding: _textPadding, child:
+              quill.QuillEditor.basic(
+                controller: _quillController,
+                focusNode: _focusNode,
+                config: quill.QuillEditorConfig(
+                  autoFocus: widget.autofocus,
+                  placeholder: widget.hint,
+                  expands: false,
+                  scrollable: true,
+                  minHeight: _textMinHeight,
+                  maxHeight: _textMaxHeight,
+                  padding: EdgeInsets.zero,
+                  customStyles: quill.DefaultStyles(
+                    paragraph: quill.DefaultTextBlockStyle(
+                      _textStyle,
+                      const quill.HorizontalSpacing(0, 0),
+                      const quill.VerticalSpacing(0, 0),
+                      const quill.VerticalSpacing(0, 0),
+                      null,
+                    ),
+                    link: _linkTextStyle,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Event2ImageCommandButton(
+            Styles().images.getImage('paper-plane',
+              color: _canSubmit ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+              size: _buttonIconSize,
+              excludeFromSemantics: true
+            ),
+            label: Localization().getStringEx('', 'Send'),
+            hint: Localization().getStringEx('', 'Tap to send message'),
+            contentPadding: _buttonPadding,
+            onTap: _canSubmit ? _onSubmit : null,
+          ),
+        ],)
+      );
+
+
+  BoxDecoration get _textDecoration => BoxDecoration(
+      color: Styles().colors.surface,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: Styles().colors.surfaceAccent)
   );
 
+  static const EdgeInsetsGeometry _textPadding = const EdgeInsets.only(left: 12, top: 8, bottom: 8);
+
+  double get _textMinHeight => widget.minLines * _textLineHeight;
+  double get _textMaxHeight => widget.maxLines * _textLineHeight;
+  double get _textLineHeight => MediaQuery.of(context).textScaler.scale(_textFontSize * 1.25);
+  double get _textFontSize => _textStyle.fontSize ?? _defaultTextSize;
+
+  TextStyle get _defaultTextStyle => TextStyle(fontFamily: _defaultFontFamily, fontSize: _defaultTextSize, color: _defaultTextColor,);
+  String? get _defaultFontFamily => Styles().fontFamilies.regular;
+  Color? get _defaultTextColor => Styles().colors.fillColorPrimary;
+  Color? get _linkTextColor => Styles().colors.fillColorSecondary;
+  static const double _defaultTextSize = 16;
+
+
+  Widget get _commandBar => Row(children: [
+    if (widget.title?.isNotEmpty == true)
+      Text(widget.title ?? '', style: Styles().textStyles.getTextStyleEx('widget.detail.small.fat'),),
+    Expanded(child:
+      Wrap(alignment: WrapAlignment.end, children: [
+        _formatButton(_EditBarCommand.bold, onTap: _onBold),
+        _formatButton(_EditBarCommand.italic, onTap: _onItalic),
+        _formatButton(_EditBarCommand.underline, onTap: _onUnderline),
+        _formatButton(_EditBarCommand.link, onTap: _onLink),
+        _formatButton(_EditBarCommand.picture, onTap: _onPicture),
+      ],),
+    )
+  ],);
+
+  Widget _formatButton(_EditBarCommand command, { void Function()? onTap }) =>
+      Event2ImageCommandButton(
+        _formatButtonImage(command),
+        label: command.accLabel,
+        hint: command.accHint,
+        contentPadding: _buttonPadding,
+        onTap: onTap,
+      );
+
+  Widget? _formatButtonImage(_EditBarCommand command) =>
+      Styles().images.getImage(command.iconKey,
+        color: _formatButtonColor(command),
+        size: _buttonIconSize,
+        excludeFromSemantics: true
+      );
+
+  Color _formatButtonColor(_EditBarCommand? command) =>
+    ((command != null) && _selectedCommands.contains(command)) ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary;
+
+  static const double _buttonIconSize = 16;
+  static const EdgeInsetsGeometry _buttonPadding = const EdgeInsetsGeometry.symmetric(horizontal: 12, vertical: 8);
+
+  bool _hasTextFormat(quill.Attribute attribute) =>
+    _quillController.getSelectionStyle().attributes.containsKey(attribute.key);
+
+  void _toggleTextFormat(quill.Attribute attribute) =>
+    _quillController.formatSelection(
+      _hasTextFormat(attribute) ? quill.Attribute.clone(attribute, null) : attribute,
+    );
+
+  bool get _canSubmit => _selectedCommands.contains(_EditBarCommand.submit);
+
+  void _onTextChanged() {
+    Set<_EditBarCommand> selectedCommands = Set<_EditBarCommand>.from(_selectedCommands);
+
+    quill.Style style = _quillController.getSelectionStyle();
+    SetUtils.set(selectedCommands, _EditBarCommand.bold, style.attributes.containsKey(quill.Attribute.bold.key));
+    SetUtils.set(selectedCommands, _EditBarCommand.italic, style.attributes.containsKey(quill.Attribute.italic.key));
+    SetUtils.set(selectedCommands, _EditBarCommand.underline, style.attributes.containsKey(quill.Attribute.underline.key));
+
+    SetUtils.set(selectedCommands, _EditBarCommand.submit, (_initialQuillDelta != _quillController.document.toDelta()));
+
+    if ((DeepCollectionEquality().equals(_selectedCommands, selectedCommands) != true) && mounted) {
+      setState(() {
+        _selectedCommands = selectedCommands;
+      });
+    }
+  }
+
+  void _onBold() {
+    Analytics().logSelect(target: 'Bold');
+    _toggleTextFormat(quill.Attribute.bold);
+  }
+
+  void _onItalic() {
+    Analytics().logSelect(target: 'Italic');
+    _toggleTextFormat(quill.Attribute.italic);
+  }
+
+  void _onUnderline() {
+    Analytics().logSelect(target: 'Underline');
+    _toggleTextFormat(quill.Attribute.underline);
+  }
+
+  void _onLink() {
+    Analytics().logSelect(target: 'Link');
+  }
+
+  void _onPicture() {
+    Analytics().logSelect(target: 'Picture');
+  }
+
+  void _onSubmit() {
+    Analytics().logSelect(target: 'Submit');
+  }
+
+}
+
+extension _EditBarCommandImpl on _EditBarCommand {
+  String get iconKey {
+    switch(this) {
+      case _EditBarCommand.bold: return 'bold';
+      case _EditBarCommand.italic: return 'italic';
+      case _EditBarCommand.underline: return 'underline';
+      case _EditBarCommand.link: return 'link-simple';
+      case _EditBarCommand.picture: return 'landscape';
+      case _EditBarCommand.submit: return 'paper-plane';
+    }
+  }
+
+  String get accLabel {
+    switch(this) {
+      case _EditBarCommand.bold: return Localization().getStringEx('', 'Bold');
+      case _EditBarCommand.italic: return Localization().getStringEx('', 'Italic');
+      case _EditBarCommand.underline: return Localization().getStringEx('', 'Underline');
+      case _EditBarCommand.link: return Localization().getStringEx('', 'Link');
+      case _EditBarCommand.picture: return Localization().getStringEx('', 'Picture');
+      case _EditBarCommand.submit: return Localization().getStringEx('', 'Submit');
+    }
+  }
+
+  String get accHint {
+    switch(this) {
+      case _EditBarCommand.bold: return Localization().getStringEx('', 'Tap to toggle bold text style on text selection');
+      case _EditBarCommand.italic: return Localization().getStringEx('', 'Tap to toggle italic text style on text selection');
+      case _EditBarCommand.underline: return Localization().getStringEx('', 'Tap to toggle underline text style on text selection');
+      case _EditBarCommand.link: return Localization().getStringEx('', 'Tap to add or edit hyperlink');
+      case _EditBarCommand.picture: return Localization().getStringEx('', 'Tap to add or Picture');
+      case _EditBarCommand.submit: return Localization().getStringEx('', 'Tap to send message');
+    }
+  }
 }
