@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:collection/collection.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -34,7 +35,9 @@ class CanvasCourse {
 
   final String? syllabusBody;
 
-  CanvasCourse({this.id, this.name, this.accessRestrictedByDate, this.syllabusBody, this.accountId, this.createdAt, this.term});
+  final List<CanvasSection>? sections;
+
+  CanvasCourse({this.id, this.name, this.accessRestrictedByDate, this.syllabusBody, this.accountId, this.createdAt, this.term, this.sections});
 
   static CanvasCourse? fromJson(Map<String, dynamic>? json) {
     return (json != null)
@@ -45,7 +48,8 @@ class CanvasCourse {
             syllabusBody: JsonUtils.stringValue(json['syllabus_body']),
             accountId: JsonUtils.intValue(json['account_id']),
             createdAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
-            term: CanvasTerm.fromJson(JsonUtils.mapValue(json['term']))
+            term: CanvasTerm.fromJson(JsonUtils.mapValue(json['term'])),
+            sections: CanvasSection.listFromJson(JsonUtils.listValue(json['sections'])),
           )
         : null;
   }
@@ -59,7 +63,8 @@ class CanvasCourse {
       (other.syllabusBody == syllabusBody) &&
       (other.accountId == accountId) &&
       (other.createdAt == createdAt) &&
-      (other.term == term);
+      (other.term == term) &&
+      DeepCollectionEquality().equals(sections, other.sections);
 
   @override
   int get hashCode =>
@@ -69,7 +74,55 @@ class CanvasCourse {
       (syllabusBody?.hashCode ?? 0) ^
       (accountId?.hashCode ?? 0) ^
       (createdAt?.hashCode ?? 0) ^
-      (term?.hashCode ?? 0);
+      (term?.hashCode ?? 0) ^
+      (sections?.hashCode ?? 0);
+}
+
+////////////////////////////////
+// CanvasSection
+
+class CanvasSection {
+  final int? id;
+  final String? name;
+  final DateTime? startAt;
+  final DateTime? endAt;
+  final DateTime? createdAt;
+  final CanvasEnrollmentType? enrollmentRole;
+
+  CanvasSection({this.id, this.name, this.startAt, this.endAt, this.createdAt, this.enrollmentRole});
+
+  static CanvasSection? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return CanvasSection(
+      id: JsonUtils.intValue(json['id']),
+      name: JsonUtils.stringValue(json['name']),
+      startAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['start_at']), isUtc: true),
+      endAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['end_at']), isUtc: true),
+      createdAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
+      enrollmentRole: CanvasEnrollment.typeFromString(JsonUtils.stringValue(json['enrollment_role'])),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) => (other is CanvasSection) && (id == other.id) && (name == other.name) && (startAt == other.startAt) &&
+      (endAt == other.endAt) && (createdAt == other.createdAt) && (enrollmentRole == other.enrollmentRole);
+
+  @override
+  int get hashCode => (id?.hashCode ?? 0) ^ (name?.hashCode ?? 0) ^ (startAt?.hashCode ?? 0) ^ (endAt?.hashCode ?? 0) ^
+    (createdAt?.hashCode ?? 0) ^ (enrollmentRole?.hashCode ?? 0);
+
+  static List<CanvasSection>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasSection>? result;
+    if (jsonList != null) {
+      result = <CanvasSection>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasSection.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
 }
 
 ////////////////////////////////

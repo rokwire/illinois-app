@@ -1,8 +1,11 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Canvas.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -409,7 +412,8 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
                   if ((widget.course?.section?.isInPerson == true) && (widget.course?.section?.building?.floors?.isNotEmpty == true))
                     _buildFloorPlans(),
 
-                  _buildCanvasContent(),
+                  if (_canvasVisible)
+                    _buildCanvasContent(),
 
                   Container(height: 32),
                   
@@ -553,7 +557,7 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
 
   void _onCanvasAssignments() {
     Analytics().logSelect(target: 'View Assignments in Canvas');
-    int? courseId = (_courseNumber != null) ? int.tryParse(_courseNumber!) : null;
+    int? courseId = _canvasCourse?.id;
     if (courseId != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseAssignmentsPanel(courseId: courseId, analyticsFeature: widget.analyticsFeature)));
     }
@@ -562,7 +566,7 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
   void _onCanvasLaunch() async {
     Analytics().logSelect(target: 'Launch Canvas');
     String? courseDeepLinkFormat = Config().canvasCourseDeepLinkFormat;
-    String? courseDeepLink = StringUtils.isNotEmpty(courseDeepLinkFormat) ? sprintf(courseDeepLinkFormat!, [_courseNumber]) : null;
+    String? courseDeepLink = StringUtils.isNotEmpty(courseDeepLinkFormat) ? sprintf(courseDeepLinkFormat!, [_canvasCourse?.id]) : null;
     if (StringUtils.isNotEmpty(courseDeepLink)) {
       await Canvas().openCanvasAppDeepLink(courseDeepLink!);
     }
@@ -574,4 +578,14 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
   }
 
   String? get _courseNumber => widget.course?.number;
+
+  bool get _canvasVisible => (_canvasCourse != null);
+
+  ///
+  /// #5584:
+  /// "the coursenumber property coming from the gatway building block should match the CRN of the canvas course."
+  ///
+  CanvasCourse? get _canvasCourse => (_courseNumber != null) ?
+    Canvas().courses?.firstWhereOrNull((item) => (item.crn == _courseNumber)) :
+    null;
 }

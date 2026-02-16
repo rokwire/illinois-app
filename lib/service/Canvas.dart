@@ -703,10 +703,10 @@ class Canvas with Service, NotificationsListener {
     String? url;
     http.Response? response;
     if (_useCanvasApi) {
-      url = _masquerade('${Config().canvasUrl}/api/v1/courses?per_page=$limit');
+      url = _masquerade('${Config().canvasUrl}/api/v1/courses?include[]=sections');
       response = await Network().get(url, headers: _canvasAuthHeaders);
     } else {
-      url = '${Config().lmsUrl}/courses?limit=$limit';
+      url = '${Config().lmsUrl}/courses?include=sections&limit=$limit';
       response = await Network().get(url, auth: Auth2());
     }
     int? responseCode = response?.statusCode;
