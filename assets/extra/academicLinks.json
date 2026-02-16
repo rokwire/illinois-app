@@ -1,0 +1,331 @@
+{
+  "directoryCategories" : [
+    "Academic Support & Success",
+    "Grades, Finances & Registration",
+    "International Education",
+    "Policies & Processes",
+    "Technology"
+  ],
+  "screens": {},
+  "resources": [
+    {
+			"id": "accessibility_and_accommodations",
+			"type": "external_link",
+			"categories": ["Academic Support & Success"],
+			"title": "Accessibility & Accommodations",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://wellness.illinois.edu/accessibility-accommodations"
+			}]
+		},{
+			"id": "advising",
+			"type": "external_link",
+			"categories": ["Academic Support & Success"],
+			"title": "Advising",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://studentsuccess.illinois.edu/student-resources/advising"
+			}]
+		},{
+			"id": "books_and_course_materials",
+			"type": "external_link",
+			"categories": ["Academic Support & Success"],
+			"title": "Books & Course Materials",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Purchase the exact textbooks selected by instructors at the Illini Union Bookstore or online."
+			},{
+				"type": "external_link",
+				"content": "https://bookstore.illinois.edu/site_text_options.asp?"
+			}]
+		},{
+			"id": "connie_frank_care_center",
+			"type": "external_link",
+			"categories": ["Academic Support & Success"],
+			"title": "Connie Frank CARE Center",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Guidance with course attendance issues, options for withdrawing from the university, or questions about where to go on campus to seek different services."
+			},{
+				"type": "external_link",
+				"content": "https://odos.illinois.edu/community-of-care/CAREcenter"
+			}]
+		},{
+			"id": "first_generation_services",
+			"type": "external_link",
+			"categories": ["Academic Support & Success"],
+			"title": "First-Generation Services",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Find support as a first-generation student. The university defines first-generation as “neither parent nor guardian have earned at least a bachelor's degree."
+			},{
+				"type": "external_link",
+				"content": "https://firstgen.illinois.edu/?_gl=1*zm5jhy*_ga*NjczMzUzNDI2LjE3NzA4NDYyMDc.*_ga_TWFEJJKL35*czE3NzA5OTgwOTQkbzEkZzEkdDE3NzA5OTg0MzMkajYwJGwwJGgw"
+			}]
+		},{
+			"id": "jeffries_center",
+			"type": "external_link",
+			"categories": ["Academic Support & Success"],
+			"title": "Jeffries Center",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Offers services for academic achievement, personal development, career preparation, and more."
+			},{
+				"type": "external_link",
+				"content": "https://jeffriescenter.illinois.edu"
+			}]
+		},{
+			"id": "new_student_and_family_experiences",
+			"type": "external_link",
+			"categories": ["Academic Support & Success"],
+			"title": "New Student & Family Experiences",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Find resources to make your first semesters on campus easier."
+			},{
+				"type": "external_link",
+				"content": "https://newstudent.illinois.edu/"
+			}]
+		},{
+			"id": "ombuds_assistance_and_resources_for_students",
+			"type": "external_link",
+			"categories": ["Academic Support & Success"],
+			"title": "Ombuds Assistance & Resources for Students",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Explore options for handling an issue with a faculty or staff member."
+			},{
+				"type": "external_link",
+				"content": "https://oars.illinois.edu"
+			}]
+		},{
+			"id": "student_legal_services",
+			"type": "external_link",
+			"categories": ["Academic Support & Success"],
+			"title": "Student Legal Services",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Access free legal services and advice on housing issues, traffic tickets, misdemeanors, and more."
+			},{
+				"type": "external_link",
+				"content": "https://studentlegal.illinois.edu/?_gl=1*87kzvc*_ga*NjczMzUzNDI2LjE3NzA4NDYyMDc.*_ga_TWFEJJKL35*czE3NzA5OTgwOTQkbzEkZzEkdDE3NzA5OTgzMzMkajM4JGwwJGgw"
+			}]
+		},{
+			"id": "stress_management_program",
+			"type": "external_link",
+			"categories": ["Academic Support & Success"],
+			"title": "Stress Management Program",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Learn stress management techniques, pick up sleep packs and stress relief packs, and make appointments with McKinley’s stress management coordinator."
+			},{
+				"type": "external_link",
+				"content": "https://www.mckinley.illinois.edu/stress-management"
+			}]
+		},{
+			"id": "tutoring_resources",
+			"type": "external_link",
+			"categories": ["Academic Support & Success"],
+			"title": "Tutoring Resources",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://tutoring.illinois.edu/"
+			}]
+		},{
+			"id": "university_emergency_dean",
+			"type": "external_link",
+			"categories": ["Academic Support & Success"],
+			"title": "University Emergency Dean (after hours)",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Provides referrals, information, and support to students after hours but is not a substitute for trained emergency personnel."
+			}]
+		},{
+			"id": "writers_workshop",
+			"type": "external_link",
+			"categories": ["Academic Support & Success"],
+			"title": "Writers Workshop",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Join a writing group or make an appointment for a consultation on any academic or professional writing project."
+			},{
+				"type": "external_link",
+				"content": "https://writersworkshop.illinois.edu/"
+			}]
+		},{
+			"id": "academic_records",
+			"type": "external_link",
+			"categories": ["Grades, Finances & Registration"],
+			"title": "Academic Records",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Request transcripts, verify degree progress, update personal info, and more."
+			},{
+				"type": "external_link",
+				"content": "https://registrar.illinois.edu/academic-records/?_gl=1*mq6wmv*_ga*NjczMzUzNDI2LjE3NzA4NDYyMDc.*_ga_TWFEJJKL35*czE3NzA5OTcyNzYkbzQkZzEkdDE3NzA5OTc2MDYkajU0JGwwJGgw"
+			}]
+		},{
+			"id": "course_explorer",
+			"type": "external_link",
+			"categories": ["Grades, Finances & Registration"],
+			"title": "Course Explorer",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Find classes by term and general education requirements."
+			},{
+				"type": "external_link",
+				"content": "https://courses.illinois.edu/"
+			}]
+		},{
+			"id": "degree_audit",
+			"type": "external_link",
+			"categories": ["Grades, Finances & Registration"],
+			"title": "Degree Audit (DARS)",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Track unofficial progress toward a degree."
+			},{
+				"type": "external_link",
+				"content": "https://registrar.illinois.edu/academic-records/dars-audit/"
+			}]
+		},{
+			"id": "financial_aid",
+			"type": "external_link",
+			"categories": ["Grades, Finances & Registration"],
+			"title": "Financial Aid",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Access information to secure funds for your education and apply for aid."
+			},{
+				"type": "external_link",
+				"content": "https://osfa.illinois.edu/?_gl=1*9qwtcp*_ga*NjczMzUzNDI2LjE3NzA4NDYyMDc.*_ga_TWFEJJKL35*czE3NzA5OTcyNzYkbzQkZzEkdDE3NzA5OTc5NjYkajYwJGwwJGgw"
+			}]
+		},{
+			"id": "myillini",
+			"type": "external_link",
+			"categories": ["Grades, Finances & Registration"],
+			"title": "myIllini",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Access your course schedule, grades, account balance, and more."
+			},{
+				"type": "external_link",
+				"content": "https://myillini.illinois.edu/IdentityManagement/Login"
+			}]
+		},{
+			"id": "student_account_payments",
+			"type": "external_link",
+			"categories": ["Grades, Finances & Registration"],
+			"title": "Student Account Payments",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Pay tuition and fees, set up tuition payment plans, and more."
+			},{
+				"type": "external_link",
+				"content": "https://paymybill.uillinois.edu"
+			}]
+		},{
+			"id": "student_money_management_center",
+			"type": "external_link",
+			"categories": ["Grades, Finances & Registration"],
+			"title": "Student Money Management Center",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Learn to handle finances responsibly through webinars, podcasts, courses, and more."
+			},{
+				"type": "external_link",
+				"content": "https://www.studentmoney.uillinois.edu/AboutSMMC"
+			}]
+		},{
+			"id": "student_self_service_portal",
+			"type": "external_link",
+			"categories": ["Grades, Finances & Registration"],
+			"title": "Student Self-Service Portal",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Register for classes, view class schedules, pay fees, view financial aid information, view grades and transcripts, and update contact information."
+			},{
+				"type": "external_link",
+				"content": "https://apps.uillinois.edu/selfservice?_gl=1*zuj6fc*_ga*NjczMzUzNDI2LjE3NzA4NDYyMDc.*_ga_TWFEJJKL35*czE3NzA5OTcyNzYkbzQkZzEkdDE3NzA5OTc1NTMkajQ2JGwwJGgw"
+			}]
+		},{
+			"id": "international_student_and_scholar_services",
+			"type": "external_link",
+			"categories": ["International Education"],
+			"title": "International Student & Scholar Services",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Offers advising, immigration support services, cultural programming, and advocacy."
+			},{
+				"type": "external_link",
+				"content": "https://isss.illinois.edu/"
+			}]
+		},{
+			"id": "study_abroad",
+			"type": "external_link",
+			"categories": ["International Education"],
+			"title": "Study Abroad",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://studyabroad.illinois.edu/?_gl=1*87kzvc*_ga*NjczMzUzNDI2LjE3NzA4NDYyMDc.*_ga_TWFEJJKL35*czE3NzA5OTgwOTQkbzEkZzEkdDE3NzA5OTgzMzMkajM4JGwwJGgw"
+			}]
+		},{
+			"id": "student_code",
+			"type": "external_link",
+			"categories": ["Policies & Processes"],
+			"title": "Student Code",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Rules, regulations, policies, and procedures for undergraduate, graduate, and professional students enrolled at the University of Illinois Urbana-Champaign."
+			},{
+				"type": "external_link",
+				"content": "https://studentcode.illinois.edu/?_gl=1*cvlsfa*_ga*NjczMzUzNDI2LjE3NzA4NDYyMDc.*_ga_TWFEJJKL35*czE3NzA5OTgwOTQkbzEkZzAkdDE3NzA5OTgwOTQkajYwJGwwJGgw"
+			}]
+		},{
+			"id": "student_complaint_process",
+			"type": "external_link",
+			"categories": ["Policies & Processes"],
+			"title": "Student Complaint Process",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://provost.illinois.edu/student-consumer-information/student-complaint-process/?_gl=1*13r5k8y*_ga*NjczMzUzNDI2LjE3NzA4NDYyMDc.*_ga_TWFEJJKL35*czE3NzA5OTgwOTQkbzEkZzEkdDE3NzA5OTgyMjQkajU1JGwwJGgw"
+			}]
+		},{
+			"id": "tech_zone_at_the_illini_union",
+			"type": "external_link",
+			"categories": ["Technology"],
+			"title": "Tech Zone at the Illini Union",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Purchase computers and accessories."
+			},{
+				"type": "external_link",
+				"content": "https://techzone.illinois.edu/?_gl=1*pgbqny*_ga*NjczMzUzNDI2LjE3NzA4NDYyMDc.*_ga_TWFEJJKL35*czE3NzA5OTgwOTQkbzEkZzAkdDE3NzA5OTgxMDAkajU0JGwwJGgw"
+			}]
+		},{
+			"id": "technology_services",
+			"type": "external_link",
+			"categories": ["Technology"],
+			"title": "Technology Services",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Get help with your NetID, Canvas, email, Zoom, and more."
+			},{
+				"type": "external_link",
+				"content": "https://www.techservices.illinois.edu/student-resource-guide/"
+			}]
+		},{
+			"id": "webstore",
+			"type": "external_link",
+			"categories": ["Technology"],
+			"title": "WebStore",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Download free software or buy programs at a discount."
+			},{
+				"type": "external_link",
+				"content": "https://webstore.illinois.edu/home/?_gl=1*13r5k8y*_ga*NjczMzUzNDI2LjE3NzA4NDYyMDc.*_ga_TWFEJJKL35*czE3NzA5OTgwOTQkbzEkZzEkdDE3NzA5OTgyMjQkajU1JGwwJGgw"
+			}]
+		}
+  ]
+}
