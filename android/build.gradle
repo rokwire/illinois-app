@@ -43,6 +43,7 @@ buildscript {
             dirs '../../libs/hid-origo/android'
         }
         maven { url 'https://jitpack.io' }
+//        maven { url "$rootProject.projectDir/tapandpay_sdk/" }
     }
 
     subprojects {

@@ -49,10 +49,11 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
     private OrigoMobileKeysApi mobileKeysApi;
 
     public static boolean isVerified(Context appContext) {
-        OrigoDeviceEligibility eligibility = getDeviceEligibility(appContext);
-        boolean bleVerified = eligibility.bleVerified();
-        boolean nfcVerified = eligibility.nfcVerified();
-        return (bleVerified || nfcVerified);
+//        OrigoDeviceEligibility eligibility = getDeviceEligibility(appContext);
+//        boolean bleVerified = eligibility.bleVerified();
+//        boolean nfcVerified = eligibility.nfcVerified();
+//        return (bleVerified || nfcVerified);
+        return true;
     }
 
     public MobileAccessKeysApiFactory(Context appContext) {
@@ -67,8 +68,9 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
         if (!mobileKeysApi.isInitialized()) {
             String appId = BuildConfig.ORIGO_APP_ID;
             String appDescription = String.format("%s-%s", BuildConfig.ORIGO_APP_ID, BuildConfig.VERSION_NAME);
-            OrigoDeviceEligibility eligibility = getDeviceEligibility(appContext);
-            OrigoOpeningTrigger[] openingTriggers = getOpeningTriggers(appContext, eligibility);
+//            OrigoDeviceEligibility eligibility = getDeviceEligibility(appContext);
+//            OrigoOpeningTrigger[] openingTriggers = getOpeningTriggers(appContext, eligibility);
+            OrigoOpeningTrigger[] openingTriggers = getOpeningTriggers(appContext);
             Integer[] lockServiceCodes = getStoredLockServiceCodes(appContext);
 
             OrigoApiConfiguration origoApiConfiguration = new OrigoApiConfiguration.Builder().setApplicationId(appId)
@@ -76,21 +78,31 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
                     .setNfcParameters(new OrigoNfcConfiguration.Builder().build())
                     .build();
 
+//            OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
+//                    openingTriggers, lockServiceCodes)
+//                    .setAllowBackgroundScanning(true)
+//                    .setBluetoothModeIfSupported(OrigoBluetoothMode.DUAL)
+//                    .build();
             OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
-                    openingTriggers, lockServiceCodes)
+                    new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(appContext),
+                            new OrigoTwistAndGoOpeningTrigger(appContext),
+                            new OrigoSeamlessOpeningTrigger()}, lockServiceCodes)
                     .setAllowBackgroundScanning(true)
+                    .setConnectingToReaderStopsScanning(false)
                     .setBluetoothModeIfSupported(OrigoBluetoothMode.DUAL)
+                    .setAutoRetryForOutOfRangeError(true)
                     .build();
 
             try {
                 mobileKeysApi.initialize(appContext, origoApiConfiguration, origoScanConfiguration, appId);
-            } catch (OrigoMobileKeysException e) {
-                Log.e(TAG, "Failed to init factory (mobileKeysApi.initialize failed). Message: " + e.getMessage() + ", CauseMessage: " + e.getCauseMessage());
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e(TAG, "Failed to init factory (mobileKeysApi.initialize failed). Message: " + e.getMessage() + ", CauseMessage: " /*+ e.getCauseMessage()*/);
+//                throw new RuntimeException(e);
             }
             if (!mobileKeysApi.isInitialized()) {
                 Log.e(TAG, "Failed to init factory (!mobileKeysApi.isInitialized())");
-                throw new IllegalStateException();
+//                throw new IllegalStateException();
             }
         }
     }
@@ -116,28 +128,37 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
 
     //region Eligibility
 
-    private static OrigoDeviceEligibility getDeviceEligibility(Context context) {
-        OrigoDeviceEligibility eligibility;
-        try {
-            eligibility = OrigoMobileKeysApi.checkEligibility(context);
-        } catch (OrigoDeviceEligibilityException e) {
-            // Failed to perform full eligibility check, using local device eligibility
-            eligibility = OrigoMobileKeysApi.defaultEligibility(context);
-        }
-        return eligibility;
-    }
+//    private static OrigoDeviceEligibility getDeviceEligibility(Context context) {
+//        OrigoDeviceEligibility eligibility;
+//        try {
+//            eligibility = OrigoMobileKeysApi.checkEligibility(context);
+//        } catch (Exception e) {
+//            try {
+//                e.printStackTrace();
+//                // Failed to perform full eligibility check, using local device eligibility
+//                eligibility = OrigoMobileKeysApi.defaultEligibility(context);
+//            } catch (Exception ex) {
+//                // Failed to perform full eligibility check, using local device eligibility
+//                ex.printStackTrace();
+//                return null;
+//            }
+//        }
+//        return eligibility;
+//    }
 
-    private OrigoOpeningTrigger[] getOpeningTriggers(Context appContext, OrigoDeviceEligibility eligibility) {
+//    private OrigoOpeningTrigger[] getOpeningTriggers(Context appContext, OrigoDeviceEligibility eligibility) {
+    private OrigoOpeningTrigger[] getOpeningTriggers(Context appContext) {
         List<OrigoOpeningTrigger> openingTriggerList = new ArrayList<>();
-        if (isTwistAndGoEnabled(appContext) && eligibility.supportsTwistAndGo()) {
+//        if (isTwistAndGoEnabled(appContext) && eligibility.supportsTwistAndGo()) {
+        if (isTwistAndGoEnabled(appContext)) {
             openingTriggerList.add(new OrigoTwistAndGoOpeningTrigger(appContext));
         }
-        if (eligibility.supportsTap()) {
+//        if (eligibility.supportsTap()) {
             openingTriggerList.add(new OrigoTapOpeningTrigger(appContext));
-        }
-        if (eligibility.supportsSeamless()) {
+//        }
+//        if (eligibility.supportsSeamless()) {
             openingTriggerList.add(new OrigoSeamlessOpeningTrigger());
-        }
+//        }
         return openingTriggerList.toArray(new OrigoOpeningTrigger[0]);
     }
 
