@@ -46,7 +46,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:universal_io/io.dart';
 
 class ExploreDiningDetailPanel extends StatefulWidget with AnalyticsInfo {
@@ -280,35 +280,23 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
 
   Widget? _exploreOrderOnline() {
     Map<String, dynamic>? onlineOrder = _dining.onlineOrder;
-    if (onlineOrder == null) {
-      return null;
-    }
-    Map<String, dynamic>? onlineOrderPlatformDetails;
-    if (kIsWeb) {
-      onlineOrderPlatformDetails = onlineOrder['web'];
-    } else if (Platform.isAndroid) {
-      onlineOrderPlatformDetails = onlineOrder['android'];
-    } else if (Platform.isIOS) {
-      onlineOrderPlatformDetails = onlineOrder['ios'];
-    }
-    if (onlineOrderPlatformDetails == null) {
-      return null;
-    }
-    if (StringUtils.isEmpty(onlineOrderPlatformDetails['deep_link'])) {
-      return null;
-    }
-    return Align(alignment: Alignment.center, child:
+    String operatingSystem = kIsWeb ? 'web' : Platform.operatingSystem;
+    Map<String, dynamic>? platformDetails = (onlineOrder != null) ? (JsonUtils.mapValue(onlineOrder[operatingSystem]) ?? onlineOrder) : null;
+    String? deepLinkUrl = (platformDetails != null) ? JsonUtils.stringValue(platformDetails['deep_link']) : null;
+    String? storeUrl = (platformDetails != null) ? JsonUtils.stringValue(platformDetails['store_url']) : null;
+
+    return ((deepLinkUrl != null) && deepLinkUrl.isNotEmpty) ? Align(alignment: Alignment.center, child:
       SmallRoundedButton(
-        label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online with Order Ahead App'),
+        label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online'),
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.regular"),
         backgroundColor: Styles().colors.white,
         borderColor: Styles().colors.fillColorSecondary,
         rightIcon: Container(),
         rightIconPadding: EdgeInsets.only(right: 12),
         leftIconPadding: EdgeInsets.only(left: 12),
-        onTap: () => _onTapOrderOnline(onlineOrderPlatformDetails),
+        onTap: () => _onTapOrderOnline(deepLinkUrl, storeUrl: storeUrl),
       ),
-    );
+    ) : null;
   }
 
   String paymentsToString(List<PaymentType>? payments) {
@@ -629,17 +617,14 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
     _dining.launchDirections();
   }
 
-  void _onTapOrderOnline(Map<String, dynamic>? orderOnlineDetails) async {
-    String? deepLink = (orderOnlineDetails != null) ? orderOnlineDetails['deep_link'] : null;
-    if (StringUtils.isEmpty(deepLink)) {
-      return;
-    }
-    bool? appLaunched = await RokwirePlugin.launchApp({"deep_link": deepLink});
-    if (appLaunched != true) {
-      String storeUrl = orderOnlineDetails!['store_url'];
+  void _onTapOrderOnline(String deepLinkUrl, { String? storeUrl }) async {
+    Analytics().logSelect(target: "Order Online");
+    bool? appLaunched = await RokwirePlugin.launchApp({"deep_link": deepLinkUrl});
+    if ((appLaunched != true) && (storeUrl != null) && storeUrl.isNotEmpty) {
       Uri? storeUri = Uri.tryParse(storeUrl);
       if (storeUri != null) {
-        url_launcher.launchUrl(storeUri);
+        launchUrl(storeUri, mode: LaunchMode.externalApplication).
+          catchError((e) { debugPrint(e.toString()); return false; });
       }
     }
   }
@@ -684,18 +669,13 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
     url = url.replaceAll('{{body}}', Uri.encodeComponent(body));
     Uri? uri = Uri.tryParse(url);
     if (uri != null) {
-      url_launcher.launchUrl(uri);
+      launchUrl(uri, mode: LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
     }
   }
 
   void _launchUrl(String? url, String analyticsName) {
     if (StringUtils.isNotEmpty(url)) {
-      AppLaunchUrl.launch(
-          context: context,
-          url: url,
-          tryInternal: UrlUtils.canLaunchInternal(url),
-          analyticsName: analyticsName,
-          analyticsSource: widget.dining.analyticsAttributes);
+      AppLaunchUrl.launch(context: context, url: url, analyticsName: analyticsName, analyticsSource: widget.dining.analyticsAttributes);
     }
   }
 }
@@ -1238,67 +1218,71 @@ class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
   Widget build(BuildContext context) {
     return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
       Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
-        SingleChildScrollView(child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Row(children: <Widget>[
             Expanded(child:
               Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)),), child:
-                  Row(children: [
-                    Expanded(child:
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-                        Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.dialog.message.regular.fat")),
-                      )
-                    ),
-                    Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), button: true, child:
-                      InkWell(onTap: _onClose, child:
-                        Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
-                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2),), child:
-                            Center(child:
-                              Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large"),semanticsLabel: "", ),
+                Row(children: [
+                  Expanded(child:
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+                      Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.dialog.message.regular.fat")),
+                    )
+                  ),
+                  Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), button: true, child:
+                    InkWell(onTap: _onClose, child:
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16), child:
+                        Styles().images.getImage('close-circle-white'),
+                        /*Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2),), child:
+                          Center(child:
+                            Baseline(baselineType: TextBaseline.alphabetic, baseline: 16, child:
+                              Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large.extra_fat"), semanticsLabel: "", ),
                             ),
                           ),
-                        )
+                        ),*/
                       )
-                    ),
-                  ],),
+                    )
+                  ),
+                ],),
               ),
             ),
           ],),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Row(children: [
-                Expanded(child:
-                  Text(widget.message ?? '', style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),),
-                ),
-              ]),
-              Container(height: 4,),
-              TextField(
-                focusNode: _focusNode,
-                controller: _textController,
-                maxLines: 8,
-                decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)), isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
-                style: Styles().textStyles.getTextStyle("widget.detail.regular")
-              ),
-              Container(height: 16,),
-              Row(children: [
-                Expanded(flex: 1, child: Container()),
-                Expanded(flex: 2, child:
-                  RoundedButton(
-                    label: Localization().getStringEx("dialog.send.title", "Send"),
-                    backgroundColor: Colors.transparent,
-                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                    borderColor: Styles().colors.fillColorSecondary,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    onTap: () => _onSend(),
+          SingleChildScrollView(child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Row(children: [
+                  Expanded(child:
+                    Text(widget.message ?? '', style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),),
                   ),
+                ]),
+                Container(height: 4,),
+                TextField(
+                  focusNode: _focusNode,
+                  controller: _textController,
+                  maxLines: 8,
+                  decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)), isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+                  style: Styles().textStyles.getTextStyle("widget.detail.regular")
                 ),
-                Expanded(flex: 1, child: Container()),
-              ]),
-            ],),
+                Container(height: 16,),
+                Row(children: [
+                  Expanded(flex: 1, child: Container()),
+                  Expanded(flex: 2, child:
+                    RoundedButton(
+                      label: Localization().getStringEx("dialog.send.title", "Send"),
+                      backgroundColor: Colors.transparent,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                      borderColor: Styles().colors.fillColorSecondary,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      onTap: () => _onSend(),
+                    ),
+                  ),
+                  Expanded(flex: 1, child: Container()),
+                ]),
+              ],),
+            ),
           ),
         ]),
       ),
-    ));
+    );
   }
 
   void _onClose() {

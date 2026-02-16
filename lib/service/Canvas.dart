@@ -37,7 +37,7 @@ import 'package:http/http.dart' as http;
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'package:url_launcher/url_launcher.dart';
 
 class Canvas with Service, NotificationsListener {
 
@@ -637,8 +637,9 @@ class Canvas with Service, NotificationsListener {
     if (appLaunched != true) {
       String? canvasStoreUrl = Config().canvasStoreUrl;
       Uri? storeUri = StringUtils.isNotEmpty(canvasStoreUrl) ? Uri.tryParse(canvasStoreUrl!) : null;
-      if ((storeUri != null) && await url_launcher.canLaunchUrl(storeUri)) {
-        await url_launcher.launchUrl(storeUri);
+      if ((storeUri != null) && await canLaunchUrl(storeUri)) {
+        try { await launchUrl(storeUri, mode: LaunchMode.externalApplication); }
+        catch(e) { debugPrint(e.toString()); }
       }
     }
   }

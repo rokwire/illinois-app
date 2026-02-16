@@ -20,7 +20,7 @@
 			"home.connect": ["netid", "phone_or_email"],
 
 			"browse": ["academics", "appointments", "athletics", "campus_guide", "dining", "directory", "events", "laundry", "groups", "messages", "mtd", "my", "polls", "music_and_news", "recent", "safety", "sexual_misconduct", "surveys", "research_projects", "wellness"],
-			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "appointments", "my_illini"],
+			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "essential_skills_coach", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "appointments", "my_illini", "academic_links"],
 			"browse.appointments": ["appointments"],
 			"browse.athletics": ["sport_events", "sport_news", "sport_teams", "my_game_day"],
 			"browse.laundry": ["laundry"],
@@ -55,7 +55,7 @@
 			"authenticate.linked.phone": ["info", "remove", "verify"],
 			"authenticate.linked.email": ["info", "remove", "verify"],
 	
-			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "appointments", "todo_list", "skills_self_evaluation", "essential_skills_coach", "my_illini", "skills_dashboard"],
+			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "appointments", "todo_list", "skills_self_evaluation", "essential_skills_coach", "my_illini", "skills_dashboard", "academic_links"],
 			"academics.appointments.features": ["authentication", "netid_login"],
 			"academics.skills_self_evaluation.features": ["authentication", "login"],
 			"academics.essential_skills_coach.features": ["authentication", "netid_login"],
@@ -219,6 +219,8 @@
 				"map.types.appointments"                  : false,
 				"settings.sports"                         : false,
 				"settings.favorites"                      : false,
+				"academics.my_illini"                     : false,
+				"browse.academics.my_illini"              : false,
 				"academics.academics_events"              : false,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
 				"onboarding2.video_tutorial"              : [["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"], "AND", "${app.storage.onBoarding2ShowTutorial}"],

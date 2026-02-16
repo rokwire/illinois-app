@@ -26,6 +26,7 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/academics/AcademicsLinks.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
 import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
@@ -50,7 +51,7 @@ enum AcademicsContentType { events,
   gies_checklist, uiuc_checklist,
   canvas_courses, gies_canvas_courses, medicine_courses, student_courses,
   skills_self_evaluation, essential_skills_coach,
-  todo_list, due_date_catalog, my_illini, appointments
+  todo_list, due_date_catalog, my_illini, appointments, academic_links
 }
 
 class AcademicsHomePanel extends StatefulWidget with AnalyticsInfo {
@@ -370,8 +371,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         DeepLink().launchUrl(url);
       }
       else {
-        bool tryInternal = launchInternal && UrlUtils.canLaunchInternal(url);
-        AppLaunchUrl.launch(context: context, url: url, tryInternal: tryInternal);
+        AppLaunchUrl.launch(context: context, url: url, tryInternal: launchInternal);
       }
     }
   }
@@ -383,6 +383,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     (_selectedContentType == AcademicsContentType.todo_list) ||
     (_selectedContentType == AcademicsContentType.essential_skills_coach) ||
     (_selectedContentType == AcademicsContentType.appointments) ||
+    (_selectedContentType == AcademicsContentType.academic_links) ||
     (_selectedContentType == AcademicsContentType.events)) ?
       Padding(padding: EdgeInsets.zero, child: _rawContentWidget) :
       SingleChildScrollView(child:
@@ -406,6 +407,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         String? guideId = Guide().detailIdFromUrl(Config().dateCatalogUrl);
         return (guideId != null) ? GuideDetailWidget(key: _dueDateCatalogKey, guideEntryId: guideId, headingColor: Styles().colors.background, analyticsFeature: AnalyticsFeature.AcademicsDueDateCatalog,) : null;
       case AcademicsContentType.appointments: return AppointmentsContentWidget(analyticsFeature: AnalyticsFeature.AcademicsAppointments,);
+      case AcademicsContentType.academic_links: return AcademicLinksWidget();
       default: return null;
     }
   }
@@ -459,6 +461,7 @@ extension AcademicsContentTypeImpl on AcademicsContentType {
       case AcademicsContentType.due_date_catalog: return Localization().getStringEx('panel.academics.section.due_date_catalog.label', 'Due Date Catalog');
       case AcademicsContentType.my_illini: return Localization().getStringEx('panel.academics.section.my_illini.label', 'myIllini');
       case AcademicsContentType.appointments: return Localization().getStringEx('panel.academics.section.appointments.label', 'Appointments');
+      case AcademicsContentType.academic_links: return Localization().getStringEx('panel.academics.section.academic_links.label', 'Academic Links');
     }
   }
 
@@ -477,6 +480,7 @@ extension AcademicsContentTypeImpl on AcademicsContentType {
       case AcademicsContentType.due_date_catalog: return 'due_date_catalog';
       case AcademicsContentType.my_illini: return 'my_illini';
       case AcademicsContentType.appointments: return 'appointments';
+      case AcademicsContentType.academic_links: return 'academic_links';
     }
   }
 
@@ -495,6 +499,7 @@ extension AcademicsContentTypeImpl on AcademicsContentType {
       case 'due_date_catalog': return AcademicsContentType.due_date_catalog;
       case 'my_illini': return AcademicsContentType.my_illini;
       case 'appointments': return AcademicsContentType.appointments;
+      case 'academic_links': return AcademicsContentType.academic_links;
       default: return null;
     }
   }
@@ -514,6 +519,7 @@ extension AcademicsContentTypeImpl on AcademicsContentType {
       case AcademicsContentType.due_date_catalog:       return AnalyticsFeature.AcademicsDueDateCatalog;
       case AcademicsContentType.my_illini:              return AnalyticsFeature.AcademicsMyIllini;
       case AcademicsContentType.appointments:           return AnalyticsFeature.AcademicsAppointments;
+      case AcademicsContentType.academic_links:         return AnalyticsFeature.AcademicsLinks;
     }
   }
 

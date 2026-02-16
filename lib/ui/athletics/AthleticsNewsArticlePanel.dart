@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:universal_io/io.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/RecentItem.dart';
@@ -36,7 +34,6 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsNewsArticlePanel extends StatefulWidget {
   final String? articleId;
@@ -261,14 +258,8 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
     return widgets;
   }
 
-  void _onTapUrl(String? url) {
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
-      }
-    }
-  }
+  void _onTapUrl(String? url) =>
+    AppLaunchUrl.launchExternal(url: url);
 
   void _setLoading(bool loading) {
     _loading = loading;

@@ -22,7 +22,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'package:url_launcher/url_launcher.dart';
 
 class OnboardingUpgradePanel extends StatelessWidget {
   final String? requiredVersion;
@@ -100,8 +100,9 @@ class OnboardingUpgradePanel extends StatelessWidget {
   void _onUpgradeClicked(BuildContext context) async {
     String? upgradeUrl = Config().upgradeUrl;
     Uri? uri = StringUtils.isNotEmpty(upgradeUrl) ? Uri.tryParse(upgradeUrl!) : null;
-    if ((uri != null) && await url_launcher.canLaunchUrl(uri)) {
-      await url_launcher.launchUrl(uri);
+    if ((uri != null) && await canLaunchUrl(uri)) {
+      try { await launchUrl(uri, mode: LaunchMode.externalApplication); }
+      catch(e) { debugPrint(e.toString()); }
     }
   }
 

@@ -16,7 +16,6 @@
 
 import 'dart:async';
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
-import 'package:universal_io/io.dart';
 
 import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
@@ -77,7 +76,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
@@ -1374,10 +1372,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         DeepLink().launchUrl(url);
       }
       else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
-        }
+        AppLaunchUrl.launchExternal(url: url);
       }
     }
   }

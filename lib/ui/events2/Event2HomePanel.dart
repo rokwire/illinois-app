@@ -1,6 +1,5 @@
 
 import 'dart:collection';
-import 'package:universal_io/io.dart';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -45,7 +44,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
 
@@ -177,10 +175,7 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
       DeepLink().launchUrl(url);
     }
     else if (url != null) {
-      Uri? uri = Uri.tryParse(url);
-      if (uri != null) {
-        launchUrl(uri);
-      }
+      AppLaunchUrl.launchExternal(url: url);
     }
   }
 
@@ -194,14 +189,8 @@ class Event2HomePanel extends StatefulWidget with AnalyticsInfo {
       return true;
     }
     else {
-      Uri? uri = Uri.tryParse(urlParam);
-      if ((uri != null) && (await canLaunchUrl(uri))) {
-        LaunchMode launchMode = Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault;
-        launchUrl(uri, mode: launchMode);
-        return true;
-      }
+      return (await AppLaunchUrl.launchExternal(url: urlParam) == true);
     }
-    return false;
   }
 
   static Widget _buildOnboardingApply(BuildContext context, bool enabled, void Function() onTap) {

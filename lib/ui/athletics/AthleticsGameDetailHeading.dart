@@ -15,8 +15,6 @@
  */
 
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
-import 'package:universal_io/io.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -44,7 +42,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsGameDetailHeading extends StatefulWidget {
   final Game? game;
@@ -484,14 +481,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     _launchUrl(videoUrl);
   }
 
-  void _launchUrl(String? url) {
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
-      }
-    }
-  }
+  void _launchUrl(String? url) =>
+    AppLaunchUrl.launchExternal(url: url);
 
   String? get _gameDayGuideUrl {
     String? sportKey = widget.game?.sport?.shortName;

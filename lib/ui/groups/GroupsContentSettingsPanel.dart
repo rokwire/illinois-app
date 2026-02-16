@@ -17,7 +17,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class GroupContentSettingsPanel extends StatefulWidget {
   final Group? group;
@@ -268,14 +267,8 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
     }
   }
 
-  void _onTapHtmlLink(String? url) {
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri);
-      }
-    }
-  }
+  void _onTapHtmlLink(String? url) =>
+    AppLaunchUrl.launchExternal(url: url);
 
   void _toggleContentItem({required String code}){
     setStateIfMounted(() {

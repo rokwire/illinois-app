@@ -5,6 +5,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -21,18 +22,18 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
   static BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10));
   static BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10));
 
-  final String _contactEmail = "rokwire@illinois.edu";
+  final String _contactEmail = Config().universityContactEmail ?? "rokwire@illinois.edu";
   late GestureRecognizer _contactEmailGestureRecognizer;
 
-  final String _contactWebsite = "m.illinois.edu";
+  final String _contactWebsite = Config().universityContactWebsite ?? "m.illinois.edu";
   late GestureRecognizer _contactWebsiteGestureRecognizer;
 
   final FocusNode _entryFocusNode = FocusNode();
 
   @override
   void initState() {
-    _contactEmailGestureRecognizer = TapGestureRecognizer()..onTap = () => _processUrl("mailto:$_contactEmail");
-    _contactWebsiteGestureRecognizer = TapGestureRecognizer()..onTap = () => _processUrl("https://$_contactWebsite");
+    _contactEmailGestureRecognizer = TapGestureRecognizer()..onTap = () => _processUrl('mailto:$_contactEmail');
+    _contactWebsiteGestureRecognizer = TapGestureRecognizer()..onTap = () => _processUrl('https://$_contactWebsite');
     super.initState();
   }
 
@@ -48,19 +49,19 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
   Widget build(BuildContext context) {
     return FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Column(
       children: [
-        _buildAccessibleWidget(focusNode: _entryFocusNode, onSelect: _onFeedback, child: _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.help_desk.title", "CONTACT HELP DESK"),
+        _buildAccessibleWidget(focusNode: _entryFocusNode, onSelect: _onFeedback, child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.help_desk.title", "CONTACT HELP DESK"),
             onTap: _onFeedback,
             borderRadius: _topRounding)),
-        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.share_idea.title", "SHARE AN IDEA"),
+        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.share_idea.title", "SHARE AN IDEA"),
             onTap: _onIdea), onSelect: _onIdea),
-        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.contacts.button.develop_code.title", "DEVELOP CODE WITH ROKWIRE"),
+        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.develop_code.title", "DEVELOP CODE WITH ROKWIRE"),
             onTap: _onFeedback), onSelect: _onFeedback),
-        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.partners.button.help_desk.title", "PARTNER WITH US"),
+        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.partner.title", "PARTNER WITH US"),
           onTap: _onIdea), onSelect: _onIdea),
-        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.review.button.help_desk.title", "REVIEW APP"),
+        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.review.title", "REVIEW APP"),
             onTap: _onReviewClicked,
             borderRadius: _bottomRounding,), onSelect: _onReviewClicked),
-        _feedbackDescriptionWidget,
+        _appDescriptionWidget,
         _dividerWidget,
         _contactInfoWidget,
         _appVersionWidget
@@ -82,57 +83,67 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
           onTap: () => onTap?.call()
       );
 
-  Widget get _feedbackDescriptionWidget {
-    final String rokwirePlatformUrlMacro = '{{rokwire_platform_url}}';
-    final String universityUrlMacro = '{{university_url}}';
-    final String shciUrlMacro = '{{shci_url}}';
-    final String externalLinIconMacro = '{{external_link_icon}}';
-    String descriptionHtml = Localization().getStringEx("panel.settings.contact.feedback.app.description.format",
-        "The Illinois app is the official campus app of the <a href='$universityUrlMacro'> University of Illinois Urbana-Champaign</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='$rokwirePlatformUrlMacro'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='$shciUrlMacro'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the Office of the Provost at the University of Illinois.");
-    descriptionHtml = descriptionHtml.replaceAll(rokwirePlatformUrlMacro, Config().rokwirePlatformUrl ?? '');
-    descriptionHtml = descriptionHtml.replaceAll(shciUrlMacro, "https://rokwire.illinois.edu/people-page"/*Config().smartHealthyInitiativeUrl ?? ''*/); // TBD add as config value if needed
-    descriptionHtml = descriptionHtml.replaceAll(universityUrlMacro, Config().universityHomepageUrl ?? '');
-    descriptionHtml = descriptionHtml.replaceAll(externalLinIconMacro, 'images/external-link.png');
+  Widget get _appDescriptionWidget =>
+    Semantics(container: true, child:
+      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 20), child:
+        HtmlWidget(
+          _appDescriptionHtml,
+          onTapUrl : (url) {_processUrl(url); return true;},
+          textStyle:  Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.textBackground)} : null
+        ),
+      ),
+    );
 
-    return  Semantics(container: true, child:
-        Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 20), child:
-          HtmlWidget(
-            StringUtils.ensureNotEmpty(descriptionHtml),
-            onTapUrl : (url) {_processUrl(url); return true;},
-            textStyle:  Styles().textStyles.getTextStyle("widget.item.regular.thin"),
-            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.textBackground)} : null
-        )));
+  String get _appDescriptionHtml {
+    final String appTitleMacro = '{{app_title}}';
+    final String universityUrlMacro = '{{university_url}}';
+    final String universityLongNameMacro = '{{university_long_name}}';
+    final String rokwirePlatformUrlMacro = '{{rokwire_platform_url}}';
+    final String externalLinkIconMacro = '{{external_link_icon}}';
+    return Localization().getStringEx("panel.settings.about.app.description.format",
+      "The $appTitleMacro app is the official campus app of the <a href='$universityUrlMacro'>$universityLongNameMacro</a>&nbsp;<img src='asset:$externalLinkIconMacro' alt=''/>. Both the app and the <a href='$rokwirePlatformUrlMacro'>Rokwire</a>&nbsp;<img src='asset:$externalLinkIconMacro' alt=''/> open source platform on which it is built are initiatives of the university.").
+        replaceAll(appTitleMacro, AppTextUtils.appTitle).
+        replaceAll(externalLinkIconMacro, 'images/external-link.png').
+        replaceAll(universityLongNameMacro, AppTextUtils.universityLongName).
+        replaceAll(universityUrlMacro, Config().universityHomepageUrl ?? 'about:blank').
+        replaceAll(rokwirePlatformUrlMacro, Config().rokwirePlatformUrl ?? 'about:blank');
   }
 
   Widget get _contactInfoWidget =>
-    Container(padding: EdgeInsets.symmetric(vertical: 20), child:
+    Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
       Column(children: [
-        Container(
-          padding: const EdgeInsets.all(6),
-          child: SizedBox(width: 32, height: 32, child:
-          Styles().images.getImage('university-logo-dark-frame'),
+        Padding(padding: const EdgeInsets.all(6), child:
+          SizedBox(width: 32, height: 32, child:
+            Styles().images.getImage('university-logo-dark-frame'),
           ),
         ),
-        Text( Localization().getStringEx("panel.settings.contact.info.row1", "Smart, Healthy Communities Initiative | Rokwire"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.fat")),
-        Text( Localization().getStringEx("panel.settings.contact.info.row2", "Institute of Government and Public Affairs \n 1007 W Nevada St; Urbana, IL 61801"), textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.item.regular.thin")),
+        Text(Localization().getStringEx("panel.settings.contact.info.title", "{{app_title}} App | Rokwire").replaceAll('{{app_title}}', AppTextUtils.appTitle),
+          textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.item.regular.fat")),
+        Text(Localization().getStringEx("panel.settings.contact.info.division", "Student Affairs at Illinois"),
+          textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),
         RichText(textAlign: TextAlign.left, text:
-          TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children:[
-              TextSpan(text: _contactEmail,
-                  style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
-                  recognizer: _contactEmailGestureRecognizer),
-              TextSpan(text: " • "),
-              TextSpan(text: _contactWebsite,
-                style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
-                recognizer: _contactWebsiteGestureRecognizer),
-          ]))
-      ],)
+          TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children: [
+            TextSpan(text: _contactEmail,
+              style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
+              recognizer: _contactEmailGestureRecognizer
+            ),
+            TextSpan(text: " • "),
+            TextSpan(text: _contactWebsite,
+              style: Styles().textStyles.getTextStyle("widget.item.regular_underline.thin"),
+              recognizer: _contactWebsiteGestureRecognizer
+            ),
+          ]),
+        ),
+      ],),
     );
+
 
   Widget get _appVersionWidget =>
       Padding(padding: const EdgeInsets.only(top: 0), child:
         RichText(textAlign: TextAlign.left, text:
         TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children:[
-          TextSpan(text: Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),),
+          TextSpan(text: Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', AppTextUtils.appTitle),),
           TextSpan(text:  " $_appVersion", style : Styles().textStyles.getTextStyle("widget.item.regular.fat")),
         ])
         ),
