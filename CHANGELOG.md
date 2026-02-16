@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - "Order Online with Order Ahead App" button renamed to "Order Online" in Dining detail panel [#5727](https://github.com/rokwire/illinois-app/issues/5727).
+- About the App text updates [#5730](https://github.com/rokwire/illinois-app/issues/5730).
 
 ## [7.3.50] - 2026-02-12
 ### Changed
