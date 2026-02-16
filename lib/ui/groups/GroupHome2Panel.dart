@@ -144,7 +144,6 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
             Event2FilterCommandButton(
               title: Localization().getStringEx('panel.group.home2.bar.button.my_groups.title', 'My Groups'),
               hint: Localization().getStringEx('panel.group.home2.bar.button.my_groups.hint', 'Tap to toggle my groups filter'),
-              titleTextStyleKey: 'widget.button.title.medium',
               leftIconKey: 'groups',
               toggled: _myGroupsSelected,
               contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
@@ -153,7 +152,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
           ),
         ),
     ])),
-    Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, crossAxisAlignment: WrapCrossAlignment.center, verticalDirection: VerticalDirection.up, children: [
+    Expanded(flex: 2, child: Wrap(alignment: WrapAlignment.end, crossAxisAlignment: WrapCrossAlignment.center, verticalDirection: VerticalDirection.up, children: [
       Visibility(visible: Auth2().isOidcLoggedIn, child:
         Event2ImageCommandButton(Styles().images.getImage('plus-circle'),
           label: Localization().getStringEx('panel.group.home2.bar.button.create.title', 'Create'),

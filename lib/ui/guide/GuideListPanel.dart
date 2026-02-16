@@ -24,7 +24,6 @@ import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class GuideListPanel extends StatefulWidget with AnalyticsInfo {
   final String? guide;
@@ -378,10 +377,7 @@ class _GuideListPanelState extends State<GuideListPanel> with NotificationsListe
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'myIllini not available while offline.'));
     }
     else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
-      Uri? uri = Uri.tryParse(Config().myIlliniUrl!);
-      if (uri != null) {
-        launchUrl(uri);
-      }
+      AppLaunchUrl.launchExternal(url: Config().myIlliniUrl);
     }
   }
 

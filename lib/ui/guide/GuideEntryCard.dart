@@ -18,7 +18,6 @@ import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class GuideEntryCard extends StatefulWidget {
   final String? favoriteKey;
@@ -165,12 +164,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> with NotificationsListe
 
   void _onTapLink(String? url) {
     Analytics().logSelect(target: 'Link: $url');
-    if (StringUtils.isNotEmpty(url)) {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
-        }
-    }
+    AppLaunchUrl.launchExternal(url: url);
   }
 
   void _onTapFavorite() {

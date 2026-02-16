@@ -33,7 +33,7 @@ import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/tracking_services.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart' as launcher_plugin;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:mime/mime.dart';
 import 'package:universal_io/io.dart';
@@ -81,8 +81,8 @@ class AppAlert {
   static Future<void> showOfflineMessage(BuildContext context, String? message) async =>
     showTextMessage(context, Localization().getStringEx("common.message.offline", "You appear to be offline"));
 
-  static Future<void> showTextMessage(BuildContext context, String? message) =>
-    showWidgetMessage(context, Text(message!, textAlign: TextAlign.center,), analyticsMessage: message);
+  static Future<void> showTextMessage(BuildContext context, String message) =>
+    showWidgetMessage(context, Text(message, textAlign: TextAlign.center,), analyticsMessage: message);
 
   static Future<void> showAuthenticationNAMessage(BuildContext context) async {
     final String linkSettingsMacro = "{{link.settings}}";
@@ -489,14 +489,19 @@ class AppPrivacyPolicy {
       if (Platform.isIOS) {
         Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
         if (privacyPolicyUri != null) {
-          return launcher_plugin.launchUrl(privacyPolicyUri, mode: launcher_plugin.LaunchMode.externalApplication);
+          try { return await launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication); }
+          catch(e) { debugPrint(e.toString()); return false; }
         }
         else {
           return false;
         }
       }
       else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
+          url: Config().privacyPolicyUrl,
+          title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),
+          showTabBar: false,
+        )));
         return true;
       }
     }
@@ -611,15 +616,44 @@ class AppTextUtils {
 }
 
 class AppLaunchUrl {
-  static Future<void> launch({required BuildContext context, String? url, Uri? uri, bool tryInternal = true, String? title,
-      String? analyticsName, Map<String, dynamic>? analyticsSource, AnalyticsFeature? analyticsFeature, bool showTabBar = true}) async {
+  static Future<bool?> launch({ String? url, Uri? uri, bool tryInternal = true,
+    BuildContext? context, String? title, bool showTabBar = true,
+    String? analyticsName, Map<String, dynamic>? analyticsSource, AnalyticsFeature? analyticsFeature,
+  }) async {
     if (uri == null) {
       uri = UriExt.tryParse(url);
     }
     uri = uri?.fix() ?? uri;
 
     if (uri != null) {
-      if (tryInternal && uri.isWebScheme && await TrackingServices.isAllowed()) {
+      try {
+        if (uri.isWebScheme) {
+          bool trackingAllowed = await TrackingServices.isAllowed();
+          if ((context != null) && tryInternal && trackingAllowed) {
+            Navigator.push(context, CupertinoPageRoute( builder: (context) => WebPanel(
+                uri: uri,
+                title: title,
+                analyticsName: analyticsName,
+                analyticsSource: analyticsSource,
+                analyticsFeature: analyticsFeature,
+                showTabBar: showTabBar
+            )));
+            return true;
+          }
+          else {
+            return launchUrl(uri, mode: trackingAllowed ? LaunchMode.platformDefault : LaunchMode.externalApplication);
+          }
+        }
+        else {
+          return launchUrl(uri, mode: LaunchMode.platformDefault);
+        }
+      }
+      catch(e) {
+        debugPrint(e.toString());
+        return false;
+      }
+
+      /* if (tryInternal && uri.isWebScheme && await TrackingServices.isAllowed()) {
         Navigator.push(context, CupertinoPageRoute( builder: (context) => WebPanel(
             uri: uri,
             title: title,
@@ -629,10 +663,15 @@ class AppLaunchUrl {
             showTabBar: showTabBar
         )));
       } else {
-        launcher_plugin.launchUrl(uri, mode: Platform.isAndroid ? launcher_plugin.LaunchMode.externalApplication : launcher_plugin.LaunchMode.platformDefault);
-      }
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+      } */
+    }
+    else {
+      return null;
     }
   }
+
+  static Future<bool?> launchExternal({ String? url, Uri? uri }) => launch(uri: uri, url: url, tryInternal: false);
 }
 
 class AppFile {

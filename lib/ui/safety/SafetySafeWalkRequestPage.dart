@@ -232,12 +232,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
   void _onTapAboutSafeWalks(BuildContext context) {
     Analytics().logSelect(target: 'About SafeWalks');
     Navigator.pop(context);
-
-    String? aboutUrl = Config().safeWalkAboutUrl;
-    Uri? aboutUri = (aboutUrl != null) ? Uri.tryParse(aboutUrl) : null;
-    if (aboutUri != null) {
-      launchUrl(aboutUri);
-    }
+    AppLaunchUrl.launchExternal(url: Config().safeWalkAboutUrl);
   }
 
   void _onTapShareSafeWalks(BuildContext context) {
@@ -684,7 +679,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
                 ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.sms.service.not_available.title', 'Unable to send text message, messaging service not available.'));
               }
               else {
-                launchUrl(uri);
+                launchUrl(uri, mode: LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
               }
             }
           });
@@ -720,8 +715,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
         DeepLink().launchUrl(url);
       }
       else {
-        bool tryInternal = launchInternal && UrlUtils.canLaunchInternal(url);
-        AppLaunchUrl.launch(context: context, url: url, tryInternal: tryInternal);
+        AppLaunchUrl.launch(context: context, url: url, tryInternal: launchInternal);
       }
       return true;
     }

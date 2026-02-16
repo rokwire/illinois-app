@@ -5,19 +5,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Changed "My Groups" filter button text style in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
+
+## [8.0.2] - 2026-02-04
+### Added
+- Added exception text as reason in Share Plus error reporting [#5653](https://github.com/rokwire/illinois-app/issues/5653).
 
 ## [8.0.1] - 2026-02-03
 ### Fixed
-- Handle & report errors from Share Email/SMS plugins in Profile info [#5700](https://github.com/rokwire/illinois-app/issues/5700).
 - Adding attendance takers to an event [#5705](https://github.com/rokwire/illinois-app/issues/5705).
 ### Added
 - Added "My Groups" filter button in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
 
 ## [8.0.0] - 2026-01-29
-### Fixed
-- Color issues in To-Do items [#5699](https://github.com/rokwire/illinois-app/issues/5699).
+
+## [7.3.50] - 2026-02-12
 ### Changed
 - Reworked refresh token processing in Auth2, added extended Crashlytics logs [#5405](https://github.com/rokwire/illinois-app/issues/5405).
+### Fixed
+- Fixed dummy usage description strings in app's Info.plist [#5720](https://github.com/rokwire/illinois-app/issues/5720).
+- Fixed event groups loading in Update Event panel [#5717](https://github.com/rokwire/illinois-app/issues/5717).
+- Fixed close button image in Dining Text Feedback popup [#5718](https://github.com/rokwire/illinois-app/issues/5718).
+- Fixed аdding attendance takers to an event [#5705](https://github.com/rokwire/illinois-app/issues/5705).
+
+## [7.3.49] - 2026-02-05
+### Fixed
+- Color issues in To-Do items [#5699](https://github.com/rokwire/illinois-app/issues/5699).
+- Handle & report errors from Share Email/SMS plugins in Profile info [#5700](https://github.com/rokwire/illinois-app/issues/5700).
+- Take care about app tracking status before launching in-app URLs [#5713](https://github.com/rokwire/illinois-app/issues/5713).
 
 ## [7.3.48] - 2026-01-26
 ### Changed
