@@ -34,7 +34,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:universal_io/io.dart';
 
 class HomeDailyIlliniWidget extends StatefulWidget {
   final String? favoriteId;
