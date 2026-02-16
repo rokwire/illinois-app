@@ -37,6 +37,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   AcademicsMyIllini              = AnalyticsFeature("Academics: myIllini", priority: -1);
   static const AnalyticsFeature   AcademicsCampusReminders       = AnalyticsFeature("Academics: Campus Reminders", priority: -1);
   static const AnalyticsFeature   AcademicsAppointments          = AnalyticsFeature("Academics: Appointments", priority: -1);
+  static const AnalyticsFeature   AcademicsLinks                 = AnalyticsFeature("Academics: Academic Links", key: {"AcademicLinks"}, priority: -1);
 
   static const AnalyticsFeature   Map                            = AnalyticsFeature("Map");
   static const AnalyticsFeature   MapEvents                      = AnalyticsFeature("Map: Events", priority: -1);

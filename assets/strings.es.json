@@ -290,6 +290,7 @@
     "panel.browse.entry.academics.wellness_todo.title": "Lista de quehaceres",
     "panel.browse.entry.academics.due_date_catalog.title": "Catálogo de fecha de vencimiento",
     "panel.browse.entry.academics.appointments.title": "Citas",
+    "panel.browse.entry.academics.academic_links.title": "Academic Links",
 
     "panel.browse.entry.appointments.appointments.title": "Citas",
 
@@ -519,6 +520,7 @@
     "panel.academics.section.due_date_catalog.label": "Catálogo de fecha de vencimiento",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.appointments.label": "Citas",
+    "panel.academics.section.academic_links.label": "Academic Links",
     "panel.academics.section.events.offline.msg": "No hay eventos de oradores o seminarios disponibles sin conexión.",
     "panel.academics.section.events.empty.msg": "No hay próximos eventos de oradores y seminarios.",
 

@@ -15,6 +15,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
+import 'package:illinois/ui/academics/AcademicsLinks.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
@@ -560,6 +561,7 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
       case "academics.appointments":          _onTapAppointments(context, analyticsFeature: AnalyticsFeature.AcademicsAppointments); break;
+      case "academics.academic_links":        _onTapAcademicLinks(context); break;
       case "academics.my_illini":             _onTapAcademicsMyIllini(context); break;
 
       case "appointments.appointments":       _onTapAppointments(context, analyticsFeature: AnalyticsFeature.Appointments); break;
@@ -811,6 +813,12 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: "myIllini");
     _launchUrl(context, Config().myIlliniUrl);
   }
+
+  static void _onTapAcademicLinks(BuildContext context) {
+    Analytics().logSelect(target: "Academic Links");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicLinksPanel()));
+  }
+
 
   static void _onTapCreatePoll(BuildContext context) {
     Analytics().logSelect(target: "Create Poll");

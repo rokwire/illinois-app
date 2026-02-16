@@ -291,6 +291,7 @@
     "panel.browse.entry.academics.wellness_todo.title": "To-Do List",
     "panel.browse.entry.academics.due_date_catalog.title": "Due Date Catalog",
     "panel.browse.entry.academics.appointments.title": "Appointments",
+    "panel.browse.entry.academics.academic_links.title": "Academic Links",
 
     "panel.browse.entry.appointments.appointments.title": "Appointments",
 
@@ -520,6 +521,7 @@
     "panel.academics.section.due_date_catalog.label": "Due Date Catalog",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.appointments.label": "Appointments",
+    "panel.academics.section.academic_links.label": "Academic Links",
     "panel.academics.section.events.offline.msg": "Speakers & Seminars events are not available while offline.",
     "panel.academics.section.events.empty.msg": "There are no upcoming Speakers & Seminars events.",
 

@@ -290,6 +290,7 @@
 	"panel.browse.entry.academics.wellness_todo.title": "待辦事項清單",
 	"panel.browse.entry.academics.due_date_catalog.title": "到期日目錄",
 	"panel.browse.entry.academics.appointments.title": "約會",
+	"panel.browse.entry.academics.academic_links.title": "Academic Links",
 
 	"panel.browse.entry.appointments.appointments.title": "約會",
 
@@ -516,6 +517,7 @@
 	"panel.academics.section.todo_list.label": "待辦事項清單",
 	"panel.academics.section.due_date_catalog.label": "到期日目錄",
 	"panel.academics.section.appointments.label": "約會",
+	"panel.academics.section.academic_links.label": "Academic Links",
 	"panel.academics.section.my_illini.label": "myIllini",
 	"panel.academics.section.events.offline.msg": "离线时无法获得演讲和研讨会活动信息。",
 	"panel.academics.section.events.empty.msg": "没有即将发生的演讲和研讨会活动。",
