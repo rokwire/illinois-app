@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
@@ -16,7 +17,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
-import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeCampusHighlightsWidget extends StatefulWidget {
@@ -31,7 +31,7 @@ class HomeCampusHighlightsWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Guide Highlights');
+  static String get title => Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Featured Resources');
   
   @override
   _HomeCampusHighlightsWidgetState createState() => _HomeCampusHighlightsWidgetState();
@@ -112,7 +112,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   @override
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
-      title: Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
+      title: HomeCampusHighlightsWidget.title,
       child: _buildContent()
     );
   }
@@ -164,7 +164,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
         HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.title', 'View All'),
-          hint: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.hint', 'Tap to view all highlights'),
+          hint: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.hint', 'Tap to view all featured resources'),
           onTap: _onViewAll,
         ),
       ),
@@ -202,7 +202,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   }
 
   Widget _buildEmptyContent() {
-    String message = Localization().getStringEx("widget.home.campus_guide_highlights.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Campus Guide Highlights</b></a> for quick access here.(<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)")
+    String message = Localization().getStringEx("widget.home.campus_guide_highlights.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Featured Resources</b></a> for quick access here.(<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)")
       .replaceAll(localUrlMacro, '$localScheme://${Guide.campusHighlightContentType}')
       .replaceAll(privacyUrlMacro, privacyUrl);
       return HomeMessageHtmlCard(message: message, onTapLink: _onMessageLink,);
@@ -220,12 +220,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
 
   void _onCampusHighlightLink() {
     Analytics().logSelect(target: "Campus Guide Highlight Link", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-      contentList: Guide().promotedList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Campus Highlights'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Hightlights."),
-      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusHighlightContentType),
-    )));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusHighlightsPanel()));
   }
 
   void _onPrivacyLevelLink() {
@@ -248,11 +243,6 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
 
   void _onViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-      contentList: Guide().promotedList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Campus Highlights'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Guide Highlights."),
-      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusHighlightContentType),
-    )));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusHighlightsPanel()));
   }
 }

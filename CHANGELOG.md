@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Renamed Campus Guide [#5736](https://github.com/rokwire/illinois-app/issues/5736).
 ### Removed
 - Removed "Create Poll" entry from Browse/Polls & Favorites, make Browse/Polls section un-exandable [#5735](https://github.com/rokwire/illinois-app/issues/5735).
 

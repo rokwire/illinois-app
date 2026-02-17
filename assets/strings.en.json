@@ -244,8 +244,8 @@
     "panel.browse.section.appointments.description": "View, schedule, or cancel various appointments.",
     "panel.browse.section.athletics.title": "Big 10 Athletics",
     "panel.browse.section.athletics.description": "Keep up with your favorite {{app_title}} teams.",
-    "panel.browse.section.campus_guide.title": "Campus Guide",
-    "panel.browse.section.campus_guide.description": "Learn more about life on campus.",
+    "panel.browse.section.campus_guide.title": "University Living",
+    "panel.browse.section.campus_guide.description": "Access links for groups, organizations, and services to enhance your time at {{app_title}}.",
     "panel.browse.section.dining.title": "Dining",
     "panel.browse.section.dining.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
     "panel.browse.section.directory.title": "Directory of Users",
@@ -300,9 +300,9 @@
     "panel.browse.entry.athletics.sport_teams.title": "Teams",
     "panel.browse.entry.athletics.my_game_day.title": "It's Game Day!",
 
-    "panel.browse.entry.campus_guide.campus_highlights.title": "Campus Guide Highlights",
-    "panel.browse.entry.campus_guide.campus_guide.title": "Complete Campus Guide",
-    "panel.browse.entry.campus_guide.my_campus_guide.title": "My Campus Guide",
+    "panel.browse.entry.campus_guide.campus_guide.title": "Complete List",
+    "panel.browse.entry.campus_guide.campus_highlights.title": "Featured Resources",
+    "panel.browse.entry.campus_guide.my_campus_guide.title": "Saved Resources",
 
     "panel.browse.entry.dining.dining.title": "Residence Hall Dining",
 
@@ -1872,7 +1872,7 @@
     "panel.saved.label.laundry": "My Laundry",
     "panel.saved.label.mtd_stops": "My Bus Stops",
     "panel.saved.label.my_locations": "My Locations",
-    "panel.saved.label.campus_guide": "My Campus Guide",
+    "panel.saved.label.campus_guide": "Saved Resources",
     "panel.saved.label.appointments": "MyMcKinley Appointments",
 
     "panel.saved.button.all.title": "View All",
@@ -3361,8 +3361,11 @@
     "panel.mtd_stops.search.label.found_single":"1 result found",
     "panel.mtd_stops.search.label.found_multi":"%d results found",
 
+    "panel.campus_guide.label.heading": "Campus Guide",
+    "panel.campus_guide.label.content.empty": "Empty resources content",
+
     "panel.guide_categories.label.heading": "Campus Guide",
-    "panel.guide_categories.label.content.empty": "Empty guide content",
+    "panel.guide_categories.label.content.empty": "Empty resources content",
 
     "panel.inbox.label.content.empty": "No messages",
     "panel.inbox.mark_all_read.label": "Mark all as read",
@@ -3448,10 +3451,10 @@
     "widget.conversation_card.body.hint": "Message: %s",
     "widget.conversation_card.sender.me": "You",
 
-    "panel.guide_list.label.highlights.heading": "Campus Guide",
+    "panel.guide_list.label.heading": "Campus Guide",
 
-    "panel.guide_list.label.highlights.section": "Campus Guide Highlights",
-    "panel.guide_list.label.highlights.empty": "There are no active Campus Guide Highlights.",
+    "panel.guide_list.label.highlights.section": "Featured Resources",
+    "panel.guide_list.label.highlights.empty": "There are currently no featured resources.",
     "panel.guide_list.label.safety_resources.section": "Safety Resources",
     "panel.guide_list.label.safety_resources.empty": "There are no active Safety Resources.",
     "panel.guide_list.label.campus_reminders.section": "Campus Reminders",
@@ -3984,10 +3987,10 @@
     "widget.home.research_projects.button.all.title": "View All",
     "widget.home.research_projects.button.all.hint": "Tap to view all research projects",
 
-    "widget.home.campus_guide_highlights.label.heading": "Campus Guide Highlights",
-    "widget.home.campus_guide_highlights.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide Highlights</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.campus_guide_highlights.label.heading": "Featured Resources",
+    "widget.home.campus_guide_highlights.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Featured Resources</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.campus_guide_highlights.button.all.title": "View All",
-    "widget.home.campus_guide_highlights.button.all.hint": "Tap to view all highlights",
+    "widget.home.campus_guide_highlights.button.all.hint": "Tap to view all featured resources",
 
     "widget.home.safety.safewalk_request.title": "SafeWalks",
     "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
@@ -4131,7 +4134,7 @@
     "widget.home.favorites.title.laundry": "My Laundry",
     "widget.home.favorites.title.mtd_stops": "My Bus Stops",
     "widget.home.favorites.title.locations": "My Locations",
-    "widget.home.favorites.title.campus_guide": "My Campus Guide",
+    "widget.home.favorites.title.campus_guide": "Saved Resources",
     "widget.home.favorites.title.appointments": "MyMcKinley Appointments",
 
     "widget.home.favorites.message.offline.events": "My Events is not available while offline.",
@@ -4142,7 +4145,7 @@
     "widget.home.favorites.message.offline.laundry": "My Laundry is not available while offline.",
     "widget.home.favorites.message.offline.mtd_stops": "My Bus Stops is not available while offline.",
     "widget.home.favorites.message.offline.locations": "My Locations is not available while offline.",
-    "widget.home.favorites.message.offline.campus_guide": "My Campus Guide is not available while offline.",
+    "widget.home.favorites.message.offline.campus_guide": "Saved Resources is not available while offline.",
     "widget.home.favorites.message.offline.appointments": "MyMcKinley Appointments is not available while offline.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
@@ -4152,8 +4155,8 @@
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Big 10 News</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.favorites.message.empty.mtd_stops": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Bus Stops</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
-    "widget.home.favorites.message.empty.locations": "Tap the ☆ on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
-    "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.locations": "Tap the \u2606 on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Complete Resources List</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.favorites.message.empty.appointments": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MyMcKinley Appointments</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.favorites.message.empty.appointments.not_to_display": "There is nothing to display because you have chosen not to display any past or future appointments. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
@@ -4165,7 +4168,7 @@
     "widget.home.favorites.all.hint.laundry": "Tap to view all favorite Laundry Locations",
     "widget.home.favorites.all.hint.mtd_stops": "Tap to view all favorite Bus Stops",
     "widget.home.favorites.all.hint.locations": "Tap to view all favorite Locations",
-    "widget.home.favorites.all.hint.campus_guide": "Tap to view all favorite Campus Guide items",
+    "widget.home.favorites.all.hint.campus_guide": "Tap to view all saved resources",
     "widget.home.favorites.all.hint.appointments": "Tap to view all favorite Appointments",
 
     "widget.home.wellness_resources.header.label": "My Wellness Resources",
