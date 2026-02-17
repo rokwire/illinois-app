@@ -38,7 +38,6 @@ import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
-import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
@@ -597,8 +596,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "research_projects.research_projects": _onTapResearchProjects(context); break;
 
-      case "polls.create_poll":              _onTapCreatePoll(context); break;
-      case "polls.recent_polls":             _onTapViewPolls(context); break;
+      case "polls.polls":                    _onTapPolls(context); break;
 
       case "recent.recent_items":            _onTapRecentItems(context); break;
 
@@ -820,13 +818,8 @@ class _BrowseEntry extends StatelessWidget {
   }
 
 
-  static void _onTapCreatePoll(BuildContext context) {
-    Analytics().logSelect(target: "Create Poll");
-    CreatePollPanel.present(context);
-  }
-
-  static void _onTapViewPolls(BuildContext context) {
-    Analytics().logSelect(target: "View Polls");
+  static void _onTapPolls(BuildContext context) {
+    Analytics().logSelect(target: "Polls");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
 
