@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Removed
+- Removed "Create Poll" entry from Browse/Polls & Favorites, make Browse/Polls section un-exandable [#5735](https://github.com/rokwire/illinois-app/issues/5735).
 
 ## [8.0.3] - 2026-02-16
 ### Added
@@ -13,8 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed "My Groups" filter button text style in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
 - "Order Online with Order Ahead App" button renamed to "Order Online" in Dining detail panel [#5727](https://github.com/rokwire/illinois-app/issues/5727).
 - About the App text updates [#5730](https://github.com/rokwire/illinois-app/issues/5730).
-### Removed
-- Removed "Create Poll" entry from Browse/Polls & Favorites, make Browse/Polls section un-exandable [#5735](https://github.com/rokwire/illinois-app/issues/5735).
 
 ## [8.0.2] - 2026-02-04
 ### Added
