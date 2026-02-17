@@ -280,33 +280,22 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
 
   Widget? _exploreOrderOnline() {
     Map<String, dynamic>? onlineOrder = _dining.onlineOrder;
-    if (onlineOrder == null) {
-      return null;
-    }
-    Map<String, dynamic>? onlineOrderPlatformDetails;
-    if (Platform.isAndroid) {
-      onlineOrderPlatformDetails = onlineOrder['android'];
-    } else if (Platform.isIOS) {
-      onlineOrderPlatformDetails = onlineOrder['ios'];
-    }
-    if (onlineOrderPlatformDetails == null) {
-      return null;
-    }
-    if (StringUtils.isEmpty(onlineOrderPlatformDetails['deep_link'])) {
-      return null;
-    }
-    return Align(alignment: Alignment.center, child:
+    Map<String, dynamic>? platformDetails = (onlineOrder != null) ? (JsonUtils.mapValue(onlineOrder[Platform.operatingSystem]) ?? onlineOrder) : null;
+    String? deepLinkUrl = (platformDetails != null) ? JsonUtils.stringValue(platformDetails['deep_link']) : null;
+    String? storeUrl = (platformDetails != null) ? JsonUtils.stringValue(platformDetails['store_url']) : null;
+
+    return ((deepLinkUrl != null) && deepLinkUrl.isNotEmpty) ? Align(alignment: Alignment.center, child:
       SmallRoundedButton(
-        label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online with Order Ahead App'),
+        label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online'),
         textStyle: Styles().textStyles.getTextStyle("widget.button.title.regular"),
         backgroundColor: Styles().colors.white,
         borderColor: Styles().colors.fillColorSecondary,
         rightIcon: Container(),
         rightIconPadding: EdgeInsets.only(right: 12),
         leftIconPadding: EdgeInsets.only(left: 12),
-        onTap: () => _onTapOrderOnline(onlineOrderPlatformDetails),
+        onTap: () => _onTapOrderOnline(deepLinkUrl, storeUrl: storeUrl),
       ),
-    );
+    ) : null;
   }
 
   String paymentsToString(List<PaymentType>? payments) {
@@ -627,17 +616,14 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
     _dining.launchDirections();
   }
 
-  void _onTapOrderOnline(Map<String, dynamic>? orderOnlineDetails) async {
-    String? deepLink = (orderOnlineDetails != null) ? orderOnlineDetails['deep_link'] : null;
-    if (StringUtils.isEmpty(deepLink)) {
-      return;
-    }
-    bool? appLaunched = await RokwirePlugin.launchApp({"deep_link": deepLink});
-    if (appLaunched != true) {
-      String? storeUrl = orderOnlineDetails?['store_url'];
-      Uri? storeUri = (storeUrl != null) ? Uri.tryParse(storeUrl) : null;
+  void _onTapOrderOnline(String deepLinkUrl, { String? storeUrl }) async {
+    Analytics().logSelect(target: "Order Online");
+    bool? appLaunched = await RokwirePlugin.launchApp({"deep_link": deepLinkUrl});
+    if ((appLaunched != true) && (storeUrl != null) && storeUrl.isNotEmpty) {
+      Uri? storeUri = Uri.tryParse(storeUrl);
       if (storeUri != null) {
-        launchUrl(storeUri, mode: LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
+        launchUrl(storeUri, mode: LaunchMode.externalApplication).
+          catchError((e) { debugPrint(e.toString()); return false; });
       }
     }
   }
