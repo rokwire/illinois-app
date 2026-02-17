@@ -243,8 +243,8 @@
     "panel.browse.section.appointments.description": "View, schedule, or cancel various appointments.",
     "panel.browse.section.athletics.title": "Los 10 grandes atletismo",
     "panel.browse.section.athletics.description": "Keep up with your favorite {{app_title}} teams.",
-    "panel.browse.section.campus_guide.title": "Guía del Campus",
-    "panel.browse.section.campus_guide.description": "Obtenga más información sobre la vida en el campus.",
+    "panel.browse.section.campus_guide.title": "Vida universitaria",
+    "panel.browse.section.campus_guide.description": "Acceda a enlaces para grupos, organizaciones y servicios para mejorar su tiempo en {{app_title}}.",
     "panel.browse.section.dining.title": "Comida",
     "panel.browse.section.dining.description": "Los estudiantes, profesores, empleados, y visitantes son bienvenidos a comer en cualquier comedor en las residencias.",
     "panel.browse.section.directory.title": "Directory of Users",
@@ -299,9 +299,9 @@
     "panel.browse.entry.athletics.sport_teams.title": "Equipos",
     "panel.browse.entry.athletics.my_game_day.title": "¡Es el día del juego!",
 
-    "panel.browse.entry.campus_guide.campus_highlights.title": "Puntos destacados de la guía del campus",
-    "panel.browse.entry.campus_guide.campus_guide.title": "Guía Completa del Campus",
-    "panel.browse.entry.campus_guide.my_campus_guide.title": "Guía de mi campus",
+    "panel.browse.entry.campus_guide.campus_guide.title": "Lista completa",
+    "panel.browse.entry.campus_guide.campus_highlights.title": "Recursos destacados",
+    "panel.browse.entry.campus_guide.my_campus_guide.title": "Recursos guardados",
 
     "panel.browse.entry.dining.dining.title": "Comedor de la residencia",
 
@@ -1869,8 +1869,8 @@
     "panel.saved.label.news": "Mis 10 grandes noticias",
     "panel.saved.label.laundry": "Mi Lavandería",
     "panel.saved.label.mtd_stops": "Mis Paradas de Autobús",
-    "panel.saved.label.my_locations": "My Locations",
-    "panel.saved.label.campus_guide": "Mi Guía del Campus",
+    "panel.saved.label.my_locations": "Mis ubicaciones",
+    "panel.saved.label.campus_guide": "Recursos guardados",
     "panel.saved.label.appointments": "Mis Citas en MyMcKinley",
 
     "panel.saved.button.all.title": "Ver todo",
@@ -3364,8 +3364,11 @@
     "panel.mtd_stops.search.label.found_single":"1 resultado se encontró",
     "panel.mtd_stops.search.label.found_multi":"%d resultados se encontraron",
 
+    "panel.campus_guide.label.heading": "Guía del Campus",
+    "panel.campus_guide.label.content.empty": "Contenido de recursos vacíos",
+
     "panel.guide_categories.label.heading": "Guía del Campus",
-    "panel.guide_categories.label.content.empty": "Contenido de la guía vacía",
+    "panel.guide_categories.label.content.empty": "Empty resources content",
 
     "panel.inbox.label.content.empty": "Ningún mensaje",
     "panel.inbox.mark_all_read.label": "Marcar todo como leido",
@@ -3451,10 +3454,10 @@
     "widget.conversation_card.body.hint": "Cuerpo: %s",
     "widget.conversation_card.sender.me": "Ya",
 
-    "panel.guide_list.label.highlights.heading": "Guía del Campus",
+    "panel.guide_list.label.heading": "Guía del campus",
 
-    "panel.guide_list.label.highlights.section": "Puntos destacados del campus",
-    "panel.guide_list.label.highlights.empty": "No hay Destacados del Campus activos.",
+    "panel.guide_list.label.highlights.section": "Recursos destacados",
+    "panel.guide_list.label.highlights.empty": "Actualmente no hay recursos destacados",
     "panel.guide_list.label.safety_resources.section": "Safety Resources",
     "panel.guide_list.label.safety_resources.empty": "There are no active Safety Resources.",
     "panel.guide_list.label.campus_reminders.section": "Recordatorios del campus",
@@ -3981,10 +3984,10 @@
     "widget.home.research_projects.button.all.title": "Ver todo",
     "widget.home.research_projects.button.all.hint": "Toque para ver todos los proyectos de investigación",
 
-    "widget.home.campus_guide_highlights.label.heading": "Puntos destacados de la guía del campus",
-    "widget.home.campus_guide_highlights.text.empty.description": "Toque \u2606 en los elementos de <a href='{{local_url}}'><b>Destacados de la guía del campus</b></a> para acceder rápidamente aquí.(<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.campus_guide_highlights.label.heading": "Recursos Destacados",
+    "widget.home.campus_guide_highlights.text.empty.description": "Toque \u2606 en los elementos de <a href='{{local_url}}'><b>Recursos destacados</b></a> para acceder rápidamente aquí.(<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.campus_guide_highlights.button.all.title": "Ver todo",
-    "widget.home.campus_guide_highlights.button.all.hint": "Toca para ver todos los momentos destacados",
+    "widget.home.campus_guide_highlights.button.all.hint": "Toque para ver todos los recursos destacados",
 
     "widget.home.safety.safewalk_request.title": "SafeWalks",
     "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
@@ -4127,8 +4130,8 @@
     "widget.home.favorites.title.news": "Mis 10 grandes noticias",
     "widget.home.favorites.title.laundry": "Mi Colada",
     "widget.home.favorites.title.mtd_stops": "Mis paradas de autobús",
-    "widget.home.favorites.title.locations": "My Locations",
-    "widget.home.favorites.title.campus_guide": "Guía de Mi Campus",
+    "widget.home.favorites.title.locations": "Mis ubicaciones",
+    "widget.home.favorites.title.campus_guide": "Recursos guardados",
     "widget.home.favorites.title.appointments": "Mis citas de MyMcKinley",
 
     "widget.home.favorites.message.offline.events": "Mis Eventos no están disponibles sin conexión.",
@@ -4138,8 +4141,8 @@
     "widget.home.favorites.message.offline.news": "My Big 10 News no está disponible sin conexión.",
     "widget.home.favorites.message.offline.laundry": "Mi Lavandería no está disponible sin conexión.",
     "widget.home.favorites.message.offline.mtd_stops": "Mis paradas de autobús no están disponibles sin conexión.",
-    "widget.home.favorites.message.offline.locations": "My Locations is not available while offline.",
-    "widget.home.favorites.message.offline.campus_guide": "My Campus Guide no está disponible sin conexión.",
+    "widget.home.favorites.message.offline.locations": "Mis ubicaciones no está disponible sin conexión.",
+    "widget.home.favorites.message.offline.campus_guide": "Los recursos guardados no están disponibles sin conexión",
     "widget.home.favorites.message.offline.appointments": "Mis citas de MyMcKinley no están disponibles sin conexión.",
 
     "widget.home.favorites.message.empty.events": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Eventos</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
@@ -4149,8 +4152,8 @@
     "widget.home.favorites.message.empty.news": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>10 grandes noticias</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.favorites.message.empty.laundry": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Lavanderías</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.favorites.message.empty.mtd_stops": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Paradas de Autobús</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
-    "widget.home.favorites.message.empty.locations": "Tap the \\u2606 on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
-    "widget.home.favorites.message.empty.campus_guide": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Guía del Campus</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.favorites.message.empty.locations": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Mapa</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.favorites.message.empty.campus_guide": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Lista completa de recursos</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.favorites.message.empty.appointments": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Citas de MyMcKinley</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.favorites.message.empty.appointments.not_to_display": "No hay nada que mostrar, ya que has optado por no mostrar ninguna cita pasada o futura. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
 
@@ -4161,8 +4164,8 @@
     "widget.home.favorites.all.hint.news": "Toque para ver todas las noticias de atletismo favoritas",
     "widget.home.favorites.all.hint.laundry": "Toca para ver todas las lavanderías favoritas",
     "widget.home.favorites.all.hint.mtd_stops": "Toque para ver todas las paradas de autobús favoritas",
-    "widget.home.favorites.all.hint.locations": "Tap to view all favorite Locations",
-    "widget.home.favorites.all.hint.campus_guide": "Toque para ver todos los artículos favoritos de la guía del campus",
+    "widget.home.favorites.all.hint.locations": "Toque para ver todas las ubicaciones favoritas",
+    "widget.home.favorites.all.hint.campus_guide": "Toque para ver todos los recursos guardados",
     "widget.home.favorites.all.hint.appointments": "Toque para ver todas las citas favoritas",
 
     "widget.home.wellness_resources.header.label": "Mis recursos de bienestar",

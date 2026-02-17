@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - "Order Online with Order Ahead App" button renamed to "Order Online" in Dining detail panel [#5727](https://github.com/rokwire/illinois-app/issues/5727).
 - About the App text updates [#5730](https://github.com/rokwire/illinois-app/issues/5730).
 - Changed "My Groups" filter button text style in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
+- Renamed Campus Guide [#5736](https://github.com/rokwire/illinois-app/issues/5736).
 ### Removed
 - Removed "Create Poll" entry from Browse/Polls & Favorites, make Browse/Polls section un-exandable [#5735](https://github.com/rokwire/illinois-app/issues/5735).
 
