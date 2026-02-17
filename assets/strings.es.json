@@ -327,8 +327,7 @@
     "panel.browse.entry.mtd.my_mtd_stops.title": "Mis paradas de autobús",
     "panel.browse.entry.mtd.my_locations.title": "My Locations",
 
-    "panel.browse.entry.polls.create_poll.title": "Crear una encuesta",
-    "panel.browse.entry.polls.recent_polls.title": "Ver encuestas",
+    "panel.browse.entry.polls.polls.title": "Encuestas",
 
     "panel.browse.entry.recent.recent_items.title": "Visited Recently",
 
@@ -3981,13 +3980,6 @@
     "widget.home.research_projects.message.offline":"Los proyectos de investigación no están disponibles sin conexión.",
     "widget.home.research_projects.button.all.title": "Ver todo",
     "widget.home.research_projects.button.all.hint": "Toque para ver todos los proyectos de investigación",
-
-    "widget.home_create_poll.heading.title":"Encuestas",
-    "widget.home_create_poll.button.close.label":"Cerrar",
-    "widget.home_create_poll.text.title":"Crea y comparte encuestas rápidamente.",
-    "widget.home_create_poll.text.description":"Las personas de tu grupo pueden recibir notificaciones para votar por la aplicación {{app_title}}. O puedes dar a los votantes el número de votación de cuatro dígitos.",
-    "widget.home_create_poll.button.create_poll.label":"Crea una encuesta",
-    "widget.home_create_poll.button.login.label":"Iniciar sesión",
 
     "widget.home.campus_guide_highlights.label.heading": "Puntos destacados de la guía del campus",
     "widget.home.campus_guide_highlights.text.empty.description": "Toque \u2606 en los elementos de <a href='{{local_url}}'><b>Destacados de la guía del campus</b></a> para acceder rápidamente aquí.(<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",

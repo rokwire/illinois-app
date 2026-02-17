@@ -327,8 +327,7 @@
 	"panel.browse.entry.mtd.my_mtd_stops.title": "我的巴士站",
 	"panel.browse.entry.mtd.my_locations.title": "My Locations",
 
-	"panel.browse.entry.polls.create_poll.title": "創建投票",
-	"panel.browse.entry.polls.recent_polls.title": "查看民意調查",
+	"panel.browse.entry.polls.polls.title": "民意調查",
 
 	"panel.browse.entry.recent.recent_items.title": "Visited Recently",
 
@@ -3955,13 +3954,6 @@
 	"widget.home.groups.message.offline":"Groups are not available while offline.",
 	"widget.home.research_projects.button.all.title": "查看全部",
 	"widget.home.research_projects.button.all.hint": "點擊查看所有研究項目",
-
-	"widget.home_create_poll.heading.title":"民意調查",
-	"widget.home_create_poll.button.close.label":"关闭",
-	"widget.home_create_poll.text.title":"快速创建和共享投票.",
-	"widget.home_create_poll.text.description":"您的群组成员可以透过{{app_title}}应用程序收到投票通知。您也可以提供使用者四码投票编号。",
-	"widget.home_create_poll.button.create_poll.label":"创建投票",
-	"widget.home_create_poll.button.login.label":"登入",
 
 	"widget.home.campus_guide_highlights.label.heading": "校園指南亮點",
 	"widget.home.campus_guide_highlights.text.empty.description": "點按<a href='{{local_url}}'><b>校園指南要點</b></a>中項目上的 \u2606 可在此處快速訪問。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
