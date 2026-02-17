@@ -31,14 +31,12 @@ import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
-import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
@@ -579,8 +577,8 @@ class _BrowseEntry extends StatelessWidget {
       case "mtd.my_mtd_stops":               _onTapMyMTDStops(context); break;
       case "mtd.my_locations":               _onTapMyLocations(context); break;
 
-      case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
+      case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
       case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
 
       case "dining.dining":                  _onTapDining(context); break;
@@ -597,8 +595,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "research_projects.research_projects": _onTapResearchProjects(context); break;
 
-      case "polls.create_poll":              _onTapCreatePoll(context); break;
-      case "polls.recent_polls":             _onTapViewPolls(context); break;
+      case "polls.polls":                    _onTapPolls(context); break;
 
       case "recent.recent_items":            _onTapRecentItems(context); break;
 
@@ -662,12 +659,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapCampusReminders(BuildContext context) {
     Analytics().logSelect(target: "Campus Reminders");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-      contentList: Guide().remindersList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_reminders.empty", "There are no active Campus Reminders."),
-      analyticsFeature: AnalyticsFeature.AcademicsCampusReminders,
-    )));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusRemindersPanel()));
   }
 
   static void _onTapSportEvents(BuildContext context) {
@@ -687,12 +679,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapCampusHighlights(BuildContext context) {
     Analytics().logSelect(target: 'Campus Highlights');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-      contentList: Guide().promotedList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Campus Highlights'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Hightlights."),
-      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusHighlightContentType),
-    )));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusHighlightsPanel()));
   }
 
   static void _onTapDueDateCatalog(BuildContext context) {
@@ -820,13 +807,8 @@ class _BrowseEntry extends StatelessWidget {
   }
 
 
-  static void _onTapCreatePoll(BuildContext context) {
-    Analytics().logSelect(target: "Create Poll");
-    CreatePollPanel.present(context);
-  }
-
-  static void _onTapViewPolls(BuildContext context) {
-    Analytics().logSelect(target: "View Polls");
+  static void _onTapPolls(BuildContext context) {
+    Analytics().logSelect(target: "Polls");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
 
@@ -860,13 +842,7 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: "Safety Resources");
     List<Map<String, dynamic>>? safetyResourcesList = Guide().safetyResourcesList;
     if (CollectionUtils.isNotEmpty(safetyResourcesList)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-        contentList: safetyResourcesList,
-        contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
-        contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
-        favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
-        analyticsFeature: AnalyticsFeature.Safety,
-      )));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusSafetyResourcesPanel(contentList: safetyResourcesList,)));
     }
     else {
       AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safety_resources.not_available.text", "Safety Resources are not currently available."));
