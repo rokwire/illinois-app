@@ -243,8 +243,8 @@
 	"panel.browse.section.appointments.description": "View, schedule, or cancel various appointments.",
 	"panel.browse.section.athletics.title": "十大田徑運動",
 	"panel.browse.section.athletics.description": "Keep up with your favorite {{app_title}} teams.",
-	"panel.browse.section.campus_guide.title": "校園指南",
-	"panel.browse.section.campus_guide.description": "了解更多關於校園生活的信息。",
+	"panel.browse.section.campus_guide.title": "大學生活",
+	"panel.browse.section.campus_guide.description": "訪問各種團體、組織和服務的鏈接，以豐富您在 {{app_title}} 的體驗。",
 	"panel.browse.section.dining.title": "校园餐饮",
 	"panel.browse.section.dining.description": "学生、教职员、访客可以到任何宿舍餐厅用餐。",
 	"panel.browse.section.directory.title": "Directory of Users",
@@ -299,9 +299,9 @@
 	"panel.browse.entry.athletics.sport_teams.title": "團隊",
 	"panel.browse.entry.athletics.my_game_day.title": "今天是比賽日！",
 
-	"panel.browse.entry.campus_guide.campus_highlights.title": "校園指南亮點",
-	"panel.browse.entry.campus_guide.campus_guide.title": "完整的校園指南",
-	"panel.browse.entry.campus_guide.my_campus_guide.title": "我的校園指南",
+	"panel.browse.entry.campus_guide.campus_guide.title": "完整列表",
+	"panel.browse.entry.campus_guide.campus_highlights.title": "特色資源",
+	"panel.browse.entry.campus_guide.my_campus_guide.title": "節省的資源",
 
 	"panel.browse.entry.dining.dining.title": "校园餐饮",
 
@@ -1854,8 +1854,8 @@
 	"panel.saved.label.news": "我的十大新聞",
 	"panel.saved.label.laundry": "我的洗衣房",
 	"panel.saved.label.mtd_stops": "我的巴士站",
-	"panel.saved.label.my_locations": "My Locations",
-	"panel.saved.label.campus_guide": "我的校園指南",
+	"panel.saved.label.my_locations": "我的位置",
+	"panel.saved.label.campus_guide": "節省的資源",
 	"panel.saved.label.appointments": "我的MyMcKinley預約",
 
 	"panel.saved.button.all.title": "查看全部",
@@ -3339,8 +3339,11 @@
 	"panel.mtd_stops.search.label.found_single":"一个结果",
 	"panel.mtd_stops.search.label.found_multi":"%d个结果",
 
-	"panel.guide_categories.label.heading": "Campus Guide",
-	"panel.guide_categories.label.content.empty": "空的指南內容",
+	"panel.campus_guide.label.heading": "校園指南",
+	"panel.campus_guide.label.content.empty": "空資源內容",
+
+	"panel.guide_categories.label.heading": "校園指南",
+	"panel.guide_categories.label.content.empty": "空資源內容",
 
 	"panel.inbox.label.content.empty": "沒有消息",
 	"panel.inbox.mark_all_read.label": "標記為已讀",
@@ -3426,10 +3429,10 @@
 	"widget.conversation_card.body.hint": "身體：%s",
 	"widget.conversation_card.sender.me": "尤",
 
-	"panel.guide_list.label.highlights.heading": "Campus Guide",
+	"panel.guide_list.label.heading": "校園指南",
 
-	"panel.guide_list.label.highlights.section": "校園亮點",
-	"panel.guide_list.label.highlights.empty": "沒有活躍的校園亮點。",
+	"panel.guide_list.label.highlights.section": "特色資源",
+	"panel.guide_list.label.highlights.empty": "目前沒有精選資源。",
 	"panel.guide_list.label.campus_reminders.section": "校園提醒",
 	"panel.guide_list.label.safety_resources.section": "Safety Resources",
 	"panel.guide_list.label.safety_resources.empty": "There are no active Safety Resources.",
@@ -3955,10 +3958,10 @@
 	"widget.home.research_projects.button.all.title": "查看全部",
 	"widget.home.research_projects.button.all.hint": "點擊查看所有研究項目",
 
-	"widget.home.campus_guide_highlights.label.heading": "校園指南亮點",
-	"widget.home.campus_guide_highlights.text.empty.description": "點按<a href='{{local_url}}'><b>校園指南要點</b></a>中項目上的 \u2606 可在此處快速訪問。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
+	"widget.home.campus_guide_highlights.label.heading": "特色資源",
+	"widget.home.campus_guide_highlights.text.empty.description": "點按<a href='{{local_url}}'><b>特色資源</b></a>中項目上的 \u2606 可在此處快速訪問。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.campus_guide_highlights.button.all.title": "查看全部",
-	"widget.home.campus_guide_highlights.button.all.hint": "點擊查看所有亮點",
+	"widget.home.campus_guide_highlights.button.all.hint": "點擊查看所有精選資源",
 
 	"widget.home.safety.safewalk_request.title": "SafeWalks",
 	"widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
@@ -4101,8 +4104,8 @@
 	"widget.home.favorites.title.news": "我的十大新聞",
 	"widget.home.favorites.title.laundry": "我的洗衣房",
 	"widget.home.favorites.title.mtd_stops": "我的巴士站",
-	"widget.home.favorites.title.locations": "My Locations",
-	"widget.home.favorites.title.campus_guide": "我的校園指南",
+	"widget.home.favorites.title.locations": "我的位置",
+	"widget.home.favorites.title.campus_guide": "節省的資源",
 	"widget.home.favorites.title.appointments": "我的MyMcKinley预约",
 
 	"widget.home.favorites.message.offline.events": "此功能离线时无法使用。",
@@ -4112,8 +4115,8 @@
 	"widget.home.favorites.message.offline.news": "離線時無法查看“我的十大新聞”。",
 	"widget.home.favorites.message.offline.laundry": "此功能离线时无法使用。",
 	"widget.home.favorites.message.offline.mtd_stops": "此功能离线时无法使用。",
-	"widget.home.favorites.message.offline.locations": "My Locations is not available while offline.",
-	"widget.home.favorites.message.offline.campus_guide": "此功能离线时无法使用。",
+	"widget.home.favorites.message.offline.locations": "離線時無法使用「我的位置」功能。",
+	"widget.home.favorites.message.offline.campus_guide": "離線時無法使用已儲存的資源。",
 	"widget.home.favorites.message.offline.appointments": "此功能离线时无法使用。",
 
 	"widget.home.favorites.message.empty.events": "点击 <a href='{{local_url}}'><b>活动</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
@@ -4123,8 +4126,8 @@
 	"widget.home.favorites.message.empty.news": "点击 <a href='{{local_url}}'><b>十大新聞</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.favorites.message.empty.laundry": "点击 <a href='{{local_url}}'><b>洗衣房</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.favorites.message.empty.mtd_stops": "点击 <a href='{{local_url}}'><b>公交车站</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
-	"widget.home.favorites.message.empty.locations": "Tap the ☆ on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
-	"widget.home.favorites.message.empty.campus_guide": "点击 <a href='{{local_url}}'><b>校園指南/b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
+	"widget.home.favorites.message.empty.locations": "点击 <a href='{{local_url}}'><b>地圖</b></a> 中项目上的 ☆，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
+	"widget.home.favorites.message.empty.campus_guide": "点击 <a href='{{local_url}}'><b>完整資源列表</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.favorites.message.empty.appointments": "点击 <a href='{{local_url}}'><b>我的MyMckinley预约</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.favorites.message.empty.appointments.not_to_display": "因为您选择不显示任何过去或未来的预约，所以没有内容显示。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 
@@ -4135,8 +4138,8 @@
 	"widget.home.favorites.all.hint.news": "點擊查看所有喜愛的田徑新聞",
 	"widget.home.favorites.all.hint.laundry": "點擊查看所有喜歡的洗衣房",
 	"widget.home.favorites.all.hint.mtd_stops": "點擊查看所有最喜歡的巴士站",
-	"widget.home.favorites.all.hint.locations": "Tap to view all favorite Locations",
-	"widget.home.favorites.all.hint.campus_guide": "點擊查看所有喜歡的校園指南文章",
+	"widget.home.favorites.all.hint.locations": "點擊查看所有收藏地點",
+	"widget.home.favorites.all.hint.campus_guide": "點擊查看所有已儲存的資源",
 	"widget.home.favorites.all.hint.appointments": "點擊查看所有的预约",
 
 	"widget.home.wellness_resources.header.label": "我的健康資源",
