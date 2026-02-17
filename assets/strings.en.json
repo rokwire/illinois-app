@@ -328,8 +328,7 @@
     "panel.browse.entry.mtd.my_mtd_stops.title": "My Bus Stops",
     "panel.browse.entry.mtd.my_locations.title": "My Locations",
 
-    "panel.browse.entry.polls.create_poll.title": "Create a Poll",
-    "panel.browse.entry.polls.recent_polls.title": "View Polls",
+    "panel.browse.entry.polls.polls.title": "Polls",
 
     "panel.browse.entry.recent.recent_items.title": "Visited Recently",
 
@@ -3982,13 +3981,6 @@
     "widget.home.research_projects.message.offline":"Research Projects are not available while offline.",
     "widget.home.research_projects.button.all.title": "View All",
     "widget.home.research_projects.button.all.hint": "Tap to view all research projects",
-
-    "widget.home_create_poll.heading.title":"Polls",
-    "widget.home_create_poll.button.close.label":"Close",
-    "widget.home_create_poll.text.title":"Quickly Create and Share Polls",
-    "widget.home_create_poll.text.description":"People in your group can be notified to vote through the {{app_title}} app. Or you can give voters the four-digit poll number.",
-    "widget.home_create_poll.button.create_poll.label":"Create a Poll",
-    "widget.home_create_poll.button.login.label":"Sign In",
 
     "widget.home.campus_guide_highlights.label.heading": "Campus Guide Highlights",
     "widget.home.campus_guide_highlights.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide Highlights</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
