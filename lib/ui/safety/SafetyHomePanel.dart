@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/safety/SafetySafeWalkRequestPage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -158,12 +158,7 @@ class _SafetyHomePanelState extends State<SafetyHomePanel>  {
       return true;
     }
     else if (contentType == SafetyContentType.safetyResources) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-        contentList: Guide().safetyResourcesList,
-        contentTitle: Localization().getStringEx('panel.guide_list.label.safety_resources.section', 'Safety Resources'),
-        contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.safety_resources.empty", "There are no active Campus Safety Resources."),
-        favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
-      )));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusSafetyResourcesPanel()));
       return true;
     }
     else {

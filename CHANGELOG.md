@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [8.0.4] - 2026-02-17
+### Changed
+- Renamed Campus Guide [#5736](https://github.com/rokwire/illinois-app/issues/5736).
+### Removed
+- Removed "Create Poll" entry from Browse/Polls & Favorites, make Browse/Polls section un-exandable [#5735](https://github.com/rokwire/illinois-app/issues/5735).
+
 ## [8.0.3] - 2026-02-16
 ### Added
 - Added Academic Links [#5729](https://github.com/rokwire/illinois-app/issues/5729).
