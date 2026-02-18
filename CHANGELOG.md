@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added Academic Links [#5729](https://github.com/rokwire/illinois-app/issues/5729).
 - Added "My Groups" filter button in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
+- Created "Career Exploration" section in Home / Section, moved Academics skills stuff there [#5744](https://github.com/rokwire/illinois-app/issues/5744).
 ### Changed
 - "Order Online with Order Ahead App" button renamed to "Order Online" in Dining detail panel [#5727](https://github.com/rokwire/illinois-app/issues/5727).
 - About the App text updates [#5730](https://github.com/rokwire/illinois-app/issues/5730).
