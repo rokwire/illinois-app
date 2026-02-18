@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
@@ -32,7 +33,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
-import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 abstract class _HomeSafetyResourcesBaseWidget extends StatefulWidget {
@@ -260,11 +260,9 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
 
   void _onCampusSafetyResourceLink() {
     Analytics().logSelect(target: "Campus Safety Resources Link", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-      contentList: Guide().safetyResourcesList,
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusSafetyResourcesPanel(
       contentTitle: widget._listContentTitle,
       contentEmptyMessage: widget._listEmptyContentDescription,
-      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
     )));
   }
 
@@ -288,11 +286,9 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
 
   void _onViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-      contentList: Guide().safetyResourcesList,
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusSafetyResourcesPanel(
       contentTitle: widget._listContentTitle,
       contentEmptyMessage: widget._listEmptyContentDescription,
-      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
     )));
   }
 

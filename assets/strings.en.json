@@ -244,8 +244,10 @@
     "panel.browse.section.appointments.description": "View, schedule, or cancel various appointments.",
     "panel.browse.section.athletics.title": "Big 10 Athletics",
     "panel.browse.section.athletics.description": "Keep up with your favorite {{app_title}} teams.",
-    "panel.browse.section.campus_guide.title": "Campus Guide",
-    "panel.browse.section.campus_guide.description": "Learn more about life on campus.",
+    "panel.browse.section.campus_guide.title": "University Living",
+    "panel.browse.section.campus_guide.description": "Access links for groups, organizations, and services to enhance your time at {{app_title}}.",
+    "panel.browse.section.career_exploration.title": "Career Exploration",
+    "panel.browse.section.career_exploration.description": "Discover career pathways and opportunities.",
     "panel.browse.section.dining.title": "Dining",
     "panel.browse.section.dining.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
     "panel.browse.section.directory.title": "Directory of Users",
@@ -281,8 +283,6 @@
 
     "panel.browse.entry.academics.gies_checklist.title": "iDegrees New Student Checklist",
     "panel.browse.entry.academics.new_student_checklist.title": "New Student Checklist",
-    "panel.browse.entry.academics.skills_self_evaluation.title": "Skills Self-Evaluation & Career Explorer",
-    "panel.browse.entry.academics.essential_skills_coach.title": "Essential Skills Coach",
     "panel.browse.entry.academics.gies_canvas_courses.title": "My Gies Canvas Courses",
     "panel.browse.entry.academics.canvas_courses.title": "My Canvas Courses",
     "panel.browse.entry.academics.student_courses.title": "My Courses",
@@ -291,6 +291,7 @@
     "panel.browse.entry.academics.wellness_todo.title": "To-Do List",
     "panel.browse.entry.academics.due_date_catalog.title": "Due Date Catalog",
     "panel.browse.entry.academics.appointments.title": "Appointments",
+    "panel.browse.entry.academics.academic_links.title": "Academic Links",
 
     "panel.browse.entry.appointments.appointments.title": "Appointments",
 
@@ -299,9 +300,14 @@
     "panel.browse.entry.athletics.sport_teams.title": "Teams",
     "panel.browse.entry.athletics.my_game_day.title": "It's Game Day!",
 
-    "panel.browse.entry.campus_guide.campus_highlights.title": "Campus Guide Highlights",
-    "panel.browse.entry.campus_guide.campus_guide.title": "Complete Campus Guide",
-    "panel.browse.entry.campus_guide.my_campus_guide.title": "My Campus Guide",
+    "panel.browse.entry.campus_guide.campus_guide.title": "Complete List",
+    "panel.browse.entry.campus_guide.campus_highlights.title": "Featured Resources",
+    "panel.browse.entry.campus_guide.my_campus_guide.title": "Saved Resources",
+
+    "panel.browse.entry.career_exploration.interest_explorer.title": "Interest Explorer",
+    "panel.browse.entry.career_exploration.digital_card.title": "My Digital Business Card",
+    "panel.browse.entry.career_exploration.skills_self_evaluation.title": "Skills Self-Evaluation",
+    "panel.browse.entry.career_exploration.essential_skills_coach.title": "Essential Skills Coach",
 
     "panel.browse.entry.dining.dining.title": "Residence Hall Dining",
 
@@ -327,8 +333,7 @@
     "panel.browse.entry.mtd.my_mtd_stops.title": "My Bus Stops",
     "panel.browse.entry.mtd.my_locations.title": "My Locations",
 
-    "panel.browse.entry.polls.create_poll.title": "Create a Poll",
-    "panel.browse.entry.polls.recent_polls.title": "View Polls",
+    "panel.browse.entry.polls.polls.title": "Polls",
 
     "panel.browse.entry.recent.recent_items.title": "Visited Recently",
 
@@ -520,6 +525,7 @@
     "panel.academics.section.due_date_catalog.label": "Due Date Catalog",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.appointments.label": "Appointments",
+    "panel.academics.section.academic_links.label": "Academic Links",
     "panel.academics.section.events.offline.msg": "Speakers & Seminars events are not available while offline.",
     "panel.academics.section.events.empty.msg": "There are no upcoming Speakers & Seminars events.",
 
@@ -1233,7 +1239,7 @@
     "panel.explore_detail.label.privacy.private.title":"Uploaded Guest List Only",
     "panel.explore_detail.label.privacy.group_members.title":"Group Members Only",
     "panel.explore_detail.label.privacy.public.title":"All App Users",
-    "panel.explore_detail.button.order_online":"Order Online with Order Ahead App",
+    "panel.explore_detail.button.order_online":"Order Online",
     "panel.explore_detail.event_type.online": "Online Event",
     "panel.explore_detail.event_type.in_person": "In-person event",
     "panel.explore_detail.label.text_and_tell": "Text and tell us about your dining experience!",
@@ -1851,14 +1857,14 @@
 
     "panel.settings.privacy_statement.label.title": "Privacy Statement",
 
-    "panel.settings.contacts.button.help_desk.title": "CONTACT HELP DESK",
-    "panel.settings.contacts.button.share_idea.title": "SHARE AN IDEA",
-    "panel.settings.contacts.button.develop_code.title": "DEVELOP CODE WITH ROKWIRE",
-    "panel.settings.partners.button.help_desk.title": "PARTNER WITH US",
-    "panel.settings.review.button.help_desk.title": "REVIEW APP",
-    "panel.settings.contact.info.row1": "Smart, Healthy Communities Initiative | Rokwire",
-    "panel.settings.contact.info.row2": "Institute of Government and Public Affairs \n 1007 W Nevada St; Urbana, IL 61801",
-    "panel.settings.contact.feedback.app.description.format": "The Illinois app is the official campus app of the <a href='{{university_url}}'> University of Illinois Urbana-Champaign</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='{{shci_url}}'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the Office of the Provost at the University of Illinois.",
+    "panel.settings.about.button.help_desk.title": "CONTACT HELP DESK",
+    "panel.settings.about.button.share_idea.title": "SHARE AN IDEA",
+    "panel.settings.about.button.develop_code.title": "DEVELOP CODE WITH ROKWIRE",
+    "panel.settings.about.button.partner.title": "PARTNER WITH US",
+    "panel.settings.about.button.review.title": "REVIEW APP",
+    "panel.settings.contact.info.title": "{{app_title}} App | Rokwire",
+    "panel.settings.contact.info.division": "Student Affairs at Illinois",
+    "panel.settings.about.app.description.format": "The {{app_title}} app is the official campus app of the <a href='{{university_url}}'>{{university_long_name}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. Both the app and the <a href='{{rokwire_platform_url}}'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source platform on which it is built are initiatives of the university.",
 
     "panel.saved.header.label": "Saved",
     "panel.saved.label.events": "My Events",
@@ -1870,7 +1876,7 @@
     "panel.saved.label.laundry": "My Laundry",
     "panel.saved.label.mtd_stops": "My Bus Stops",
     "panel.saved.label.my_locations": "My Locations",
-    "panel.saved.label.campus_guide": "My Campus Guide",
+    "panel.saved.label.campus_guide": "Saved Resources",
     "panel.saved.label.appointments": "MyMcKinley Appointments",
 
     "panel.saved.button.all.title": "View All",
@@ -2028,26 +2034,7 @@
     "panel.settings.home.logout.message":"Are you sure you want to sign out?",
     "panel.settings.home.logout.button.yes":"Yes",
     "panel.settings.home.logout.no":"No",
-    "panel.settings.home.security.reset_password":"ResetPassword",
-    "panel.settings.home.security.face_id":"Use Face ID",
-    "panel.settings.home.notifications.reminders":"Event reminders",
-    "panel.settings.home.notifications.athletics_updates":"Athletics updates",
-    "panel.settings.home.notifications.dining":"Dining specials",
-    "panel.settings.home.privacy.title" :"Privacy",
-    "panel.settings.home.privacy.edit_my_privacy.title":"Edit My Privacy",
-    "panel.settings.home.privacy.privacy_statement.title":"Privacy Statement",
-    "panel.settings.home.button.debug.title":"Debug",
-    "panel.settings.home.button.debug.hint":"",
-    "panel.settings.home.button.test.title":"Test",
-    "panel.settings.home.button.test.hint":"",
-    "panel.settings.home.feedback.title": "App Feedback",
-    "panel.settings.home.feedback.description": "Enjoying the app? Missing something? The {{app_title}} app team needs your ideas and input. Thank you!",
-    "panel.settings.home.button.feedback.title": "Submit Feedback",
-    "panel.settings.home.button.feedback.hint": "",
-    "panel.settings.home.button.review.title": "Review App",
-    "panel.settings.home.button.review.hint": "",
     "panel.settings.home.version.info.label": "{{app_title}} App Version:",
-    "panel.settings.home.feedback.app.description.format": "The Illinois app is the official campus app of the University of Illinois Urbana-Champaign. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='{{shci_url}}'>Smart, Healthy Communities Initiative</a> in the Office of the Provost at the University of Illinois.",
     "panel.settings.home.copyright.text": "Copyright © {{COPYRIGHT_YEAR}} University of Illinois Board of Trustees",
 
     "panel.settings.profile.content.profile.label": "My Profile",
@@ -3160,6 +3147,9 @@
     "panel.group.home2.failed.text": "Failed to load groups",
     "panel.group.home2.empty.text": "There are no groups matching the selected filters",
     "panel.group.home2.bar.button.filter.title": "Filter",
+    "panel.group.home2.bar.button.filter.hint": "Tap to build filter",
+    "panel.group.home2.bar.button.my_groups.title": "My Groups",
+    "panel.group.home2.bar.button.my_groups.hint": "Tap to toggle my groups filter",
     "panel.group.home2.bar.button.create.title": "Create",
     "panel.group.home2.bar.button.create.hint": "Tap to create group",
     "panel.group.home2.bar.button.search.title": "Search",
@@ -3374,8 +3364,11 @@
     "panel.mtd_stops.search.label.found_single":"1 result found",
     "panel.mtd_stops.search.label.found_multi":"%d results found",
 
+    "panel.campus_guide.label.heading": "Campus Guide",
+    "panel.campus_guide.label.content.empty": "Empty resources content",
+
     "panel.guide_categories.label.heading": "Campus Guide",
-    "panel.guide_categories.label.content.empty": "Empty guide content",
+    "panel.guide_categories.label.content.empty": "Empty resources content",
 
     "panel.inbox.label.content.empty": "No messages",
     "panel.inbox.mark_all_read.label": "Mark all as read",
@@ -3461,10 +3454,10 @@
     "widget.conversation_card.body.hint": "Message: %s",
     "widget.conversation_card.sender.me": "You",
 
-    "panel.guide_list.label.highlights.heading": "Campus Guide",
+    "panel.guide_list.label.heading": "Campus Guide",
 
-    "panel.guide_list.label.highlights.section": "Campus Guide Highlights",
-    "panel.guide_list.label.highlights.empty": "There are no active Campus Guide Highlights.",
+    "panel.guide_list.label.highlights.section": "Featured Resources",
+    "panel.guide_list.label.highlights.empty": "There are currently no featured resources.",
     "panel.guide_list.label.safety_resources.section": "Safety Resources",
     "panel.guide_list.label.safety_resources.empty": "There are no active Safety Resources.",
     "panel.guide_list.label.campus_reminders.section": "Campus Reminders",
@@ -3508,6 +3501,7 @@
     "panel.student_courses.load.failed.error.msg": "You do not appear to be registered for any courses for the selected term.",
     "panel.student_courses.load.offline.error.msg": "My Courses is not available while offline.",
 
+    "panel.skills_self_evaluation.header.title": "Skills Self-Evaluation & Career Explorer",
     "panel.skills_self_evaluation.get_started.section.title": "Skills Self-Evaluation & Career Explorer",
     "panel.skills_self_evaluation.button.more.hint": "Show more",
     "panel.skills_self_evaluation.survey.title": "Skills Self-Evaluation & Career Explorer",
@@ -3563,6 +3557,7 @@
     "panel.skills_self_evaluation.occupation_details.offline.error.msg": "Results are not available while offline.",
     "panel.skills_self_evaluation.occupation_details.unavailable.message": "Failed to get occupation data. Please try again.",
 
+    "panel.essential_skills_coach.header.title": "Essential Skills Coach",
     "panel.essential_skills_coach.get_started.header.title": "Take the Self-Evaluation",
     "panel.essential_skills_coach.get_started.take_evaluation_header": "Take the Essential Skills Self-Evaluation",
     "panel.essential_skills_coach.get_started.take_evaluation.message": "Before getting started, take the skills self-evaluation to identify your current strengths related to:",
@@ -3997,17 +3992,10 @@
     "widget.home.research_projects.button.all.title": "View All",
     "widget.home.research_projects.button.all.hint": "Tap to view all research projects",
 
-    "widget.home_create_poll.heading.title":"Polls",
-    "widget.home_create_poll.button.close.label":"Close",
-    "widget.home_create_poll.text.title":"Quickly Create and Share Polls",
-    "widget.home_create_poll.text.description":"People in your group can be notified to vote through the {{app_title}} app. Or you can give voters the four-digit poll number.",
-    "widget.home_create_poll.button.create_poll.label":"Create a Poll",
-    "widget.home_create_poll.button.login.label":"Sign In",
-
-    "widget.home.campus_guide_highlights.label.heading": "Campus Guide Highlights",
-    "widget.home.campus_guide_highlights.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide Highlights</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.campus_guide_highlights.label.heading": "Featured Resources",
+    "widget.home.campus_guide_highlights.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Featured Resources</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.campus_guide_highlights.button.all.title": "View All",
-    "widget.home.campus_guide_highlights.button.all.hint": "Tap to view all highlights",
+    "widget.home.campus_guide_highlights.button.all.hint": "Tap to view all featured resources",
 
     "widget.home.safety.safewalk_request.title": "SafeWalks",
     "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
@@ -4151,7 +4139,7 @@
     "widget.home.favorites.title.laundry": "My Laundry",
     "widget.home.favorites.title.mtd_stops": "My Bus Stops",
     "widget.home.favorites.title.locations": "My Locations",
-    "widget.home.favorites.title.campus_guide": "My Campus Guide",
+    "widget.home.favorites.title.campus_guide": "Saved Resources",
     "widget.home.favorites.title.appointments": "MyMcKinley Appointments",
 
     "widget.home.favorites.message.offline.events": "My Events is not available while offline.",
@@ -4162,7 +4150,7 @@
     "widget.home.favorites.message.offline.laundry": "My Laundry is not available while offline.",
     "widget.home.favorites.message.offline.mtd_stops": "My Bus Stops is not available while offline.",
     "widget.home.favorites.message.offline.locations": "My Locations is not available while offline.",
-    "widget.home.favorites.message.offline.campus_guide": "My Campus Guide is not available while offline.",
+    "widget.home.favorites.message.offline.campus_guide": "Saved Resources is not available while offline.",
     "widget.home.favorites.message.offline.appointments": "MyMcKinley Appointments is not available while offline.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
@@ -4172,8 +4160,8 @@
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Big 10 News</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.favorites.message.empty.mtd_stops": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Bus Stops</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
-    "widget.home.favorites.message.empty.locations": "Tap the ☆ on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
-    "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.locations": "Tap the \u2606 on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
+    "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Complete Resources List</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.favorites.message.empty.appointments": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MyMcKinley Appointments</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
     "widget.home.favorites.message.empty.appointments.not_to_display": "There is nothing to display because you have chosen not to display any past or future appointments. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
@@ -4185,7 +4173,7 @@
     "widget.home.favorites.all.hint.laundry": "Tap to view all favorite Laundry Locations",
     "widget.home.favorites.all.hint.mtd_stops": "Tap to view all favorite Bus Stops",
     "widget.home.favorites.all.hint.locations": "Tap to view all favorite Locations",
-    "widget.home.favorites.all.hint.campus_guide": "Tap to view all favorite Campus Guide items",
+    "widget.home.favorites.all.hint.campus_guide": "Tap to view all saved resources",
     "widget.home.favorites.all.hint.appointments": "Tap to view all favorite Appointments",
 
     "widget.home.wellness_resources.header.label": "My Wellness Resources",
@@ -4383,8 +4371,8 @@
 
     "widget.appointment.card.cancelled.label": "Cancelled",
 
-    "widget.access.academics.skills_self_evaluation.name": "Skills Self-Evaluation & Career Explorer",
     "widget.access.academics.essential_skills_coach.name": "Essential Skills Coach",
+    "widget.access.career_exploration.skills_self_evaluation.name": "Skills Self-Evaluation & Career Explorer",
     "widget.access.polls.name": "Polls",
     "widget.access.wellness.appointments.name": "MyMcKinley Appointments",
     "widget.access.wellness.health_screener.name": "Illinois Health Screener",

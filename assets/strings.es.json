@@ -243,8 +243,10 @@
     "panel.browse.section.appointments.description": "View, schedule, or cancel various appointments.",
     "panel.browse.section.athletics.title": "Los 10 grandes atletismo",
     "panel.browse.section.athletics.description": "Keep up with your favorite {{app_title}} teams.",
-    "panel.browse.section.campus_guide.title": "Guía del Campus",
-    "panel.browse.section.campus_guide.description": "Obtenga más información sobre la vida en el campus.",
+    "panel.browse.section.campus_guide.title": "Vida universitaria",
+    "panel.browse.section.campus_guide.description": "Acceda a enlaces para grupos, organizaciones y servicios para mejorar su tiempo en {{app_title}}.",
+    "panel.browse.section.career_exploration.title": "Career Exploration",
+    "panel.browse.section.career_exploration.description": "Discover career pathways and opportunities.",
     "panel.browse.section.dining.title": "Comida",
     "panel.browse.section.dining.description": "Los estudiantes, profesores, empleados, y visitantes son bienvenidos a comer en cualquier comedor en las residencias.",
     "panel.browse.section.directory.title": "Directory of Users",
@@ -280,8 +282,6 @@
 
     "panel.browse.entry.academics.gies_checklist.title": "Lista de verificación para nuevos estudiantes de iDegrees",
     "panel.browse.entry.academics.new_student_checklist.title": "Lista de verificación para nuevos estudiantes",
-    "panel.browse.entry.academics.skills_self_evaluation.title": "Skills Self-Evaluation & Career Explorer",
-    "panel.browse.entry.academics.essential_skills_coach.title": "Essential Skills Coach",
     "panel.browse.entry.academics.gies_canvas_courses.title": "Mis cursos Gies Canvas",
     "panel.browse.entry.academics.canvas_courses.title": "Mis cursos de lienzo",
     "panel.browse.entry.academics.student_courses.title": "Mis cursos",
@@ -290,6 +290,7 @@
     "panel.browse.entry.academics.wellness_todo.title": "Lista de quehaceres",
     "panel.browse.entry.academics.due_date_catalog.title": "Catálogo de fecha de vencimiento",
     "panel.browse.entry.academics.appointments.title": "Citas",
+    "panel.browse.entry.academics.academic_links.title": "Academic Links",
 
     "panel.browse.entry.appointments.appointments.title": "Citas",
 
@@ -298,9 +299,14 @@
     "panel.browse.entry.athletics.sport_teams.title": "Equipos",
     "panel.browse.entry.athletics.my_game_day.title": "¡Es el día del juego!",
 
-    "panel.browse.entry.campus_guide.campus_highlights.title": "Puntos destacados de la guía del campus",
-    "panel.browse.entry.campus_guide.campus_guide.title": "Guía Completa del Campus",
-    "panel.browse.entry.campus_guide.my_campus_guide.title": "Guía de mi campus",
+    "panel.browse.entry.campus_guide.campus_guide.title": "Lista completa",
+    "panel.browse.entry.campus_guide.campus_highlights.title": "Recursos destacados",
+    "panel.browse.entry.campus_guide.my_campus_guide.title": "Recursos guardados",
+
+    "panel.browse.entry.career_exploration.interest_explorer.title": "Interest Explorer",
+    "panel.browse.entry.career_exploration.digital_card.title": "My Digital Business Card",
+    "panel.browse.entry.career_exploration.skills_self_evaluation.title": "Skills Self-Evaluation",
+    "panel.browse.entry.career_exploration.essential_skills_coach.title": "Essential Skills Coach",
 
     "panel.browse.entry.dining.dining.title": "Comedor de la residencia",
 
@@ -326,8 +332,7 @@
     "panel.browse.entry.mtd.my_mtd_stops.title": "Mis paradas de autobús",
     "panel.browse.entry.mtd.my_locations.title": "My Locations",
 
-    "panel.browse.entry.polls.create_poll.title": "Crear una encuesta",
-    "panel.browse.entry.polls.recent_polls.title": "Ver encuestas",
+    "panel.browse.entry.polls.polls.title": "Encuestas",
 
     "panel.browse.entry.recent.recent_items.title": "Visited Recently",
 
@@ -519,6 +524,7 @@
     "panel.academics.section.due_date_catalog.label": "Catálogo de fecha de vencimiento",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.appointments.label": "Citas",
+    "panel.academics.section.academic_links.label": "Academic Links",
     "panel.academics.section.events.offline.msg": "No hay eventos de oradores o seminarios disponibles sin conexión.",
     "panel.academics.section.events.empty.msg": "No hay próximos eventos de oradores y seminarios.",
 
@@ -1232,7 +1238,7 @@
     "panel.explore_detail.label.privacy.private.title":"Lista de invitados cargada únicamente",
     "panel.explore_detail.label.privacy.group_members.title":"Solo miembros del grupo",
     "panel.explore_detail.label.privacy.public.title":"All App Users",
-    "panel.explore_detail.button.order_online":"Order Online with Order Ahead App",
+    "panel.explore_detail.button.order_online":"Order Online",
     "panel.explore_detail.event_type.online": "Evento en Línea",
     "panel.explore_detail.event_type.in_person": "Evento en Persona",
     "panel.explore_detail.label.text_and_tell": "¡Envíanos un mensaje de texto sobre tu experiencia gastronómica!",
@@ -1850,14 +1856,14 @@
 
     "panel.settings.privacy_statement.label.title": "Declaración de privacidad",
 
-    "panel.settings.contacts.button.help_desk.title": "CONTACT HELP DESK",
-    "panel.settings.contacts.button.share_idea.title": "SHARE AN IDEA",
-    "panel.settings.contacts.button.develop_code.title": "DEVELOP CODE WITH ROKWIRE",
-    "panel.settings.partners.button.help_desk.title": "PARTNER WITH US",
-    "panel.settings.review.button.help_desk.title": "REVIEW APP",
-    "panel.settings.contact.info.row1": "Smart, Healthy Communities Initiative | Rokwire",
-    "panel.settings.contact.info.row2": "Institute of Government and Public Affairs \n 1007 W Nevada St; Urbana, IL 61801",
-    "panel.settings.contact.feedback.app.description.format": "The Illinois app is the official campus app of the <a href='{{university_url}}'> University of Illinois Urbana-Champaign</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='{{shci_url}}'>Smart, Healthy Communities Initiative</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> in the Office of the Provost at the University of Illinois.",
+    "panel.settings.about.button.help_desk.title": "CONTACT HELP DESK",
+    "panel.settings.about.button.share_idea.title": "SHARE AN IDEA",
+    "panel.settings.about.button.develop_code.title": "DEVELOP CODE WITH ROKWIRE",
+    "panel.settings.about.button.partner.title": "PARTNER WITH US",
+    "panel.settings.about.button.review.title": "REVIEW APP",
+    "panel.settings.contact.info.title": "{{app_title}} App | Rokwire",
+    "panel.settings.contact.info.division": "Student Affairs at Illinois",
+    "panel.settings.about.app.description.format": "The {{app_title}} app is the official campus app of the <a href='{{university_url}}'>{{university_long_name}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>. Both the app and the <a href='{{rokwire_platform_url}}'>Rokwire</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> open source platform on which it is built are initiatives of the university.",
 
     "panel.saved.header.label": "Guardado",
     "panel.saved.label.events": "Mis Eventos",
@@ -1868,8 +1874,8 @@
     "panel.saved.label.news": "Mis 10 grandes noticias",
     "panel.saved.label.laundry": "Mi Lavandería",
     "panel.saved.label.mtd_stops": "Mis Paradas de Autobús",
-    "panel.saved.label.my_locations": "My Locations",
-    "panel.saved.label.campus_guide": "Mi Guía del Campus",
+    "panel.saved.label.my_locations": "Mis ubicaciones",
+    "panel.saved.label.campus_guide": "Recursos guardados",
     "panel.saved.label.appointments": "Mis Citas en MyMcKinley",
 
     "panel.saved.button.all.title": "Ver todo",
@@ -2028,25 +2034,7 @@
     "panel.settings.home.logout.button.yes":"Sí",
     "panel.settings.home.logout.no":"No",
     "panel.settings.home.security.reset_password":"Restablecer la contraseña",
-    "panel.settings.home.security.face_id":"Usar Face ID",
-    "panel.settings.home.notifications.reminders":"Recordatorios de eventos",
-    "panel.settings.home.notifications.athletics_updates":"Actualizaciones de atletismo",
-    "panel.settings.home.notifications.dining":"Especiales de comidas",
-    "panel.settings.home.privacy.title":"Privacidad",
-    "panel.settings.home.privacy.edit_my_privacy.title":"Editar Mi Privacidad",
-    "panel.settings.home.privacy.privacy_statement.title":"Declaración de Privacidad",
-    "panel.settings.home.button.debug.title":"Depurar",
-    "panel.settings.home.button.debug.hint":"",
-    "panel.settings.home.button.test.title":"Prueba",
-    "panel.settings.home.button.test.hint":"",
-    "panel.settings.home.feedback.title": "Comentarios sobre la aplicación",
-    "panel.settings.home.feedback.description": "¿Disfrutas de la aplicación? ¿Falta algo? El equipo de la aplicación de {{app_title}} necesita sus ideas y aportes. ¡Gracias!",
-    "panel.settings.home.button.feedback.title": "Enviar comentarios",
-    "panel.settings.home.button.feedback.hint": "",
-    "panel.settings.home.button.review.title": "Revisar aplicación",
-    "panel.settings.home.button.review.hint": "",
     "panel.settings.home.version.info.label": "Versión de la aplicación de {{app_title}}:",
-    "panel.settings.home.feedback.app.description.format": "La aplicación de Illinois es la aplicación oficial del campus de la Universidad de Illinois Urbana-Champaign. La aplicación se basa en la plataforma de software de código abierto <a href='{{rokwire_platform_url}}'>Rokwire</a>. El proyecto Rokwire y la aplicación de Illinois son esfuerzos de la <a href='{{shci_url}}'>Iniciativa de Comunidades Inteligentes y Saludables</a> en la oficina del Rector de la Universidad de Illinois.",
     "panel.settings.home.copyright.text": "Copyright © {{COPYRIGHT_YEAR}} Junta de Síndicos de la Universidad de Illinois",
 
     "panel.settings.profile.content.profile.label": "Mi perfil",
@@ -3164,6 +3152,9 @@
     "panel.group.home2.failed.text": "Failed to load groups",
     "panel.group.home2.empty.text": "There are no groups matching the selected filters",
     "panel.group.home2.bar.button.filter.title": "Filter",
+    "panel.group.home2.bar.button.filter.hint": "Tap to build filter",
+    "panel.group.home2.bar.button.my_groups.title": "My Groups",
+    "panel.group.home2.bar.button.my_groups.hint": "Tap to toggle my groups filter",
     "panel.group.home2.bar.button.create.title": "Create",
     "panel.group.home2.bar.button.create.hint": "Tap to create group",
     "panel.group.home2.bar.button.search.title": "Search",
@@ -3378,8 +3369,11 @@
     "panel.mtd_stops.search.label.found_single":"1 resultado se encontró",
     "panel.mtd_stops.search.label.found_multi":"%d resultados se encontraron",
 
+    "panel.campus_guide.label.heading": "Guía del Campus",
+    "panel.campus_guide.label.content.empty": "Contenido de recursos vacíos",
+
     "panel.guide_categories.label.heading": "Guía del Campus",
-    "panel.guide_categories.label.content.empty": "Contenido de la guía vacía",
+    "panel.guide_categories.label.content.empty": "Empty resources content",
 
     "panel.inbox.label.content.empty": "Ningún mensaje",
     "panel.inbox.mark_all_read.label": "Marcar todo como leido",
@@ -3465,10 +3459,10 @@
     "widget.conversation_card.body.hint": "Cuerpo: %s",
     "widget.conversation_card.sender.me": "Ya",
 
-    "panel.guide_list.label.highlights.heading": "Guía del Campus",
+    "panel.guide_list.label.heading": "Guía del campus",
 
-    "panel.guide_list.label.highlights.section": "Puntos destacados del campus",
-    "panel.guide_list.label.highlights.empty": "No hay Destacados del Campus activos.",
+    "panel.guide_list.label.highlights.section": "Recursos destacados",
+    "panel.guide_list.label.highlights.empty": "Actualmente no hay recursos destacados",
     "panel.guide_list.label.safety_resources.section": "Safety Resources",
     "panel.guide_list.label.safety_resources.empty": "There are no active Safety Resources.",
     "panel.guide_list.label.campus_reminders.section": "Recordatorios del campus",
@@ -3512,6 +3506,7 @@
     "panel.student_courses.load.failed.error.msg": "Parece que no tiene cursos registrados para el término seleccionado.",
     "panel.student_courses.load.offline.error.msg": "Mis Cursos no está disponible sin conexión.",
 
+    "panel.skills_self_evaluation.header.title": "Skills Self-Evaluation & Career Explorer",
     "panel.skills_self_evaluation.get_started.section.title": "Skills Self-Evaluation & Career Explorer",
     "panel.skills_self_evaluation.button.more.hint": "Mostrar más",
     "panel.skills_self_evaluation.survey.title": "Skills Self-Evaluation & Career Explorer",
@@ -3565,6 +3560,7 @@
     "panel.skills_self_evaluation.occupation_details.offline.error.msg": "Los resultados no están disponibles sin conexión.",
     "panel.skills_self_evaluation.occupation_details.unavailable.message": "No se pudieron obtener los datos de ocupación. Por favor, intenta de nuevo.",
 
+    "panel.essential_skills_coach.header.title": "Essential Skills Coach",
     "panel.essential_skills_coach.get_started.header.title": "Take the Self-Evaluation",
     "panel.essential_skills_coach.get_started.take_evaluation_header": "Take the Essential Skills Self-Evaluation",
     "panel.essential_skills_coach.get_started.take_evaluation.message": "Before getting started, take the skills self-evaluation to identify your current strengths related to:",
@@ -3995,17 +3991,10 @@
     "widget.home.research_projects.button.all.title": "Ver todo",
     "widget.home.research_projects.button.all.hint": "Toque para ver todos los proyectos de investigación",
 
-    "widget.home_create_poll.heading.title":"Encuestas",
-    "widget.home_create_poll.button.close.label":"Cerrar",
-    "widget.home_create_poll.text.title":"Crea y comparte encuestas rápidamente.",
-    "widget.home_create_poll.text.description":"Las personas de tu grupo pueden recibir notificaciones para votar por la aplicación {{app_title}}. O puedes dar a los votantes el número de votación de cuatro dígitos.",
-    "widget.home_create_poll.button.create_poll.label":"Crea una encuesta",
-    "widget.home_create_poll.button.login.label":"Iniciar sesión",
-
-    "widget.home.campus_guide_highlights.label.heading": "Puntos destacados de la guía del campus",
-    "widget.home.campus_guide_highlights.text.empty.description": "Toque \u2606 en los elementos de <a href='{{local_url}}'><b>Destacados de la guía del campus</b></a> para acceder rápidamente aquí.(<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.campus_guide_highlights.label.heading": "Recursos Destacados",
+    "widget.home.campus_guide_highlights.text.empty.description": "Toque \u2606 en los elementos de <a href='{{local_url}}'><b>Recursos destacados</b></a> para acceder rápidamente aquí.(<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.campus_guide_highlights.button.all.title": "Ver todo",
-    "widget.home.campus_guide_highlights.button.all.hint": "Toca para ver todos los momentos destacados",
+    "widget.home.campus_guide_highlights.button.all.hint": "Toque para ver todos los recursos destacados",
 
     "widget.home.safety.safewalk_request.title": "SafeWalks",
     "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
@@ -4148,8 +4137,8 @@
     "widget.home.favorites.title.news": "Mis 10 grandes noticias",
     "widget.home.favorites.title.laundry": "Mi Colada",
     "widget.home.favorites.title.mtd_stops": "Mis paradas de autobús",
-    "widget.home.favorites.title.locations": "My Locations",
-    "widget.home.favorites.title.campus_guide": "Guía de Mi Campus",
+    "widget.home.favorites.title.locations": "Mis ubicaciones",
+    "widget.home.favorites.title.campus_guide": "Recursos guardados",
     "widget.home.favorites.title.appointments": "Mis citas de MyMcKinley",
 
     "widget.home.favorites.message.offline.events": "Mis Eventos no están disponibles sin conexión.",
@@ -4159,8 +4148,8 @@
     "widget.home.favorites.message.offline.news": "My Big 10 News no está disponible sin conexión.",
     "widget.home.favorites.message.offline.laundry": "Mi Lavandería no está disponible sin conexión.",
     "widget.home.favorites.message.offline.mtd_stops": "Mis paradas de autobús no están disponibles sin conexión.",
-    "widget.home.favorites.message.offline.locations": "My Locations is not available while offline.",
-    "widget.home.favorites.message.offline.campus_guide": "My Campus Guide no está disponible sin conexión.",
+    "widget.home.favorites.message.offline.locations": "Mis ubicaciones no está disponible sin conexión.",
+    "widget.home.favorites.message.offline.campus_guide": "Los recursos guardados no están disponibles sin conexión",
     "widget.home.favorites.message.offline.appointments": "Mis citas de MyMcKinley no están disponibles sin conexión.",
 
     "widget.home.favorites.message.empty.events": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Eventos</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
@@ -4170,8 +4159,8 @@
     "widget.home.favorites.message.empty.news": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>10 grandes noticias</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.favorites.message.empty.laundry": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Lavanderías</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.favorites.message.empty.mtd_stops": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Paradas de Autobús</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
-    "widget.home.favorites.message.empty.locations": "Tap the \\u2606 on locations on the <a href='{{local_url}}'><b>Map</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
-    "widget.home.favorites.message.empty.campus_guide": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Guía del Campus</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.favorites.message.empty.locations": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Mapa</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.favorites.message.empty.campus_guide": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Lista completa de recursos</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.favorites.message.empty.appointments": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Citas de MyMcKinley</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.favorites.message.empty.appointments.not_to_display": "No hay nada que mostrar, ya que has optado por no mostrar ninguna cita pasada o futura. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
 
@@ -4182,8 +4171,8 @@
     "widget.home.favorites.all.hint.news": "Toque para ver todas las noticias de atletismo favoritas",
     "widget.home.favorites.all.hint.laundry": "Toca para ver todas las lavanderías favoritas",
     "widget.home.favorites.all.hint.mtd_stops": "Toque para ver todas las paradas de autobús favoritas",
-    "widget.home.favorites.all.hint.locations": "Tap to view all favorite Locations",
-    "widget.home.favorites.all.hint.campus_guide": "Toque para ver todos los artículos favoritos de la guía del campus",
+    "widget.home.favorites.all.hint.locations": "Toque para ver todas las ubicaciones favoritas",
+    "widget.home.favorites.all.hint.campus_guide": "Toque para ver todos los recursos guardados",
     "widget.home.favorites.all.hint.appointments": "Toque para ver todas las citas favoritas",
 
     "widget.home.wellness_resources.header.label": "Mis recursos de bienestar",
@@ -4379,8 +4368,8 @@
 
     "widget.appointment.card.cancelled.label": "Cancelado",
 
-    "widget.access.academics.skills_self_evaluation.name": "Autoevaluación de habilidades",
     "widget.access.academics.essential_skills_coach.name": "Essential Skills Coach",
+    "widget.access.career_exploration.skills_self_evaluation.name": "Autoevaluación de habilidades",
     "widget.access.polls.name": "Encuestas",
     "widget.access.wellness.appointments.name": "Citas MyMcKinley",
     "widget.access.wellness.health_screener.name": "Illinois Health Screener",

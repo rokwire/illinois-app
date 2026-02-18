@@ -146,6 +146,9 @@ class Config extends rokwire.Config {
   String? get wpgufmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['wpgufm_radio_url']);
   String? get rokwirePlatformUrl     => JsonUtils.stringValue(otherUniversityServices['rokwire_platform_url']);
   String? get studentCodeUrl         => JsonUtils.stringValue(otherUniversityServices['student_code_url']);
+  String? get interestExplorerUrl    => JsonUtils.stringValue(otherUniversityServices['interest_explorer_url']);
+  String? get universityContactEmail => JsonUtils.stringValue(otherUniversityServices['university_contact_email']);
+  String? get universityContactWebsite => JsonUtils.stringValue(otherUniversityServices['university_contact_website']);
   String? get universityLibraryUrl   => JsonUtils.stringValue(otherUniversityServices['university_library_url']);
   String? get universityHomepageUrl  => JsonUtils.stringValue(otherUniversityServices['university_homepage_url']);
   String? get dailyIlliniHomepageUrl => JsonUtils.stringValue(otherUniversityServices['daily_illini_homepage_url']);

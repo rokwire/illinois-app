@@ -15,6 +15,9 @@ class GBVData {
     required this.resourceListScreens
   });
 
+  factory GBVData.empty() =>
+    GBVData(directoryCategories:[], resources:[], resourceListScreens: null);
+
   static GBVData? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? GBVData(
       directoryCategories: JsonUtils.listCastValue<String>(json["directoryCategories"]) ?? [],

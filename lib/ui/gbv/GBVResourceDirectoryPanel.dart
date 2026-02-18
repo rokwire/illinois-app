@@ -17,17 +17,77 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Analytics.dart';
 
-class GBVResourceDirectoryPanel extends StatefulWidget {
+class GBVResourceDirectoryPanel extends StatelessWidget {
   final GBVData gbvData;
 
   GBVResourceDirectoryPanel({ super.key, required this.gbvData});
 
   @override
-  State<StatefulWidget> createState() => _GBVResourceDirectoryPanelState();
+  Widget build(BuildContext context) =>
+    Scaffold(appBar: HeaderBar(title: 'Resource Directory'),
+      body: _buildBody(context),
+      backgroundColor: Styles().colors.background, bottomNavigationBar: uiuc.TabBar()
+    );
+
+  Widget _buildBody(BuildContext context) =>
+    SingleChildScrollView(child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        GBVQuickExitWidget(),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+          GBVResourceDirectoryWidget(gbvData: gbvData,)
+        ),
+        _buildWeCareUrlWidget(context) ?? Container()
+      ])
+    );
+
+  Widget? _buildWeCareUrlWidget(BuildContext context) {
+    String? url = Config().gbvWeCareResourcesUrl;
+    return (url != null) ?
+      Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
+            RichText(text: TextSpan(children: [
+              TextSpan(
+                text: Localization().getStringEx('panel.sexual_misconduct.resource_directory.view_additional', 'View additional resources on the '),
+                style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
+                ),
+              TextSpan(
+              text: Localization().getStringEx('panel.sexual_misconduct.resource_directory.we_care', 'Illinois We Care website'),
+              style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
+              recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(context, url)
+              ),
+              WidgetSpan(child: Semantics(
+                label: Localization().getStringEx('panel.sexual_misconduct.resource_directory.external_link_icon', 'Opens directory in browser'),
+                image: true, child: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()),
+              )
+              )
+            ]))
+      )
+      : null;
+  }
+
+  void _launchUrl(BuildContext context, String? url) async {
+    if (StringUtils.isNotEmpty(url)) {
+      if (StringUtils.isNotEmpty(url)) {
+        Uri? uri = Uri.tryParse(url!);
+        if ((uri != null) && (await canLaunchUrl(uri))) {
+          AppLaunchUrl.launch(context: context, url: url);
+        }
+      }
+    }
+  }
 
 }
 
-class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
+class GBVResourceDirectoryWidget extends StatefulWidget {
+  final GBVData gbvData;
+
+  GBVResourceDirectoryWidget({ super.key, required this.gbvData});
+
+  @override
+  State<StatefulWidget> createState() => _GBVResourceDirectoryWidgetState();
+
+}
+
+class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget> {
 
   List<String> _expandedSections = [];
 
@@ -42,26 +102,9 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      Scaffold(appBar: HeaderBar(title: 'Resource Directory'),
-          body: _bodyWidget(),
-          backgroundColor: Styles().colors.background, bottomNavigationBar: uiuc.TabBar()
-      );
-
-  Widget _bodyWidget () {
-    return
-      SingleChildScrollView(child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          GBVQuickExitWidget(),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-            Column(children: [
-              ...widget.gbvData.directoryCategories.map((category) => _buildCategory(category, widget.gbvData.resources)),
-            ])
-          ),
-          _buildWeCareUrlWidget() ?? Container()
-        ])
-      );
-  }
+  Widget build(BuildContext context) => Column(mainAxisSize: MainAxisSize.min, children: [
+    ...widget.gbvData.directoryCategories.map((category) => _buildCategory(category, widget.gbvData.resources)),
+  ]);
 
   Widget _buildCategory(String category, List<GBVResource> allResources) {
     List<GBVResource> resources = List.from(allResources.where((resource) => resource.categories.contains(category)));
@@ -173,40 +216,4 @@ class _GBVResourceDirectoryPanelState extends State<GBVResourceDirectoryPanel> {
       }
       }
     }
-
-  Widget? _buildWeCareUrlWidget() {
-    String? url = Config().gbvWeCareResourcesUrl;
-    return (url != null) ?
-      Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
-            RichText(text: TextSpan(children: [
-              TextSpan(
-                text: Localization().getStringEx('panel.sexual_misconduct.resource_directory.view_additional', 'View additional resources on the '),
-                style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic')
-                ),
-              TextSpan(
-              text: Localization().getStringEx('panel.sexual_misconduct.resource_directory.we_care', 'Illinois We Care website'),
-              style: Styles().textStyles.getTextStyle('panel.gbv.footer.regular.italic.underline'),
-              recognizer: TapGestureRecognizer()..onTap = () => _launchUrl(url)
-              ),
-              WidgetSpan(child: Semantics(
-                label: Localization().getStringEx('panel.sexual_misconduct.resource_directory.external_link_icon', 'Opens directory in browser'),
-                image: true, child: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()),
-              )
-              )
-            ]))
-      )
-      : null;
-  }
-
-  void _launchUrl(String? url) async {
-    if (StringUtils.isNotEmpty(url)) {
-      if (StringUtils.isNotEmpty(url)) {
-        Uri? uri = Uri.tryParse(url!);
-        if ((uri != null) && (await canLaunchUrl(uri))) {
-          AppLaunchUrl.launch(context: context, url: url);
-        }
-      }
-    }
-  }
-
 }
