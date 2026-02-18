@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Academic Links content, fixed panel's background color [#5729](https://github.com/rokwire/illinois-app/issues/5729).
 ### Removed
 - Removed "Create Poll" entry from Browse/Polls & Favorites, make Browse/Polls section un-exandable [#5735](https://github.com/rokwire/illinois-app/issues/5735).
+### Fixed
+- Decrease spacing between title and description in BrowseSection [#5677](https://github.com/rokwire/illinois-app/issues/5677).
 
 ## [7.3.50] - 2026-02-12
 ### Changed
