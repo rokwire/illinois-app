@@ -16,6 +16,8 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/academics/AcademicsLinks.dart';
+import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
@@ -38,6 +40,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
+import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/gbv/GBVPathwaysPanel.dart';
@@ -534,9 +537,10 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   static Map<String, String> _iconsMap = <String, String>{
-    'academics.my_illini'        : 'external-link',
-    'academics.due_date_catalog' : 'external-link',
-    'music_and_news.daily_illini': 'external-link',
+    'academics.my_illini'                  : 'external-link',
+    'academics.due_date_catalog'           : 'external-link',
+    'career_exploration.interest_explorer' : 'external-link',
+    'music_and_news.daily_illini'          : 'external-link',
   };
 
   Widget? get _iconWidget =>
@@ -550,8 +554,6 @@ class _BrowseEntry extends StatelessWidget {
     switch("$sectionId.$entryId") {
       case "academics.gies_checklist":        _onTapGiesChecklist(context); break;
       case "academics.new_student_checklist": _onTapNewStudentChecklist(context); break;
-      case "academics.skills_self_evaluation":_onTapSkillSelfEvaluation(context); break;
-      case "academics.essential_skills_coach":_onTapEssentialSkillCoach(context); break;
       case "academics.wellness_todo":         _onTapAcademicsToDo(context); break;
       case "academics.student_courses":       _onTapStudentCourses(context); break;
       case "academics.canvas_courses":        _onTapCanvasCourses(context); break;
@@ -580,6 +582,11 @@ class _BrowseEntry extends StatelessWidget {
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
       case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
+
+      case "career_exploration.interest_explorer": _onTapInterestExplorer(context); break;
+      case "career_exploration.digital_card": _onTapDigitalCard(context); break;
+      case "career_exploration.skills_self_evaluation":_onTapSkillSelfEvaluation(context); break;
+      case "career_exploration.essential_skills_coach":_onTapEssentialSkillCoach(context); break;
 
       case "dining.dining":                  _onTapDining(context); break;
 
@@ -629,12 +636,14 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapSkillSelfEvaluation(BuildContext context) {
     Analytics().logSelect(target: "Skills Self-Evaluation");
-    AcademicsHomePanel.push(context, AcademicsContentType.skills_self_evaluation);
+    //AcademicsHomePanel.push(context, AcademicsContentType.skills_self_evaluation);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationPanel()));
   }
 
   static void _onTapEssentialSkillCoach(BuildContext context) {
     Analytics().logSelect(target: "Essential Skills Coach");
-    AcademicsHomePanel.push(context, AcademicsContentType.essential_skills_coach);
+    //AcademicsHomePanel.push(context, AcademicsContentType.essential_skills_coach);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => EssentialSkillsCoachPanel()));
   }
 
   static void _onTapAcademicsToDo(BuildContext context) {
@@ -724,6 +733,16 @@ class _BrowseEntry extends StatelessWidget {
     Event2HomePanel.present(context,
       analyticsFeature: AnalyticsFeature.Events,
     );
+  }
+
+  static void _onTapInterestExplorer(BuildContext context) {
+    Analytics().logSelect(target: "Interest Explorer");
+    _launchUrl(context, Config().interestExplorerUrl);
+  }
+
+  static void _onTapDigitalCard(BuildContext context) {
+    Analytics().logSelect(target: "My Digital Business Card");
+    ProfileHomePanel.present(context, contentType: ProfileContentType.share,);
   }
 
   static void _onTapDailyIllini(BuildContext context) {
