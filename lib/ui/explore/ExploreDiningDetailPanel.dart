@@ -234,7 +234,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
             Row(children: <Widget>[
               image,
               _diningPaymentTypesExpanded ? Container(width: 5,) : Container(),
-              _diningPaymentTypesExpanded ? Text(paymentType.displayTitle) : Container()
+              _diningPaymentTypesExpanded ? Expanded(child: Text(paymentType.displayTitle)) : Container()
             ],)
           ));
         }
@@ -264,6 +264,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
             ],),
             _diningPaymentTypesExpanded ? GridView.count(
               physics: NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.only(top: 6),
               shrinkWrap: true,
               childAspectRatio: 6,
               crossAxisCount: 2,
