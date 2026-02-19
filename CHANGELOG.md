@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Fixed
-- Fixed and cleaned refreshing new Home Favorites widget [#5744](https://github.com/rokwire/illinois-app/issues/5744).
+- Fixed and cleaned refreshing new Home Favorites widget [#5761](https://github.com/rokwire/illinois-app/issues/5761).
 
 ## [7.3.51] - 2026-02-18
 ### Added
