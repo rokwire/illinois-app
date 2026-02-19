@@ -91,7 +91,7 @@ class _HomeDiningWidgetState extends State<HomeDiningWidget> {
 
   Iterable<Widget> get _contentTypeWidgets => FavoriteDiningContentType.values.map((FavoriteDiningContentType contentType) =>
     Visibility(visible: (_contentType == contentType), maintainState: true, child:
-    _HomeDiningImplWidget(contentType,
+      _HomeDiningImplWidget(contentType,
         updateController: widget.updateController,
       ),
     ));
@@ -132,8 +132,7 @@ class _HomeDiningImplWidget extends StatefulWidget {
 class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with NotificationsListener {
 
   List<Dining>? _dinings;
-  bool _loadingDinings = false;
-  bool _refreshingDinings = false;
+  FavoriteContentActivity _contentActivity = FavoriteContentActivity.none;
 
   bool _visible = false;
   Key _visibilityDetectorKey = UniqueKey();
@@ -216,7 +215,7 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
         message: Localization().getStringEx("widget.home.dinings.text.offline.description", "No dining locations available while offline."),
       );
     }
-    else if (_loadingDinings || _refreshingDinings) {
+    else if (_contentActivity.showsProgress) {
       return HomeProgressWidget();
     }
     else {
@@ -355,16 +354,15 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
     if (_visible) {
       return _loadDinings();
     }
-    else if (_contentStatus.index < FavoriteContentStatus.reload.index) {
+    else if (_contentStatus.canReload) {
       _contentStatus = FavoriteContentStatus.reload;
     }
   }
 
   Future<void> _loadDinings() async {
-    if ((_loadingDinings == false) && mounted) {
+    if (_contentActivity.canReload && mounted) {
       setState(() {
-        _loadingDinings = true;
-        _refreshingDinings = false;
+        _contentActivity = FavoriteContentActivity.reload;
       });
 
       List<Dining>? dinings = await Dinings().loadFilteredDinings();
@@ -372,7 +370,7 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
       setStateIfMounted(() {
         _dinings = dinings;
         _contentStatus = FavoriteContentStatus.none;
-        _loadingDinings = false;
+        _contentActivity = FavoriteContentActivity.none;
         _contentKeys.clear();
       });
     }
@@ -382,31 +380,37 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
     if (_visible) {
       return _refreshDinings();
     }
-    else if (_contentStatus.index < FavoriteContentStatus.refresh.index) {
+    else if (_contentStatus.canRefresh) {
       _contentStatus = FavoriteContentStatus.refresh;
     }
   }
 
   Future<void> _refreshDinings() async {
-    if ((_loadingDinings == false) && (_refreshingDinings == false) && mounted) {
+    if ((_contentActivity.canRefresh) && mounted) {
       setState(() {
-        _refreshingDinings = true;
+        _contentActivity = FavoriteContentActivity.refresh;
       });
 
       List<Dining>? dinings = await Dinings().loadFilteredDinings();
 
-      if (mounted && _refreshingDinings && (dinings != null) && !DeepCollectionEquality().equals(dinings, _dinings)) {
-        setState(() {
-          dinings = dinings;
-          _contentStatus = FavoriteContentStatus.none;
-          _refreshingDinings = false;
-          _pageViewKey = UniqueKey();
-          _contentKeys.clear();
-          // _pageController = null;
-          if ((_dinings?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
-            _pageController?.jumpToPage(0);
-          }
-        });
+      if (mounted && (_contentActivity == FavoriteContentActivity.refresh)) {
+        if ((dinings != null) && !DeepCollectionEquality().equals(dinings, _dinings)) {
+          setState(() {
+            dinings = dinings;
+            _contentStatus = FavoriteContentStatus.none;
+            _contentActivity = FavoriteContentActivity.none;
+            _pageViewKey = UniqueKey();
+            _contentKeys.clear();
+            // _pageController = null;
+            if ((_dinings?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
+              _pageController?.jumpToPage(0);
+            }
+          });
+        } else {
+          setState(() {
+            _contentActivity = FavoriteContentActivity.none;
+          });
+        }
       }
     }
   }
