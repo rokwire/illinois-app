@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed and cleaned refreshing new Home Favorites widget [#5761](https://github.com/rokwire/illinois-app/issues/5761).
 - Big 10 Athletics favorite events and games [#5756](https://github.com/rokwire/illinois-app/issues/5756).
 - Fixed SafeWalks phone number url [#5758](https://github.com/rokwire/illinois-app/issues/5758).
+- Fixed Payment types padding for Dining Location detail [#5753](https://github.com/rokwire/illinois-app/issues/5753).
 
 ## [7.3.51] - 2026-02-18
 ### Added
