@@ -94,7 +94,7 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeAcademicsGiesCheckilst,
       FirebaseMessaging.payloadTypeAcademicsMedicineCourses,
       FirebaseMessaging.payloadTypeAcademicsMyIllini,
-      FirebaseMessaging.payloadTypeAcademicsSkillsSelfEvaluation,
+      FirebaseMessaging.payloadTypeCareerExplorationSkillsSelfEvaluation,
       FirebaseMessaging.payloadTypeAcademicsStudentCourses,
       FirebaseMessaging.payloadTypeAcademicsToDoList,
       FirebaseMessaging.payloadTypeAcademicsUiucCheckilst,

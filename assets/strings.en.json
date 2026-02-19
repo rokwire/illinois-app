@@ -246,6 +246,8 @@
     "panel.browse.section.athletics.description": "Keep up with your favorite {{app_title}} teams.",
     "panel.browse.section.campus_guide.title": "University Living",
     "panel.browse.section.campus_guide.description": "Access links for groups, organizations, and services to enhance your time at {{app_title}}.",
+    "panel.browse.section.career_exploration.title": "Career Exploration",
+    "panel.browse.section.career_exploration.description": "Discover career pathways and opportunities.",
     "panel.browse.section.dining.title": "Dining",
     "panel.browse.section.dining.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
     "panel.browse.section.directory.title": "Directory of Users",
@@ -281,8 +283,6 @@
 
     "panel.browse.entry.academics.gies_checklist.title": "iDegrees New Student Checklist",
     "panel.browse.entry.academics.new_student_checklist.title": "New Student Checklist",
-    "panel.browse.entry.academics.skills_self_evaluation.title": "Skills Self-Evaluation & Career Explorer",
-    "panel.browse.entry.academics.essential_skills_coach.title": "Essential Skills Coach",
     "panel.browse.entry.academics.gies_canvas_courses.title": "My Gies Canvas Courses",
     "panel.browse.entry.academics.canvas_courses.title": "My Canvas Courses",
     "panel.browse.entry.academics.student_courses.title": "My Courses",
@@ -303,6 +303,11 @@
     "panel.browse.entry.campus_guide.campus_guide.title": "Complete List",
     "panel.browse.entry.campus_guide.campus_highlights.title": "Featured Resources",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "Saved Resources",
+
+    "panel.browse.entry.career_exploration.interest_explorer.title": "Interest Explorer",
+    "panel.browse.entry.career_exploration.digital_card.title": "My Digital Business Card",
+    "panel.browse.entry.career_exploration.skills_self_evaluation.title": "Skills Self-Evaluation",
+    "panel.browse.entry.career_exploration.essential_skills_coach.title": "Essential Skills Coach",
 
     "panel.browse.entry.dining.dining.title": "Residence Hall Dining",
 
@@ -3498,6 +3503,7 @@
     "panel.student_courses.load.failed.error.msg": "You do not appear to be registered for any courses for the selected term.",
     "panel.student_courses.load.offline.error.msg": "My Courses is not available while offline.",
 
+    "panel.skills_self_evaluation.header.title": "Skills Self-Evaluation & Career Explorer",
     "panel.skills_self_evaluation.get_started.section.title": "Skills Self-Evaluation & Career Explorer",
     "panel.skills_self_evaluation.button.more.hint": "Show more",
     "panel.skills_self_evaluation.survey.title": "Skills Self-Evaluation & Career Explorer",
@@ -3553,6 +3559,7 @@
     "panel.skills_self_evaluation.occupation_details.offline.error.msg": "Results are not available while offline.",
     "panel.skills_self_evaluation.occupation_details.unavailable.message": "Failed to get occupation data. Please try again.",
 
+    "panel.essential_skills_coach.header.title": "Essential Skills Coach",
     "panel.essential_skills_coach.get_started.header.title": "Take the Self-Evaluation",
     "panel.essential_skills_coach.get_started.take_evaluation_header": "Take the Essential Skills Self-Evaluation",
     "panel.essential_skills_coach.get_started.take_evaluation.message": "Before getting started, take the skills self-evaluation to identify your current strengths related to:",
@@ -4366,8 +4373,8 @@
 
     "widget.appointment.card.cancelled.label": "Cancelled",
 
-    "widget.access.academics.skills_self_evaluation.name": "Skills Self-Evaluation & Career Explorer",
     "widget.access.academics.essential_skills_coach.name": "Essential Skills Coach",
+    "widget.access.career_exploration.skills_self_evaluation.name": "Skills Self-Evaluation & Career Explorer",
     "widget.access.polls.name": "Polls",
     "widget.access.wellness.appointments.name": "MyMcKinley Appointments",
     "widget.access.wellness.health_screener.name": "Illinois Health Screener",

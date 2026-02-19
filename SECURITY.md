@@ -8,8 +8,8 @@ Patches for [ **illinois-app** ] will only be applied to the following versions:
 |----------| ------------------ |
 | 8.0.0    | :white_check_mark: |
 | < 8.0.0  | :x: |
-| 7.3.50   | :white_check_mark: |
-| < 7.3.50 | :x: |
+| 7.3.51   | :white_check_mark: |
+| < 7.3.51 | :x: |
 | 7.2.25   | :white_check_mark: |
 | < 7.2.25 | :x: |
 | 7.1.19   | :white_check_mark: |
