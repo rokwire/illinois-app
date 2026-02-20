@@ -133,8 +133,9 @@ class Auth2 extends rokwire.Auth2 {
     if (isLoggedIn && !FlexUI().isAuthenticationAvailable && !_processingLoginDisabled) {
       _processingLoginDisabled = true;
       onUserPrefsChanged(account?.prefs).then((_) {
-        logout(reason: logoutReasonAuthorization);
-        _processingLoginDisabled = false;
+        logout(reason: logoutReasonAuthorization).then((_){
+          _processingLoginDisabled = false;
+        });
       });
     }
   }
@@ -184,7 +185,8 @@ class Auth2 extends rokwire.Auth2 {
   }
 
   @override
-  void logout({ String? reason, Auth2UserPrefs? prefs }) {
+  Future<void> logout({ String? reason, Auth2UserPrefs? prefs }) async {
+
     if (_uiucToken != null) {
       Storage().auth2UiucToken = _uiucToken = null;
     }
@@ -202,7 +204,7 @@ class Auth2 extends rokwire.Auth2 {
       NotificationService().notify(notifyProfilePictureChanged);
     }
 
-    super.logout(reason: reason, prefs: prefs);
+    return super.logout(reason: reason, prefs: prefs);
   }
 
   @protected

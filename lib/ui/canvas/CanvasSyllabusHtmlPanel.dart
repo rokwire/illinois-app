@@ -95,8 +95,7 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
 
   void _onTapLink(String? url) {
     if (StringUtils.isNotEmpty(url)) {
-      bool canLaunchInternal = UrlUtils.canLaunchInternal(url);
-      AppLaunchUrl.launch(context: context, url: url, tryInternal: canLaunchInternal, analyticsFeature: widget.analyticsFeature);
+      AppLaunchUrl.launch(context: context, url: url, analyticsFeature: widget.analyticsFeature);
     }
   }
 

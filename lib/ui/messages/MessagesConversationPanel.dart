@@ -36,7 +36,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:universal_io/io.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:illinois/platform_impl/stub.dart'
 if (dart.library.io) 'package:illinois/platform_impl/mobile.dart'
@@ -464,10 +463,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         DeepLink().launchUrl(url);
       }
       else {
-        Uri? uri = Uri.tryParse(url);
-        if (uri != null) {
-          launchUrl(uri);
-        }
+        AppLaunchUrl.launchExternal(url: url);
       }
     }
   }

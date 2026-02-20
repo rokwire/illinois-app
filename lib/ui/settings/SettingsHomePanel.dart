@@ -241,9 +241,13 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
 
   double get _innserContentHeight {
     final screenHeight = MediaQuery.of(context).size.height;
-    final RenderObject? renderObj = _innerContentKey.currentContext?.findRenderObject();
-    final RenderBox? renderBox = (renderObj is RenderBox) ? renderObj : null;
-    Offset? position = renderBox?.localToGlobal(Offset.zero);
+    Offset? position;
+    try {
+      final RenderObject? renderObj = _innerContentKey.currentContext?.findRenderObject();
+      final RenderBox? renderBox = (renderObj is RenderBox) ? renderObj : null;
+      position = (renderBox?.hasSize == true) ? renderBox?.localToGlobal(Offset.zero) : null;
+    }
+    catch (e) { debugPrint(e.toString()); }
     return (position != null) ? (screenHeight - position.dy) : screenHeight;
   }
 

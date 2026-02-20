@@ -12,8 +12,9 @@ import 'package:illinois/service/Analytics.dart';
 
 class GBVDetailContentWidget extends StatelessWidget {
   final GBVResourceDetail resourceDetail;
+  final bool isTextSelectable;
 
-  GBVDetailContentWidget({super.key, required this.resourceDetail});
+  GBVDetailContentWidget({super.key, required this.resourceDetail, this.isTextSelectable = true});
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +91,8 @@ class GBVDetailContentWidget extends StatelessWidget {
           )
         ];
       case GBVResourceDetailType.text:
-        return [
+        return (isTextSelectable)
+        ? [
           Expanded(child:
             Container(padding: EdgeInsets.symmetric(vertical: 12), child:
               SelectionArea(child:
@@ -99,6 +101,17 @@ class GBVDetailContentWidget extends StatelessWidget {
                   customStylesBuilder: (element) => (element.localName == "a") ? _htmlLinkStyle : null,
                   onTapUrl: (String url) => _onTapHtmlLink(context, url),
                 )
+              )
+            )
+          )
+        ]
+        : [
+          Expanded(child:
+            Container(padding: EdgeInsets.symmetric(vertical: 12), child:
+              HtmlWidget(detail.content ?? '',
+                textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
+                customStylesBuilder: (element) => (element.localName == "a") ? _htmlLinkStyle : null,
+                onTapUrl: (String url) => _onTapHtmlLink(context, url),
               )
             )
           )
@@ -113,7 +126,7 @@ class GBVDetailContentWidget extends StatelessWidget {
 
   void _onTapEmail (Uri uri) {
     Analytics().logSelect(target: 'Resource Detail - Email');
-    launchUrl(uri);
+    launchUrl(uri, mode: LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
   }
 
   void _onTapExternalLink (BuildContext context, String? url) {
@@ -123,7 +136,7 @@ class GBVDetailContentWidget extends StatelessWidget {
 
   void _onTapPhone (Uri uri) {
     Analytics().logSelect(target: 'Resource Detail - Phone');
-    launchUrl(uri);
+    launchUrl(uri, mode: LaunchMode.externalApplication)..catchError((e) { debugPrint(e.toString()); return false; });
   }
 
   void _onTapButton (BuildContext context, GBVResourceDetail detail) {
@@ -144,7 +157,7 @@ class GBVDetailContentWidget extends StatelessWidget {
     if (DeepLink().isAppUrl(url)) {
       DeepLink().launchUrl(url);
     } else {
-      AppLaunchUrl.launch(context: context, url: url, tryInternal: false);
+      AppLaunchUrl.launchExternal(url: url);
     }
     return true;
   }

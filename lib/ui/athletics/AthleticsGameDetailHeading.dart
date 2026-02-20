@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -43,7 +41,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsGameDetailHeading extends StatefulWidget {
   final Game? game;
@@ -101,7 +98,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     bool hasScores = sportDefinition?.hasScores ?? false;
     bool hasLiveGame = (Storage().debugDisableLiveGameCheck == true) || LiveStats().hasLiveGame(widget.game?.id);
     bool showScore = hasScores && (widget.game?.isGameDay ?? false) && hasLiveGame;
-    bool isSportEventFavorite = Auth2().isFavorite(widget.sportEvent);
+    bool isSportEventFavorite = Auth2().isFavorite(widget.sportEvent) || Auth2().isFavorite(widget.game);
     bool isUpcomingGame = widget.game?.isUpcoming ?? false;
     String? liveStatsUrl = widget.game?.links?.liveStats;
     String? audioUrl = widget.game?.links?.audio;
@@ -443,7 +440,9 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
 
   void _onTapSwitchFavorite() {
     Analytics().logSelect(target: "Favorite: ${widget.game?.title}");
-    Auth2().prefs?.toggleFavorite(widget.sportEvent);
+    bool isFavorite = Auth2().isFavorite(widget.sportEvent) || Auth2().isFavorite(widget.game);
+    Auth2().prefs?.setFavorite(widget.game, !isFavorite);
+    Auth2().prefs?.setFavorite(widget.sportEvent, !isFavorite);
   }
 
   void _onTapGetTickets() {
@@ -483,14 +482,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     _launchUrl(videoUrl);
   }
 
-  void _launchUrl(String? url) {
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
-      }
-    }
-  }
+  void _launchUrl(String? url) =>
+    AppLaunchUrl.launchExternal(url: url);
 
   String? get _gameDayGuideUrl {
     String? sportKey = widget.game?.sport?.shortName;

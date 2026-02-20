@@ -15,9 +15,9 @@
  */
 
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -74,7 +74,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
@@ -1371,10 +1370,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         DeepLink().launchUrl(url);
       }
       else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri, mode: (Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault));
-        }
+        AppLaunchUrl.launchExternal(url: url);
       }
     }
   }
@@ -2132,6 +2128,12 @@ class _GroupPollsState extends State<_GroupPollsContent> with NotificationsListe
   }
 
   @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
   bool get wantKeepAlive => true;
 
   Widget build(BuildContext context) {
@@ -2203,7 +2205,7 @@ class _GroupPollsState extends State<_GroupPollsContent> with NotificationsListe
   }
 
   void _onPollUpdated(String? pollId) {
-    if ((pollId != null) && (_groupPolls != null) && (_groupPolls?.firstWhere((element) => (pollId == element.pollId)) != null)) { //This is Group poll
+    if ((pollId != null) && (_groupPolls != null) && (_groupPolls?.firstWhereOrNull((element) => (pollId == element.pollId)) != null)) { //This is Group poll
 
       Poll? poll = Polls().getPoll(pollId: pollId);
       if (poll != null) {
@@ -2280,6 +2282,12 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with Notification
     _initUpdateListener();
     _loadInitialMessages();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   @override
@@ -2514,6 +2522,12 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
     _initUpdateListener();
     _loadInitialScheduledPosts();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   @override

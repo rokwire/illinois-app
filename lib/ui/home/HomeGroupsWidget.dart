@@ -105,8 +105,7 @@ class _HomeGroupsImplWidget extends StatefulWidget {
 class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with NotificationsListener{
 
   List<Group>? _groups;
-  bool _loadingGroups = false;
-  bool _updatingGroups = false;
+  FavoriteContentActivity _contentActivity = FavoriteContentActivity.none;
 
   bool _visible = false;
   Key _visibilityDetectorKey = UniqueKey();
@@ -158,12 +157,10 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
       (name == Groups.notifyGroupUpdated) ||
       (name == Groups.notifyGroupDeleted) ||
       (name == Connectivity.notifyStatusChanged) ||
+      (name == Groups.notifyUserGroupsUpdated) ||
       (name == Auth2.notifyLoginChanged)
     ) {
       _loadGroupsIfVisible();
-    }
-    else if (name == Groups.notifyUserGroupsUpdated) {
-      _applyUserGroups();
     }
   }
 
@@ -201,7 +198,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
         message: AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.groups', 'Groups'), verbose: true),
       );
     }
-    else if (_loadingGroups) {
+    else if (_contentActivity.showsProgress) {
       return HomeProgressWidget();
     }
     else {
@@ -307,26 +304,25 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
     if (_visible) {
       return _loadGroups();
     }
-    else if (_contentStatus.index < FavoriteContentStatus.reload.index) {
+    else if (_contentStatus.canReload) {
       _contentStatus = FavoriteContentStatus.reload;
     }
   }
 
   Future<void> _loadGroups() async {
-    if ((_loadingGroups == false) && mounted) {
+    if (_contentActivity.canReload && mounted) {
       setState(() {
-        _loadingGroups = true;
-        _updatingGroups = false;
+        _contentActivity = FavoriteContentActivity.reload;
       });
 
-      List<Group>? groupsList = await Groups().loadGroupsListV3(filter: widget.contentType.groupsFilter);
+      List<Group>? groupsList = await Groups().loadDisplayGroupsListV3(widget.contentType.groupsFilter);
       List<Group>? groups = ListUtils.from(groupsList);
       _sortGroups(groups);
 
       setStateIfMounted(() {
         _groups = groups;
         _contentStatus = FavoriteContentStatus.none;
-        _loadingGroups = false;
+        _contentActivity = FavoriteContentActivity.none;
         _groupCardKeys.clear();
       });
     }
@@ -336,46 +332,40 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
     if (_visible) {
       return _updateGroups();
     }
-    else if (_contentStatus.index < FavoriteContentStatus.refresh.index) {
+    else if (_contentStatus.canRefresh) {
       _contentStatus = FavoriteContentStatus.refresh;
     }
   }
 
   Future<void> _updateGroups() async {
-    if ((_loadingGroups == false) && (_updatingGroups == false) && mounted) {
+    if (_contentActivity.canRefresh && mounted) {
       setState(() {
-        _updatingGroups = true;
+        _contentActivity = FavoriteContentActivity.refresh;
       });
 
-      List<Group>? groupsList = await Groups().loadGroupsListV3(filter: widget.contentType.groupsFilter);
+      List<Group>? groupsList = await Groups().loadDisplayGroupsListV3(widget.contentType.groupsFilter);
       List<Group>? groups = ListUtils.from(groupsList);
       _sortGroups(groups);
 
-      if (mounted && _updatingGroups && (groups != null) && !DeepCollectionEquality().equals(_groups, groups)) {
-        setState(() {
-          _groups = groups;
-          _contentStatus = FavoriteContentStatus.none;
-          _updatingGroups = false;
-          _pageViewKey = UniqueKey();
-          _groupCardKeys.clear();
-          // _pageController = null;
-          if ((_groups?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
-            _pageController?.jumpToPage(0);
-          }
-        });
-      }
-    }
-  }
+      if (mounted && (_contentActivity == FavoriteContentActivity.refresh)) {
+        if ((groups != null) && !DeepCollectionEquality().equals(_groups, groups)) {
+          setState(() {
+            _groups = groups;
+            _contentStatus = FavoriteContentStatus.none;
+            _contentActivity = FavoriteContentActivity.none;
+            _pageViewKey = UniqueKey();
+            _groupCardKeys.clear();
+            // _pageController = null;
+            if ((_groups?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
+              _pageController?.jumpToPage(0);
+            }
+          });
+        } else {
+          setState(() {
+            _contentActivity = FavoriteContentActivity.none;
+          });
+        }
 
-  void _applyUserGroups() {
-    if (widget.contentType == FavoriteContentType.my) {
-      List<Group>? userGroups = ListUtils.from(Groups().userGroups);
-      _sortGroups(userGroups);
-      if (mounted) {
-        setState(() {
-          _groups = userGroups;
-          _groupCardKeys.clear();
-        });
       }
     }
   }
@@ -428,7 +418,7 @@ extension _FavoriteGroupsContentType on FavoriteContentType {
     }
   }
 
-  GroupsFilter? get groupsFilter {
+  GroupsFilter get groupsFilter {
     switch (this) {
       case FavoriteContentType.my: return Groups.userGroupsFilter;
       case FavoriteContentType.all: return Groups.allGroupsFilter;

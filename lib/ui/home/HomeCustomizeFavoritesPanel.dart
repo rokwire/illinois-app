@@ -20,7 +20,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomeCustomizeFavoritesPanel extends StatefulWidget {
 
@@ -206,11 +205,12 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
     return HomeDropTargetWidget(favoriteId: favoriteId, dragAndDropHost: this, dropAnchorAlignment: dropAnchorAlignment, childBuilder: (BuildContext context, { bool? dropTarget, CrossAxisAlignment? dropAnchorAlignment }) {
       return Column(children: [
           Container(height: 2, color: ((dropTarget == true) && (dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors.fillColorSecondary : Colors.transparent,),
-          Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-              Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.medium_large.extra_fat")),
+          Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Flexible(child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.medium_large.extra_fat")),
+              )
             ),
-            Expanded(child: Container()),
             Visibility(visible: (onTapLinkButton != null), child: InkWell(onTap: onTapLinkButton, child: 
               Padding(padding: EdgeInsets.only(left: 5, top: 5, bottom: 5, right: 16), child:
                 Text(StringUtils.ensureNotEmpty(linkButtonTitle), style: Styles().textStyles.getTextStyle("widget.home.link_button.regular.accent.underline")))
@@ -379,14 +379,8 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
     }
   }
 
-  void _onTapHtmlLink(String? url) {
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri);
-      }
-    }
-  }
+  void _onTapHtmlLink(String? url) =>
+    AppLaunchUrl.launchExternal(url: url);
 
   void _onTapUnstarAll(List<String>? favorites) {
     Analytics().logSelect(source: 'Customize', target: 'Unstar All');

@@ -27,6 +27,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 enum CardDisplayMode { home, browse, }
 enum FavoriteContentType { my, all }
 enum FavoriteContentStatus { none, refresh, reload }
+enum FavoriteContentActivity { none, extend, refresh, reload, }
 
 ////////////////////////////
 // HomeHandleWidget
@@ -315,8 +316,9 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
   @override
   Widget build(BuildContext context) => Column(children: [
     _headerWidget,
-    if (_expanded && (widget.child != null))
+    Visibility(visible: _expanded, maintainState: true, child:
       widget.child ?? Container(),
+    ),
   ],);
 
   Widget get _headerWidget {
@@ -328,15 +330,17 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
     return Padding(padding: _headerPadding, child:
       Row(children: [
         Expanded(child:
-          _titleWidget(rightPadding: titleRightPadding)
-        ),
+          Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, children: [
+            _titleWidget(rightPadding: titleRightPadding),
 
-        if ((actions != null) && actions.isNotEmpty)
-          Padding(padding: EdgeInsets.only(right: actionsRightPadding), child:
-            Row(mainAxisSize: MainAxisSize.min, children:
-              actions,
-            )
-          ),
+            if ((actions != null) && actions.isNotEmpty)
+              Padding(padding: EdgeInsets.only(right: actionsRightPadding), child:
+                Row(mainAxisSize: MainAxisSize.min, children:
+                  actions,
+                )
+              ),
+          ],)
+        ),
 
         if (favoriteId != null)
           HomeFavoriteButton(
@@ -356,12 +360,13 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
     Widget? dropdownIcon = _dropdownIcon;
     Widget titleTextWidget = _titleTextWidget(dropdownIcon: dropdownIcon, rightPadding: rightPadding);
     return InkWell(onTap : _onToggleExoanded, child:
-      Row(children: [
+      Row(mainAxisSize: MainAxisSize.min, children: [
         if (dropdownIcon != null)
           Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
             dropdownIcon
           ),
-        Expanded(child: widget.titleBuilder?.call(titleTextWidget) ?? titleTextWidget
+        Flexible(child:
+          widget.titleBuilder?.call(titleTextWidget) ?? titleTextWidget
         )
       ],)
     );
@@ -1246,4 +1251,20 @@ extension FavoritesContentTypeImpl on FavoriteContentType {
     }
   }
 }
+
+extension FavoriteContentStatusimpl on FavoriteContentStatus {
+  bool get canReload => (this.index < FavoriteContentStatus.reload.index);
+  bool get canRefresh => (this.index < FavoriteContentStatus.refresh.index);
+}
+
+extension FavoriteContentActivityimpl on FavoriteContentActivity {
+  bool get canReload => (this.index < FavoriteContentActivity.reload.index);
+  bool get canRefresh => (this.index < FavoriteContentActivity.refresh.index);
+  bool get canExtend => (this.index < FavoriteContentActivity.extend.index);
+  bool get canReloadOrRefresh => canRefresh;
+
+  bool get showsProgress => (FavoriteContentActivity.refresh.index <= this.index);
+
+}
+
 

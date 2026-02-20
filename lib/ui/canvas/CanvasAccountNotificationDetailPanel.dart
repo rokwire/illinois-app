@@ -86,7 +86,7 @@ class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNoti
 
   void _onTapLink(String? url) {
     if (StringUtils.isNotEmpty(url)) {
-      AppLaunchUrl.launch(context: context, url: url, tryInternal: UrlUtils.canLaunchInternal(url), analyticsFeature: widget.analyticsFeature);
+      AppLaunchUrl.launch(context: context, url: url, analyticsFeature: widget.analyticsFeature);
     }
   }
 }

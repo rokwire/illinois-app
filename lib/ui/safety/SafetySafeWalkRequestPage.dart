@@ -12,10 +12,9 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
-import 'package:illinois/ui/guide/GuideListPanel.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/map2/Map2LocationPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
@@ -232,12 +231,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
   void _onTapAboutSafeWalks(BuildContext context) {
     Analytics().logSelect(target: 'About SafeWalks');
     Navigator.pop(context);
-
-    String? aboutUrl = Config().safeWalkAboutUrl;
-    Uri? aboutUri = (aboutUrl != null) ? Uri.tryParse(aboutUrl) : null;
-    if (aboutUri != null) {
-      launchUrl(aboutUri);
-    }
+    AppLaunchUrl.launchExternal(url: Config().safeWalkAboutUrl);
   }
 
   void _onTapShareSafeWalks(BuildContext context) {
@@ -252,12 +246,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
 
   void _onTapCampusResources(BuildContext context) {
     Analytics().logSelect(target: 'Campus Resources');
-    Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-      contentList: Guide().safetyResourcesList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.safety_resources.section', 'Safety Resources'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.safety_resources.empty", "There are no active Campus Safety Resources."),
-      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
-    )));
+    Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => CampusSafetyResourcesPanel()));
   }
 }
 
@@ -684,7 +673,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
                 ExploreMessagePopup.show(context, Localization().getStringEx('widget.safewalks_request.message.sms.service.not_available.title', 'Unable to send text message, messaging service not available.'));
               }
               else {
-                launchUrl(uri);
+                launchUrl(uri, mode: LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
               }
             }
           });
@@ -720,8 +709,7 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
         DeepLink().launchUrl(url);
       }
       else {
-        bool tryInternal = launchInternal && UrlUtils.canLaunchInternal(url);
-        AppLaunchUrl.launch(context: context, url: url, tryInternal: tryInternal);
+        AppLaunchUrl.launch(context: context, url: url, tryInternal: launchInternal);
       }
       return true;
     }

@@ -17,7 +17,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomeToutWidget extends StatefulWidget {
   final String? favoriteId;
@@ -77,13 +76,13 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
       (imageUrl != null) ? _buildImageWidget(imageUrl) : Container(),
       Visibility(visible: (widget.contentType == HomeContentType.favorites), child:
         Container(padding: EdgeInsets.only(bottom: 8,), color: Styles().colors.white, child:
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Expanded(child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Flexible(flex: 3, child:
               Padding(padding: EdgeInsets.only(left: 16, top: 16), child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(_title1 ?? '', style: Styles().textStyles.getTextStyle("widget.home_tout.text.greeting")),
                   Visibility(visible: StringUtils.isNotEmpty(title2), child:
-                    Row(children: [
+                    Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
                       Text(title2 ?? '', style: Styles().textStyles.getTextStyle("widget.home_tout.text.title")),
                       Semantics(label: Localization().getStringEx("widget.home.tout.button.info.label", "Info"), hint: Localization().getStringEx("widget.home.tout.button.info.hint", "Tap for more info"), child:
                         InkWell(onTap: _onInfo, child:
@@ -97,17 +96,21 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
                 ],),
               )
             ),
-            InkWell(onTap: _onCustomize, child:
-              Padding(padding: EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 16), child:
-                Row(mainAxisSize: MainAxisSize.min, children: [
-                  Padding(padding: EdgeInsets.only(right: 4), child:
-                    Styles().images.getImage('edit-dark-blue', size: 14, excludeFromSemantics: true) ?? Container(),
-                  ),
-                  Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
-                    style: Styles().textStyles.getTextStyle("widget.home_tout.button.link"))
-                ],),
+            Flexible(flex: 2, child:
+              InkWell(onTap: _onCustomize, child:
+                Padding(padding: EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 16), child:
+                  Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end, children: [
+                    Padding(padding: EdgeInsets.only(right: 4), child:
+                      Styles().images.getImage('edit-dark-blue', size: 14, excludeFromSemantics: true) ?? Container(),
+                    ),
+                    Flexible(child:
+                      Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
+                        style: Styles().textStyles.getTextStyle("widget.home_tout.button.link"))
+                    )
+                  ],),
+                ),
               ),
-            ),
+            )
           ],)
         )
       ),
@@ -277,11 +280,11 @@ class _InfoDialog extends StatelessWidget {
   void _onTapLink(BuildContext context, String? url) {
     Analytics().logAlert(text: "Info", selection: "Student Self Service");
     if (StringUtils.isNotEmpty(url)) {
-      Navigator.pop(context);
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri);
-      }
+      AppLaunchUrl.launchExternal(url: url).then((bool? result){
+        if ((result == true) && context.mounted) {
+          Navigator.pop(context);
+        }
+      });
     }
   }
 

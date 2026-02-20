@@ -283,7 +283,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     Analytics().logSelect(target: url);
     Uri? uri = Uri.tryParse(url);
     if (uri != null) {
-      launchUrl(uri, mode: LaunchMode.externalApplication);
+      launchUrl(uri, mode: LaunchMode.externalApplication).catchError((e) { debugPrint(e.toString()); return false; });
     }
   }
 
@@ -336,7 +336,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   void _loadContentItems() {
-    SkillsSelfEvaluation.loadContentItems(["bessi_results", "bessi_profile"]).then((content) {
+    SkillsSelfEvaluationWidget.loadContentItems(["bessi_results", "bessi_profile"]).then((content) {
       if (content?.isNotEmpty ?? false) {
         _resultsContentItems.clear();
         _profileContentItems.clear();

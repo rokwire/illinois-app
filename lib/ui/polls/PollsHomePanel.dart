@@ -65,7 +65,6 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
   PollsCursor? _groupPollsCursor;
   String? _groupPollsError;
   bool _groupPollsLoading = false;
-  List<Group>? _myGroups;
 
   bool _hasPollsAccess = false;
   
@@ -460,24 +459,22 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
         _myPollsLoading = true;
       });
 
-      _loadMyGroupsIfNeeded().then((_) {
-        Polls().getMyPolls(cursor: _myPollsCursor)!.then((PollsChunk? result) {
-          setStateIfMounted(() {
-            if (result != null) {
-              if (_myPolls == null) {
-                _myPolls = [];
-              }
-              _myPolls!.addAll(result.polls!);
-              _myPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
-              _myPollsError = null;
+      Polls().getMyPolls(cursor: _myPollsCursor)!.then((PollsChunk? result) {
+        setStateIfMounted(() {
+          if (result != null) {
+            if (_myPolls == null) {
+              _myPolls = [];
             }
-          });
-        }).catchError((e) {
-          _myPollsError = illinois.Polls.localizedErrorString(e);
-        }).whenComplete(() {
-          setStateIfMounted(() {
-            _myPollsLoading = false;
-          });
+            _myPolls!.addAll(result.polls!);
+            _myPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
+            _myPollsError = null;
+          }
+        });
+      }).catchError((e) {
+        _myPollsError = illinois.Polls.localizedErrorString(e);
+      }).whenComplete(() {
+        setStateIfMounted(() {
+          _myPollsLoading = false;
         });
       });
     }
@@ -489,25 +486,23 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
         _recentPollsLoading = true;
       });
 
-      _loadMyGroupsIfNeeded().then((_) {
-        Polls().getRecentPolls(cursor: _recentPollsCursor)!.then((PollsChunk? result){
-          setStateIfMounted((){
-            if (result != null) {
-              if (_recentPolls == null) {
-                _recentPolls = [];
-              }
-              _stripRecentLocalPolls(result.polls);
-              _recentPolls!.addAll(result.polls!);
-              _recentPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
-              _recentPollsError = null;
+      Polls().getRecentPolls(cursor: _recentPollsCursor)!.then((PollsChunk? result){
+        setStateIfMounted((){
+          if (result != null) {
+            if (_recentPolls == null) {
+              _recentPolls = [];
             }
-          });
-        }).catchError((e){
-          _recentPollsError = illinois.Polls.localizedErrorString(e);
-        }).whenComplete((){
-          setStateIfMounted((){
-            _recentPollsLoading = false;
-          });
+            _stripRecentLocalPolls(result.polls);
+            _recentPolls!.addAll(result.polls!);
+            _recentPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
+            _recentPollsError = null;
+          }
+        });
+      }).catchError((e){
+        _recentPollsError = illinois.Polls.localizedErrorString(e);
+      }).whenComplete((){
+        setStateIfMounted((){
+          _recentPollsLoading = false;
         });
       });
     }
@@ -515,63 +510,30 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
 
   void _loadGroupPolls() {
     if (((_groupPolls == null) || (_groupPollsCursor != null)) && !_groupPollsLoading) {
-      _setGroupPollsLoading(true);
-      _loadMyGroupsIfNeeded().then((_) {
-        Set<String>? groupIds = _myGroupIds;
-        if (CollectionUtils.isNotEmpty(groupIds)) {
-          Polls().getGroupPolls(groupIds: groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
-            if (result != null) {
-              if (_groupPolls == null) {
-                _groupPolls = [];
-              }
-              _groupPolls!.addAll(result.polls!);
-              _groupPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
-              _groupPollsError = null;
+      Set<String>? groupIds = getGroupIds();
+      if (CollectionUtils.isNotEmpty(groupIds)) {
+        _setGroupPollsLoading(true);
+        Polls().getGroupPolls(groupIds: groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
+          if (result != null) {
+            if (_groupPolls == null) {
+              _groupPolls = [];
             }
-            setStateIfMounted(() {});
-          }).catchError((e) {
-            _groupPollsError = illinois.Polls.localizedErrorString(e);
-          }).whenComplete(() {
-            _setGroupPollsLoading(false);
-          });
-        } else {
+            _groupPolls!.addAll(result.polls!);
+            _groupPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
+            _groupPollsError = null;
+          }
+          setStateIfMounted(() {});
+        }).catchError((e) {
+          _groupPollsError = illinois.Polls.localizedErrorString(e);
+        }).whenComplete(() {
           _setGroupPollsLoading(false);
-        }
-      });
-    }
-  }
-
-  Future<void> _loadMyGroupsIfNeeded() async {
-    if (CollectionUtils.isEmpty(_myGroups)) {
-      await _reloadMyGroups();
-    }
-  }
-
-  Future<void> _reloadMyGroups() async {
-    _myGroups = await Groups().loadUserGroupsV3();
-  }
-
-  Set<String>? get _myGroupIds {
-    Set<String>? groupIds;
-    if (CollectionUtils.isNotEmpty(_myGroups)) {
-      groupIds = <String>{};
-      _myGroups!.forEach((group) {
-        groupIds!.add(group.id!);
-      });
-    }
-    return groupIds;
-  }
-
-  Group? _getGroup(String? groupId) {
-    if (StringUtils.isNotEmpty(groupId) && CollectionUtils.isNotEmpty(_myGroups)) {
-      for (Group group in _myGroups!) {
-        if (groupId == group.id) {
-          return group;
-        }
+        });
       }
     }
-    return null;
   }
+
+  Set<String>? getGroupIds() => SetUtils.from(Groups().userGroups?.map((Group group) => group.id ?? ''));
+  Group? _getGroup(String? groupId) => (groupId != null) ? Groups().getUserGroup(groupId) : null;
 
   void _setGroupPollsLoading(bool loading) {
     setStateIfMounted(() {
@@ -827,24 +789,25 @@ class _PollCardState extends State<PollCard> {
             ]),
           ),
         ),
-        Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus", child:
-          Padding(padding: EdgeInsets.only(bottom: 12, right: (canDeletePoll && (widget.group == null)) ? 24 : 0), child:
-            Row(children: <Widget>[
-              Text(StringUtils.ensureNotEmpty(pollVotesStatus), style:Styles().textStyles.getTextStyle("widget.card.detail.tiny.fat")
+        Row(mainAxisSize: MainAxisSize.max, children: [
+          Expanded(child:
+            Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus", child:
+              Padding(padding: EdgeInsets.only(bottom: 12, right: (canDeletePoll && (widget.group == null)) ? 24 : 0), child:
+                Wrap(alignment: WrapAlignment.spaceBetween, children: [
+                  Wrap(children: <Widget>[
+                    Text(StringUtils.ensureNotEmpty(pollVotesStatus), style:Styles().textStyles.getTextStyle("widget.card.detail.tiny.fat")),
+                    Text('  ', style:Styles().textStyles.getTextStyle("widget.card.detail.tiny")),
+                    Text((pollStatus ?? ''), style:
+                      Styles().textStyles.getTextStyle("widget.card.detail.tiny"),
+                    ),
+                    // Flexible(child: Container()),
+                  ],),
+                  Text(pin, style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.fat"),)
+                ])
               ),
-              Text('  ', style:Styles().textStyles.getTextStyle("widget.card.detail.tiny")
-              ),
-              Expanded(child:
-                Text(pollStatus ?? '', style:
-                Styles().textStyles.getTextStyle("widget.card.detail.tiny"),
-                ),
-              ),
-              Expanded(child: Container()),
-              Text(pin, style: Styles().textStyles.getTextStyle("widget.card.detail.tiny.fat"),
-              )
-            ],),
-          ),
-        ),
+            ),
+          )
+        ]),
         Row(children: <Widget>[
           Expanded(child: Container(),)
         ],),

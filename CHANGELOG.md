@@ -5,6 +5,93 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fixed and cleaned refreshing new Home Favorites widget [#5761](https://github.com/rokwire/illinois-app/issues/5761).
+- Big 10 Athletics favorite events and games [#5756](https://github.com/rokwire/illinois-app/issues/5756).
+- Fixed SafeWalks phone number url [#5758](https://github.com/rokwire/illinois-app/issues/5758).
+- Fixed Payment types padding for Dining Location detail [#5753](https://github.com/rokwire/illinois-app/issues/5753).
+
+## [7.3.51] - 2026-02-18
+### Added
+- Added Academic Links [#5729](https://github.com/rokwire/illinois-app/issues/5729).
+- Added "My Groups" filter button in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
+- Created "Career Exploration" section in Home / Section, moved Academics skills stuff there [#5744](https://github.com/rokwire/illinois-app/issues/5744).
+### Changed
+- "Order Online with Order Ahead App" button renamed to "Order Online" in Dining detail panel [#5727](https://github.com/rokwire/illinois-app/issues/5727).
+- About the App text updates [#5730](https://github.com/rokwire/illinois-app/issues/5730).
+- Changed "My Groups" filter button text style in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
+- Renamed Campus Guide [#5736](https://github.com/rokwire/illinois-app/issues/5736).
+- Updated Academic Links content, fixed panel's background color [#5729](https://github.com/rokwire/illinois-app/issues/5729).
+### Removed
+- Removed "Create Poll" entry from Browse/Polls & Favorites, make Browse/Polls section un-exandable [#5735](https://github.com/rokwire/illinois-app/issues/5735).
+
+## [7.3.50] - 2026-02-12
+### Changed
+- Reworked refresh token processing in Auth2, added extended Crashlytics logs [#5405](https://github.com/rokwire/illinois-app/issues/5405).
+### Fixed
+- Fixed dummy usage description strings in app's Info.plist [#5720](https://github.com/rokwire/illinois-app/issues/5720).
+- Fixed event groups loading in Update Event panel [#5717](https://github.com/rokwire/illinois-app/issues/5717).
+- Fixed close button image in Dining Text Feedback popup [#5718](https://github.com/rokwire/illinois-app/issues/5718).
+- Fixed аdding attendance takers to an event [#5705](https://github.com/rokwire/illinois-app/issues/5705).
+
+## [7.3.49] - 2026-02-05
+### Fixed
+- Color issues in To-Do items [#5699](https://github.com/rokwire/illinois-app/issues/5699).
+- Handle & report errors from Share Email/SMS plugins in Profile info [#5700](https://github.com/rokwire/illinois-app/issues/5700).
+- Take care about app tracking status before launching in-app URLs [#5713](https://github.com/rokwire/illinois-app/issues/5713).
+
+## [7.3.48] - 2026-01-26
+### Changed
+- Sections text updates [#5694](https://github.com/rokwire/illinois-app/issues/5694).
+### Fixed
+- Fixed myIllini typo [#5693](https://github.com/rokwire/illinois-app/issues/5693).
+- Do not allow updating a poll twice when the user votes, take care to update date created/updated either [#5672](https://github.com/rokwire/illinois-app/issues/5672).
+- Unsubscribe from listening notifications in group detail tab pages when disposed.
+
+## [7.3.47] - 2026-01-21
+### Fixed
+- Fixed update time display in GroupPollCard [#5672](https://github.com/rokwire/illinois-app/issues/5672).
+- Fixed Large text issues in Assistant panel [#5610](https://github.com/rokwire/illinois-app/issues/5610).
+### Changed
+- Apply includeHidden param in groups / research project APIs [#5683](https://github.com/rokwire/illinois-app/issues/5683).
+
+## [7.3.46] - 2026-01-15
+### Fixed
+- Group Poll issues [#5519](https://github.com/rokwire/illinois-app/issues/5514).
+- Fixed groups loading in Event2SetupGroupsPanel [#5666](https://github.com/rokwire/illinois-app/issues/5666).
+### Changed
+- Updated button text in Image Edit Panel, load button texts from app resources [#5665](https://github.com/rokwire/illinois-app/issues/5665).
+
+## [7.3.45] - 2026-01-14
+### Changed
+- Report errors if SharePlus plugin fails [#5653](https://github.com/rokwire/illinois-app/issues/5653).
+### Fixed
+- Make sure not to show Floor Plans and Amenities for online courses [#5519](https://github.com/rokwire/illinois-app/issues/5519).
+
+## [7.3.44] - 2026-01-12
+### Fixed
+- Gbv resource tappable area issue [#5529](https://github.com/rokwire/illinois-app/issues/5529).
+- Acknowledged returning user selection when logging user during onboarding [#4698](https://github.com/rokwire/illinois-app/issues/4698).
+- Fixed Map2 buildings search by short name [#5654](https://github.com/rokwire/illinois-app/issues/5654).
+### Changed
+- Upgraded SharePlus plugin, more precise detection is share is available [#5653](https://github.com/rokwire/illinois-app/issues/5653).
+
+## [7.3.43] - 2026-01-09
+### Fixed
+- AssistantHomePanel large font issues [#5610](https://github.com/rokwire/illinois-app/issues/5610).
+- GroupCards large font issues [#5610](https://github.com/rokwire/illinois-app/issues/5610).
+- PollCard large font issues [#5610](https://github.com/rokwire/illinois-app/issues/5610).
+- HomePanel large font issues  [#5610](https://github.com/rokwire/illinois-app/issues/5610).
+- Health Screener notifications [#4481](https://github.com/rokwire/illinois-app/issues/4481).
+### Changed
+- Updated Privacy Update review alert [#4698](https://github.com/rokwire/illinois-app/issues/4698).
+- Rework Amenities filter logic in Map2 [#5646](https://github.com/rokwire/illinois-app/issues/5646).
+
+## [7.3.42] - 2026-01-07
+### Changed
+- Hide ILLordle / Wordle widget for the web app [#5615](https://github.com/rokwire/illinois-app/issues/5615).
+
+## [7.3.41] - 2026-01-06
 ### Changed
 - Upgrade to http package 1.4.0 [#5562](https://github.com/rokwire/illinois-app/issues/5562).
 

@@ -130,7 +130,7 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
     if (DeepLink().isAppUrl(url)) {
       DeepLink().launchUrl(url);
     } else {
-      AppLaunchUrl.launch(context: context, url: url, tryInternal: false);
+      AppLaunchUrl.launchExternal(url: url);
     }
     return true;
   }

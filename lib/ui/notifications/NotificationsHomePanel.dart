@@ -94,7 +94,7 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeAcademicsGiesCheckilst,
       FirebaseMessaging.payloadTypeAcademicsMedicineCourses,
       FirebaseMessaging.payloadTypeAcademicsMyIllini,
-      FirebaseMessaging.payloadTypeAcademicsSkillsSelfEvaluation,
+      FirebaseMessaging.payloadTypeCareerExplorationSkillsSelfEvaluation,
       FirebaseMessaging.payloadTypeAcademicsStudentCourses,
       FirebaseMessaging.payloadTypeAcademicsToDoList,
       FirebaseMessaging.payloadTypeAcademicsUiucCheckilst,
@@ -136,7 +136,7 @@ class NotificationsHomePanel extends StatefulWidget {
 }
 
 class _NotificationsHomePanelState extends State<NotificationsHomePanel> with NotificationsListener {
-  static final int _messagesPageSize = 8;
+  static final int _messagesPageSize = 16;
   static final double _defaultPaddingValue = 16;
 
   bool _isFilterVisible = false;
@@ -1052,113 +1052,99 @@ class _InboxMessageCardState extends State<InboxMessageCard> with NotificationsL
   Widget build(BuildContext context) {
     double leftPadding = (widget.selected != null) ? 12 : 16;
     String mutedStatus = Localization().getStringEx('widget.inbox_message_card.status.muted', 'Muted');
-    return Container(
-        decoration: BoxDecoration(
-            color: Styles().colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(4)),
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
-        clipBehavior: Clip.none,
-        child: Stack(children: [
-          InkWell(
-            onTap: widget.onTap,
-            child: Padding(
-                padding: EdgeInsets.only(left: leftPadding, right: 16, top: 16, bottom: 16),
-                child: Row(
-                  children: <Widget>[
-                    Visibility(
-                      visible: (widget.selected != null),
-                      child: Padding(
-                          padding: EdgeInsets.only(right: leftPadding),
-                          child: Semantics(
-                            label: (widget.selected == true)
-                                ? Localization().getStringEx('widget.inbox_message_card.selected.hint', 'Selected')
-                                : Localization().getStringEx('widget.inbox_message_card.unselected.hint', 'Not Selected'),
-                            child: Styles().images.getImage(
-                                  (widget.selected == true) ? 'check-circle-filled' : 'check-circle-outline-gray',
-                                  excludeFromSemantics: true,
-                                ),
-                          )),
+    String selectedLabel = (widget.selected == true)
+      ? Localization().getStringEx('widget.inbox_message_card.selected.hint', 'Selected')
+      : Localization().getStringEx('widget.inbox_message_card.unselected.hint', 'Not Selected');
+    String subjectLabel = sprintf(Localization().getStringEx('widget.inbox_message_card.subject.hint', 'Subject: %s'), [widget.message?.subject ?? '']);
+    String bodyLabel = sprintf(Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'), [widget.message?.displayBody ?? '']);
+    String mutedLabel = sprintf(Localization().getStringEx('widget.inbox_message_card.status.hint', 'status: %s ,for: '), [mutedStatus.toLowerCase()]);
+
+    return Container(decoration: _cardDecoration, clipBehavior: Clip.none, child:
+      Stack(children: [
+        InkWell(onTap: widget.onTap, child:
+          Padding(padding: EdgeInsets.only(left: leftPadding, right: 16, top: 16, bottom: 16), child:
+            Row(children: <Widget>[
+              Visibility(visible: (widget.selected != null), child:
+                Padding(padding: EdgeInsets.only(right: leftPadding), child:
+                  Semantics(label: selectedLabel, child:
+                    Styles().images.getImage((widget.selected == true) ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true,),
+                  )
+                ),
+              ),
+              Expanded(child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  if (StringUtils.isNotEmpty(widget.message?.subject))
+                    Padding(padding: EdgeInsets.only(bottom: 4), child:
+                      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Expanded(child:
+                          Text(widget.message?.subject ?? '', semanticsLabel: subjectLabel, style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'))
+                        ),
+                        if (widget.message?.mute == true)
+                          Semantics(label: mutedLabel, excludeSemantics: true, child:
+                            Container(decoration: _labelDecoration, padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), child:
+                              Text(mutedStatus.toUpperCase(), style: Styles().textStyles.getTextStyle("widget.heading.extra_small"))
+                            )
+                          ),
+                      ])
                     ),
-                    Expanded(
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                      StringUtils.isNotEmpty(widget.message?.subject)
-                          ? Padding(
-                              padding: EdgeInsets.only(bottom: 4),
-                              child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Expanded(
-                                    child: Text(widget.message?.subject ?? '',
-                                        semanticsLabel: sprintf(
-                                            Localization().getStringEx('widget.inbox_message_card.subject.hint', 'Subject: %s'),
-                                            [widget.message?.subject ?? '']),
-                                        style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'))),
-                                (widget.message?.mute == true)
-                                    ? Semantics(
-                                        label: sprintf(
-                                            Localization().getStringEx('widget.inbox_message_card.status.hint', 'status: %s ,for: '),
-                                            [mutedStatus.toLowerCase()]),
-                                        excludeSemantics: true,
-                                        child: Container(
-                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                            decoration: BoxDecoration(
-                                                color: Styles().colors.fillColorSecondary,
-                                                borderRadius: BorderRadius.all(Radius.circular(2))),
-                                            child: Text(mutedStatus.toUpperCase(),
-                                                style: Styles().textStyles.getTextStyle("widget.heading.extra_small"))))
-                                    : Container()
-                              ]))
-                          : Container(),
-                      StringUtils.isNotEmpty(widget.message?.body)
-                          ? Padding(
-                              padding: EdgeInsets.only(bottom: 6),
-                              child: Row(children: [
-                                Expanded(
-                                    child: Text(widget.message?.displayBody ?? '',
-                                        semanticsLabel: sprintf(
-                                            Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'),
-                                            [widget.message?.displayBody ?? '']),
-                                        style: Styles().textStyles.getTextStyle('widget.card.detail.small')))
-                              ]))
-                          : Container(),
+                  if (StringUtils.isNotEmpty(widget.message?.body))
+                    Padding(padding: EdgeInsets.only(bottom: 6), child:
                       Row(children: [
-                        Expanded(
-                            child: Text(widget.message?.displayInfo ?? '', style: Styles().textStyles.getTextStyle('widget.info.tiny'))),
-                      ]),
-                    ])),
-                  ],
-                )),
+                        Expanded(child:
+                          Text(widget.message?.displayBody ?? '', semanticsLabel: bodyLabel, style: Styles().textStyles.getTextStyle('widget.card.detail.small'))
+                        )
+                      ])
+                    ),
+                  Row(children: [
+                    Expanded( child:
+                      Text(widget.message?.displayInfo ?? '', style: Styles().textStyles.getTextStyle('widget.info.tiny'))
+                    ),
+                  ]),
+                ])
+              ),
+            ],)
           ),
-          Container(color: Styles().colors.fillColorSecondary, height: 4),
-          Positioned(
-              bottom: 0,
-              right: 0,
-              child: Stack(alignment: Alignment.center, children: [
-                InkWell(
-                    onTap: _onTapDelete,
-                    splashColor: Colors.transparent,
-                    child: Container(padding: EdgeInsets.all(16), child: Styles().images.getImage('trash-blue'))),
-                Visibility(
-                    visible: _deleting,
-                    child: SizedBox.square(
-                        dimension: 16,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 1, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))))
-              ]))
-        ]));
+        ),
+        Container(color: Styles().colors.fillColorSecondary, height: 4),
+        Positioned(bottom: 0, right: 0, child:
+          Stack(alignment: Alignment.center, children: [
+            InkWell(onTap: _onTapDelete, splashColor: Colors.transparent, child:
+              Padding(padding: EdgeInsets.all(16), child:
+                Styles().images.getImage('trash-blue')
+              )
+            ),
+            Visibility(visible: _deleting, child:
+              SizedBox.square(dimension: 16, child:
+                CircularProgressIndicator(strokeWidth: 1, color: Styles().colors.fillColorSecondary)
+              )
+            )
+          ])
+        )
+      ])
+    );
   }
+
+  Decoration get _cardDecoration => BoxDecoration(
+    color: Styles().colors.white,
+    borderRadius: BorderRadius.all(Radius.circular(4)),
+    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+  );
+
+  Decoration get _labelDecoration => BoxDecoration(
+    color: Styles().colors.fillColorSecondary,
+    borderRadius: BorderRadius.all(Radius.circular(2))
+  );
 
   void _onTapDelete() {
     Analytics().logSelect(target: 'Delete Inbox Message');
-    AppAlert.showCustomDialog(
-        context: context,
-        contentWidget: Text(Localization()
-            .getStringEx('widget.inbox_message_card.delete.confirm.msg', 'Are you sure that you want to delete this message?')),
+    AppAlert.showCustomDialog(context: context,
+      contentWidget: Text(Localization().getStringEx('widget.inbox_message_card.delete.confirm.msg', 'Are you sure that you want to delete this message?')),
         actions: <Widget>[
-          TextButton(
-              child: Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _deleteMessage();
-              }),
+          TextButton(child: Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+            onPressed: () {
+              Navigator.of(context).pop();
+              _deleteMessage();
+            }),
           TextButton(child: Text(Localization().getStringEx('dialog.no.title', 'No')), onPressed: () => Navigator.of(context).pop())
         ]);
   }
@@ -1172,10 +1158,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> with NotificationsL
         _deleting = false;
       });
       if (!succeeded) {
-        AppAlert.showDialogResult(
-            context,
-            Localization()
-                .getStringEx('widget.inbox_message_card.delete.failed.msg', 'Failed to delete message. Please, try again later.'));
+        AppAlert.showDialogResult(context,Localization().getStringEx('widget.inbox_message_card.delete.failed.msg', 'Failed to delete message. Please, try again later.'));
       }
     });
   }

@@ -167,7 +167,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
     String? url = item.htmlUrl;
     if (StringUtils.isNotEmpty(url)) {
       AppLaunchUrl.launch(
-          context: context, url: url, tryInternal: UrlUtils.canLaunchInternal(url), analyticsFeature: widget.analyticsFeature);
+          context: context, url: url, analyticsFeature: widget.analyticsFeature);
     }
   }
 
