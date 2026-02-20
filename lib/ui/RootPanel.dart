@@ -38,6 +38,8 @@ import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
+import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
@@ -187,10 +189,11 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyAcademicsGiesChecklistNotification,
       FirebaseMessaging.notifyAcademicsMedicineCoursesNotification,
       FirebaseMessaging.notifyAcademicsMyIlliniNotification,
-      FirebaseMessaging.notifyAcademicsSkillsSelfEvaluationNotification,
       FirebaseMessaging.notifyAcademicsStudentCoursesNotification,
       FirebaseMessaging.notifyAcademicsToDoListNotification,
       FirebaseMessaging.notifyAcademicsUiucChecklistNotification,
+      FirebaseMessaging.notifyCareerExplorationSkillsSelfEvaluationNotification,
+      FirebaseMessaging.notifyCareerExplorationEssentialSkillsCoachNotification,
       FirebaseMessaging.notifyWellnessNotification,
       FirebaseMessaging.notifyWellnessAppointmentsNotification,
       FirebaseMessaging.notifyWellnessDailyTipsNotification,
@@ -444,9 +447,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == FirebaseMessaging.notifyAcademicsMyIlliniNotification) {
       _onFirebaseAcademicsNotification(AcademicsContentType.my_illini);
     }
-    else if (name == FirebaseMessaging.notifyAcademicsSkillsSelfEvaluationNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContentType.skills_self_evaluation);
-    }
     else if (name == FirebaseMessaging.notifyAcademicsStudentCoursesNotification) {
       _onFirebaseAcademicsNotification(AcademicsContentType.student_courses);
     }
@@ -455,6 +455,12 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
     else if (name == FirebaseMessaging.notifyAcademicsUiucChecklistNotification) {
       _onFirebaseAcademicsNotification(AcademicsContentType.uiuc_checklist);
+    }
+    else if (name == FirebaseMessaging.notifyCareerExplorationSkillsSelfEvaluationNotification) {
+      _onFirebaseCareerExplorationSkillsSelfEvaluationNotification();
+    }
+    else if (name == FirebaseMessaging.notifyCareerExplorationEssentialSkillsCoachNotification) {
+      _onFirebaseCareerExplorationEssentialSkillsCoachNotification();
     }
     else if (name == FirebaseMessaging.notifyWellnessNotification) {
       _onFirebaseTabNotification(RootTab.Wellness);
@@ -1276,6 +1282,19 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
+  void _onFirebaseCareerExplorationSkillsSelfEvaluationNotification() {
+    if (context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationPanel()));
+    }
+  }
+
+  void _onFirebaseCareerExplorationEssentialSkillsCoachNotification() {
+    if (context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => EssentialSkillsCoachPanel()));
+    }
+  }
+
+
   void _onFirebaseWellnessToDoItemNotification(dynamic param) {
     if (param is Map<String, dynamic>) {
       String? todoItemId = JsonUtils.stringValue(param['entity_id']);
@@ -1332,6 +1351,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       WellnessHomePanel.present(context, content);
     }
   }
+
 
   // Service Notifications
 

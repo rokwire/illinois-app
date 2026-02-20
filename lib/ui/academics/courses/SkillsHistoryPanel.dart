@@ -278,7 +278,7 @@ class _SkillsHistoryPanelState extends State<SkillsHistoryPanel> {
   }
 
   void _loadContentItems() {
-    SkillsSelfEvaluation.loadContentItems(["bessi_results", "bessi_profile"]).then((content) {
+    SkillsSelfEvaluationWidget.loadContentItems(["bessi_results", "bessi_profile"]).then((content) {
       if ((content != null) && content.isNotEmpty && mounted) {
         setState(() {
           _resultsContentItems.clear();

@@ -245,6 +245,8 @@
 	"panel.browse.section.athletics.description": "Keep up with your favorite {{app_title}} teams.",
 	"panel.browse.section.campus_guide.title": "大學生活",
 	"panel.browse.section.campus_guide.description": "訪問各種團體、組織和服務的鏈接，以豐富您在 {{app_title}} 的體驗。",
+	"panel.browse.section.career_exploration.title": "Career Exploration",
+	"panel.browse.section.career_exploration.description": "Discover career pathways and opportunities.",
 	"panel.browse.section.dining.title": "校园餐饮",
 	"panel.browse.section.dining.description": "学生、教职员、访客可以到任何宿舍餐厅用餐。",
 	"panel.browse.section.directory.title": "Directory of Users",
@@ -280,8 +282,6 @@
 
 	"panel.browse.entry.academics.gies_checklist.title": "iDegrees 新學生清單",
 	"panel.browse.entry.academics.new_student_checklist.title": "新學生清單",
-	"panel.browse.entry.academics.skills_self_evaluation.title": "Skills Self-Evaluation & Career Explorer",
-	"panel.browse.entry.academics.essential_skills_coach.title": "Essential Skills Coach",
 	"panel.browse.entry.academics.gies_canvas_courses.title": "我的 Gies 帆布課程",
 	"panel.browse.entry.academics.canvas_courses.title": "我的畫布課程",
 	"panel.browse.entry.academics.student_courses.title": "我的課程",
@@ -302,6 +302,11 @@
 	"panel.browse.entry.campus_guide.campus_guide.title": "完整列表",
 	"panel.browse.entry.campus_guide.campus_highlights.title": "特色資源",
 	"panel.browse.entry.campus_guide.my_campus_guide.title": "節省的資源",
+
+	"panel.browse.entry.career_exploration.interest_explorer.title": "Interest Explorer",
+	"panel.browse.entry.career_exploration.digital_card.title": "My Digital Business Card",
+	"panel.browse.entry.career_exploration.skills_self_evaluation.title": "Skills Self-Evaluation",
+	"panel.browse.entry.career_exploration.essential_skills_coach.title": "Essential Skills Coach",
 
 	"panel.browse.entry.dining.dining.title": "校园餐饮",
 
@@ -3497,6 +3502,7 @@
 	"panel.student_courses.load.failed.error.msg": "您似乎沒有註冊所選學期的任何課程。",
 	"panel.student_courses.load.offline.error.msg": "My Courses not available while offline.",
 
+	"panel.skills_self_evaluation.header.title": "Skills Self-Evaluation & Career Explorer",
 	"panel.skills_self_evaluation.get_started.section.title": "Skills Self-Evaluation & Career Explorer",
 	"panel.skills_self_evaluation.button.more.hint": "展示更多",
 	"panel.skills_self_evaluation.survey.title": "Skills Self-Evaluation & Career Explorer",
@@ -3550,6 +3556,7 @@
 	"panel.skills_self_evaluation.occupation_details.offline.error.msg": "離線時無法獲得結果。",
 	"panel.skills_self_evaluation.occupation_details.unavailable.message": "獲取職業數據失敗。 請重試。",
 
+	"panel.essential_skills_coach.header.title": "Essential Skills Coach",
 	"panel.essential_skills_coach.get_started.header.title": "Take the Self-Evaluation",
 	"panel.essential_skills_coach.get_started.take_evaluation_header": "Take the Essential Skills Self-Evaluation",
 	"panel.essential_skills_coach.get_started.take_evaluation.message": "Before getting started, take the skills self-evaluation to identify your current strengths related to:",
@@ -4360,8 +4367,8 @@
 
 	"widget.appointment.card.cancelled.label": "取消",
 
-	"widget.access.academics.skills_self_evaluation.name": "技能自我評估",
 	"widget.access.academics.essential_skills_coach.name": "Essential Skills Coach",
+	"widget.access.career_exploration.skills_self_evaluation.name": "技能自我評估",
 	"widget.access.polls.name": "快速投票",
 	"widget.access.wellness.appointments.name": "MyMckinley預約",
 	"widget.access.wellness.health_screener.name": "Illinois Health Screener",

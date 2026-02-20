@@ -245,6 +245,8 @@
     "panel.browse.section.athletics.description": "Keep up with your favorite {{app_title}} teams.",
     "panel.browse.section.campus_guide.title": "Vida universitaria",
     "panel.browse.section.campus_guide.description": "Acceda a enlaces para grupos, organizaciones y servicios para mejorar su tiempo en {{app_title}}.",
+    "panel.browse.section.career_exploration.title": "Career Exploration",
+    "panel.browse.section.career_exploration.description": "Discover career pathways and opportunities.",
     "panel.browse.section.dining.title": "Comida",
     "panel.browse.section.dining.description": "Los estudiantes, profesores, empleados, y visitantes son bienvenidos a comer en cualquier comedor en las residencias.",
     "panel.browse.section.directory.title": "Directory of Users",
@@ -280,8 +282,6 @@
 
     "panel.browse.entry.academics.gies_checklist.title": "Lista de verificación para nuevos estudiantes de iDegrees",
     "panel.browse.entry.academics.new_student_checklist.title": "Lista de verificación para nuevos estudiantes",
-    "panel.browse.entry.academics.skills_self_evaluation.title": "Skills Self-Evaluation & Career Explorer",
-    "panel.browse.entry.academics.essential_skills_coach.title": "Essential Skills Coach",
     "panel.browse.entry.academics.gies_canvas_courses.title": "Mis cursos Gies Canvas",
     "panel.browse.entry.academics.canvas_courses.title": "Mis cursos de lienzo",
     "panel.browse.entry.academics.student_courses.title": "Mis cursos",
@@ -302,6 +302,11 @@
     "panel.browse.entry.campus_guide.campus_guide.title": "Lista completa",
     "panel.browse.entry.campus_guide.campus_highlights.title": "Recursos destacados",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "Recursos guardados",
+
+    "panel.browse.entry.career_exploration.interest_explorer.title": "Interest Explorer",
+    "panel.browse.entry.career_exploration.digital_card.title": "My Digital Business Card",
+    "panel.browse.entry.career_exploration.skills_self_evaluation.title": "Skills Self-Evaluation",
+    "panel.browse.entry.career_exploration.essential_skills_coach.title": "Essential Skills Coach",
 
     "panel.browse.entry.dining.dining.title": "Comedor de la residencia",
 
@@ -3522,6 +3527,7 @@
     "panel.student_courses.load.failed.error.msg": "Parece que no tiene cursos registrados para el término seleccionado.",
     "panel.student_courses.load.offline.error.msg": "Mis Cursos no está disponible sin conexión.",
 
+    "panel.skills_self_evaluation.header.title": "Skills Self-Evaluation & Career Explorer",
     "panel.skills_self_evaluation.get_started.section.title": "Skills Self-Evaluation & Career Explorer",
     "panel.skills_self_evaluation.button.more.hint": "Mostrar más",
     "panel.skills_self_evaluation.survey.title": "Skills Self-Evaluation & Career Explorer",
@@ -3575,6 +3581,7 @@
     "panel.skills_self_evaluation.occupation_details.offline.error.msg": "Los resultados no están disponibles sin conexión.",
     "panel.skills_self_evaluation.occupation_details.unavailable.message": "No se pudieron obtener los datos de ocupación. Por favor, intenta de nuevo.",
 
+    "panel.essential_skills_coach.header.title": "Essential Skills Coach",
     "panel.essential_skills_coach.get_started.header.title": "Take the Self-Evaluation",
     "panel.essential_skills_coach.get_started.take_evaluation_header": "Take the Essential Skills Self-Evaluation",
     "panel.essential_skills_coach.get_started.take_evaluation.message": "Before getting started, take the skills self-evaluation to identify your current strengths related to:",
@@ -4386,8 +4393,8 @@
 
     "widget.appointment.card.cancelled.label": "Cancelado",
 
-    "widget.access.academics.skills_self_evaluation.name": "Autoevaluación de habilidades",
     "widget.access.academics.essential_skills_coach.name": "Essential Skills Coach",
+    "widget.access.career_exploration.skills_self_evaluation.name": "Autoevaluación de habilidades",
     "widget.access.polls.name": "Encuestas",
     "widget.access.wellness.appointments.name": "Citas MyMcKinley",
     "widget.access.wellness.health_screener.name": "Illinois Health Screener",

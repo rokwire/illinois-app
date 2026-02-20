@@ -117,7 +117,7 @@ class AcademicLinksPanel extends StatelessWidget with AnalyticsInfo {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.browse.entry.academics.academic_links.title', 'Academic Links')),
       body: Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child: AcademicLinksWidget()),
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar()
     );
   }

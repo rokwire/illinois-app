@@ -1,17 +1,17 @@
 {
   "directoryCategories" : [
-    "Academic Support & Success",
-    "Grades, Finances & Registration",
-    "International Education",
-    "Policies & Processes",
-    "Technology"
+    "ACADEMIC SUPPORT & SUCCESS",
+    "GRADES, FINANCES & REGISTRATION",
+    "INTERNATIONAL EDUCATION",
+    "POLICIES & PROCESSES",
+    "TECHNOLOGY"
   ],
   "screens": {},
   "resources": [
     {
 			"id": "accessibility_and_accommodations",
 			"type": "external_link",
-			"categories": ["Academic Support & Success"],
+			"categories": ["ACADEMIC SUPPORT & SUCCESS"],
 			"title": "Accessibility & Accommodations",
 			"directoryContent": [{
 				"type": "external_link",
@@ -20,7 +20,7 @@
 		},{
 			"id": "advising",
 			"type": "external_link",
-			"categories": ["Academic Support & Success"],
+			"categories": ["ACADEMIC SUPPORT & SUCCESS"],
 			"title": "Advising",
 			"directoryContent": [{
 				"type": "external_link",
@@ -29,7 +29,7 @@
 		},{
 			"id": "books_and_course_materials",
 			"type": "external_link",
-			"categories": ["Academic Support & Success"],
+			"categories": ["ACADEMIC SUPPORT & SUCCESS"],
 			"title": "Books & Course Materials",
 			"directoryContent": [{
 				"type": "text",
@@ -41,7 +41,7 @@
 		},{
 			"id": "connie_frank_care_center",
 			"type": "external_link",
-			"categories": ["Academic Support & Success"],
+			"categories": ["ACADEMIC SUPPORT & SUCCESS"],
 			"title": "Connie Frank CARE Center",
 			"directoryContent": [{
 				"type": "text",
@@ -53,7 +53,7 @@
 		},{
 			"id": "first_generation_services",
 			"type": "external_link",
-			"categories": ["Academic Support & Success"],
+			"categories": ["ACADEMIC SUPPORT & SUCCESS"],
 			"title": "First-Generation Services",
 			"directoryContent": [{
 				"type": "text",
@@ -65,7 +65,7 @@
 		},{
 			"id": "jeffries_center",
 			"type": "external_link",
-			"categories": ["Academic Support & Success"],
+			"categories": ["ACADEMIC SUPPORT & SUCCESS"],
 			"title": "Jeffries Center",
 			"directoryContent": [{
 				"type": "text",
@@ -77,7 +77,7 @@
 		},{
 			"id": "new_student_and_family_experiences",
 			"type": "external_link",
-			"categories": ["Academic Support & Success"],
+			"categories": ["ACADEMIC SUPPORT & SUCCESS"],
 			"title": "New Student & Family Experiences",
 			"directoryContent": [{
 				"type": "text",
@@ -89,7 +89,7 @@
 		},{
 			"id": "ombuds_assistance_and_resources_for_students",
 			"type": "external_link",
-			"categories": ["Academic Support & Success"],
+			"categories": ["ACADEMIC SUPPORT & SUCCESS"],
 			"title": "Ombuds Assistance & Resources for Students",
 			"directoryContent": [{
 				"type": "text",
@@ -101,7 +101,7 @@
 		},{
 			"id": "student_legal_services",
 			"type": "external_link",
-			"categories": ["Academic Support & Success"],
+			"categories": ["ACADEMIC SUPPORT & SUCCESS"],
 			"title": "Student Legal Services",
 			"directoryContent": [{
 				"type": "text",
@@ -113,7 +113,7 @@
 		},{
 			"id": "stress_management_program",
 			"type": "external_link",
-			"categories": ["Academic Support & Success"],
+			"categories": ["ACADEMIC SUPPORT & SUCCESS"],
 			"title": "Stress Management Program",
 			"directoryContent": [{
 				"type": "text",
@@ -125,7 +125,7 @@
 		},{
 			"id": "tutoring_resources",
 			"type": "external_link",
-			"categories": ["Academic Support & Success"],
+			"categories": ["ACADEMIC SUPPORT & SUCCESS"],
 			"title": "Tutoring Resources",
 			"directoryContent": [{
 				"type": "external_link",
@@ -134,16 +134,19 @@
 		},{
 			"id": "university_emergency_dean",
 			"type": "external_link",
-			"categories": ["Academic Support & Success"],
+			"categories": ["ACADEMIC SUPPORT & SUCCESS"],
 			"title": "University Emergency Dean (after hours)",
 			"directoryContent": [{
 				"type": "text",
 				"content": "Provides referrals, information, and support to students after hours but is not a substitute for trained emergency personnel."
+			},{
+				"type": "external_link",
+				"content": "https://odos.illinois.edu/community-of-care/emergency-dean"
 			}]
 		},{
 			"id": "writers_workshop",
 			"type": "external_link",
-			"categories": ["Academic Support & Success"],
+			"categories": ["ACADEMIC SUPPORT & SUCCESS"],
 			"title": "Writers Workshop",
 			"directoryContent": [{
 				"type": "text",
@@ -155,7 +158,7 @@
 		},{
 			"id": "academic_records",
 			"type": "external_link",
-			"categories": ["Grades, Finances & Registration"],
+			"categories": ["GRADES, FINANCES & REGISTRATION"],
 			"title": "Academic Records",
 			"directoryContent": [{
 				"type": "text",
@@ -167,7 +170,7 @@
 		},{
 			"id": "course_explorer",
 			"type": "external_link",
-			"categories": ["Grades, Finances & Registration"],
+			"categories": ["GRADES, FINANCES & REGISTRATION"],
 			"title": "Course Explorer",
 			"directoryContent": [{
 				"type": "text",
@@ -179,7 +182,7 @@
 		},{
 			"id": "degree_audit",
 			"type": "external_link",
-			"categories": ["Grades, Finances & Registration"],
+			"categories": ["GRADES, FINANCES & REGISTRATION"],
 			"title": "Degree Audit (DARS)",
 			"directoryContent": [{
 				"type": "text",
@@ -191,7 +194,7 @@
 		},{
 			"id": "financial_aid",
 			"type": "external_link",
-			"categories": ["Grades, Finances & Registration"],
+			"categories": ["GRADES, FINANCES & REGISTRATION"],
 			"title": "Financial Aid",
 			"directoryContent": [{
 				"type": "text",
@@ -203,7 +206,7 @@
 		},{
 			"id": "myillini",
 			"type": "external_link",
-			"categories": ["Grades, Finances & Registration"],
+			"categories": ["GRADES, FINANCES & REGISTRATION"],
 			"title": "myIllini",
 			"directoryContent": [{
 				"type": "text",
@@ -215,7 +218,7 @@
 		},{
 			"id": "student_account_payments",
 			"type": "external_link",
-			"categories": ["Grades, Finances & Registration"],
+			"categories": ["GRADES, FINANCES & REGISTRATION"],
 			"title": "Student Account Payments",
 			"directoryContent": [{
 				"type": "text",
@@ -227,7 +230,7 @@
 		},{
 			"id": "student_money_management_center",
 			"type": "external_link",
-			"categories": ["Grades, Finances & Registration"],
+			"categories": ["GRADES, FINANCES & REGISTRATION"],
 			"title": "Student Money Management Center",
 			"directoryContent": [{
 				"type": "text",
@@ -239,7 +242,7 @@
 		},{
 			"id": "student_self_service_portal",
 			"type": "external_link",
-			"categories": ["Grades, Finances & Registration"],
+			"categories": ["GRADES, FINANCES & REGISTRATION"],
 			"title": "Student Self-Service Portal",
 			"directoryContent": [{
 				"type": "text",
@@ -251,7 +254,7 @@
 		},{
 			"id": "international_student_and_scholar_services",
 			"type": "external_link",
-			"categories": ["International Education"],
+			"categories": ["INTERNATIONAL EDUCATION"],
 			"title": "International Student & Scholar Services",
 			"directoryContent": [{
 				"type": "text",
@@ -263,7 +266,7 @@
 		},{
 			"id": "study_abroad",
 			"type": "external_link",
-			"categories": ["International Education"],
+			"categories": ["INTERNATIONAL EDUCATION"],
 			"title": "Study Abroad",
 			"directoryContent": [{
 				"type": "external_link",
@@ -272,7 +275,7 @@
 		},{
 			"id": "student_code",
 			"type": "external_link",
-			"categories": ["Policies & Processes"],
+			"categories": ["POLICIES & PROCESSES"],
 			"title": "Student Code",
 			"directoryContent": [{
 				"type": "text",
@@ -284,7 +287,7 @@
 		},{
 			"id": "student_complaint_process",
 			"type": "external_link",
-			"categories": ["Policies & Processes"],
+			"categories": ["POLICIES & PROCESSES"],
 			"title": "Student Complaint Process",
 			"directoryContent": [{
 				"type": "external_link",
@@ -293,7 +296,7 @@
 		},{
 			"id": "tech_zone_at_the_illini_union",
 			"type": "external_link",
-			"categories": ["Technology"],
+			"categories": ["TECHNOLOGY"],
 			"title": "Tech Zone at the Illini Union",
 			"directoryContent": [{
 				"type": "text",
@@ -305,7 +308,7 @@
 		},{
 			"id": "technology_services",
 			"type": "external_link",
-			"categories": ["Technology"],
+			"categories": ["TECHNOLOGY"],
 			"title": "Technology Services",
 			"directoryContent": [{
 				"type": "text",
@@ -317,7 +320,7 @@
 		},{
 			"id": "webstore",
 			"type": "external_link",
-			"categories": ["Technology"],
+			"categories": ["TECHNOLOGY"],
 			"title": "WebStore",
 			"directoryContent": [{
 				"type": "text",
