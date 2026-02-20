@@ -49,13 +49,24 @@ class IlliniCashBallance {
 
   Map<String, dynamic> toJson() {
     return {
-      'MealPlanName': mealPlanName,
-      'IllinCashBalance': balance,
-      'CafeCreditBalance': cafeCreditBalance,
-      'MPBalance': mealBalance,
-      'Status': status,
-      'HousingResidentStatus': housingResidenceStatus
+      'MealPlanName':           mealPlanName,
+      'IllinCashBalance':       balance,
+      'CafeCreditBalance':      cafeCreditBalance,
+      'MPBalance':              mealBalance,
+      'Status':                 status,
+      'HousingResidentStatus' : housingResidenceStatus
     };
+  }
+
+  dynamic fieldValue(String fieldName) {
+    switch (fieldName) {
+      case 'MealPlanName':          return mealPlanName;
+      case 'IllinCashBalance':      return balance;
+      case 'CafeCreditBalance':     return cafeCreditBalance;
+      case 'MPBalance':             return mealBalance;
+      case 'Status':                return status;
+      case 'HousingResidentStatus': return housingResidenceStatus;
+    }
   }
 
   @override
@@ -129,14 +140,16 @@ class IlliniStudentClassification {
   final String? studentType;
   final String? studentTypeCode;
   final String? collegeName;
+  final String? collegeCode;
   final String? departmentName;
   final String? departmentCode;
-  final String? major;
   final String? department2;
+  final String? major;
   final String? major2;
   final String? studentLevelCode;
   final String? studentLevelDescription;
   final String? classification;
+  final String? recordType;
   final String? ferpaSuppressed;
   final bool? firstYear;
   final bool? isHousingResident;
@@ -144,28 +157,31 @@ class IlliniStudentClassification {
   IlliniStudentClassification({
     this.termCode, this.admittedTerm,
     this.studentType, this.studentTypeCode,
-    this.collegeName, this.departmentName, this.departmentCode, this.major,
-    this.department2, this.major2,
+    this.collegeName, this.collegeCode,
+    this.departmentName, this.departmentCode, this.department2,
+    this.major, this.major2,
     this.studentLevelCode, this.studentLevelDescription,
-    this.classification, this.ferpaSuppressed,
-    this.firstYear, this.isHousingResident
+    this.classification, this.recordType,
+    this.ferpaSuppressed, this.firstYear, this.isHousingResident
   });
 
   static IlliniStudentClassification? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? IlliniStudentClassification(
       termCode:                  JsonUtils.stringValue(json['TermCode']),
       admittedTerm:              JsonUtils.stringValue(json['AdmittedTerm']),
-      studentType:               JsonUtils.stringValue(json['StudentTypeCode']),
-      studentTypeCode:           JsonUtils.stringValue(json['StudentType']),
+      studentType:               JsonUtils.stringValue(json['StudentType']),
+      studentTypeCode:           JsonUtils.stringValue(json['StudentTypeCode']),
       collegeName:               JsonUtils.stringValue(json['CollegeName']),
+      collegeCode:               JsonUtils.stringValue(json['CollegeCode']),
       departmentName:            JsonUtils.stringValue(json['DepartmentName']),
       departmentCode:            JsonUtils.stringValue(json['DepartmentCode']),
-      major:                     JsonUtils.stringValue(json['Major']),
       department2:               JsonUtils.stringValue(json['SecondDept']),
+      major:                     JsonUtils.stringValue(json['Major']),
       major2:                    JsonUtils.stringValue(json['SecondMajor']),
       studentLevelCode:          JsonUtils.stringValue(json['StudentLevelCode']),
       studentLevelDescription:   JsonUtils.stringValue(json['StudentLevelDescription']),
       classification:            JsonUtils.stringValue(json['Classification']),
+      recordType:                JsonUtils.stringValue(json['RecordType']),
       ferpaSuppressed:           JsonUtils.stringValue(json['FerpaSuppressed']),
       firstYear:                 JsonUtils.boolValue(json['FirstYear']),
       isHousingResident:         JsonUtils.boolValue(json['IsHousingResident'])
@@ -179,18 +195,44 @@ class IlliniStudentClassification {
       'StudentType':             studentType,
       'StudentTypeCode':         studentTypeCode,
       'CollegeName':             collegeName,
+      'CollegeCode':             collegeCode,
       'DepartmentName':          departmentName,
       'DepartmentCode':          departmentCode,
-      'Major':                   major,
       'SecondDept':              department2,
+      'Major':                   major,
       'SecondMajor':             major2,
       'StudentLevelCode':        studentLevelCode,
       'StudentLevelDescription': studentLevelDescription,
       'Classification':          classification,
+      'RecordType':              recordType,
       'FerpaSuppressed':         ferpaSuppressed,
       'FirstYear':               firstYear,
       'IsHousingResident':       isHousingResident,
     };
+  }
+
+  dynamic fieldValue(String fieldName) {
+    switch(fieldName) {
+      case 'TermCode':                return termCode;
+      case 'AdmittedTerm':            return admittedTerm;
+      case 'StudentType':             return studentType;
+      case 'StudentTypeCode':         return studentTypeCode;
+      case 'CollegeName':             return collegeName;
+      case 'CollegeCode':             return collegeCode;
+      case 'DepartmentName':          return departmentName;
+      case 'DepartmentCode':          return departmentCode;
+      case 'SecondDept':              return department2;
+      case 'Major':                   return major;
+      case 'SecondMajor':             return major2;
+      case 'StudentLevelCode':        return studentLevelCode;
+      case 'StudentLevelDescription': return studentLevelDescription;
+      case 'Classification':          return classification;
+      case 'RecordType':              return recordType;
+      case 'FerpaSuppressed':         return ferpaSuppressed;
+      case 'FirstYear':               return firstYear;
+      case 'IsHousingResident':       return isHousingResident;
+      default:                        return null;
+    }
   }
 
   @override
@@ -201,14 +243,16 @@ class IlliniStudentClassification {
       other.studentType == studentType &&
       other.studentTypeCode == studentTypeCode &&
       other.collegeName == collegeName &&
+      other.collegeCode == collegeCode &&
       other.departmentName == departmentName &&
       other.departmentCode == departmentCode &&
-      other.major == major &&
       other.department2 == department2 &&
+      other.major == major &&
       other.major2 == major2 &&
       other.studentLevelCode == studentLevelCode &&
       other.studentLevelDescription == studentLevelDescription &&
       other.classification == classification &&
+      other.recordType == recordType &&
       other.ferpaSuppressed == ferpaSuppressed &&
       other.firstYear == firstYear &&
       other.isHousingResident == isHousingResident;
@@ -220,14 +264,16 @@ class IlliniStudentClassification {
     (studentType?.hashCode ?? 0) ^
     (studentTypeCode?.hashCode ?? 0) ^
     (collegeName?.hashCode ?? 0) ^
+    (collegeCode?.hashCode ?? 0) ^
     (departmentName?.hashCode ?? 0) ^
     (departmentCode?.hashCode ?? 0) ^
-    (major?.hashCode ?? 0) ^
     (department2?.hashCode ?? 0) ^
+    (major?.hashCode ?? 0) ^
     (major2?.hashCode ?? 0) ^
     (studentLevelCode?.hashCode ?? 0) ^
     (studentLevelDescription?.hashCode ?? 0) ^
     (classification?.hashCode ?? 0) ^
+    (recordType?.hashCode ?? 0) ^
     (ferpaSuppressed?.hashCode ?? 0) ^
     (firstYear?.hashCode ?? 0) ^
     (isHousingResident?.hashCode ?? 0);

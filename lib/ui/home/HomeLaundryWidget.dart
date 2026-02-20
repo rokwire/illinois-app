@@ -110,8 +110,7 @@ class _HomeLaundryImplWidget extends StatefulWidget {
 class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with NotificationsListener {
 
   LaundrySchool? _laundrySchool;
-  bool _loadingLaundry = false;
-  bool _refreshingLaundry = false;
+  FavoriteContentActivity _contentActivity = FavoriteContentActivity.none;
 
   bool _visible = false;
   Key _visibilityDetectorKey = UniqueKey();
@@ -194,7 +193,7 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
         message: Localization().getStringEx("widget.home.laundry.text.offline", "Laundries are not available while offline."),
       );
     }
-    else if (_loadingLaundry || _refreshingLaundry) {
+    else if (_contentActivity.showsProgress) {
       return HomeProgressWidget();
     }
     else {
@@ -331,16 +330,15 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
     if (_visible) {
       return _loadLaundry();
     }
-    else if (_contentStatus.index < FavoriteContentStatus.reload.index) {
+    else if (_contentStatus.canReload) {
       _contentStatus = FavoriteContentStatus.reload;
     }
   }
 
   Future<void> _loadLaundry() async {
-    if ((_loadingLaundry == false) && mounted) {
+    if (_contentActivity.canReload && mounted) {
       setState(() {
-        _loadingLaundry = true;
-        _refreshingLaundry = false;
+        _contentActivity = FavoriteContentActivity.reload;
       });
 
       LaundrySchool? laundrySchool = await Laundries().loadSchoolRooms();
@@ -348,7 +346,7 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
       setStateIfMounted(() {
         _laundrySchool = laundrySchool;
         _contentStatus = FavoriteContentStatus.none;
-        _loadingLaundry = false;
+        _contentActivity = FavoriteContentActivity.none;
         _contentKeys.clear();
       });
     }
@@ -358,32 +356,39 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
     if (_visible) {
       return _refreshLaundry();
     }
-    else if (_contentStatus.index < FavoriteContentStatus.refresh.index) {
+    else if (_contentStatus.canRefresh) {
       _contentStatus = FavoriteContentStatus.refresh;
     }
   }
 
   Future<void> _refreshLaundry() async {
-    if ((_loadingLaundry == false) && (_refreshingLaundry == false) && mounted) {
+    if (_contentActivity.canRefresh && mounted) {
       setState(() {
-        _refreshingLaundry = true;
+        _contentActivity = FavoriteContentActivity.refresh;
       });
 
       LaundrySchool? laundrySchool = await Laundries().loadSchoolRooms();
 
-      if (mounted && _refreshingLaundry && (laundrySchool != null) && (_laundrySchool != laundrySchool)) {
-        setState(() {
-          _laundrySchool = laundrySchool;
-          _contentStatus = FavoriteContentStatus.none;
-          _refreshingLaundry = false;
-          _pageViewKey = UniqueKey();
-          _contentKeys.clear();
-          // _pageController = null;
-          if ((_laundrySchool?.rooms?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
-            _pageController?.jumpToPage(0);
-          }
-        });
+      if (mounted && (_contentActivity == FavoriteContentActivity.refresh)) {
+        if ((laundrySchool != null) && (_laundrySchool != laundrySchool)) {
+          setState(() {
+            _laundrySchool = laundrySchool;
+            _contentStatus = FavoriteContentStatus.none;
+            _contentActivity = FavoriteContentActivity.none;
+            _pageViewKey = UniqueKey();
+            _contentKeys.clear();
+            // _pageController = null;
+            if ((_laundrySchool?.rooms?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
+              _pageController?.jumpToPage(0);
+            }
+          });
+        } else {
+          setState(() {
+            _contentActivity = FavoriteContentActivity.none;
+          });
+        }
       }
+
     }
   }
 

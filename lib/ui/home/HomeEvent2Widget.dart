@@ -202,9 +202,7 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
   bool? _lastPageLoadedAll;
   int? _totalEventsCount;
   String? _eventsErrorText;
-  bool _loadingEvents = false;
-  bool _refreshingEvents = false;
-  bool _extendingEvents = false;
+  FavoriteContentActivity _contentActivity = FavoriteContentActivity.none;
   static const int _eventsPageLength = 16;
   static const String _progressContentKey = '_progress_';
  
@@ -324,7 +322,7 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
         message: Localization().getStringEx("widget.home.event2_feed.text.offline.description", "Events are not available while offline."),
       );
     }
-    else if (_loadingEvents || _loadingLocationServicesStatus) {
+    else if (_contentActivity.showsProgress || _loadingLocationServicesStatus) {
       return HomeProgressWidget();
     }
     else if (_events == null) {
@@ -421,7 +419,7 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
     ((_events?.length ?? 0) < _totalEventsCount!) : _lastPageLoadedAll;
 
   void _onPageChanged(int index) {
-    if ((_events?.length ?? 0) < (index + 1) && (_hasMoreEvents != false) && !_extendingEvents && !_loadingEvents && !_refreshingEvents) {
+    if ((_events?.length ?? 0) < (index + 1) && (_hasMoreEvents != false) && (_contentActivity == FavoriteContentActivity.none)) {
       _extend();
     }
   }
@@ -559,16 +557,15 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
     if (_visible) {
       return _reload(limit: limit);
     }
-    else if (_contentStatus.index < FavoriteContentStatus.reload.index) {
+    else if (_contentStatus.canReload) {
       _contentStatus = FavoriteContentStatus.reload;
     }
   }
 
   Future<void> _reload({ int limit = _eventsPageLength }) async {
-    if (!_loadingEvents && !_refreshingEvents) {
-      setStateIfMounted(() {
-        _loadingEvents = true;
-        _extendingEvents = false;
+    if (_contentActivity.canReloadOrRefresh && mounted) {
+      setState(() {
+        _contentActivity = FavoriteContentActivity.reload;
       });
 
       dynamic result = Connectivity().isNotOffline ? await Events2().loadEventsEx(await _queryParam(limit: limit)) : null;
@@ -581,7 +578,7 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
         _totalEventsCount = listResult?.totalCount;
         _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
         _eventsErrorText = errorTextResult;
-        _loadingEvents = false;
+        _contentActivity = FavoriteContentActivity.none;
         _contentStatus = FavoriteContentStatus.none;
         _pageViewKey = UniqueKey();
         _contentKeys.clear();
@@ -593,17 +590,16 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
     if (_visible) {
       return _refresh();
     }
-    else if (_contentStatus.index < FavoriteContentStatus.refresh.index) {
+    else if (_contentStatus.canRefresh) {
       _contentStatus = FavoriteContentStatus.refresh;
     }
   }
 
   Future<void> _refresh() async {
 
-    if (!_loadingEvents && !_refreshingEvents) {
+    if (_contentActivity.canReloadOrRefresh && mounted) {
       setStateIfMounted(() {
-        _refreshingEvents = true;
-        _extendingEvents = false;
+        _contentActivity = FavoriteContentActivity.refresh;
       });
 
       int limit = max(_events?.length ?? 0, _eventsPageLength);
@@ -626,7 +622,7 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
         if (totalCount != null) {
           _totalEventsCount = totalCount;
         }
-        _refreshingEvents = false;
+        _contentActivity = FavoriteContentActivity.none;
         _contentStatus = FavoriteContentStatus.none;
         _pageViewKey = UniqueKey();
         _contentKeys.clear();
@@ -635,16 +631,16 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
   }
 
   Future<void> _extend() async {
-    if (!_loadingEvents && !_refreshingEvents && !_extendingEvents && Connectivity().isNotOffline) {
+    if (_contentActivity.canExtend && mounted && Connectivity().isNotOffline) {
       setStateIfMounted(() {
-        _extendingEvents = true;
+        _contentActivity = FavoriteContentActivity.extend;
       });
 
       Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: _eventsPageLength));
       List<Event2>? events = loadResult?.events;
       int? totalCount = loadResult?.totalCount;
 
-      if (mounted && _extendingEvents && !_loadingEvents && !_refreshingEvents) {
+      if (mounted && (_contentActivity == FavoriteContentActivity.extend)) {
         setState(() {
           if (events != null) {
             if (_events != null) {
@@ -658,7 +654,7 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
           if (totalCount != null) {
             _totalEventsCount = totalCount;
           }
-          _extendingEvents = false;
+          _contentActivity = FavoriteContentActivity.none;
           _contentStatus = FavoriteContentStatus.none;
         });
       }

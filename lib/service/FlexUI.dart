@@ -20,6 +20,7 @@ import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart' as rokwire;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class FlexUI extends rokwire.FlexUI {
 
@@ -109,15 +110,48 @@ class FlexUI extends rokwire.FlexUI {
     return super.localeIsEntryAvailable(entry, group: group, rules: rules, buildContext: buildContext);
   }
 
-  static bool _localeEvalIlliniCashRule(dynamic illiniCashRule, { rokwire.FlexUiBuildContext? buildContext }) {
+  static const String _studentClassificationPrefix = 'StudentClassification:';
+  static const String _ballancePrefix = 'Ballance:';
+
+  bool _localeEvalIlliniCashRule(dynamic illiniCashRule, { rokwire.FlexUiBuildContext? buildContext }) {
     bool result = true;  // allow everything that is not defined or we do not understand
     if (illiniCashRule is Map) {
       illiniCashRule.forEach((dynamic key, dynamic value) {
-        if ((key is String) && (key == 'housingResidenceStatus') && (value is bool)) {
-           result = result && (IlliniCash().ballance?.housingResidenceStatus ?? false);
-        }
-        else if ((key is String) && (key == 'firstYearStudent') && (value is bool)) {
-           result = result && (IlliniCash().studentClassification?.firstYear ?? false);
+        if (key is String) {
+          if (key == 'housingResidenceStatus') {
+            bool? ruleValue = JsonUtils.boolValue(localeEvalParam(value));
+            if (ruleValue != null) {
+              bool housingResidenceStatus = IlliniCash().ballance?.housingResidenceStatus ?? false;
+              result = result && (housingResidenceStatus == ruleValue);
+            }
+          }
+          else if (key == 'firstYearStudent') {
+            bool? ruleValue = JsonUtils.boolValue(localeEvalParam(value));
+            if (ruleValue != null) {
+              bool firstYearStudent = IlliniCash().studentClassification?.firstYear ?? false;
+              result = result && (firstYearStudent == ruleValue);
+            }
+          }
+          else if (key.startsWith(_studentClassificationPrefix)) {
+            String fieldName = key.substring(_studentClassificationPrefix.length);
+            dynamic fieldValue = IlliniCash().studentClassification?.fieldValue(fieldName);
+            if (fieldValue != null) {
+              dynamic ruleValue = localeEvalParam(value);
+              if (ruleValue != null) {
+                result = result && (fieldValue == ruleValue);
+              }
+            }
+          }
+          else if (key.startsWith(_ballancePrefix)) {
+            String fieldName = key.substring(_ballancePrefix.length);
+            dynamic fieldValue = IlliniCash().ballance?.fieldValue(fieldName);
+            if (fieldValue != null) {
+              dynamic ruleValue = localeEvalParam(value);
+              if (ruleValue != null) {
+                result = result && (fieldValue == ruleValue);
+              }
+            }
+          }
         }
       });
     }
