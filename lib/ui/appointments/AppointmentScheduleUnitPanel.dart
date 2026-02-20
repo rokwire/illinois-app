@@ -267,7 +267,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
       _isLoadingProviders = true;
       Appointments().loadProviders().then((List<AppointmentProvider>? result) {
         setStateIfMounted(() {
-          _providers = AppointmentProvider.subList(result);
+          _providers = AppointmentProvider.subList(AppointmentProviderUtils.enabledProviders(result), supportsSchedule: true);
           _selectedProvider = AppointmentProvider.findInList(result, id: widget.scheduleParam?.provider?.id) ??
             AppointmentProvider.findInList(result, id: Storage().selectedAppointmentProviderId) ??
             ((_providers?.isNotEmpty == true) ? _providers?.first : null);

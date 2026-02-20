@@ -100,7 +100,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     bool hasScores = sportDefinition?.hasScores ?? false;
     bool hasLiveGame = (Storage().debugDisableLiveGameCheck == true) || LiveStats().hasLiveGame(widget.game?.id);
     bool showScore = hasScores && (widget.game?.isGameDay ?? false) && hasLiveGame;
-    bool isSportEventFavorite = Auth2().isFavorite(widget.sportEvent);
+    bool isSportEventFavorite = Auth2().isFavorite(widget.sportEvent) || Auth2().isFavorite(widget.game);
     bool isUpcomingGame = widget.game?.isUpcoming ?? false;
     String? liveStatsUrl = widget.game?.links?.liveStats;
     String? audioUrl = widget.game?.links?.audio;
@@ -442,7 +442,9 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
 
   void _onTapSwitchFavorite() {
     Analytics().logSelect(target: "Favorite: ${widget.game?.title}");
-    Auth2().prefs?.toggleFavorite(widget.sportEvent);
+    bool isFavorite = Auth2().isFavorite(widget.sportEvent) || Auth2().isFavorite(widget.game);
+    Auth2().prefs?.setFavorite(widget.game, !isFavorite);
+    Auth2().prefs?.setFavorite(widget.sportEvent, !isFavorite);
   }
 
   void _onTapGetTickets() {
