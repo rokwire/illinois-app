@@ -3635,7 +3635,7 @@
 	"widget.safewalks_request.location.current.title": "Use My Location",
 	"widget.safewalks_request.location.map.title": "Search Map",
 	"widget.safewalks_request.location.saved.title": "View Saved Locations",
-	"widget.safewalks_request.message.service.worktime.out_of_hours.html": "<b>SafeWalks is not available at this time.</b><br>For more information, call <a href=\\'tel:{{safewalk_phone_number}}\\'>{{safewalk_phone_number}}</a>.",
+	"widget.safewalks_request.message.service.worktime.out_of_hours.html": "<b>SafeWalks is not available at this time.</b><br>For more information, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a>.",
 	"widget.safewalks_request.message.location.service.disabled.title": "Location Services not enabled.",
  	"widget.safewalks_request.message.location.service.denied.title": "Location Services access denied.",
 	"widget.safewalks_request.message.missing.origin.title": "Please select your current location.",

@@ -74,7 +74,10 @@
 			"map.types":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "my_locations", "storied_sites"],
 
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
-	
+
+			"appointment.providers.monitored": ["grainger"],
+			"appointment.providers.enabled": ["grainger"],
+
 			"settings": ["food_filters", "sports", "favorites", "assessments", "recent_items", "appointments_and_events", "language", "about", "research", "privacy", "notifications", "accessibility"],
 			"settings.assessments": ["skills_self_evaluation", "health_screener"],
 			"settings.assessments.skills_self_evaluation": ["save"],
@@ -205,6 +208,7 @@
 				"features.phone_login"                    : { "phoneLoggedIn": true },
 				"features.privacy"                        : { "shibbolethLoggedIn": true },
 
+				"appointment.providers.enabled.grainger"  : { "shibbolethLoggedIn": true },
 				"attributes.groups.rso"                   : [{ "accountPermission": "${config.settings.auth.permissions.rso_group_admin}" }, "OR", { "accountRole": "${config.settings.auth.roles.rso_group_admin}" }]
 			},
 			"platform":{
@@ -213,7 +217,8 @@
 			"illini_cash": {
 				"laundry"                                 : { "housingResidenceStatus": true },
 				"new_student"                             : { "firstYearStudent": true },
-				"new_student_checklist"                   : { "firstYearStudent": true }
+				"new_student_checklist"                   : { "firstYearStudent": true },
+				"appointment.providers.enabled.grainger"  : { "StudentClassification:CollegeCode" : "${config.settings.appointments.providers.grainger.code}" }
 			},
 			"enable" : {
 				"emergency"                               : false,
@@ -241,6 +246,10 @@
 				"meal_plan"                               : "${config.settings.wallet.mealPlanEnabled}",
 				"bus_pass"                                : "${config.settings.wallet.busPassEnabled}",
 				"safewalk_request"                        : "${config.settings.safety.safeWalkEnabled}",
+				"gies"                                    : "${config.settings.gies.giesEnabled}",
+				"gies_checklist"                          : "${config.settings.gies.checklistEnabled}",
+				"new_student"                             : "${config.settings.new_student.newStudentEnabled}",
+				"new_student_checklist"                   : "${config.settings.new_student.checklistEnabled}",
 				"google_assistant"                        : "${config.settings.assistant.enable.google}",
 				"grok_assistant"                          : "${config.settings.assistant.enable.grok}",
 				"openai_assistant"                        : "${config.settings.assistant.enable.openai}",
