@@ -291,6 +291,51 @@ class _BrowseSection extends StatelessWidget {
 
   Widget _buildHeading(BuildContext context) {
     return Padding(padding: EdgeInsets.only(bottom: (expanded ? 0 : 4)), child:
+      InkWell(onTap: () => _onTapHeading(context), child:
+        Container(
+          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
+          padding: EdgeInsets.only(left: 16),
+          child: Column(children: [
+            Row(children: [
+              Expanded(child:
+                Padding(padding: EdgeInsets.only(top: 16), child:
+                  Text(_title, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))
+                )
+              ),
+              Opacity(opacity: _hasFavoriteContent ? 1 : 0, child:
+                Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
+                  InkWell(onTap: () => _onTapSectionFavorite(context), child:
+                    FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,)
+                  ),
+                ),
+              ),
+            ],),
+            Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+              Expanded(child:
+                Padding(padding: EdgeInsets.only(bottom: 16), child:
+                  Text(_description, style: Styles().textStyles.getTextStyle("widget.info.regular.thin"))
+                )
+              ),
+              Semantics(
+                label: expanded ? Localization().getStringEx('panel.browse.section.status.colapse.title', 'Colapse') : Localization().getStringEx('panel.browse.section.status.expand.title', 'Expand'),
+                hint: expanded ? Localization().getStringEx('panel.browse.section.status.colapse.hint', 'Tap to colapse section content') : Localization().getStringEx('panel.browse.section.status.expand.hint', 'Tap to expand section content'),
+                button: true, child:
+                  Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+                    SizedBox(width: 18, height: 18, child:
+                      Center(child:
+                        _headingIcon
+                      ),
+                    )
+                  ),
+              ),
+            ],)
+          ],)
+        ),
+      ),
+    );
+
+      /* WEB Accessibility
+      Padding(padding: EdgeInsets.only(bottom: (expanded ? 0 : 4)), child:
         Semantics(container: true, explicitChildNodes: true, label: '$_title: $_description', child: Container(
           decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.only(left: 16),
@@ -327,7 +372,7 @@ class _BrowseSection extends StatelessWidget {
             ],)
           ],)
         )),
-    );
+    );*/
   }
 
   Widget? get _headingIcon {
