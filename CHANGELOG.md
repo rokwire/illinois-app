@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed SafeWalks phone number url [#5758](https://github.com/rokwire/illinois-app/issues/5758).
 - Fixed Payment types padding for Dining Location detail [#5753](https://github.com/rokwire/illinois-app/issues/5753).
 - Make sure research interest form is not accessible when participate in research is toggled off in Settings / My Participation in Research [#5743](https://github.com/rokwire/illinois-app/issues/5743).
+- Fixed accessibility for InboxMessageCard [#5740](https://github.com/rokwire/illinois-app/issues/5740).
 ### Changed
 - Control Academics > iDegrees New Student Checklist availability from app config [#5637](https://github.com/rokwire/illinois-app/issues/5637).
 - Exclude Grainger appointment provider for students that are not part of The Grainger College of Engineering [#5637](https://github.com/rokwire/illinois-app/issues/5637).
