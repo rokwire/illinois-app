@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -205,6 +206,25 @@ class Auth2 extends rokwire.Auth2 {
     }
 
     return super.logout(reason: reason, prefs: prefs);
+  }
+
+  // Debug Logging
+  @override
+  void debugLog(String event, { String? token, String? token2 }) {
+    super.debugLog(event, token: token, token2: token2);
+    Analytics().logAuth2(event, type: AnalyticsAuth2EventType.log, token: token, token2: token2);
+  }
+
+  @override
+  void debugError(String error, { String? token, Response? response })  {
+    super.debugError(error, token: token, response: response);
+    Analytics().logAuth2(error, type: AnalyticsAuth2EventType.error, token: token, response: response);
+  }
+
+  @override
+  void debugException(String description, { String? token }) {
+    super.debugException(description, token: token);
+    Analytics().logAuth2(description, type: AnalyticsAuth2EventType.exception, token: token);
   }
 
   @protected

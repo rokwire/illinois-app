@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added auth2 analytics event for monitoring refresh token issues [#5405](https://github.com/rokwire/illinois-app/issues/5405).
 ### Fixed
 - Fixed and cleaned refreshing new Home Favorites widget [#5761](https://github.com/rokwire/illinois-app/issues/5761).
 - Big 10 Athletics favorite events and games [#5756](https://github.com/rokwire/illinois-app/issues/5756).
