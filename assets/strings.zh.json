@@ -2625,7 +2625,7 @@
 	"panel.wellness.sections.health_screener.dropdown.filter.timeframe.title": "时间：",
 	"panel.wellness.sections.health_screener.dropdown.filter.type.title": "种类：",
 	"panel.wellness.sections.health_screener.offline.error.msg": "Illinois Health Screener 在離線時不可用。",
-	"panel.wellness.sections.health_screener.description.title": "使用 Illinois Health Screener 幫助您找到合適的資源",
+	"panel.wellness.sections.health_screener.description.title": "使用 Illinois Health Screener 幫助您找到合適的資源。",
 	"panel.wellness.sections.health_screener.body.save.description": "您的結果將被保存，以便您重新訪問或與未來的結果進行比較。",
 	"panel.wellness.sections.health_screener.body.dont_save.description": "您的結果將不會被保存，以便您與未來的結果進行比較。",
 	"panel.wellness.sections.health_screener.body.dont_save.label": "不要保存我的結果",
