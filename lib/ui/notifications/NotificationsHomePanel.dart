@@ -373,6 +373,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
     return Semantics(
         label: title,
         button: true,
+        container: true,
         child: InkWell(
             onTap: _onTapFilter,
             child: Container(
