@@ -28,16 +28,12 @@ import 'package:sprintf/sprintf.dart';
 class AccessCard extends StatefulWidget {
   final String resource;
   final EdgeInsetsGeometry padding;
+  static const EdgeInsetsGeometry defaultPadding = const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0);
 
-  const AccessCard({
-    required this.resource,
-    required this.padding,
-  });
+  const AccessCard({ required this.resource, this.padding = defaultPadding, });
 
-  static AccessCard? builder({
-    required String resource,
-    EdgeInsetsGeometry padding = const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0)
-  }) => _AccessContent.mayAccessResource(resource) ? null : AccessCard(resource: resource, padding: padding);
+  static AccessCard? builder({ required String resource, EdgeInsetsGeometry padding = defaultPadding }) =>
+    AccessContent.mayAccessResource(resource) ? null : AccessCard(resource: resource, padding: padding);
 
   @override
   _AccessCardState createState() => _AccessCardState();
@@ -61,10 +57,10 @@ class _AccessCardState extends State<AccessCard> with NotificationsListener {
 
   @override
   Widget build(BuildContext context) {
-    List<String> messageKeys = _AccessContent.getMessageKeys(widget.resource);
+    List<String> messageKeys = AccessContent.getMessageKeys(widget.resource);
     if (messageKeys.isNotEmpty) {
       String titleKey = messageKeys.last.split('.').first;
-      String defaultTitle = _AccessContent.defaultStringKey(titleKey);
+      String defaultTitle = AccessContent.defaultStringKey(titleKey);
       String resourceName = Localization().getStringEx('widget.access.${widget.resource}.name', widget.resource);
 
       return Padding(padding: widget.padding, child:
@@ -80,7 +76,7 @@ class _AccessCardState extends State<AccessCard> with NotificationsListener {
                 ),
               )
             ]),
-            _AccessContent(messageKeys: messageKeys, resourceName: resourceName,),
+            AccessContent(messageKeys: messageKeys, resourceName: resourceName,),
           ])
         )
       );
@@ -112,7 +108,7 @@ class AccessDialog extends StatefulWidget {
     required BuildContext context,
 
     bool barrierDismissible = true,
-  }) => _AccessContent.mayAccessResource(resource) ? null : showDialog<bool>(
+  }) => AccessContent.mayAccessResource(resource) ? null : showDialog<bool>(
     context: context,
     barrierDismissible: barrierDismissible,
     routeSettings: RouteSettings(name: routeName),
@@ -138,17 +134,17 @@ class _AccessDialogState extends State<AccessDialog> with NotificationsListener 
 
   @override
   Widget build(BuildContext context) {
-    List<String> messageKeys = _AccessContent.getMessageKeys(widget.resource);
+    List<String> messageKeys = AccessContent.getMessageKeys(widget.resource);
     if (messageKeys.isNotEmpty) {
       String titleKey = messageKeys.last.split('.').first;
-      String defaultTitle = _AccessContent.defaultStringKey(titleKey);
+      String defaultTitle = AccessContent.defaultStringKey(titleKey);
       String resourceName = Localization().getStringEx('widget.access.${widget.resource}.name', widget.resource);
 
       return ActionsMessage(
         title: sprintf(Localization().getStringEx('widget.access.$titleKey.title', defaultTitle), [resourceName]),
         titleTextStyle: Styles().textStyles.getTextStyle('widget.heading.regular.fat'),
         titleBarColor: Styles().colors.fillColorPrimary,
-        bodyWidget: _AccessContent(messageKeys: messageKeys, resourceName: resourceName,),
+        bodyWidget: AccessContent(messageKeys: messageKeys, resourceName: resourceName,),
       );
     }
     return Container();
@@ -159,7 +155,7 @@ class _AccessDialogState extends State<AccessDialog> with NotificationsListener 
   @override
   void onNotification(String name, param) {
     if (name == FlexUI.notifyChanged && mounted) {
-      if (_AccessContent.mayAccessResource(widget.resource)) {
+      if (AccessContent.mayAccessResource(widget.resource)) {
         Navigator.popUntil(context, (route) {
           return route.settings.name == AccessDialog.routeName;
         });
@@ -171,11 +167,11 @@ class _AccessDialogState extends State<AccessDialog> with NotificationsListener 
   }
 }
 
-class _AccessContent extends StatelessWidget {
+class AccessContent extends StatelessWidget {
   final List<String> messageKeys;
   final String resourceName;
 
-  const _AccessContent({required this.messageKeys, required this.resourceName});
+  const AccessContent({required this.messageKeys, required this.resourceName});
 
   @override
   Widget build(BuildContext context) {

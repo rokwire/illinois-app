@@ -14,6 +14,7 @@ import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -120,7 +121,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     );
 
   Decoration get _commandBarDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: Styles().colors.surface,
     border: Border.all(color: Styles().colors.disabledTextColor, width: 1)
   );
 
@@ -129,11 +130,11 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
       MergeSemantics(key: _filtersButtonKey, child:
         Semantics(/* TBD: value: _currentFilterParam.descriptionText, hint: _filtersButtonHint,*/ child:
-          Event2FilterCommandButton(
+          Map2FilterTextButton(
             title: Localization().getStringEx('panel.group.home2.bar.button.filter.title', 'Filter'),
             hint: Localization().getStringEx('panel.group.home2.bar.button.filter.hint', 'Tap to build filter'),
-            leftIconKey: 'filters',
-            rightIconKey: 'chevron-right',
+            leftIcon: Styles().images.getImage('filters', size: 16),
+            rightIcon: Styles().images.getImage('chevron-right'),
             onTap: _onFilter,
           ),
         ),
@@ -141,12 +142,12 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       if (Auth2().isLoggedIn)
         MergeSemantics(key: _myGroupsFilterButtonKey, child:
           Semantics(/* TBD: value: _currentFilterParam.descriptionText, hint: _filtersButtonHint,*/ child:
-            Event2FilterCommandButton(
+            Map2FilterTextButton(
               title: Localization().getStringEx('panel.group.home2.bar.button.my_groups.title', 'My Groups'),
               hint: Localization().getStringEx('panel.group.home2.bar.button.my_groups.hint', 'Tap to toggle my groups filter'),
-              leftIconKey: 'groups',
+              leftIcon: Styles().images.getImage('groups', size: 16),
               toggled: _myGroupsSelected,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+              //contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
               onTap: _onMyGroups,
             ),
           ),
@@ -231,7 +232,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   }
 
   Decoration get _contentDescriptionDecoration => BoxDecoration(
-    color: Styles().colors.white,
+    color: Styles().colors.surface,
     border: Border(top: BorderSide(color: Styles().colors.disabledTextColor, width: 1))
   );
 
