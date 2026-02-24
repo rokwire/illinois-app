@@ -245,7 +245,7 @@
     "panel.browse.section.athletics.description": "Keep up with your favorite {{app_title}} teams.",
     "panel.browse.section.campus_guide.title": "Vida universitaria",
     "panel.browse.section.campus_guide.description": "Acceda a enlaces para grupos, organizaciones y servicios para mejorar su tiempo en {{app_title}}.",
-    "panel.browse.section.career_exploration.title": "Career Exploration",
+    "panel.browse.section.career_exploration.title": "Career Exploration & Preparation",
     "panel.browse.section.career_exploration.description": "Discover career pathways and opportunities.",
     "panel.browse.section.dining.title": "Comida",
     "panel.browse.section.dining.description": "Los estudiantes, profesores, empleados, y visitantes son bienvenidos a comer en cualquier comedor en las residencias.",
@@ -303,10 +303,12 @@
     "panel.browse.entry.campus_guide.campus_highlights.title": "Recursos destacados",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "Recursos guardados",
 
+    "panel.browse.entry.career_exploration.career_planing_links.title": "Career Planning Links",
     "panel.browse.entry.career_exploration.interest_explorer.title": "Interest Explorer",
     "panel.browse.entry.career_exploration.digital_card.title": "My Digital Business Card",
     "panel.browse.entry.career_exploration.skills_self_evaluation.title": "Skills Self-Evaluation",
     "panel.browse.entry.career_exploration.essential_skills_coach.title": "Essential Skills Coach",
+    "panel.browse.entry.career_exploration.job_board.title": "Virtual Job Board",
 
     "panel.browse.entry.dining.dining.title": "Comedor de la residencia",
 

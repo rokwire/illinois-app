@@ -24,6 +24,7 @@ import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
+import 'package:illinois/ui/career/CareerPlanningLinks.dart';
 import 'package:illinois/ui/groups/GroupHome2Panel.dart';
 import 'package:illinois/ui/illini/WordlePanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
@@ -540,6 +541,7 @@ class _BrowseEntry extends StatelessWidget {
     'academics.my_illini'                  : 'external-link',
     'academics.due_date_catalog'           : 'external-link',
     'career_exploration.interest_explorer' : 'external-link',
+    'career_exploration.job_board'         : 'external-link',
     'music_and_news.daily_illini'          : 'external-link',
   };
 
@@ -583,10 +585,12 @@ class _BrowseEntry extends StatelessWidget {
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
       case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
 
+      case "career_exploration.career_planing_links": _onTapCareerPlaningLinks(context); break;
       case "career_exploration.interest_explorer": _onTapInterestExplorer(context); break;
       case "career_exploration.digital_card": _onTapDigitalCard(context); break;
       case "career_exploration.skills_self_evaluation":_onTapSkillSelfEvaluation(context); break;
       case "career_exploration.essential_skills_coach":_onTapEssentialSkillCoach(context); break;
+      case "career_exploration.job_board":   _onTapJobBoard(context); break;
 
       case "dining.dining":                  _onTapDining(context); break;
 
@@ -735,9 +739,19 @@ class _BrowseEntry extends StatelessWidget {
     );
   }
 
+  static void _onTapCareerPlaningLinks(BuildContext context) {
+    Analytics().logSelect(target: "Career Planning Links");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CareerPlanningLinksPanel()));
+  }
+
   static void _onTapInterestExplorer(BuildContext context) {
     Analytics().logSelect(target: "Interest Explorer");
     _launchUrl(context, Config().interestExplorerUrl);
+  }
+
+  static void _onTapJobBoard(BuildContext context) {
+    Analytics().logSelect(target: "Virtual Job Board");
+    _launchUrl(context, Config().jobBoardUrl);
   }
 
   static void _onTapDigitalCard(BuildContext context) {

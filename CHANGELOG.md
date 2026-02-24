@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Campus Guide home panel title [#5785](https://github.com/rokwire/illinois-app/issues/5785).
 - Updated empty saved content description for student guide items [#5786](https://github.com/rokwire/illinois-app/issues/5786).
 - Make sure "Member Approval" title is visible [#5787](https://github.com/rokwire/illinois-app/issues/5787).
+- Career Exploration section updates [#5784](https://github.com/rokwire/illinois-app/issues/5784)
+
 
 ## [7.3.51] - 2026-02-18
 ### Added
