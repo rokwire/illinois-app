@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -51,18 +53,15 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
   _PollType? _selectedPollType;
 
   List<Poll>? _myPolls;
-  PollsCursor? _myPollsCursor;
   String? _myPollsError;
   bool _myPollsLoading = false;
   
   List<Poll>? _recentPolls;
   List<Poll>? _recentLocalPolls;
-  PollsCursor? _recentPollsCursor;
   String? _recentPollsError;
   bool _recentPollsLoading = false;
 
   List<Poll>? _groupPolls;
-  PollsCursor? _groupPollsCursor;
   String? _groupPollsError;
   bool _groupPollsLoading = false;
 
@@ -73,6 +72,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
 
   ScrollController? _scrollController;
 
+  static const int _pollsPageSize = 5;
 
   @override
   void initState() {
@@ -147,17 +147,19 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
   Widget _buildScaffoldBody() =>
     Column(children: [
       Expanded(child:
-        CustomScrollView(controller: _scrollController, slivers: <Widget>[
-          SliverList(delegate:
-            SliverChildListDelegate([
-              Column(children: <Widget>[
-                _buildDescriptionLayout(),
-                _buildPollsTabbar(),
-                _buildPollsContent(),
-              ],),
-            ]),
-          ),
-        ],)
+        RefreshIndicator(color: Styles().colors.fillColorSecondary, onRefresh: _onRefresh, child:
+          CustomScrollView(controller: _scrollController, slivers: <Widget>[
+            SliverList(delegate:
+              SliverChildListDelegate([
+                Column(children: <Widget>[
+                  _buildDescriptionLayout(),
+                  _buildPollsTabbar(),
+                  _buildPollsContent(),
+                ],),
+              ]),
+            ),
+          ],)
+        )
       ),
       _buildCreatePollButton(),
     ],);
@@ -433,32 +435,43 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
   }
 
   void _loadPolls() {
-
     if (_selectedPollType == _PollType.myPolls) {
-      _loadMyPolls();
+      _loadMyPolls(PollsCursor(offset: _myPolls?.length ?? 0, limit: _pollsPageSize));
     }
     else if (_selectedPollType == _PollType.recentPolls) {
-      _loadRecentPolls();
+      _loadRecentPolls(PollsCursor(offset: _recentPolls?.length ?? 0, limit: _pollsPageSize));
     }
     else if (_selectedPollType == _PollType.groupPolls) {
-      _loadGroupPolls();
+      _loadGroupPolls(PollsCursor(offset: _groupPolls?.length ?? 0, limit: _pollsPageSize));
     }
   }
 
-  void _loadMyPolls() {
-    if (((_myPolls == null) || (_myPollsCursor != null)) && !_myPollsLoading) {
+  void _refreshPolls() {
+    if (_selectedPollType == _PollType.myPolls) {
+      _loadMyPolls(PollsCursor(offset: 0, limit: max(_myPolls?.length ?? 0, _pollsPageSize)));
+    }
+    else if (_selectedPollType == _PollType.recentPolls) {
+      _loadRecentPolls(PollsCursor(offset: 0, limit: max(_recentPolls?.length ?? 0, _pollsPageSize)));
+    }
+    else if (_selectedPollType == _PollType.groupPolls) {
+      _loadGroupPolls(PollsCursor(offset: 0, limit: max(_groupPolls?.length ?? 0, _pollsPageSize)));
+    }
+  }
+
+  void _loadMyPolls(PollsCursor cursor) {
+    if (_myPollsLoading == false) {
       setStateIfMounted(() {
         _myPollsLoading = true;
+        if (cursor.offset == 0) {
+          _myPolls = null;
+        }
       });
 
-      Polls().getMyPolls(cursor: _myPollsCursor)!.then((PollsChunk? result) {
+      Polls().getMyPolls(cursor: cursor)?.then((PollsChunk? result) {
         setStateIfMounted(() {
           if (result != null) {
-            if (_myPolls == null) {
-              _myPolls = [];
-            }
-            _myPolls!.addAll(result.polls!);
-            _myPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
+            _myPolls ??= [];
+            _myPolls?.addAll(result.polls!);
             _myPollsError = null;
           }
         });
@@ -472,21 +485,22 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
     }
   }
 
-  void _loadRecentPolls() {
-    if (((_recentPolls == null) || (_recentPollsCursor != null)) && !_recentPollsLoading) {
+  void _loadRecentPolls(PollsCursor cursor) {
+    if (_recentPollsLoading == false) {
       setStateIfMounted(() {
         _recentPollsLoading = true;
+        if (cursor.offset == 0) {
+          _recentPolls = null;
+        }
       });
 
-      Polls().getRecentPolls(cursor: _recentPollsCursor)!.then((PollsChunk? result){
+      Polls().getRecentPolls(cursor: cursor)?.then((PollsChunk? result){
         setStateIfMounted((){
           if (result != null) {
-            if (_recentPolls == null) {
-              _recentPolls = [];
-            }
             _stripRecentLocalPolls(result.polls);
-            _recentPolls!.addAll(result.polls!);
-            _recentPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
+
+            _recentPolls ??= [];
+            _recentPolls?.addAll(result.polls!);
             _recentPollsError = null;
           }
         });
@@ -500,25 +514,29 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
     }
   }
 
-  void _loadGroupPolls() {
-    if (((_groupPolls == null) || (_groupPollsCursor != null)) && !_groupPollsLoading) {
+  void _loadGroupPolls(PollsCursor cursor) {
+    if (_groupPollsLoading == false) {
       Set<String>? groupIds = getGroupIds();
       if (CollectionUtils.isNotEmpty(groupIds)) {
-        _setGroupPollsLoading(true);
-        Polls().getGroupPolls(groupIds: groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
+        setStateIfMounted(() {
+          _groupPollsLoading = true;
+          if (cursor.offset == 0) {
+            _groupPolls = null;
+          }
+        });
+        Polls().getGroupPolls(groupIds: groupIds, cursor: cursor)?.then((PollsChunk? result) {
           if (result != null) {
-            if (_groupPolls == null) {
-              _groupPolls = [];
-            }
-            _groupPolls!.addAll(result.polls!);
-            _groupPollsCursor = (0 < result.polls!.length) ? result.cursor : null;
+            _groupPolls ??= [];
+            _groupPolls?.addAll(result.polls!);
             _groupPollsError = null;
           }
           setStateIfMounted(() {});
         }).catchError((e) {
           _groupPollsError = illinois.Polls.localizedErrorString(e);
         }).whenComplete(() {
-          _setGroupPollsLoading(false);
+          setStateIfMounted(() {
+            _groupPollsLoading = false;
+          });
         });
       }
     }
@@ -527,11 +545,6 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
   Set<String>? getGroupIds() => SetUtils.from(Groups().userGroups?.map((Group group) => group.id ?? ''));
   Group? _getGroup(String? groupId) => (groupId != null) ? Groups().getUserGroup(groupId) : null;
 
-  void _setGroupPollsLoading(bool loading) {
-    setStateIfMounted(() {
-      _groupPollsLoading = loading;
-    });
-  }
 
   void _stripRecentLocalPolls(List<Poll>?recentPolls) {
     if (recentPolls != null) {
@@ -585,11 +598,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
 
   void _resetMyPolls() {
     _myPolls = null;
-    _myPollsCursor = null;
     _myPollsError = null;
 
     if (_selectedPollType == _PollType.myPolls) {
-      _loadMyPolls();
+      _loadMyPolls(PollsCursor(offset: 0, limit: _pollsPageSize));
     }
   }
 
@@ -617,6 +629,9 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
       });
     }
   }
+
+  Future<void> _onRefresh() async =>
+    _refreshPolls();
 
   void _scrollListener() {
     if (_scrollController!.offset >= _scrollController!.position.maxScrollExtent) {
