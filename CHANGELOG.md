@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Poll UI Clean Up [#5781](https://github.com/rokwire/illinois-app/issues/5781).
 - Updated buttons styles in filter bars of Groups and Events home panel to match those in Maps [#5783](https://github.com/rokwire/illinois-app/issues/5783).
 - Updated Campus Guide home panel title [#5785](https://github.com/rokwire/illinois-app/issues/5785).
+- Updated empty saved content description for student guide items [#5786](https://github.com/rokwire/illinois-app/issues/5785).
 
 ## [7.3.51] - 2026-02-18
 ### Added
