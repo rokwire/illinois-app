@@ -70,7 +70,6 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
   static const String _pollsAccessResource = 'polls';
 
   final GlobalKey _keyBleDescriptionText = GlobalKey();
-  double _bleDescriptionTextHeight = 0;
 
   ScrollController? _scrollController;
 
@@ -92,10 +91,6 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
     
     _recentLocalPolls = Polls().localRecentPolls();
     _selectPollType(_PollType.values[Storage().selectedPollType ?? 0]);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _evalBleDescriptionHeight();
-    });
 
     _hasPollsAccess = AccessContent.mayAccessResource(_pollsAccessResource);
 
@@ -174,40 +169,32 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
       )
     ]);
 
-  Widget _buildDescriptionLayout(){
-    String description = Localization().getStringEx("panel.polls_home.text.pin_description", "Ask the creator of the poll for its four-digit number.");
-
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-      color: Styles().colors.fillColorPrimary,
-      child: Column(
-        children: <Widget>[
-          Row(children: <Widget>[
-            Expanded(child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text(description,
-                key: _keyBleDescriptionText,
+  Widget _buildDescriptionLayout() =>
+    Container(padding: EdgeInsets.symmetric(vertical: 18, horizontal: 16), color: Styles().colors.fillColorPrimary, child:
+      Column(children: <Widget>[
+        Row(children: <Widget>[
+          Expanded(child:
+            Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child:
+              Text(Localization().getStringEx("panel.polls_home.text.pin_description", "Ask the creator of the poll for its four-digit number."),
+                style: Styles().textStyles.getTextStyle("panel.polls.home.description"),
                 textAlign: TextAlign.center,
-                style: Styles().textStyles.getTextStyle("panel.polls.home.description")
-                ),
-            ),
-            ),
-          ],),
-          Container(height: 10,),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 80),
-            child: RoundedButton(
-              label: Localization().getStringEx("panel.polls_home.button.find_poll.title","Find Poll"),
-              textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
-              onTap: ()=>_onFindPollTapped(),
-              backgroundColor: Styles().colors.fillColorPrimary,
-              borderColor: Styles().colors.fillColorSecondary,
+                key: _keyBleDescriptionText,
+              ),
             ),
           ),
-        ],
-      ),
+        ],),
+        Container(height: 10,),
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 80), child:
+          RoundedButton(
+            label: Localization().getStringEx("panel.polls_home.button.find_poll.title","Find Poll"),
+            textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
+            onTap: _onFindPollTapped,
+            backgroundColor: Styles().colors.fillColorPrimary,
+            borderColor: Styles().colors.fillColorSecondary,
+          ),
+        ),
+      ],),
     );
-  }
 
   Widget _buildPollsTabbar() {
     return Container(
@@ -408,21 +395,11 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
     ));
   }
 
-  void _evalBleDescriptionHeight() {
-    try {
-      final RenderObject? renderBox = _keyBleDescriptionText.currentContext?.findRenderObject();
-      if ((renderBox is RenderBox) && renderBox.hasSize) {
-        _bleDescriptionTextHeight = renderBox.size.height;
-      }
-    } on Exception catch (e) {
-      print(e.toString());
-    }
-  }
-
   void _onFindPollTapped() {
     Analytics().logSelect(target:"Find Poll");
-    double topOffset = kToolbarHeight + 18 + _bleDescriptionTextHeight + 5;
-    Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubblePinPanel(topOffset:topOffset))).then((dynamic poll){
+    double descriptionHeight = _keyBleDescriptionText.renderBoxSize?.height ?? 0;
+    double topOffset = kToolbarHeight + 18 + descriptionHeight + 5;
+    Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => PollBubblePinPanel(topOffset: topOffset))).then((dynamic poll){
       if (poll is Poll) {
         if (!Polls().presentPollId(poll.pollId)) {
           AppAlert.showDialogResult(context, Localization().getStringEx('panel.polls_home.text.unable_to_present', 'Unable to present poll at the moment'));
