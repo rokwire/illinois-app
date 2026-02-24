@@ -162,7 +162,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   Widget _buildDescription() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(Localization().getStringEx('panel.wellness.sections.health_screener.description.title',
-        'Use the Illinois Health Screener to help you find the right resources'), style: Styles().textStyles.getTextStyle('panel.wellness.sections.health_screener.description'),),
+        'Use the Illinois Health Screener to help you find the right resources.'), style: Styles().textStyles.getTextStyle('panel.wellness.sections.health_screener.description'),),
       Padding(padding: EdgeInsets.only(top: 8), child: Text(
         Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.details.text',
             'Your screening results are confidential unless you choose to share them'),

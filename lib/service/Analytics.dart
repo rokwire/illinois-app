@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -356,6 +357,17 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
   static const String   LogIllordleGuessName               = "guess";
   static const String   LogIllordleAttemptName             = "attempt";
   static const String   LogIllordleStatusName              = "status";
+
+  // Auth2 Event
+  // "event" : { "name":"auth2", "type":"log|error|exception", "message":"...", "token":#, "token2":#, "response":{"code":#, "body":"..."}, }
+  static const String   LogAuth2EventName                  = "auth2";
+  static const String   LogAuth2TypeName                   = "type";
+  static const String   LogAuth2MessageName                = "message";
+  static const String   LogAuth2TokenName                  = "token";
+  static const String   LogAuth2Token2Name                 = "token2";
+  static const String   LogAuth2ResponseName               = "response";
+  static const String   LogAuth2ResponseCodeName           = "code";
+  static const String   LogAuth2ResponseBodyName           = "body";
 
   // Attributes
   static const String   LogAttributeUrl                    = "url";
@@ -734,8 +746,7 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
   @override
   void logEvent(Map<String, dynamic> event, { List<String> defaultAttributes = DefaultAttributes, int? timestamp }) {
     NotificationService().notify(notifyEvent, event);
-
-    if (FlexUI().isAnalyticsAvailable) {
+    if (FlexUI().isAnalyticsAvailable != false) {
 
       event[LogEventPageName] = _currentPageName;
       event[LogEventPageFeature] = _currentPageFeature?.name;
@@ -842,6 +853,9 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
         }
       }
       
+      try { debugPrint('Analytics: ${json.encode(event)}'); }
+      catch(e) { debugPrint('Analytics.logEvent: ${e.toString()}'); }
+
       super.logEvent(analyticsEvent, timestamp: timestamp ?? nowUtc.millisecondsSinceEpoch);
     }
   }
@@ -1288,7 +1302,7 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
     logEvent(event);
   }
 
-  void logIllordle({ required String word, required String guess, required int attempt, AnalyticsIllordleEventStatus? status }) {
+  void logIllordle({ required String word, required String guess, required int attempt, AnalyticsIllordleEventStatus? status }) =>
     logEvent({
       LogEventName                        : LogIllordleEventName,
       LogIllordleWordName                 : word,
@@ -1296,7 +1310,22 @@ class Analytics extends rokwire.Analytics with NotificationsListener {
       LogIllordleAttemptName              : attempt,
       LogIllordleStatusName               : status?._attributeString,
     });
-  }
+
+  void logAuth2(String message, { AnalyticsAuth2EventType type = AnalyticsAuth2EventType.log, String? token, String? token2, Response? response }) =>
+    logEvent({
+      LogEventName                        : LogAuth2EventName,
+      LogAuth2MessageName                 : message,
+      LogAuth2TypeName                    : type._attributeString,
+      if (token != null)
+        LogAuth2TokenName                 : token,
+      if (token2 != null)
+        LogAuth2Token2Name                : token2,
+      if (response != null)
+        LogAuth2ResponseName              : {
+          LogAuth2ResponseCodeName        : response.statusCode,
+          LogAuth2ResponseBodyName        : response.body,
+        },
+    });
 }
 
 extension _UriAnalytics on Uri {
@@ -1314,6 +1343,18 @@ extension _AnalyticsIllordleEventStatus on AnalyticsIllordleEventStatus {
       case AnalyticsIllordleEventStatus.notInDictionary: return 'invalid';
       case AnalyticsIllordleEventStatus.success: return 'win';
       case AnalyticsIllordleEventStatus.fail: return 'lost';
+    }
+  }
+}
+
+enum AnalyticsAuth2EventType { log, error, exception }
+
+extension _Auth2EventType on AnalyticsAuth2EventType {
+  String get _attributeString {
+    switch (this) {
+      case AnalyticsAuth2EventType.log: return 'log';
+      case AnalyticsAuth2EventType.error: return 'error';
+      case AnalyticsAuth2EventType.exception: return 'exception';
     }
   }
 }
