@@ -67,11 +67,13 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
   bool _groupPollsLoading = false;
 
   bool _hasPollsAccess = false;
-  
+  static const String _pollsAccessResource = 'polls';
+
   final GlobalKey _keyBleDescriptionText = GlobalKey();
   double _bleDescriptionTextHeight = 0;
 
   ScrollController? _scrollController;
+
 
   @override
   void initState() {
@@ -95,6 +97,12 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
       _evalBleDescriptionHeight();
     });
 
+    _hasPollsAccess = AccessContent.mayAccessResource(_pollsAccessResource);
+
+    if (_hasPollsAccess) {
+      _loadPolls();
+    }
+
     super.initState();
   }
 
@@ -105,52 +113,66 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
   }
   
   @override
+  void onNotification(String name, dynamic param) {
+    if (name == Polls.notifyCreated) {
+      _onPollCreated(param);
+    }
+    else if (name == Polls.notifyDeleted) {
+      _onPollDeleted(param);
+    }
+    else if (name == Polls.notifyVoteChanged) {
+      _onPollUpdated(param);
+    }
+    else if (name == Polls.notifyResultsChanged) {
+      _onPollUpdated(param);
+    }
+    else if (name == Polls.notifyStatusChanged) {
+      _onPollUpdated(param);
+    }
+    else if (name == GeoFence.notifyCurrentRegionsUpdated) {
+      setStateIfMounted(() { });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updatePollsAccess();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(
         title: Localization().getStringEx("panel.polls_home.text.header.title","Quick Polls"),
       ),
-      body: _buildScaffoldBody(),
+      body: _hasPollsAccess ? _buildScaffoldBody() : _buildAccessBody(),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
-  Widget _buildScaffoldBody() {
-    List<Widget> bodyWidgets = [];
-    Widget? accessWidget = AccessCard.builder(resource: 'polls');
-    Widget content = Expanded(child:
-      CustomScrollView(
-          controller: _scrollController,
-          slivers: <Widget>[
-            SliverList(
-              delegate: SliverChildListDelegate([
-                Column(
-                  children: <Widget>[
-                    _buildDescriptionLayout(),
-                    _buildPollsTabbar(),
-                    _buildPollsContent(),
-                  ],
-                )
-              ]),
-            ),
-          ],
-      )
-    );
+  Widget _buildScaffoldBody() =>
+    Column(children: [
+      Expanded(child:
+        CustomScrollView(controller: _scrollController, slivers: <Widget>[
+          SliverList(delegate:
+            SliverChildListDelegate([
+              Column(children: <Widget>[
+                _buildDescriptionLayout(),
+                _buildPollsTabbar(),
+                _buildPollsContent(),
+              ],),
+            ]),
+          ),
+        ],)
+      ),
+      _buildCreatePollButton(),
+    ],);
 
-    if (accessWidget != null) {
-      bodyWidgets.add(Padding(padding: const EdgeInsets.only(top: 16), child: accessWidget));
-      _hasPollsAccess = false;
-    } else {
-      bodyWidgets.add(content);
-      bodyWidgets.add(_buildCreatePollButton());
-      if (!_hasPollsAccess) {
-        _loadPolls();
-      }
-      _hasPollsAccess = true;
-    }
-    return Column(children: bodyWidgets);
-  }
+  Widget _buildAccessBody() =>
+    Column(children: [
+      Padding(padding: const EdgeInsets.only(top: 16), child:
+        AccessCard(resource: _pollsAccessResource)
+      )
+    ]);
 
   Widget _buildDescriptionLayout(){
     String description = Localization().getStringEx("panel.polls_home.text.pin_description", "Ask the creator of the poll for its four-digit number.");
@@ -258,17 +280,14 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
       pollsContent = _buildEmptyContent();
     }
 
-    return
-      Stack(
-        alignment: Alignment.topCenter,
-        children: <Widget>[
-          Container(
-            height: 112,
-            width: double.infinity,
-            child: Styles().images.getImage("slant-dark", fit: BoxFit.fill, excludeFromSemantics: true) ?? Container()),
-          Padding( padding: EdgeInsets.symmetric(horizontal: 16),
-              child: pollsContent,
-          )]);
+    return Stack(alignment: Alignment.topCenter, children: <Widget>[
+      Container(height: 112, width: double.infinity, child:
+        Styles().images.getImage("slant-dark", fit: BoxFit.fill, excludeFromSemantics: true) ?? Container()
+      ),
+      Padding( padding: EdgeInsets.symmetric(horizontal: 16), child:
+        pollsContent,
+      )
+    ]);
   }
 
   List<Poll>? get _polls {
@@ -632,30 +651,18 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
     }
   }
 
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == Polls.notifyCreated) {
-      _onPollCreated(param);
-    }
-    else if (name == Polls.notifyDeleted) {
-      _onPollDeleted(param);
-    }
-    else if (name == Polls.notifyVoteChanged) {
-      _onPollUpdated(param);
-    }
-    else if (name == Polls.notifyResultsChanged) {
-      _onPollUpdated(param);
-    }
-    else if (name == Polls.notifyStatusChanged) {
-      _onPollUpdated(param);
-    }
-    else if (name == GeoFence.notifyCurrentRegionsUpdated) {
-      setStateIfMounted(() { });
-    }
-    else if (name == FlexUI.notifyChanged) {
-      setStateIfMounted(() { });
+  void _updatePollsAccess() {
+    bool hasPollsAccess = AccessContent.mayAccessResource(_pollsAccessResource);
+    if ((_hasPollsAccess != hasPollsAccess) && mounted) {
+      setState(() {
+        _hasPollsAccess = hasPollsAccess;
+      });
+      if (hasPollsAccess) {
+        _loadPolls();
+      }
     }
   }
+
 }
 
 class _PollsHomePanelFilterTab extends StatelessWidget {
