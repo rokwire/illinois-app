@@ -2524,7 +2524,7 @@
 
     "panel.polls_home.text.header.title":"Encuestas",
     "panel.polls_home.text.loading":"Cargando. Por favor espera...",
-    "panel.polls_home.text.pin_description":"Pregunta al creador de la encuesta por su número de cuatro dígitos.",
+    "panel.polls_home.text.pin_description":"Enter the four-digit code provided by the poll creator.",
     "panel.polls_home.button.find_poll.title":"Encontrar encuesta",
     "panel.polls_home.text.error":"Error",
     "panel.polls_home.tab.title.recent_polls":"Encuestas recientes",

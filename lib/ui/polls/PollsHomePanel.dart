@@ -170,12 +170,12 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
     ]);
 
   Widget _buildDescriptionLayout() =>
-    Container(padding: EdgeInsets.symmetric(vertical: 18, horizontal: 16), color: Styles().colors.fillColorPrimary, child:
+    Container(padding: EdgeInsets.symmetric(vertical: 18, horizontal: 16), color: Styles().colors.fillColorPrimaryVariant, child:
       Column(children: <Widget>[
         Row(children: <Widget>[
           Expanded(child:
             Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child:
-              Text(Localization().getStringEx("panel.polls_home.text.pin_description", "Ask the creator of the poll for its four-digit number."),
+              Text(Localization().getStringEx("panel.polls_home.text.pin_description", "Enter the four-digit code provided by the poll creator."),
                 style: Styles().textStyles.getTextStyle("panel.polls.home.description"),
                 textAlign: TextAlign.center,
                 key: _keyBleDescriptionText,
@@ -189,7 +189,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
             label: Localization().getStringEx("panel.polls_home.button.find_poll.title","Find Poll"),
             textStyle: Styles().textStyles.getTextStyle("widget.colourful_button.title.large.accent"),
             onTap: _onFindPollTapped,
-            backgroundColor: Styles().colors.fillColorPrimary,
+            backgroundColor: Styles().colors.fillColorPrimaryVariant,
             borderColor: Styles().colors.fillColorSecondary,
           ),
         ),
@@ -197,37 +197,27 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
     );
 
   Widget _buildPollsTabbar() {
-    return Container(
-      color: Styles().colors.backgroundVariant,
-      padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: _PollsHomePanelFilterTab(
-              text: Localization().getStringEx("panel.polls_home.tab.title.recent_polls","Recent Polls"),
-              tabPosition: _PollFilterTabPosition.left,
-              selected: (_selectedPollType == _PollType.recentPolls),
-              onTap: _onRecentPollsTapped,
-            )
-          ),
-          Expanded(
-              child: _PollsHomePanelFilterTab(
-                text: Localization().getStringEx("panel.polls_home.tab.title.group_polls","Group Polls"),
-                tabPosition: _PollFilterTabPosition.center,
-                selected: (_selectedPollType == _PollType.groupPolls),
-                onTap: _onGroupPollsTapped,
-              )
-          ),
-          Expanded(
-            child: _PollsHomePanelFilterTab(
-              text: Localization().getStringEx("panel.polls_home.tab.title.my_polls","My Polls"),
-              tabPosition: _PollFilterTabPosition.right,
-              selected: (_selectedPollType == _PollType.myPolls),
-              onTap: _onMyPollsTapped,
-            )
-          )
-        ],
-      ),
+    return Container(color: Styles().colors.background, padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
+      Row(children: <Widget>[
+        Expanded(child: _PollsHomePanelFilterTab(
+          text: Localization().getStringEx("panel.polls_home.tab.title.recent_polls","Recent Polls"),
+          tabPosition: _PollFilterTabPosition.left,
+          selected: (_selectedPollType == _PollType.recentPolls),
+          onTap: _onRecentPollsTapped,
+        )),
+        Expanded(child: _PollsHomePanelFilterTab(
+          text: Localization().getStringEx("panel.polls_home.tab.title.group_polls","Group Polls"),
+          tabPosition: _PollFilterTabPosition.center,
+          selected: (_selectedPollType == _PollType.groupPolls),
+          onTap: _onGroupPollsTapped,
+        )),
+        Expanded(child: _PollsHomePanelFilterTab(
+          text: Localization().getStringEx("panel.polls_home.tab.title.my_polls","My Polls"),
+          tabPosition: _PollFilterTabPosition.right,
+          selected: (_selectedPollType == _PollType.myPolls),
+          onTap: _onMyPollsTapped,
+        ))
+      ],),
     );
   }
 
@@ -267,14 +257,9 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
       pollsContent = _buildEmptyContent();
     }
 
-    return Stack(alignment: Alignment.topCenter, children: <Widget>[
-      Container(height: 112, width: double.infinity, child:
-        Styles().images.getImage("slant-dark", fit: BoxFit.fill, excludeFromSemantics: true) ?? Container()
-      ),
-      Padding( padding: EdgeInsets.symmetric(horizontal: 16), child:
-        pollsContent,
-      )
-    ]);
+    return Padding( padding: EdgeInsets.symmetric(horizontal: 16), child:
+      pollsContent,
+    );
   }
 
   List<Poll>? get _polls {
@@ -386,13 +371,20 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
   }
 
   Widget _buildCreatePollButton() {
-    return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors.white,child:
-      RoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a Poll"),
-          textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-          borderColor: Styles().colors.fillColorSecondary,
-          backgroundColor: Styles().colors.white,
+    return Container(
+      decoration: BoxDecoration(
+        color: Styles().colors.background,
+        border: Border(top: BorderSide(color: Styles().colors.surfaceAccent))
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      child: RoundedButton(
+        label: Localization().getStringEx("panel.polls_home.text.create_poll","Create a Poll"),
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+        borderColor: Styles().colors.fillColorSecondary,
+        backgroundColor: Styles().colors.white,
         onTap:_onCreatePollTapped
-    ));
+      )
+    );
   }
 
   void _onFindPollTapped() {

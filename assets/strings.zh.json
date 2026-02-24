@@ -2509,7 +2509,7 @@
 
 	"panel.polls_home.text.header.title":"快速投票",
 	"panel.polls_home.text.loading":" 加载中。请稍等 ...",
-	"panel.polls_home.text.pin_description":"向民意調查的創建者詢問其四位數字.",
+	"panel.polls_home.text.pin_description":"Enter the four-digit code provided by the poll creator.",
 	"panel.polls_home.button.find_poll.title":"查找投票",
 	"panel.polls_home.text.error":"错误",
 	"panel.polls_home.tab.title.recent_polls":"最近的民意测验",

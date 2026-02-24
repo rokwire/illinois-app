@@ -2524,7 +2524,7 @@
 
     "panel.polls_home.text.header.title":"Polls",
     "panel.polls_home.text.loading":"Loading. Please wait...",
-    "panel.polls_home.text.pin_description":"Ask the creator of the poll for its four-digit number.",
+    "panel.polls_home.text.pin_description":"Enter the four-digit code provided by the poll creator.",
     "panel.polls_home.button.find_poll.title":"Find Poll",
     "panel.polls_home.text.error":"Error",
     "panel.polls_home.tab.title.recent_polls":"Recent Polls",
