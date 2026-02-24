@@ -25,6 +25,7 @@ import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/map2/Map2HomeExts.dart';
+import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/events2/Event2SearchPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
@@ -618,10 +619,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         MergeSemantics(key: _filtersButtonKey ??= GlobalKey(), child:
           Semantics(value: _currentFilterParam.descriptionText, hint: _filtersButtonHint, child:
-            Event2FilterCommandButton(
+            Map2FilterTextButton(
               title: Localization().getStringEx('panel.events2.home.bar.button.filter.title', 'Filter'),
-              leftIconKey: 'filters',
-              rightIconKey: 'chevron-right',
+              leftIcon: Styles().images.getImage('filters', size: 16),
+              rightIcon: Styles().images.getImage('chevron-right'),
               onTap: _onFilters,
             )
           )
@@ -633,7 +634,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
         LinkButton(
           title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'), 
           hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
-          textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
+          textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.medium.underline'),
           padding: EdgeInsets.only(left: 0, right: 8, top: 12, bottom: 12),
           onTap: _onMapView,
         ),
@@ -659,21 +660,23 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
   Widget get _sortButton {
     _sortDropdownWidth ??= _evaluateSortDropdownWidth();
     return  MergeSemantics(key: _sortButtonKey ??= GlobalKey(), child:
-    Semantics(value: event2SortTypeToDisplayString(_sortType), hint: _filtersButtonHint, child:
-      DropdownButtonHideUnderline(child:
-        DropdownButton2<Event2SortType>(
-          dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth, padding: EdgeInsets.zero),
-          customButton: Event2FilterCommandButton(
-            title: Localization().getStringEx('panel.events2.home.bar.button.sort.title', 'Sort'),
-            leftIconKey: 'sort'
-          ),
-          isExpanded: false,
-          items: _buildSortDropdownItems(),
-          onChanged: _onSortType,
-          onMenuStateChange: (isOpen) => isOpen ?  //Handling Accessibility focus
-            AppSemantics.triggerAccessibilityFocus( _sortItemKeys[_sortType], delay: Duration(seconds: 1)) : null
+      Semantics(value: event2SortTypeToDisplayString(_sortType), hint: _filtersButtonHint, child:
+        DropdownButtonHideUnderline(child:
+          DropdownButton2<Event2SortType>(
+            dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth, padding: EdgeInsets.zero),
+            customButton: Map2FilterTextButton(
+              title: Localization().getStringEx('panel.events2.home.bar.button.sort.title', 'Sort'),
+              leftIcon: Styles().images.getImage('sort', size: 16),
+              rightIcon: Styles().images.getImage('chevron-down'),
+            ),
+            isExpanded: false,
+            items: _buildSortDropdownItems(),
+            onChanged: _onSortType,
+            onMenuStateChange: (isOpen) => isOpen ?  //Handling Accessibility focus
+              AppSemantics.triggerAccessibilityFocus( _sortItemKeys[_sortType], delay: Duration(seconds: 1)) : null
+          )
         )
-      ))
+      )
     );
   }
 
