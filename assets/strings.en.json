@@ -246,7 +246,7 @@
     "panel.browse.section.athletics.description": "Keep up with your favorite {{app_title}} teams.",
     "panel.browse.section.campus_guide.title": "University Living",
     "panel.browse.section.campus_guide.description": "Access links for groups, organizations, and services to enhance your time at {{app_title}}.",
-    "panel.browse.section.career_exploration.title": "Career Exploration",
+    "panel.browse.section.career_exploration.title": "Career Exploration & Preparation",
     "panel.browse.section.career_exploration.description": "Discover career pathways and opportunities.",
     "panel.browse.section.dining.title": "Dining",
     "panel.browse.section.dining.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
@@ -304,10 +304,12 @@
     "panel.browse.entry.campus_guide.campus_highlights.title": "Featured Resources",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "Saved Resources",
 
+    "panel.browse.entry.career_exploration.career_planing_links.title": "Career Planning Links",
     "panel.browse.entry.career_exploration.interest_explorer.title": "Interest Explorer",
     "panel.browse.entry.career_exploration.digital_card.title": "My Digital Business Card",
     "panel.browse.entry.career_exploration.skills_self_evaluation.title": "Skills Self-Evaluation",
     "panel.browse.entry.career_exploration.essential_skills_coach.title": "Essential Skills Coach",
+    "panel.browse.entry.career_exploration.job_board.title": "Virtual Job Board",
 
     "panel.browse.entry.dining.dining.title": "Residence Hall Dining",
 

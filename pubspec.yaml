@@ -150,6 +150,7 @@ flutter:
   assets:
   - images/
   - assets/
+    # assets/extra/
   - media/
   - app/images/
   - app/assets/
