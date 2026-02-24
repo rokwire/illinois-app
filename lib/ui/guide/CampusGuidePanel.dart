@@ -7,7 +7,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 class CampusGuidePanel extends GuideCategoriesPanel {
   CampusGuidePanel({super.key}) : super(
     guide: Guide.campusGuide,
-    title: Localization().getStringEx('panel.campus_guide.label.heading', 'Campus Guide'),
+    title: Localization().getStringEx('panel.campus_guide.label.heading', 'University Living'),
     emptyDescriptin: Localization().getStringEx('panel.campus_guide.label.content.empty', 'Empty resources content')
   );
 }
