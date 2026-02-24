@@ -742,22 +742,12 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
             _imageHeadingWidget,
             Padding(padding: EdgeInsetsGeometry.only(left: 16, top: _imageHeadingVisible ? 8 : 16, right: 16, bottom: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               _buildHeading(),
-              Row(children:[
-                Expanded(child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
-                  _buildCategories(),
-                  _buildTitle(),
-                  _buildProperties(),
-                ]),
-                )
-              ]),
+              _buildCategories(),
+              _buildTitle(),
+              Visibility(visible: !_isHomeDisplayType, child: _buildProperties()),
+              _buildMembers(),
               Container(height: 4),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Expanded(child:
-                _buildUpdateTime(),
-                ),
-                _buildMembersCount()
-              ])
+              _buildUpdateTime(),
             ]),)
           ]),
         ))
@@ -765,10 +755,10 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     );
   }
 
-  BoxDecoration get _cardDecoration => (widget.displayType == GroupCardDisplayType.homeGroups) ?
+  BoxDecoration get _cardDecoration => _isHomeDisplayType ?
       HomeCard.boxDecoration : _defaultCardDecoration;
 
-  BorderRadius get _cardBorderRadius => (widget.displayType == GroupCardDisplayType.homeGroups) ?
+  BorderRadius get _cardBorderRadius => _isHomeDisplayType ?
     HomeCard.borderRadius : defaultCardBorderRadius;
 
   static BoxDecoration get _defaultCardDecoration => BoxDecoration(
@@ -869,7 +859,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     return Row(children: [
       Expanded(child:
         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-          Text(widget.group.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups ? 1 : 10, style: _titleTextStyle)
+          Text(widget.group.title ?? "", overflow: TextOverflow.ellipsis, maxLines: _isHomeDisplayType ? 1 : 10, style: _titleTextStyle)
         )
       )
     ]);
@@ -888,7 +878,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       Expanded(child:
         Text(displayList?.join(', ') ?? '',
             overflow: TextOverflow.ellipsis,
-            maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
+            maxLines: _isHomeDisplayType ? 1 : 10,
             style: Styles().textStyles.getTextStyle("common.title.secondary")
         )
       )
@@ -949,18 +939,15 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       ));
 
   Widget _buildUpdateTime() {
-    return Container(
-        child: Text(
-          _timeUpdatedText,
-          maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
-          overflow: TextOverflow.ellipsis,
-          style: _detailTextStyle
-    ));
+    return Visibility(visible: StringUtils.isNotEmpty(_timeUpdatedText), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Padding(padding: EdgeInsetsGeometry.only(right: 6), child: Styles().images.getImage('rotate-right', excludeFromSemantics: true),),
+      Text(_timeUpdatedText, maxLines: _isHomeDisplayType ? 1 : 10, overflow: TextOverflow.ellipsis, style: _detailTextStyle)
+    ],));
   }
 
   bool get _isResearchProject => widget.group.researchProject == true;
 
-  Widget _buildMembersCount() {
+  Widget _buildMembers() {
     String membersLabel;
     int count = _groupStats?.activeMembersCount ?? 0;
     if (!_isResearchProject) {
@@ -989,16 +976,14 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       membersLabel = "";
     }
     return Visibility(visible: StringUtils.isNotEmpty(membersLabel), child:
-      Text(membersLabel, style: _detailTextStyle),
+      Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Padding(padding: EdgeInsetsGeometry.only(right: 6), child: Styles().images.getImage('person', excludeFromSemantics: true),),
+        Text(membersLabel, style: _detailTextStyle)
+      ]),
     );
   }
 
-  TextStyle? get _detailTextStyle {
-    switch (widget.displayType) {
-      case GroupCardDisplayType.homeGroups: return Styles().textStyles.getTextStyle('widget.card.detail.small.semi_fat');
-      default: return Styles().textStyles.getTextStyle('widget.card.detail.small.regular');
-    }
-  }
+  TextStyle? get _detailTextStyle => Styles().textStyles.getTextStyle('common.body');
 
    void _loadGroupStats() {
     Groups().loadGroupStats(widget.group.id).then((stats) {
@@ -1075,7 +1060,8 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   String get _timeUpdatedText => widget.group.displayUpdateTime ?? '';
   String? get _imageUrl => widget.group.imageURL;
   bool get _hasImage => StringUtils.isNotEmpty(_imageUrl);
-  bool get _imageHeadingVisible => (widget.displayType == GroupCardDisplayType.homeGroups) || _hasImage;
+  bool get _imageHeadingVisible => _isHomeDisplayType || _hasImage;
+  bool get _isHomeDisplayType => (widget.displayType == GroupCardDisplayType.homeGroups);
 }
 
 //////////////////////////////////////
