@@ -4134,7 +4134,7 @@
 	"widget.home.favorites.message.empty.laundry": "点击 <a href='{{local_url}}'><b>洗衣房</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.favorites.message.empty.mtd_stops": "点击 <a href='{{local_url}}'><b>公交车站</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.favorites.message.empty.locations": "点击 <a href='{{local_url}}'><b>地圖</b></a> 中项目上的 ☆，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
-	"widget.home.favorites.message.empty.campus_guide": "点击 <a href='{{local_url}}'><b>完整資源列表</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
+	"widget.home.favorites.message.empty.campus_guide": "点击 <a href='{{local_url}}'><b>完整列表</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.favorites.message.empty.appointments": "点击 <a href='{{local_url}}'><b>我的MyMckinley预约</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.favorites.message.empty.appointments.not_to_display": "因为您选择不显示任何过去或未来的预约，所以没有内容显示。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 
