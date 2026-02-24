@@ -310,13 +310,17 @@ class _PollsHomePanelState extends State<PollsHomePanel> with NotificationsListe
     return Column(children:content);
   }
 
-  Widget _constructListSeparator(){
-    return Container(height: 16,);
-  }
+  Widget _constructListSeparator() =>
+    Container(height: 16,);
 
-  Widget _constructLoadingIndicator() {
-    return Container(height: 80, child: Align(alignment: Alignment.center, child: CircularProgressIndicator(),),);
-  }
+  Widget _constructLoadingIndicator() =>
+    Padding(padding: EdgeInsets.symmetric(vertical: 42), child:
+      Center(child:
+        SizedBox.square(dimension: 32, child:
+          CircularProgressIndicator(strokeWidth: 3, color: Styles().colors.fillColorSecondary,)
+        )
+      )
+    );
 
   Widget _buildEmptyContent(){
     String message, description;
