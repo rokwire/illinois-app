@@ -767,7 +767,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     boxShadow: [_defaultCardShadow]
   );
 
-  static Radius get defaultCardRadius => Radius.circular(4);
+  static Radius get defaultCardRadius => Radius.circular(12);
   static BorderRadius get defaultCardBorderRadius => BorderRadius.all(defaultCardRadius);
 
   static BoxShadow get _defaultCardShadow =>
