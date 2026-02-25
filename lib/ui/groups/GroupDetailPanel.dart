@@ -76,6 +76,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
@@ -1142,9 +1143,18 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         backgroundColor: Colors.white,
         isScrollControlled: true,
         isDismissible: true,
+        barrierLabel: "Dismiss settings",
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
         builder: (context) {
-          return Container(
+          GlobalKey? firstAvailableItemKey;
+          return VisibilityDetector(key: Key('options-visibility-detector'),
+            onVisibilityChanged: (info){
+              if(info.visibleFraction > 0.99){
+                Log.d("VisibilityDetector fully visible at: ${info.visibleFraction}");
+                AppSemantics.triggerAccessibilityFocus(firstAvailableItemKey);
+              }
+            },
+            child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
               child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
                 Container(
@@ -1153,6 +1163,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                 Visibility(
                     visible: _canAboutSettings,
                     child: PointerInterceptor(child: RibbonButton(
+                        key: _canAboutSettings ? firstAvailableItemKey = GlobalKey() : null,
                         leftIconKey: "info",
                         title: Localization().getStringEx("panel.group_detail.button.group.about.title", "About this group"),//TBD localize
                         onTap: () {
@@ -1162,6 +1173,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                 Visibility(
                     visible: _canEditGroup,
                     child: PointerInterceptor(child: RibbonButton(
+                        key: _canEditGroup && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
                         leftIconKey: "settings",
                         title: _isResearchProject ? 'Research project settings' : Localization().getStringEx("_panel.group_detail.button.group.edit.title", "Group admin settings"),//TBD localize
                         onTap: () {
@@ -1171,12 +1183,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                 Visibility(
                     visible: _canManageMembers,
                     child: PointerInterceptor(child: RibbonButton(
+                        key: _canManageMembers && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
                         leftIconKey: "person-circle",
                         title: _isResearchProject ? 'Manage participants' : Localization().getStringEx("", "Manage members"),
                         onTap: _onTapMembers))),
                 Visibility(
                     visible: _canNotificationSettings,
                     child: PointerInterceptor(child: RibbonButton(
+                        key: _canNotificationSettings && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
                         leftIconKey: "reminder",
                         title: Localization().getStringEx("panel.group_detail.button.group.notifications.title", "Notification Preferences"),//TBD localize
                         onTap: () {
@@ -1186,6 +1200,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                 Visibility(
                     visible: _canShareSettings, //TBD do we restrict sharing?
                     child: PointerInterceptor(child: RibbonButton(
+                        key: _canShareSettings && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
                         leftIconKey: "share-nodes",
                         title: Localization().getStringEx("panel.group_detail.button.group.share.title", "Share group"),//TBD localize
                         onTap: () {
@@ -1195,6 +1210,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                 Visibility(
                     visible: _canLeaveGroup,
                     child: PointerInterceptor(child: RibbonButton(
+                        key: _canLeaveGroup && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
                         leftIconKey: "trash",
                         title: _isResearchProject ? 'Leave project' : Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
                         onTap: () {
@@ -1211,6 +1227,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                 Visibility(
                     visible: _canDeleteGroup,
                     child: PointerInterceptor(child: RibbonButton(
+                        key: _canDeleteGroup && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
                         leftIconKey: "trash",
                         title: _isResearchProject ? 'Delete research project' : Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
                         onTap: () {
@@ -1224,68 +1241,82 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                                   onPositiveTap: _onTapDeleteDialog)).then((value) => Navigator.pop(context));
                         }))),
                 Visibility(visible: _canReportAbuse, child: PointerInterceptor(child: RibbonButton(
+                  key: _canReportAbuse && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
                   leftIconKey: "report",
                   title: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
                   onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true)   ),
                 ))),
-              ]));
+              ])));
         });
   }
 
   void _onCreateOptionsTap() {
     Analytics().logSelect(target: 'Group Create Options', attributes: _group?.analyticsAttributes);
-
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
         isScrollControlled: true,
         isDismissible: true,
+        barrierLabel: "Dismiss Create Options",
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
         builder: (context) {
-          return Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17), child:
-            Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                Container(height: 24,),
-                Visibility(visible: _canCreatePost, child:
-                  RibbonButton(
-                    leftIconKey: "plus-circle",
-                    title: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _onTapCreatePost();
-                    })),
-                Visibility(visible: _canCreateMessage, child:
-                  RibbonButton(
-                    leftIconKey: "plus-circle",
-                    title: Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message"),//localize tbd
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _onTapCreatePost(type: PostType.direct_message);
-                    })),
-                Visibility(visible: _canAddEvent, child:
-                  RibbonButton(
-                    leftIconKey: "plus-circle",
-                    title: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create New Event"),
-                    onTap: (){
-                      Navigator.pop(context);
-                      _onTapCreateEvent();
-                    })),
-                Visibility(visible: _canAddEvent, child:
-                  RibbonButton(
-                    leftIconKey: "plus-circle",
-                    title: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add Existing Event"),
-                    onTap: (){
-                      Navigator.pop(context);
-                      _onTapBrowseEvents();
-                    })),
-                Visibility(visible: _canCreatePoll, child:
-                  RibbonButton(
-                    leftIconKey: "plus-circle",
-                    title: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Create a Poll"), //tbd localize
-                    onTap: (){
-                      Navigator.pop(context);
-                      _onTapCreatePoll();
-                    })),
-              ]));
+          GlobalKey? firstAvailableItemKey;
+          return VisibilityDetector(key: Key('create-options-visibility-detector'),
+              onVisibilityChanged: (info){
+                if(info.visibleFraction > 0.99){
+                  Log.d("VisibilityDetector fully visible at: ${info.visibleFraction}");
+                  AppSemantics.triggerAccessibilityFocus(firstAvailableItemKey);
+                }
+              },
+              child: Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17), child:
+                Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                    Container(height: 24,),
+                    Visibility(visible: _canCreatePost, child:
+                      RibbonButton(
+                        key: _canCreatePost ? firstAvailableItemKey = GlobalKey() : null,
+                        leftIconKey: "plus-circle",
+                        title: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _onTapCreatePost();
+                        })),
+                    Visibility(visible: _canCreateMessage, child:
+                      RibbonButton(
+                        key: _canCreateMessage && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
+                        leftIconKey: "plus-circle",
+                        title: Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message"),//localize tbd
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _onTapCreatePost(type: PostType.direct_message);
+                        })),
+                    Visibility(visible: _canAddEvent, child:
+                      RibbonButton(
+                        key: _canAddEvent && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
+                        leftIconKey: "plus-circle",
+                        title: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create New Event"),
+                        onTap: (){
+                          Navigator.pop(context);
+                          _onTapCreateEvent();
+                        })),
+                    Visibility(visible: _canAddEvent, child:
+                      RibbonButton(
+                        key: _canAddEvent && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
+                        leftIconKey: "plus-circle",
+                        title: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add Existing Event"),
+                        onTap: (){
+                          Navigator.pop(context);
+                          _onTapBrowseEvents();
+                        })),
+                    Visibility(visible: _canCreatePoll, child:
+                      RibbonButton(
+                        key: _canCreatePoll && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
+                        leftIconKey: "plus-circle",
+                        title: Localization().getStringEx("panel.group_detail.button.group.create_poll.title", "Create a Poll"), //tbd localize
+                        onTap: (){
+                          Navigator.pop(context);
+                          _onTapCreatePoll();
+                        })),
+                ])));
         });
   }
 

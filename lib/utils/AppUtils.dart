@@ -208,11 +208,11 @@ class AppSemantics {
           sendSemanticsEvent(
             TapSemanticEvent());
 
-    static void triggerAccessibilityFocus(GlobalKey? groupKey, {Duration? delay}) => Future.delayed(delay ?? Duration.zero, ()=>
+    static void triggerAccessibilityFocus(GlobalKey? groupKey, {Duration? delay}) => Future.delayed(delay ?? Duration.zero, () =>
       groupKey?.currentContext?.mounted == true && isAccessibilityFocused(groupKey) == false ?
         groupKey?.currentContext?.findRenderObject()?.
-          sendSemanticsEvent(
-            FocusSemanticEvent()) :
+          sendSemanticsEvent(FocusSemanticEvent()
+        ) :
         null);
 
     static bool isAccessibilityFocused(GlobalKey? key) =>

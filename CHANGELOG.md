@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Make Group cards a fixed height [#5719](https://github.com/rokwire/illinois-app/issues/5719).
+- Fixed accessibility focus issues [#5741](https://github.com/rokwire/illinois-app/issues/5741).
+- Fixed accessibility empty 'scrim' focus node for SettingsHomePanel and GroupsDetailPanel [#5746](https://github.com/rokwire/illinois-app/issues/5746).
 
 ## [8.0.6] - 2026-02-24
 ### Added
