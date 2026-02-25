@@ -398,11 +398,14 @@ class _QrCodePanelState extends State<QrCodePanel> {
           Navigator.of(context).pop();
         } else */
         if (result.status == ShareResultStatus.unavailable) {
-          message = Localization().getStringEx('panel.qr_code.alert.share.unable.msg', 'Unable to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareQrCodeTarget);
+          message = Localization().getStringEx('panel.qr_code.alert.share.unable.msg', 'Unable to share $_shareTargetMacro.')
+            .replaceAll(_shareTargetMacro, _shareQrCodeTarget);
         }
       }
       catch (e) {
-        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareQrCodeTarget);
+        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.\n\nReason: $_shareReasonMacro')
+          .replaceAll(_shareTargetMacro, _shareQrCodeTarget)
+          .replaceAll(_shareReasonMacro, e.toString());
       }
     }
     else {
@@ -410,11 +413,12 @@ class _QrCodePanelState extends State<QrCodePanel> {
     }
 
     if (mounted && (message != null)) {
-      AppAlert.showTextMessage(context, message);
+      AppAlert.showTextMessage(context, message, textAlign: TextAlign.start);
     }
   }
 
   static const String _shareTargetMacro = '{{target}}';
+  static const String _shareReasonMacro = '{{reason}}';
   String get _shareQrCodeTarget => Localization().getStringEx('panel.qr_code.alert.share.target.qr', 'QR code');
   String get _shareVCardTarget => Localization().getStringEx('panel.qr_code.alert.share.target.vcard', 'Digital Business Card');
 
@@ -434,11 +438,14 @@ class _QrCodePanelState extends State<QrCodePanel> {
           Navigator.of(context).pop();
         }
         else if (result.status == ShareResultStatus.unavailable) {
-          message = Localization().getStringEx('panel.qr_code.alert.share.unable.msg', 'Unable to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareVCardTarget);
+          message = Localization().getStringEx('panel.qr_code.alert.share.unable.msg', 'Unable to share $_shareTargetMacro.')
+            .replaceAll(_shareTargetMacro, _shareVCardTarget);
         }
       }
       catch (e) {
-        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareVCardTarget);
+        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.\n\nReason: $_shareReasonMacro')
+          .replaceAll(_shareTargetMacro, _shareQrCodeTarget)
+          .replaceAll(_shareReasonMacro, e.toString());
       }
     }
     else {
@@ -446,7 +453,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
     }
 
     if (mounted && (message != null)) {
-      AppAlert.showTextMessage(context, message);
+      AppAlert.showTextMessage(context, message, textAlign: TextAlign.start);
     }
   }
 

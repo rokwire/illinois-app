@@ -46,6 +46,7 @@ import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/gbv/GBVPathwaysPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:illinois/ui/wellness/WellnessLinksPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
@@ -676,6 +677,7 @@ class _BrowseEntry extends StatelessWidget {
       case "wellness.wellness_todo":            _onTapWellnessToDo(context); break;
       case "wellness.my_appointments":          _onTapWellnessAppointments(context); break;
       case "wellness.wellness_tips":            _onTapWellnessTips(context); break;
+      case "wellness.wellness_links":           _onTapWellnessLinks(context); break;
       case "wellness.wellness_health_screener": _onTapWellnessHealthScreener(context); break;
       case "wellness.wellness_success_team":    _onTapWellnessSuccessTeam(context); break;
     }
@@ -953,6 +955,11 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapWellnessTips(BuildContext context) {
     Analytics().logSelect(target: "Wellness Daily Tips");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.dailyTips,)));
+  }
+
+  static void _onTapWellnessLinks(BuildContext context) {
+    Analytics().logSelect(target: "24/7 Hotlines & Links");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessLinksPanel()));
   }
 
   static void _onTapWellnessHealthScreener(BuildContext context) {

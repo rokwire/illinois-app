@@ -800,6 +800,7 @@
     "panel.create_event.dropdown_button.title.regular":  {"font_family": "regular", "size": 16.0, "color": "mediumGray"},
 
     "panel.event.attendance.detail.description.italic":  {"font_family": "regular_italic", "size": 14.0, "color": "textSurface"},
+    "panel.event.attendance.detail.description.italic.underline":  {"extends": "panel.event.attendance.detail.description.italic", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "textSurface"},
     "panel.event.survey.responses.hyperlink.underlined":  {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorPrimary"},
 
     "panel.laundry_room_detail.map_button.title.regular.underline":  {"extends": "widget.button.title.medium.underline", "decoration_thickness" : 1.17},
@@ -1101,7 +1102,7 @@
 
     "profile-placeholder": {"src": "images/missing-profile-photo-placeholder.png", "type": "flutter.asset", "size": 127, "todo": "bad size"},
     "news-placeholder": {"src": "images/daily-illini-placeholder.jpg", "type": "flutter.asset", "todo": "bad size"},
-    "laundry-placeholder": {"src": "images/icon-laundry-machine-placeholder.jpg", "type": "flutter.asset", "todo": "bad size"},
+    "laundry-placeholder": {"src": "images/icon-laundry-machine-placeholder.png", "type": "flutter.asset", "todo": "bad size"},
     "explore-illustration": {"src": "images/explore_illustration.png", "type": "flutter.asset", "todo": "size"},
     "lock-illustration": {"src": "images/lock_illustration.png", "type": "flutter.asset", "todo": "size"},
     "improve-illustration": {"src": "images/improve_illustration.png", "type": "flutter.asset", "todo": "size"},
