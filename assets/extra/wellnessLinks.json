@@ -1,0 +1,457 @@
+{
+  "directoryCategories" : [
+    "24/7 CRISIS RESOURCES",
+    "EDUCATION & PREVENTION",
+    "GENERAL RESOURCES",
+    "MENTAL HEALTH RESOURCES (ON CAMPUS)",
+    "MENTAL HEALTH RESOURCES (REMOTE)",
+		"PHYSICAL HEALTH RESOURCES",
+		"SEXUAL HEALTH RESOURCES"
+  ],
+  "screens": {},
+  "resources": [
+    {
+			"id": "emergencies_911",
+			"type": "external_link",
+			"categories": ["24/7 CRISIS RESOURCES"],
+			"title": "Emergencies (911)",
+			"directoryContent": [{
+				"type": "text",
+		    "content": "Report emergencies or non-emergency criminal violations."
+			},{
+				"type": "phone",
+				"content": "911"
+			}]
+		},{
+			"id": "courage_connection_hotline",
+			"type": "external_link",
+			"categories": ["24/7 CRISIS RESOURCES"],
+			"title": "Courage Connection Hotline (local)",
+			"directoryContent": [{
+				"type": "text",
+		    "content": "For domestic violence concerns."
+			},{
+				"type": "phone",
+				"content": "217-384-4390"
+			}]
+		},{
+			"id": "crisis_line_for_university_employees",
+			"type": "external_link",
+			"categories": ["24/7 CRISIS RESOURCES"],
+			"title": "Crisis Line for University Employees",
+			"directoryContent": [{
+				"type": "phone",
+				"content": "217-244-7739"
+			}]
+		},{
+			"id": "national_suicide_prevention_hotline",
+			"type": "external_link",
+			"categories": ["24/7 CRISIS RESOURCES"],
+			"title": "National Suicide Prevention Hotline",
+			"directoryContent": [{
+				"type": "phone",
+				"content": "988"
+			}]
+		},{
+			"id": "rosecrance_hotline",
+			"type": "external_link",
+			"categories": ["24/7 CRISIS RESOURCES"],
+			"title": "Rosecrance Hotline (local)",
+			"directoryContent": [{
+				"type": "text",
+		    "content": "Rosecrance offers a crisis hotline and prevention, intervention, and behavioral health services."
+			},{
+				"type": "phone",
+				"content": "815-720-4953"
+			},{
+				"type": "phone",
+				"content": "217-352-4217",
+				"contentPrefix": "TTY: "
+			}]
+		},{
+			"id": "trevor_lifeline",
+			"type": "external_link",
+			"categories": ["24/7 CRISIS RESOURCES"],
+			"title": "Trevor Lifeline",
+			"directoryContent": [{
+				"type": "text",
+		    "content": "Suicide prevention for LGBTQ+ youth."
+			},{
+				"type": "phone",
+				"content": "866-4-U-TREVOR"
+			}]
+		},{
+			"id": "university_emergency_dean",
+			"type": "external_link",
+			"categories": ["24/7 CRISIS RESOURCES"],
+			"title": "University Emergency Dean (after hours)",
+			"directoryContent": [{
+				"type": "text",
+		    "content": "Provides referrals, information, and support to students after hours but is not a substitute for trained emergency personnel."
+			},{
+				"type": "external_link",
+				"content": "https://odos.illinois.edu/community-of-care/emergency-dean"
+			}]
+		},{
+			"id": "effective_sleep_practices",
+			"type": "external_link",
+			"categories": ["EDUCATION & PREVENTION"],
+			"title": "Effective Sleep Practices",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://counselingcenter.illinois.edu/brochure-effective-sleep-practices"
+			}]
+		},{
+			"id": "the_healthy_illini_podcast",
+			"type": "external_link",
+			"categories": ["EDUCATION & PREVENTION"],
+			"title": "The Healthy Illini Podcast",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://creators.spotify.com/pod/profile/mckinley-health-center"
+			}]
+		},{
+			"id": "mental_health_screening",
+			"type": "external_link",
+			"categories": ["EDUCATION & PREVENTION"],
+			"title": "Mental Health Screening",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://app.aiberry.io/mindcare/university_of_illinois_counseling_center"
+			}]
+		},{
+			"id": "self_care_and_self_help",
+			"type": "external_link",
+			"categories": ["EDUCATION & PREVENTION"],
+			"title": "Self-Care & Self-Help",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://wellness.illinois.edu/get-help/self-help"
+			}]
+		},{
+			"id": "self_care_stations",
+			"type": "external_link",
+			"categories": ["EDUCATION & PREVENTION"],
+			"title": "Self-Care Stations",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://www.mckinley.illinois.edu/health-wellness/self-care-stations"
+			}]
+		},{
+			"id": "suicide_prevention_praining",
+			"type": "external_link",
+			"categories": ["EDUCATION & PREVENTION"],
+			"title": "Suicide Prevention Training",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://www.counselingcenter.illinois.edu/sos-higher-ed"
+			}]
+		},{
+			"id": "video_library_campus_well",
+			"type": "external_link",
+			"categories": ["EDUCATION & PREVENTION"],
+			"title": "Video Library (CampusWell)",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://campusrecplus-wellbeing.com"
+			}]
+		},{
+			"id": "wellness_events_and_workshops",
+			"type": "external_link",
+			"categories": ["EDUCATION & PREVENTION"],
+			"title": "Wellness Events & Workshops",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://wellness.illinois.edu/wellness-resources/events-workshops"
+			}]
+		},{
+			"id": "alcohol_and_drug_resources",
+			"type": "external_link",
+			"categories": ["GENERAL RESOURCES"],
+			"title": "Alcohol and Drug Resources",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://www.counselingcenter.illinois.edu/counseling/specialized-assessments"
+			}]
+		},{
+			"id": "basic_needs",
+			"type": "external_link",
+			"categories": ["GENERAL RESOURCES"],
+			"title": "Basic Needs",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://odos.illinois.edu/community-of-care/basic-needs"
+			}]
+		},{
+			"id": "connie_frank_care_center",
+			"type": "external_link",
+			"categories": ["GENERAL RESOURCES"],
+			"title": "Connie Frank CARE Center",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://odos.illinois.edu/community-of-care/CAREcenter"
+			}]
+		},{
+			"id": "financial_assistance",
+			"type": "external_link",
+			"categories": ["GENERAL RESOURCES"],
+			"title": "Financial Assistance",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://wellness.illinois.edu/basic-needs-and-financial-help"
+			}]
+		},{
+			"id": "food_resources",
+			"type": "external_link",
+			"categories": ["GENERAL RESOURCES"],
+			"title": "Food Resources",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://odos.illinois.edu/resources/students/food-resources"
+			}]
+		},{
+			"id": "lgbtqplus_health_and_wellness",
+			"type": "external_link",
+			"categories": ["GENERAL RESOURCES"],
+			"title": "LGBTQ+ Health & Wellness",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://www.mckinley.illinois.edu/especially/lgbtq"
+			}]
+		},{
+			"id": "nature_and_culture",
+			"type": "external_link",
+			"categories": ["GENERAL RESOURCES"],
+			"title": "Nature & Culture",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://wellness.illinois.edu/wellness-resources/nature-culture"
+			}]
+		},{
+			"id": "non_emergency_potential_threat_report",
+			"type": "external_link",
+			"categories": ["GENERAL RESOURCES"],
+			"title": "Non-Emergency Potential Threat Report",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://financeadmin.illinois.edu/threat-assessment/"
+			}]
+		},{
+			"id": "non_emergency_referral_form",
+			"type": "external_link",
+			"categories": ["GENERAL RESOURCES"],
+			"title": "Non-Emergency Referral Form",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://cm.maxient.com/reportingform.php?UnivofIllinois=&layout_id=8"
+			}]
+		},{
+			"id": "stress_management_program",
+			"type": "external_link",
+			"categories": ["GENERAL RESOURCES"],
+			"title": "Stress Management Program",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://www.mckinley.illinois.edu/stress-management"
+			}]
+		},{
+			"id": "student_health_insurance",
+			"type": "external_link",
+			"categories": ["GENERAL RESOURCES"],
+			"title": "Student Health Insurance",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://si.illinois.edu"
+			}]
+		},{
+			"id": "veterans_and_military_connected_services",
+			"type": "external_link",
+			"categories": ["GENERAL RESOURCES"],
+			"title": "Veterans’ & Military-Connected Services",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://chezveteranscenter.ahs.illinois.edu"
+			}]
+		},{
+			"id": "chez_veterans_center",
+			"type": "external_link",
+			"categories": ["MENTAL HEALTH RESOURCES (ON CAMPUS)"],
+			"title": "Chez Veterans Center",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://chezveteranscenter.ahs.illinois.edu"
+			}]
+		},{
+			"id": "counseling_center",
+			"type": "external_link",
+			"categories": ["MENTAL HEALTH RESOURCES (ON CAMPUS)"],
+			"title": "Counseling Center",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://counselingcenter.illinois.edu"
+			}]
+		},{
+			"id": "disability_resource_and_educational_services",
+			"type": "external_link",
+			"categories": ["MENTAL HEALTH RESOURCES (ON CAMPUS)"],
+			"title": "Disability Resource and Educational Services (DRES)",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://dres.illinois.edu/support-services/mental-health-services/"
+			}]
+		},{
+			"id": "faculty_staff_assistance_and_well_being_services",
+			"type": "external_link",
+			"categories": ["MENTAL HEALTH RESOURCES (ON CAMPUS)"],
+			"title": "Faculty/Staff Assistance and Well-Being Services",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://humanresources.illinois.edu/about/culture-learning-engagement/faculty-staff-assistance-and-well-being-services/"
+			}]
+		},{
+			"id": "mckinleys_mental_health_clinic",
+			"type": "external_link",
+			"categories": ["MENTAL HEALTH RESOURCES (ON CAMPUS)"],
+			"title": "McKinley’s Mental Health Clinic",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://www.mckinley.illinois.edu/mental-health"
+			}]
+		},{
+			"id": "psychological_services_center",
+			"type": "external_link",
+			"categories": ["MENTAL HEALTH RESOURCES (ON CAMPUS)"],
+			"title": "Psychological Services Center",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://psc.illinois.edu/about-psc"
+			}]
+		},{
+			"id": "healthiestYou_telehealth",
+			"type": "external_link",
+			"categories": ["MENTAL HEALTH RESOURCES (REMOTE)"],
+			"title": "HealthiestYou Telehealth",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://si.illinois.edu/healthiestyou"
+			}]
+		},{
+			"id": "talkcampus",
+			"type": "external_link",
+			"categories": ["MENTAL HEALTH RESOURCES (REMOTE)"],
+			"title": "TalkCampus",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://www.talkcampus.com/sign-up"
+			}]
+		},{
+			"id": "telus_health_student_support",
+			"type": "external_link",
+			"categories": ["MENTAL HEALTH RESOURCES (REMOTE)"],
+			"title": "Telus Health Student Support",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://studentsupport.telushealth.com/ca/home"
+			}]
+		},{
+			"id": "welltrack_boost_app",
+			"type": "external_link",
+			"categories": ["MENTAL HEALTH RESOURCES (REMOTE)"],
+			"title": "WellTrack Boost App",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://counselingcenter.illinois.edu/welltrack"
+			}]
+		},{
+			"id": "fitness_and_recreation",
+			"type": "external_link",
+			"categories": ["PHYSICAL HEALTH RESOURCES"],
+			"title": "Fitness and Recreation",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://wellness.illinois.edu/physical-activities"
+			}]
+		},{
+			"id": "flu_shots",
+			"type": "external_link",
+			"categories": ["PHYSICAL HEALTH RESOURCES"],
+			"title": "Flu Shots",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://mckinley.illinois.edu/flu-shot-information"
+			}]
+		},{
+			"id": "immunization_requirements",
+			"type": "external_link",
+			"categories": ["PHYSICAL HEALTH RESOURCES"],
+			"title": "Immunization Requirements",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://www.mckinley.illinois.edu/medical-services/immunizations-clinic"
+			}]
+		},{
+			"id": "lgbtqplus_health_and_wellness",
+			"type": "external_link",
+			"categories": ["PHYSICAL HEALTH RESOURCES"],
+			"title": "LGBTQ+ Health & Wellness",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://www.mckinley.illinois.edu/especially/lgbtq"
+			}]
+		},{
+			"id": "mckinley_health_center",
+			"type": "external_link",
+			"categories": ["PHYSICAL HEALTH RESOURCES"],
+			"title": "McKinley Health Center",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://www.mckinley.illinois.edu"
+			}]
+		},{
+			"id": "mckinley_pharmacy",
+			"type": "external_link",
+			"categories": ["PHYSICAL HEALTH RESOURCES"],
+			"title": "McKinley Pharmacy",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://www.mckinley.illinois.edu/medical-services/pharmacy"
+			}]
+		},{
+			"id": "mckinley_patient_health_portal",
+			"type": "external_link",
+			"categories": ["PHYSICAL HEALTH RESOURCES"],
+			"title": "MyMcKinley Patient Health Portal",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://mymckinley.illinois.edu"
+			}]
+		},{
+			"id": "mckinley_womens_health_clinic",
+			"type": "external_link",
+			"categories": ["PHYSICAL HEALTH RESOURCES"],
+			"title": "Women’s Health Clinic",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://mckinley.illinois.edu/womens-health"
+			}]
+		},{
+			"id": "sexual_health_program",
+			"type": "external_link",
+			"categories": ["SEXUAL HEALTH RESOURCES"],
+			"title": "Sexual Health Program",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://www.mckinley.illinois.edu/sexual-health"
+			}]
+		},{
+			"id": "sexual_misconduct",
+			"type": "external_link",
+			"categories": ["SEXUAL HEALTH RESOURCES"],
+			"title": "Sexual Misconduct",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://wecare.illinois.edu"
+			}]
+		}
+  ]
+}

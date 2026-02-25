@@ -149,11 +149,13 @@ class GBVResourceDetail {
   final GBVResourceDetailType type;
   final String? title;
   final String? content;
+  final String? contentPrefix;
 
   GBVResourceDetail({
     required this.type,
     this.title,
-    this.content
+    this.content,
+    this.contentPrefix,
   });
 
   static List<GBVResourceDetail> listFromJson(List<dynamic>? jsonList) {
@@ -182,7 +184,8 @@ class GBVResourceDetail {
     return (json != null) ? GBVResourceDetail(
       type: _typeFromString(JsonUtils.stringValue(json['type']) ?? "text"),
       title: JsonUtils.stringValue(json['title']),
-      content: JsonUtils.stringValue(json['content'])
+      content: JsonUtils.stringValue(json['content']),
+      contentPrefix: JsonUtils.stringValue(json['contentPrefix'])
     ) : null;
   }
 }
