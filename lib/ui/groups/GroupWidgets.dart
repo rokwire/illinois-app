@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:device_calendar/device_calendar.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -743,7 +744,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
         Container(decoration: _cardDecoration, child: ClipRRect(borderRadius: _cardBorderRadius, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             _imageHeadingWidget,
-            _isHomeDisplayType ? Container(child: AspectRatio(aspectRatio: _contentAspectRatio, child: _contentWidget,)) : _contentWidget,
+            _isHomeDisplayType ? Container(child: Container(height: _imageHeadingWebSize.height, child: _contentWidget,)) : _contentWidget,
           ]),
         ))
       ))
@@ -940,16 +941,20 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
 
   Widget get _imageHeadingWidget => Visibility(
       visible: _imageHeadingVisible,
-      child: Container(
-        child:
-          AspectRatio(aspectRatio: _contentAspectRatio,
-          child: AccessibleImageHolder(
+      child: Container(child: AccessibleImageHolder(
             child: _hasImage ?
-              Image.network(_imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true) :
-              Styles().images.getImage('group-detail-default', fit: BoxFit.cover, excludeFromSemantics: true),
+              WebNetworkImage(imageUrl: _imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true, height: _imageHeadingWebSize.height, width: _imageHeadingWebSize.width,) :
+              Styles().images.getImage('group-detail-default', fit: BoxFit.cover, excludeFromSemantics: true, height: _imageHeadingWebSize.height, width: _imageHeadingWebSize.width,),
           ),
-        ),
       ));
+
+  Size get _imageHeadingWebSize {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double preferredWidth = screenWidth / 4.0;
+    double imageWidth = max(preferredWidth, 400);
+    double imageHeight = (imageWidth / 2.5);
+    return Size(imageWidth, imageHeight);
+  }
 
   Widget _buildUpdateTime() {
     return Visibility(visible: StringUtils.isNotEmpty(_timeUpdatedText), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
