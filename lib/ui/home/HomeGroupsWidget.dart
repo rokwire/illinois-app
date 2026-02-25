@@ -217,7 +217,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
         GlobalKey groupKey = (_groupCardKeys[group.id!] ??= GlobalKey());
         pages.add(Padding(padding: HomeCard.defaultPageMargin, child:
           // Semantics(/*excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ container: true,  child:
-            GroupCard(group, key: groupKey, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+            GroupCard(group, key: groupKey, displayType: GroupCardDisplayType.homeGroups,),
           // )
         ));
       }
@@ -241,7 +241,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
     else if (visibleCount == 1) {
       contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
         Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ container: true, child:
-          GroupCard(visibleGroups!.first, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+          GroupCard(visibleGroups!.first, displayType: GroupCardDisplayType.homeGroups,),
       ));
     }
 
