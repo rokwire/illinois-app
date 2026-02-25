@@ -708,7 +708,6 @@ class GroupCard extends StatefulWidget with AnalyticsInfo {
 }
 
 class _GroupCardState extends State<GroupCard> with NotificationsListener {
-  static final double _contentAspectRatio = 2.5;
 
   GroupStats? _groupStats;
 
@@ -1073,6 +1072,12 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   bool get _hasImage => StringUtils.isNotEmpty(_imageUrl);
   bool get _imageHeadingVisible => _isHomeDisplayType || _hasImage;
   bool get _isHomeDisplayType => (widget.displayType == GroupCardDisplayType.homeGroups);
+
+  double get _contentAspectRatio {
+    double textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    double result = 2.5 / textScale;
+    return result;
+  }
 }
 
 //////////////////////////////////////
