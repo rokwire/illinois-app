@@ -196,6 +196,8 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
   ],);
   }
 
+  static const String _shareReasonMacro = '{{reason}}';
+
   Future<void> _onShareArticle() async {
     Analytics().logSelect(target: "Share Article");
     String? message, reason;
@@ -207,10 +209,9 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
         }
       }
       catch (e) {
-        final String reasonMacro = '{{reason}}';
         message = Localization().getStringEx('panel.athletics_news_article.message.share.failed.text', 'Failed to share article.');
-        reason = Localization().getStringEx('panel.athletics_news_article.message.share.reason.format', 'Reason: $reasonMacro').
-          replaceAll(reasonMacro, e.toString());
+        reason = Localization().getStringEx('panel.athletics_news_article.message.share.reason.format', 'Reason: $_shareReasonMacro').
+          replaceAll(_shareReasonMacro, e.toString());
       }
     }
     else {
@@ -235,7 +236,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
         padding: EdgeInsets.only(bottom: 10),
         child:
         HtmlWidget(
-            StringUtils.ensureNotEmpty(_article!.description),
+          StringUtils.ensureNotEmpty(_article!.description),
           textStyle:  Styles().textStyles.getTextStyle("widget.item.regular.thin"),
         )
       ));

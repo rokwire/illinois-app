@@ -22,6 +22,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/wellness/WellnessHealthScreenerWidgets.dart';
+import 'package:illinois/ui/wellness/WellnessLinksPanel.dart';
 import 'package:illinois/ui/wellness/WellnessMentalHealthContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessRecreationContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessSuccessTeamContentWidget.dart';
@@ -40,7 +41,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum WellnessContentType { dailyTips, rings, todo, appointments, healthScreener, resources, mentalHealth, successTeam, recreation}
+enum WellnessContentType { dailyTips, rings, todo, appointments, healthScreener, resources, mentalHealth, successTeam, recreation, links}
 
 class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'WellnessHomePanel';
@@ -177,6 +178,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   Widget _buildScrollableContentWidget({required Widget child}) {
     if (_selectedContentType == WellnessContentType.appointments || _selectedContentType == WellnessContentType.todo) {
       return Container(child: child);
+    } else if (_selectedContentType == WellnessContentType.links) {
+        return Container(padding: EdgeInsets.symmetric(horizontal: 16), child: child);
     } else {
       return SingleChildScrollView(controller: _contentScrollController, child: child);
     }
@@ -280,12 +283,14 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return WellnessHealthScreenerHomeWidget(_contentScrollController);
       case WellnessContentType.resources:
         return WellnessResourcesContentWidget();
-      case WellnessContentType.recreation:
-        return WellnessRecreationContentWidget();
       case WellnessContentType.mentalHealth:
         return WellnessMentalHealthContentWidget();
       case WellnessContentType.successTeam:
         return WellnessSuccessTeamContentWidget();
+      case WellnessContentType.recreation:
+        return WellnessRecreationContentWidget();
+      case WellnessContentType.links:
+        return WellnessLinksWidget();
       default:
         return Container();
     }
@@ -328,35 +333,38 @@ extension WellnessContentTypeImpl on WellnessContentType {
       case WellnessContentType.mentalHealth: return Localization().getStringEx('panel.wellness.section.mental_health.label', 'Mental Health Resources', language: language);
       case WellnessContentType.successTeam: return Localization().getStringEx('panel.wellness.section.success_team.label', 'My Primary Care Provider', language: language);
       case WellnessContentType.recreation: return Localization().getStringEx('panel.wellness.section.recreation.label', 'Campus Recreation', language: language);
+      case WellnessContentType.links: return Localization().getStringEx('panel.wellness.section.links.label', '24/7 Hotlines & Links', language: language);
     }
   }
 
   String get jsonString {
     switch (this) {
-      case WellnessContentType.dailyTips: return 'daily_tips';
-      case WellnessContentType.rings: return 'rings';
-      case WellnessContentType.todo: return 'todo_list';
-      case WellnessContentType.appointments: return 'appointments';
-      case WellnessContentType.healthScreener: return 'health_screener';
-      case WellnessContentType.resources: return 'resources';
-      case WellnessContentType.mentalHealth: return 'mental_health';
-      case WellnessContentType.successTeam: return 'success_team';
-      case WellnessContentType.recreation: return 'recreation';
+      case WellnessContentType.dailyTips:      return 'wellness_tips';
+      case WellnessContentType.rings:          return 'wellness_rings';
+      case WellnessContentType.todo:           return 'wellness_todo';
+      case WellnessContentType.healthScreener: return 'wellness_health_screener';
+      case WellnessContentType.resources:      return 'wellness_resources';
+      case WellnessContentType.mentalHealth:   return 'wellness_mental_health';
+      case WellnessContentType.successTeam:    return 'wellness_success_team';
+      case WellnessContentType.recreation:     return 'wellness_recreation';
+      case WellnessContentType.links:          return 'wellness_links';
+      case WellnessContentType.appointments:   return 'my_appointments';
     }
   }
 
   static WellnessContentType? fromJsonString(String? value) {
     switch (value) {
-      case 'daily_tips':      return WellnessContentType.dailyTips;
-      case 'rings':           return WellnessContentType.rings;
-      case 'todo_list':       return WellnessContentType.todo;
-      case 'appointments':    return WellnessContentType.appointments;
-      case 'health_screener': return WellnessContentType.healthScreener;
-      case 'resources':       return WellnessContentType.resources;
-      case 'mental_health':   return WellnessContentType.mentalHealth;
-      case 'success_team':    return WellnessContentType.successTeam;
-      case 'recreation':      return WellnessContentType.recreation;
-      default:                return null;
+      case 'wellness_tips':            return WellnessContentType.dailyTips;
+      case 'wellness_rings':           return WellnessContentType.rings;
+      case 'wellness_todo':            return WellnessContentType.todo;
+      case 'wellness_health_screener': return WellnessContentType.healthScreener;
+      case 'wellness_resources':       return WellnessContentType.resources;
+      case 'wellness_mental_health':   return WellnessContentType.mentalHealth;
+      case 'wellness_success_team':    return WellnessContentType.successTeam;
+      case 'wellness_recreation':      return WellnessContentType.recreation;
+      case 'wellness_links':           return WellnessContentType.links;
+      case 'my_appointments':          return WellnessContentType.appointments;
+      default:                         return null;
     }
   }
 
@@ -371,6 +379,7 @@ extension WellnessContentTypeImpl on WellnessContentType {
       case WellnessContentType.mentalHealth:   return AnalyticsFeature.WellnessMentalHealth;
       case WellnessContentType.successTeam:    return AnalyticsFeature.WellnessSuccessTeam;
       case WellnessContentType.recreation:     return AnalyticsFeature.WellnessRecreation;
+      case WellnessContentType.links:          return AnalyticsFeature.WellnessLinks;
     }
   }
 
