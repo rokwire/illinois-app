@@ -5,9 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [8.0.6] - 2026-02-24
 ### Added
 - Added auth2 analytics event for monitoring refresh token issues [#5405](https://github.com/rokwire/illinois-app/issues/5405).
 - Added missing period in Illinois Health Screener panel [#5778](https://github.com/rokwire/illinois-app/issues/5778).
+### Fixed
+- Fixed accessibility focus issues [#5741](https://github.com/rokwire/illinois-app/issues/5741).
+### Changed
+- Poll UI Clean Up [#5781](https://github.com/rokwire/illinois-app/issues/5781).
+- Updated buttons styles in filter bars of Groups and Events home panel to match those in Maps [#5783](https://github.com/rokwire/illinois-app/issues/5783).
+- Updated Campus Guide home panel title [#5785](https://github.com/rokwire/illinois-app/issues/5785).
+- Updated empty saved content description for student guide items [#5786](https://github.com/rokwire/illinois-app/issues/5786).
+- Make sure "Member Approval" title is visible [#5787](https://github.com/rokwire/illinois-app/issues/5787).
+- Career Exploration section updates [#5784](https://github.com/rokwire/illinois-app/issues/5784)
 
 ## [8.0.5] - 2026-02-21
 ### Fixed

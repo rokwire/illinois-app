@@ -67,6 +67,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   DiningFavorites                = AnalyticsFeature("Dining: Favorites", priority: -1);
 
   static const AnalyticsFeature   CareerExploration              = AnalyticsFeature("Career Exploration", key: "CareerExploration");
+  static const AnalyticsFeature   CareerExplorationPlaningLinks  = AnalyticsFeature("Career Exploration: Planning Links", key: "CareerPlanningLinks");
   static const AnalyticsFeature   CareerExplorationSkillsSelfEvaluation  = AnalyticsFeature("Career Exploration: Skills Self-Evaluation", key: {"SkillsSelfEvaluation"}, priority: 1);
   static const AnalyticsFeature   CareerExplorationEssentialSkillsCoach  = AnalyticsFeature("Career Exploration: Essential Skills Coach", key: {"EssentialSkillsCoach"}, priority: 1);
 
