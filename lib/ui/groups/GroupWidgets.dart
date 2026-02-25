@@ -708,6 +708,7 @@ class GroupCard extends StatefulWidget with AnalyticsInfo {
 }
 
 class _GroupCardState extends State<GroupCard> with NotificationsListener {
+  static final double _contentAspectRatio = 2.5;
 
   GroupStats? _groupStats;
 
@@ -740,18 +741,28 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
         Container(decoration: _cardDecoration, child: ClipRRect(borderRadius: _cardBorderRadius, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             _imageHeadingWidget,
-            Padding(padding: EdgeInsetsGeometry.only(left: 16, top: _imageHeadingVisible ? 8 : 16, right: 16, bottom: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _buildHeading(),
-              _buildCategories(),
-              _buildTitle(),
-              Visibility(visible: !_isHomeDisplayType, child: _buildProperties()),
-              _buildMembers(),
-              Container(height: 4),
-              _buildUpdateTime(),
-            ]),)
+            _isHomeDisplayType ? Container(child: AspectRatio(aspectRatio: _contentAspectRatio, child: _contentWidget,)) : _contentWidget,
           ]),
         ))
       )
+    );
+  }
+
+  Widget get _contentWidget {
+    return Padding(
+      padding: EdgeInsetsGeometry.only(left: 16, top: _imageHeadingVisible ? 8 : 16, right: 16, bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeading(),
+          _buildCategories(),
+          _buildTitle(),
+          Visibility(visible: !_isHomeDisplayType, child: _buildProperties()),
+          _buildMembers(),
+          Container(height: 4),
+          _buildUpdateTime(),
+        ],
+      ),
     );
   }
 
@@ -929,7 +940,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       visible: _imageHeadingVisible,
       child: Container(
         child:
-          AspectRatio(aspectRatio: 2.5,
+          AspectRatio(aspectRatio: _contentAspectRatio,
           child: AccessibleImageHolder(
             child: _hasImage ?
               Image.network(_imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true) :
