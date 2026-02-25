@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make sure "Member Approval" title is visible [#5787](https://github.com/rokwire/illinois-app/issues/5787).
 - Career Exploration section updates [#5784](https://github.com/rokwire/illinois-app/issues/5784).
 - Combined three wellness panels into one [#5728](https://github.com/rokwire/illinois-app/issues/5728).
+- Laundry: Update "Submit" button styling [#5794](https://github.com/rokwire/illinois-app/issues/5794).
 
 
 ## [7.3.51] - 2026-02-18
