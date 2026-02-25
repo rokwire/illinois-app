@@ -25,7 +25,7 @@
 			"browse.athletics": ["sport_events", "sport_news", "sport_teams", "my_game_day"],
 			"browse.laundry": ["laundry"],
 			"browse.campus_guide": ["campus_highlights", "campus_guide", "my_campus_guide"],
-			"browse.career_exploration": ["interest_explorer", "digital_card", "skills_self_evaluation", "essential_skills_coach"],
+			"browse.career_exploration": ["career_planing_links", "interest_explorer", "digital_card", "skills_self_evaluation", "essential_skills_coach", "job_board"],
 			"browse.dining": ["dining"],
 			"browse.directory": ["user_directory"],
 			"browse.events": ["events"],
