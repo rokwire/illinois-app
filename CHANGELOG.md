@@ -16,9 +16,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make sure research interest form is not accessible when participate in research is toggled off in Settings / My Participation in Research [#5743](https://github.com/rokwire/illinois-app/issues/5743).
 - Fixed accessibility for InboxMessageCard [#5740](https://github.com/rokwire/illinois-app/issues/5740).
 - Fixed accessibility focus issues [#5741](https://github.com/rokwire/illinois-app/issues/5741).
+- Fixed accessibility empty 'scrim' focus node for SettingsHomePanel and GroupsDetailPanel [#5746](https://github.com/rokwire/illinois-app/issues/5746).
 ### Changed
 - Control Academics > iDegrees New Student Checklist availability from app config [#5637](https://github.com/rokwire/illinois-app/issues/5637).
 - Exclude Grainger appointment provider for students that are not part of The Grainger College of Engineering [#5637](https://github.com/rokwire/illinois-app/issues/5637).
+- Poll UI Clean Up [#5781](https://github.com/rokwire/illinois-app/issues/5781).
+- Updated buttons styles in filter bars of Groups and Events home panel to match those in Maps [#5783](https://github.com/rokwire/illinois-app/issues/5783).
+- Updated Campus Guide home panel title [#5785](https://github.com/rokwire/illinois-app/issues/5785).
+- Updated empty saved content description for student guide items [#5786](https://github.com/rokwire/illinois-app/issues/5786).
+- Make sure "Member Approval" title is visible [#5787](https://github.com/rokwire/illinois-app/issues/5787).
+- Career Exploration section updates [#5784](https://github.com/rokwire/illinois-app/issues/5784)
+
 
 ## [7.3.51] - 2026-02-18
 ### Added

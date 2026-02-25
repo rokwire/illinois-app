@@ -71,7 +71,7 @@ class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
       return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        isDismissible: true,
+        isDismissible: AppSemantics.isAccessibilityEnabled(context) ? false : true, //Remove 'scrim' node
         useRootNavigator: true,
         routeSettings: RouteSettings(name: routeName),
         clipBehavior: Clip.antiAlias,

@@ -169,6 +169,7 @@ flutter:
   assets:
   - images/
 # - assets/ # native apps - do not include all files explicitly
+    # assets/extra/
   - media/
   - app/images/
   - app/assets/
