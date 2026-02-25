@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Career Exploration section updates [#5784](https://github.com/rokwire/illinois-app/issues/5784).
 - Combined three wellness panels into one [#5728](https://github.com/rokwire/illinois-app/issues/5728).
 - Laundry: Update "Submit" button styling [#5794](https://github.com/rokwire/illinois-app/issues/5794).
-
+- Display exception description when Share fails [#5795](https://github.com/rokwire/illinois-app/issues/5795).
 
 ## [7.3.51] - 2026-02-18
 ### Added
