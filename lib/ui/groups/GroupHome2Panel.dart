@@ -263,7 +263,6 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 16 : 0), child:
         GroupCard(group,
           key: _cardKeys[group.id],
-          margin: EdgeInsets.zero,
           displayType: GroupCardDisplayType.allGroups,
         ),
       ),);

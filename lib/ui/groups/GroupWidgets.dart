@@ -687,12 +687,10 @@ enum GroupCardDisplayType { myGroup, allGroups, homeGroups }
 class GroupCard extends StatefulWidget with AnalyticsInfo {
   final Group group;
   final GroupCardDisplayType displayType;
-  final EdgeInsetsGeometry margin;
   final Function? onImageTap;
 
   GroupCard(this.group, { super.key,
     this.displayType = GroupCardDisplayType.allGroups,
-    this.margin = const EdgeInsets.symmetric(horizontal: 16),
     this.onImageTap,
   });
 
@@ -710,8 +708,7 @@ class GroupCard extends StatefulWidget with AnalyticsInfo {
 }
 
 class _GroupCardState extends State<GroupCard> with NotificationsListener {
-  static const double _smallImageSize = 64;
-  static const double _maxImageWidth = 150;
+  static final double _contentAspectRatio = 2.5;
 
   GroupStats? _groupStats;
 
@@ -741,38 +738,39 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   Widget build(BuildContext context) {
     return Semantics(container: true, child:
       GestureDetector(onTap: () => _onTapCard(context), child:
-        Padding(padding: widget.margin, child:
-          Container(padding: EdgeInsets.all(16), decoration: _cardDecoration, child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              _buildHeading(),
-              Container(height: 6),
-              Row(children:[
-                Expanded(child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
-                    _buildCategories(),
-                    _buildTitle(),
-                    _buildProperties(),
-                  ]),
-                ),
-                _buildImage()
-              ]),
-              Container(height: 4),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Expanded(child:
-                  _buildUpdateTime(),
-                ),
-                _buildMembersCount()
-              ])
-              // : Container()
-            ]),
-          )
-        )
+        Container(decoration: _cardDecoration, child: ClipRRect(borderRadius: _cardBorderRadius, child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            _imageHeadingWidget,
+            _isHomeDisplayType ? Container(child: AspectRatio(aspectRatio: _contentAspectRatio, child: _contentWidget,)) : _contentWidget,
+          ]),
+        ))
       )
     );
   }
 
-  BoxDecoration get _cardDecoration => (widget.displayType == GroupCardDisplayType.homeGroups) ?
+  Widget get _contentWidget {
+    return Padding(
+      padding: EdgeInsetsGeometry.only(left: 16, top: _imageHeadingVisible ? 8 : 16, right: 16, bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeading(),
+          _buildCategories(),
+          _buildTitle(),
+          Visibility(visible: !_isHomeDisplayType, child: _buildProperties()),
+          _buildMembers(),
+          Container(height: 4),
+          _buildUpdateTime(),
+        ],
+      ),
+    );
+  }
+
+  BoxDecoration get _cardDecoration => _isHomeDisplayType ?
       HomeCard.boxDecoration : _defaultCardDecoration;
+
+  BorderRadius get _cardBorderRadius => _isHomeDisplayType ?
+    HomeCard.borderRadius : defaultCardBorderRadius;
 
   static BoxDecoration get _defaultCardDecoration => BoxDecoration(
     color: HomeCard.backColor,
@@ -780,7 +778,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     boxShadow: [_defaultCardShadow]
   );
 
-  static Radius get defaultCardRadius => Radius.circular(4);
+  static Radius get defaultCardRadius => Radius.circular(12);
   static BorderRadius get defaultCardBorderRadius => BorderRadius.all(defaultCardRadius);
 
   static BoxShadow get _defaultCardShadow =>
@@ -832,7 +830,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       ));
     }
 
-    return rowContent.isNotEmpty ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: rowContent,) : Container();
+    return rowContent.isNotEmpty ? Padding(padding: EdgeInsetsGeometry.only(bottom: 6), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: rowContent,)) : Container();
   }
 
   /*Widget _buildPrivacyStatysBadge(){
@@ -872,7 +870,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     return Row(children: [
       Expanded(child:
         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-          Text(widget.group.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups ? 2 : 10, style: _titleTextStyle)
+          Text(widget.group.title ?? "", overflow: TextOverflow.ellipsis, maxLines: _isHomeDisplayType ? 1 : 10, style: _titleTextStyle)
         )
       )
     ]);
@@ -891,8 +889,8 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       Expanded(child:
         Text(displayList?.join(', ') ?? '',
             overflow: TextOverflow.ellipsis,
-            maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
-            style: Styles().textStyles.getTextStyle("widget.card.title.small.fat")
+            maxLines: _isHomeDisplayType ? 1 : 10,
+            style: Styles().textStyles.getTextStyle("common.title.secondary")
         )
       )
     ]) : Container();
@@ -913,10 +911,10 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       }
     }
 
-    int pendigCount = (widget.group.currentUserIsAdmin == true) ? (_groupStats?.pendingCount ?? 0) : 0;
-    if (pendigCount > 0) {
+    int pendingCount = (widget.group.currentUserIsAdmin == true) ? (_groupStats?.pendingCount ?? 0) : 0;
+    if (pendingCount > 0) {
       String pendingTitle = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), ['']);
-      propertiesList.add(_buildProperty(pendingTitle, pendigCount.toString()));
+      propertiesList.add(_buildProperty(pendingTitle, pendingCount.toString()));
     }
 
     return propertiesList.isNotEmpty ?
@@ -938,43 +936,29 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     ],);
   }
 
-  Widget _buildImage() => StringUtils.isEmpty(widget.group.imageURL) ?
-      Container() :
-      _imageWidget;
+  Widget get _imageHeadingWidget => Visibility(
+      visible: _imageHeadingVisible,
+      child: Container(
+        child:
+          AspectRatio(aspectRatio: _contentAspectRatio,
+          child: AccessibleImageHolder(
+            child: _hasImage ?
+              Image.network(_imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true) :
+              Styles().images.getImage('group-detail-default', fit: BoxFit.cover, excludeFromSemantics: true),
+          ),
+        ),
+      ));
 
-  Widget get _imageWidget => widget.onImageTap != null ?
-      GestureDetector(
-        onTap: ()  => widget.onImageTap?.call(), child:
-          AccessibleImageHolder(imageUrl: widget.group.imageURL, child:
-          _rawImageWidget)) :
-      AccessibleImageHolder(child:
-        ModalImageHolder(imageUrl: widget.group.imageURL, child:
-          _rawImageWidget));
-
-  Widget get _rawImageWidget => widget.group.imageURL != null ?
-      Container(
-          padding: EdgeInsets.only(left: 8),
-          child: Container(
-            constraints: BoxConstraints(maxWidth: _maxImageWidth),
-            // width: _smallImageSize,
-            height: _smallImageSize,
-            child: Image.network(widget.group.imageURL ?? "", excludeFromSemantics: true, fit: BoxFit.fill,),),) :
-            Container();
-
-
-    Widget _buildUpdateTime() {
-    return Container(
-        child: Text(
-          _timeUpdatedText,
-          maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
-          overflow: TextOverflow.ellipsis,
-          style: _detailTextStyle
-    ));
+  Widget _buildUpdateTime() {
+    return Visibility(visible: StringUtils.isNotEmpty(_timeUpdatedText), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Padding(padding: EdgeInsetsGeometry.only(right: 6), child: Styles().images.getImage('rotate-right', excludeFromSemantics: true),),
+      Text(_timeUpdatedText, maxLines: _isHomeDisplayType ? 1 : 10, overflow: TextOverflow.ellipsis, style: _detailTextStyle)
+    ],));
   }
 
   bool get _isResearchProject => widget.group.researchProject == true;
 
-  Widget _buildMembersCount() {
+  Widget _buildMembers() {
     String membersLabel;
     int count = _groupStats?.activeMembersCount ?? 0;
     if (!_isResearchProject) {
@@ -1003,16 +987,14 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       membersLabel = "";
     }
     return Visibility(visible: StringUtils.isNotEmpty(membersLabel), child:
-      Text(membersLabel, style: _detailTextStyle),
+      Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Padding(padding: EdgeInsetsGeometry.only(right: 6), child: Styles().images.getImage('person', excludeFromSemantics: true),),
+        Text(membersLabel, style: _detailTextStyle)
+      ]),
     );
   }
 
-  TextStyle? get _detailTextStyle {
-    switch (widget.displayType) {
-      case GroupCardDisplayType.homeGroups: return Styles().textStyles.getTextStyle('widget.card.detail.small.semi_fat');
-      default: return Styles().textStyles.getTextStyle('widget.card.detail.small.regular');
-    }
-  }
+  TextStyle? get _detailTextStyle => Styles().textStyles.getTextStyle('common.body');
 
    void _loadGroupStats() {
     Groups().loadGroupStats(widget.group.id).then((stats) {
@@ -1086,9 +1068,11 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     Navigator.of(context).pop();
   }
 
-  String get _timeUpdatedText {
-    return widget.group.displayUpdateTime ?? '';
-  }
+  String get _timeUpdatedText => widget.group.displayUpdateTime ?? '';
+  String? get _imageUrl => widget.group.imageURL;
+  bool get _hasImage => StringUtils.isNotEmpty(_imageUrl);
+  bool get _imageHeadingVisible => _isHomeDisplayType || _hasImage;
+  bool get _isHomeDisplayType => (widget.displayType == GroupCardDisplayType.homeGroups);
 }
 
 //////////////////////////////////////
