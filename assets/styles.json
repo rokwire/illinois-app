@@ -1102,7 +1102,7 @@
 
     "profile-placeholder": {"src": "images/missing-profile-photo-placeholder.png", "type": "flutter.asset", "size": 127, "todo": "bad size"},
     "news-placeholder": {"src": "images/daily-illini-placeholder.jpg", "type": "flutter.asset", "todo": "bad size"},
-    "laundry-placeholder": {"src": "images/icon-laundry-machine-placeholder.jpg", "type": "flutter.asset", "todo": "bad size"},
+    "laundry-placeholder": {"src": "images/icon-laundry-machine-placeholder.png", "type": "flutter.asset", "todo": "bad size"},
     "explore-illustration": {"src": "images/explore_illustration.png", "type": "flutter.asset", "todo": "size"},
     "lock-illustration": {"src": "images/lock_illustration.png", "type": "flutter.asset", "todo": "size"},
     "improve-illustration": {"src": "images/improve_illustration.png", "type": "flutter.asset", "todo": "size"},
