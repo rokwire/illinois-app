@@ -60,6 +60,7 @@ class GBVDetailContentWidget extends StatelessWidget {
           )
         ];
       case GBVResourceDetailType.external_link:
+      case GBVResourceDetailType.internal_link:
         return [
           Container(padding: EdgeInsets.only(right: 8), child:
             Styles().images.getImage('external-link', excludeFromSemantics: true) ?? Container(),

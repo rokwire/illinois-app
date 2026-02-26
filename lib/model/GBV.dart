@@ -1,8 +1,8 @@
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum GBVResourceType {panel, external_link, directory, resource_list}
+enum GBVResourceType {panel, external_link, internal_link, directory, resource_list}
 
-enum GBVResourceDetailType {text, address, phone, email, external_link, button}
+enum GBVResourceDetailType {text, address, phone, email, external_link, internal_link, button}
 
 class GBVData {
   final List<String> directoryCategories;
@@ -168,21 +168,9 @@ class GBVResourceDetail {
     return values;
   }
 
-  static GBVResourceDetailType _typeFromString(String type) {
-    switch (type) {
-      case "text": return GBVResourceDetailType.text;
-      case "address": return GBVResourceDetailType.address;
-      case "phone": return GBVResourceDetailType.phone;
-      case "external_link": return GBVResourceDetailType.external_link;
-      case "email": return GBVResourceDetailType.email;
-      case "button": return GBVResourceDetailType.button;
-      default: return GBVResourceDetailType.text;
-    }
-  }
-
   static GBVResourceDetail? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? GBVResourceDetail(
-      type: _typeFromString(JsonUtils.stringValue(json['type']) ?? "text"),
+      type: GBVResourceDetailTypeImpl.fromJson(JsonUtils.stringValue(json['type'])) ?? GBVResourceDetailType.text,
       title: JsonUtils.stringValue(json['title']),
       content: JsonUtils.stringValue(json['content']),
       contentPrefix: JsonUtils.stringValue(json['contentPrefix'])
@@ -225,10 +213,38 @@ extension GBVResourceTypeImpl on GBVResourceType {
   static GBVResourceType? fromJson(String? json) {
     switch (json) {
       case 'external_link': return GBVResourceType.external_link;
+      case 'internal_link': return GBVResourceType.internal_link;
       case 'panel': return GBVResourceType.panel;
       case 'resource_list': return GBVResourceType.resource_list;
       case 'directory': return GBVResourceType.directory;
       default: return null;
     }
   }
+
+  bool get isExternalLink => (this == GBVResourceType.external_link);
+  bool get isInternalLink => (this == GBVResourceType.internal_link);
+  bool get isLink => isInternalLink || isExternalLink;
+  bool get isNotLink => (isLink != true);
 }
+
+extension GBVResourceDetailTypeImpl on GBVResourceDetailType {
+  static GBVResourceDetailType? fromJson(String? json) {
+    switch (json) {
+      case "text": return GBVResourceDetailType.text;
+      case "address": return GBVResourceDetailType.address;
+      case "phone": return GBVResourceDetailType.phone;
+      case "external_link": return GBVResourceDetailType.external_link;
+      case "internal_link": return GBVResourceDetailType.internal_link;
+      case "email": return GBVResourceDetailType.email;
+      case "button": return GBVResourceDetailType.button;
+      default: return null;
+    }
+  }
+
+  bool get isExternalLink => (this == GBVResourceDetailType.external_link);
+  bool get isInternalLink => (this == GBVResourceDetailType.internal_link);
+  bool get isLink => isInternalLink || isExternalLink;
+  bool get isNotLink => (isLink != true);
+}
+
+
