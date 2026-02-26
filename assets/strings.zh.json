@@ -234,8 +234,8 @@
 	"panel.browse.alert.building_access.privacy_level.4.button.label": "設置為 4",
 	"panel.browse.alert.building_access.privacy_level.5.button.label": "設置為 5",
 
-	"panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD these items to your favorites?",
- "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE these items from your favorites?",
+	"panel.browse.prompt.add.all.favorites": "Are you sure you want to add these items to your favorites?",
+	"panel.browse.prompt.remove.all.favorites": "Are you sure you want to remove these items from your favorites?",
 
 	"panel.browse.section.academics.title": "學业",
 	"panel.browse.section.academics.description": "Tools for managing your academic life.",
