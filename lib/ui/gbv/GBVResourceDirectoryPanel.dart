@@ -118,16 +118,18 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
           ), child:
           Column(children: [
             GestureDetector(onTap: () => _expandSection(category), child:
-            Container(decoration: BoxDecoration(), child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
-            Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                Styles().images.getImage((_expandedSections.contains(category)) ? 'chevron-up' : 'chevron-down', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-              ),
-              Text(category, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
-            ])
-            )
-            )
+              Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
+                Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                    Styles().images.getImage((_expandedSections.contains(category)) ? 'chevron-up' : 'chevron-down', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                  ),
+                  Expanded(child:
+                    Padding(padding: EdgeInsets.only(right: 16), child:
+                      Text(category, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
+                    )
+                  )
+                ])
+              )
             ),
             Visibility(visible: _expandedSections.contains(category), child:
               Padding(padding: EdgeInsets.only(bottom: 8), child:
