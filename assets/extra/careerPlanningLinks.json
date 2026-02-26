@@ -1,7 +1,6 @@
 {
   "directoryCategories" : [
     "APPOINTMENTS",
-    "CANVAS COURSES",
     "EVENTS",
     "ONLINE TOOLS"
   ],
@@ -35,39 +34,12 @@
 				"content": "https://prelaw.illinois.edu/appointments/"
 			}]
 		},{
-			"id": "career_development_toolkit",
-			"type": "external_link",
-			"categories": ["CANVAS COURSES"],
-			"title": "Career Development Toolkit",
-			"directoryContent": [{
-				"type": "external_link",
-				"content": "https://careercenter.illinois.edu/career-development-toolkit"
-			}]
-		},{
-			"id": "pre_health_advising_canvas_course",
-			"type": "external_link",
-			"categories": ["CANVAS COURSES"],
-			"title": "Pre-Health Advising Canvas Course",
-			"directoryContent": [{
-				"type": "external_link",
-				"content": "https://canvas.illinois.edu/enroll/WLLTEE"
-			}]
-		},{
-			"id": "pre_law_advising_canvas_course",
-			"type": "external_link",
-			"categories": ["CANVAS COURSES"],
-			"title": "Pre-Law Advising Canvas Course",
-			"directoryContent": [{
-				"type": "external_link",
-				"content": "https://canvas.illinois.edu/enroll/NNTG3J"
-			}]
-		},{
 			"id": "events_in_the_app",
-			"type": "external_link",
+			"type": "internal_link",
 			"categories": ["EVENTS"],
 			"title": "Events in the App",
 			"directoryContent": [{
-				"type": "external_link",
+				"type": "internal_link",
 				"content": "edu.illinois.rokwire://rokwire.illinois.edu/events2_query?time_filter=upcoming&attributes=%7B%22category%22%3A%22Career+Development%22%7D"
 			}]
 		},{
@@ -78,6 +50,15 @@
 			"directoryContent": [{
 				"type": "external_link",
 				"content": "https://illinois.joinhandshake.com/stu/events?collection=ALL&eventFormat=HYBRID&sort=RELEVANCE&date=ALL"
+			}]
+		},{
+			"id": "career_development_toolkit",
+			"type": "external_link",
+			"categories": ["ONLINE TOOLS"],
+			"title": "Career Development Toolkit",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://careercenter.illinois.edu/career-development-toolkit"
 			}]
 		},{
 			"id": "exploration_pathways",
