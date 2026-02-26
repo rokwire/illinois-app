@@ -17,7 +17,14 @@ class GBVResourceDirectoryContentWidget extends StatefulWidget {
   final String? contentCategory;
   final String? contentAssetKey;
   final String? contentFailedMessage;
-  GBVResourceDirectoryContentWidget({ this.contentCategory, this.contentAssetKey, this.contentFailedMessage });
+  final Widget Function(BuildContext)? prefixWidgetBuilder;
+  final Widget Function(BuildContext)? suffixWidgetBuilder;
+
+  GBVResourceDirectoryContentWidget({
+    this.contentCategory, this.contentAssetKey,
+    this.contentFailedMessage,
+    this.prefixWidgetBuilder, this.suffixWidgetBuilder,
+  });
 
   @override
   State<StatefulWidget> createState() => _GBVResourceDirectoryContentWidgetState();
@@ -58,9 +65,11 @@ class _GBVResourceDirectoryContentWidgetState extends State<GBVResourceDirectory
   Widget get _resourceContent =>
     RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
-        Padding(padding: EdgeInsets.only(bottom: 16), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+          widget.prefixWidgetBuilder?.call(context) ?? Container(),
           GBVResourceDirectoryWidget(gbvData: _linksData ?? GBVData.empty(),),
-        )
+          widget.suffixWidgetBuilder?.call(context) ?? Container(),
+        ],)
       ),
     );
 
@@ -78,13 +87,13 @@ class _GBVResourceDirectoryContentWidgetState extends State<GBVResourceDirectory
   Widget _messageContent(String message) =>
     RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
-        Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 64), child:
-          Column(children:[
-            Container(height: _screenHeight / 10,),
+        Column(children:[
+          widget.prefixWidgetBuilder?.call(context) ?? Container(height: _screenHeight / 10,),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 64), child:
             Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.title.regular.medium_fat')),
-            Container(height: 8 * _screenHeight / 10,),
-          ]),
-        )
+          ),
+          widget.suffixWidgetBuilder?.call(context) ?? Container(height: 8 * _screenHeight / 10,),
+        ]),
       ),
     );
 

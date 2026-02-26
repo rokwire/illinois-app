@@ -357,6 +357,7 @@
 	"panel.browse.entry.wellness.wellness_todo.title": "待辦事項清單",
 	"panel.browse.entry.wellness.my_appointments.title": "MyMckinley預約",
 	"panel.browse.entry.wellness.wellness_tips.title": "每日提示",
+	"panel.browse.entry.wellness.wellness_links.title": "24小時熱線和鏈接",
 	"panel.browse.entry.wellness.wellness_health_screener.title": "Illinois Health Screener",
 	"panel.browse.entry.wellness.wellness_resources.title": "一般資源",
 	"panel.browse.entry.wellness.wellness_mental_health.title": "心理健康資源",
@@ -2629,6 +2630,8 @@
 	"panel.wellness.section.resources.label": "一般資源",
 	"panel.wellness.section.mental_health.label": "心理健康資源",
 	"panel.wellness.section.success_team.label": "My Primary Care Provider",
+	"panel.wellness.section.recreation.label": "Campus Recreation",
+	"panel.wellness.section.links.label": "24/7 Hotlines & Links",
 
 	"panel.wellness.sections.description.footer.wellness.text": "健康 ",
 	"panel.wellness.sections.description.footer.description.text": "是一種以最大化個人潛力為導向的最佳幸福狀態。 這是一個終生的過程，旨在提高你的 ",
