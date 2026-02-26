@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added auth2 analytics event for monitoring refresh token issues [#5405](https://github.com/rokwire/illinois-app/issues/5405).
 - Added missing period in Illinois Health Screener panel [#5778](https://github.com/rokwire/illinois-app/issues/5778).
+- Added internal link resource type to GBV model [#5784](https://github.com/rokwire/illinois-app/issues/5784).
 ### Fixed
 - Fixed and cleaned refreshing new Home Favorites widget [#5761](https://github.com/rokwire/illinois-app/issues/5761).
 - Big 10 Athletics favorite events and games [#5756](https://github.com/rokwire/illinois-app/issues/5756).
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed accessibility for InboxMessageCard [#5740](https://github.com/rokwire/illinois-app/issues/5740).
 - Fixed accessibility focus issues [#5741](https://github.com/rokwire/illinois-app/issues/5741).
 - Fixed accessibility empty 'scrim' focus node for SettingsHomePanel and GroupsDetailPanel [#5746](https://github.com/rokwire/illinois-app/issues/5746).
+- Fixed resource category text wrap in GBVResourceDirectoryPanel [#5728](https://github.com/rokwire/illinois-app/issues/5728).
 ### Changed
 - Control Academics > iDegrees New Student Checklist availability from app config [#5637](https://github.com/rokwire/illinois-app/issues/5637).
 - Exclude Grainger appointment provider for students that are not part of The Grainger College of Engineering [#5637](https://github.com/rokwire/illinois-app/issues/5637).

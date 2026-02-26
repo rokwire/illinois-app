@@ -390,7 +390,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
 
   Future<void> _onTapShareLink() async {
     Analytics().logSelect(target: 'Share QR Code');
-    String? message;
+    String? message, reason;
     if (_deepLinkUri?.isValid == true) {
       try {
         ShareResult result = await SharePlus.instance.share(ShareParams(uri: _deepLinkUri!));
@@ -403,9 +403,10 @@ class _QrCodePanelState extends State<QrCodePanel> {
         }
       }
       catch (e) {
-        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.\n\nReason: $_shareReasonMacro')
-          .replaceAll(_shareTargetMacro, _shareQrCodeTarget)
-          .replaceAll(_shareReasonMacro, e.toString());
+          message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareReasonMacro.').
+            replaceAll(_shareReasonMacro, _shareQrCodeTarget);
+          reason = Localization().getStringEx('panel.qr_code.alert.share.reason.fmt', 'Reason: $_shareReasonMacro').
+            replaceAll(_shareReasonMacro, e.toString());
       }
     }
     else {
@@ -413,7 +414,13 @@ class _QrCodePanelState extends State<QrCodePanel> {
     }
 
     if (mounted && (message != null)) {
-      AppAlert.showTextMessage(context, message, textAlign: TextAlign.start);
+      Widget messageText = (reason != null) ? Column(mainAxisSize: MainAxisSize.min, children: [
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.message.large'),),
+        Padding(padding: EdgeInsets.only(top: 24), child:
+          Text(reason, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle('widget.message.medium.thin'),),
+        ),
+      ],) : Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.message.medium.thin'),);
+      AppAlert.showWidgetMessage(context, messageText, buttonTextStyle: Styles().textStyles.getTextStyle('widget.message.medium.thin'));
     }
   }
 
@@ -426,7 +433,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
 
   Future<void> _onTapShareDigitalCard() async {
     Analytics().logSelect(target: 'Share Digital Card');
-    String? message;
+    String? message, reason;
     if (widget.digitalCardShare?.isNotEmpty == true) {
       try {
         ShareResult result = await SharePlus.instance.share(ShareParams(
@@ -443,9 +450,10 @@ class _QrCodePanelState extends State<QrCodePanel> {
         }
       }
       catch (e) {
-        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.\n\nReason: $_shareReasonMacro')
-          .replaceAll(_shareTargetMacro, _shareQrCodeTarget)
-          .replaceAll(_shareReasonMacro, e.toString());
+        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.')
+          .replaceAll(_shareTargetMacro, _shareQrCodeTarget);
+        reason = Localization().getStringEx('panel.qr_code.alert.share.reason.fmt', 'Reason: $_shareReasonMacro').
+          replaceAll(_shareReasonMacro, e.toString());
       }
     }
     else {
@@ -453,7 +461,13 @@ class _QrCodePanelState extends State<QrCodePanel> {
     }
 
     if (mounted && (message != null)) {
-      AppAlert.showTextMessage(context, message, textAlign: TextAlign.start);
+      Widget messageText = (reason != null) ? Column(mainAxisSize: MainAxisSize.min, children: [
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.message.large'),),
+        Padding(padding: EdgeInsets.only(top: 24), child:
+          Text(reason, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle('widget.message.medium.thin'),),
+        ),
+      ],) : Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.message.medium.thin'),);
+      AppAlert.showWidgetMessage(context, messageText, buttonTextStyle: Styles().textStyles.getTextStyle('widget.message.medium.thin'));
     }
   }
 

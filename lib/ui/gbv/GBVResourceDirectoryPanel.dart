@@ -1,7 +1,7 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/GBV.dart';
 import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
@@ -118,16 +118,18 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
           ), child:
           Column(children: [
             GestureDetector(onTap: () => _expandSection(category), child:
-            Container(decoration: BoxDecoration(), child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
-            Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                Styles().images.getImage((_expandedSections.contains(category)) ? 'chevron-up' : 'chevron-down', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-              ),
-              Text(category, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
-            ])
-            )
-            )
+              Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
+                Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                    Styles().images.getImage((_expandedSections.contains(category)) ? 'chevron-up' : 'chevron-down', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                  ),
+                  Expanded(child:
+                    Padding(padding: EdgeInsets.only(right: 16), child:
+                      Text(category, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
+                    )
+                  )
+                ])
+              )
             ),
             Visibility(visible: _expandedSections.contains(category), child:
               Padding(padding: EdgeInsets.only(bottom: 8), child:
@@ -142,20 +144,12 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
   }
 
   Widget _resourceWidget (GBVResource resource) {
-    Widget descriptionWidget = (resource.type == GBVResourceType.external_link)
-      ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        Column(children:
-          List.from(
-              resource.directoryContent.where((detail) => detail.type != GBVResourceDetailType.external_link)
-                .map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false))
-          )
-        )
+    Widget descriptionWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(children: (resource.type.isLink)
+        ? List.from(resource.directoryNotLinkContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
+        : List.from(resource.directoryContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
       )
-      : Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        Column(children:
-          List.from(resource.directoryContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
-        )
-      );
+    );
     return
       Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
         GestureDetector(onTap: () => _onTapResource(resource), child:
@@ -175,12 +169,7 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
                   ])
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
-                  (resource.type != GBVResourceType.external_link)
-                    ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-                    : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link)) ? Semantics(
-                    label: Localization().getStringEx('panel.sexual_misconduct.resource_directory.external_link_icon', 'Opens in external browser'), image: true,
-                    child: Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container(),
-                    ): Container()
+                  Styles().images.getImage(resource.chevronIconKey, width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                 )
               ])
             )
@@ -200,9 +189,15 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
     Analytics().logSelect(target: 'Resource - ${resource.title}');
     switch (resource.type) {
       case GBVResourceType.external_link: {
-        GBVResourceDetail? externalLinkDetail = resource.directoryContent.firstWhereOrNull((detail) => detail.type == GBVResourceDetailType.external_link);
-        if (externalLinkDetail != null) {
-          AppLaunchUrl.launch(context: context, url: externalLinkDetail.content);
+        GBVResourceDetail? linkDetail = resource.externalOrInternalLinkDetail;
+        if (linkDetail != null) {
+          AppLaunchUrl.launch(context: context, url: linkDetail.content);
+        } else break;
+      }
+      case GBVResourceType.internal_link: {
+        GBVResourceDetail? linkDetail = resource.internalOrExternalLinkDetail;
+        if (linkDetail != null) {
+          AppLaunchUrl.launch(context: context, url: linkDetail.content);
         } else break;
       }
       case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: resource))); break;
