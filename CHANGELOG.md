@@ -5,12 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added internal link resource type to GBV model [#5784](https://github.com/rokwire/illinois-app/issues/5784).
+### Fixed
+- Fixed resource category text wrap in GBVResourceDirectoryPanel [#5728](https://github.com/rokwire/illinois-app/issues/5728).
 
 ## [8.0.7] - 2026-02-25
-### Changed
-- Make Group cards a fixed height [#5719](https://github.com/rokwire/illinois-app/issues/5719).
+### Fixed
 - Fixed accessibility focus issues [#5741](https://github.com/rokwire/illinois-app/issues/5741).
 - Fixed accessibility empty 'scrim' focus node for SettingsHomePanel and GroupsDetailPanel [#5746](https://github.com/rokwire/illinois-app/issues/5746).
+### Changed
+- Make Group cards a fixed height [#5719](https://github.com/rokwire/illinois-app/issues/5719).
 - Combined three wellness panels into one [#5728](https://github.com/rokwire/illinois-app/issues/5728).
 - Laundry: Update "Submit" button styling [#5794](https://github.com/rokwire/illinois-app/issues/5794).
 - Display exception description when Share fails [#5795](https://github.com/rokwire/illinois-app/issues/5795).
