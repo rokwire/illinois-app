@@ -35,11 +35,11 @@
 			}]
 		},{
 			"id": "events_in_the_app",
-			"type": "external_link",
+			"type": "internal_link",
 			"categories": ["EVENTS"],
 			"title": "Events in the App",
 			"directoryContent": [{
-				"type": "external_link",
+				"type": "internal_link",
 				"content": "edu.illinois.rokwire://rokwire.illinois.edu/events2_query?time_filter=upcoming&attributes=%7B%22category%22%3A%22Career+Development%22%7D"
 			}]
 		},{
