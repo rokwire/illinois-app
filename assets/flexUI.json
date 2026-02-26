@@ -25,7 +25,7 @@
 			"browse.athletics": ["sport_events", "sport_news", "sport_teams", "my_game_day"],
 			"browse.laundry": ["laundry"],
 			"browse.campus_guide": ["campus_highlights", "campus_guide", "my_campus_guide"],
-			"browse.career_exploration": ["interest_explorer", "digital_card", "skills_self_evaluation", "essential_skills_coach"],
+			"browse.career_exploration": ["career_planing_links", "interest_explorer", "digital_card", "skills_self_evaluation", "essential_skills_coach", "job_board"],
 			"browse.dining": ["dining"],
 			"browse.directory": ["user_directory"],
 			"browse.events": ["events"],
@@ -38,7 +38,7 @@
 			"browse.recent": ["recent_items"],
 			"browse.safety": ["safewalk_request", "saferides", "safety_resources", "sexual_misconduct"],
 			"browse.sexual_misconduct": ["sexual_misconduct"],
-			"browse.wellness": ["wellness_recreation", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener"],
+			"browse.wellness": ["wellness_recreation", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener", "wellness_links"],
 
 			"wallet": ["illini_id", "bus_pass", "library_card", "meal_plan", "illini_cash", "add_illini_cash"],
 
@@ -62,7 +62,7 @@
 			"career_exploration.skills_self_evaluation.features": ["authentication", "login"],
 			"career_exploration.essential_skills_coach.features": ["authentication", "netid_login"],
 
-			"wellness": ["recreation", "daily_tips", "rings", "appointments", "health_screener", "resources", "mental_health", "success_team", "struggling"],
+			"wellness": ["wellness_recreation", "wellness_tips", "wellness_rings", "wellness_todo", "my_appointments", "wellness_health_screener", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_links"],
 			"wellness.appointments.features": ["authentication", "netid_login"],
 			"wellness.health_screener": ["history"],
 			"wellness.health_screener.features": ["student", "authentication", "netid_login"],
@@ -231,6 +231,10 @@
 				"academics.academics_events"              : false,
 				"academics.skills_self_evaluation"        : false,
 				"academics.essential_skills_coach"        : false,
+				"wellness_tips"                           : false,
+				"wellness_resources"                      : false,
+				"wellness_mental_health"                  : false,
+				"wellness.wellness_todo"                  : false,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
 				"onboarding2.video_tutorial"              : [["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"], "AND", "${app.storage.onBoarding2ShowTutorial}"],
 				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],

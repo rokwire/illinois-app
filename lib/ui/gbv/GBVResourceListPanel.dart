@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/GBV.dart';
 import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
@@ -71,20 +72,12 @@ class GBVResourceListPanel extends StatelessWidget {
   }
 
   Widget _resourceWidget (BuildContext context, GBVResource resource) {
-    Widget descriptionWidget = (resource.type == GBVResourceType.external_link)
-      ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        Column(children:
-          List.from(
-              resource.directoryContent.where((detail) => detail.type != GBVResourceDetailType.external_link)
-                  .map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false))
-          )
-        )
+    Widget descriptionWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(children: (resource.type.isLink)
+        ? List.from(resource.directoryNotLinkContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
+        : List.from(resource.directoryContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
       )
-      : Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        Column(children:
-          List.from(resource.directoryContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
-        )
-      );
+    );
     return
       Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
         GestureDetector(onTap: () => _onTapResource(context, resource), child:
@@ -105,11 +98,7 @@ class GBVResourceListPanel extends StatelessWidget {
                   ])
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
-                  (resource.type != GBVResourceType.external_link)
-                    ? Styles().images.getImage('chevron-right', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-                    : (resource.directoryContent.any((detail) => detail.type == GBVResourceDetailType.external_link))
-                    ? Styles().images.getImage('external-link', width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-                    : Container()
+                  Styles().images.getImage(resource.chevronIconKey, width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                 )
               ])
             )
@@ -131,9 +120,15 @@ class GBVResourceListPanel extends StatelessWidget {
   void _onTapResource(BuildContext context, GBVResource resource) {
     switch (resource.type) {
       case GBVResourceType.external_link: {
-        GBVResourceDetail? externalLinkDetail = resource.directoryContent.firstWhereOrNull((detail) => detail.type == GBVResourceDetailType.external_link);
-        if (externalLinkDetail != null) {
-          AppLaunchUrl.launch(context: context, url: externalLinkDetail.content);
+        GBVResourceDetail? linkDetail = resource.externalOrInternalLinkDetail;
+        if (linkDetail != null) {
+          AppLaunchUrl.launch(context: context, url: linkDetail.content);
+        } else break;
+      }
+      case GBVResourceType.internal_link: {
+        GBVResourceDetail? linkDetail = resource.internalOrExternalLinkDetail;
+        if (linkDetail != null) {
+          AppLaunchUrl.launch(context: context, url: linkDetail.content);
         } else break;
       }
       case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: resource))); break;

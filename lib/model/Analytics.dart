@@ -35,7 +35,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   AcademicsMyIllini              = AnalyticsFeature("Academics: myIllini", priority: -1);
   static const AnalyticsFeature   AcademicsCampusReminders       = AnalyticsFeature("Academics: Campus Reminders", priority: -1);
   static const AnalyticsFeature   AcademicsAppointments          = AnalyticsFeature("Academics: Appointments", priority: -1);
-  static const AnalyticsFeature   AcademicsLinks                 = AnalyticsFeature("Academics: Academic Links", key: {"AcademicLinks"}, priority: -1);
+  static const AnalyticsFeature   AcademicsLinks                 = AnalyticsFeature("Academics: Academic Links", key: {"AcademicLinks"}, priority: 1);
 
   static const AnalyticsFeature   Map                            = AnalyticsFeature("Map");
   static const AnalyticsFeature   MapEvents                      = AnalyticsFeature("Map: Events", priority: -1);
@@ -67,6 +67,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   DiningFavorites                = AnalyticsFeature("Dining: Favorites", priority: -1);
 
   static const AnalyticsFeature   CareerExploration              = AnalyticsFeature("Career Exploration", key: "CareerExploration");
+  static const AnalyticsFeature   CareerExplorationPlaningLinks  = AnalyticsFeature("Career Exploration: Planning Links", key: "CareerPlanningLinks");
   static const AnalyticsFeature   CareerExplorationSkillsSelfEvaluation  = AnalyticsFeature("Career Exploration: Skills Self-Evaluation", key: {"SkillsSelfEvaluation"}, priority: 1);
   static const AnalyticsFeature   CareerExplorationEssentialSkillsCoach  = AnalyticsFeature("Career Exploration: Essential Skills Coach", key: {"EssentialSkillsCoach"}, priority: 1);
 
@@ -87,6 +88,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   WellnessMentalHealth           = AnalyticsFeature("Wellness: Mental Health", key: {"WellnessMentalHealth"}, priority: 1);
   static const AnalyticsFeature   WellnessSuccessTeam            = AnalyticsFeature("Wellness: Primary Care Provider", key: {"WellnessSuccessTeam"}, priority: 1);
   static const AnalyticsFeature   WellnessRecreation             = AnalyticsFeature("Wellness: Recreation", priority: -1);
+  static const AnalyticsFeature   WellnessLinks                  = AnalyticsFeature("Academics: Wellness Links", key: {"WellnessLinks"}, priority: 1);
 
   static const AnalyticsFeature   AppHelp                        = AnalyticsFeature("App Help");
   static const AnalyticsFeature   Athletics                      = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});

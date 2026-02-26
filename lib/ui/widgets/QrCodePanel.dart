@@ -391,14 +391,15 @@ class _QrCodePanelState extends State<QrCodePanel> {
           Navigator.of(context).pop();
         } else */
         if (result.status == ShareResultStatus.unavailable) {
-          message = Localization().getStringEx('panel.qr_code.alert.share.unable.msg', 'Unable to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareQrCodeTarget);
+          message = Localization().getStringEx('panel.qr_code.alert.share.unable.msg', 'Unable to share $_shareTargetMacro.')
+            .replaceAll(_shareTargetMacro, _shareQrCodeTarget);
         }
       }
       catch (e) {
-        final String reasonMacro = '{{reason}}';
-        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareQrCodeTarget);
-        reason = Localization().getStringEx('panel.qr_code.alert.share.reason.fmt', 'Reason: $reasonMacro').
-          replaceAll(reasonMacro, e.toString());
+        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareReasonMacro.').
+          replaceAll(_shareReasonMacro, _shareQrCodeTarget);
+        reason = Localization().getStringEx('panel.qr_code.alert.share.reason.fmt', 'Reason: $_shareReasonMacro').
+          replaceAll(_shareReasonMacro, e.toString());
       }
     }
     else {
@@ -417,6 +418,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
   }
 
   static const String _shareTargetMacro = '{{target}}';
+  static const String _shareReasonMacro = '{{reason}}';
   String get _shareQrCodeTarget => Localization().getStringEx('panel.qr_code.alert.share.target.qr', 'QR code');
   String get _shareVCardTarget => Localization().getStringEx('panel.qr_code.alert.share.target.vcard', 'Digital Business Card');
 
@@ -424,7 +426,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
 
   Future<void> _onTapShareDigitalCard() async {
     Analytics().logSelect(target: 'Share Digital Card');
-    String? message;
+    String? message, reason;
     if (widget.digitalCardShare?.isNotEmpty == true) {
       try {
         ShareResult result = await SharePlus.instance.share(ShareParams(
@@ -436,11 +438,15 @@ class _QrCodePanelState extends State<QrCodePanel> {
           Navigator.of(context).pop();
         }
         else if (result.status == ShareResultStatus.unavailable) {
-          message = Localization().getStringEx('panel.qr_code.alert.share.unable.msg', 'Unable to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareVCardTarget);
+          message = Localization().getStringEx('panel.qr_code.alert.share.unable.msg', 'Unable to share $_shareTargetMacro.')
+            .replaceAll(_shareTargetMacro, _shareVCardTarget);
         }
       }
       catch (e) {
-        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareVCardTarget);
+        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.')
+          .replaceAll(_shareTargetMacro, _shareQrCodeTarget);
+        reason = Localization().getStringEx('panel.qr_code.alert.share.reason.fmt', 'Reason: $_shareReasonMacro').
+          replaceAll(_shareReasonMacro, e.toString());
       }
     }
     else {
@@ -448,7 +454,13 @@ class _QrCodePanelState extends State<QrCodePanel> {
     }
 
     if (mounted && (message != null)) {
-      AppAlert.showTextMessage(context, message);
+      Widget messageText = (reason != null) ? Column(mainAxisSize: MainAxisSize.min, children: [
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.message.large'),),
+        Padding(padding: EdgeInsets.only(top: 24), child:
+          Text(reason, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle('widget.message.medium.thin'),),
+        ),
+      ],) : Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.message.medium.thin'),);
+      AppAlert.showWidgetMessage(context, messageText, buttonTextStyle: Styles().textStyles.getTextStyle('widget.message.medium.thin'));
     }
   }
 

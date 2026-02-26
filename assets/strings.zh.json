@@ -245,7 +245,7 @@
 	"panel.browse.section.athletics.description": "Keep up with your favorite {{app_title}} teams.",
 	"panel.browse.section.campus_guide.title": "大學生活",
 	"panel.browse.section.campus_guide.description": "訪問各種團體、組織和服務的鏈接，以豐富您在 {{app_title}} 的體驗。",
-	"panel.browse.section.career_exploration.title": "Career Exploration",
+	"panel.browse.section.career_exploration.title": "Career Exploration & Preparation",
 	"panel.browse.section.career_exploration.description": "Discover career pathways and opportunities.",
 	"panel.browse.section.dining.title": "校园餐饮",
 	"panel.browse.section.dining.description": "学生、教职员、访客可以到任何宿舍餐厅用餐。",
@@ -303,10 +303,12 @@
 	"panel.browse.entry.campus_guide.campus_highlights.title": "特色資源",
 	"panel.browse.entry.campus_guide.my_campus_guide.title": "節省的資源",
 
+	"panel.browse.entry.career_exploration.career_planing_links.title": "Career Planning Links",
 	"panel.browse.entry.career_exploration.interest_explorer.title": "Interest Explorer",
 	"panel.browse.entry.career_exploration.digital_card.title": "My Digital Business Card",
 	"panel.browse.entry.career_exploration.skills_self_evaluation.title": "Skills Self-Evaluation",
 	"panel.browse.entry.career_exploration.essential_skills_coach.title": "Essential Skills Coach",
+	"panel.browse.entry.career_exploration.job_board.title": "Virtual Job Board",
 
 	"panel.browse.entry.dining.dining.title": "校园餐饮",
 
@@ -355,6 +357,7 @@
 	"panel.browse.entry.wellness.wellness_todo.title": "待辦事項清單",
 	"panel.browse.entry.wellness.my_appointments.title": "MyMckinley預約",
 	"panel.browse.entry.wellness.wellness_tips.title": "每日提示",
+	"panel.browse.entry.wellness.wellness_links.title": "24小時熱線和鏈接",
 	"panel.browse.entry.wellness.wellness_health_screener.title": "Illinois Health Screener",
 	"panel.browse.entry.wellness.wellness_resources.title": "一般資源",
 	"panel.browse.entry.wellness.wellness_mental_health.title": "心理健康資源",
@@ -2510,7 +2513,7 @@
 
 	"panel.polls_home.text.header.title":"快速投票",
 	"panel.polls_home.text.loading":" 加载中。请稍等 ...",
-	"panel.polls_home.text.pin_description":"向民意調查的創建者詢問其四位數字.",
+	"panel.polls_home.text.pin_description":"Enter the four-digit code provided by the poll creator.",
 	"panel.polls_home.button.find_poll.title":"查找投票",
 	"panel.polls_home.text.error":"错误",
 	"panel.polls_home.tab.title.recent_polls":"最近的民意测验",
@@ -2608,6 +2611,8 @@
 	"panel.wellness.section.resources.label": "一般資源",
 	"panel.wellness.section.mental_health.label": "心理健康資源",
 	"panel.wellness.section.success_team.label": "My Primary Care Provider",
+	"panel.wellness.section.recreation.label": "Campus Recreation",
+	"panel.wellness.section.links.label": "24/7 Hotlines & Links",
 
 	"panel.wellness.sections.description.footer.wellness.text": "健康 ",
 	"panel.wellness.sections.description.footer.description.text": "是一種以最大化個人潛力為導向的最佳幸福狀態。 這是一個終生的過程，旨在提高你的 ",
@@ -3346,7 +3351,7 @@
 	"panel.mtd_stops.search.label.found_single":"一个结果",
 	"panel.mtd_stops.search.label.found_multi":"%d个结果",
 
-	"panel.campus_guide.label.heading": "校園指南",
+	"panel.campus_guide.label.heading": "大學生活",
 	"panel.campus_guide.label.content.empty": "空資源內容",
 
 	"panel.guide_categories.label.heading": "校園指南",
@@ -4136,7 +4141,7 @@
 	"widget.home.favorites.message.empty.laundry": "点击 <a href='{{local_url}}'><b>洗衣房</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.favorites.message.empty.mtd_stops": "点击 <a href='{{local_url}}'><b>公交车站</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.favorites.message.empty.locations": "点击 <a href='{{local_url}}'><b>地圖</b></a> 中项目上的 ☆，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
-	"widget.home.favorites.message.empty.campus_guide": "点击 <a href='{{local_url}}'><b>完整資源列表</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
+	"widget.home.favorites.message.empty.campus_guide": "点击 <a href='{{local_url}}'><b>完整列表</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.favorites.message.empty.appointments": "点击 <a href='{{local_url}}'><b>我的MyMckinley预约</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 	"widget.home.favorites.message.empty.appointments.not_to_display": "因为您选择不显示任何过去或未来的预约，所以没有内容显示。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 2。）",
 

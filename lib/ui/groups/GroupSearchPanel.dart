@@ -215,7 +215,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  with Notificatio
         itemBuilder: (context, index) {
           Group? group = _groups![index];
           GroupCard groupCard = GroupCard(group);
-          return Padding(padding: EdgeInsets.only(top: 16), child: groupCard);
+          return Padding(padding: EdgeInsets.only(left: 16, right: 16), child: groupCard);
         }
       );
     }

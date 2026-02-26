@@ -140,6 +140,7 @@ class Config extends rokwire.Config {
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
   String? get wellness8DimensionsUrl => JsonUtils.stringValue(otherUniversityServices['wellness_8_dimensions_url']);
+  String? get wellnessWhereToStartUrl=> JsonUtils.stringValue(otherUniversityServices['wellness_where_to_start_url']);
   String? get willRadioUrl           => JsonUtils.stringValue(otherUniversityServices['will_radio_url']);
   String? get willFmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['willfm_radio_url']);
   String? get willHdRadioUrl         => JsonUtils.stringValue(otherUniversityServices['willhd_radio_url']);
@@ -147,6 +148,7 @@ class Config extends rokwire.Config {
   String? get rokwirePlatformUrl     => JsonUtils.stringValue(otherUniversityServices['rokwire_platform_url']);
   String? get studentCodeUrl         => JsonUtils.stringValue(otherUniversityServices['student_code_url']);
   String? get interestExplorerUrl    => JsonUtils.stringValue(otherUniversityServices['interest_explorer_url']);
+  String? get jobBoardUrl            => JsonUtils.stringValue(otherUniversityServices['job_board_url']);
   String? get universityContactEmail => JsonUtils.stringValue(otherUniversityServices['university_contact_email']);
   String? get universityContactWebsite => JsonUtils.stringValue(otherUniversityServices['university_contact_website']);
   String? get universityLibraryUrl   => JsonUtils.stringValue(otherUniversityServices['university_library_url']);
