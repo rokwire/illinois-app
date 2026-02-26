@@ -599,8 +599,8 @@ class HomeFavoriteButton extends FavoriteButton {
     if (kReleaseMode) {
 
       String message = (isFavorite ?? Auth2().prefs?.isFavorite(favorite) ?? false) ?
-        Localization().getStringEx('widget.home.prompt.remove.favorite', 'Are you sure you want to REMOVE this item from your favorites?') :
-        Localization().getStringEx('widget.home.prompt.add.favorite', 'Are you sure you want to ADD this favorite?');
+        Localization().getStringEx('widget.home.prompt.remove.favorite', 'Are you sure you want to remove this item from your favorites?') :
+        Localization().getStringEx('widget.home.prompt.add.favorite', 'Are you sure you want to add this favorite?');
       
       return await showDialog(context: context, builder: (BuildContext context) {
         return AlertDialog(
