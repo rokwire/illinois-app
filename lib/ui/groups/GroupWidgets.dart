@@ -711,6 +711,7 @@ class GroupCard extends StatefulWidget with AnalyticsInfo {
 }
 
 class _GroupCardState extends State<GroupCard> with NotificationsListener {
+  static final double _imageMinWidth = 400;
 
   GroupStats? _groupStats;
 
@@ -741,9 +742,9 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     return Semantics(label: '', hint: '', button: true, child:
       InkWell(onTap: () => _onTapCard(context), child: Semantics(child:
         Container(decoration: _cardDecoration, child: ClipRRect(borderRadius: _cardBorderRadius, child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Column(children: <Widget>[
             _imageHeadingWidget,
-            _isHomeDisplayType ? Container(child: Container(height: _imageHeadingWebSize.height, child: _contentWidget,)) : _contentWidget,
+            _isHomeDisplayType ? Container(child: Container(height: _contentWebHeight, child: _contentWidget,)) : _contentWidget,
           ]),
         ))
       ))
@@ -942,18 +943,10 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       visible: _imageHeadingVisible,
       child: Container(child: AccessibleImageHolder(
             child: _hasImage ?
-              WebNetworkImage(imageUrl: _imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true, height: _imageHeadingWebSize.height, width: _imageHeadingWebSize.width,) :
+              WebNetworkImage(imageUrl: _imageUrl ?? '', fit: BoxFit.cover, excludeFromSemantics: true, height: _imageHeadingWebSize.height, width: _imageHeadingWebSize.width,) :
               Styles().images.getImage('group-detail-default', fit: BoxFit.cover, excludeFromSemantics: true, height: _imageHeadingWebSize.height, width: _imageHeadingWebSize.width,),
           ),
       ));
-
-  Size get _imageHeadingWebSize {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double preferredWidth = screenWidth / 4.0;
-    double imageWidth = max(preferredWidth, 400);
-    double imageHeight = (imageWidth / 2.5);
-    return Size(imageWidth, imageHeight);
-  }
 
   Widget _buildUpdateTime() {
     return Visibility(visible: StringUtils.isNotEmpty(_timeUpdatedText), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -1080,11 +1073,22 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   bool get _imageHeadingVisible => _isHomeDisplayType || _hasImage;
   bool get _isHomeDisplayType => (widget.displayType == GroupCardDisplayType.homeGroups);
 
+  // ignore: unused_element
   double get _contentAspectRatio {
     double textScale = MediaQuery.textScalerOf(context).scale(1.0);
     double result = 2.5 / textScale;
     return result;
   }
+
+  Size get _imageHeadingWebSize {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double preferredWidth = screenWidth / 4.0;
+    double imageWidth = max(preferredWidth, _imageMinWidth);
+    double imageHeight = (imageWidth / 2.5);
+    return Size(imageWidth, imageHeight);
+  }
+
+  double get _contentWebHeight => (_imageMinWidth / 2.4);
 }
 
 //////////////////////////////////////
