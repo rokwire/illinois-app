@@ -234,8 +234,8 @@
     "panel.browse.alert.building_access.privacy_level.4.button.label": "Establecer en 4",
     "panel.browse.alert.building_access.privacy_level.5.button.label": "Establecer en 5",
 
-    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD these items to your favorites?",
-    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE these items from your favorites?",
+    "panel.browse.prompt.add.all.favorites": "Are you sure you want to add these items to your favorites?",
+    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to remove these items from your favorites?",
 
     "panel.browse.section.academics.title": "Académica",
     "panel.browse.section.academics.description": "Tools for managing your academic life.",
@@ -4066,8 +4066,8 @@
     "widget.home.radio.button.fail.title": "Inicialización falló",
     "widget.home.radio.button.add_radio.hint": "",
 
-    "widget.home.prompt.add.favorite": "¿Estás segura de que quieres AÑADIR este favorito?",
-    "widget.home.prompt.remove.favorite": "¿Estás segura de que deseas ELIMINAR este artículo de tus favoritos?",
+    "widget.home.prompt.add.favorite": "¿Estás segura de que quieres añadir este favorito?",
+    "widget.home.prompt.remove.favorite": "¿Estás segura de que deseas eliminar este artículo de tus favoritos?",
 
     "widget.home.welcome_message.title.text": "Tailor Your App Experience",
     "widget.home.favorites.instructions.message.text": "Tap the \u2606s in <a href='{{browse_local_url}}'>Sections</a> or <a href='{{customize_favorites_local_url}}'>Customize</a> to add shortcuts to Favorites. Note that some features require specific <a href='{{privacy_settings_local_url}}'>privacy settings</a> and <a href='{{sign_in_local_url}}'>signing in</a> with your NetID, phone number, or email address.",

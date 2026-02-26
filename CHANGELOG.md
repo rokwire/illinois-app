@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added internal link resource type to GBV model [#5784](https://github.com/rokwire/illinois-app/issues/5784).
 ### Fixed
 - Fixed resource category text wrap in GBVResourceDirectoryPanel [#5728](https://github.com/rokwire/illinois-app/issues/5728).
+### Changed
+- Lower case "add" and "remove" for favorite widgets [#5760](https://github.com/rokwire/illinois-app/issues/5760).
 
 ## [8.0.7] - 2026-02-25
 ### Fixed
