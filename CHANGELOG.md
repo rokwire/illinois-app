@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed accessibility focus issues [#5741](https://github.com/rokwire/illinois-app/issues/5741).
 - Fixed accessibility empty 'scrim' focus node for SettingsHomePanel and GroupsDetailPanel [#5746](https://github.com/rokwire/illinois-app/issues/5746).
 - Fixed resource category text wrap in GBVResourceDirectoryPanel [#5728](https://github.com/rokwire/illinois-app/issues/5728).
+- Fixed camera label when adding group image [#5766](https://github.com/rokwire/illinois-app/issues/5766).
 ### Changed
 - Control Academics > iDegrees New Student Checklist availability from app config [#5637](https://github.com/rokwire/illinois-app/issues/5637).
 - Exclude Grainger appointment provider for students that are not part of The Grainger College of Engineering [#5637](https://github.com/rokwire/illinois-app/issues/5637).
