@@ -108,7 +108,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                         Container(
                             padding: EdgeInsets.only(top: 8, bottom: 8),
                             decoration: PostInputField.fieldDecoration,
-                            child: TextField(
+                            child: Semantics(label: "Post Subject", child: TextField(
                                 controller: TextEditingController(text: _postData.subject),
                                 onChanged: (msg)=> _postData.subject = msg,
                                 maxLines: 1,
@@ -119,7 +119,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.all(8)
                                 ),
-                                style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"))),
+                                style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"))),),
                         Container(height: 12,),
                     ],)
                   ),

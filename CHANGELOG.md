@@ -5,49 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Added
-- Added internal link resource type to GBV model [#5784](https://github.com/rokwire/illinois-app/issues/5784).
-### Fixed
-- Fixed resource category text wrap in GBVResourceDirectoryPanel [#5728](https://github.com/rokwire/illinois-app/issues/5728).
-- Fixed camera label when adding group image [#5766](https://github.com/rokwire/illinois-app/issues/5766).
-### Changed
-- Lower case "add" and "remove" for favorite widgets [#5760](https://github.com/rokwire/illinois-app/issues/5760).
+
+## [8.0.8] - 2026-02-27
 
 ## [8.0.7] - 2026-02-25
-### Fixed
-- Fixed accessibility focus issues [#5741](https://github.com/rokwire/illinois-app/issues/5741).
-- Fixed accessibility empty 'scrim' focus node for SettingsHomePanel and GroupsDetailPanel [#5746](https://github.com/rokwire/illinois-app/issues/5746).
 ### Changed
 - Make Group cards a fixed height [#5719](https://github.com/rokwire/illinois-app/issues/5719).
-- Combined three wellness panels into one [#5728](https://github.com/rokwire/illinois-app/issues/5728).
-- Laundry: Update "Submit" button styling [#5794](https://github.com/rokwire/illinois-app/issues/5794).
-- Display exception description when Share fails [#5795](https://github.com/rokwire/illinois-app/issues/5795).
 
 ## [8.0.6] - 2026-02-24
-### Added
-- Added auth2 analytics event for monitoring refresh token issues [#5405](https://github.com/rokwire/illinois-app/issues/5405).
-- Added missing period in Illinois Health Screener panel [#5778](https://github.com/rokwire/illinois-app/issues/5778).
-### Fixed
-- Fixed accessibility focus issues [#5741](https://github.com/rokwire/illinois-app/issues/5741).
-### Changed
-- Poll UI Clean Up [#5781](https://github.com/rokwire/illinois-app/issues/5781).
-- Updated buttons styles in filter bars of Groups and Events home panel to match those in Maps [#5783](https://github.com/rokwire/illinois-app/issues/5783).
-- Updated Campus Guide home panel title [#5785](https://github.com/rokwire/illinois-app/issues/5785).
-- Updated empty saved content description for student guide items [#5786](https://github.com/rokwire/illinois-app/issues/5786).
-- Make sure "Member Approval" title is visible [#5787](https://github.com/rokwire/illinois-app/issues/5787).
-- Career Exploration section updates [#5784](https://github.com/rokwire/illinois-app/issues/5784)
 
 ## [8.0.5] - 2026-02-21
-### Fixed
-- Fixed and cleaned refreshing new Home Favorites widget [#5761](https://github.com/rokwire/illinois-app/issues/5761).
-- Big 10 Athletics favorite events and games [#5756](https://github.com/rokwire/illinois-app/issues/5756).
-- Fixed SafeWalks phone number url [#5758](https://github.com/rokwire/illinois-app/issues/5758).
-- Fixed Payment types padding for Dining Location detail [#5753](https://github.com/rokwire/illinois-app/issues/5753).
-- Make sure research interest form is not accessible when participate in research is toggled off in Settings / My Participation in Research [#5743](https://github.com/rokwire/illinois-app/issues/5743).
-- Fixed accessibility for InboxMessageCard [#5740](https://github.com/rokwire/illinois-app/issues/5740).
-### Changed
-- Control Academics > iDegrees New Student Checklist availability from app config [#5637](https://github.com/rokwire/illinois-app/issues/5637).
-- Exclude Grainger appointment provider for students that are not part of The Grainger College of Engineering [#5637](https://github.com/rokwire/illinois-app/issues/5637).
 
 ## [8.0.4] - 2026-02-17
 
@@ -62,6 +29,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adding attendance takers to an event [#5705](https://github.com/rokwire/illinois-app/issues/5705).
 
 ## [8.0.0] - 2026-01-29
+
+## [7.3.52] - 2026-02-27
+### Added
+- Added auth2 analytics event for monitoring refresh token issues [#5405](https://github.com/rokwire/illinois-app/issues/5405).
+- Added missing period in Illinois Health Screener panel [#5778](https://github.com/rokwire/illinois-app/issues/5778).
+- Added internal link resource type to GBV model [#5784](https://github.com/rokwire/illinois-app/issues/5784).
+- Added navigation direction buttons in My Courses card and detail widgets [#5809](https://github.com/rokwire/illinois-app/issues/5809).
+### Fixed
+- Fixed and cleaned refreshing new Home Favorites widget [#5761](https://github.com/rokwire/illinois-app/issues/5761).
+- Big 10 Athletics favorite events and games [#5756](https://github.com/rokwire/illinois-app/issues/5756).
+- Fixed SafeWalks phone number url [#5758](https://github.com/rokwire/illinois-app/issues/5758).
+- Fixed Payment types padding for Dining Location detail [#5753](https://github.com/rokwire/illinois-app/issues/5753).
+- Make sure research interest form is not accessible when participate in research is toggled off in Settings / My Participation in Research [#5743](https://github.com/rokwire/illinois-app/issues/5743).
+- Fixed accessibility for InboxMessageCard [#5740](https://github.com/rokwire/illinois-app/issues/5740).
+- Fixed accessibility focus issues [#5741](https://github.com/rokwire/illinois-app/issues/5741).
+- Fixed accessibility empty 'scrim' focus node for SettingsHomePanel and GroupsDetailPanel [#5746](https://github.com/rokwire/illinois-app/issues/5746).
+- Fixed resource category text wrap in GBVResourceDirectoryPanel [#5728](https://github.com/rokwire/illinois-app/issues/5728).
+- Fixed camera label when adding group image [#5766](https://github.com/rokwire/illinois-app/issues/5766).
+- Fixed accessibility for GroupPostCreatPanel [#5770](https://github.com/rokwire/illinois-app/issues/5770).
+### Changed
+- Control Academics > iDegrees New Student Checklist availability from app config [#5637](https://github.com/rokwire/illinois-app/issues/5637).
+- Exclude Grainger appointment provider for students that are not part of The Grainger College of Engineering [#5637](https://github.com/rokwire/illinois-app/issues/5637).
+- Poll UI Clean Up [#5781](https://github.com/rokwire/illinois-app/issues/5781).
+- Updated buttons styles in filter bars of Groups and Events home panel to match those in Maps [#5783](https://github.com/rokwire/illinois-app/issues/5783).
+- Updated Campus Guide home panel title [#5785](https://github.com/rokwire/illinois-app/issues/5785).
+- Updated empty saved content description for student guide items [#5786](https://github.com/rokwire/illinois-app/issues/5786).
+- Make sure "Member Approval" title is visible [#5787](https://github.com/rokwire/illinois-app/issues/5787).
+- Career Exploration section updates [#5784](https://github.com/rokwire/illinois-app/issues/5784).
+- Combined three wellness panels into one [#5728](https://github.com/rokwire/illinois-app/issues/5728).
+- Laundry: Update "Submit" button styling [#5794](https://github.com/rokwire/illinois-app/issues/5794).
+- Display exception description when Share fails [#5795](https://github.com/rokwire/illinois-app/issues/5795).
+- Lower case "add" and "remove" for favorite widgets [#5760](https://github.com/rokwire/illinois-app/issues/5760).
+- Upgrade share_plus plugin to the latest (12.0.1) version [#5795](https://github.com/rokwire/illinois-app/issues/5795).
 
 ## [7.3.51] - 2026-02-18
 ### Added
