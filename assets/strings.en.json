@@ -235,8 +235,8 @@
     "panel.browse.alert.building_access.privacy_level.4.button.label": "Set to 4",
     "panel.browse.alert.building_access.privacy_level.5.button.label": "Set to 5",
 
-    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD these items to your favorites?",
-    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE these items from your favorites?",
+    "panel.browse.prompt.add.all.favorites": "Are you sure you want to add these items to your favorites?",
+    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to remove these items from your favorites?",
 
     "panel.browse.section.academics.title": "Academics",
     "panel.browse.section.academics.description": "Tools for managing your academic life.",
@@ -3854,7 +3854,7 @@
     "panel.image_edit.button.replace.title":"Replace Image",
     "panel.image_edit.button.upload.title":"Choose Image",
     "panel.image_edit.button.gallery.title":"Gallery",
-    "panel.image_edit.button.camera.title":"Gallery",
+    "panel.image_edit.button.camera.title":"Camera",
 
     "panel.wordle.header.title": "ILLordle",
     "panel.wordle.heading.info.text": "Presented by The Daily Illini",
@@ -4067,8 +4067,8 @@
     "widget.home.radio.button.fail.title": "Initialization Failed",
     "widget.home.radio.button.add_radio.hint": "",
 
-    "widget.home.prompt.add.favorite": "Are you sure you want to ADD this favorite?",
-    "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this item from your favorites?",
+    "widget.home.prompt.add.favorite": "Are you sure you want to add this favorite?",
+    "widget.home.prompt.remove.favorite": "Are you sure you want to remove this item from your favorites?",
 
     "widget.home.welcome_message.title.text": "Tailor Your App Experience",
     "widget.home.favorites.instructions.message.text": "Tap the \u2606s in <a href='{{browse_local_url}}'>Sections</a> or <a href='{{customize_favorites_local_url}}'>Customize</a> to add shortcuts to Favorites. Note that some features require specific <a href='{{privacy_settings_local_url}}'>privacy settings</a> and <a href='{{sign_in_local_url}}'>signing in</a> with your NetID, phone number, or email address.",

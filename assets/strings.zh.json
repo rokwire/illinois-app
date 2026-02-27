@@ -234,8 +234,8 @@
 	"panel.browse.alert.building_access.privacy_level.4.button.label": "設置為 4",
 	"panel.browse.alert.building_access.privacy_level.5.button.label": "設置為 5",
 
-	"panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD these items to your favorites?",
- "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE these items from your favorites?",
+	"panel.browse.prompt.add.all.favorites": "Are you sure you want to add these items to your favorites?",
+	"panel.browse.prompt.remove.all.favorites": "Are you sure you want to remove these items from your favorites?",
 
 	"panel.browse.section.academics.title": "學业",
 	"panel.browse.section.academics.description": "Tools for managing your academic life.",
@@ -3827,7 +3827,7 @@
 	"panel.image_edit.button.replace.title":"Replace Image",
 	"panel.image_edit.button.upload.title":"Choose Image",
 	"panel.image_edit.button.gallery.title":"Gallery",
-	"panel.image_edit.button.camera.title":"Gallery",
+	"panel.image_edit.button.camera.title":"Camera",
 
 	"panel.wordle.header.title": "ILLordle",
 	"panel.wordle.heading.info.text": "Presented by The Daily Illini",
