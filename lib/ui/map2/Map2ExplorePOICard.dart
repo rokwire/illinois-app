@@ -5,6 +5,7 @@ import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -239,10 +240,10 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
   Widget get _directionsDetailCommands => Row(children: [
     Expanded(child:
       Wrap(spacing: 8, runSpacing: 8, children: [
-        _DirectionsButton('person-walking', onTap: () => _onTapDirections(GeoMapUtils.traveModeWalking)),
-        _DirectionsButton('bicycle', onTap: () => _onTapDirections(GeoMapUtils.traveModeBycycling)),
-        _DirectionsButton('car', onTap: () => _onTapDirections(GeoMapUtils.traveModeDriving)),
-        _DirectionsButton('bus', onTap: () => _onTapDirections(GeoMapUtils.traveModeTransit)),
+        Map2NavDirectionsButton('person-walking', onTap: () => _onTapDirections(GeoMapUtils.traveModeWalking)),
+        Map2NavDirectionsButton('bicycle', onTap: () => _onTapDirections(GeoMapUtils.traveModeBycycling)),
+        Map2NavDirectionsButton('car', onTap: () => _onTapDirections(GeoMapUtils.traveModeDriving)),
+        Map2NavDirectionsButton('bus', onTap: () => _onTapDirections(GeoMapUtils.traveModeTransit)),
       ],),
     )
   ],);
@@ -332,33 +333,3 @@ class _Map2ExplorePOICardState extends State<Map2ExplorePOICard> with Notificati
   String get _semanticsLocation => _positionDetailText;
 }
 
-class _DirectionsButton extends StatelessWidget {
-  final String imageKey;
-  final void Function()? onTap;
-
-  // ignore: unused_element_parameter
-  _DirectionsButton(this.imageKey, {super.key, this.onTap});
-
-  @override
-  Widget build(BuildContext context) => InkWell(onTap: onTap, child:
-    Container(decoration: _buttonDecoration, child:
-      Padding(padding: EdgeInsets.all(12), child:
-        SizedBox(width: _iconSize, height: _iconSize, child:
-          Center(child:
-            Styles().images.getImage(imageKey, size: _iconSize, color: Styles().colors.fillColorPrimary),
-          ),
-        )
-      )
-    )
-  );
-
-  static Decoration get _buttonDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    borderRadius: _buttonBorderRadius,
-    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-  );
-
-  static const BorderRadiusGeometry _buttonBorderRadius = BorderRadius.all(_buttonRadius);
-  static const Radius _buttonRadius = Radius.circular(8);
-  static const double _iconSize = 18;
-}

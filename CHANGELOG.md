@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added auth2 analytics event for monitoring refresh token issues [#5405](https://github.com/rokwire/illinois-app/issues/5405).
 - Added missing period in Illinois Health Screener panel [#5778](https://github.com/rokwire/illinois-app/issues/5778).
 - Added internal link resource type to GBV model [#5784](https://github.com/rokwire/illinois-app/issues/5784).
+- Added navigation direction buttons in My Courses card and detail widgets [#5809](https://github.com/rokwire/illinois-app/issues/5809).
 ### Fixed
 - Fixed and cleaned refreshing new Home Favorites widget [#5761](https://github.com/rokwire/illinois-app/issues/5761).
 - Big 10 Athletics favorite events and games [#5756](https://github.com/rokwire/illinois-app/issues/5756).
