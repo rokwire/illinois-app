@@ -1799,27 +1799,29 @@ class _PostInputFieldState extends State<PostInputField> {
                       maxHeight: (widget.maxLines ?? PostInputField.defaultMaxLines) * 20.0,
                     ),
                     padding: const EdgeInsets.all(8),
-                    child: quill.QuillEditor.basic(
-                      controller: _controller,
-                      focusNode: _focusNode,
-                      config: quill.QuillEditorConfig(
-                        editorKey: _editorKey,
-                        autoFocus: widget.autofocus,
-                        placeholder: _hint,
-                        expands: false,
-                        scrollable: true,
-                        padding: EdgeInsets.zero,
-                        customStyles: quill.DefaultStyles(
-                          link: (widget.style ?? Styles().textStyles.getTextStyle('widget.message.regular'))?.apply(color: Styles().colors.fillColorSecondary, decoration: TextDecoration.underline),
-                          paragraph: quill.DefaultTextBlockStyle(
-                            widget.style ?? Styles().textStyles.getTextStyle('widget.message.regular')!,
-                            const quill.HorizontalSpacing(0, 0),
-                            const quill.VerticalSpacing(0, 0),
-                            const quill.VerticalSpacing(0, 0),
-                            null,
+                    child: Semantics(label: widget.title, hint: widget.hint, textField: true, child:
+                      quill.QuillEditor.basic(
+                        controller: _controller,
+                        focusNode: _focusNode,
+                        config: quill.QuillEditorConfig(
+                          editorKey: _editorKey,
+                          autoFocus: widget.autofocus,
+                          placeholder: _hint,
+                          expands: false,
+                          scrollable: true,
+                          padding: EdgeInsets.zero,
+                          customStyles: quill.DefaultStyles(
+                            link: (widget.style ?? Styles().textStyles.getTextStyle('widget.message.regular'))?.apply(color: Styles().colors.fillColorSecondary, decoration: TextDecoration.underline),
+                            paragraph: quill.DefaultTextBlockStyle(
+                              widget.style ?? Styles().textStyles.getTextStyle('widget.message.regular')!,
+                              const quill.HorizontalSpacing(0, 0),
+                              const quill.VerticalSpacing(0, 0),
+                              const quill.VerticalSpacing(0, 0),
+                              null,
+                            ),
                           ),
                         ),
-                      ),
+                      )
                     ),
                   ),
                 ],
@@ -1853,6 +1855,7 @@ class _PostInputFieldState extends State<PostInputField> {
             _buildFormatButton(
               icon: Icons.format_bold,
               isActive: _isFormatActive(quill.Attribute.bold),
+              semanticsLabel: 'bold',
               onPressed: () {
                 Analytics().logSelect(target: 'Bold');
                 _toggleFormat(quill.Attribute.bold);
@@ -1863,6 +1866,7 @@ class _PostInputFieldState extends State<PostInputField> {
             _buildFormatButton(
               icon: Icons.format_italic,
               isActive: _isFormatActive(quill.Attribute.italic),
+              semanticsLabel: 'italic',
               onPressed: () {
                 Analytics().logSelect(target: 'Italic');
                 _toggleFormat(quill.Attribute.italic);
@@ -1873,6 +1877,7 @@ class _PostInputFieldState extends State<PostInputField> {
             _buildFormatButton(
               icon: Icons.format_underline,
               isActive: _isFormatActive(quill.Attribute.underline),
+              semanticsLabel: 'underline',
               onPressed: () {
                 Analytics().logSelect(target: 'Underline');
                 _toggleFormat(quill.Attribute.underline);
@@ -1903,30 +1908,33 @@ class _PostInputFieldState extends State<PostInputField> {
     required IconData icon,
     required bool isActive,
     required VoidCallback onPressed,
+    String? semanticsLabel,
   }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 2),
-      decoration: BoxDecoration(
-        color: isActive ? Styles().colors.fillColorSecondary : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onPressed,
+    return Semantics(label: semanticsLabel,  button: true, child:
+      Container(
+        margin: const EdgeInsets.symmetric(horizontal: 2),
+        decoration: BoxDecoration(
+          color: isActive ? Styles().colors.fillColorSecondary : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
-          child: Container(
-            width: 40,
-            height: 40,
-            alignment: Alignment.center,
-            child: Icon(
-              icon,
-              size: 20,
-              color: isActive ? Colors.white : Styles().colors.black,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onPressed,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              width: 40,
+              height: 40,
+              alignment: Alignment.center,
+              child: Icon(
+                icon,
+                size: 20,
+                color: isActive ? Colors.white : Styles().colors.black,
+              ),
             ),
           ),
         ),
-      ),
+      )
     );
   }
 
@@ -3668,12 +3676,14 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
 
   @override
   Widget build(BuildContext context) {
-    return Row(crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(padding: EdgeInsets.only(top: 16), child:
-          Text("Schedule: ", style: Styles().textStyles.getTextStyle('widget.group.members.title'),)),
-        Expanded(child: _buildDropdown())
-    ]);
+    return Semantics(container: true, child:
+      Row(crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(padding: EdgeInsets.only(top: 16), child:
+            Text("Schedule: ", style: Styles().textStyles.getTextStyle('widget.group.members.title'),)),
+          Expanded(child: _buildDropdown())
+      ])
+    );
   }
 
   Widget _buildDropdown(){
@@ -3690,7 +3700,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
             borderRadius: BorderRadius.all(Radius.circular(4))
         ),
         child: Column(children: <Widget>[
-          Semantics(button: true, label: title,
+          Semantics(label: "dropdown button", hint: _expanded ? "expanded" : "collapsed",
               child: InkWell(
                 onTap: (){
                   if(widget.enabled == true) {
@@ -3702,7 +3712,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
                 child: Padding(padding: sectionHeadingContentPadding, child:
                 Row(children: [
                   Expanded(child:
-                    Semantics ( label: title, child:
+                    Semantics (label: title, child:
                       RichText(text:
                         TextSpan(text: title, style: Styles().textStyles.getTextStyle("widget.title.medium.fat"), semanticsLabel: "", children: required ? <InlineSpan>[
                           TextSpan(text: ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
@@ -3711,7 +3721,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
                   ),
                   Visibility(visible: widget.enabled == true, child:
                     Padding(padding: EdgeInsets.only(left: 8), child:
-                      Styles().images.getImage(_expanded ? 'chevron-up' : 'chevron-down') ?? Container()),)
+                      Styles().images.getImage(_expanded ? 'chevron-up' : 'chevron-down', excludeFromSemantics: true) ?? Container()),)
                 ],),
                 ),
               )
@@ -3733,28 +3743,33 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   Widget? buildBody() => Column(children: [
       _buildTimeZoneDropdown(),
       Padding(padding: EdgeInsets.only(bottom: 12)),
-      Row(
-        children: [
-          Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "DATE"),)),
-          Expanded(flex: 7, child: _buildDropdownButton(label: (_date != null) ? DateFormat("EEE, MMM dd, yyyy").format(_date!) : "-", onTap: _onDate))
-        ],),
+      Semantics(container: true, child:
+        Row(
+          children: [
+            Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "DATE"),)),
+            Expanded(flex: 7, child: _buildDropdownButton(label: (_date != null) ? DateFormat("EEE, MMM dd, yyyy").format(_date!) : "-", onTap: _onDate))
+          ],)
+      ),
       Padding(padding: EdgeInsets.only(bottom: 12)),
-      Row(
-        children: [
-          Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "TIME"),)),
-          Expanded(flex: 7, child: _buildDropdownButton(label: (_time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(_time!)) : "-", onTap: _onTime))
-      ],)
+      Semantics(container: true, child:
+        Row(
+          children: [
+            Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "TIME"),)),
+            Expanded(flex: 7, child: _buildDropdownButton(label: (_time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(_time!)) : "-", onTap: _onTime))
+        ],)
+      )
     ]);
 
   Widget _buildDropdownButton({String? label, GestureTapCallback? onTap}) {
-    return InkWell(onTap: onTap, child:
-      Container(decoration: dropdownButtonDecoration, padding: dropdownButtonContentPadding, child:
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-          Text(label ??  '-', style: Styles().textStyles.getTextStyle("widget.title.regular"),),
-          Styles().images.getImage('chevron-down') ?? Container()
-        ],),
-      ),
-    );
+    return Semantics(label: label, child:
+      InkWell(onTap: onTap, child:
+        Container(decoration: dropdownButtonDecoration, padding: dropdownButtonContentPadding, child:
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+            Text(label ??  '-', style: Styles().textStyles.getTextStyle("widget.title.regular"),semanticsLabel: "",),
+            Styles().images.getImage('chevron-down', excludeFromSemantics: true) ?? Container()
+          ],),
+        ),
+    ));
   }
 
   void _onDate() {
