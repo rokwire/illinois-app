@@ -130,23 +130,32 @@ class Map2PlainImageButton extends StatelessWidget {
 
 class Map2NavDirectionsButton extends StatelessWidget {
   final String imageKey;
+  final double imageSize;
+  final EdgeInsetsGeometry contentPadding;
   final void Function()? onTap;
 
   // ignore: unused_element_parameter
-  Map2NavDirectionsButton(this.imageKey, {super.key, this.onTap});
+  Map2NavDirectionsButton(this.imageKey, { super.key,
+    this.imageSize = _imageSize,
+    this.contentPadding = _contentPadding,
+    this.onTap
+  });
 
   @override
   Widget build(BuildContext context) => InkWell(onTap: onTap, child:
     Container(decoration: _buttonDecoration, child:
-      Padding(padding: EdgeInsets.all(12), child:
-        SizedBox(width: _iconSize, height: _iconSize, child:
+      Padding(padding: contentPadding, child:
+        SizedBox(width: imageSize, height: imageSize, child:
           Center(child:
-            Styles().images.getImage(imageKey, size: _iconSize, color: Styles().colors.fillColorPrimary),
+            Styles().images.getImage(imageKey, size: imageSize, color: Styles().colors.fillColorPrimary),
           ),
         )
       )
     )
   );
+
+  static const EdgeInsetsGeometry _contentPadding = EdgeInsets.all(12);
+  static const double _imageSize = 18;
 
   static Decoration get _buttonDecoration => BoxDecoration(
     color: Styles().colors.surface,
@@ -156,5 +165,4 @@ class Map2NavDirectionsButton extends StatelessWidget {
 
   static const BorderRadiusGeometry _buttonBorderRadius = BorderRadius.all(_buttonRadius);
   static const Radius _buttonRadius = Radius.circular(8);
-  static const double _iconSize = 18;
 }
