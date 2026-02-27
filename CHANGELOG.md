@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.3.52] - 2026-02-27
 ### Added
 - Added auth2 analytics event for monitoring refresh token issues [#5405](https://github.com/rokwire/illinois-app/issues/5405).
 - Added missing period in Illinois Health Screener panel [#5778](https://github.com/rokwire/illinois-app/issues/5778).
@@ -21,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed accessibility empty 'scrim' focus node for SettingsHomePanel and GroupsDetailPanel [#5746](https://github.com/rokwire/illinois-app/issues/5746).
 - Fixed resource category text wrap in GBVResourceDirectoryPanel [#5728](https://github.com/rokwire/illinois-app/issues/5728).
 - Fixed camera label when adding group image [#5766](https://github.com/rokwire/illinois-app/issues/5766).
+- Fixed accessibility for GroupPostCreatPanel [#5770](https://github.com/rokwire/illinois-app/issues/5770).
 ### Changed
 - Control Academics > iDegrees New Student Checklist availability from app config [#5637](https://github.com/rokwire/illinois-app/issues/5637).
 - Exclude Grainger appointment provider for students that are not part of The Grainger College of Engineering [#5637](https://github.com/rokwire/illinois-app/issues/5637).
