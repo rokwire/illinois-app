@@ -67,10 +67,16 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
   }
 
   Widget _buildResourceDetailSection(GBVDetailListSection section) {
-    bool isExternalLink = (section.content.length == 1 && section.content[0].type == GBVResourceDetailType.external_link);
+    GBVResourceDetail? singleDetail = (section.content.length == 1) ? section.content.first : null;
+    GestureTapCallback onTap = ((singleDetail != null) && singleDetail.type.isLink)
+      ? () => AppLaunchUrl.launch(context: context, url: singleDetail.content)
+      : () => _expandSection(section);
+    String chevronIconKey = ((singleDetail != null) && singleDetail.type.isLink)
+      ? (singleDetail.type.isExternalLink ? 'external-link' : 'chevron-right')
+      : (_expandedSections.contains(section.title) ? 'chevron-up' : 'chevron-down');
     return
       Column(children: [
-        GestureDetector(onTap: (isExternalLink) ? () => AppLaunchUrl.launch(context: context, url: section.content[0].content) : () => _expandSection(section), child:
+        GestureDetector(onTap: onTap, child:
           Container(decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
             Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
               Row(children: [
@@ -86,10 +92,7 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
                   ])
                   ),
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                    Styles().images.getImage((isExternalLink)
-                        ? 'external-link'
-                        : (_expandedSections.contains(section.title)) ? 'chevron-up' : 'chevron-down',
-                        width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+                    Styles().images.getImage(chevronIconKey, width: 16, height: 16, fit: BoxFit.contain) ?? Container()
                   )
               ])
             )

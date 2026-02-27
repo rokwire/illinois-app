@@ -103,33 +103,29 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.black.withValues(alpha: 0.3), //Colors.transparent,
-        body: SafeArea(
-          child:
-//          Padding(
-//            padding: EdgeInsets.only(top: widget.topOffset),
-//            child:
-            Padding(
-              padding: EdgeInsets.only(left:5, right: 5, top: /*widget.topOffset*/30, bottom: 5),
-              child:
-              Stack(children: <Widget>[
-                SingleChildScrollView(child:
-                Column(children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
-                    child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildContent(),),),
+  Widget build(BuildContext context) =>
+    Scaffold(backgroundColor: Colors.black.withValues(alpha: 0.3) /* Colors.transparent */, body:
+      SafeArea(child:
+        Padding(padding: EdgeInsets.only(left: 5, right: 5, top: widget.topOffset, bottom: 5), child:
+          Stack(children: <Widget>[
+            SingleChildScrollView(child:
+              Column(children: <Widget>[
+                Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(5)), child:
+                  Padding(padding: EdgeInsets.all(20), child:
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+                      _buildContent(),
+                    ),
                   ),
-                ],)),
-                Container(alignment: Alignment.topRight, child: _buildCloseButton()),
-              ]),
-            )
-//          ),
-        ),
-
+                ),
+              ],)
+            ),
+            Container(alignment: Alignment.topRight, child:
+              _buildCloseButton()
+            ),
+          ]),
+        )
+      ),
     );
-  }
 
   List<Widget> _buildContent() {
     return _showInfo ? _buildInfoContent() : _buildMainContent();

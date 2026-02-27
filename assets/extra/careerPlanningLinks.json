@@ -1,0 +1,101 @@
+{
+  "directoryCategories" : [
+    "APPOINTMENTS",
+    "EVENTS",
+    "ONLINE TOOLS"
+  ],
+  "screens": {},
+  "resources": [
+    {
+			"id": "career_services_appointment",
+			"type": "external_link",
+			"categories": ["APPOINTMENTS"],
+			"title": "Career Services Appointment",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://illinois.joinhandshake.com/stu/schools/364"
+			}]
+		},{
+			"id": "pre_health_advising_appointments",
+			"type": "external_link",
+			"categories": ["APPOINTMENTS"],
+			"title": "Pre-Health Advising Appointments",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://illinois.joinhandshake.com/stu/schools/364"
+			}]
+		},{
+			"id": "pre_law_advising_appointment",
+			"type": "external_link",
+			"categories": ["APPOINTMENTS"],
+			"title": "Pre-Law Advising Appointment",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://prelaw.illinois.edu/appointments/"
+			}]
+		},{
+			"id": "events_in_the_app",
+			"type": "internal_link",
+			"categories": ["EVENTS"],
+			"title": "Events in the App",
+			"directoryContent": [{
+				"type": "internal_link",
+				"content": "edu.illinois.rokwire://rokwire.illinois.edu/events2_query?time_filter=upcoming&attributes=%7B%22category%22%3A%22Career+Development%22%7D"
+			}]
+		},{
+			"id": "events_on_handshake",
+			"type": "external_link",
+			"categories": ["EVENTS"],
+			"title": "Events on Handshake",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://illinois.joinhandshake.com/stu/events?collection=ALL&eventFormat=HYBRID&sort=RELEVANCE&date=ALL"
+			}]
+		},{
+			"id": "career_development_toolkit",
+			"type": "external_link",
+			"categories": ["ONLINE TOOLS"],
+			"title": "Career Development Toolkit",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://careercenter.illinois.edu/career-development-toolkit"
+			}]
+		},{
+			"id": "exploration_pathways",
+			"type": "external_link",
+			"categories": ["ONLINE TOOLS"],
+			"title": "Exploration Pathways",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Organized by broad themes, discover Illinois majors that align with your interests."
+			},{
+				"type": "external_link",
+				"content": "https://explore.illinois.edu/exploration-pathways/"
+			}]
+		},{
+			"id": "exploration_toolkit",
+			"type": "external_link",
+			"categories": ["ONLINE TOOLS"],
+			"title": "Exploration Toolkit",
+			"directoryContent": [{
+				"type": "text",
+				"content": "A step-by-step guide with resources, activities, and action items to help identify career possibilities."
+			},{
+				"type": "external_link",
+				"content": "https://explore.illinois.edu/exploration-toolkit/"
+			}]
+		},{
+			"id": "major_handbook",
+			"type": "external_link",
+			"categories": ["ONLINE TOOLS"],
+			"title": "Major Handbook",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Learn more about Illinois majors, including their introductory courses, related occupations, program costs, and graduation outcomes."
+			},{
+				"type": "external_link",
+				"content": "https://explore.illinois.edu/major-handbook/"
+			}]
+		}
+  ]
+}

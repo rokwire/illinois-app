@@ -99,7 +99,9 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
         Row(children: [
           Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16), child:
-                Text(Localization().getStringEx('panel.home.header.editing.title', 'Customize'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))
+                Semantics(container: true,
+                    child: Text(Localization().getStringEx('panel.home.header.editing.title', 'Customize'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))
+                )
               )
           ),
           Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), container: true, button: true, child:

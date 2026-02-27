@@ -68,7 +68,7 @@ class _HomeResearchProjectsWidgetState extends State<HomeResearchProjectsWidget>
 
   Iterable<Widget> get _contentTypeWidgets => FavoriteContentType.values.map((FavoriteContentType contentType) =>
     Visibility(visible: (_contentType == contentType), maintainState: true, child:
-    _HomeResearchProjectsImplWidget(contentType.researchProjectsContentType,
+      _HomeResearchProjectsImplWidget(contentType.researchProjectsContentType,
         updateController: widget.updateController,
       ),
     ));
@@ -107,8 +107,7 @@ class _HomeResearchProjectsImplWidget extends StatefulWidget {
 class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsImplWidget> with NotificationsListener {
 
   List<Group>? _researchProjects;
-  bool _loadingResearchProjects = false;
-  bool _updatingResearchProjects = false;
+  FavoriteContentActivity _contentActivity = FavoriteContentActivity.none;
 
   bool _visible = false;
   Key _visibilityDetectorKey = UniqueKey();
@@ -151,9 +150,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
-    else if ((name == Connectivity.notifyStatusChanged) ||
-        (name == Auth2.notifyLoginChanged)
-    ) {
+    else if ((name == Connectivity.notifyStatusChanged) || (name == Auth2.notifyLoginChanged)) {
       _loadResearchProjectsIfVisible();
     }
   }
@@ -192,7 +189,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
         message: AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.research_projects', 'Research Projects'), verbose: true),
       );
     }
-    else if (_loadingResearchProjects) {
+    else if (_contentActivity.showsProgress) {
       return HomeProgressWidget();
     }
     else {
@@ -324,16 +321,15 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
     if (_visible) {
       return _loadResearchProjects();
     }
-    else if (_contentStatus.index < FavoriteContentStatus.reload.index) {
+    else if (_contentStatus.canReload) {
       _contentStatus = FavoriteContentStatus.reload;
     }
   }
 
   Future<void> _loadResearchProjects() async {
-    if ((_loadingResearchProjects == false) && mounted) {
+    if (_contentActivity.canReload && mounted) {
       setState(() {
-        _loadingResearchProjects = true;
-        _updatingResearchProjects = true;
+        _contentActivity = FavoriteContentActivity.reload;
       });
 
       List<Group>? researchProjects = await Groups().loadDisplayResearchProjectsListV3(ResearchProjectsFilter(contentType: widget.contentType));
@@ -342,7 +338,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
       setStateIfMounted(() {
         _researchProjects = researchProjects;
         _contentStatus = FavoriteContentStatus.none;
-        _loadingResearchProjects = false;
+        _contentActivity = FavoriteContentActivity.none;
         _researchProjectsCardKeys.clear();
       });
     }
@@ -352,33 +348,40 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
     if (_visible) {
       return _updateResearchProjects();
     }
-    else if (_contentStatus.index < FavoriteContentStatus.refresh.index) {
+    else if (_contentStatus.canRefresh) {
       _contentStatus = FavoriteContentStatus.refresh;
     }
   }
 
   Future<void> _updateResearchProjects() async {
-    if ((_loadingResearchProjects == false) && (_updatingResearchProjects == false) && mounted) {
+    if (_contentActivity.canRefresh && mounted) {
       setState(() {
-        _updatingResearchProjects = true;
+        _contentActivity = FavoriteContentActivity.refresh;
       });
     }
 
     List<Group>? researchProjects = await Groups().loadDisplayResearchProjectsListV3(ResearchProjectsFilter(contentType: widget.contentType));
     _sortResearchProjects(researchProjects);
 
-    if (mounted && _updatingResearchProjects && (researchProjects != null) && !DeepCollectionEquality().equals(_researchProjects, researchProjects)) {
-      setState(() {
-        _researchProjects = researchProjects;
-        _contentStatus = FavoriteContentStatus.none;
-        _updatingResearchProjects = false;
-        _pageViewKey = UniqueKey();
-        _researchProjectsCardKeys.clear();
-        // _pageController = null;
-        if ((_researchProjects?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
-          _pageController?.jumpToPage(0);
-        }
-      });
+    if (mounted && (_contentActivity == FavoriteContentActivity.refresh)) {
+      if ((researchProjects != null) && !DeepCollectionEquality().equals(_researchProjects, researchProjects)) {
+        setState(() {
+          _researchProjects = researchProjects;
+          _contentStatus = FavoriteContentStatus.none;
+          _contentActivity = FavoriteContentActivity.none;
+          _pageViewKey = UniqueKey();
+          _researchProjectsCardKeys.clear();
+          // _pageController = null;
+          if ((_researchProjects?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
+            _pageController?.jumpToPage(0);
+          }
+        });
+      } else {
+        setState(() {
+          _contentActivity = FavoriteContentActivity.none;
+        });
+      }
+
     }
   }
 

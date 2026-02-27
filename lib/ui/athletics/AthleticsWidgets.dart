@@ -103,7 +103,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> with Notificati
     bool isTicketedSport = sport?.ticketed ?? false;
     bool showImage = widget.showImage && StringUtils.isNotEmpty(game?.imageUrl) && isTicketedSport;
     bool isGetTicketsVisible = widget.showGetTickets && StringUtils.isNotEmpty(game?.links?.tickets) && isTicketedSport;
-    bool isFavorite = Auth2().isFavorite(widget.sportEvent);
+    bool isFavorite = Auth2().isFavorite(widget.sportEvent) || Auth2().isFavorite(game);
     String? interestsLabelValue = _getInterestsLabelValue();
     bool showInterests = StringUtils.isNotEmpty(interestsLabelValue) && widget.showInterests;
     String? description = game?.description;
@@ -334,7 +334,9 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> with Notificati
 
   void _onTapSave() {
     Analytics().logSelect(target: "Favorite: ${_game?.title}");
-    Auth2().prefs?.toggleFavorite(widget.sportEvent);
+    bool isFavorite = Auth2().isFavorite(widget.sportEvent) || Auth2().isFavorite(_game);
+    Auth2().prefs?.setFavorite(widget.sportEvent, !isFavorite);
+    Auth2().prefs?.setFavorite(_game, !isFavorite);
   }
 
   void _onTapSportCategory(SportDefinition? sport) {

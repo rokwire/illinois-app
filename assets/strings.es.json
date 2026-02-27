@@ -234,8 +234,8 @@
     "panel.browse.alert.building_access.privacy_level.4.button.label": "Establecer en 4",
     "panel.browse.alert.building_access.privacy_level.5.button.label": "Establecer en 5",
 
-    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD these items to your favorites?",
-    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE these items from your favorites?",
+    "panel.browse.prompt.add.all.favorites": "Are you sure you want to add these items to your favorites?",
+    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to remove these items from your favorites?",
 
     "panel.browse.section.academics.title": "Académica",
     "panel.browse.section.academics.description": "Tools for managing your academic life.",
@@ -245,7 +245,7 @@
     "panel.browse.section.athletics.description": "Keep up with your favorite {{app_title}} teams.",
     "panel.browse.section.campus_guide.title": "Vida universitaria",
     "panel.browse.section.campus_guide.description": "Acceda a enlaces para grupos, organizaciones y servicios para mejorar su tiempo en {{app_title}}.",
-    "panel.browse.section.career_exploration.title": "Career Exploration",
+    "panel.browse.section.career_exploration.title": "Career Exploration & Preparation",
     "panel.browse.section.career_exploration.description": "Discover career pathways and opportunities.",
     "panel.browse.section.dining.title": "Comida",
     "panel.browse.section.dining.description": "Los estudiantes, profesores, empleados, y visitantes son bienvenidos a comer en cualquier comedor en las residencias.",
@@ -303,10 +303,12 @@
     "panel.browse.entry.campus_guide.campus_highlights.title": "Recursos destacados",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "Recursos guardados",
 
+    "panel.browse.entry.career_exploration.career_planing_links.title": "Career Planning Links",
     "panel.browse.entry.career_exploration.interest_explorer.title": "Interest Explorer",
     "panel.browse.entry.career_exploration.digital_card.title": "My Digital Business Card",
     "panel.browse.entry.career_exploration.skills_self_evaluation.title": "Skills Self-Evaluation",
     "panel.browse.entry.career_exploration.essential_skills_coach.title": "Essential Skills Coach",
+    "panel.browse.entry.career_exploration.job_board.title": "Virtual Job Board",
 
     "panel.browse.entry.dining.dining.title": "Comedor de la residencia",
 
@@ -355,6 +357,7 @@
     "panel.browse.entry.wellness.wellness_todo.title": "Lista de quehaceres",
     "panel.browse.entry.wellness.my_appointments.title": "Mis citas de MyMcKinley",
     "panel.browse.entry.wellness.wellness_tips.title": "Consejo diario",
+    "panel.browse.entry.wellness.wellness_links.title": "Líneas directas y enlaces 24/7",
     "panel.browse.entry.wellness.wellness_health_screener.title": "Illinois Health Screener",
     "panel.browse.entry.wellness.wellness_resources.title": "Recursos generales",
     "panel.browse.entry.wellness.wellness_mental_health.title": "Recursos de salud mental",
@@ -626,6 +629,7 @@
     "panel.athletics_news_article.message.share.failed.text": "Failed to share article.",
     "panel.athletics_news_article.message.share.unable.text": "Unable to share article.",
     "panel.athletics_news_article.message.share.unavailable.text": "Share not available.",
+    "panel.athletics_news_article.message.share.reason.format": "Reason: {{reason}}",
 
     "panel.athletics_roster_list.header.title": "Lista",
     "panel.athletics_roster_list.button.by_name.title": "Por nombre",
@@ -2524,7 +2528,7 @@
 
     "panel.polls_home.text.header.title":"Encuestas",
     "panel.polls_home.text.loading":"Cargando. Por favor espera...",
-    "panel.polls_home.text.pin_description":"Pregunta al creador de la encuesta por su número de cuatro dígitos.",
+    "panel.polls_home.text.pin_description":"Enter the four-digit code provided by the poll creator.",
     "panel.polls_home.button.find_poll.title":"Encontrar encuesta",
     "panel.polls_home.text.error":"Error",
     "panel.polls_home.tab.title.recent_polls":"Encuestas recientes",
@@ -2629,6 +2633,8 @@
     "panel.wellness.section.resources.label": "Recursos generales",
     "panel.wellness.section.mental_health.label": "Recursos de salud mental",
     "panel.wellness.section.success_team.label": "My Primary Care Provider",
+    "panel.wellness.section.recreation.label": "Campus Recreation",
+    "panel.wellness.section.links.label": "24/7 Hotlines & Links",
 
     "panel.wellness.sections.description.footer.wellness.text": "Bienestar ",
     "panel.wellness.sections.description.footer.description.text": "es un estado de bienestar óptimo que está orientado a maximizar el potencial de un individuo. Este es un proceso de por vida para avanzar hacia la mejora de su ",
@@ -2646,7 +2652,7 @@
     "panel.wellness.sections.health_screener.dropdown.filter.timeframe.title": "Hora:",
     "panel.wellness.sections.health_screener.dropdown.filter.type.title": "Tipo:",
     "panel.wellness.sections.health_screener.offline.error.msg": "Illinois Health Screener no está disponible sin conexión.",
-    "panel.wellness.sections.health_screener.description.title": "Use el Illinois Health Screener para ayudarlo a encontrar los recursos correctos",
+    "panel.wellness.sections.health_screener.description.title": "Use el Illinois Health Screener para ayudarlo a encontrar los recursos correctos.",
     "panel.wellness.sections.health_screener.body.save.description": "Sus resultados se guardarán para que pueda revisarlos o compararlos con resultados futuros.",
     "panel.wellness.sections.health_screener.body.dont_save.description": "Sus resultados no se guardarán para que los compare con resultados futuros.",
     "panel.wellness.sections.health_screener.body.dont_save.label": "No guardar mis resultados",
@@ -2974,6 +2980,7 @@
     "panel.qr_code.alert.share.failed.msg": "Failed to share QR code.",
     "panel.qr_code.alert.share.unable.msg": "Unable to share QR code.",
     "panel.qr_code.alert.share.unavailable.msg": "Share not available.",
+    "panel.qr_code.alert.share.reason.fmt": "Reason: {{reason}}",
     "panel.qr_code.alert.share.target.qr": "QR code",
     "panel.qr_code.alert.share.target.vcard": "Digital Business Card",
     "panel.qr_code.code.hint": "Imagen del código QR",
@@ -3369,7 +3376,7 @@
     "panel.mtd_stops.search.label.found_single":"1 resultado se encontró",
     "panel.mtd_stops.search.label.found_multi":"%d resultados se encontraron",
 
-    "panel.campus_guide.label.heading": "Guía del Campus",
+    "panel.campus_guide.label.heading": "Vida universitaria",
     "panel.campus_guide.label.content.empty": "Contenido de recursos vacíos",
 
     "panel.guide_categories.label.heading": "Guía del Campus",
@@ -3658,7 +3665,7 @@
     "widget.safewalks_request.location.current.title": "Use My Location",
     "widget.safewalks_request.location.map.title": "Search Map",
     "widget.safewalks_request.location.saved.title": "View Saved Locations",
-    "widget.safewalks_request.message.service.worktime.out_of_hours.html": "<b>SafeWalks is not available at this time.</b><br>For more information, call <a href=\\'tel:{{safewalk_phone_number}}\\'>{{safewalk_phone_number}}</a>.",
+    "widget.safewalks_request.message.service.worktime.out_of_hours.html": "<b>SafeWalks is not available at this time.</b><br>For more information, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a>.",
     "widget.safewalks_request.message.location.service.disabled.title": "Location Services not enabled.",
     "widget.safewalks_request.message.location.service.denied.title": "Location Services access denied.",
     "widget.safewalks_request.message.service_not_available.title": "Location Services not available.",
@@ -3846,7 +3853,7 @@
     "panel.image_edit.button.replace.title":"Replace Image",
     "panel.image_edit.button.upload.title":"Choose Image",
     "panel.image_edit.button.gallery.title":"Gallery",
-    "panel.image_edit.button.camera.title":"Gallery",
+    "panel.image_edit.button.camera.title":"Camera",
 
     "panel.wordle.header.title": "ILLordle",
     "panel.wordle.heading.info.text": "Presented by The Daily Illini",
@@ -4059,8 +4066,8 @@
     "widget.home.radio.button.fail.title": "Inicialización falló",
     "widget.home.radio.button.add_radio.hint": "",
 
-    "widget.home.prompt.add.favorite": "¿Estás segura de que quieres AÑADIR este favorito?",
-    "widget.home.prompt.remove.favorite": "¿Estás segura de que deseas ELIMINAR este artículo de tus favoritos?",
+    "widget.home.prompt.add.favorite": "¿Estás segura de que quieres añadir este favorito?",
+    "widget.home.prompt.remove.favorite": "¿Estás segura de que deseas eliminar este artículo de tus favoritos?",
 
     "widget.home.welcome_message.title.text": "Tailor Your App Experience",
     "widget.home.favorites.instructions.message.text": "Tap the \u2606s in <a href='{{browse_local_url}}'>Sections</a> or <a href='{{customize_favorites_local_url}}'>Customize</a> to add shortcuts to Favorites. Note that some features require specific <a href='{{privacy_settings_local_url}}'>privacy settings</a> and <a href='{{sign_in_local_url}}'>signing in</a> with your NetID, phone number, or email address.",
@@ -4160,7 +4167,7 @@
     "widget.home.favorites.message.empty.laundry": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Lavanderías</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.favorites.message.empty.mtd_stops": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Paradas de Autobús</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.favorites.message.empty.locations": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Mapa</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
-    "widget.home.favorites.message.empty.campus_guide": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Lista completa de recursos</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
+    "widget.home.favorites.message.empty.campus_guide": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Lista completa</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.favorites.message.empty.appointments": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Citas de MyMcKinley</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
     "widget.home.favorites.message.empty.appointments.not_to_display": "No hay nada que mostrar, ya que has optado por no mostrar ninguna cita pasada o futura. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 2.)",
 

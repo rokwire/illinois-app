@@ -110,8 +110,7 @@ class _HomeAthliticsNewsImplWidget extends StatefulWidget {
 class _HomeAthliticsNewsImplWidgetState extends State<_HomeAthliticsNewsImplWidget> with NotificationsListener {
 
   List<News>? _news;
-  bool _loadingNews = false;
-  bool _refreshingNews = false;
+  FavoriteContentActivity _contentActivity = FavoriteContentActivity.none;
 
   bool _visible = false;
   Key _visibilityDetectorKey = UniqueKey();
@@ -194,7 +193,7 @@ class _HomeAthliticsNewsImplWidgetState extends State<_HomeAthliticsNewsImplWidg
         message: Localization().getStringEx("widget.home.athletics_news.text.offline", "Big 10 News is not available while offline."),
       );
     }
-    else if (_loadingNews || _refreshingNews) {
+    else if (_contentActivity.showsProgress) {
       return HomeProgressWidget();
     }
     else {
@@ -336,16 +335,15 @@ class _HomeAthliticsNewsImplWidgetState extends State<_HomeAthliticsNewsImplWidg
     if (_visible) {
       return _loadNews();
     }
-    else if (_contentStatus.index < FavoriteContentStatus.reload.index) {
+    else if (_contentStatus.canReload) {
       _contentStatus = FavoriteContentStatus.reload;
     }
   }
 
   Future<void> _loadNews() async {
-    if ((_loadingNews == false) && mounted) {
+    if (_contentActivity.canReload && mounted) {
       setState(() {
-        _loadingNews = true;
-        _refreshingNews = false;
+        _contentActivity = FavoriteContentActivity.reload;
       });
 
       List<News>? news = await Sports().loadNews(null, 0);
@@ -353,7 +351,7 @@ class _HomeAthliticsNewsImplWidgetState extends State<_HomeAthliticsNewsImplWidg
       setStateIfMounted(() {
         _news = news;
         _contentStatus = FavoriteContentStatus.none;
-        _loadingNews = false;
+        _contentActivity = FavoriteContentActivity.none;
         _contentKeys.clear();
       });
     }
@@ -363,31 +361,37 @@ class _HomeAthliticsNewsImplWidgetState extends State<_HomeAthliticsNewsImplWidg
     if (_visible) {
       return _refreshNews();
     }
-    else if (_contentStatus.index < FavoriteContentStatus.refresh.index) {
+    else if (_contentStatus.canRefresh) {
       _contentStatus = FavoriteContentStatus.refresh;
     }
   }
 
   Future<void> _refreshNews() async {
-    if ((_loadingNews == false) && (_refreshingNews == false) && mounted) {
+    if (_contentActivity.canRefresh && mounted) {
       setState(() {
-        _refreshingNews = true;
+        _contentActivity = FavoriteContentActivity.refresh;
       });
 
       List<News>? news = await Sports().loadNews(null, 0);
 
-      if (mounted && _refreshingNews && (news != null) && !DeepCollectionEquality().equals(_news, news)) {
-        setState(() {
-          _news = news;
-          _contentStatus = FavoriteContentStatus.none;
-          _refreshingNews = false;
-          _pageViewKey = UniqueKey();
-          _contentKeys.clear();
-          // _pageController = null;
-          if ((_news?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
-            _pageController?.jumpToPage(0);
-          }
-        });
+      if (mounted && (_contentActivity == FavoriteContentActivity.refresh)) {
+        if ((news != null) && !DeepCollectionEquality().equals(_news, news)) {
+          setState(() {
+            _news = news;
+            _contentStatus = FavoriteContentStatus.none;
+            _contentActivity = FavoriteContentActivity.none;
+            _pageViewKey = UniqueKey();
+            _contentKeys.clear();
+            // _pageController = null;
+            if ((_news?.isNotEmpty == true) && (_pageController?.hasClients == true)) {
+              _pageController?.jumpToPage(0);
+            }
+          });
+        } else {
+          setState(() {
+            _contentActivity = FavoriteContentActivity.none;
+          });
+        }
       }
     }
   }

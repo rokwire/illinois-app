@@ -2,6 +2,7 @@
 import 'dart:math';
 
 import 'package:illinois/model/Appointment.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -71,6 +72,27 @@ extension AppointmentProviderExt on AppointmentProvider {
 
   String indexedImageKey(int index) => (name == graingerName) ?
     'photo-grainger-${(index.abs() % 2) + 1}' : defaultImageKey;
+}
+
+extension AppointmentProviderUtils on AppointmentProvider {
+
+  static List<AppointmentProvider>? enabledProviders(List<AppointmentProvider>? providers) {
+    if (providers != null) {
+      Set<String>? monitored = SetUtils.from(JsonUtils.listStringsValue(FlexUI()['appointment.providers.monitored'])) ;
+      Set<String>? enabled = SetUtils.from(JsonUtils.listStringsValue(FlexUI()['appointment.providers.enabled'])) ;
+      if ((monitored != null) && (enabled != null)) {
+        return List<AppointmentProvider>.from(providers.where((provider) {
+          String? code = provider.name?.toLowerCase();
+          return (code == null) || (monitored.contains(code) == false) || (enabled.contains(code) == true);
+        }));
+      } else {
+        return providers;
+      }
+    } else {
+      return null;
+    }
+  }
+
 }
 
 ///////////////////////////////

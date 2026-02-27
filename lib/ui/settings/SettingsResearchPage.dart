@@ -56,8 +56,8 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchPage> {
           borderRadius: BorderRadius.all(Radius.circular(4)),
           title: Localization().getStringEx("panel.settings.home.research.questionnaire.title", "Research interest form"),
           textStyle:  (Questionnaires().participateInResearch == true) ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
-          rightIconKey: Questionnaires().participateInResearch ?? false ? 'chevron-right-bold' : 'chevron-right-gray',
-          onTap: _onResearchQuestionnaireClicked
+          rightIconKey: (Questionnaires().participateInResearch == true) ? 'chevron-right-bold' : 'chevron-right-gray',
+          onTap: (Questionnaires().participateInResearch == true) ? _onResearchQuestionnaireClicked : null,
       ),
     ]),
   );

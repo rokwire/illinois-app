@@ -45,8 +45,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   WordleGame? _game;
   WordleDailyWord? _dailyWord;
   Set<String>? _dictionary;
-  bool _loadingData = false;
-  bool _refreshingData = false;
+  FavoriteContentActivity _contentActivity = FavoriteContentActivity.none;
   bool _hintMode = false;
 
   bool _visible = false;
@@ -116,7 +115,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
     );
 
   Widget get _contentWidget {
-    if (_loadingData) {
+    if (_contentActivity == FavoriteContentActivity.reload) {
       return _loadingContent;
     } else if (_game == null) {
       return _errorContent;
@@ -213,7 +212,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
     if (_visible) {
       return _loadData();
     }
-    else if (_contentStatus.index < FavoriteContentStatus.reload.index) {
+    else if (_contentStatus.canReload) {
       _contentStatus = FavoriteContentStatus.reload;
     }
   }
@@ -222,7 +221,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
     if (_visible) {
       return _refreshData();
     }
-    else if (_contentStatus.index < FavoriteContentStatus.refresh.index) {
+    else if (_contentStatus.canRefresh) {
       _contentStatus = FavoriteContentStatus.refresh;
     }
   }
@@ -232,10 +231,9 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   WordleGame get _theGame => _game ??= WordleGame(_dailyWord?.word ?? '');
 
   Future<void> _loadData() async {
-    if ((_loadingData == false) && mounted) {
+    if (_contentActivity.canReload && mounted) {
       setState(() {
-        _loadingData = true;
-        _refreshingData = false;
+        _contentActivity = FavoriteContentActivity.reload;
       });
 
       List<dynamic> results = await Future.wait([
@@ -255,7 +253,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
           _game = game;
           _dailyWord = dailyWord;
           _dictionary = dictionary;
-          _loadingData = false;
+          _contentActivity = FavoriteContentActivity.none;
           _contentStatus = FavoriteContentStatus.none;
         });
       }
@@ -263,9 +261,9 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   }
 
   Future<void> _refreshData() async {
-    if ((_loadingData == false) && (_refreshingData == false) && mounted) {
+    if (_contentActivity.canRefresh && mounted) {
       setState(() {
-        _refreshingData = true;
+        _contentActivity = FavoriteContentActivity.refresh;
       });
 
       WordleGame? game = WordleGame.fromStorage();
@@ -274,7 +272,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
         game = WordleGame(dailyWord.word);
       }
 
-      if (mounted && _refreshingData) {
+      if (mounted && (_contentActivity == FavoriteContentActivity.refresh)) {
         setState(() {
           if ((game != null) && (_game != game)) {
             _game = game;
@@ -283,7 +281,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
             _dailyWord = dailyWord;
           }
 
-          _refreshingData = false;
+          _contentActivity = FavoriteContentActivity.none;
           _contentStatus = FavoriteContentStatus.none;
         });
       }

@@ -81,8 +81,8 @@ class AppAlert {
   static Future<void> showOfflineMessage(BuildContext context, String? message) async =>
     showTextMessage(context, Localization().getStringEx("common.message.offline", "You appear to be offline"));
 
-  static Future<void> showTextMessage(BuildContext context, String? message) =>
-    showWidgetMessage(context, Text(message!, textAlign: TextAlign.center,), analyticsMessage: message);
+  static Future<void> showTextMessage(BuildContext context, String? message, { TextAlign textAlign = TextAlign.center }) =>
+    showWidgetMessage(context, Text(message!, textAlign: textAlign,), analyticsMessage: message);
 
   static Future<void> showAuthenticationNAMessage(BuildContext context) async {
     final String linkSettingsMacro = "{{link.settings}}";
@@ -207,11 +207,11 @@ class AppSemantics {
           sendSemanticsEvent(
             TapSemanticEvent());
 
-    static void triggerAccessibilityFocus(GlobalKey? groupKey, {Duration? delay}) => Future.delayed(delay ?? Duration.zero, ()=>
+    static void triggerAccessibilityFocus(GlobalKey? groupKey, {Duration? delay}) => Future.delayed(delay ?? Duration.zero, () =>
       groupKey?.currentContext?.mounted == true && isAccessibilityFocused(groupKey) == false ?
         groupKey?.currentContext?.findRenderObject()?.
-          sendSemanticsEvent(
-            FocusSemanticEvent()) :
+          sendSemanticsEvent(FocusSemanticEvent()
+        ) :
         null);
 
     static bool isAccessibilityFocused(GlobalKey? key) => extractSemanticsNote(key)?.hasFlag(SemanticsFlag.isFocused) ?? false;
