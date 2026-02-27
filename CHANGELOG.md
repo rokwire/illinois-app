@@ -66,6 +66,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.0.0] - 2026-01-29
 
 ## [7.3.52] - 2026-02-27
+### Added
+- Added auth2 analytics event for monitoring refresh token issues [#5405](https://github.com/rokwire/illinois-app/issues/5405).
+- Added missing period in Illinois Health Screener panel [#5778](https://github.com/rokwire/illinois-app/issues/5778).
+- Added internal link resource type to GBV model [#5784](https://github.com/rokwire/illinois-app/issues/5784).
+- Added navigation direction buttons in My Courses card and detail widgets [#5809](https://github.com/rokwire/illinois-app/issues/5809).
 ### Fixed
 - Fixed accessibility focus issues [#5741](https://github.com/rokwire/illinois-app/issues/5741).
 - Fixed accessibility empty 'scrim' focus node for SettingsHomePanel and GroupsDetailPanel [#5746](https://github.com/rokwire/illinois-app/issues/5746).
