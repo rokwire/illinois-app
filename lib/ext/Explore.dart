@@ -438,39 +438,39 @@ extension ExploreMap on Explore {
     }
   }
 
-  Future<bool> launchDirections() async {
-    LatLng? targetLocation = await _targetLocation;
+  Future<bool> launchDirections({ String? travelMode }) async {
+    travelMode ??= _defaultTravelMode;
+    LatLng? targetLocation = await _getTargetLocation(travelMode: travelMode);
     return (targetLocation != null) ? await GeoMapUtils.launchDirections(
       destination: targetLocation,
-      travelMode: _defaultTravelMode
+      travelMode: travelMode
     ) : false;
   }
 
-  Future<LatLng?> get _targetLocation async {
-    Building? building;
-    if (this is Building) {
-      building = this as Building;
-    }
-    else if (this is WellnessBuilding) {
-      building = (this as WellnessBuilding).building;
-    }
-    else if (this is StudentCourse) {
-      building = (this as StudentCourse).section?.building;
-    }
+  Future<LatLng?> _getTargetLocation({ String? travelMode }) async {
 
-    if (building != null) {
-      Position? userLocation = await LocationServices().location;
-      BuildingEntrance? buildingEntrance = building.nearstEntrance(userLocation, requireAda: StudentCourses().requireAda);
-      if ((buildingEntrance != null) && buildingEntrance.hasValidLocation) {
-        return LatLng(buildingEntrance.latitude!, buildingEntrance.longitude!);
+    if ((travelMode == GeoMapUtils.traveModeWalking) || (travelMode == GeoMapUtils.traveModeBycycling)) {
+      Building? building;
+      if (this is Building) {
+        building = this as Building;
+      }
+      else if (this is WellnessBuilding) {
+        building = (this as WellnessBuilding).building;
+      }
+      else if (this is StudentCourse) {
+        building = (this as StudentCourse).section?.building;
+      }
+
+      if (building != null) {
+        Position? userLocation = await LocationServices().location;
+        BuildingEntrance? buildingEntrance = building.nearstEntrance(userLocation, requireAda: StudentCourses().requireAda);
+        if ((buildingEntrance != null) && buildingEntrance.hasValidLocation) {
+          return LatLng(buildingEntrance.latitude ?? 0, buildingEntrance.longitude ?? 0);
+        }
       }
     }
 
-    ExploreLocation? location = exploreLocation;
-    return (location?.isLocationCoordinateValid ?? false) ? LatLng(
-      location?.latitude?.toDouble() ?? 0,
-      location?.longitude?.toDouble() ?? 0
-    ) : null;
+    return exploreLocation?.exploreLocationMapCoordinate;
   }
 
   String get _defaultTravelMode => ((this is MTDStop) || (this is ExplorePOI)) ?
