@@ -127,3 +127,42 @@ class Map2PlainImageButton extends StatelessWidget {
       ),
     );
 }
+
+class Map2NavDirectionsButton extends StatelessWidget {
+  final String imageKey;
+  final double imageSize;
+  final EdgeInsetsGeometry contentPadding;
+  final void Function()? onTap;
+
+  // ignore: unused_element_parameter
+  Map2NavDirectionsButton(this.imageKey, { super.key,
+    this.imageSize = _imageSize,
+    this.contentPadding = _contentPadding,
+    this.onTap
+  });
+
+  @override
+  Widget build(BuildContext context) => InkWell(onTap: onTap, child:
+    Container(decoration: _buttonDecoration, child:
+      Padding(padding: contentPadding, child:
+        SizedBox(width: imageSize, height: imageSize, child:
+          Center(child:
+            Styles().images.getImage(imageKey, size: imageSize, color: Styles().colors.fillColorPrimary),
+          ),
+        )
+      )
+    )
+  );
+
+  static const EdgeInsetsGeometry _contentPadding = EdgeInsets.all(12);
+  static const double _imageSize = 18;
+
+  static Decoration get _buttonDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    borderRadius: _buttonBorderRadius,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+  );
+
+  static const BorderRadiusGeometry _buttonBorderRadius = BorderRadius.all(_buttonRadius);
+  static const Radius _buttonRadius = Radius.circular(8);
+}
