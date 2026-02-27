@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [7.3.52] - 2026-02-27
 ### Added
 - Added auth2 analytics event for monitoring refresh token issues [#5405](https://github.com/rokwire/illinois-app/issues/5405).
 - Added missing period in Illinois Health Screener panel [#5778](https://github.com/rokwire/illinois-app/issues/5778).
