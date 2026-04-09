@@ -83,6 +83,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
   // Dining Payment Types
   bool _diningPaymentTypesExpanded = false;
 
+  bool _hasCrowdMeter = true;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -218,8 +220,94 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
       details.add(additionalInfo);
     }
 
+    Widget? crowdMeter = Padding(padding: EdgeInsets.all(8), child: _crowdMeter());
+    if(_hasCrowdMeter){
+      details.add(crowdMeter);
+    }
+
+
     return (0 < details.length) ? Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
       Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: details)) : Container();
+  }
+
+  Widget? _crowdMeter() {
+    double unitHeight = 25.0;
+    int hoursDisplayed = 19;
+    List<String> hourLabels = ["6a", "9a", "12p", "3p", "6p", "9p", "12a"];
+    return Container(
+      // decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
+      child:
+        Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("MON"),
+                Text("TUE"),
+                Text("WED"),
+                Text("THU"),
+                Text("FRI"),
+                Text("SAT"),
+                Text("SUN"),
+              ],
+            ),
+
+            new Stack(children: [
+              Column(children: [
+                Padding(padding: EdgeInsets.only(bottom: unitHeight - 1), child:
+                  Container(height: 1, color: Styles().colors.surfaceAccent),
+                ),
+                Padding(padding: EdgeInsets.only(bottom: unitHeight - 1), child:
+                  Container(height: 1, color: Styles().colors.surfaceAccent),
+                ),
+                Padding(padding: EdgeInsets.only(bottom: unitHeight - 1), child:
+                  Container(height: 1, color: Styles().colors.surfaceAccent),
+                ),
+                Padding(padding: EdgeInsets.only(bottom: unitHeight - 1), child:
+                  Container(height: 1, color: Styles().colors.surfaceAccent),
+                ),
+              ]),
+              Positioned.fill(child:
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [...List.filled(hoursDisplayed, 0).map((x) =>
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Styles().colors.blueAccent,
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(10), bottom: Radius.circular(10))),
+                      width: 10, height: unitHeight * 3)
+                  )]
+                )
+              )
+
+            ]),
+            Padding(padding: EdgeInsets.only(top: 3), child:
+              Container(height: 1, color: Styles().colors.black),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [...List.generate(hoursDisplayed, (index) => index).map((x) =>
+                (x % 3 == 0)
+                  ? Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 4.5), child:
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Styles().colors.black),
+                        width: 1, height: 5)
+                    ),
+                  Padding(padding: EdgeInsets.only(top: 2), child:
+                    Text(hourLabels[(x ~/ 3)], style: Styles().textStyles.getTextStyle("widget.item.tiny"))
+                  )
+
+                  ])
+                  : Padding(padding: EdgeInsets.symmetric(horizontal: 5))
+              )]
+            )
+          ],
+        ),
+    );
   }
 
   Widget? _explorePaymentTypes() {

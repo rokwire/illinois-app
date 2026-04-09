@@ -3,14 +3,17 @@ import 'package:rokwire_plugin/utils/utils.dart';
 enum WeekDay { monday, tuesday, wednesday, thursday, friday, saturday, sunday }
 
 class CrowdMeterWeek {
+  final String id;
   final String? crowdType;
   final List<CrowdMeterDay>? days;
 
   CrowdMeterWeek({
+    required this.id,
     this.crowdType, this.days
   });
 
   static CrowdMeterWeek? fromJson(Map<String, dynamic>? json) => (json != null) ? CrowdMeterWeek(
+    id: JsonUtils.stringValue(json['id']) ?? '',
     crowdType: JsonUtils.stringValue(json['crowdType']),
     days: CrowdMeterDay.listFromJson(JsonUtils.listValue(json['days'])),
   ) : null;
@@ -18,11 +21,13 @@ class CrowdMeterWeek {
   @override
   bool operator ==(other) =>
       (other is CrowdMeterWeek) &&
+          (other.id == id) &&
           (other.crowdType == crowdType) &&
           (other.days == days);
 
   @override
   int get hashCode =>
+      id.hashCode ^
       (crowdType?.hashCode ?? 0) ^
       (days?.hashCode ?? 0);
 }
