@@ -6,6 +6,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [8.0.8] - 2026-02-27
+
+## [8.0.7] - 2026-02-25
+### Changed
+- Make Group cards a fixed height [#5719](https://github.com/rokwire/illinois-app/issues/5719).
+
+## [8.0.6] - 2026-02-24
+
+## [8.0.5] - 2026-02-21
+
+## [8.0.4] - 2026-02-17
+
+## [8.0.3] - 2026-02-16
+
+## [8.0.2] - 2026-02-04
+### Added
+- Added exception text as reason in Share Plus error reporting [#5653](https://github.com/rokwire/illinois-app/issues/5653).
+
+## [8.0.1] - 2026-02-03
+### Fixed
+- Adding attendance takers to an event [#5705](https://github.com/rokwire/illinois-app/issues/5705).
+
+## [8.0.0] - 2026-01-29
+
 ## [7.3.52] - 2026-02-27
 ### Added
 - Added auth2 analytics event for monitoring refresh token issues [#5405](https://github.com/rokwire/illinois-app/issues/5405).
@@ -45,11 +69,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added "My Groups" filter button in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
 - Created "Career Exploration" section in Home / Section, moved Academics skills stuff there [#5744](https://github.com/rokwire/illinois-app/issues/5744).
 ### Changed
-- "Order Online with Order Ahead App" button renamed to "Order Online" in Dining detail panel [#5727](https://github.com/rokwire/illinois-app/issues/5727).
-- About the App text updates [#5730](https://github.com/rokwire/illinois-app/issues/5730).
-- Changed "My Groups" filter button text style in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
 - Renamed Campus Guide [#5736](https://github.com/rokwire/illinois-app/issues/5736).
 - Updated Academic Links content, fixed panel's background color [#5729](https://github.com/rokwire/illinois-app/issues/5729).
+- Changed "My Groups" filter button text style in GroupsHome2Panel [#5353](https://github.com/rokwire/illinois-app/issues/5353).
+- "Order Online with Order Ahead App" button renamed to "Order Online" in Dining detail panel [#5727](https://github.com/rokwire/illinois-app/issues/5727).
+- About the App text updates [#5730](https://github.com/rokwire/illinois-app/issues/5730).
 ### Removed
 - Removed "Create Poll" entry from Browse/Polls & Favorites, make Browse/Polls section un-exandable [#5735](https://github.com/rokwire/illinois-app/issues/5735).
 

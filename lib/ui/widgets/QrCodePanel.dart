@@ -396,10 +396,10 @@ class _QrCodePanelState extends State<QrCodePanel> {
         }
       }
       catch (e) {
-          message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareReasonMacro.').
-            replaceAll(_shareReasonMacro, _shareQrCodeTarget);
-          reason = Localization().getStringEx('panel.qr_code.alert.share.reason.fmt', 'Reason: $_shareReasonMacro').
-            replaceAll(_shareReasonMacro, e.toString());
+        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareReasonMacro.').
+          replaceAll(_shareReasonMacro, _shareQrCodeTarget);
+        reason = Localization().getStringEx('panel.qr_code.alert.share.reason.fmt', 'Reason: $_shareReasonMacro').
+          replaceAll(_shareReasonMacro, e.toString());
       }
     }
     else {

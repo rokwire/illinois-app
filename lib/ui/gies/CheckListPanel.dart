@@ -36,7 +36,7 @@ class CheckListPanel extends StatelessWidget with AnalyticsInfo {
       AppAlert.showOfflineMessage(context, _offlineMessage(contentKey));
     }
     else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showTextMessage(context, _loggedOutMessage(contentKey));
+      AppAlert.showTextMessage(context, _loggedOutMessage(contentKey) ?? '');
     }
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CheckListPanel(contentKey: contentKey, analyticsFeature: analyticsFeature,)));

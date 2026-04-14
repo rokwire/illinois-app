@@ -64,6 +64,8 @@ android {
 
     namespace 'edu.illinois.rokwire'
 
+    ndkVersion = "28.2.13676358"
+
     buildFeatures {
         buildConfig = true
     }
@@ -87,7 +89,7 @@ android {
     
     defaultConfig {
         applicationId "edu.illinois.rokwire"
-        minSdkVersion 23
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

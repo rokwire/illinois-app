@@ -199,12 +199,12 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
                             Radio<String>(
                               activeColor: Styles().colors.fillColorPrimary,
                               value: section,
-                              groupValue: _selectedRadioValue,
+                              /*groupValue: _selectedRadioValue,
                               onChanged: (value) {
                                 setState(() {
                                   _selectedRadioValue = value;
                                 });
-                              },
+                              },*/
                             ),
                           Flexible(
                               flex: 5,
@@ -341,7 +341,24 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
       ),
     ));
 
-    return finalWidgets;
+    //return finalWidgets;
+    return <Widget>[
+      RadioGroup<String>(
+        groupValue: _selectedRadioValue,
+        onChanged: (value) {
+          setState(() {
+            _selectedRadioValue = value;
+          });
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: finalWidgets,
+        )
+      )
+    ];
+
   }
 
   void _onContactEmailAddress() {
