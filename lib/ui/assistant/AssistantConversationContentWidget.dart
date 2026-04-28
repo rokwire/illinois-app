@@ -1145,6 +1145,7 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
                   content: Localization().getStringEx('panel.assistant.label.error.title',
                       'Sorry, something went wrong. For the best results, please restart the app and try your question again.'),
                   user: false));
+          _inputController.text = message;
         }
         _loadingResponse = false;
         _showGeneratingResponseHint = false;

@@ -917,6 +917,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
             content: Localization().getStringEx('panel.assistant.label.error.title',
                 'Sorry, something went wrong. For the best results, please restart the app and try your question again.'),
             user: false, provider: provider));
+        _inputController.text = message;
       }
     }
     setStateIfMounted(() {
