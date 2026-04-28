@@ -1142,9 +1142,8 @@ class _AssistantConversationContentWidgetState extends State<AssistantConversati
           Assistant().addMessage(
               provider: _provider!,
               message: Message(
-                  content: Localization().getStringEx('panel.assistant.label.pending_response.title',
-                      'This response may still be processing and could take additional time. '
-                      'You can continue using the app and check back by refreshing this conversation shortly.'),
+                  content: Localization().getStringEx('panel.assistant.label.error.title',
+                      'Sorry, something went wrong. For the best results, please restart the app and try your question again.'),
                   user: false));
         }
         _loadingResponse = false;
