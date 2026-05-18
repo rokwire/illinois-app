@@ -13,8 +13,8 @@ class CrowdMeterWeek {
   });
 
   static CrowdMeterWeek? fromJson(Map<String, dynamic>? json) => (json != null) ? CrowdMeterWeek(
-    id: JsonUtils.stringValue(json['id']) ?? '',
-    crowdType: JsonUtils.stringValue(json['crowdType']),
+    id: JsonUtils.stringValue(json['LocationID']) ?? '',
+    crowdType: JsonUtils.stringValue(json['CrowdType']),
     days: CrowdMeterDay.listFromJson(JsonUtils.listValue(json['days'])),
   ) : null;
 
@@ -41,19 +41,19 @@ class CrowdMeterDay{
   });
 
   static CrowdMeterDay? fromJson(Map<String, dynamic>? json) => (json != null) ? CrowdMeterDay(
-    day: _dayFromString(JsonUtils.stringValue(json['day'])),
-    busyLevels: JsonUtils.listIntsValue(json['busyLevels']),
+    day: _dayFromString(JsonUtils.stringValue(json['Day'])),
+    busyLevels: JsonUtils.listIntsValue(json['BusyLevels']),
   ) : null;
 
   static WeekDay? _dayFromString(String? day) {
     switch (day) {
-      case "monday": return WeekDay.monday;
-      case "tuesday": return WeekDay.tuesday;
-      case "wednesday": return WeekDay.wednesday;
-      case "thursday": return WeekDay.thursday;
-      case "friday": return WeekDay.friday;
-      case "saturday": return WeekDay.saturday;
-      case "sunday": return WeekDay.sunday;
+      case "Monday": return WeekDay.monday;
+      case "Tuesday": return WeekDay.tuesday;
+      case "Wednesday": return WeekDay.wednesday;
+      case "Thursday": return WeekDay.thursday;
+      case "Friday": return WeekDay.friday;
+      case "Saturday": return WeekDay.saturday;
+      case "Sunday": return WeekDay.sunday;
       default: return null;
     }
   }

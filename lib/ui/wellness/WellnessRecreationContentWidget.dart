@@ -8,6 +8,7 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/apphelp/AppHelpVideoTutorialPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
+import 'package:illinois/ui/widgets/CrowdMeterWidget.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -32,6 +33,8 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
   Video? _video;
   List<dynamic>? _commands;
   Map<String, dynamic>? _strings;
+
+  String _activeCrowdMeter = "ARC";
 
   @override
   void initState() {
@@ -70,6 +73,8 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
 
   Widget _buildContent() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(children: [
+      _buildCrowdMeter(),
+      Container(height: 32,),
       _buildVideoContent,
       Container(height: 16,),
       _buildRegularButtonsContainer(),
@@ -78,6 +83,51 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
     ]));
   }
 
+  Widget _buildCrowdMeter() {
+    return Column(children: [
+      Container(decoration: BoxDecoration(), child:
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Expanded(child:
+            Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.disabledTextColor, width: 2), borderRadius: BorderRadius.horizontal(left: Radius.circular(16)), color: (_activeCrowdMeter == "ARC") ? Styles().colors.white : Styles().colors.lightGray), child:
+              GestureDetector(onTap: _onTapARC, child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
+                  Text("ARC", textAlign: TextAlign.center, style: (_activeCrowdMeter == "ARC")
+                    ? Styles().textStyles.getTextStyle('widget.message.regular.fat')
+                    : Styles().textStyles.getTextStyle('widget.message.regular'))
+                )
+              )
+            )
+          ),
+          Expanded(child:
+            Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.disabledTextColor, width: 2), borderRadius: BorderRadius.horizontal(right: Radius.circular(16)), color: (_activeCrowdMeter == "CRCE") ? Styles().colors.white : Styles().colors.lightGray), child:
+              GestureDetector(onTap: _onTapCRCE, child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
+                  Text("CRCE", textAlign: TextAlign.center, style: (_activeCrowdMeter == "CRCE")
+                    ? Styles().textStyles.getTextStyle('widget.message.regular.fat')
+                    : Styles().textStyles.getTextStyle('widget.message.regular'))
+                )
+              )
+            )
+          ),
+        ],)),
+      Container(height: 16),
+      Container(
+        decoration: BoxDecoration(
+          color: Styles().colors.white,
+          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+          borderRadius: BorderRadius.all(Radius.circular(4))),
+        child: Padding(padding: EdgeInsets. all(8), child: (
+          _crowdMeterWidget
+        ))
+      )
+    ]);
+  }
+
+  Widget get _crowdMeterWidget {
+    String locationId = (_activeCrowdMeter == "ARC") ? '1' : '2';
+    return CrowdMeterWidget(key: ValueKey(locationId), locationId: locationId, locationType: 'CampusRec');
+  }
+  
   Widget get _buildVideoContent {
     if (_video == null) {
       return Container();
@@ -176,6 +226,19 @@ class _WellnessRecreationContent extends State<WellnessRecreationContentWidget> 
     widgetList.add(Container(height: 16,));
 
     return Column(children: widgetList);
+  }
+
+  void _onTapARC() {
+   setState(() {
+     _activeCrowdMeter = "ARC";
+   });
+  }
+
+  void _onTapCRCE() {
+    setState(() {
+      
+      _activeCrowdMeter = "CRCE";
+    });
   }
 
   void _onTapVideo() {

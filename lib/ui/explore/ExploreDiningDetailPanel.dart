@@ -20,9 +20,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'package:http/http.dart' as http;
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/CrowdMeter.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
@@ -32,6 +34,7 @@ import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Dinings.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
@@ -48,6 +51,10 @@ import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
+
+import '../../service/Config.dart';
+
+import 'package:illinois/ui/widgets/CrowdMeterWidget.dart';
 
 class ExploreDiningDetailPanel extends StatefulWidget with AnalyticsInfo {
   final Dining dining;
@@ -82,8 +89,6 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
 
   // Dining Payment Types
   bool _diningPaymentTypesExpanded = false;
-
-  bool _hasCrowdMeter = true;
 
   @override
   void initState() {
@@ -220,95 +225,13 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
       details.add(additionalInfo);
     }
 
-    Widget? crowdMeter = Padding(padding: EdgeInsets.all(8), child: _crowdMeter());
-    if(_hasCrowdMeter){
-      details.add(crowdMeter);
-    }
-
+    Widget? crowdMeter = Padding(padding: EdgeInsets.symmetric(vertical: 8), child: CrowdMeterWidget(locationId: _dining.id ?? '0', locationType: "Dining"));
+    details.add(crowdMeter);
 
     return (0 < details.length) ? Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
       Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: details)) : Container();
   }
 
-  Widget? _crowdMeter() {
-    double unitHeight = 25.0;
-    int hoursDisplayed = 19;
-    List<String> hourLabels = ["6a", "9a", "12p", "3p", "6p", "9p", "12a"];
-    return Container(
-      // decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
-      child:
-        Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("MON"),
-                Text("TUE"),
-                Text("WED"),
-                Text("THU"),
-                Text("FRI"),
-                Text("SAT"),
-                Text("SUN"),
-              ],
-            ),
-
-            new Stack(children: [
-              Column(children: [
-                Padding(padding: EdgeInsets.only(bottom: unitHeight - 1), child:
-                  Container(height: 1, color: Styles().colors.surfaceAccent),
-                ),
-                Padding(padding: EdgeInsets.only(bottom: unitHeight - 1), child:
-                  Container(height: 1, color: Styles().colors.surfaceAccent),
-                ),
-                Padding(padding: EdgeInsets.only(bottom: unitHeight - 1), child:
-                  Container(height: 1, color: Styles().colors.surfaceAccent),
-                ),
-                Padding(padding: EdgeInsets.only(bottom: unitHeight - 1), child:
-                  Container(height: 1, color: Styles().colors.surfaceAccent),
-                ),
-              ]),
-              Positioned.fill(child:
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [...List.filled(hoursDisplayed, 0).map((x) =>
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Styles().colors.blueAccent,
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(10), bottom: Radius.circular(10))),
-                      width: 10, height: unitHeight * 3)
-                  )]
-                )
-              )
-
-            ]),
-            Padding(padding: EdgeInsets.only(top: 3), child:
-              Container(height: 1, color: Styles().colors.black),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [...List.generate(hoursDisplayed, (index) => index).map((x) =>
-                (x % 3 == 0)
-                  ? Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 4.5), child:
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Styles().colors.black),
-                        width: 1, height: 5)
-                    ),
-                  Padding(padding: EdgeInsets.only(top: 2), child:
-                    Text(hourLabels[(x ~/ 3)], style: Styles().textStyles.getTextStyle("widget.item.tiny"))
-                  )
-
-                  ])
-                  : Padding(padding: EdgeInsets.symmetric(horizontal: 5))
-              )]
-            )
-          ],
-        ),
-    );
-  }
 
   Widget? _explorePaymentTypes() {
     List<Widget>? details;
@@ -635,6 +558,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
       return Container();
     }
   }
+
 
   Future<void> _reloadDiningIfNeed() async {
     if ((_dining.hasDiningSchedules != true) && mounted) {
