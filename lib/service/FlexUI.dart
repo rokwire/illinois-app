@@ -93,6 +93,7 @@ class FlexUI extends rokwire.FlexUI {
 
   bool get isAllAssistantsAvailable => hasFeature('all_assistants');
   bool get isAssistantFaqsAvailable => hasFeature('assistant_faqs');
+  bool get isAssistantPromoAvailable => hasFeature('assistant_promo');
 
   // Local Build
 

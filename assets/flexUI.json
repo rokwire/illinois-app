@@ -259,7 +259,8 @@
 				"openai_assistant"                        : "${config.settings.assistant.enable.openai}",
 				"perplexity_assistant"                    : "${config.settings.assistant.enable.perplexity}",
 				"all_assistants"                          : "${config.settings.assistant.enable.all}",
-				"assistant_faqs"                          : "${config.settings.assistant.enable.faqs}"
+				"assistant_faqs"                          : "${config.settings.assistant.enable.faqs}",
+				"assistant_promo"                         : false
 			}
 		}
 	},

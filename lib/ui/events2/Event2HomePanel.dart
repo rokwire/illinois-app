@@ -1130,7 +1130,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     }
   }
 
-  bool get _isAssistantPromoVisible => (_assistantPromo != null) && Auth2().isOidcLoggedIn && (Storage().assistantEventsPromptHidden != true);
+  bool get _isAssistantPromoVisible => (_assistantPromo != null) && Auth2().isOidcLoggedIn && (Storage().assistantEventsPromptHidden != true && FlexUI().isAssistantPromoAvailable);
 
   Widget _buildAssistantPromo() {
     Widget? imageWidget = Styles().images.getImage('assistant-prompt-orange');
