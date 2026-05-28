@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Hide assistant promo in events [#5838](https://github.com/rokwire/illinois-app/issues/5838)
 
 ## [8.0.8] - 2026-02-27
 
