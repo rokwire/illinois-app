@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 - Hide assistant promo in events [#5838](https://github.com/rokwire/illinois-app/issues/5838)
+- Add QR code sharing for GBV [#5828](https://github.com/rokwire/illinois-app/issues/5828)
 
 ## [8.0.8] - 2026-02-27
 
