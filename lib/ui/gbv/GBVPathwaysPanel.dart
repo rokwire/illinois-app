@@ -132,13 +132,13 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           RichText(text: TextSpan(children: [
             TextSpan(
-              text: Localization().getStringEx('panel.sexual_misconduct.choose_pathways', 'Choose one of the below pathways or '),
-              style: Styles().textStyles.getTextStyle('widget.description.regular.highlight')
+              text: Localization().getStringEx('panel.sexual_misconduct.view_resources', 'View the resource directory '),
+              style: Styles().textStyles.getTextStyle('widget.description.regular.highlight.underline'),
+              recognizer: _resourceDirectoryRecognizer,
             ),
             TextSpan(
-                text: Localization().getStringEx('panel.sexual_misconduct.view_resources', 'view a list of resources.'),
-                style: Styles().textStyles.getTextStyle('widget.description.regular.highlight.underline'),
-                recognizer: _resourceDirectoryRecognizer,
+              text: Localization().getStringEx('panel.sexual_misconduct.choose_pathways', 'or choose one of the pathways below.'),
+              style: Styles().textStyles.getTextStyle('widget.description.regular.highlight')
             )
           ]))
         ),
