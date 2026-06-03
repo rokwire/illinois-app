@@ -128,7 +128,6 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     key: key,
     deepLinkUrl: GBV.gbvPathwaysUrl,
     saveFileName: 'gbv-pathways',
-    saveWatermarkText: 'A Path Forward',
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this section'),
     description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
