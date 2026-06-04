@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 - Hide assistant promo in events [#5838](https://github.com/rokwire/illinois-app/issues/5838)
 - Make UIN in Illini ID selectable [#5822](https://github.com/rokwire/illinois-app/issues/5822)
+- Change phrasing in 'A Path Forward' panel within GBV  [#5835](https://github.com/rokwire/illinois-app/issues/5835)
 
 ## [8.0.8] - 2026-02-27
 
