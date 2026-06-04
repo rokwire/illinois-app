@@ -54,7 +54,6 @@ extension PaymentTypeUtils on PaymentType {
     switch (this) {
       case PaymentType.ClassicMeal: return Localization().getStringEx('payment_type.text.classic_meal', 'Classic Meal');
       case PaymentType.DiningDollars: return Localization().getStringEx('payment_type.text.dining_dollars', 'Dining Dollars');
-      case PaymentType.IlliniCash: return Localization().getStringEx('payment_type.text.illini_cash', 'Illini Cash');
       case PaymentType.CreditCard: return Localization().getStringEx('payment_type.text.credit_card', 'Credit Card');
       case PaymentType.Cash: return Localization().getStringEx('payment_type.text.cash', 'Cash');
       case PaymentType.GooglePay: return Localization().getStringEx('payment_type.text.google_pay', 'Google Pay');
@@ -68,7 +67,6 @@ extension PaymentTypeUtils on PaymentType {
     switch (this) {
       case PaymentType.ClassicMeal: return 'payment-meal';
       case PaymentType.DiningDollars: return 'payment-dining';
-      case PaymentType.IlliniCash: return 'payment-student-cash';
       case PaymentType.CreditCard: return 'payment-credit-card';
       case PaymentType.Cash: return 'payment-cash';
       case PaymentType.GooglePay: return 'payment-google-pay';
