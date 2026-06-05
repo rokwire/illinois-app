@@ -158,7 +158,7 @@ class GBVDetailContentWidget extends StatelessWidget {
 
   void _onTapButton (BuildContext context, GBVResourceDetail detail) {
     Analytics().logSelect(target: 'Resource Button - ${detail.title ?? detail.content}');
-    AppLaunchUrl.launch(context: context, url: detail.content);
+    AppLaunchUrl.launchExternal(url: detail.content);
   }
 
   Map<String, String> get _htmlLinkStyle => <String, String>{
