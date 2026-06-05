@@ -80,12 +80,13 @@ class GBVDetailContentWidget extends StatelessWidget {
       case GBVResourceDetailType.button:
         return [
           Expanded(child:
-            Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12), child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
               RoundedButton(
                   label: detail.title ?? detail.content ?? '',
                   textStyle: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
+                  textAlign: TextAlign.start,
                   rightIcon: Styles().images.getImage('external-link', excludeFromSemantics: true) ?? Container(),
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   onTap: () => _onTapButton(context, detail)
               )
             )
