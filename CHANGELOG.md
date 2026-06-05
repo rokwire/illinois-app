@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove Illini Cash Dining option filter and inclusion in payment types [#5829](https://github.com/rokwire/illinois-app/issues/5829)
 - Make UIN in Illini ID selectable [#5822](https://github.com/rokwire/illinois-app/issues/5822)
 - Hide Skills Self-Evaluation and Essential Skills Coach [#5824](https://github.com/rokwire/illinois-app/issues/5824)
+- Change padding on GBV quick exit icon within "I'm not sure" survey flow to match other screens [#5832](https://github.com/rokwire/illinois-app/issues/5832)
 
 ## [8.0.8] - 2026-02-27
 
