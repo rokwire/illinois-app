@@ -84,7 +84,7 @@ class GBVDetailContentWidget extends StatelessWidget {
               RoundedButton(
                   label: detail.title ?? detail.content ?? '',
                   textStyle: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
-                  textAlign: TextAlign.start,
+                  textAlign: TextAlign.center,
                   rightIcon: Styles().images.getImage('external-link', excludeFromSemantics: true) ?? Container(),
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   onTap: () => _onTapButton(context, detail)
