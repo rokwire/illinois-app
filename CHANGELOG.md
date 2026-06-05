@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Made reporting form link in GBV open externally [#5830](https://github.com/rokwire/illinois-app/issues/5830).
 - Change phrasing in 'A Path Forward' panel within GBV [#5835](https://github.com/rokwire/illinois-app/issues/5835)
 - Hide Skills Self-Evaluation and Essential Skills Coach [#5824](https://github.com/rokwire/illinois-app/issues/5824)
+- Made University Reporting Form button wider in GBV Filing a Report screen [#5831](https://github.com/rokwire/illinois-app/issues/5831)
 - Change padding on GBV quick exit icon within "I'm not sure" survey flow to match other screens [#5832](https://github.com/rokwire/illinois-app/issues/5832)
 
 ## [8.0.8] - 2026-02-27
