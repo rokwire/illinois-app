@@ -8,6 +8,7 @@ import 'package:illinois/model/BrightnessHighlight.dart';
 import 'package:illinois/model/Building.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Map2.dart';
@@ -33,6 +34,8 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../../service/GBV.dart';
 
 class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 
@@ -117,6 +120,16 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     saveWatermarkText: 'Skills Self-Evaluation',
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
+    description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
+    analyticsFeature: analyticsFeature,
+  );
+
+  factory QrCodePanel.gbvPathways({Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
+    key: key,
+    deepLinkUrl: GBV.gbvPathwaysUrl,
+    saveFileName: 'gbv-pathways',
+    saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this section'),
     description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
     analyticsFeature: analyticsFeature,
   );

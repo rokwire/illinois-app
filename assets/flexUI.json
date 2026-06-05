@@ -25,7 +25,7 @@
 			"browse.athletics": ["sport_events", "sport_news", "sport_teams", "my_game_day"],
 			"browse.laundry": ["laundry"],
 			"browse.campus_guide": ["campus_highlights", "campus_guide", "my_campus_guide"],
-			"browse.career_exploration": ["career_planing_links", "interest_explorer", "digital_card", "skills_self_evaluation", "essential_skills_coach", "job_board"],
+			"browse.career_exploration": ["career_planing_links", "interest_explorer", "digital_card", "job_board"],
 			"browse.dining": ["dining"],
 			"browse.directory": ["user_directory"],
 			"browse.events": ["events"],
@@ -79,7 +79,7 @@
 			"appointment.providers.enabled": ["grainger"],
 
 			"settings": ["food_filters", "sports", "favorites", "assessments", "recent_items", "appointments_and_events", "language", "about", "research", "privacy", "notifications", "accessibility"],
-			"settings.assessments": ["skills_self_evaluation", "health_screener"],
+			"settings.assessments": ["health_screener"],
 			"settings.assessments.skills_self_evaluation": ["save"],
 			"settings.assessments.health_screener": ["save"],
 

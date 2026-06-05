@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/GBV.dart';
+import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceDirectoryPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -315,7 +317,8 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
       builder: (context) => Container(padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16 + bottomPadding), child:
       Column(mainAxisSize: MainAxisSize.min, children: [
         RibbonButton(title: Localization().getStringEx('panel.sexual_misconduct.options.we_care', 'We Care at Illinois website'), rightIconKey: 'external-link', onTap: () => _onTapWeCare(context)),
-        RibbonButton(title: Localization().getStringEx('panel.sexual_misconduct.options.resource_directory', 'Resource Directory'), onTap: () => _onResourceDirectory(context, _gbv!))
+        RibbonButton(title: Localization().getStringEx('panel.sexual_misconduct.options.resource_directory', 'Resource Directory'), onTap: () => _onResourceDirectory(context, _gbv!)),
+        RibbonButton(title: Localization().getStringEx('panel.sexual_misconduct.options.share', 'Share this Section'), onTap: () => _onTapShare(context)),
       ])
       ),
     );
@@ -324,6 +327,14 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
   void _onTapWeCare(BuildContext context) {
     Navigator.pop(context);
     AppLaunchUrl.launchExternal(url: Config().gbvWeCareUrl);
+  }
+
+  void _onTapShare(BuildContext context) {
+    Navigator.pop(context);
+    Analytics().logSelect(target: 'Share GBV Pathways');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+      QrCodePanel.gbvPathways(analyticsFeature: AnalyticsFeature.Safety)
+    ));
   }
 
 }
