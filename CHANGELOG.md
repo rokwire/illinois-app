@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 8.1.0 - 2026-06-08
 - Hide assistant promo in events [#5838](https://github.com/rokwire/illinois-app/issues/5838)
 - Add QR code sharing for GBV [#5828](https://github.com/rokwire/illinois-app/issues/5828)
 - Remove Illini Cash Dining option filter and inclusion in payment types [#5829](https://github.com/rokwire/illinois-app/issues/5829)
