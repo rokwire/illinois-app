@@ -2054,7 +2054,7 @@
     "panel.settings.home.research.toggle.title": "Participar en la investigación",
     "panel.settings.home.research.title": "Research Participation",
     "panel.settings.home.research.questionnaire.title": "Formulario de interés de investigación",
-    "panel.settings.home.research.prompt.title": "Please confirm that you no longer wish to participate in Research Projects. All information filled out in your questionnaire will be deleted.",
+    "panel.settings.home.research.prompt.title": "Se eliminarán todas las respuestas de su formulario de intereses de investigación. ¿Desea continuar?",
 
     "panel.settings.home.recent_items.title": "Browsing History",
     "panel.settings.home.recent_items.enable.toggle.title": "Display recently viewed app content",
