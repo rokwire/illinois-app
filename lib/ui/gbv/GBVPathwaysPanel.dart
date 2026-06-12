@@ -318,7 +318,7 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
       Column(mainAxisSize: MainAxisSize.min, children: [
         RibbonButton(title: Localization().getStringEx('panel.sexual_misconduct.options.we_care', 'We Care at Illinois website'), rightIconKey: 'external-link', onTap: () => _onTapWeCare(context)),
         RibbonButton(title: Localization().getStringEx('panel.sexual_misconduct.options.resource_directory', 'Resource Directory'), onTap: () => _onResourceDirectory(context, _gbv!)),
-        RibbonButton(title: Localization().getStringEx('panel.sexual_misconduct.options.share', 'Share this Section'), onTap: () => _onTapShare(context)),
+        RibbonButton(title: Localization().getStringEx('panel.sexual_misconduct.options.share', 'Share This Section'), onTap: () => _onTapShare(context)),
       ])
       ),
     );
