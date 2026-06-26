@@ -74,26 +74,29 @@ class _GBVSituationStepPanelState extends State<GBVSituationStepPanel> {
     SurveyData? question = _currentStep;
     final opts = (question is SurveyQuestionMultipleChoice) ? question.options : [];
 
-    return SingleChildScrollView(padding: const EdgeInsets.all(20), child:
+    return SingleChildScrollView(child:
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       GBVQuickExitWidget(),
+      Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 20), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          if ((question != null) && (question.moreInfo?.isNotEmpty == true))
+            _buildMoreInfo(question),
 
-      if ((question != null) && (question.moreInfo?.isNotEmpty == true))
-        _buildMoreInfo(question),
+          Text(question?.text ?? '', style: Styles().textStyles.getTextStyle('widget.description.regular'),),
 
-      Text(question?.text ?? '', style: Styles().textStyles.getTextStyle('widget.description.regular'),),
+          const SizedBox(height: 12),
+          _stepProgressIndicator,
+          const SizedBox(height: 24),
 
-      const SizedBox(height: 12),
-      _stepProgressIndicator,
-      const SizedBox(height: 24),
+          ...opts.map((o) => _buildOption(o.title)),
 
-      ...opts.map((o) => _buildOption(o.title)),
+          if (question?.allowSkip == true)
+            _allowSkipButton(question),
 
-      if (question?.allowSkip == true)
-        _allowSkipButton(question),
-
-      if (_loading)
-        _loadingProgressIndicator,
+          if (_loading)
+            _loadingProgressIndicator,
+        ]),
+      ),
     ],),
     );
   }
