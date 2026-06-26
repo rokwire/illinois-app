@@ -5,6 +5,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Update research form and settings text [#5852](https://github.com/rokwire/illinois-app/issues/5852)
+
+## 8.1.0 - 2026-06-08
+- Hide assistant promo in events [#5838](https://github.com/rokwire/illinois-app/issues/5838)
+- Add QR code sharing for GBV [#5828](https://github.com/rokwire/illinois-app/issues/5828)
+- Remove Illini Cash Dining option filter and inclusion in payment types [#5829](https://github.com/rokwire/illinois-app/issues/5829)
+- Make UIN in Illini ID selectable [#5822](https://github.com/rokwire/illinois-app/issues/5822)
+- Made reporting form link in GBV open externally [#5830](https://github.com/rokwire/illinois-app/issues/5830).
+- Change phrasing in 'A Path Forward' panel within GBV [#5835](https://github.com/rokwire/illinois-app/issues/5835)
+- Hide Skills Self-Evaluation and Essential Skills Coach [#5824](https://github.com/rokwire/illinois-app/issues/5824)
+- Made University Reporting Form button wider in GBV Filing a Report screen [#5831](https://github.com/rokwire/illinois-app/issues/5831)
+- Change padding on GBV quick exit icon within "I'm not sure" survey flow to match other screens [#5832](https://github.com/rokwire/illinois-app/issues/5832)
+
+## [8.0.8] - 2026-02-27
+
+## [8.0.7] - 2026-02-25
+### Changed
+- Make Group cards a fixed height [#5719](https://github.com/rokwire/illinois-app/issues/5719).
+
+## [8.0.6] - 2026-02-24
+
+## [8.0.5] - 2026-02-21
+
+## [8.0.4] - 2026-02-17
+
+## [8.0.3] - 2026-02-16
+
+## [8.0.2] - 2026-02-04
+### Added
+- Added exception text as reason in Share Plus error reporting [#5653](https://github.com/rokwire/illinois-app/issues/5653).
+
+## [8.0.1] - 2026-02-03
+### Fixed
+- Adding attendance takers to an event [#5705](https://github.com/rokwire/illinois-app/issues/5705).
+
+## [8.0.0] - 2026-01-29
 
 ## [8.0.8] - 2026-02-27
 
