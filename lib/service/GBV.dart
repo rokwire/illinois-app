@@ -1,0 +1,73 @@
+/*
+ * Copyright 2026 Board of Trustees of the University of Illinois.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import 'package:rokwire_plugin/service/deep_link.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+
+class GBV with Service, NotificationsListener {
+  static const String notifyLaunchGBVPathways = "edu.illinois.rokwire.gbv.launch";
+
+  // Singleton Factory
+
+  static GBV? _instance;
+
+  factory GBV() => _instance ?? (_instance = GBV.internal());
+
+  GBV.internal();
+
+  // Service
+
+  @override
+  void createService() {
+    NotificationService().subscribe(this, [
+      DeepLink.notifyUiUri,
+    ]);
+    super.createService();
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+    super.destroyService();
+  }
+
+  @override
+  Set<Service> get serviceDependsOn {
+    return {DeepLink()};
+  }
+
+  // DeepLinks
+
+  static String get gbvPathwaysUrl => '${DeepLink().appUrl}/gbv_pathways';
+
+  void _onDeepLinkUri(Uri? uri) {
+    if ((uri != null) && uri.matchDeepLinkUri(Uri.tryParse(gbvPathwaysUrl))) {
+      NotificationService().notify(notifyLaunchGBVPathways);
+    }
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == DeepLink.notifyUiUri) {
+      _onDeepLinkUri(JsonUtils.cast(param));
+    }
+  }
+}
+

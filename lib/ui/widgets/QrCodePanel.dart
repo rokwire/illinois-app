@@ -34,6 +34,8 @@ import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../service/GBV.dart';
+
 class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 
   final String? deepLinkUrl;
@@ -115,6 +117,16 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     deepLinkUrl: SkillsSelfEvaluation.skillsSelfEvaluationUrl,
     saveFileName: 'skills self-evaluation',
     saveWatermarkText: 'Skills Self-Evaluation',
+    saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
+    description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
+    analyticsFeature: analyticsFeature,
+  );
+
+  factory QrCodePanel.gbvPathways({Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
+    key: key,
+    deepLinkUrl: GBV.gbvPathwaysUrl,
+    saveFileName: 'gbv-pathways',
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
     description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),

@@ -157,7 +157,7 @@ class Dining with Explore implements Favorite {
 //////////////////////////////
 /// PaymentType
 
-enum PaymentType { ClassicMeal, DiningDollars, IlliniCash, CreditCard, Cash, GooglePay, ApplePay  }
+enum PaymentType { ClassicMeal, DiningDollars, CreditCard, Cash, GooglePay, ApplePay  }
 
 extension PaymentTypeImpl on PaymentType {
 
@@ -166,7 +166,6 @@ extension PaymentTypeImpl on PaymentType {
     switch (value) {
       case 'ClassicMeal':    return  PaymentType.ClassicMeal;
       case 'Dining Dollars': return  PaymentType.DiningDollars;
-      case 'IlliniCash':     return  PaymentType.IlliniCash;
       case 'CreditCard':     return  PaymentType.CreditCard;
       case 'Cash':           return  PaymentType.Cash;
       case 'GooglePay':      return  PaymentType.GooglePay;
@@ -179,7 +178,6 @@ extension PaymentTypeImpl on PaymentType {
     switch(this) {
       case PaymentType.ClassicMeal:   return 'ClassicMeal';
       case PaymentType.DiningDollars: return 'Dining Dollars';
-      case PaymentType.IlliniCash:    return 'IlliniCash';
       case PaymentType.CreditCard:    return 'CreditCard';
       case PaymentType.Cash:          return 'Cash';
       case PaymentType.GooglePay:     return 'GooglePay';

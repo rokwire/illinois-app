@@ -17,10 +17,12 @@ import 'package:illinois/ui/canvas/CanvasCourseAssignmentsPanel.dart';
 import 'package:illinois/ui/explore/DisplayFloorPlanPanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
+import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/AccentCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -272,7 +274,7 @@ class StudentCourseCard extends StatelessWidget {
   Widget get _contentWidget {
     String courseSchedule = course.section?.displaySchedule ?? '';
     String courseLocation = course.section?.displayLocation ?? '';
-    
+
     return Padding(padding: EdgeInsets.all(16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
@@ -319,12 +321,30 @@ class StudentCourseCard extends StatelessWidget {
                     Styles().textStyles.getTextStyle("widget.button.light.title.medium")
                   ),
                 )
-
               ],),
             ),
           ),
         ),
 
+        Visibility(visible: (course.section?.isInPerson == true) && course.hasValidLocation, child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
+            Row(children: [
+              Padding(padding: EdgeInsets.only(right: 6), child:
+                Opacity(opacity: 0, child:
+                  Styles().images.getImage('location', excludeFromSemantics: true),
+                )
+              ),
+              Expanded(child:
+                Wrap(spacing: 8, runSpacing: 8, children: [
+                  Map2NavDirectionsButton('person-walking', onTap: () => _onNavigationDirections(GeoMapUtils.traveModeWalking)),
+                  Map2NavDirectionsButton('bicycle', onTap: () => _onNavigationDirections(GeoMapUtils.traveModeBycycling)),
+                  Map2NavDirectionsButton('car', onTap: () => _onNavigationDirections(GeoMapUtils.traveModeDriving)),
+                  Map2NavDirectionsButton('bus', onTap: () => _onNavigationDirections(GeoMapUtils.traveModeTransit)),
+                ],),
+              )
+            ],),
+          ),
+        ),
       ],)
     );
   }
@@ -332,6 +352,12 @@ class StudentCourseCard extends StatelessWidget {
   void _onLocaltion() {
     Analytics().logSelect(target: "Location Detail");
     course.launchDirections();
+  }
+
+  void _onNavigationDirections(String travelMode) {
+    Analytics().logSelect(target: 'Navigation Directions: $travelMode');
+    course.launchDirections(travelMode: travelMode);
+    //GeoMapUtils.launchDirections(destination: course?.section?.building?.exploreLocation?.exploreLocationMapCoordinate, travelMode: travelMode);
   }
 
   void _onCard(BuildContext context) {
@@ -412,6 +438,9 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
                   if ((widget.course?.section?.isInPerson == true) && (widget.course?.section?.building?.floors?.isNotEmpty == true))
                     _buildFloorPlans(),
 
+                  if ((widget.course?.section?.isInPerson == true) && (widget.course?.hasValidLocation == true))
+                    _buildNavDirections(),
+
                   if (_canvasVisible)
                     _buildCanvasContent(),
 
@@ -463,6 +492,21 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
       ),
     );
 
+
+  Widget _buildNavDirections() =>
+    Padding(padding: EdgeInsets.symmetric(vertical: 6,), child:
+      Row(children: [
+        _buildDetailIcon(),
+        Expanded(child:
+          Wrap(spacing: 8, runSpacing: 8, children: [
+            Map2NavDirectionsButton('person-walking', onTap: () => _onNavigationDirections(GeoMapUtils.traveModeWalking)),
+            Map2NavDirectionsButton('bicycle', onTap: () => _onNavigationDirections(GeoMapUtils.traveModeBycycling)),
+            Map2NavDirectionsButton('car', onTap: () => _onNavigationDirections(GeoMapUtils.traveModeDriving)),
+            Map2NavDirectionsButton('bus', onTap: () => _onNavigationDirections(GeoMapUtils.traveModeTransit)),
+          ],),
+        )
+      ],),
+    );
 
   Widget _buildFloorPlans() {
     String? room = widget.course?.section?.room;
@@ -541,6 +585,12 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
   void _onLocation() {
     Analytics().logSelect(target: "Location Directions");
     widget.course?.launchDirections();
+  }
+
+  void _onNavigationDirections(String travelMode) {
+    Analytics().logSelect(target: 'Navigation Directions: $travelMode');
+    widget.course?.launchDirections(travelMode: travelMode);
+    //GeoMapUtils.launchDirections(destination: widget.course?.section?.building?.exploreLocation?.exploreLocationMapCoordinate, travelMode: travelMode);
   }
 
   void _onFloor(String floor) {

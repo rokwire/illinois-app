@@ -1,7 +1,7 @@
 {
 	"id":"demographics",
 	"title":"Research Interest Form",
-	"description": "Please fill out this questionnaire to receive invitations to participate in research studies that match your demographics.",
+	"description": "Complete this questionnaire to personalize the research opportunities you see in the app. You can opt out and permanently delete your responses at any time under Settings.",
 	"questions": [{
 		"id":"q01",
 		"title":"How old are you?",
