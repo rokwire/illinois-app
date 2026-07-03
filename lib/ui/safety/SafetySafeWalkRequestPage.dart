@@ -12,10 +12,9 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
-import 'package:illinois/ui/guide/GuideListPanel.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/map2/Map2LocationPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
@@ -247,12 +246,7 @@ class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {
 
   void _onTapCampusResources(BuildContext context) {
     Analytics().logSelect(target: 'Campus Resources');
-    Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-      contentList: Guide().safetyResourcesList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.safety_resources.section', 'Safety Resources'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.safety_resources.empty", "There are no active Campus Safety Resources."),
-      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
-    )));
+    Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => CampusSafetyResourcesPanel()));
   }
 }
 

@@ -159,9 +159,11 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
         Row(children: [
           Styles().images.getImage('user-check', excludeFromSemantics: true) ?? Container(),
           Container(width: 8,),
-          Text(_isResearchProject ? "Participant Approval" : Localization().getStringEx("panel.pending_member_detail.label.approval", "Member Approval"), style:
-            Styles().textStyles.getTextStyle("widget.title.light.regular.fat"),
-          ),
+          Expanded(child:
+            Text(_isResearchProject ? "Participant Approval" : Localization().getStringEx("panel.pending_member_detail.label.approval", "Member Approval"), style:
+              Styles().textStyles.getTextStyle("widget.title.regular.fat"),
+            ),
+          )
         ],),
         Container(height: 21,),
         ToggleRibbonButton(

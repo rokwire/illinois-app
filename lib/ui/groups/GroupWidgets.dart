@@ -687,12 +687,10 @@ enum GroupCardDisplayType { myGroup, allGroups, homeGroups }
 class GroupCard extends StatefulWidget with AnalyticsInfo {
   final Group group;
   final GroupCardDisplayType displayType;
-  final EdgeInsetsGeometry margin;
   final Function? onImageTap;
 
   GroupCard(this.group, { super.key,
     this.displayType = GroupCardDisplayType.allGroups,
-    this.margin = const EdgeInsets.symmetric(horizontal: 16),
     this.onImageTap,
   });
 
@@ -710,8 +708,6 @@ class GroupCard extends StatefulWidget with AnalyticsInfo {
 }
 
 class _GroupCardState extends State<GroupCard> with NotificationsListener {
-  static const double _smallImageSize = 64;
-  static const double _maxImageWidth = 150;
 
   GroupStats? _groupStats;
 
@@ -741,38 +737,39 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   Widget build(BuildContext context) {
     return Semantics(container: true, child:
       GestureDetector(onTap: () => _onTapCard(context), child:
-        Padding(padding: widget.margin, child:
-          Container(padding: EdgeInsets.all(16), decoration: _cardDecoration, child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              _buildHeading(),
-              Container(height: 6),
-              Row(children:[
-                Expanded(child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
-                    _buildCategories(),
-                    _buildTitle(),
-                    _buildProperties(),
-                  ]),
-                ),
-                _buildImage()
-              ]),
-              Container(height: 4),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Expanded(child:
-                  _buildUpdateTime(),
-                ),
-                _buildMembersCount()
-              ])
-              // : Container()
-            ]),
-          )
-        )
+        Container(decoration: _cardDecoration, child: ClipRRect(borderRadius: _cardBorderRadius, child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            _imageHeadingWidget,
+            _isHomeDisplayType ? Container(child: AspectRatio(aspectRatio: _contentAspectRatio, child: _contentWidget,)) : _contentWidget,
+          ]),
+        ))
       )
     );
   }
 
-  BoxDecoration get _cardDecoration => (widget.displayType == GroupCardDisplayType.homeGroups) ?
+  Widget get _contentWidget {
+    return Padding(
+      padding: EdgeInsetsGeometry.only(left: 16, top: _imageHeadingVisible ? 8 : 16, right: 16, bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeading(),
+          _buildCategories(),
+          _buildTitle(),
+          Visibility(visible: !_isHomeDisplayType, child: _buildProperties()),
+          _buildMembers(),
+          Container(height: 4),
+          _buildUpdateTime(),
+        ],
+      ),
+    );
+  }
+
+  BoxDecoration get _cardDecoration => _isHomeDisplayType ?
       HomeCard.boxDecoration : _defaultCardDecoration;
+
+  BorderRadius get _cardBorderRadius => _isHomeDisplayType ?
+    HomeCard.borderRadius : defaultCardBorderRadius;
 
   static BoxDecoration get _defaultCardDecoration => BoxDecoration(
     color: HomeCard.backColor,
@@ -780,7 +777,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     boxShadow: [_defaultCardShadow]
   );
 
-  static Radius get defaultCardRadius => Radius.circular(4);
+  static Radius get defaultCardRadius => Radius.circular(12);
   static BorderRadius get defaultCardBorderRadius => BorderRadius.all(defaultCardRadius);
 
   static BoxShadow get _defaultCardShadow =>
@@ -832,7 +829,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       ));
     }
 
-    return rowContent.isNotEmpty ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: rowContent,) : Container();
+    return rowContent.isNotEmpty ? Padding(padding: EdgeInsetsGeometry.only(bottom: 6), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: rowContent,)) : Container();
   }
 
   /*Widget _buildPrivacyStatysBadge(){
@@ -872,7 +869,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     return Row(children: [
       Expanded(child:
         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-          Text(widget.group.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups ? 2 : 10, style: _titleTextStyle)
+          Text(widget.group.title ?? "", overflow: TextOverflow.ellipsis, maxLines: _isHomeDisplayType ? 1 : 10, style: _titleTextStyle)
         )
       )
     ]);
@@ -891,8 +888,8 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       Expanded(child:
         Text(displayList?.join(', ') ?? '',
             overflow: TextOverflow.ellipsis,
-            maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
-            style: Styles().textStyles.getTextStyle("widget.card.title.small.fat")
+            maxLines: _isHomeDisplayType ? 1 : 10,
+            style: Styles().textStyles.getTextStyle("common.title.secondary")
         )
       )
     ]) : Container();
@@ -913,10 +910,10 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       }
     }
 
-    int pendigCount = (widget.group.currentUserIsAdmin == true) ? (_groupStats?.pendingCount ?? 0) : 0;
-    if (pendigCount > 0) {
+    int pendingCount = (widget.group.currentUserIsAdmin == true) ? (_groupStats?.pendingCount ?? 0) : 0;
+    if (pendingCount > 0) {
       String pendingTitle = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), ['']);
-      propertiesList.add(_buildProperty(pendingTitle, pendigCount.toString()));
+      propertiesList.add(_buildProperty(pendingTitle, pendingCount.toString()));
     }
 
     return propertiesList.isNotEmpty ?
@@ -938,43 +935,29 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     ],);
   }
 
-  Widget _buildImage() => StringUtils.isEmpty(widget.group.imageURL) ?
-      Container() :
-      _imageWidget;
+  Widget get _imageHeadingWidget => Visibility(
+      visible: _imageHeadingVisible,
+      child: Container(
+        child:
+          AspectRatio(aspectRatio: _contentAspectRatio,
+          child: AccessibleImageHolder(
+            child: _hasImage ?
+              Image.network(_imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true) :
+              Styles().images.getImage('group-detail-default', fit: BoxFit.cover, excludeFromSemantics: true),
+          ),
+        ),
+      ));
 
-  Widget get _imageWidget => widget.onImageTap != null ?
-      GestureDetector(
-        onTap: ()  => widget.onImageTap?.call(), child:
-          AccessibleImageHolder(imageUrl: widget.group.imageURL, child:
-          _rawImageWidget)) :
-      AccessibleImageHolder(child:
-        ModalImageHolder(imageUrl: widget.group.imageURL, child:
-          _rawImageWidget));
-
-  Widget get _rawImageWidget => widget.group.imageURL != null ?
-      Container(
-          padding: EdgeInsets.only(left: 8),
-          child: Container(
-            constraints: BoxConstraints(maxWidth: _maxImageWidth),
-            // width: _smallImageSize,
-            height: _smallImageSize,
-            child: Image.network(widget.group.imageURL ?? "", excludeFromSemantics: true, fit: BoxFit.fill,),),) :
-            Container();
-
-
-    Widget _buildUpdateTime() {
-    return Container(
-        child: Text(
-          _timeUpdatedText,
-          maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
-          overflow: TextOverflow.ellipsis,
-          style: _detailTextStyle
-    ));
+  Widget _buildUpdateTime() {
+    return Visibility(visible: StringUtils.isNotEmpty(_timeUpdatedText), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Padding(padding: EdgeInsetsGeometry.only(right: 6), child: Styles().images.getImage('rotate-right', excludeFromSemantics: true),),
+      Text(_timeUpdatedText, maxLines: _isHomeDisplayType ? 1 : 10, overflow: TextOverflow.ellipsis, style: _detailTextStyle)
+    ],));
   }
 
   bool get _isResearchProject => widget.group.researchProject == true;
 
-  Widget _buildMembersCount() {
+  Widget _buildMembers() {
     String membersLabel;
     int count = _groupStats?.activeMembersCount ?? 0;
     if (!_isResearchProject) {
@@ -1003,16 +986,14 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
       membersLabel = "";
     }
     return Visibility(visible: StringUtils.isNotEmpty(membersLabel), child:
-      Text(membersLabel, style: _detailTextStyle),
+      Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Padding(padding: EdgeInsetsGeometry.only(right: 6), child: Styles().images.getImage('person', excludeFromSemantics: true),),
+        Text(membersLabel, style: _detailTextStyle)
+      ]),
     );
   }
 
-  TextStyle? get _detailTextStyle {
-    switch (widget.displayType) {
-      case GroupCardDisplayType.homeGroups: return Styles().textStyles.getTextStyle('widget.card.detail.small.semi_fat');
-      default: return Styles().textStyles.getTextStyle('widget.card.detail.small.regular');
-    }
-  }
+  TextStyle? get _detailTextStyle => Styles().textStyles.getTextStyle('common.body');
 
    void _loadGroupStats() {
     Groups().loadGroupStats(widget.group.id).then((stats) {
@@ -1086,8 +1067,16 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     Navigator.of(context).pop();
   }
 
-  String get _timeUpdatedText {
-    return widget.group.displayUpdateTime ?? '';
+  String get _timeUpdatedText => widget.group.displayUpdateTime ?? '';
+  String? get _imageUrl => widget.group.imageURL;
+  bool get _hasImage => StringUtils.isNotEmpty(_imageUrl);
+  bool get _imageHeadingVisible => _isHomeDisplayType || _hasImage;
+  bool get _isHomeDisplayType => (widget.displayType == GroupCardDisplayType.homeGroups);
+
+  double get _contentAspectRatio {
+    double textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    double result = 2.5 / textScale;
+    return result;
   }
 }
 
@@ -1810,27 +1799,29 @@ class _PostInputFieldState extends State<PostInputField> {
                       maxHeight: (widget.maxLines ?? PostInputField.defaultMaxLines) * 20.0,
                     ),
                     padding: const EdgeInsets.all(8),
-                    child: quill.QuillEditor.basic(
-                      controller: _controller,
-                      focusNode: _focusNode,
-                      config: quill.QuillEditorConfig(
-                        editorKey: _editorKey,
-                        autoFocus: widget.autofocus,
-                        placeholder: _hint,
-                        expands: false,
-                        scrollable: true,
-                        padding: EdgeInsets.zero,
-                        customStyles: quill.DefaultStyles(
-                          link: (widget.style ?? Styles().textStyles.getTextStyle('widget.message.regular'))?.apply(color: Styles().colors.fillColorSecondary, decoration: TextDecoration.underline),
-                          paragraph: quill.DefaultTextBlockStyle(
-                            widget.style ?? Styles().textStyles.getTextStyle('widget.message.regular')!,
-                            const quill.HorizontalSpacing(0, 0),
-                            const quill.VerticalSpacing(0, 0),
-                            const quill.VerticalSpacing(0, 0),
-                            null,
+                    child: Semantics(label: widget.title, hint: widget.hint, textField: true, child:
+                      quill.QuillEditor.basic(
+                        controller: _controller,
+                        focusNode: _focusNode,
+                        config: quill.QuillEditorConfig(
+                          editorKey: _editorKey,
+                          autoFocus: widget.autofocus,
+                          placeholder: _hint,
+                          expands: false,
+                          scrollable: true,
+                          padding: EdgeInsets.zero,
+                          customStyles: quill.DefaultStyles(
+                            link: (widget.style ?? Styles().textStyles.getTextStyle('widget.message.regular'))?.apply(color: Styles().colors.fillColorSecondary, decoration: TextDecoration.underline),
+                            paragraph: quill.DefaultTextBlockStyle(
+                              widget.style ?? Styles().textStyles.getTextStyle('widget.message.regular')!,
+                              const quill.HorizontalSpacing(0, 0),
+                              const quill.VerticalSpacing(0, 0),
+                              const quill.VerticalSpacing(0, 0),
+                              null,
+                            ),
                           ),
                         ),
-                      ),
+                      )
                     ),
                   ),
                 ],
@@ -1864,6 +1855,7 @@ class _PostInputFieldState extends State<PostInputField> {
             _buildFormatButton(
               icon: Icons.format_bold,
               isActive: _isFormatActive(quill.Attribute.bold),
+              semanticsLabel: 'bold',
               onPressed: () {
                 Analytics().logSelect(target: 'Bold');
                 _toggleFormat(quill.Attribute.bold);
@@ -1874,6 +1866,7 @@ class _PostInputFieldState extends State<PostInputField> {
             _buildFormatButton(
               icon: Icons.format_italic,
               isActive: _isFormatActive(quill.Attribute.italic),
+              semanticsLabel: 'italic',
               onPressed: () {
                 Analytics().logSelect(target: 'Italic');
                 _toggleFormat(quill.Attribute.italic);
@@ -1884,6 +1877,7 @@ class _PostInputFieldState extends State<PostInputField> {
             _buildFormatButton(
               icon: Icons.format_underline,
               isActive: _isFormatActive(quill.Attribute.underline),
+              semanticsLabel: 'underline',
               onPressed: () {
                 Analytics().logSelect(target: 'Underline');
                 _toggleFormat(quill.Attribute.underline);
@@ -1914,30 +1908,33 @@ class _PostInputFieldState extends State<PostInputField> {
     required IconData icon,
     required bool isActive,
     required VoidCallback onPressed,
+    String? semanticsLabel,
   }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 2),
-      decoration: BoxDecoration(
-        color: isActive ? Styles().colors.fillColorSecondary : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onPressed,
+    return Semantics(label: semanticsLabel,  button: true, child:
+      Container(
+        margin: const EdgeInsets.symmetric(horizontal: 2),
+        decoration: BoxDecoration(
+          color: isActive ? Styles().colors.fillColorSecondary : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
-          child: Container(
-            width: 40,
-            height: 40,
-            alignment: Alignment.center,
-            child: Icon(
-              icon,
-              size: 20,
-              color: isActive ? Colors.white : Styles().colors.black,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onPressed,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              width: 40,
+              height: 40,
+              alignment: Alignment.center,
+              child: Icon(
+                icon,
+                size: 20,
+                color: isActive ? Colors.white : Styles().colors.black,
+              ),
             ),
           ),
         ),
-      ),
+      )
     );
   }
 
@@ -3679,12 +3676,14 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
 
   @override
   Widget build(BuildContext context) {
-    return Row(crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(padding: EdgeInsets.only(top: 16), child:
-          Text("Schedule: ", style: Styles().textStyles.getTextStyle('widget.group.members.title'),)),
-        Expanded(child: _buildDropdown())
-    ]);
+    return Semantics(container: true, child:
+      Row(crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(padding: EdgeInsets.only(top: 16), child:
+            Text("Schedule: ", style: Styles().textStyles.getTextStyle('widget.group.members.title'),)),
+          Expanded(child: _buildDropdown())
+      ])
+    );
   }
 
   Widget _buildDropdown(){
@@ -3701,7 +3700,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
             borderRadius: BorderRadius.all(Radius.circular(4))
         ),
         child: Column(children: <Widget>[
-          Semantics(button: true, label: title,
+          Semantics(label: "dropdown button", hint: _expanded ? "expanded" : "collapsed",
               child: InkWell(
                 onTap: (){
                   if(widget.enabled == true) {
@@ -3713,7 +3712,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
                 child: Padding(padding: sectionHeadingContentPadding, child:
                 Row(children: [
                   Expanded(child:
-                    Semantics ( label: title, child:
+                    Semantics (label: title, child:
                       RichText(text:
                         TextSpan(text: title, style: Styles().textStyles.getTextStyle("widget.title.medium.fat"), semanticsLabel: "", children: required ? <InlineSpan>[
                           TextSpan(text: ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
@@ -3722,7 +3721,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
                   ),
                   Visibility(visible: widget.enabled == true, child:
                     Padding(padding: EdgeInsets.only(left: 8), child:
-                      Styles().images.getImage(_expanded ? 'chevron-up' : 'chevron-down') ?? Container()),)
+                      Styles().images.getImage(_expanded ? 'chevron-up' : 'chevron-down', excludeFromSemantics: true) ?? Container()),)
                 ],),
                 ),
               )
@@ -3744,28 +3743,33 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   Widget? buildBody() => Column(children: [
       _buildTimeZoneDropdown(),
       Padding(padding: EdgeInsets.only(bottom: 12)),
-      Row(
-        children: [
-          Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "DATE"),)),
-          Expanded(flex: 7, child: _buildDropdownButton(label: (_date != null) ? DateFormat("EEE, MMM dd, yyyy").format(_date!) : "-", onTap: _onDate))
-        ],),
+      Semantics(container: true, child:
+        Row(
+          children: [
+            Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "DATE"),)),
+            Expanded(flex: 7, child: _buildDropdownButton(label: (_date != null) ? DateFormat("EEE, MMM dd, yyyy").format(_date!) : "-", onTap: _onDate))
+          ],)
+      ),
       Padding(padding: EdgeInsets.only(bottom: 12)),
-      Row(
-        children: [
-          Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "TIME"),)),
-          Expanded(flex: 7, child: _buildDropdownButton(label: (_time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(_time!)) : "-", onTap: _onTime))
-      ],)
+      Semantics(container: true, child:
+        Row(
+          children: [
+            Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "TIME"),)),
+            Expanded(flex: 7, child: _buildDropdownButton(label: (_time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(_time!)) : "-", onTap: _onTime))
+        ],)
+      )
     ]);
 
   Widget _buildDropdownButton({String? label, GestureTapCallback? onTap}) {
-    return InkWell(onTap: onTap, child:
-      Container(decoration: dropdownButtonDecoration, padding: dropdownButtonContentPadding, child:
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-          Text(label ??  '-', style: Styles().textStyles.getTextStyle("widget.title.regular"),),
-          Styles().images.getImage('chevron-down') ?? Container()
-        ],),
-      ),
-    );
+    return Semantics(label: label, child:
+      InkWell(onTap: onTap, child:
+        Container(decoration: dropdownButtonDecoration, padding: dropdownButtonContentPadding, child:
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+            Text(label ??  '-', style: Styles().textStyles.getTextStyle("widget.title.regular"),semanticsLabel: "",),
+            Styles().images.getImage('chevron-down', excludeFromSemantics: true) ?? Container()
+          ],),
+        ),
+    ));
   }
 
   void _onDate() {

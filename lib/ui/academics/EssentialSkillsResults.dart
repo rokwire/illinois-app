@@ -396,7 +396,7 @@ class _EssentialSkillsResultsState extends State<EssentialSkillsResults> {
   }
 
   void _loadContentItems() {
-    SkillsSelfEvaluation.loadContentItems(["bessi_results", "bessi_profile"]).then((content) {
+    SkillsSelfEvaluationWidget.loadContentItems(["bessi_results", "bessi_profile"]).then((content) {
       if (mounted && (content?.isNotEmpty == true)) {
         setState(() {
           _resultsContentItems.clear();

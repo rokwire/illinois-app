@@ -56,8 +56,8 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchPage> {
           borderRadius: BorderRadius.all(Radius.circular(4)),
           title: Localization().getStringEx("panel.settings.home.research.questionnaire.title", "Research interest form"),
           textStyle:  (Questionnaires().participateInResearch == true) ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
-          rightIconKey: Questionnaires().participateInResearch ?? false ? 'chevron-right-bold' : 'chevron-right-gray',
-          onTap: _onResearchQuestionnaireClicked
+          rightIconKey: (Questionnaires().participateInResearch == true) ? 'chevron-right-bold' : 'chevron-right-gray',
+          onTap: (Questionnaires().participateInResearch == true) ? _onResearchQuestionnaireClicked : null,
       ),
     ]),
   );
@@ -88,7 +88,7 @@ class _SettingsContactsContentWidgetState extends State<SettingsResearchPage> {
   }
 
   Future<bool?> _promptTurnOffParticipateInResearch() async {
-    String promptEn = 'Please confirm that you wish to no longer participate in Research Projects. All information filled out in your questionnaire will be deleted.';
+    String promptEn = 'All of your research interest form responses will be deleted. Would you like to proceed?';
     return await AppAlert.showCustomDialog(context: context,
         contentWidget:
         Text(Localization().getStringEx('panel.settings.home.research.prompt.title', promptEn),

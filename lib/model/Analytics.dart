@@ -30,13 +30,12 @@ class AnalyticsFeature {
   static const AnalyticsFeature   AcademicsGiesCanvasCourses     = AnalyticsFeature("Academics: Gies Canvas Courses", key: {"GiesCanvasCours"}, priority: 2);
   static const AnalyticsFeature   AcademicsMedicineCourses       = AnalyticsFeature("Academics: College of Medicine Compliance", key: {"MedicineCourse"}, priority: 1);
   static const AnalyticsFeature   AcademicsStudentCourses        = AnalyticsFeature("Academics: Courses", key: {"StudentCourse"}, priority: 1);
-  static const AnalyticsFeature   AcademicsSkillsSelfEvaluation  = AnalyticsFeature("Academics: Skills Self-Evaluation", key: {"SkillsSelfEvaluation"}, priority: 1);
-  static const AnalyticsFeature   AcademicsEssentialSkillsCoach  = AnalyticsFeature("Academics: Essential Skills Coach", key: {"EssentialSkillsCoach"}, priority: 1);
   static const AnalyticsFeature   AcademicsToDoList              = AnalyticsFeature("Academics: To-Do List", priority: -1);
   static const AnalyticsFeature   AcademicsDueDateCatalog        = AnalyticsFeature("Academics: Due Date Catalog", priority: -1);
   static const AnalyticsFeature   AcademicsMyIllini              = AnalyticsFeature("Academics: myIllini", priority: -1);
   static const AnalyticsFeature   AcademicsCampusReminders       = AnalyticsFeature("Academics: Campus Reminders", priority: -1);
   static const AnalyticsFeature   AcademicsAppointments          = AnalyticsFeature("Academics: Appointments", priority: -1);
+  static const AnalyticsFeature   AcademicsLinks                 = AnalyticsFeature("Academics: Academic Links", key: {"AcademicLinks"}, priority: 1);
 
   static const AnalyticsFeature   Map                            = AnalyticsFeature("Map");
   static const AnalyticsFeature   MapEvents                      = AnalyticsFeature("Map: Events", priority: -1);
@@ -67,6 +66,11 @@ class AnalyticsFeature {
   static const AnalyticsFeature   DiningOpen                     = AnalyticsFeature("Dining: Open", priority: -1);
   static const AnalyticsFeature   DiningFavorites                = AnalyticsFeature("Dining: Favorites", priority: -1);
 
+  static const AnalyticsFeature   CareerExploration              = AnalyticsFeature("Career Exploration", key: "CareerExploration");
+  static const AnalyticsFeature   CareerExplorationPlaningLinks  = AnalyticsFeature("Career Exploration: Planning Links", key: "CareerPlanningLinks");
+  static const AnalyticsFeature   CareerExplorationSkillsSelfEvaluation  = AnalyticsFeature("Career Exploration: Skills Self-Evaluation", key: {"SkillsSelfEvaluation"}, priority: 1);
+  static const AnalyticsFeature   CareerExplorationEssentialSkillsCoach  = AnalyticsFeature("Career Exploration: Essential Skills Coach", key: {"EssentialSkillsCoach"}, priority: 1);
+
   static const AnalyticsFeature   Wallet                         = AnalyticsFeature("Wallet");
   static const AnalyticsFeature   WalletBusPass                  = AnalyticsFeature("Wallet: Bus Pass", key: "BusPass", priority: 1);
   static const AnalyticsFeature   WalletIlliniCash               = AnalyticsFeature("Wallet: Illini Cash", key: "IlliniCash", priority: 1);
@@ -84,6 +88,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   WellnessMentalHealth           = AnalyticsFeature("Wellness: Mental Health", key: {"WellnessMentalHealth"}, priority: 1);
   static const AnalyticsFeature   WellnessSuccessTeam            = AnalyticsFeature("Wellness: Primary Care Provider", key: {"WellnessSuccessTeam"}, priority: 1);
   static const AnalyticsFeature   WellnessRecreation             = AnalyticsFeature("Wellness: Recreation", priority: -1);
+  static const AnalyticsFeature   WellnessLinks                  = AnalyticsFeature("Academics: Wellness Links", key: {"WellnessLinks"}, priority: 1);
 
   static const AnalyticsFeature   AppHelp                        = AnalyticsFeature("App Help");
   static const AnalyticsFeature   Athletics                      = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});
@@ -120,8 +125,6 @@ class AnalyticsFeature {
     AcademicsGiesCanvasCourses,
     AcademicsMedicineCourses,
     AcademicsStudentCourses,
-    AcademicsSkillsSelfEvaluation,
-    AcademicsEssentialSkillsCoach,
     AcademicsToDoList,
     AcademicsDueDateCatalog,
     AcademicsMyIllini,
@@ -156,6 +159,10 @@ class AnalyticsFeature {
     DiningAll,
     DiningOpen,
     DiningFavorites,
+
+    CareerExploration,
+    CareerExplorationSkillsSelfEvaluation,
+    CareerExplorationEssentialSkillsCoach,
 
     Wallet,
     WalletBusPass,

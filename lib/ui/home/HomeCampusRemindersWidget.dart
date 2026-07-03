@@ -20,6 +20,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
@@ -29,7 +30,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
-import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeCampusRemindersWidget extends StatefulWidget {
@@ -197,11 +197,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
 
   void _onViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-      contentList: _reminderItems,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_reminders.empty", "There are no active Campus Reminders."),
-    )));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusRemindersPanel(contentList: _reminderItems,)));
   }
 }
 

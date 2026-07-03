@@ -32,12 +32,15 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Gateway.dart';
+import 'package:illinois/service/GBV.dart';
 import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
+import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/assistant/AssistantHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
@@ -56,6 +59,7 @@ import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
+import 'package:illinois/ui/gbv/GBVPathwaysPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
@@ -187,10 +191,11 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyAcademicsGiesChecklistNotification,
       FirebaseMessaging.notifyAcademicsMedicineCoursesNotification,
       FirebaseMessaging.notifyAcademicsMyIlliniNotification,
-      FirebaseMessaging.notifyAcademicsSkillsSelfEvaluationNotification,
       FirebaseMessaging.notifyAcademicsStudentCoursesNotification,
       FirebaseMessaging.notifyAcademicsToDoListNotification,
       FirebaseMessaging.notifyAcademicsUiucChecklistNotification,
+      FirebaseMessaging.notifyCareerExplorationSkillsSelfEvaluationNotification,
+      FirebaseMessaging.notifyCareerExplorationEssentialSkillsCoachNotification,
       FirebaseMessaging.notifyWellnessNotification,
       FirebaseMessaging.notifyWellnessAppointmentsNotification,
       FirebaseMessaging.notifyWellnessDailyTipsNotification,
@@ -251,6 +256,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       Wellness.notifyCategorySelect,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
+      GBV.notifyLaunchGBVPathways,
 
       // Select
       HomePanel.notifySelect,
@@ -444,9 +450,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == FirebaseMessaging.notifyAcademicsMyIlliniNotification) {
       _onFirebaseAcademicsNotification(AcademicsContentType.my_illini);
     }
-    else if (name == FirebaseMessaging.notifyAcademicsSkillsSelfEvaluationNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContentType.skills_self_evaluation);
-    }
     else if (name == FirebaseMessaging.notifyAcademicsStudentCoursesNotification) {
       _onFirebaseAcademicsNotification(AcademicsContentType.student_courses);
     }
@@ -455,6 +458,12 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
     else if (name == FirebaseMessaging.notifyAcademicsUiucChecklistNotification) {
       _onFirebaseAcademicsNotification(AcademicsContentType.uiuc_checklist);
+    }
+    else if (name == FirebaseMessaging.notifyCareerExplorationSkillsSelfEvaluationNotification) {
+      _onFirebaseCareerExplorationSkillsSelfEvaluationNotification();
+    }
+    else if (name == FirebaseMessaging.notifyCareerExplorationEssentialSkillsCoachNotification) {
+      _onFirebaseCareerExplorationEssentialSkillsCoachNotification();
     }
     else if (name == FirebaseMessaging.notifyWellnessNotification) {
       _onFirebaseTabNotification(RootTab.Wellness);
@@ -656,6 +665,9 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
     else if (name == SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation) {
       _onFirebaseAcademicsNotification(AcademicsContentType.skills_self_evaluation);
+    }
+    else if (name == GBV.notifyLaunchGBVPathways) {
+      _onGBVPathwaysNotification();
     }
     else if (name == LocalNotifications.notifyLocalNotificationTapped) {
       _onLocalNotification(param);
@@ -1276,6 +1288,19 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
+  void _onFirebaseCareerExplorationSkillsSelfEvaluationNotification() {
+    if (context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationPanel()));
+    }
+  }
+
+  void _onFirebaseCareerExplorationEssentialSkillsCoachNotification() {
+    if (context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => EssentialSkillsCoachPanel()));
+    }
+  }
+
+
   void _onFirebaseWellnessToDoItemNotification(dynamic param) {
     if (param is Map<String, dynamic>) {
       String? todoItemId = JsonUtils.stringValue(param['entity_id']);
@@ -1332,6 +1357,13 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       WellnessHomePanel.present(context, content);
     }
   }
+
+  void _onGBVPathwaysNotification() {
+    if (context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVPathwaysPanel()));
+    }
+  }
+
 
   // Service Notifications
 

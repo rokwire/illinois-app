@@ -26,13 +26,17 @@ class GBVDetailContentWidget extends StatelessWidget {
     switch (detail.type) {
       case GBVResourceDetailType.address:
         return [
-          Styles().images.getImage('location', excludeFromSemantics: true) ?? Container(),
+          Container(padding: EdgeInsets.only(right: 8), child:
+            Styles().images.getImage('location', excludeFromSemantics: true) ?? Container(),
+          ),
+          if (detail.contentPrefix != null)
+            Text(detail.contentPrefix ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small")),
           Expanded(child:
             GestureDetector(
               onTap: () => _onTapAddress(detail.content),
               behavior: HitTestBehavior.translucent,
               child:
-                Container(padding: EdgeInsets.only(left: 8, top: 12, bottom: 12), child:
+                Container(padding: EdgeInsets.symmetric(vertical: 12), child:
                   Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
             )
           )
@@ -40,26 +44,35 @@ class GBVDetailContentWidget extends StatelessWidget {
       case GBVResourceDetailType.email:
         Uri uri = Uri.parse('mailto:${detail.content}');
         return [
-          Styles().images.getImage('envelope', excludeFromSemantics: true) ?? Container(),
+          Container(padding: EdgeInsets.only(right: 8), child:
+            Styles().images.getImage('envelope', excludeFromSemantics: true) ?? Container(),
+          ),
+          if (detail.contentPrefix != null)
+            Text(detail.contentPrefix ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small")),
           Expanded(child:
             GestureDetector(
               onTap: () => _onTapEmail(uri),
               behavior: HitTestBehavior.translucent,
               child:
-                Container(padding: EdgeInsets.only(left: 8, top: 12, bottom: 12), child:
+                Container(padding: EdgeInsets.symmetric(vertical: 12), child:
                   Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
             )
           )
         ];
       case GBVResourceDetailType.external_link:
+      case GBVResourceDetailType.internal_link:
         return [
-          Styles().images.getImage('external-link', excludeFromSemantics: true) ?? Container(),
+          Container(padding: EdgeInsets.only(right: 8), child:
+            Styles().images.getImage('external-link', excludeFromSemantics: true) ?? Container(),
+          ),
+          if (detail.contentPrefix != null)
+            Text(detail.contentPrefix ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small")),
           Expanded(child:
             GestureDetector(
               onTap: () => _onTapExternalLink(context, detail.content),
               behavior: HitTestBehavior.translucent,
               child:
-              Container(padding: EdgeInsets.only(left: 8, top: 12, bottom: 12), child:
+              Container(padding: EdgeInsets.symmetric(vertical: 12), child:
                 Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
             )
           )
@@ -67,12 +80,13 @@ class GBVDetailContentWidget extends StatelessWidget {
       case GBVResourceDetailType.button:
         return [
           Expanded(child:
-            Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12), child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
               RoundedButton(
                   label: detail.title ?? detail.content ?? '',
                   textStyle: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
+                  textAlign: TextAlign.center,
                   rightIcon: Styles().images.getImage('external-link', excludeFromSemantics: true) ?? Container(),
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   onTap: () => _onTapButton(context, detail)
               )
             )
@@ -81,13 +95,17 @@ class GBVDetailContentWidget extends StatelessWidget {
       case GBVResourceDetailType.phone:
         Uri uri = Uri.parse('tel:${detail.content}');
         return [
-          Styles().images.getImage('phone', excludeFromSemantics: true) ?? Container(),
-            GestureDetector(
-              onTap: () => _onTapPhone(uri),
-              behavior: HitTestBehavior.translucent,
-              child:
-              Container(padding: EdgeInsets.only(left: 8, top: 12, bottom: 12), child:
-                Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
+          Container(padding: EdgeInsets.only(right: 8), child:
+            Styles().images.getImage('phone', excludeFromSemantics: true) ?? Container(),
+          ),
+          if (detail.contentPrefix != null)
+            Text(detail.contentPrefix ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small")),
+          GestureDetector(
+            onTap: () => _onTapPhone(uri),
+            behavior: HitTestBehavior.translucent,
+            child:
+            Container(padding: EdgeInsets.symmetric(vertical: 12), child:
+              Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
           )
         ];
       case GBVResourceDetailType.text:
@@ -141,7 +159,7 @@ class GBVDetailContentWidget extends StatelessWidget {
 
   void _onTapButton (BuildContext context, GBVResourceDetail detail) {
     Analytics().logSelect(target: 'Resource Button - ${detail.title ?? detail.content}');
-    AppLaunchUrl.launch(context: context, url: detail.content);
+    AppLaunchUrl.launchExternal(url: detail.content);
   }
 
   Map<String, String> get _htmlLinkStyle => <String, String>{

@@ -8,6 +8,7 @@ import 'package:illinois/model/BrightnessHighlight.dart';
 import 'package:illinois/model/Building.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Map2.dart';
@@ -33,6 +34,8 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../../service/GBV.dart';
 
 class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
 
@@ -115,6 +118,16 @@ class QrCodePanel extends StatefulWidget with AnalyticsInfo { //TBD localize
     deepLinkUrl: SkillsSelfEvaluation.skillsSelfEvaluationUrl,
     saveFileName: 'skills self-evaluation',
     saveWatermarkText: 'Skills Self-Evaluation',
+    saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
+    title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
+    description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
+    analyticsFeature: analyticsFeature,
+  );
+
+  factory QrCodePanel.gbvPathways({Key? key, AnalyticsFeature? analyticsFeature}) => QrCodePanel(
+    key: key,
+    deepLinkUrl: GBV.gbvPathwaysUrl,
+    saveFileName: 'gbv-pathways',
     saveWatermarkStyle: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 64, color: Styles().colors.textSurface),
     title: Localization().getStringEx('panel.qr_code.feature.title', 'Share this feature'),
     description: Localization().getStringEx('panel.qr_code.feature.description.label', 'Want to invite other Illinois app users to view this feature? Use one of the sharing options below.'),
@@ -391,14 +404,15 @@ class _QrCodePanelState extends State<QrCodePanel> {
           Navigator.of(context).pop();
         } else */
         if (result.status == ShareResultStatus.unavailable) {
-          message = Localization().getStringEx('panel.qr_code.alert.share.unable.msg', 'Unable to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareQrCodeTarget);
+          message = Localization().getStringEx('panel.qr_code.alert.share.unable.msg', 'Unable to share $_shareTargetMacro.')
+            .replaceAll(_shareTargetMacro, _shareQrCodeTarget);
         }
       }
       catch (e) {
-        final String reasonMacro = '{{reason}}';
-        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareQrCodeTarget);
-        reason = Localization().getStringEx('panel.qr_code.alert.share.reason.fmt', 'Reason: $reasonMacro').
-          replaceAll(reasonMacro, e.toString());
+        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareReasonMacro.').
+          replaceAll(_shareReasonMacro, _shareQrCodeTarget);
+        reason = Localization().getStringEx('panel.qr_code.alert.share.reason.fmt', 'Reason: $_shareReasonMacro').
+          replaceAll(_shareReasonMacro, e.toString());
       }
     }
     else {
@@ -417,6 +431,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
   }
 
   static const String _shareTargetMacro = '{{target}}';
+  static const String _shareReasonMacro = '{{reason}}';
   String get _shareQrCodeTarget => Localization().getStringEx('panel.qr_code.alert.share.target.qr', 'QR code');
   String get _shareVCardTarget => Localization().getStringEx('panel.qr_code.alert.share.target.vcard', 'Digital Business Card');
 
@@ -424,7 +439,7 @@ class _QrCodePanelState extends State<QrCodePanel> {
 
   Future<void> _onTapShareDigitalCard() async {
     Analytics().logSelect(target: 'Share Digital Card');
-    String? message;
+    String? message, reason;
     if (widget.digitalCardShare?.isNotEmpty == true) {
       try {
         ShareResult result = await SharePlus.instance.share(ShareParams(
@@ -436,11 +451,15 @@ class _QrCodePanelState extends State<QrCodePanel> {
           Navigator.of(context).pop();
         }
         else if (result.status == ShareResultStatus.unavailable) {
-          message = Localization().getStringEx('panel.qr_code.alert.share.unable.msg', 'Unable to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareVCardTarget);
+          message = Localization().getStringEx('panel.qr_code.alert.share.unable.msg', 'Unable to share $_shareTargetMacro.')
+            .replaceAll(_shareTargetMacro, _shareVCardTarget);
         }
       }
       catch (e) {
-        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.').replaceAll(_shareTargetMacro, _shareVCardTarget);
+        message = Localization().getStringEx('panel.qr_code.alert.share.failed.msg', 'Failed to share $_shareTargetMacro.')
+          .replaceAll(_shareTargetMacro, _shareQrCodeTarget);
+        reason = Localization().getStringEx('panel.qr_code.alert.share.reason.fmt', 'Reason: $_shareReasonMacro').
+          replaceAll(_shareReasonMacro, e.toString());
       }
     }
     else {
@@ -448,7 +467,13 @@ class _QrCodePanelState extends State<QrCodePanel> {
     }
 
     if (mounted && (message != null)) {
-      AppAlert.showTextMessage(context, message);
+      Widget messageText = (reason != null) ? Column(mainAxisSize: MainAxisSize.min, children: [
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.message.large'),),
+        Padding(padding: EdgeInsets.only(top: 24), child:
+          Text(reason, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle('widget.message.medium.thin'),),
+        ),
+      ],) : Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.message.medium.thin'),);
+      AppAlert.showWidgetMessage(context, messageText, buttonTextStyle: Styles().textStyles.getTextStyle('widget.message.medium.thin'));
     }
   }
 

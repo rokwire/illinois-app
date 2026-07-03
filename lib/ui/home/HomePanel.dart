@@ -58,7 +58,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomeCampusRemindersWidget.dart';
-import 'package:illinois/ui/home/HomeCreatePollWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsGameDayWidget.dart';
 import 'package:illinois/ui/home/HomeGroupsWidget.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
@@ -233,16 +232,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeStudentCoursesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == 'create_poll') {
-      if (title) {
-        return HomeCreatePollWidget.title;
-      } else if (handle) {
-        return HomeCreatePollWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeCreatePollWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'recent_polls') {
+    else if (code == 'polls') {
       if (title) {
         return HomeRecentPollsWidget.title;
       } else if (handle) {

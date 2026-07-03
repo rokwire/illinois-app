@@ -93,16 +93,8 @@ class _GuideListPanelState extends State<GuideListPanel> with NotificationsListe
   @override
   Widget build(BuildContext context) {
 
-    String? title;
-    if (widget.category != null) {
-      title = widget.category;
-    }
-    else if (widget.contentList?.isEmpty ?? true) {
-      title = widget.contentTitle;
-    }
-    
     return Scaffold(
-      appBar: HeaderBar(title: title ?? Localization().getStringEx('panel.guide_list.label.highlights.heading', 'Campus Guide')),
+      appBar: HeaderBar(title: widget.category ?? widget.contentTitle ?? Localization().getStringEx('panel.guide_list.label.heading', 'Campus Guide')),
       body: Column(children: _buildContent()),
       backgroundColor: Styles().colors.background,
     );
@@ -149,9 +141,6 @@ class _GuideListPanelState extends State<GuideListPanel> with NotificationsListe
 
       if (widget.section != null) {
         contentList.add(_buildSectionHeading(widget.section!.name));
-      }
-      else if (widget.contentList != null) {
-        contentList.add(_buildSectionHeading(widget.contentTitle));
       }
 
       List<Widget> cardsList = <Widget>[];

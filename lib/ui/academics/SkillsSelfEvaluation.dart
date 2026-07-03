@@ -38,15 +38,15 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class SkillsSelfEvaluation extends StatefulWidget with AnalyticsInfo {
+class SkillsSelfEvaluationWidget extends StatefulWidget with AnalyticsInfo {
 
-  SkillsSelfEvaluation();
-
-  @override
-  _SkillsSelfEvaluationState createState() => _SkillsSelfEvaluationState();
+  SkillsSelfEvaluationWidget();
 
   @override
-  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsSkillsSelfEvaluation;
+  _SkillsSelfEvaluationWidgetState createState() => _SkillsSelfEvaluationWidgetState();
+
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.CareerExplorationSkillsSelfEvaluation;
 
   static Future<Map<String, Map<String, dynamic>>?> loadContentItems(List<String> categories) async {
     Map<String, Map<String, dynamic>>? result;
@@ -90,7 +90,7 @@ class SkillsSelfEvaluation extends StatefulWidget with AnalyticsInfo {
   }
 }
 
-class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> with NotificationsListener {
+class _SkillsSelfEvaluationWidgetState extends State<SkillsSelfEvaluationWidget> with NotificationsListener {
   Map<String, SkillsSelfEvaluationContent> _infoContentItems = {};
 
   @override
@@ -198,7 +198,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> with Notifi
 
   void _loadContentItems() {
 
-    SkillsSelfEvaluation.loadContentItems(["bessi_info"]).then((content) {
+    SkillsSelfEvaluationWidget.loadContentItems(["bessi_info"]).then((content) {
       if (content?.isNotEmpty ?? false) {
         _infoContentItems.clear();
         for (MapEntry<String, Map<String, dynamic>> item in content?.entries ?? []) {
@@ -261,7 +261,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> with Notifi
   }
 
   void _onTapStartEvaluation() {
-    Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation');
+    Future? result = AccessDialog.show(context: context, resource: 'career_exploration.skills_self_evaluation');
     if (Config().bessiSurveyID != null && result == null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
         SurveyPanel(
@@ -339,6 +339,21 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> with Notifi
     if (name == Storage.notifySettingChanged && param == Storage().assessmentsEnableSaveKey && mounted) {
       setState(() {});
     }
+  }
+}
+
+class SkillsSelfEvaluationPanel extends StatelessWidget with AnalyticsInfo {
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.CareerExplorationSkillsSelfEvaluation;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: HeaderBar(/*title: Localization().getStringEx('panel.skills_self_evaluation.header.title', 'Skills Self-Evaluation & Career Explorer')*/),
+      body: SingleChildScrollView(child: SkillsSelfEvaluationWidget()),
+      backgroundColor: Styles().colors.background,
+      bottomNavigationBar: uiuc.TabBar()
+    );
   }
 }
 

@@ -16,6 +16,8 @@ import 'package:illinois/ui/academics/courses/EssentialSkillsCoachWidgets.dart';
 import 'package:illinois/ui/academics/courses/ResourcesPanel.dart';
 import 'package:illinois/ui/academics/courses/SkillsHistoryPanel.dart';
 import 'package:illinois/ui/academics/courses/StreakPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -27,17 +29,17 @@ import 'package:sprintf/sprintf.dart';
 
 enum EssentialSkillsCoachTab { coach, history }
 
-class EssentialSkillsCoachDashboardPanel extends StatefulWidget with AnalyticsInfo {
-  EssentialSkillsCoachDashboardPanel();
+class EssentialSkillsCoachDashboard extends StatefulWidget with AnalyticsInfo {
+  EssentialSkillsCoachDashboard();
 
   @override
-  State<EssentialSkillsCoachDashboardPanel> createState() => _EssentialSkillsCoachDashboardPanelState();
+  State<EssentialSkillsCoachDashboard> createState() => _EssentialSkillsCoachDashboardState();
 
   @override
-  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsEssentialSkillsCoach;
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.CareerExplorationEssentialSkillsCoach;
 }
 
-class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoachDashboardPanel> with NotificationsListener {
+class _EssentialSkillsCoachDashboardState extends State<EssentialSkillsCoachDashboard> with NotificationsListener {
   Course? _course;
   UserCourse? _userCourse;
   List<UserUnit>? _userCourseUnits;
@@ -784,5 +786,20 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
         }
       }
     }
+  }
+}
+
+class EssentialSkillsCoachPanel extends StatelessWidget with AnalyticsInfo {
+  @override
+  AnalyticsFeature? get analyticsFeature => AnalyticsFeature.CareerExplorationEssentialSkillsCoach;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: HeaderBar(title: Localization().getStringEx('panel.essential_skills_coach.header.title', 'Essential Skills Coach')),
+      body: Padding(padding: EdgeInsets.zero, child: EssentialSkillsCoachDashboard()),
+      backgroundColor: Styles().colors.background,
+      bottomNavigationBar: uiuc.TabBar()
+    );
   }
 }

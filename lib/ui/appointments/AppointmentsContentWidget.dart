@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -346,6 +347,9 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
       _isLoadingProviders = true;
     });
     Appointments().loadProviders().then((List<AppointmentProvider>? result) {
+
+      // Filter providers by FlexUI rules [#5637]
+      result =  AppointmentProviderUtils.enabledProviders(result);
 
       result?.sort((AppointmentProvider p1, AppointmentProvider p2) {
         String name1 = _getDropDownProviderName(p1) ?? '';

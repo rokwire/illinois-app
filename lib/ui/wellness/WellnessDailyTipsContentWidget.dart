@@ -144,41 +144,6 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     }
   }
 
-  Widget _buildEightDimensionsPopup(BuildContext context) {
-    return Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
-      ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
-        Container(color: Styles().colors.white, child:
-          Stack(children: [
-            Padding(padding: EdgeInsets.symmetric(vertical: 32), child:
-              Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                Row(children: [
-                  Expanded(child:
-                    Semantics( header: true, inMutuallyExclusiveGroup: true,
-                      child:Text(Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'), textAlign: TextAlign.center, style:Styles().textStyles.getTextStyle("panel.wellness.todo.dialog.heading.large")),
-                  )),
-                ],),
-                Container(height: 16),
-                Styles().images.getImage('wellness-wheel', semanticLabel: "Circular diagram with 8 dimensions title in center. Then a 2nd ring of icons representing different dimensions in the next ring of diagram. In the Third and final ring of diagram, there are names of dimensions: Environmental, Financial, Spiritual, Vocational, Emotional, Social, Physical, Mental.") ?? Container(), //TBD localize
-              ],),
-            ),
-            Column(mainAxisSize: MainAxisSize.min, children: [
-              Row(children: [
-                Expanded(child: Container()),
-                Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-                  InkWell(onTap : () => _onClosePopup(context), child:
-                    Padding(padding: EdgeInsets.all(18), child: 
-                      Styles().images.getImage('close-circle', excludeFromSemantics: true),
-                    ),
-                  ),
-                ),
-              ]),
-            ],)
-          ],)
-        ),
-      ),
-    );
-  }
-
   void onTapEightDimension() {
     Analytics().logSelect(target: 'Learn more about the 8 dimensions', source: widget.runtimeType.toString());
     if (StringUtils.isNotEmpty(Config().wellness8DimensionsUrl)) {
@@ -188,17 +153,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
 
   void _onTapEightDimensionsImage() {
     Analytics().logSelect(target: '8 dimensions of Wellness', source: widget.runtimeType.toString());
-    showDialog(context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return _buildEightDimensionsPopup(context);
-      },
-    );
-  }
-
-  void _onClosePopup(BuildContext context) {
-    Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
-    Navigator.of(context).pop();
+    showDialog(context: context, barrierDismissible: true, builder: (BuildContext context) => WellnessEightDimensionsPopup(),);
   }
 
   void _launchUrl(String? url) {
@@ -225,5 +180,47 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
         });
       }
     }
+  }
+}
+
+class WellnessEightDimensionsPopup extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) =>
+    Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
+      ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+        Container(color: Styles().colors.white, child:
+          Stack(children: [
+            Padding(padding: EdgeInsets.symmetric(vertical: 32), child:
+              Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Row(children: [
+                  Expanded(child:
+                    Semantics( header: true, inMutuallyExclusiveGroup: true, child:
+                      Text(Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'), textAlign: TextAlign.center, style:Styles().textStyles.getTextStyle("panel.wellness.todo.dialog.heading.large")),
+                  )),
+                ],),
+                Container(height: 16),
+                Styles().images.getImage('wellness-wheel', semanticLabel: "Circular diagram with 8 dimensions title in center. Then a 2nd ring of icons representing different dimensions in the next ring of diagram. In the Third and final ring of diagram, there are names of dimensions: Environmental, Financial, Spiritual, Vocational, Emotional, Social, Physical, Mental.") ?? Container(), //TBD localize
+              ],),
+            ),
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Row(children: [
+                Expanded(child: Container()),
+                Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+                  InkWell(onTap : () => _onClosePopup(context), child:
+                    Padding(padding: EdgeInsets.all(18), child:
+                      Styles().images.getImage('close-circle', excludeFromSemantics: true),
+                    ),
+                  ),
+                ),
+              ]),
+            ],)
+          ],)
+        ),
+      ),
+    );
+
+  void _onClosePopup(BuildContext context) {
+    Analytics().logSelect(target: 'Close', source: runtimeType.toString());
+    Navigator.of(context).pop();
   }
 }

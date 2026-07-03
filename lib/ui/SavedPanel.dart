@@ -381,7 +381,7 @@ class _SavedPanelState extends State<SavedPanel> with NotificationsListener {
       case LaundryRoom.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
       case MTDStop.favoriteKeyName:       return Localization().getStringEx('panel.saved.label.mtd_stops', 'My Bus Stops');
       case ExplorePOI.favoriteKeyName:    return Localization().getStringEx('panel.saved.label.my_locations', 'My Locations');
-      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
+      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'Saved Resources');
       case Appointment.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.appointments', 'MyMcKinley Appointments');
     }
     return null;
@@ -396,7 +396,7 @@ class _SavedPanelState extends State<SavedPanel> with NotificationsListener {
       case LaundryRoom.favoriteKeyName:   return 'laundry';
       case MTDStop.favoriteKeyName:       return 'transit';
       case ExplorePOI.favoriteKeyName:    return 'location';
-      case GuideFavorite.favoriteKeyName: return 'guide.';
+      case GuideFavorite.favoriteKeyName: return 'guide';
       case Appointment.favoriteKeyName:   return 'appointments';
     }
     return null;

@@ -17,8 +17,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class GuideCategoriesPanel extends StatefulWidget with AnalyticsInfo {
   final String? guide;
   final String? contentType;
+  final String? title;
+  final String? emptyDescriptin;
 
-  GuideCategoriesPanel({Key? key, this.guide, this.contentType}) : super(key: key);
+  GuideCategoriesPanel({super.key, this.guide, this.contentType, this.title, this.emptyDescriptin});
 
   @override
   _GuideCategoriesPanelState createState() => _GuideCategoriesPanelState();
@@ -59,55 +61,11 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> with Notifi
     }
   }
 
-  void _buildCategories() {
-    
-    List<dynamic>? contentList = Guide().getContentList(guide: widget.guide, contentType: widget.contentType);
-    if (contentList != null) {
-
-      LinkedHashMap<String, LinkedHashSet<GuideSection>> categoriesMap = LinkedHashMap<String, LinkedHashSet<GuideSection>>();
-      
-      for (dynamic contentEntry in contentList) {
-        Map<String, dynamic>? guideEntry = JsonUtils.mapValue(contentEntry);
-        if (guideEntry != null) {
-          String? category = JsonUtils.stringValue(Guide().entryValue(guideEntry, 'category'));
-          GuideSection? section = GuideSection.fromGuideEntry(guideEntry);
-
-          if (StringUtils.isNotEmpty(category) && (section != null)) {
-            LinkedHashSet<GuideSection>? categorySections = categoriesMap[category];
-            if (categorySections == null) {
-              categoriesMap[category!] = categorySections = LinkedHashSet<GuideSection>();
-            }
-            if (!categorySections.contains(section)) {
-              categorySections.add(section);
-            }
-          }
-        }
-      }
-
-      _categories = List.from(categoriesMap.keys) ;
-      _categories!.sort();
-
-      _categorySections = Map<String, List<GuideSection>>();
-      categoriesMap.forEach((String category, LinkedHashSet<GuideSection> sectionsSet) {
-        List<GuideSection> sections = List.from(sectionsSet);
-        sections.sort((GuideSection section1, GuideSection section2) {
-          return section1.compareTo(section2);
-        });
-        _categorySections![category] = sections;
-      });
-        
-    }
-    else {
-      _categories = null;
-      _categorySections = null;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(
-        title: Localization().getStringEx('panel.guide_categories.label.heading', 'Campus Guide'), 
+        title: widget.title ?? Localization().getStringEx('panel.guide_categories.label.heading', 'Campus Guide'),
       ),
       body: Column(children: <Widget>[
           Expanded(child:
@@ -140,7 +98,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> with Notifi
     else {
       return Padding(padding: EdgeInsets.all(32), child:
         Center(child:
-          Text(Localization().getStringEx('panel.guide_categories.label.content.empty', 'Empty guide content'), style: Styles().textStyles.getTextStyle("widget.message.regular.fat"))
+          Text(widget.emptyDescriptin ?? Localization().getStringEx('panel.guide_categories.label.content.empty', 'Empty guide content'), style: Styles().textStyles.getTextStyle("widget.message.regular.fat"))
         ,)
       );
     }
@@ -178,6 +136,50 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> with Notifi
         ),
       ),
     );
+  }
+
+  void _buildCategories() {
+
+    List<dynamic>? contentList = Guide().getContentList(guide: widget.guide, contentType: widget.contentType);
+    if (contentList != null) {
+
+      LinkedHashMap<String, LinkedHashSet<GuideSection>> categoriesMap = LinkedHashMap<String, LinkedHashSet<GuideSection>>();
+
+      for (dynamic contentEntry in contentList) {
+        Map<String, dynamic>? guideEntry = JsonUtils.mapValue(contentEntry);
+        if (guideEntry != null) {
+          String? category = JsonUtils.stringValue(Guide().entryValue(guideEntry, 'category'));
+          GuideSection? section = GuideSection.fromGuideEntry(guideEntry);
+
+          if (StringUtils.isNotEmpty(category) && (section != null)) {
+            LinkedHashSet<GuideSection>? categorySections = categoriesMap[category];
+            if (categorySections == null) {
+              categoriesMap[category!] = categorySections = LinkedHashSet<GuideSection>();
+            }
+            if (!categorySections.contains(section)) {
+              categorySections.add(section);
+            }
+          }
+        }
+      }
+
+      _categories = List.from(categoriesMap.keys) ;
+      _categories!.sort();
+
+      _categorySections = Map<String, List<GuideSection>>();
+      categoriesMap.forEach((String category, LinkedHashSet<GuideSection> sectionsSet) {
+        List<GuideSection> sections = List.from(sectionsSet);
+        sections.sort((GuideSection section1, GuideSection section2) {
+          return section1.compareTo(section2);
+        });
+        _categorySections![category] = sections;
+      });
+
+    }
+    else {
+      _categories = null;
+      _categorySections = null;
+    }
   }
 
   void _onTapCategory(String category) {

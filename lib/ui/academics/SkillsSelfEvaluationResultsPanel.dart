@@ -336,7 +336,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   void _loadContentItems() {
-    SkillsSelfEvaluation.loadContentItems(["bessi_results", "bessi_profile"]).then((content) {
+    SkillsSelfEvaluationWidget.loadContentItems(["bessi_results", "bessi_profile"]).then((content) {
       if (content?.isNotEmpty ?? false) {
         _resultsContentItems.clear();
         _profileContentItems.clear();

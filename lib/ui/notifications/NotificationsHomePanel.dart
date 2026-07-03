@@ -94,7 +94,7 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeAcademicsGiesCheckilst,
       FirebaseMessaging.payloadTypeAcademicsMedicineCourses,
       FirebaseMessaging.payloadTypeAcademicsMyIllini,
-      FirebaseMessaging.payloadTypeAcademicsSkillsSelfEvaluation,
+      FirebaseMessaging.payloadTypeCareerExplorationSkillsSelfEvaluation,
       FirebaseMessaging.payloadTypeAcademicsStudentCourses,
       FirebaseMessaging.payloadTypeAcademicsToDoList,
       FirebaseMessaging.payloadTypeAcademicsUiucCheckilst,
@@ -373,6 +373,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
     return Semantics(
         label: title,
         button: true,
+        container: true,
         child: InkWell(
             onTap: _onTapFilter,
             child: Container(
@@ -1108,9 +1109,11 @@ class _InboxMessageCardState extends State<InboxMessageCard> with NotificationsL
         Container(color: Styles().colors.fillColorSecondary, height: 4),
         Positioned(bottom: 0, right: 0, child:
           Stack(alignment: Alignment.center, children: [
-            InkWell(onTap: _onTapDelete, splashColor: Colors.transparent, child:
-              Padding(padding: EdgeInsets.all(16), child:
-                Styles().images.getImage('trash-blue')
+            Semantics(label: "Delete", hint: widget.message?.displayBody ?? widget.message?.subject ,child:
+              InkWell(onTap: _onTapDelete, splashColor: Colors.transparent, child:
+                Padding(padding: EdgeInsets.all(16), child:
+                  Styles().images.getImage('trash-blue')
+                )
               )
             ),
             Visibility(visible: _deleting, child:
