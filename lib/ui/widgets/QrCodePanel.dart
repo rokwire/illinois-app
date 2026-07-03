@@ -8,7 +8,6 @@ import 'package:illinois/model/BrightnessHighlight.dart';
 import 'package:illinois/model/Building.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Map2.dart';
