@@ -73,7 +73,7 @@ dependencies:
   pdf: ^3.11.3
   printing: ^5.14.2
   flutter_quill_delta_from_html: ^1.5.3
-  flutter_quill: ^11.5.0
+  flutter_quill: ^11.5.1
   vsc_quill_delta_to_html: ^1.0.5
   file_picker: ^10.3.8
   image_picker: ^1.2.1
@@ -145,6 +145,11 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # turn off Swift Package Manager
+  # https://stackoverflow.com/questions/79956093/the-following-plugins-do-not-support-swift-package-manager-flutter-build-ios
+  config:
+    enable-swift-package-manager: false
 
   # To add assets to your application, add an assets section, like this:
   assets:
