@@ -14,7 +14,7 @@
 
 import 'package:illinois/platform_impl/base.dart';
 
-import 'package:file_picker/_internal/file_picker_web.dart';
+import 'package:file_picker/src/platform/web/file_picker_web.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 class FileHelper extends BaseFileHelper {

@@ -1505,7 +1505,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
 
   Future<void> _onTapAttachFile() async {
     //TODO: should file attachments be retained for draft messages?
-    final FilePickerResult? result = await FilePicker.platform.pickFiles(
+    final FilePickerResult? result = await FilePicker.pickFiles(
       allowMultiple: true,
       withData: true,
       dialogTitle: Localization().getStringEx("panel.messages.conversation.attach_files.message", "Select file(s) to upload"),
