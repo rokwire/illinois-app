@@ -119,5 +119,16 @@
 					<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" tools:replace="android:resource"></meta-data>
 				</provider>
 
+				<provider
+					android:name="com.sidlatau.flutteremailsender.FlutterEmailSenderFileProvider"
+					android:authorities="${applicationId}.file_provider"
+					android:exported="false"
+					android:grantUriPermissions="true">
+					<meta-data
+						android:name="android.support.FILE_PROVIDER_PATHS"
+						android:resource="@xml/file_paths"
+						tools:replace="android:resource" />
+				</provider>
+
     </application>
 </manifest>

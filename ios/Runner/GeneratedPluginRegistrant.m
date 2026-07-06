@@ -78,10 +78,10 @@
 @import firebase_messaging;
 #endif
 
-#if __has_include(<flutter_email_sender/FlutterEmailSenderPlugin.h>)
-#import <flutter_email_sender/FlutterEmailSenderPlugin.h>
+#if __has_include(<flutter_email_sender_method_channel/FlutterEmailSenderPlugin.h>)
+#import <flutter_email_sender_method_channel/FlutterEmailSenderPlugin.h>
 #else
-@import flutter_email_sender;
+@import flutter_email_sender_method_channel;
 #endif
 
 #if __has_include(<flutter_exif_rotation/FlutterExifRotationPlugin.h>)

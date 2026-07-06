@@ -78,7 +78,7 @@ public final class GeneratedPluginRegistrant {
     try {
       flutterEngine.getPlugins().add(new com.sidlatau.flutteremailsender.FlutterEmailSenderPlugin());
     } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin flutter_email_sender, com.sidlatau.flutteremailsender.FlutterEmailSenderPlugin", e);
+      Log.e(TAG, "Error registering plugin flutter_email_sender_method_channel, com.sidlatau.flutteremailsender.FlutterEmailSenderPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.flutterexifrotation.FlutterExifRotationPlugin());
