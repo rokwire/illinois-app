@@ -201,7 +201,7 @@ PODS:
     - Flutter
   - rokwire_plugin (1.13.0):
     - Flutter
-  - screen_brightness_ios (0.1.0):
+  - screen_brightness_ios (2.1.3):
     - Flutter
   - SDWebImage (5.21.5):
     - SDWebImage/Core (= 5.21.5)
@@ -451,7 +451,7 @@ SPEC CHECKSUMS:
   quill_native_bridge_ios: f47af4b14e7757968486641656c5d23250cee521
   record_ios: f75fa1d57f840012775c0e93a38a7f3ceea1a374
   rokwire_plugin: b7ad279fc9c90d7614fcea4074b7f6b821350db7
-  screen_brightness_ios: 9953fd7da5bd480f1a93990daeec2eb42d4f3b52
+  screen_brightness_ios: 212d950bb99c915eee971c884f4a6c87c92cd13d
   SDWebImage: e9c98383c7572d713c1a0d7dd2783b10599b9838
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
@@ -461,7 +461,7 @@ SPEC CHECKSUMS:
   SwiftProtobuf: 409d3aaec90e51b1705b1dd8065b56893450e77c
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
   url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
-  video_player_avfoundation: dd410b52df6d2466a42d28550e33e4146928280a
+  video_player_avfoundation: 3453f792138786248960ca029747fcd9f318ef52
   wakelock_plus: e29112ab3ef0b318e58cfa5c32326458be66b556
   webview_flutter_wkwebview: 8ebf4fded22593026f7dbff1fbff31ea98573c8d
   ZXingObjC: 512b34b9b6920e8ef0461a4159d0814c5e48c28a

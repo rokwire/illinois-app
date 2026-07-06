@@ -85,10 +85,10 @@ packages:
     dependency: transitive
     description:
       name: audio_session
-      sha256: "8f96a7fecbb718cb093070f868b4cdcb8a9b1053dce342ff8ab2fde10eb9afb7"
+      sha256: f9e7711a0e24ca8b40f5d7ac374c3c6e55016f3157912badd18199cdbbca5c4d
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.2"
+    version: "0.2.4"
   barcode:
     dependency: transitive
     description:
@@ -1046,10 +1046,10 @@ packages:
     dependency: "direct main"
     description:
       name: in_app_review
-      sha256: ab26ac54dbd802896af78c670b265eaeab7ecddd6af4d0751e9604b60574817f
+      sha256: "364db0c160b37fe7fad9cdaa18f968473924b17368869010af902760421b6bf8"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.11"
+    version: "2.0.12"
   in_app_review_platform_interface:
     dependency: transitive
     description:
@@ -2098,26 +2098,26 @@ packages:
     dependency: "direct main"
     description:
       name: video_player
-      sha256: "096bc28ce10d131be80dfb00c223024eb0fba301315a406728ab43dd99c45bdf"
+      sha256: "48a7bdaa38a3d50ec10c78627abdbfad863fdf6f0d6e08c7c3c040cfd80ae36f"
       url: "https://pub.dev"
     source: hosted
-    version: "2.10.1"
+    version: "2.11.1"
   video_player_android:
     dependency: transitive
     description:
       name: video_player_android
-      sha256: ee4fd520b0cafa02e4a867a0f882092e727cdaa1a2d24762171e787f8a502b0a
+      sha256: "8401adac6f33e78a0f255a75a7e7c9e2f9713ffcd87ff4e6c00d9bd92b5d99db"
       url: "https://pub.dev"
     source: hosted
-    version: "2.9.1"
+    version: "2.9.7"
   video_player_avfoundation:
     dependency: transitive
     description:
       name: video_player_avfoundation
-      sha256: "2a7aaf2f28212c285e0fb29b50728bbea513d743dd48d3024098015f169fb937"
+      sha256: "9338f3ec22774f88146b22f13273a446719b1da010fd200c4d1d97802156ac58"
       url: "https://pub.dev"
     source: hosted
-    version: "2.8.10"
+    version: "2.9.7"
   video_player_platform_interface:
     dependency: transitive
     description:
@@ -2186,34 +2186,34 @@ packages:
     dependency: "direct main"
     description:
       name: webview_flutter
-      sha256: a3da219916aba44947d3a5478b1927876a09781174b5a2b67fa5be0555154bf9
+      sha256: e4d3474277c5043f5f3100ed27d94ad693abfd5c602b0221c719a4497e4ba1e4
       url: "https://pub.dev"
     source: hosted
-    version: "4.13.1"
+    version: "4.14.0"
   webview_flutter_android:
     dependency: transitive
     description:
       name: webview_flutter_android
-      sha256: eeeb3fcd5f0ff9f8446c9f4bbc18a99b809e40297528a3395597d03aafb9f510
+      sha256: a97db7a44f8e71af2f3971c45550a08cce1fb60059c1b8e534251e6cfb753490
       url: "https://pub.dev"
     source: hosted
-    version: "4.10.11"
+    version: "4.13.0"
   webview_flutter_platform_interface:
     dependency: transitive
     description:
       name: webview_flutter_platform_interface
-      sha256: "63d26ee3aca7256a83ccb576a50272edd7cfc80573a4305caa98985feb493ee0"
+      sha256: "1221c1b12f5278791042f2ec2841743784cf25c5a644e23d6680e5d718824f04"
       url: "https://pub.dev"
     source: hosted
-    version: "2.14.0"
+    version: "2.15.1"
   webview_flutter_wkwebview:
     dependency: transitive
     description:
       name: webview_flutter_wkwebview
-      sha256: e49f378ed066efb13fc36186bbe0bd2425630d4ea0dbc71a18fdd0e4d8ed8ebc
+      sha256: c879dd64b87c452aa84381b244d5469da57ba7e8cca6884c7b1e0d406372c12d
       url: "https://pub.dev"
     source: hosted
-    version: "3.23.5"
+    version: "3.26.0"
   weekday_selector:
     dependency: "direct main"
     description:

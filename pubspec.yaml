@@ -41,7 +41,7 @@ dependencies:
   path_provider: ^2.1.5
   share_plus: ^12.0.1
   qr_flutter: ^4.1.0
-  webview_flutter: ^4.13.1
+  webview_flutter: ^4.14.0
   app_settings: ^7.0.0
   currency_text_input_formatter: ^2.3.0
   flutter_multi_formatter: ^2.13.10
@@ -51,11 +51,11 @@ dependencies:
   package_info_plus: ^8.3.1
   device_calendar: ^4.3.3
   image_cropping: ^0.0.16
-  video_player: ^2.10.1
+  video_player: ^2.11.1
   just_audio: ^0.10.5
   confetti: ^0.8.0
   flutter_colorpicker: ^1.1.0
-  in_app_review: ^2.0.11
+  in_app_review: ^2.0.12
   speech_to_text: ^7.3.0
   visibility_detector: ^0.4.0+2
   table_calendar: ^3.1.3
