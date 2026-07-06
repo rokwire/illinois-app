@@ -80,7 +80,7 @@ dependencies:
   mime: ^2.0.0
   universal_html: ^2.3.0
   flutter_file_dialog: ^3.0.3
-  screen_brightness: ^2.1.7
+  screen_brightness: ^2.1.11
   local_auth_android: ^2.0.4
   flutter_plugin_android_lifecycle: ^2.0.24
   barcode_scan2: 4.8.0
