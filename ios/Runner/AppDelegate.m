@@ -37,15 +37,24 @@
 static NSString *const kFlutterMetodChannelName = @"edu.illinois.rokwire/native_call";
 static NSString *const kFIRMessagingFCMTokenNotification = @"com.firebase.iid.notif.fcm-token";
 
+typedef void (^FlutterCompletion)(id returnValue);
+
+@interface SceneDelegate : FlutterSceneDelegate
++ (instancetype)sharedInstance;
+
+- (void)setupLaunchScreenInView:(UIView*)view;
+- (void)removeLaunchScreenWithCompletionHandler:(FlutterCompletion)completionHandler;
+- (void)setLaunchScreenStatusText:(NSString*)statusText;
+@end
+
 @interface RootNavigationController : UINavigationController
++ (instancetype)sharedInstance;
 - (void)setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible;
 @end
 
 @interface LaunchScreenView : UIView
 @property (nonatomic) NSString *statusText;
 @end
-
-typedef void (^FlutterCompletion)(id returnValue);
 
 @protocol FlutterCompletionHandler <NSObject>
 @property (nonatomic) FlutterCompletion completionHandler;
@@ -57,16 +66,7 @@ NSString* _interfaceOrientationToString(UIInterfaceOrientation value);
 UIInterfaceOrientation _interfaceOrientationFromMask(UIInterfaceOrientationMask value);
 UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation value);
 
-@interface AppDelegate()<UINavigationControllerDelegate, UNUserNotificationCenterDelegate, FIRMessagingDelegate> {
-}
-
-// Flutter
-@property (nonatomic) RootNavigationController *navigationViewController;
-@property (nonatomic) FlutterViewController *flutterViewController;
-@property (nonatomic) FlutterMethodChannel *flutterMethodChannel;
-
-// Launch View
-@property (nonatomic) LaunchScreenView *launchScreenView;
+@interface AppDelegate()<FlutterImplicitEngineDelegate, UINavigationControllerDelegate, UNUserNotificationCenterDelegate, FIRMessagingDelegate>
 
 // Init Keys
 @property (nonatomic) NSDictionary* config;
@@ -81,8 +81,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-	__weak typeof(self) weakSelf = self;
-	
 	_backgroundOperationQueue = [[NSOperationQueue alloc] init];
 	
 //	Initialize Google Maps SDK
@@ -93,49 +91,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	[FIRMessaging messaging].delegate = self;
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveFCMTokenNotification:) name:kFIRMessagingFCMTokenNotification object:nil];
 	
-	// Initialize Flutter plugins
-	[GeneratedPluginRegistrant registerWithRegistry:self];
-	
-	// Setup supported & preffered orientation
-	_preferredInterfaceOrientation = UIInterfaceOrientationPortrait;
-
-	//_supportedInterfaceOrientations = [NSSet setWithObject:@(_preferredInterfaceOrientation)];
-	_supportedInterfaceOrientations = [NSSet setWithObjects:
-		@(UIInterfaceOrientationPortrait),
-		@(UIInterfaceOrientationLandscapeLeft),
-		@(UIInterfaceOrientationLandscapeRight),
-	nil];
-
-	// Setup root ViewController
-	UIViewController *rootViewController = self.window.rootViewController;
-	_flutterViewController = [rootViewController isKindOfClass:[FlutterViewController class]] ? (FlutterViewController*)rootViewController : nil;
-
-	_navigationViewController = [[RootNavigationController alloc] initWithRootViewController:rootViewController];
-	_navigationViewController.navigationBarHidden = YES;
-	[_navigationViewController setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible];
-	_navigationViewController.delegate = self;
-
-	_navigationViewController.navigationBar.translucent = NO;
-	_navigationViewController.navigationBar.barTintColor = [UIColor inaColorWithHex:@"13294b"];
-	_navigationViewController.navigationBar.tintColor = [UIColor whiteColor];
-	_navigationViewController.navigationBar.titleTextAttributes = @{
-		NSForegroundColorAttributeName : [UIColor whiteColor]
-	};
-
-	[self setupLaunchScreen];
-	
-	self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-	self.window.rootViewController = _navigationViewController;
-	[self.window makeKeyAndVisible];
-	
-	// Listen Method Channel
-	_flutterMethodChannel = [FlutterMethodChannel methodChannelWithName:kFlutterMetodChannelName binaryMessenger:_flutterViewController.binaryMessenger];
-	[_flutterMethodChannel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
-		[weakSelf handleFlutterAPIFromCall:call result:result];
-	}];
-	
-	// Push Notifications
 	[UNUserNotificationCenter currentNotificationCenter].delegate = self;
+
+	__weak typeof(self) weakSelf = self;
 	[UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* settings) {
 		if ((settings.authorizationStatus != UNAuthorizationStatusNotDetermined) && (settings.authorizationStatus != UNAuthorizationStatusDenied)) {
 			dispatch_async(dispatch_get_main_queue(), ^{
@@ -145,6 +103,20 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}];
 	
 	return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
+
+- (void)didInitializeImplicitFlutterEngine:(NSObject<FlutterImplicitEngineBridge>*)engineBridge {
+
+  [GeneratedPluginRegistrant registerWithRegistry:engineBridge.pluginRegistry];
+
+	// Listen Method Channel
+	__weak typeof(self) weakSelf = self;
+	FlutterMethodChannel *flutterMethodChannel = [FlutterMethodChannel methodChannelWithName:kFlutterMetodChannelName binaryMessenger:engineBridge.applicationRegistrar.messenger];
+	[flutterMethodChannel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
+		[weakSelf handleFlutterAPIFromCall:call result:result];
+	}];
+	
+	//[super didInitializeImplicitFlutterEngine:engineBridge];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
@@ -166,52 +138,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	return [sharedInstance isKindOfClass:self] ? sharedInstance : nil;
 }
 
-#pragma mark - UISceneSession lifecycle
-
-/*
-	// FlutterViewController not available in application:didFinishLaunchingWithOptions: if scene overrides exist
-- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession options:(UISceneConnectionOptions *)options {
-	NSLog(@"capplication:onfigurationForConnectingSceneSession:");
-	return [[UISceneConfiguration alloc] initWithName:@"Default Configuration" sessionRole:connectingSceneSession.role];
-}
-
-
-- (void)application:(UIApplication *)application didDiscardSceneSessions:(NSSet<UISceneSession *> *)sceneSessions {
-	NSLog(@"application:didDiscardSceneSessions:");
-}*/
-
-#pragma mark Launch Screen
-
-- (void)setupLaunchScreen {
-
-	if (_launchScreenView != nil) {
-		[_launchScreenView removeFromSuperview];
-	}
-	
-	UIView *parentView = _navigationViewController.viewControllers.firstObject.view;
-	_launchScreenView = [[LaunchScreenView alloc] initWithFrame:CGRectMake(0, 0, parentView.bounds.size.width, parentView.bounds.size.height)];
-	_launchScreenView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	[parentView addSubview:_launchScreenView];
-}
-
-- (void)removeLaunchScreenWithCompletionHandler:(FlutterCompletion)completionHandler {
-	if (_launchScreenView != nil) {
-		__weak typeof(self) weakSelf = self;
-		[UIView animateWithDuration:0.5 animations:^{
-			weakSelf.launchScreenView.alpha = 0;
-		} completion:^(BOOL finished) {
-			[weakSelf.launchScreenView removeFromSuperview];
-			weakSelf.launchScreenView = nil;
-			completionHandler(nil);
-		}];
-	}
-}
-
-- (void)setLaunchScreenStatusText:(NSString*)statusText {
-	if (_launchScreenView != nil) {
-		_launchScreenView.statusText = statusText;
-	}
-}
 
 #pragma mark Config
 
@@ -263,14 +189,14 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 }
 
 - (void)handleDismissLaunchScreenWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	[self removeLaunchScreenWithCompletionHandler:^(id returnValue) {
+	[SceneDelegate.sharedInstance removeLaunchScreenWithCompletionHandler:^(id returnValue) {
 		result(returnValue);
 	}];
 }
 
 - (void)handleSetLaunchScreenStatusWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
 	NSString *statusText = [parameters inaStringForKey:@"status"];
-	[self setLaunchScreenStatusText:statusText];
+	[SceneDelegate.sharedInstance setLaunchScreenStatusText:statusText];
 	result(nil);
 }
 
@@ -467,7 +393,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		if ((0 < supportedOrientations.count) && ![_supportedInterfaceOrientations isEqualToSet:supportedOrientations]) {
 			_supportedInterfaceOrientations = supportedOrientations;
 
-			[_navigationViewController setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible];
+			[RootNavigationController.sharedInstance setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible];
 
 			UIDeviceOrientation currentOrientation = [[UIDevice currentDevice] orientation];
 			if (![_supportedInterfaceOrientations containsObject:@(currentOrientation)]) {
@@ -577,9 +503,116 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 @end
 
 //////////////////////////////////////
+// SceneDelegate
+
+@interface SceneDelegate()
+// Launch View
+@property (nonatomic) LaunchScreenView *launchScreenView;
+@end
+
+@implementation SceneDelegate
+
++ (instancetype)sharedInstance {
+	for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
+		id<UISceneDelegate> sceneDelegate = scene.delegate;
+		if ([sceneDelegate isKindOfClass:self]) {
+			return (SceneDelegate*)sceneDelegate;
+		}
+	}
+	return nil;
+}
+
+- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *) session options:(UISceneConnectionOptions *) connectionOptions {
+
+	// Setup supported & preffered orientation
+	AppDelegate.sharedInstance.preferredInterfaceOrientation = UIInterfaceOrientationPortrait;
+
+	//AppDelegate.sharedInstance.supportedInterfaceOrientations = [NSSet setWithObject:@(_preferredInterfaceOrientation)];
+	AppDelegate.sharedInstance.supportedInterfaceOrientations = [NSSet setWithObjects:
+		@(UIInterfaceOrientationPortrait),
+		@(UIInterfaceOrientationLandscapeLeft),
+		@(UIInterfaceOrientationLandscapeRight),
+	nil];
+
+	UIWindowScene* windowScene = [scene isKindOfClass:[UIWindowScene class]] ? (UIWindowScene*)scene : nil;
+	
+
+	// Setup Root ViewController
+	UIViewController *rootViewController = windowScene.windows.firstObject.rootViewController;
+
+	RootNavigationController *navigationViewController = [[RootNavigationController alloc] initWithRootViewController:rootViewController];
+	navigationViewController.navigationBarHidden = YES;
+	[navigationViewController setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible];
+	navigationViewController.delegate = AppDelegate.sharedInstance;
+
+	navigationViewController.navigationBar.translucent = NO;
+	navigationViewController.navigationBar.barTintColor = [UIColor inaColorWithHex:@"13294b"];
+	navigationViewController.navigationBar.tintColor = [UIColor whiteColor];
+	navigationViewController.navigationBar.titleTextAttributes = @{
+		NSForegroundColorAttributeName : [UIColor whiteColor]
+	};
+
+	[self setupLaunchScreenInView:rootViewController.view];
+	
+	self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
+	self.window.rootViewController = navigationViewController;
+	[self.window makeKeyAndVisible];
+	
+	[super scene:scene willConnectToSession:session options:connectionOptions];
+}
+
+#pragma mark Launch Screen
+
+- (void)setupLaunchScreenInView:(UIView*)view {
+
+	if (_launchScreenView != nil) {
+		[_launchScreenView removeFromSuperview];
+	}
+	
+	CGSize parentSize = view.bounds.size;
+	_launchScreenView = [[LaunchScreenView alloc] initWithFrame:CGRectMake(0, 0, parentSize.width, parentSize.height)];
+	_launchScreenView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	[view addSubview:_launchScreenView];
+}
+
+- (void)removeLaunchScreenWithCompletionHandler:(FlutterCompletion)completionHandler {
+	if (_launchScreenView != nil) {
+		__weak typeof(self) weakSelf = self;
+		[UIView animateWithDuration:0.5 animations:^{
+			weakSelf.launchScreenView.alpha = 0;
+		} completion:^(BOOL finished) {
+			[weakSelf.launchScreenView removeFromSuperview];
+			weakSelf.launchScreenView = nil;
+			completionHandler(nil);
+		}];
+	}
+}
+
+- (void)setLaunchScreenStatusText:(NSString*)statusText {
+	if (_launchScreenView != nil) {
+		_launchScreenView.statusText = statusText;
+	}
+}
+
+@end
+
+//////////////////////////////////////
 // RootNavigationController
 
 @implementation RootNavigationController
+
++ (instancetype)sharedInstance {
+	for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
+		UIWindowScene* windowScene = [scene isKindOfClass:[UIWindowScene class]] ? (UIWindowScene*)scene : nil;
+		for (UIWindow *window in windowScene.windows) {
+			UIViewController *rootViewController = window.rootViewController;
+			if ([rootViewController isKindOfClass:self]) {
+				return (RootNavigationController*)rootViewController;
+			}
+		}
+	}
+	return nil;
+}
 
 - (void)setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible {
 	if ([self respondsToSelector:@selector(setNeedsUpdateOfSupportedInterfaceOrientations)]) {

@@ -2,7 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+//import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/DeviceCalendar.dart';
@@ -1138,7 +1138,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
 
       String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#E84A27';
       String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
-      String scanResult = await FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR);
+      String scanResult = ''; // await FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR);
       if (mounted) {
         if (scanResult != '-1') { // The user did not hit "Cancel button"
           Map<String, dynamic>? selfCheckInParams = _selfCheckScanInUrlParamters(scanResult);

@@ -2,7 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+//import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 //import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -616,11 +616,11 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       
       String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#E84A27';
       String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
-      FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR).then((String scanResult) {
+      /*FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR).then((String scanResult) {
         if (mounted) {
           _onScanFinished(scanResult);
         }
-      });
+      });*/
     }
   }
 
