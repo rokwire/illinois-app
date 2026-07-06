@@ -97,6 +97,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.9"
+  barcode_scan2:
+    dependency: "direct main"
+    description:
+      name: barcode_scan2
+      sha256: e48fbbe8d98a55b0ed6b502031371e1eca33dd6ff3964272c8bc8687fa226ceb
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.8.0"
   base58check:
     dependency: transitive
     description:
@@ -1426,6 +1434,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.14.2"
+  protobuf:
+    dependency: transitive
+    description:
+      name: protobuf
+      sha256: "75ec242d22e950bdcc79ee38dd520ce4ee0bc491d7fadc4ea47694604d22bf06"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.0"
   provider:
     dependency: transitive
     description:

@@ -83,6 +83,7 @@ dependencies:
   screen_brightness: ^2.1.7
   local_auth_android: ^2.0.4
   flutter_plugin_android_lifecycle: ^2.0.24
+  barcode_scan2: 4.8.0
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:
@@ -91,13 +92,6 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: plugin
-
-  # https://community.flutterflow.io/ask-the-community/post/flutter-barcode-scanner-not-compatible-with-latest-flutter-in-android-build-PCf2OlE2dK64lFU
-  # flutter_barcode_scanner: ^2.0.0
-  # flutter_barcode_scanner:
-  #   git:
-  #     url: https://github.com/decodevM/flutter_barcode_scanner.git
-  #     ref: flutter-3.29
 
   # google_maps_flutter: ^2.2.5
   google_maps_flutter:
