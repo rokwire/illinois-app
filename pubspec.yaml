@@ -30,9 +30,9 @@ dependencies:
   intl: ^0.20.2
   http: ^1.6.0
   flutter_widget_from_html: ^0.17.1
-  geolocator: ^12.0.0
+  geolocator: ^14.0.2
   url_launcher: ^6.3.2
-  xml: ^6.6.1
+  xml: ^7.0.1
   sprintf: ^7.0.0
   path: ^1.9.1
   collection: ^1.19.1
@@ -48,7 +48,7 @@ dependencies:
   pinch_zoom: ^2.0.1
   uuid: ^4.5.2
   expandable_page_view: ^1.2.0
-  package_info_plus: ^8.3.1
+  package_info_plus: ^9.0.1
   device_calendar: ^4.3.3
   image_cropping: ^0.0.16
   video_player: ^2.11.1
@@ -63,7 +63,7 @@ dependencies:
   flutter_pdfview: ^1.4.4
   fl_chart: ^1.1.1
   font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
-  record: ^6.1.2
+  record: ^7.1.1
   flutter_markdown: ^0.7.7+1
   quick_actions: ^1.1.0
   link_text: ^0.2.1
@@ -75,7 +75,7 @@ dependencies:
   flutter_quill_delta_from_html: ^1.5.3
   flutter_quill: ^11.5.1
   vsc_quill_delta_to_html: ^1.0.5
-  file_picker: ^10.3.8
+  file_picker: ^11.0.2
   image_picker: ^1.2.1
   mime: ^2.0.0
   universal_html: ^2.3.0
