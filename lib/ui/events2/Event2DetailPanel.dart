@@ -1137,15 +1137,19 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
     if (canSelfCheckIn) {
       setState(() { _selfCheckingIn = true; });
 
+      ScanResult? scanResult;
       String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
-      ScanResult scanResult = await BarcodeScanner.scan(options: ScanOptions(
-        restrictFormat: <BarcodeFormat>[BarcodeFormat.qr],
-        strings: <String, String>{
-          'cancel': cancelButtonTitle,
-        }
-      ));
+      try {
+        scanResult = await BarcodeScanner.scan(options: ScanOptions(
+          restrictFormat: <BarcodeFormat>[BarcodeFormat.qr],
+          strings: <String, String>{
+            'cancel': cancelButtonTitle,
+          }
+        ));
+      }
+      catch (e) { print(e); }
       if (mounted) {
-        if (scanResult.type == ResultType.Barcode) { // The user did not hit "Cancel button"
+        if ((scanResult != null) && (scanResult.type == ResultType.Barcode)) { // The user did not hit "Cancel button"
           Map<String, dynamic>? selfCheckInParams = _selfCheckScanInUrlParamters(scanResult.rawContent);
           if (selfCheckInParams != null) {
             String? eventId = JsonUtils.stringValue(selfCheckInParams['event_id']) ;

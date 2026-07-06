@@ -595,7 +595,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     padding: EdgeInsets.zero,
   );
 
-  void _onTapScanButton() {
+  void _onTapScanButton() async {
     Analytics().logSelect(target: 'Scan Illini Id');
     Event2CreatePanel.hideKeyboard(context);
 
@@ -614,22 +614,25 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         _onScanFinished("$uin");
       }); */
       
+      ScanResult? scanResult;
       String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
-      BarcodeScanner.scan(options: ScanOptions(
-        restrictFormat: <BarcodeFormat>[BarcodeFormat.qr],
-        strings: <String, String>{
-          'cancel': cancelButtonTitle,
-        }
-      )).then((ScanResult scanResult) {
-        if (mounted) {
-          _onScanFinished(scanResult);
-        }
-      });
+      try {
+        scanResult = await BarcodeScanner.scan(options: ScanOptions(
+          restrictFormat: <BarcodeFormat>[BarcodeFormat.qr],
+          strings: <String, String>{
+            'cancel': cancelButtonTitle,
+          }
+        ));
+      }
+      catch (e) { print(e); }
+      if (mounted) {
+        _onScanFinished(scanResult);
+      }
     }
   }
 
-  void _onScanFinished(ScanResult scanResult) {
-    if (scanResult.type == ResultType.Barcode) { // The user did not hit "Cancel button"
+  void _onScanFinished(ScanResult? scanResult) {
+    if ((scanResult != null) &&  (scanResult.type == ResultType.Barcode)) { // The user did not hit "Cancel button"
       String? uin = _extractUin(scanResult.rawContent);
       String? eventId = widget.event?.id;
       if (uin == null) {
