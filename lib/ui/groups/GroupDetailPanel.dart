@@ -1296,6 +1296,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                           Navigator.of(context).pop();
                           _onTapCreatePost(type: PostType.direct_message);
                         })),
+                  Visibility(visible: _canCreateConversation, child:
+                    RibbonButton(
+                      key: _canCreateConversation && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
+                      leftIconKey: "plus-circle",
+                      title: Localization().getStringEx("", "Create Direct Message2"),//localize tbd
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _onTapCreateMessage2();
+                      })),
                     Visibility(visible: _canAddEvent, child:
                       RibbonButton(
                         key: _canAddEvent && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
@@ -1586,10 +1595,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   }
 
   void _onTapCreateMessage2() {
+    Analytics().logSelect(target: "Create Message", attributes: _group?.analyticsAttributes);
     //TBD
   }
 
   void _onTapCreatePoll() {
+    Analytics().logSelect(target: "Create Poll", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel(group: _group)));
   }
 
