@@ -5,7 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
 - Update research form and settings text [#5852](https://github.com/rokwire/illinois-app/issues/5852)
+- Upgrade to Flutter 3.44.4 [#5869](https://github.com/rokwire/illinois-app/issues/5869).
 
 ## 8.1.0 - 2026-06-08
 - Hide assistant promo in events [#5838](https://github.com/rokwire/illinois-app/issues/5838)
