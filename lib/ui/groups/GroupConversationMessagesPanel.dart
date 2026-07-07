@@ -2,7 +2,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -76,7 +75,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   }
 
   Widget get _messagesContent => Column(children: [
-    GroupConversationHeader(widget.conversation, group: widget.group, onDelete: _onDeleteConversation,),
+    GroupConversationHeader(widget.conversation, group: widget.group, groupAdmins: widget.groupAdmins, onDelete: _onDeleteConversation,),
     Expanded(child:
       RefreshIndicator(onRefresh: _onRefresh, child:
         SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
@@ -107,7 +106,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
         GroupConversationMessageCard(message,
           conversation: widget.conversation,
           group: widget.group,
-          adminSender: MemberExt.getMember(widget.groupAdmins, userId: message.sender?.accountId),
+          //groupMember: MemberExt.getMember(widget.groupAdmins, userId: message.sender?.accountId),
           analyticsFeature: widget.analyticsFeature,
         ),
       ),);

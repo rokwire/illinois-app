@@ -259,6 +259,7 @@
     "widget.title.light.small.fat.spaced": {"font_family": "bold", "size": 14.0, "color": "textColorPrimary", "letter_spacing": 1.0},
     "widget.title.light.little.fat": {"font_family": "bold", "size": 12.0, "color": "textColorPrimary"},
     "widget.title.light.tiny": {"font_family": "medium", "size": 10.0, "color": "textColorPrimary"},
+    "widget.title.light.tiny.fat": { "extends": "widget.title.light.tiny", "font_family": "bold" },
     "widget.title.disabled.medium.fat": {"font_family": "bold", "size": 18.0, "color": "disabledTextColor"},
 
     "widget.detail.extra_large.fat": { "font_family": "bold", "size": 24.0, "color": "fillColorPrimary"},
@@ -523,6 +524,8 @@
     "widget.card.detail.tiny": { "font_family": "regular", "size": 12.0, "color": "textBackground"},
     "widget.card.detail.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "textBackground"},
     "widget.card.detail.tiny.medium_fat": { "font_family": "medium", "size": 12.0, "color": "textBackground"},
+    "widget.card.detail.light": { "font_family": "regular", "size": 10.0, "color": "textBackground"},
+    "widget.card.detail.light.fat": { "extends": "widget.card.detail.light", "font_family": "bold"},
 
     "widget.explore.card.detail.small": {"extends": "widget.card.detail.tiny.medium_fat"},
     "widget.explore.card.detail.regular": {"extends": "widget.item.small"},

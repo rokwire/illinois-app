@@ -65,7 +65,10 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> {
       Column(mainAxisSize: MainAxisSize.min, children: [
         ..._conversations?.map((Conversation conversation) =>
           Padding(padding: EdgeInsets.only(top: 8), child:
-            GroupConversationCard(conversation, onTap: () => _onTapConversation(conversation),),
+            GroupConversationCard(conversation,
+              groupAdmins: widget.groupAdmins,
+              onTap: () => _onTapConversation(conversation),
+            ),
           )
         ) ?? <Widget>[],
         Padding(padding: EdgeInsets.only(top: 8),),

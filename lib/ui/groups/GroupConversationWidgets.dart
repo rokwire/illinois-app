@@ -17,7 +17,6 @@ import 'package:illinois/ui/widgets/LinkTextEx.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -27,9 +26,10 @@ import 'package:sprintf/sprintf.dart';
 class GroupConversationCard extends StatelessWidget {
 
   final Conversation conversation;
+  final List<Member>? groupAdmins;
   final void Function()? onTap;
 
-  GroupConversationCard(this.conversation, { this.onTap });
+  GroupConversationCard(this.conversation, { this.groupAdmins, this.onTap });
 
   @override
   Widget build(BuildContext context) =>
@@ -40,7 +40,7 @@ class GroupConversationCard extends StatelessWidget {
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                _participantNamesWidget,
+                _titleWidget,
                 _updateTimeWidget,
               ],)
             ),
@@ -49,6 +49,34 @@ class GroupConversationCard extends StatelessWidget {
         ],)
       )
     );
+
+  Widget get _titleWidget {
+    int participantsCount = conversation.members?.length ?? 0;
+    if (1 < participantsCount) {
+      return _participantNamesWidget;
+    } else if (0 < participantsCount) {
+      return _participantNameWidget;
+    } else {
+      return Container();
+    }
+  }
+
+  Widget get _participantNameWidget {
+    ConversationMember? member = conversation.members?.firstOrNull;
+    String? fullName = (member != null) ? member.name : null;
+    Member? groupMember = MemberExt.getMember(groupAdmins, userId: member?.accountId);
+    String? memberStatus = groupMemberStatusToDisplayString(groupMember?.status);
+    Color? memberColor = groupMemberStatusToColor(groupMember?.status);
+    return RichText(textAlign: TextAlign.left, text:
+      TextSpan(style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'), children: ((fullName != null) && fullName.isNotEmpty) ? [
+        TextSpan(text: fullName),
+        if ((memberStatus != null) && memberStatus.isNotEmpty) ...[
+          TextSpan(text: ' '),
+          TextSpan(text: memberStatus.toUpperCase(), style: Styles().textStyles.getTextStyleEx('widget.card.detail.light.fat', color: memberColor)),
+        ]
+      ] : []),
+    );
+  }
 
   Widget get _participantNamesWidget => Text(conversation.membersString ?? '',
     textAlign: TextAlign.left,
@@ -224,23 +252,22 @@ class GroupConversationAvtarWidget extends StatelessWidget {
 
 class GroupConversationHeader extends StatelessWidget {
   final Group? group;
+  final List<Member>? groupAdmins;
   final Conversation conversation;
   final void Function()? onDelete;
 
-  static const double _photoSize = 42;
-
-  GroupConversationHeader(this.conversation, {this.group, this.onDelete});
+  GroupConversationHeader(this.conversation, {this.group, this.groupAdmins, this.onDelete});
 
   @override
   Widget build(BuildContext context) => Container(decoration: _headingDecoration, child:
     Row(children: [
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
-        _avtarWidget,
+        GroupConversationAvtarWidget(conversation.members),
       ),
 
       Expanded(child:
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-          _nameWidget
+          _titleWidget,
         )
       ),
 
@@ -248,26 +275,41 @@ class GroupConversationHeader extends StatelessWidget {
     ],),
   );
 
-  Widget get _nameWidget {
-    String? fullName = Auth2().profile?.fullName;
-    String? memberStatus = groupMemberStatusToDisplayString(group?.currentMember?.status);
-    Color? memberColor = groupMemberStatusToColor(group?.currentMember?.status);
+  Widget get _titleWidget {
+    int participantsCount = conversation.members?.length ?? 0;
+    if (1 < participantsCount) {
+      return _participantNamesWidget;
+    }
+    else if (0 < participantsCount) {
+      return _participantNameWidget;
+    }
+    else {
+      return Container();
+    }
+  }
+
+  Widget get _participantNameWidget {
+    ConversationMember? member = conversation.members?.firstOrNull;
+    String? fullName = (member != null) ? member.name : null;
+    Member? groupMember = MemberExt.getMember(groupAdmins, userId: member?.accountId);
+    String? memberStatus = groupMemberStatusToDisplayString(groupMember?.status);
+    Color? memberColor = groupMemberStatusToColor(groupMember?.status);
     return RichText(textAlign: TextAlign.left, text:
-      TextSpan(style: Styles().textStyles.getTextStyle('widget.title.large.fat'), children: [
-        if ((fullName != null) && fullName.isNotEmpty)
-          TextSpan(text: fullName),
-        if ((fullName != null) && fullName.isNotEmpty && (memberStatus != null) && memberStatus.isNotEmpty)
+      TextSpan(style: Styles().textStyles.getTextStyle('widget.title.large.fat'), children: ((fullName != null) && fullName.isNotEmpty) ? [
+        TextSpan(text: fullName),
+        if ((memberStatus != null) && memberStatus.isNotEmpty) ...[
           TextSpan(text: ' '),
-        if ((memberStatus != null) && memberStatus.isNotEmpty)
-          TextSpan(text: memberStatus.toUpperCase(), style: Styles().textStyles.getTextStyleEx('widget.title.medium.fat', color: memberColor)),
-      ]),
+          TextSpan(text: memberStatus.toUpperCase(), style: Styles().textStyles.getTextStyleEx('widget.title.light.tiny.fat', color: memberColor)),
+        ]
+      ] : []),
     );
   }
 
-  Widget get _avtarWidget => DirectoryProfilePhoto(
-    photoUrl: Content().getUserPhotoUrl(type: UserProfileImageType.medium,),
-    photoSize: _photoSize,
-    photoUrlHeaders: DirectoryProfilePhotoUtils.authHeaders,
+  Widget get _participantNamesWidget => Text(conversation.membersString ?? '',
+    textAlign: TextAlign.left,
+    overflow: TextOverflow.ellipsis,
+    maxLines: 1,
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat')
   );
 
   Widget get _deleteButton => Event2ImageCommandButton(
@@ -283,22 +325,23 @@ class GroupConversationHeader extends StatelessWidget {
     border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
     boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2))],
   );
+
 }
 
 class GroupConversationMessageCard extends StatelessWidget {
   final Message message;
   final Conversation? conversation;
   final Group? group;
-  final Member? adminSender;
+  final Member? groupMember;
   final AnalyticsFeature? analyticsFeature;
 
-  GroupConversationMessageCard(this.message, { this.conversation, this.group, this.adminSender, this.analyticsFeature });
+  GroupConversationMessageCard(this.message, { this.conversation, this.group, this.groupMember, this.analyticsFeature });
 
   @override
   Widget build(BuildContext context) =>
     Container(decoration: _cardDecoration, child:
       Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        GroupConversationMessageHeader(message, conversation: conversation, group: group, adminSender: adminSender, onCommands: null,),
+        GroupConversationMessageHeader(message, conversation: conversation, group: group, groupMember: groupMember, onCommands: null,),
         Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding), child:
           SelectionArea(child:
             LinkTextEx(
@@ -347,10 +390,10 @@ class GroupConversationMessageHeader extends StatelessWidget {
   final Message message;
   final Conversation? conversation;
   final Group? group;
-  final Member? adminSender;
+  final Member? groupMember;
   final void Function()? onCommands;
 
-  GroupConversationMessageHeader(this.message, { this.conversation, this.group, this.adminSender, this.onCommands });
+  GroupConversationMessageHeader(this.message, { this.conversation, this.group, this.groupMember, this.onCommands });
 
   @override
   Widget build(BuildContext context) => Row(crossAxisAlignment: CrossAxisAlignment.start, children:[
@@ -378,8 +421,8 @@ class GroupConversationMessageHeader extends StatelessWidget {
 
   Widget get _nameWidget {
     String? fullName = message.sender?.name;
-    String? memberStatus = groupMemberStatusToDisplayString(adminSender?.status);
-    Color? memberColor = groupMemberStatusToColor(adminSender?.status);
+    String? memberStatus = groupMemberStatusToDisplayString(groupMember?.status);
+    Color? memberColor = groupMemberStatusToColor(groupMember?.status);
     return RichText(textAlign: TextAlign.left, text:
       TextSpan(style: Styles().textStyles.getTextStyle('widget.detail.small.fat'), children: [
         if ((fullName != null) && fullName.isNotEmpty)
