@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+// ignore_for_file: experimental_member_use
 
 class Uint8ListAudioSource extends StreamAudioSource {
   final Uint8List _data;
