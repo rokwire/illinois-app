@@ -22,6 +22,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 
 class GroupConversationCard extends StatelessWidget {
 
@@ -473,6 +474,8 @@ class GroupConversationMessageHeader extends StatelessWidget {
 }
 
 class GroupConversationMessageEditBar extends StatefulWidget {
+  final Future<bool> Function(String message)? onSendMessage;
+
   final String? title;
 
   final String? text;
@@ -486,7 +489,8 @@ class GroupConversationMessageEditBar extends StatefulWidget {
 
   final EdgeInsetsGeometry padding;
 
-  GroupConversationMessageEditBar({this.title,
+  GroupConversationMessageEditBar({ required this.onSendMessage,
+    this.title,
     this.text, this.hint, this.textStyle, this.linkTextStyle, // ignore: unused_element_parameter
     this.minLines = 1, this.maxLines = 12, this.autofocus = false, // ignore: unused_element_parameter
     this.padding = const EdgeInsetsGeometry.only(left: 24, right: 16, bottom: 24), // ignore: unused_element_parameter
@@ -511,6 +515,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
   late TextStyle _textStyle;
   late TextStyle _linkTextStyle;
   Set<_EditBarCommand> _selectedCommands = <_EditBarCommand>{};
+  bool _submitting = false;
 
   @override
   void initState() {
@@ -573,20 +578,27 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
               ),
             ),
           ),
-          Event2ImageCommandButton(
-            Styles().images.getImage('paper-plane',
-              color: _canSubmit ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-              size: _buttonIconSize,
-              excludeFromSemantics: true
-            ),
-            label: Localization().getStringEx('', 'Send'),
-            hint: Localization().getStringEx('', 'Tap to send message'),
-            contentPadding: _buttonPadding,
-            onTap: _canSubmit ? _onSubmit : null,
-          ),
+          _submitting ? _submittingProgress : _submitButton,
         ],)
       );
 
+  Widget get _submitButton => Event2ImageCommandButton(
+    Styles().images.getImage('paper-plane',
+      color: _canSubmit ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+      size: _buttonIconSize,
+      excludeFromSemantics: true
+    ),
+    label: Localization().getStringEx('', 'Send'),
+    hint: Localization().getStringEx('', 'Tap to send message'),
+    contentPadding: _buttonPadding,
+    onTap: _canSubmit ? _onSubmit : null,
+  );
+
+  Widget get _submittingProgress => Padding(padding: _buttonPadding, child:
+    SizedBox.square(dimension: 18, child:
+      CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary),
+    )
+  );
 
   BoxDecoration get _textDecoration => BoxDecoration(
       color: Styles().colors.surface,
@@ -652,7 +664,32 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
       _hasTextFormat(attribute) ? quill.Attribute.clone(attribute, null) : attribute,
     );
 
-  bool get _canSubmit => _selectedCommands.contains(_EditBarCommand.submit);
+  bool get _canSubmit => _selectedCommands.contains(_EditBarCommand.submit) && (widget.onSendMessage != null);
+
+  String get _quillHtml {
+    final deltaOps = _quillController.document.toDelta().toJson();
+    final converter = QuillDeltaToHtmlConverter(
+      deltaOps,
+      ConverterOptions(
+        converterOptions: OpConverterOptions(
+          inlineStylesFlag: true,
+        ),
+      ),
+    );
+    return converter.convert();
+  }
+
+  void _quillReset() {
+    setState(() {
+      _quillController.removeListener(_onTextChanged);
+      _quillController.dispose();
+
+      _quillController = quill.QuillController.basic();
+      _quillController.addListener(_onTextChanged);
+
+      _initialQuillDelta = _quillController.document.toDelta();
+    });
+  }
 
   void _onTextChanged() {
     Set<_EditBarCommand> selectedCommands = Set<_EditBarCommand>.from(_selectedCommands);
@@ -694,8 +731,18 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     Analytics().logSelect(target: 'Picture');
   }
 
-  void _onSubmit() {
+  void _onSubmit() async {
     Analytics().logSelect(target: 'Submit');
+    if (_canSubmit && !_submitting)
+    setState(() {
+      _submitting = true;
+    });
+
+    bool? succeeded = await widget.onSendMessage?.call(_quillHtml);
+
+    if (mounted && (succeeded == true)) {
+      _quillReset();
+    }
   }
 
 }

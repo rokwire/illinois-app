@@ -7,6 +7,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/groups/GroupConversationWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
@@ -84,6 +85,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
       )
     ),
     GroupConversationMessageEditBar(
+      onSendMessage: (widget.conversation.id?.isNotEmpty == true) ? _onSendMessage : null ,
       title: Localization().getStringEx('', 'REPLY'),
     ),
   ],);
@@ -252,6 +254,46 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
       await Scrollable.ensureVisible(scrollToContext, duration: _scrollDuration);
     }
   }*/
+
+  Future<bool> _onSendMessage(String message) async {
+    // Create a temporary message and add it immediately
+    Message tempMessage = Message(
+      sender: ConversationMember(accountId: Auth2().accountId, name: Auth2().fullName ?? ''),
+      message: message,
+      //fileAttachments: fileAttachments,
+      dateSentUtc: DateTime.now().toUtc(),
+    );
+
+    setState(() {
+      _contentList?.add(tempMessage);
+      Message.sortListByDateSent(_contentList ?? []);
+    });
+
+    List<Message>? newMessages = await Social().createConversationMessage(
+      conversationId: widget.conversation.id ?? '',
+      message: message,
+      //fileAttachments: fileAttachments,
+    );
+
+    if (mounted) {
+      Message? newMessage = newMessages?.firstOrNull;
+      if (newMessage != null) {
+        int? index = _contentList?.indexOf(tempMessage);
+        if ((index != null) && (index >= 0)) {
+          setState(() {
+            _contentList![index] = newMessage;
+            Message.sortListByDateSent(_contentList ?? []);
+          });
+        }
+        return true;
+      } else {
+        AppAlert.showDialogResult(context, Localization().getStringEx('', 'Failed to send message.'));
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
 
   Future<void> _onRefresh() async {
     Analytics().logSelect(target: 'Refresh');
