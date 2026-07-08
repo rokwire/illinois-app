@@ -20,6 +20,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/StudentCourses.dart';
+import 'package:illinois/ui/academics/student_courses/StudentCoursesCalendarContentWidget.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesListContentWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -153,7 +154,7 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
     }
     else {
       // TODO (Step 7): switch between Calendar / List / Map content widgets based on the selected view type.
-      return StudentCoursesListContentWidget(courses: _courses, analyticsFeature: widget.analyticsFeature);
+      return StudentCoursesCalendarContentWidget(courses: _courses, analyticsFeature: widget.analyticsFeature);
     }
   }
 
