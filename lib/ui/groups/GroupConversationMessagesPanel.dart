@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/ui/groups/GroupConversationWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -28,17 +29,20 @@ class GroupConversationMessagesPanel extends StatefulWidget {
   State<StatefulWidget> createState() => _GroupConversationMessagesPanelState();
 }
 
-class _GroupConversationMessagesPanelState extends State<GroupConversationMessagesPanel> {
+class _GroupConversationMessagesPanelState extends State<GroupConversationMessagesPanel> with NotificationsListener {
 
   ScrollController _scrollController = ScrollController();
 
   List<Message>? _contentList;
-  ContentActivity? _contentActivity;
+  _ContentActivity? _contentActivity;
   bool? _lastPageLoadedAll;
   static const int _contentPageLength = 8;
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      FirebaseMessaging.notifySocialMessageNotification
+    ]);
     _scrollController.addListener(_scrollListener);
     _reloadContent();
     super.initState();
@@ -46,9 +50,19 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (mounted) {
+      if (name == FirebaseMessaging.notifySocialMessageNotification) {
+        _onFirebaseSocialMessageNotification(param);
+      }
+    }
   }
 
   @override
@@ -59,10 +73,10 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   );
 
   Widget get _bodyWidget {
-    if (_contentActivity == ContentActivity.reload) {
+    if (_contentActivity == _ContentActivity.reload) {
       return _loadingContent;
     }
-    else if (_contentActivity == ContentActivity.refresh) {
+    else if (_contentActivity == _ContentActivity.refresh) {
       return Container();
     }
     else if (_contentList == null) {
@@ -93,7 +107,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   Widget get _listContent {
     List<Widget> cardsList = <Widget>[];
 
-    if (_contentActivity == ContentActivity.extend) {
+    if (_contentActivity == _ContentActivity.extend) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 16 : 0), child:
         _extendingIndicator
       ));
@@ -157,9 +171,9 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   int get _refreshContentLength => max(_listSafeContentLength, _contentPageLength);
 
   Future<void> _reloadContent({ int limit = _contentPageLength }) async {
-    if ((_contentActivity != ContentActivity.reload) && mounted) {
+    if ((_contentActivity != _ContentActivity.reload) && mounted) {
       setState(() {
-        _contentActivity = ContentActivity.reload;
+        _contentActivity = _ContentActivity.reload;
       });
 
       List<Message>? contentList = await Social().loadConversationMessages(
@@ -167,7 +181,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
         offset: 0, limit: limit,
       );
 
-      if (mounted && (_contentActivity == ContentActivity.reload)) {
+      if (mounted && (_contentActivity == _ContentActivity.reload)) {
         setState(() {
           _contentList = (contentList != null) ? List<Message>.from(contentList) : null;
           _lastPageLoadedAll = (contentList != null) ? (contentList.length >= limit) : null;
@@ -179,10 +193,10 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     }
   }
 
-  Future<void> _refreshContent() async {
-    if (((_contentActivity != ContentActivity.reload) && (_contentActivity != ContentActivity.refresh)) && mounted) {
+  Future<void> _refreshContent({ _ContentActivity activity = _ContentActivity.refresh }) async {
+    if (((_contentActivity != _ContentActivity.reload) && (_contentActivity != activity)) && mounted) {
       setState(() {
-        _contentActivity = ContentActivity.refresh;
+        _contentActivity = activity;
       });
 
       int contentLength = _refreshContentLength;
@@ -191,7 +205,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
         offset: 0, limit: contentLength,
       );
 
-      if (mounted && (_contentActivity == ContentActivity.refresh)) {
+      if (mounted && (_contentActivity == activity)) {
         setState(() {
           if (contentList != null) {
             _contentList = List<Message>.from(contentList);
@@ -207,7 +221,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   Future<void> _extendContent() async {
     if ((_contentActivity == null) && mounted) {
       setState(() {
-        _contentActivity = ContentActivity.extend;
+        _contentActivity = _ContentActivity.extend;
       });
 
       int contentOffset = _contentList?.length ?? 0;
@@ -217,7 +231,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
         offset: contentOffset, limit: contentLength,
       );
 
-      if (mounted && (_contentActivity == ContentActivity.extend)) {
+      if (mounted && (_contentActivity == _ContentActivity.extend)) {
         setState(() {
           if (contentList != null) {
             if (_contentList != null) {
@@ -254,6 +268,13 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
       await Scrollable.ensureVisible(scrollToContext, duration: _scrollDuration);
     }
   }*/
+
+  void _onFirebaseSocialMessageNotification(dynamic param) {
+    String? conversationId = (param is Map<String, dynamic>) ? JsonUtils.stringValue(param['entity_id']) : null;
+    if (conversationId == widget.conversation.id) {
+      _refreshContent(activity: _ContentActivity.update);
+    }
+  }
 
   Future<bool> _onSendMessage(String message) async {
     // Create a temporary message and add it immediately
@@ -306,3 +327,4 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   }
 }
 
+enum _ContentActivity { reload, refresh, update, extend }
