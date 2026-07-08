@@ -735,8 +735,46 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     _toggleTextFormat(quill.Attribute.underline);
   }
 
-  void _onLink() {
+  void _onLink() async {
     Analytics().logSelect(target: 'Link');
+
+    TextSelection selection = _quillController.selection;
+    String selectedText = _quillController.document.getPlainText(selection.start, selection.end - selection.start,).trim();
+    quill.Style selectedStyle = _quillController.document.collectStyle(selection.start, selection.end - selection.start);
+    quill.Attribute? selectedLink = selectedStyle.attributes['link'];
+
+    TextEditingController linkTextCtrl = TextEditingController(text: selectedText);
+    TextEditingController linkUrlCtrl = TextEditingController(text: selectedLink?.value);
+
+    bool? linkConfirmed = await showDialog(context: context, builder: (_) => AlertDialog(
+      contentPadding: const EdgeInsets.only(left: 24, right: 24, top: 24, bottom: 6),
+      content: GroupConversationLinkDialog(linkTextController: linkTextCtrl, linkUrlController: linkUrlCtrl),
+      actions: [
+        TextButton(child: Text(Localization().getStringEx('dialog.ok.title', 'OK')), onPressed: () {
+          Analytics().logSelect(target: 'Set Link Url');
+          Navigator.of(context).pop(true);
+        },),
+        TextButton(child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')), onPressed: () {
+          Analytics().logSelect(target: 'Cancel');
+          Navigator.of(context).pop(false);
+        },),
+      ],
+    ));
+
+    final linkText = linkTextCtrl.text;
+    String linkSourceUrl = linkUrlCtrl.text.trim();
+    if ((linkConfirmed == true) && linkText.isNotEmpty && linkSourceUrl.isNotEmpty)  {
+      String linkUrl = UrlUtils.fixUrl(linkSourceUrl, scheme: 'https') ?? linkSourceUrl;
+      if (selectedText != linkText) {
+        _quillController.replaceText(selection.start, selection.end - selection.start, linkText, TextSelection(baseOffset: selection.start, extentOffset: selection.start + linkText.length));
+      }
+      _quillController.formatText(selection.start, linkText.length, quill.LinkAttribute(linkUrl),);
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      linkTextCtrl.dispose();
+      linkUrlCtrl.dispose();
+    });
   }
 
   void _onPicture() {
@@ -792,4 +830,46 @@ extension _EditBarCommandImpl on _EditBarCommand {
       case _EditBarCommand.submit: return Localization().getStringEx('', 'Tap to send message');
     }
   }
+}
+
+class GroupConversationLinkDialog extends StatelessWidget {
+  final TextEditingController? linkTextController;
+  final TextEditingController? linkUrlController;
+
+  GroupConversationLinkDialog({this.linkTextController, this.linkUrlController});
+
+  @override
+  Widget build(BuildContext context) =>
+    Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(Localization().getStringEx('panel.group.detail.post.create.dialog.link.edit.header', 'Edit Link',),
+        style: Styles().textStyles.getTextStyle('widget.group.input_field.heading'),
+      ),
+      Padding(padding: const EdgeInsets.only(top: 16), child:
+        Text(Localization().getStringEx('panel.group.detail.post.create.dialog.link.text.label', 'Link Text:',),
+          style: Styles().textStyles.getTextStyle('widget.group.input_field.detail'),
+        ),
+      ),
+      Padding(padding: const EdgeInsets.only(top: 6), child:
+        TextField(controller: linkTextController, maxLines: 1, decoration: _textInputDecoration,
+          style: Styles().textStyles.getTextStyle('widget.input_field.text.regular'),
+        ),
+      ),
+      Padding(padding: const EdgeInsets.only(top: 16), child:
+        Text(Localization().getStringEx('panel.group.detail.post.create.dialog.link.url.label', 'Link URL:', ),
+          style: Styles().textStyles.getTextStyle('widget.group.input_field.detail'),
+        ),
+      ),
+      Padding(padding: const EdgeInsets.only(top: 6), child:
+        TextField(controller: linkUrlController, maxLines: 1, decoration: _textInputDecoration,
+          style: Styles().textStyles.getTextStyle('widget.input_field.text.regular'),
+        ),
+      ),
+    ],);
+
+  InputDecoration get _textInputDecoration => InputDecoration(
+      border: OutlineInputBorder(
+        borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0,),
+      ),
+  );
+
 }

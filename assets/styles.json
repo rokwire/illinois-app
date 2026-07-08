@@ -554,6 +554,7 @@
     "widget.group.dialog.add_image.message" : {"extends":"widget.dialog.message.regular.extra_fat"},
     "widget.group.input_field.link": {"extends": "widget.detail.large.thin"},
     "widget.group.input_field.detail": {"extends": "widget.detail.regular"},
+    "widget.group.input_field.heading": {"extends": "widget.detail.regular", "font_family": "medium", "size": 18.0},
 
     "widget.group.members.title": {"extends": "widget.title.large.fat"},
     "widget.group.members.search": {"extends": "widget.input_field.text.regular"},
