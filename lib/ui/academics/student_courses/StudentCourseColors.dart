@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/StudentCourse.dart';
 
-// Predefined pale color palette for Calendar view course blocks.
-// Colors are assigned client-side (neither color nor duration is provided by the backend).
 class StudentCourseColors {
 
   static const List<Color> palette = <Color>[
@@ -30,9 +29,24 @@ class StudentCourseColors {
     Color(0xFFE1EED4), // Pale Green
   ];
 
-  // TODO (Step 4): assign a stable color per unique course (keyed by course number), without repeating
-  // a color between different courses until the palette is exhausted (more than palette.length courses).
+  ///
+  /// Requirement: "It's important that the same color is not used for two separate classes (unless the user is taking more than 6 classes that semester)."
+  ///
   static Map<String, Color> assign(List<StudentCourse>? courses) {
-    return const <String, Color>{};
+    List<String> courseKeys = <String>[];
+    for (StudentCourse course in courses ?? <StudentCourse>[]) {
+      String? courseKey = course.number;
+      if ((courseKey != null) && !courseKeys.contains(courseKey)) {
+        courseKeys.add(courseKey);
+      }
+    }
+
+    List<Color> shuffledPalette = List<Color>.from(palette)..shuffle(Random(courseKeys.join(',').hashCode));
+
+    Map<String, Color> courseColors = <String, Color>{};
+    for (int index = 0; index < courseKeys.length; index++) {
+      courseColors[courseKeys[index]] = shuffledPalette[index % shuffledPalette.length];
+    }
+    return courseColors;
   }
 }
