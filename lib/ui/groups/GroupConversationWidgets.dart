@@ -14,7 +14,6 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/ui/widgets/LinkTextEx.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
@@ -590,7 +589,8 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
               ),
             ),
           ),
-          _submitting ? _submittingProgress : _submitButton,
+          _submitButton,
+          // _submitting ? _submittingProgress : _submitButton,
         ],)
       );
 
@@ -606,11 +606,11 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     onTap: _canSubmit ? _onSubmit : null,
   );
 
-  Widget get _submittingProgress => Padding(padding: _buttonPadding, child:
+  /* Widget get _submittingProgress => Padding(padding: _buttonPadding, child:
     SizedBox.square(dimension: 18, child:
       CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary),
     )
-  );
+  ); */
 
   BoxDecoration get _textDecoration => BoxDecoration(
       color: Styles().colors.surface,

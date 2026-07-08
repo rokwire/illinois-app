@@ -265,9 +265,10 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     );
 
     setState(() {
-      _contentList?.add(tempMessage);
-      Message.sortListByDateSent(_contentList ?? []);
+      _contentList?.insert(0, tempMessage);
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToLast());
 
     List<Message>? newMessages = await Social().createConversationMessage(
       conversationId: widget.conversation.id ?? '',
@@ -282,7 +283,6 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
         if ((index != null) && (index >= 0)) {
           setState(() {
             _contentList![index] = newMessage;
-            Message.sortListByDateSent(_contentList ?? []);
           });
         }
         return true;
