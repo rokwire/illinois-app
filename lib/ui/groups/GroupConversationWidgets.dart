@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:flutter_quill_delta_from_html/parser/html_to_delta.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -345,12 +346,7 @@ class GroupConversationMessageCard extends StatelessWidget {
         GroupConversationMessageHeader(message, conversation: conversation, group: group, groupMember: groupMember, onCommands: null,),
         Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding), child:
           SelectionArea(child:
-            LinkTextEx(
-              message.message ?? '',
-              textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
-              linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
-              onLinkTap: _onTapLink,
-            ),
+            _bodyHtmlWidget,
           ),
         ),
         Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding, vertical: _horzPadding), child:
@@ -358,6 +354,22 @@ class GroupConversationMessageCard extends StatelessWidget {
         ),
       ],)
     );
+
+  /* Widget get _bodyTextWidget => LinkTextEx(
+    message.message ?? '',
+    textStyle: Styles().textStyles.getTextStyle('widget.detail.regular'),
+    linkStyle: Styles().textStyles.getTextStyleEx('widget.detail.regular.underline', decorationColor: Styles().colors.fillColorPrimary),
+    onLinkTap: _onTapLink,
+  ); */
+
+  Widget get _bodyHtmlWidget => HtmlWidget(
+      "<div style= $_bodyHtmlStyle> ${message.message ?? ''}</div>",
+      onTapUrl : (url) { _onTapLink(url); return true; },
+      textStyle:  Styles().textStyles.getTextStyle("widget.detail.regular"),
+      customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null,
+  );
+
+  String get _bodyHtmlStyle => 'white-space: normal'; // 'text-overflow: ellipsis; max-lines: 3'
 
   void _onTapLink(String url) {
     Uri? uri = Uri.tryParse(url);
