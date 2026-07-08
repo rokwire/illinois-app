@@ -49,8 +49,8 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
   @override
   void initState() {
     super.initState();
-    _selectedCourseId = widget.courseId;
     _courses = Canvas().courses;
+    _initSelectedCourseId();
     _loadAssignments();
   }
 
@@ -350,6 +350,15 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
       }
       _decreaseProgress();
     });
+  }
+
+  void _initSelectedCourseId() {
+    if ((_courses != null) && (_courses?.isNotEmpty == true)) {
+      List<int?> courseIds = _courses!.map((e) => e.id).toList();
+      if (courseIds.contains(widget.courseId)) {
+        _selectedCourseId = widget.courseId;
+      }
+    }
   }
 
   void _sortAssignments(List<CanvasAssignment>? assignments, {bool reverse = false}) {
