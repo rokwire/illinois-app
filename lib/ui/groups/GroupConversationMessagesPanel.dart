@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -29,7 +30,7 @@ class GroupConversationMessagesPanel extends StatefulWidget {
   State<StatefulWidget> createState() => _GroupConversationMessagesPanelState();
 }
 
-class _GroupConversationMessagesPanelState extends State<GroupConversationMessagesPanel> with NotificationsListener {
+class _GroupConversationMessagesPanelState extends State<GroupConversationMessagesPanel> with NotificationsListener, WidgetsBindingObserver {
 
   ScrollController _scrollController = ScrollController();
 
@@ -38,11 +39,20 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   bool? _lastPageLoadedAll;
   static const int _contentPageLength = 8;
 
+  double _screenInsetsBottom = 0;
+  Timer? _screenInsetsBottomChangedTimer;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
       FirebaseMessaging.notifySocialMessageNotification
     ]);
+
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
+    });
+
     _scrollController.addListener(_scrollListener);
     _reloadContent();
     super.initState();
@@ -51,6 +61,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    WidgetsBinding.instance.removeObserver(this);
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     super.dispose();
@@ -66,10 +77,28 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   }
 
   @override
+  void didChangeMetrics() {
+    if (mounted) {
+      double screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
+      if (screenInsetsBottom != _screenInsetsBottom) {
+        _screenInsetsBottom = screenInsetsBottom;
+        _screenInsetsBottomChangedTimer?.cancel();
+        _screenInsetsBottomChangedTimer = Timer(Duration(milliseconds: 100), (){
+          if (mounted) {
+            _screenInsetsBottomChangedTimer = null;
+            _onKeyboardVisibilityChanged();
+          }
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) =>  Scaffold(
     appBar: HeaderBar(title: Localization().getStringEx('', 'Message')),
     body: _bodyWidget,
     backgroundColor: Styles().colors.background,
+    resizeToAvoidBottomInset: true,
   );
 
   Widget get _bodyWidget {
@@ -90,11 +119,16 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   }
 
   Widget get _messagesContent => Column(children: [
-    GroupConversationHeader(widget.conversation, group: widget.group, groupAdmins: widget.groupAdmins, onDelete: _onDeleteConversation,),
+    GroupConversationHeader(widget.conversation, group: widget.group, groupAdmins: widget.groupAdmins, onDelete: _onDeleteConversation, onTap: _isKeyboardVisible ? _onHideKeyboard : null,),
     Expanded(child:
       RefreshIndicator(onRefresh: _onRefresh, child:
-        SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
-          _listContent,
+        SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), scrollDirection: Axis.vertical, child:
+          Stack(children: [
+            _listContent,
+            Positioned.fill(child:
+              InkWell(onTap: _isKeyboardVisible ?  _onHideKeyboard : null, child: Container()),
+            )
+          ],)
         )
       )
     ),
@@ -257,6 +291,19 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   void _scrollToLast() {
     double scrollMaxExtent = _scrollController.position.maxScrollExtent;
     _scrollController.jumpTo(scrollMaxExtent);
+  }
+
+  void _onKeyboardVisibilityChanged() {
+    if (_isKeyboardVisible && mounted) {
+      _scrollToLast();
+    }
+    setStateIfMounted();
+  }
+
+  bool get _isKeyboardVisible => (_screenInsetsBottom > 0);
+
+  void _onHideKeyboard() {
+    FocusScope.of(context).unfocus();
   }
 
   /*Widget get _lastContentAnchor =>

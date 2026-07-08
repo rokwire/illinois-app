@@ -256,24 +256,27 @@ class GroupConversationHeader extends StatelessWidget {
   final List<Member>? groupAdmins;
   final Conversation conversation;
   final void Function()? onDelete;
+  final void Function()? onTap;
 
-  GroupConversationHeader(this.conversation, {this.group, this.groupAdmins, this.onDelete});
+  GroupConversationHeader(this.conversation, {this.group, this.groupAdmins, this.onDelete, this.onTap});
 
   @override
-  Widget build(BuildContext context) => Container(decoration: _headingDecoration, child:
-    Row(children: [
-      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
-        GroupConversationAvtarWidget(conversation.members),
-      ),
+  Widget build(BuildContext context) => InkWell(onTap: onTap, child:
+    Container(decoration: _headingDecoration, child:
+      Row(children: [
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
+          GroupConversationAvtarWidget(conversation.members),
+        ),
 
-      Expanded(child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-          _titleWidget,
-        )
-      ),
+        Expanded(child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+            _titleWidget,
+          )
+        ),
 
-      _deleteButton,
-    ],),
+        _deleteButton,
+      ],),
+    ),
   );
 
   Widget get _titleWidget {
@@ -504,7 +507,7 @@ class GroupConversationMessageEditBar extends StatefulWidget {
     this.title,
     this.text, this.hint, this.textStyle, this.linkTextStyle, // ignore: unused_element_parameter
     this.minLines = 1, this.maxLines = 12, this.autofocus = false, // ignore: unused_element_parameter
-    this.padding = const EdgeInsetsGeometry.only(left: 24, right: 16, bottom: 24), // ignore: unused_element_parameter
+    this.padding = const EdgeInsetsGeometry.only(left: 24, right: 16, top: 8, bottom: 24), // ignore: unused_element_parameter
   });
 
   quill.Document get textDocument {
