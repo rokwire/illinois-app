@@ -3512,6 +3512,12 @@
     "panel.student_courses.empty.content.msg": "No parece estar inscrito en ningún curso para el término seleccionado.",
     "panel.student_courses.load.failed.error.msg": "Parece que no tiene cursos registrados para el término seleccionado.",
     "panel.student_courses.load.offline.error.msg": "Mis Cursos no está disponible sin conexión.",
+    "panel.student_courses.view_type.calendar.pill.title": "Calendario",
+    "panel.student_courses.view_type.list.pill.title": "Lista",
+    "panel.student_courses.view_type.map.pill.title": "Mapa",
+    "panel.student_courses.view_type.calendar.title": "Vista de calendario",
+    "panel.student_courses.view_type.list.title": "Vista de lista",
+    "panel.student_courses.view_type.map.title": "Vista de mapa",
 
     "panel.skills_self_evaluation.header.title": "Skills Self-Evaluation & Career Explorer",
     "panel.skills_self_evaluation.get_started.section.title": "Skills Self-Evaluation & Career Explorer",
