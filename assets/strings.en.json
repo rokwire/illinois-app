@@ -40,6 +40,8 @@
     "dialog.print.hint":"",
     "dialog.copy.title":"Copy",
     "dialog.copy.hint":"",
+    "dialog.done.title":"Done",
+    "dialog.copy.hint":"",
 
     "tabbar.home.title":"Home",
     "tabbar.home.hint":"Home Page",

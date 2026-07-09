@@ -320,6 +320,23 @@ extension MemberExt on Member {
     }
     return null;
   }
+
+  static Map<String, Member>? mapFromList(List<Member>? membersList) {
+    if (membersList != null) {
+      Map<String, Member> membersMap = <String, Member>{};
+      for (Member member in membersList) {
+        String? memberId = member.userId;
+        if (memberId != null) {
+          membersMap[memberId] = member;
+        }
+      }
+      return membersMap;
+    } else {
+      return null;
+    }
+  }
+
+  bool matchLowercaseText(String text) => (name?.toLowerCase().contains(text) == true);
 }
 
 extension GroupsExt on Groups {

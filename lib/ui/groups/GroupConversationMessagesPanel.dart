@@ -181,7 +181,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   Widget get _loadingContent => Center(child:
     Padding(padding: EdgeInsets.symmetric(vertical: _screenHeight / 4), child:
       SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors.fillColorSecondary,)
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
       )
     )
   );

@@ -32,6 +32,7 @@ import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupAboutContentWidget.dart';
+import 'package:illinois/ui/groups/GroupConversationCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupConversationsTab.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
@@ -1300,10 +1301,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     RibbonButton(
                       key: _canCreateConversation && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
                       leftIconKey: "plus-circle",
-                      title: Localization().getStringEx("", "Create Direct Message2"),//localize tbd
+                      title: Localization().getStringEx("", "Create Conversation Message"),//localize tbd
                       onTap: () {
                         Navigator.of(context).pop();
-                        _onTapCreateMessage2();
+                        _onTapCreateConversationMessage();
                       })),
                     Visibility(visible: _canAddEvent, child:
                       RibbonButton(
@@ -1594,9 +1595,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     }
   }
 
-  void _onTapCreateMessage2() {
-    Analytics().logSelect(target: "Create Message", attributes: _group?.analyticsAttributes);
-    //TBD
+  void _onTapCreateConversationMessage() {
+    Analytics().logSelect(target: "Create Conversation Message", attributes: _group?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupConversationCreatePanel(group: _group, groupAdmins: _groupAdmins, analyticsFeature: AnalyticsFeature.Groups,)));
   }
 
   void _onTapCreatePoll() {

@@ -39,6 +39,8 @@
     "dialog.print.hint":"",
     "dialog.copy.title":"Copy",
     "dialog.copy.hint":"",
+    "dialog.done.title":"Done",
+    "dialog.copy.hint":"",
 
     "tabbar.home.title":"Inicio",
     "tabbar.home.hint":"Página de inicio",
