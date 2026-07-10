@@ -326,7 +326,7 @@ extension MemberExt on Member {
       Map<String, Member> membersMap = <String, Member>{};
       for (Member member in membersList) {
         String? memberId = member.userId;
-        if (memberId != null) {
+        if ((memberId != null) && memberId.isNotEmpty) {
           membersMap[memberId] = member;
         }
       }

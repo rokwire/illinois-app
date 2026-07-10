@@ -41,7 +41,7 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
   TextEditingController _searchTextController = TextEditingController();
   FocusNode _searchTextFocusNode = FocusNode();
 
-  LinkedHashSet<String> _selectedMembers = LinkedHashSet<String>();
+  LinkedHashSet<String> _selectedMemberIds = LinkedHashSet<String>();
 
   bool _submitting = false;
 
@@ -99,7 +99,7 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
       //itemBuilder: (context, index) => _buildMemberItem(ListUtils.entry(_displayMembers, index), decoration: _getMemberItemDecoration(index)),
       itemBuilder: (context, index) => _MemberListItemWidget(_displayMembers[index],
         pos: _MemberListItemPosImpl.fromListIndex(_displayMembers, index),
-        selected: _selectedMembers.contains(_displayMembers[index].userId ?? ''),
+        selected: _selectedMemberIds.contains(_displayMembers[index].userId ?? ''),
         onSelect: () => _onTapMember(_displayMembers[index].userId ?? ''),
       ),
       separatorBuilder: (context, index) => Divider(color: _MemberListItemWidget.widgetBorderColor, height: _MemberListItemWidget.widgetBorderSize),
@@ -176,23 +176,29 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
   Widget get _membersListHeading => Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 16), child:
     Row(children: [
       Expanded(child:
-        Text(Localization().getStringEx('', 'ALL MEMBERS'), style: Styles().textStyles.getTextStyle('widget.title.small.medium_fat'),),
+        Padding(padding: EdgeInsetsGeometry.symmetric(vertical: 11), child:
+          Text(_searchText.isNotEmpty ? Localization().getStringEx('', 'SEARCH RESULTS') : Localization().getStringEx('', 'ALL MEMBERS'),
+            style: Styles().textStyles.getTextStyle('widget.title.small.medium_fat'),
+          ),
+        )
       ),
-      _selectAllButton,
+      if (_searchText.isEmpty)
+        _selectAllButton,
     ],),
   );
 
   Widget get _selectAllButton {
-    bool allDisplayMembersSelected = _selectedMembers.containsAll(_displayMembers.map((member) => member.userId ?? ''));
-    String buttonTitle = allDisplayMembersSelected ?
+    Iterable<String>? allMemberIds = _membersMap?.keys;
+    bool allMembersSelected = (allMemberIds != null) && _selectedMemberIds.containsAll(allMemberIds);
+    String buttonTitle = allMembersSelected ?
       Localization().getStringEx('', 'Unselect All') : Localization().getStringEx('', 'Select All');
-    String semanticsHint = allDisplayMembersSelected ?
+    String semanticsHint = allMembersSelected ?
       Localization().getStringEx('', 'Tap to unselect all members') : Localization().getStringEx('', 'Tap to select all members');
 
     return Semantics(label: buttonTitle, hint: semanticsHint, button: true, child:
       InkWell(onTap: _onSelectAll, child:
         Padding(padding: EdgeInsetsGeometry.symmetric(vertical: 12), child:
-          Text(allDisplayMembersSelected ?
+          Text(allMembersSelected ?
             Localization().getStringEx('', 'Unselect All') : Localization().getStringEx('', 'Select All'), style: Styles().textStyles.getTextStyle('widget.button.title.small.fat.underline'),),
         )
       )
@@ -206,7 +212,7 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
       Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
         Text(Localization().getStringEx('', 'To: '), style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),),
       ),
-      Expanded(child: Wrap(spacing: 4, runSpacing: 4, children: List<Widget>.from(_selectedMembers.map((memberId) => _SelectedMemberWidget(_membersMap?[memberId] , onRemove: () => _onRemoveMember(memberId),)))
+      Expanded(child: Wrap(spacing: 4, runSpacing: 4, children: List<Widget>.from(_selectedMemberIds.map((memberId) => _SelectedMemberWidget(_membersMap?[memberId] , onRemove: () => _onRemoveMember(memberId),)))
       ,))
     ],)
   );
@@ -322,7 +328,7 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
     if (membersList != null) {
       String searchLowercaseText = _searchText.trim().toLowerCase();
       for (Member member in membersList) {
-        if ((member.userId != null) && (searchLowercaseText.isEmpty || member.matchLowercaseText(searchLowercaseText))) {
+        if ((member.userId?.isNotEmpty == true) && (searchLowercaseText.isEmpty || member.matchLowercaseText(searchLowercaseText))) {
           displayMembers.add(member);
         }
       }
@@ -376,19 +382,22 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
   }
   
   void _onSelectAll() {
-    Analytics().logSelect(target: 'Select All');
-    Iterable<String> allMembers = _displayMembers.map((member) => member.userId ?? '');
-    setState(() {
-      if (_selectedMembers.containsAll(allMembers)) {
-        _selectedMembers.clear();
-      } else {
-        _selectedMembers.addAll(allMembers);
-      }
-    });
+    Iterable<String>? allMemberIds = _membersMap?.keys;
+    if ((allMemberIds != null) && (_selectedMemberIds.containsAll(allMemberIds) != true)) {
+      Analytics().logSelect(target: 'Select All');
+      setState(() {
+        _selectedMemberIds.addAll(allMemberIds);
+      });
+    } else {
+      Analytics().logSelect(target: 'Unselect All');
+      setState(() {
+        _selectedMemberIds.clear();
+      });
+    }
   }
 
   void _onTapMember(String memberId) {
-    if (_selectedMembers.contains(memberId)) {
+    if (_selectedMemberIds.contains(memberId)) {
       _onUnselectMember(memberId);
     } else {
       _onSelectMember(memberId);
@@ -398,27 +407,27 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
   void _onSelectMember(String memberId) {
     Analytics().logSelect(target: 'Select Member');
     setState(() {
-      _selectedMembers.add(memberId);
+      _selectedMemberIds.add(memberId);
     });
   }
 
   void _onUnselectMember(String memberId) {
     Analytics().logSelect(target: 'Unselect Member');
     setState(() {
-      _selectedMembers.remove(memberId);
+      _selectedMemberIds.remove(memberId);
     });
   }
 
   void _onRemoveMember(String memberId) {
     Analytics().logSelect(target: 'Remove Member');
-    if (_selectedMembers.contains(memberId)) {
+    if (_selectedMemberIds.contains(memberId)) {
       setState(() {
-        _selectedMembers.remove(memberId);
+        _selectedMemberIds.remove(memberId);
       });
     }
   }
 
-  bool get _canSubmit => _selectedMembers.isNotEmpty;
+  bool get _canSubmit => _selectedMemberIds.isNotEmpty;
 
   void _onSubmit() async {
     Analytics().logSelect(target: 'Done');
@@ -427,7 +436,7 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
         _submitting = true;
       });
 
-      Conversation? conversation = await Social().createConversation(memberIds: List.from(_selectedMembers));
+      Conversation? conversation = await Social().createConversation(memberIds: List.from(_selectedMemberIds));
       if (mounted) {
         setState(() {
           _submitting = true;
