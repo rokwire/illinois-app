@@ -27,7 +27,6 @@ import 'package:illinois/ui/debug/DebugGuideBrowsePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
 import 'package:illinois/ui/debug/DebugWordlePanel.dart';
-import 'package:illinois/ui/academics/student_courses/StudentCoursesHomePanel.dart';
 import 'package:illinois/ui/map2/Map2LocationPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
@@ -241,8 +240,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
       RibbonButton(title: "Browse Guide", onTap: _onTapGuideBrowse),
       Container(height: 1, color: Styles().colors.surfaceAccent ,),
       RibbonButton(title: "Student Courses", onTap: _onTapStudentCourses),
-      Container(height: 1, color: Styles().colors.surfaceAccent ,),
-      RibbonButton(title: "Student Courses (New)", onTap: _onTapStudentCoursesNew),
       Container(height: 1, color: Styles().colors.surfaceAccent ,),
       RibbonButton(title: "Styles", onTap: _onTapStyles),
       Container(height: 1, color: Styles().colors.surfaceAccent ,),
@@ -661,10 +658,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
 
   void _onTapStudentCourses() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentCoursesPanel()));
-  }
-
-  void _onTapStudentCoursesNew() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCoursesHomePanel()));
   }
 
   void _onTapStyles() {
