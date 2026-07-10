@@ -1,6 +1,5 @@
 
 import 'dart:collection';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
@@ -92,83 +91,15 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
   Widget get _membersListView => Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 16), child:
     ListView.separated(
       itemCount: _displayMembers.length,
-      itemBuilder: (context, index) => _buildMemberItem(ListUtils.entry(_displayMembers, index), decoration: _getMemberItemDecoration(index)),
-      separatorBuilder: (context, index) => Divider(height: 1, color: _memberItemBorderColor,),
+      //itemBuilder: (context, index) => _buildMemberItem(ListUtils.entry(_displayMembers, index), decoration: _getMemberItemDecoration(index)),
+      itemBuilder: (context, index) => _MemberListItemWidget(_displayMembers[index],
+        pos: _MemberListItemPosImpl.fromListIndex(_displayMembers, index),
+        selected: _selectedMembers.contains(_displayMembers[index].userId ?? ''),
+        onSelect: () => _onTapMember(_displayMembers[index].userId ?? ''),
+      ),
+      separatorBuilder: (context, index) => Divider(color: _MemberListItemWidget.widgetBorderColor, height: _MemberListItemWidget.widgetBorderSize),
     ),
   );
-
-  Widget _buildMemberItem(Member? member, { BoxDecoration? decoration }) =>
-    Container(decoration: decoration, child:
-      Row(children: [
-        _buildMemberCheckButton(member),
-        Expanded(child:
-          Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
-            Text(member?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
-          )
-        ),
-        _buildMemberStatusIndicator(member),
-      ],)
-    );
-
-  Widget _buildMemberCheckButton(Member? member) =>
-    InkWell(onTap: () => _onTapMember(member), child:
-      Padding(padding: EdgeInsets.all(12), child:
-        Styles().images.getImage(_selectedMembers.contains(member?.userId) ? 'check-circle-filled' : 'check-circle-outline-gray', size: 24)
-      ),
-    );
-
-  Widget _buildMemberStatusIndicator(Member? member) =>
-    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-      Container(padding: _memberStatusPadding, decoration: _getMemberStatusDecoration(member?.status), child:
-        Text(groupMemberStatusToDisplayString(member?.status)?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle('widget.heading.extra_small')),
-      ),
-    );
-
-  EdgeInsetsGeometry get _memberStatusPadding => EdgeInsets.symmetric(horizontal: 8, vertical: 4);
-
-  BoxDecoration _getMemberStatusDecoration(GroupMemberStatus? memberStatus) => BoxDecoration(
-    color: groupMemberStatusToColor(memberStatus),
-    borderRadius: BorderRadius.all(Radius.circular(2)),
-  );
-
-
-  BoxDecoration _getMemberItemDecoration(int index) {
-    if (_displayMembers.length <= 1) {
-      return _allMemberItemDecoration;
-    } else if (index == 0) {
-      return _firstMemberItemDecoration;
-    } else if (index == _displayMembers.length - 1) {
-      return _lastMemberItemDecoration;
-    } else {
-      return _memberItemDecoration;
-    }
-  }
-
-  BoxDecoration get _memberItemDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    border: Border(left: _memberItemBorder, right: _memberItemBorder),
-  );
-
-  BoxDecoration get _firstMemberItemDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    border: Border(left: _memberItemBorder, right: _memberItemBorder, top: _memberItemBorder),
-    borderRadius: BorderRadius.vertical(top: Radius.circular(8),),
-  );
-
-  BoxDecoration get _lastMemberItemDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    border: Border(left: _memberItemBorder, right: _memberItemBorder, bottom: _memberItemBorder),
-    borderRadius: BorderRadius.vertical(bottom: Radius.circular(8),),
-  );
-
-  BoxDecoration get _allMemberItemDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    border: Border.all(color: _memberItemBorderColor, width: 1),
-    borderRadius: BorderRadius.all(Radius.circular(16))
-  );
-
-  BorderSide get _memberItemBorder =>  BorderSide(color: _memberItemBorderColor, width: 1);
-  Color get _memberItemBorderColor => Styles().colors.surfaceAccent2;
 
   /*ListView.separated(
     itemBuilder: (context, index) => _buildDeparture(ListUtils.entry(_departures, index)),
@@ -209,15 +140,19 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
     ]),
   );
 
-  Widget get _searchClearButton => InkWell(onTap: _onSearchClear, child:
-    Padding(padding: EdgeInsetsGeometry.only(left: 16, right: 8, top: 16, bottom: 16), child:
-      Styles().images.getImage('close-circle', size: 18, color: (_hasEditSearchText || _searchText.isNotEmpty) ? Styles().colors.fillColorSecondary : Styles().colors.mediumGray2)
+  Widget get _searchClearButton => Semantics(label: Localization().getStringEx('', 'Clear Search'), button: true, child:
+    InkWell(onTap: _onSearchClear, child:
+      Padding(padding: EdgeInsetsGeometry.only(left: 16, right: 8, top: 16, bottom: 16), child:
+        Styles().images.getImage('close-circle', size: 18, color: (_hasEditSearchText || _searchText.isNotEmpty) ? Styles().colors.fillColorSecondary : Styles().colors.mediumGray2)
+      )
     )
   );
 
-  Widget get _searchButton => InkWell(onTap: _onSearch, child:
-    Padding(padding: EdgeInsetsGeometry.only(left: 8, right: 16, top: 16, bottom: 16), child:
-      Styles().images.getImage('search', size: 18, color: _hasEditSearchText ? Styles().colors.fillColorSecondary : Styles().colors.mediumGray2)
+  Widget get _searchButton => Semantics(label: Localization().getStringEx('', 'Search'), button: true, child:
+    InkWell(onTap: _onSearch, child:
+      Padding(padding: EdgeInsetsGeometry.only(left: 8, right: 16, top: 16, bottom: 16), child:
+        Styles().images.getImage('search', size: 18, color: _hasEditSearchText ? Styles().colors.fillColorSecondary : Styles().colors.mediumGray2)
+      )
     )
   );
 
@@ -242,12 +177,22 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
     ],),
   );
 
-  Widget get _selectAllButton => InkWell(onTap: _onSelectAll, child:
-    Padding(padding: EdgeInsetsGeometry.symmetric(vertical: 12), child:
-      Text(_selectedMembers.containsAll(_displayMembers.map((member) => member.userId ?? '')) ?
-        Localization().getStringEx('', 'Unselect All') : Localization().getStringEx('', 'Select All'), style: Styles().textStyles.getTextStyle('widget.button.title.small.fat.underline'),),
-    )
-  );
+  Widget get _selectAllButton {
+    bool allDisplayMembersSelected = _selectedMembers.containsAll(_displayMembers.map((member) => member.userId ?? ''));
+    String buttonTitle = allDisplayMembersSelected ?
+      Localization().getStringEx('', 'Unselect All') : Localization().getStringEx('', 'Select All');
+    String semanticsHint = allDisplayMembersSelected ?
+      Localization().getStringEx('', 'Tap to unselect all members') : Localization().getStringEx('', 'Tap to select all members');
+
+    return Semantics(label: buttonTitle, hint: semanticsHint, button: true, child:
+      InkWell(onTap: _onSelectAll, child:
+        Padding(padding: EdgeInsetsGeometry.symmetric(vertical: 12), child:
+          Text(allDisplayMembersSelected ?
+            Localization().getStringEx('', 'Unselect All') : Localization().getStringEx('', 'Select All'), style: Styles().textStyles.getTextStyle('widget.button.title.small.fat.underline'),),
+        )
+      )
+    );
+  }
 
   // Selected Members Bar
   
@@ -256,13 +201,13 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
       Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
         Text(Localization().getStringEx('', 'To: '), style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),),
       ),
-      Expanded(child: Wrap(children: [
-        //TBD build
-      ],))
+      Expanded(child: Wrap(spacing: 4, runSpacing: 4, children: List<Widget>.from(_selectedMembers.map((memberId) => _SelectedMemberWidget(_membersMap?[memberId] , onRemove: () => _onRemoveMember(memberId),)))
+      ,))
     ],)
   );
 
   EdgeInsetsGeometry get _selectedMembersPadding => EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+
   BoxDecoration get _selectedMembersDecoration => BoxDecoration(
     color: Styles().colors.surface,
     border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
@@ -379,6 +324,8 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
     return displayMembers;
   }
 
+  // Event Handlers
+
   Future<void> _onRefresh() async {
     Analytics().logSelect(target: 'Refresh');
     return _refreshMembers();
@@ -434,20 +381,162 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
     });
   }
 
-  void _onTapMember(Member? member) {
+  void _onTapMember(String memberId) {
+    if (_selectedMembers.contains(memberId)) {
+      _onUnselectMember(memberId);
+    } else {
+      _onSelectMember(memberId);
+    }
+  }
+
+  void _onSelectMember(String memberId) {
     Analytics().logSelect(target: 'Select Member');
-    String memberId = member?.userId ?? '';
     setState(() {
-      if (_selectedMembers.contains(memberId)) {
-        _selectedMembers.remove(memberId);
-      } else {
-        _selectedMembers.add(memberId);
-      }
+      _selectedMembers.add(memberId);
     });
+  }
+
+  void _onUnselectMember(String memberId) {
+    Analytics().logSelect(target: 'Unselect Member');
+    setState(() {
+      _selectedMembers.remove(memberId);
+    });
+  }
+
+  void _onRemoveMember(String memberId) {
+    Analytics().logSelect(target: 'Remove Member');
+    if (_selectedMembers.contains(memberId)) {
+      setState(() {
+        _selectedMembers.remove(memberId);
+      });
+    }
   }
 
   void _onDone() {
     Analytics().logSelect(target: 'Select All');
   }
+}
 
+class _SelectedMemberWidget extends StatelessWidget {
+  final Member? member;
+  final void Function()? onRemove;
+
+  _SelectedMemberWidget(this.member, { this.onRemove});
+
+  @override
+  Widget build(BuildContext context) =>
+    Container(decoration: _widgetDecoration, child:
+      Semantics(
+        label: member?.name ?? '',
+        hint: Localization().getStringEx('', 'Tap to remove ${member?.name ?? ''}'),
+        button: true,
+        child: InkWell(onTap: onRemove, child:
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            Padding(padding: EdgeInsetsGeometry.only(left: _spacing, top: _halfSpacing, bottom: _halfSpacing), child:
+              Text(member?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
+            ),
+            Padding(padding: EdgeInsets.only(left: _halfSpacing, right: _spacing, top: _spacing, bottom: _spacing), child:
+              Styles().images.getImage('close', color: Styles().colors.fillColorPrimary, size: 12)
+            )
+          ],)
+        )
+      ),
+    );
+  
+  BoxDecoration get _widgetDecoration => BoxDecoration(
+    color: Styles().colors.background,
+    borderRadius: BorderRadius.all(Radius.circular(4)),
+  );
+
+  double get _spacing => 8;
+  double get _halfSpacing => _spacing / 2;
+}
+
+class _MemberListItemWidget extends StatelessWidget {
+  final Member? member;
+  final _MemberListItemPos pos;
+  final bool selected;
+  final void Function()? onSelect;
+
+  _MemberListItemWidget(this.member, { this.pos = _MemberListItemPos.middle, this.selected = false, this.onSelect });
+
+  @override
+  Widget build(BuildContext context) =>
+    Container(decoration: _widgetDecoration, child:
+      Row(children: [
+        _checkButton,
+        Expanded(child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+            Text(member?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
+          )
+        ),
+        if (_memberStatus != null)
+          _MemberStatusWidget(_memberStatus),
+      ],)
+    );
+
+  Widget get _checkButton =>
+    InkWell(onTap: onSelect, child:
+      Padding(padding: EdgeInsets.all(12), child:
+        Styles().images.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', size: 24)
+      ),
+    );
+
+  GroupMemberStatus? get _memberStatus => member?.status;
+
+  BoxDecoration get _widgetDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border(
+      left: widgetBorder,
+      right: widgetBorder,
+      top: pos.hasTopBorder ? widgetBorder : BorderSide.none,
+      bottom: pos.hasBottomBorder ? widgetBorder : BorderSide.none,
+    ),
+    borderRadius: BorderRadius.vertical(
+      top: pos.hasTopBorder ? Radius.circular(8) : Radius.zero,
+      bottom: pos.hasBottomBorder ? Radius.circular(8) : Radius.zero,
+    ),
+  );
+
+  static BorderSide get widgetBorder =>  BorderSide(color: widgetBorderColor, width: widgetBorderSize);
+  static double get widgetBorderSize => 1;
+  static Color get widgetBorderColor => Styles().colors.surfaceAccent2;
+}
+
+enum _MemberListItemPos { only, first, middle, last, }
+
+extension _MemberListItemPosImpl on _MemberListItemPos {
+  bool get hasTopBorder => (this == _MemberListItemPos.first) || (this == _MemberListItemPos.only);
+  bool get hasBottomBorder => (this == _MemberListItemPos.last) || (this == _MemberListItemPos.only);
+
+  static _MemberListItemPos fromListIndex(List list, int index) {
+    if (list.length <= 1) {
+      return _MemberListItemPos.only;
+    } else if (index <= 0) {
+      return _MemberListItemPos.first;
+    } else if ((index + 1) < list.length) {
+      return _MemberListItemPos.middle;
+    } else {
+      return _MemberListItemPos.last;
+    }
+  }
+}
+
+class _MemberStatusWidget extends StatelessWidget {
+  final GroupMemberStatus? memberStatus;
+
+  _MemberStatusWidget(this.memberStatus);
+
+  @override
+  Widget build(BuildContext context) =>
+    Container(padding: _widgetPadding, decoration: _widgetDecoration, child:
+      Text(groupMemberStatusToDisplayString(memberStatus)?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle('widget.heading.extra_small')),
+    );
+
+  EdgeInsetsGeometry get _widgetPadding => EdgeInsets.symmetric(horizontal: 8, vertical: 4);
+
+  BoxDecoration get _widgetDecoration => BoxDecoration(
+    color: groupMemberStatusToColor(memberStatus),
+    borderRadius: BorderRadius.all(Radius.circular(2)),
+  );
 }
