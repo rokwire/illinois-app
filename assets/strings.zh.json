@@ -3499,8 +3499,6 @@
 	"panel.student_courses.calendar.day.thursday.letter": "四",
 	"panel.student_courses.calendar.day.friday.letter": "五",
 	"panel.student_courses.calendar.day.saturday.letter": "六",
-	"panel.student_courses.calendar.hour.midnight.label": "凌晨12點",
-	"panel.student_courses.calendar.hour.noon.label": "中午12點",
 
 	"panel.skills_self_evaluation.header.title": "Skills Self-Evaluation & Career Explorer",
 	"panel.skills_self_evaluation.get_started.section.title": "Skills Self-Evaluation & Career Explorer",

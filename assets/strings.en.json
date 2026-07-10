@@ -3519,8 +3519,6 @@
     "panel.student_courses.calendar.day.thursday.letter": "T",
     "panel.student_courses.calendar.day.friday.letter": "F",
     "panel.student_courses.calendar.day.saturday.letter": "S",
-    "panel.student_courses.calendar.hour.midnight.label": "12 AM",
-    "panel.student_courses.calendar.hour.noon.label": "12 PM",
 
     "panel.skills_self_evaluation.header.title": "Skills Self-Evaluation & Career Explorer",
     "panel.skills_self_evaluation.get_started.section.title": "Skills Self-Evaluation & Career Explorer",

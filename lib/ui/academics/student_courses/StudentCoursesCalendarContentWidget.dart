@@ -81,6 +81,8 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
   late final List<Color> _coursePalette;
   Map<String, Color> _courseColors = <String, Color>{};
 
+  Map<int, List<_CourseBlock>> _blocksByWeekday = <int, List<_CourseBlock>>{};
+
   @override
   void initState() {
     super.initState();
@@ -94,6 +96,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
       Styles().colors.getColor('studentCourseGreenColor') ?? const Color(0xFFE1EED4),
     ];
     _updateCourseColors();
+    _updateBlocksByWeekday();
   }
 
   @override
@@ -101,6 +104,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
     super.didUpdateWidget(oldWidget);
     if (!identical(widget.courses, oldWidget.courses)) {
       _updateCourseColors();
+      _updateBlocksByWeekday();
     }
   }
 
@@ -110,9 +114,6 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
     super.dispose();
   }
 
-  // Runs once, right after the first frame where a real (measured) _hourHeight is known, to scroll
-  // to _initialVisibleHour. Can't be done at controller-creation time (initState), since the day
-  // column width - and hence the square _hourHeight - isn't known until the first layout pass.
   void _applyInitialScrollOffsetIfNeeded() {
     if (!_initialScrollApplied && _scrollController.hasClients) {
       _initialScrollApplied = true;
@@ -123,7 +124,6 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
   @override
   Widget build(BuildContext context) {
     TZDateTime now = DateTimeUni.nowUniOrLocal();
-    Map<int, List<_CourseBlock>> blocksByWeekday = _buildBlocksByWeekday();
 
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       // Square cells: the hour row height matches the (measured) day-column width, rather than a
@@ -132,26 +132,19 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
       _hourHeight = math.max(dayColumnWidth, _minHourHeight);
       WidgetsBinding.instance.addPostFrameCallback((_) => _applyInitialScrollOffsetIfNeeded());
 
-      // The day header is painted as a Stack sibling on top of the scrollable grid (rather than a
-      // plain Column sibling above it) so its drop shadow can fall over the grid as it scrolls
-      // underneath, instead of being hidden behind the grid's opaque background.
       return Stack(children: <Widget>[
         Column(children: <Widget>[
           SizedBox(height: _dayHeaderRowHeight),
           Expanded(child:
             SingleChildScrollView(controller: _scrollController, child:
               Padding(padding: EdgeInsets.only(top: _gridTopGap), child:
-                // Extra `_closingRowHeight` below the 24-hour grid for a closing "12 AM" line/label
-                // (the next day's midnight boundary) - reserved as a separate sliver, not part of the
-                // day columns themselves, so their vertical borders stop exactly at the grid's own
-                // bottom edge instead of continuing alongside the closing line.
                 SizedBox(height: (24 * _hourHeight) + _closingRowHeight, child:
                   Stack(clipBehavior: Clip.none, children: <Widget>[
                     Positioned(top: 0, left: 0, right: 0, height: 24 * _hourHeight, child:
                       Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                         _buildTimeColumn(),
                         ..._weekdayOrder.map((int weekday) => Expanded(child:
-                          _buildDayColumn(blocks: blocksByWeekday[weekday] ?? <_CourseBlock>[]),
+                          _buildDayColumn(blocks: _blocksByWeekday[weekday] ?? <_CourseBlock>[]),
                         )),
                       ]),
                     ),
@@ -170,7 +163,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
 
   // Data prep
 
-  Map<int, List<_CourseBlock>> _buildBlocksByWeekday() {
+  void _updateBlocksByWeekday() {
     Map<int, List<_CourseBlock>> blocksByWeekday = <int, List<_CourseBlock>>{};
     for (StudentCourse course in widget.courses ?? <StudentCourse>[]) {
       int? startMinutes = course.section?.startTimeMinutes;
@@ -183,7 +176,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
       }
     }
     blocksByWeekday.forEach((_, List<_CourseBlock> blocks) => _layoutOverlappingBlocks(blocks));
-    return blocksByWeekday;
+    _blocksByWeekday = blocksByWeekday;
   }
 
   ///
@@ -358,13 +351,13 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
 
   String _hourLabel(int hour) {
     if (hour == 0) {
-      return Localization().getStringEx('panel.student_courses.calendar.hour.midnight.label', '12 AM');
+      return '12 AM';
     }
     else if (hour < 12) {
       return '$hour AM';
     }
     else if (hour == 12) {
-      return Localization().getStringEx('panel.student_courses.calendar.hour.noon.label', '12 PM');
+      return '12 PM';
     }
     else {
       return '${hour - 12} PM';
