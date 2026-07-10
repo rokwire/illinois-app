@@ -1,18 +1,22 @@
 
 import 'dart:collection';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/groups/GroupConversationMessagesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/group.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupConversationCreatePanel extends StatefulWidget {
   final Group? group;
@@ -27,7 +31,6 @@ class GroupConversationCreatePanel extends StatefulWidget {
 
 class _GroupConversationCreatePanelState extends State<GroupConversationCreatePanel> {
 
-
   List<Member>? _membersList;
   Map<String, Member>? _membersMap;
   List<Member> _displayMembers = <Member>[];
@@ -39,6 +42,8 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
   FocusNode _searchTextFocusNode = FocusNode();
 
   LinkedHashSet<String> _selectedMembers = LinkedHashSet<String>();
+
+  bool _submitting = false;
 
   @override
   void initState() {
@@ -78,7 +83,7 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
       Column(children: [
         _selectedMembersBar,
         _searchBar,
-        _listHeading,
+        _membersListHeading,
         Expanded(child:
           _membersListView
         ),
@@ -168,7 +173,7 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
   
   // List Heading
 
-  Widget get _listHeading => Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 16), child:
+  Widget get _membersListHeading => Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 16), child:
     Row(children: [
       Expanded(child:
         Text(Localization().getStringEx('', 'ALL MEMBERS'), style: Styles().textStyles.getTextStyle('widget.title.small.medium_fat'),),
@@ -223,12 +228,13 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
         RoundedButton(
           label: Localization().getStringEx("dialog.done.title",  'Done'),
           backgroundColor: Styles().colors.white,
-          textStyle: _selectedMembers.isNotEmpty ? Styles().textStyles.getTextStyle("widget.button.title.regular") : Styles().textStyles.getTextStyleEx("widget.button.title.regular", color: Styles().colors.disabledTextColorTwo),
-          borderColor: _selectedMembers.isNotEmpty ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColorTwo,
-          enabled: _selectedMembers.isNotEmpty,
+          textStyle: _canSubmit ? Styles().textStyles.getTextStyle("widget.button.title.regular") : Styles().textStyles.getTextStyleEx("widget.button.title.regular", color: Styles().colors.disabledTextColorTwo),
+          borderColor: _canSubmit ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColorTwo,
+          enabled: _canSubmit,
           padding: EdgeInsets.symmetric(horizontal: 24, vertical: 6),
           borderWidth: 2,
-          onTap:_onDone,
+          progress: _submitting,
+          onTap: _onSubmit,
         ),
       ),
       Expanded(flex: 1, child: Container()),
@@ -412,8 +418,33 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
     }
   }
 
-  void _onDone() {
-    Analytics().logSelect(target: 'Select All');
+  bool get _canSubmit => _selectedMembers.isNotEmpty;
+
+  void _onSubmit() async {
+    Analytics().logSelect(target: 'Done');
+    if (_canSubmit && (_submitting == false)) {
+      setState(() {
+        _submitting = true;
+      });
+
+      Conversation? conversation = await Social().createConversation(memberIds: List.from(_selectedMembers));
+      if (mounted) {
+        setState(() {
+          _submitting = true;
+        });
+        if (conversation != null) {
+          Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) =>
+            GroupConversationMessagesPanel(conversation,
+              group: widget.group,
+              groupAdmins: widget.groupAdmins,
+              analyticsFeature: widget.analyticsFeature,
+            )
+          ));
+        } else {
+          AppAlert.showTextMessage(context, Localization().getStringEx('', 'Failed to create new message'));
+        }
+      }
+    }
   }
 }
 
