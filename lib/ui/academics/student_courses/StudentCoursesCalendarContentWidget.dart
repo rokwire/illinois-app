@@ -136,15 +136,12 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
                       Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                         _buildTimeColumn(),
                         ..._weekdayOrder.map((int weekday) => Expanded(child:
-                          _buildDayColumn(
-                            blocks: blocksByWeekday[weekday] ?? <_CourseBlock>[],
-                            isToday: (weekday == now.weekday),
-                            nowMinutes: (now.hour * 60) + now.minute,
-                          ),
+                          _buildDayColumn(blocks: blocksByWeekday[weekday] ?? <_CourseBlock>[]),
                         )),
                       ]),
                     ),
                     Positioned(top: 24 * _hourHeight, left: 0, right: 0, child: _buildClosingHourRow()),
+                    _buildNowLine(nowMinutes: (now.hour * 60) + now.minute, todayWeekday: now.weekday),
                   ]),
                 ),
               ),
@@ -338,14 +335,13 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
     }
   }
 
-  Widget _buildDayColumn({required List<_CourseBlock> blocks, required bool isToday, required int nowMinutes}) {
+  Widget _buildDayColumn({required List<_CourseBlock> blocks}) {
     return Container(
       decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.surfaceAccent, width: 1))),
       child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) =>
         Stack(children: <Widget>[
           _buildHourLines(),
           ...blocks.map((_CourseBlock block) => _buildCourseBlock(block, dayWidth: constraints.maxWidth)),
-          if (isToday) _buildNowLine(nowMinutes: nowMinutes),
         ]),
       ),
     );
@@ -383,11 +379,34 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
     );
   }
 
-  Widget _buildNowLine({required int nowMinutes}) {
-    return Positioned(top: (nowMinutes / 60.0) * _hourHeight, left: 0, right: 0, child:
-      Container(height: 2, color: Styles().colors.getColor('alert') ?? const Color(0xFFFF0000)),
+  Widget _buildNowLine({required int nowMinutes, required int todayWeekday}) {
+    int todayIndex = _weekdayOrder.indexOf(todayWeekday);
+    if (todayIndex < 0) {
+      return Container();
+    }
+
+    double columnLeft = _timeColumnWidth + (todayIndex * _hourHeight); // _hourHeight doubles as the square day-column width
+    double lineTop = (nowMinutes / 60.0) * _hourHeight;
+
+    return Positioned.fill(child:
+      Stack(clipBehavior: Clip.none, children: <Widget>[
+        Positioned(top: lineTop, left: columnLeft, width: _hourHeight, child:
+          Container(height: 2, color: _nowLineColor),
+        ),
+        _buildNowLineDot(top: lineTop, centerX: columnLeft),
+        _buildNowLineDot(top: lineTop, centerX: columnLeft + _hourHeight),
+      ]),
     );
   }
+
+  Widget _buildNowLineDot({required double top, required double centerX}) {
+    const double dotSize = 4;
+    return Positioned(top: top + 1 - (dotSize / 2), left: centerX - (dotSize / 2), width: dotSize, height: dotSize, child:
+      Container(decoration: BoxDecoration(shape: BoxShape.circle, color: _nowLineColor)),
+    );
+  }
+
+  Color get _nowLineColor => Styles().colors.getColor('alert') ?? const Color(0xFFFF0000);
 
   void _onTapCourse(StudentCourse course) {
     Analytics().logSelect(target: "Student Course: ${course.title}");

@@ -38,7 +38,7 @@ class StudentCoursesListContentWidget extends StatelessWidget {
     }
 
     return SingleChildScrollView(child:
-      Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 16), child:
         Column(children: courseWidgets),
       ),
     );
