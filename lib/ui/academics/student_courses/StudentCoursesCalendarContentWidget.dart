@@ -45,10 +45,29 @@ class StudentCoursesCalendarContentWidget extends StatefulWidget {
 
 class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCalendarContentWidget> {
 
-  static const double _hourHeight = 60;
-  static const double _timeColumnWidth = 44;
+  static const double _minHourHeight = 40; // floor, in case the measured day-column width is tiny
+  static const double _timeColumnWidth = 64;
   static const int _initialVisibleHour = 7;
   static const int _fixedDurationMinutes = 60; // backend provides no real class duration
+
+  // Day header row: Padding(vertical: 8) + the 28-diameter "today" circle + Padding(vertical: 8).
+  static const double _dayHeaderRowHeight = 44;
+  // Small vertical tick between adjacent day letters (S | M | T ...), bottom-aligned against the
+  // header's own bottom border, shorter than the letter row.
+  static const double _dayHeaderDividerHeight = 8;
+  // Gap between the day header's bottom border/shadow and the first (12 AM) hour line when scrolled
+  // to top. Also doubles as headroom so the vertically-centered "12 AM" label (which straddles its
+  // gridline same as every other hour label) has room to render without being clipped.
+  static const double _gridTopGap = 20;
+  // Hour gridline "tick" in the time-label column: the hour text stops _hourLabelRightMargin from
+  // the column's right edge, then the tick itself (_hourLineLength long) starts a visible gap after
+  // that and extends a little (_hourLineRightOvershoot) past the vertical line separating the time
+  // labels from the grid.
+  static const double _hourLabelRightMargin = 24;
+  static const double _hourLineLength = 20;
+  static const double _hourLineRightOvershoot = 4;
+  // Extra sliver below the 24-hour grid for the closing "12 AM" (next day) line/label.
+  static const double _closingRowHeight = 20;
 
   // Column order matches the "S M T W T F S" header in the design.
   static const List<int> _weekdayOrder = <int>[
@@ -58,10 +77,16 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
 
   late final ScrollController _scrollController;
 
+  // Cells are square: the hour row height matches the (measured, so responsive) day-column width,
+  // rather than a fixed height. Recomputed on every build via the LayoutBuilder in build() below;
+  // starts at the floor value until the first layout pass measures the real width.
+  double _hourHeight = _minHourHeight;
+  bool _initialScrollApplied = false;
+
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController(initialScrollOffset: _initialVisibleHour * _hourHeight);
+    _scrollController = ScrollController();
   }
 
   @override
@@ -70,30 +95,65 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
     super.dispose();
   }
 
+  // Runs once, right after the first frame where a real (measured) _hourHeight is known, to scroll
+  // to _initialVisibleHour. Can't be done at controller-creation time (initState), since the day
+  // column width - and hence the square _hourHeight - isn't known until the first layout pass.
+  void _applyInitialScrollOffsetIfNeeded() {
+    if (!_initialScrollApplied && _scrollController.hasClients) {
+      _initialScrollApplied = true;
+      _scrollController.jumpTo(_gridTopGap + (_initialVisibleHour * _hourHeight));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     TZDateTime now = DateTimeUni.nowUniOrLocal();
     Map<int, List<_CourseBlock>> blocksByWeekday = _buildBlocksByWeekday();
 
-    return Column(children: <Widget>[
-      _buildDayHeaderRow(todayWeekday: now.weekday),
-      Expanded(child:
-        SingleChildScrollView(controller: _scrollController, child:
-          SizedBox(height: 24 * _hourHeight, child:
-            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              _buildTimeColumn(),
-              ..._weekdayOrder.map((int weekday) => Expanded(child:
-                _buildDayColumn(
-                  blocks: blocksByWeekday[weekday] ?? <_CourseBlock>[],
-                  isToday: (weekday == now.weekday),
-                  nowMinutes: (now.hour * 60) + now.minute,
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+      // Square cells: the hour row height matches the (measured) day-column width, rather than a
+      // fixed height, so it responds to the actual available screen width like the design.
+      double dayColumnWidth = (constraints.maxWidth - _timeColumnWidth) / _weekdayOrder.length;
+      _hourHeight = math.max(dayColumnWidth, _minHourHeight);
+      WidgetsBinding.instance.addPostFrameCallback((_) => _applyInitialScrollOffsetIfNeeded());
+
+      // The day header is painted as a Stack sibling on top of the scrollable grid (rather than a
+      // plain Column sibling above it) so its drop shadow can fall over the grid as it scrolls
+      // underneath, instead of being hidden behind the grid's opaque background.
+      return Stack(children: <Widget>[
+        Column(children: <Widget>[
+          SizedBox(height: _dayHeaderRowHeight),
+          Expanded(child:
+            SingleChildScrollView(controller: _scrollController, child:
+              Padding(padding: EdgeInsets.only(top: _gridTopGap), child:
+                // Extra `_closingRowHeight` below the 24-hour grid for a closing "12 AM" line/label
+                // (the next day's midnight boundary) - reserved as a separate sliver, not part of the
+                // day columns themselves, so their vertical borders stop exactly at the grid's own
+                // bottom edge instead of continuing alongside the closing line.
+                SizedBox(height: (24 * _hourHeight) + _closingRowHeight, child:
+                  Stack(clipBehavior: Clip.none, children: <Widget>[
+                    Positioned(top: 0, left: 0, right: 0, height: 24 * _hourHeight, child:
+                      Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                        _buildTimeColumn(),
+                        ..._weekdayOrder.map((int weekday) => Expanded(child:
+                          _buildDayColumn(
+                            blocks: blocksByWeekday[weekday] ?? <_CourseBlock>[],
+                            isToday: (weekday == now.weekday),
+                            nowMinutes: (now.hour * 60) + now.minute,
+                          ),
+                        )),
+                      ]),
+                    ),
+                    Positioned(top: 24 * _hourHeight, left: 0, right: 0, child: _buildClosingHourRow()),
+                  ]),
                 ),
-              )),
-            ]),
+              ),
+            ),
           ),
-        ),
-      ),
-    ]);
+        ]),
+        Positioned(top: 0, left: 0, right: 0, child: _buildDayHeaderRow(todayWeekday: now.weekday)),
+      ]);
+    });
   }
 
   // Data prep
@@ -156,15 +216,39 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
     }
   }
 
-  // Day header row (S M T W T F S), with the current day circled.
-
+  // Day header row (S M T W T F S), with the current day circled. Opaque white + a drop shadow,
+  // since it now floats (via Positioned in build()) on top of the scrollable grid below it.
+  //
+  // Each day cell (including the first, S - matching the grid's own day-column-0 left border at the
+  // boundary with the time-label gutter) carries its own left-edge divider, instead of inserting
+  // separate 1px-wide divider widgets between Expanded cells: the latter would shrink every cell by
+  // a fraction of those extra widgets' width relative to the grid's day columns below (which have no
+  // such siblings), drifting the header's dividers out of alignment with the grid's own column
+  // borders further right along the row. Matching the grid's own approach (each day column paints
+  // its own left border) keeps both rows' cell widths - and so the divider/border positions -
+  // pixel-identical.
   Widget _buildDayHeaderRow({required int todayWeekday}) {
-    return Row(children: <Widget>[
-      SizedBox(width: _timeColumnWidth),
-      ..._weekdayOrder.map((int weekday) => Expanded(child:
-        _buildDayHeaderCell(weekday: weekday, isToday: (weekday == todayWeekday)),
-      )),
-    ]);
+    return Container(
+      height: _dayHeaderRowHeight,
+      decoration: BoxDecoration(
+        color: Styles().colors.white,
+        border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
+        boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, blurRadius: 4, offset: Offset(0, 2))],
+      ),
+      child: Row(children: <Widget>[
+        SizedBox(width: _timeColumnWidth),
+        ..._weekdayOrder.map((int weekday) => Expanded(child:
+          Stack(children: <Widget>[
+            _buildDayHeaderCell(weekday: weekday, isToday: (weekday == todayWeekday)),
+            Positioned(left: 0, bottom: 0, child: _buildDayHeaderDivider()),
+          ]),
+        )),
+      ]),
+    );
+  }
+
+  Widget _buildDayHeaderDivider() {
+    return Container(width: 1, height: _dayHeaderDividerHeight, color: Styles().colors.surfaceAccent);
   }
 
   Widget _buildDayHeaderCell({required int weekday, required bool isToday}) {
@@ -197,12 +281,46 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
 
   Widget _buildTimeColumn() {
     return SizedBox(width: _timeColumnWidth, height: 24 * _hourHeight, child:
-      Stack(children: List<Widget>.generate(24, (int hour) =>
-        Positioned(top: (hour * _hourHeight) - 7, left: 0, right: 4, child:
-          Text(_hourLabel(hour), textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.message.tiny')),
-        )
-      )),
+      // The "12 AM" label straddles its gridline the same as every other hour label (top: -7), which
+      // pokes a few pixels above this Stack's own top edge (y=0). Without Clip.none, Stack's default
+      // hardEdge clip cuts that overflow off, so only the label's bottom half showed. _gridTopGap
+      // above provides the actual blank space for it to render into.
+      Stack(clipBehavior: Clip.none, children: <Widget>[
+        // Ticks poking out past the time column's own right edge (negative `right`), so each hour
+        // gridline visually overshoots the vertical line separating the time labels from the grid.
+        // Clip.none on this Stack (see below) is what allows that overshoot to actually render.
+        ...List<Widget>.generate(24, (int hour) =>
+          Positioned(top: hour * _hourHeight, right: -_hourLineRightOvershoot, width: _hourLineLength, child:
+            Container(height: 1, color: Styles().colors.surfaceAccent),
+          )
+        ),
+        ...List<Widget>.generate(24, (int hour) =>
+          Positioned(top: (hour * _hourHeight) - 7, left: 0, right: _hourLabelRightMargin, child:
+            Text(_hourLabel(hour), textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.message.tiny')),
+          )
+        ),
+      ]),
     );
+  }
+
+  // Closing "12 AM" (next day's midnight) line + label under the 24-hour grid: same two-part
+  // treatment as every other hour line in _buildTimeColumn() (a short overshooting tick in the
+  // time-label gutter, plus the full-width line across), but with no per-day vertical borders below
+  // it, since the day columns above already end at this exact y.
+  Widget _buildClosingHourRow() {
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      SizedBox(width: _timeColumnWidth, height: _closingRowHeight, child:
+        Stack(clipBehavior: Clip.none, children: <Widget>[
+          Positioned(top: 0, right: -_hourLineRightOvershoot, width: _hourLineLength, child:
+            Container(height: 1, color: Styles().colors.surfaceAccent),
+          ),
+          Positioned(top: -7, left: 0, right: _hourLabelRightMargin, child:
+            Text(_hourLabel(0), textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.message.tiny')),
+          ),
+        ]),
+      ),
+      Expanded(child: Container(height: 1, color: Styles().colors.surfaceAccent)),
+    ]);
   }
 
   String _hourLabel(int hour) {

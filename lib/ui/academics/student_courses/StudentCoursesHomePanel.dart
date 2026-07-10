@@ -126,6 +126,7 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
       appBar: HeaderBar(title: Localization().getStringEx('panel.student_courses.header.title', 'My Courses')),
       body: Column(children: <Widget>[
         _buildFilterBar(),
+        Container(height: 1, color: Styles().colors.surfaceAccent),
         Expanded(child: _buildContent()),
       ]),
       backgroundColor: Styles().colors.white,
