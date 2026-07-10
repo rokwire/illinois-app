@@ -1,5 +1,6 @@
 
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -207,17 +208,27 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
 
   // Selected Members Bar
   
-  Widget get _selectedMembersBar => Container(padding: _selectedMembersPadding, decoration: _selectedMembersDecoration, child:
-    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
-        Text(Localization().getStringEx('', 'To: '), style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),),
-      ),
-      Expanded(child: Wrap(spacing: 4, runSpacing: 4, children: List<Widget>.from(_selectedMemberIds.map((memberId) => _SelectedMemberWidget(_membersMap?[memberId] , onRemove: () => _onRemoveMember(memberId),)))
-      ,))
-    ],)
+  Widget get _selectedMembersBar => Container(padding: _selectedMembersPadding, decoration: _selectedMembersDecoration, constraints: _selectedMembersConstraints, child:
+    SingleChildScrollView(child:
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+          Text(Localization().getStringEx('', 'To: '), style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),),
+        ),
+        Expanded(child:
+          Wrap(spacing: _selectedMembersWrapSpacing, runSpacing: _selectedMembersWrapSpacing, children:
+            List<Widget>.from(List.from(_selectedMemberIds).reversed.map((memberId) => _SelectedMemberWidget(_membersMap?[memberId] , onRemove: () => _onRemoveMember(memberId),)))
+          )
+        )
+      ],)
+    )
   );
 
-  EdgeInsetsGeometry get _selectedMembersPadding => EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+  BoxConstraints get _selectedMembersConstraints => BoxConstraints(minHeight: _selectedMembersHeight(1), maxHeight: _selectedMembersHeight(3));
+  static double _selectedMembersHeight(int lineNum) => max(lineNum, 0) * _SelectedMemberWidget.height + max(lineNum - 1, 0) * _selectedMembersWrapSpacing + 2 * _selectedMembersSpacing;
+  static double get _selectedMembersSpacing => 8;
+  static double get _selectedMembersWrapSpacing => 4;
+
+  EdgeInsetsGeometry get _selectedMembersPadding => EdgeInsets.symmetric(horizontal: 16, vertical: _selectedMembersSpacing);
 
   BoxDecoration get _selectedMembersDecoration => BoxDecoration(
     color: Styles().colors.surface,
@@ -476,7 +487,7 @@ class _SelectedMemberWidget extends StatelessWidget {
               Text(member?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
             ),
             Padding(padding: EdgeInsets.only(left: _halfSpacing, right: _spacing, top: _spacing, bottom: _spacing), child:
-              Styles().images.getImage('close', color: Styles().colors.fillColorPrimary, size: 12)
+              Styles().images.getImage('close', color: Styles().colors.fillColorPrimary, size: _iconSize)
             )
           ],)
         )
@@ -488,8 +499,10 @@ class _SelectedMemberWidget extends StatelessWidget {
     borderRadius: BorderRadius.all(Radius.circular(4)),
   );
 
-  double get _spacing => 8;
-  double get _halfSpacing => _spacing / 2;
+  static double get _spacing => 8;
+  static double get _halfSpacing => _spacing / 2;
+  static double get _iconSize => 12;
+  static double get height => _iconSize + 2 * _spacing;
 }
 
 class _MemberListItemWidget extends StatelessWidget {
