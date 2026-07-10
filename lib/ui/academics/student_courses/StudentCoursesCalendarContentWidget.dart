@@ -28,16 +28,11 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:timezone/timezone.dart';
 
-// Weekly calendar grid content for StudentCoursesHomePanel. Courses without a `section.startTime`
-// are not shown here (the backend does not provide a real class duration, only a start time, so
-// every block uses a fixed 1-hour height). Courses meeting at overlapping times on the same day are
-// laid out side by side, splitting the day column width evenly between them.
 class StudentCoursesCalendarContentWidget extends StatefulWidget {
   final List<StudentCourse>? courses;
-  final Map<String, Color>? courseColors;
   final AnalyticsFeature? analyticsFeature;
 
-  StudentCoursesCalendarContentWidget({super.key, this.courses, this.courseColors, this.analyticsFeature});
+  StudentCoursesCalendarContentWidget({super.key, this.courses, this.analyticsFeature});
 
   @override
   State<StudentCoursesCalendarContentWidget> createState() => _StudentCoursesCalendarContentWidgetState();
@@ -83,10 +78,30 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
   double _hourHeight = _minHourHeight;
   bool _initialScrollApplied = false;
 
+  late final List<Color> _coursePalette;
+  Map<String, Color> _courseColors = <String, Color>{};
+
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+    _coursePalette = <Color>[
+      Styles().colors.getColor('studentCourseYellowColor') ?? const Color(0xFFEFEECE),
+      Styles().colors.getColor('studentCourseOrangeColor') ?? const Color(0xFFF4E5CE),
+      Styles().colors.getColor('studentCourseRedColor') ?? const Color(0xFFF6E6E2),
+      Styles().colors.getColor('studentCoursePurpleColor') ?? const Color(0xFFEDE3F4),
+      Styles().colors.getColor('studentCourseBlueColor') ?? const Color(0xFFD2E6EC),
+      Styles().colors.getColor('studentCourseGreenColor') ?? const Color(0xFFE1EED4),
+    ];
+    _updateCourseColors();
+  }
+
+  @override
+  void didUpdateWidget(StudentCoursesCalendarContentWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(widget.courses, oldWidget.courses)) {
+      _updateCourseColors();
+    }
   }
 
   @override
@@ -169,6 +184,27 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
     }
     blocksByWeekday.forEach((_, List<_CourseBlock> blocks) => _layoutOverlappingBlocks(blocks));
     return blocksByWeekday;
+  }
+
+  ///
+  /// Requirement: "It's important that the same color is not used for two separate classes (unless the user is taking more than 6 classes that semester)."
+  ///
+  void _updateCourseColors() {
+    List<String> courseKeys = <String>[];
+    for (StudentCourse course in widget.courses ?? <StudentCourse>[]) {
+      String? courseKey = course.number;
+      if ((courseKey != null) && !courseKeys.contains(courseKey)) {
+        courseKeys.add(courseKey);
+      }
+    }
+
+    List<Color> shuffledPalette = List<Color>.from(_coursePalette)..shuffle(math.Random(courseKeys.join(',').hashCode));
+
+    Map<String, Color> courseColors = <String, Color>{};
+    for (int index = 0; index < courseKeys.length; index++) {
+      courseColors[courseKeys[index]] = shuffledPalette[index % shuffledPalette.length];
+    }
+    _courseColors = courseColors;
   }
 
   // Sorts a day's blocks by start time and assigns each one a `column` / `columnCount` so that
@@ -366,7 +402,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             decoration: BoxDecoration(
-              color: widget.courseColors?[block.course.number] ?? Styles().colors.background,
+              color: _courseColors[block.course.number] ?? Styles().colors.background,
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(block.course.shortName ?? (block.course.title ?? ''),

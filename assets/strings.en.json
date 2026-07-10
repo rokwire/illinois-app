@@ -3501,6 +3501,8 @@
     "panel.medicine_courses.load.empty.error.msg": "You do not appear to be enrolled in any Medicine courses.",
 
     "panel.student_courses.header.title": "My Courses",
+    "panel.student_courses.term_dropdown.hint": "Double tap to select term",
+    "panel.student_courses.view_type_dropdown.hint": "Double tap to select view",
     "panel.student_courses.instructor.title": "Instructor: %s",
     "panel.student_courses.room.title": "Room",
     "panel.student_courses.map.button.title": "View In-Person Courses on Map",

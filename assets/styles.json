@@ -94,7 +94,14 @@
 
     "illordle.green"  : "#21aa57",
     "illordle.yellow" : "#e5b22e",
-    "illordle.gray"   : "#7a7a7a"
+    "illordle.gray"   : "#7a7a7a",
+
+    "studentCourseYellowColor"             :"#EFEECE",
+    "studentCourseOrangeColor"             :"#F4E5CE",
+    "studentCourseRedColor"                :"#F6E6E2",
+    "studentCoursePurpleColor"             :"#EDE3F4",
+    "studentCourseBlueColor"               :"#D2E6EC",
+    "studentCourseGreenColor"              :"#E1EED4"
   },
   "font_family": {
     "black": "ProximaNovaBlack",
