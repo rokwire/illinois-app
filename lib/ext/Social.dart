@@ -154,3 +154,25 @@ extension CreatorExt on Creator{
     return CollectionUtils.isNotEmpty(creators) ? creators!.first : null;
   }
 }
+
+extension ConversationMemberExt on ConversationMember {
+  static int compareNames(ConversationMember m1, ConversationMember m2) {
+    String? n1 = m1.name, n2 = m2.name;
+    if ((n1 != null) && (n2 != null)) {
+      List<String> fn1 = n1.split(' ');
+      List<String> fn2 = n2.split(' ');
+      if ((1 < fn1.length) && (1 < fn2.length)) {
+        int result = fn1.last.compareTo(fn2.last);
+        if (result != 0) {
+          return result;
+        } else {
+          return fn1.first.compareTo(fn2.first);
+        }
+      } else {
+        return n1.compareTo(n2);
+      }
+    } else {
+      return 0;
+    }
+  }
+}

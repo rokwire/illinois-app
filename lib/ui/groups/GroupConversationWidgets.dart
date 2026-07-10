@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_quill/quill_delta.dart';
@@ -115,9 +116,9 @@ class GroupConversationCard extends StatelessWidget {
 }
 
 class GroupConversationAvtarWidget extends StatelessWidget {
-  static const double _widgetSize = 48;
+  static const double widgetSize = 48;
 
-  static const double _avtarSize = _widgetSize / 2;
+  static const double _avtarSize = widgetSize / 2;
   static const double _avtarOffset = _avtarSize * (sqrt2 - 1) / (2 * sqrt2) - 1;
 
   static const double _avtar2Size = _avtarSize * 2 / 3;
@@ -131,7 +132,7 @@ class GroupConversationAvtarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-    Container(width: _widgetSize, height: _widgetSize, decoration: _avtarDecoration, child: _participantsIcon);
+    Container(width: widgetSize, height: widgetSize, decoration: _avtarDecoration, child: _participantsIcon);
 
   /*Widget build(BuildContext context) {
     return Container(width: _widgetSize, height: _widgetSize, decoration: _avtarDecoration, child:
@@ -178,7 +179,7 @@ class GroupConversationAvtarWidget extends StatelessWidget {
         accountId: participants?.firstOrNull?.accountId,
         //params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken),
       ),
-      photoSize: _widgetSize,
+      photoSize: widgetSize,
       photoUrlHeaders: DirectoryProfilePhotoUtils.authHeaders,
     );
 
@@ -262,48 +263,97 @@ class GroupConversationHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InkWell(onTap: onTap, child:
-    Container(decoration: _headingDecoration, child:
-      Row(children: [
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
-          GroupConversationAvtarWidget(conversation.members),
-        ),
-
-        Expanded(child:
-          Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-            _titleWidget,
-          )
-        ),
-
-        _deleteButton,
-      ],),
+    Container(decoration: _headingDecoration, child: _multipleMembers ?
+    _multipleMembersDropdown(context) : _singleMemberWidget
     ),
   );
 
-  Widget get _titleWidget {
-    int participantsCount = conversation.members?.length ?? 0;
-    if (1 < participantsCount) {
-      return _participantNamesWidget;
-    }
-    else if (0 < participantsCount) {
-      return _participantNameWidget;
-    }
-    else {
-      return Container();
-    }
-  }
+  Widget get _singleMemberWidget => Row(children: [
+    _avtarWidget,
+    Expanded(child:
+      Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+        _participantNameWidget,
+      )
+    ),
+    _deleteButton,
+  ],);
 
-  Widget get _participantNameWidget {
-    ConversationMember? member = conversation.members?.firstOrNull;
+
+  Widget _multipleMembersDropdown(BuildContext context) =>
+    DropdownButtonHideUnderline(child:
+      DropdownButton2<String>(
+        dropdownStyleData: DropdownStyleData(width: _screenWidth(context), padding: EdgeInsets.zero),
+        menuItemStyleData: MenuItemStyleData(height: _dropdownMemberItemHeight, padding: EdgeInsets.zero),
+        customButton: _multipleMembersWidget,
+        isExpanded: false,
+        items: _buildDropdownMembers(),
+        onChanged: (_){},
+      ),
+    );
+
+  Widget get _multipleMembersWidget => Row(children: [
+    _avtarWidget,
+    Expanded(child:
+      Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+        _participantNamesWidget,
+      )
+    ),
+    _chevronDownIcon,
+    _deleteButton,
+  ],);
+
+  // Dropdown
+
+  List<DropdownMenuItem<String>> _buildDropdownMembers() => List.from(conversation.members?.sorted(ConversationMemberExt.compareNames).map((member) => _buildDropdownMemberItem(member)) ?? []);
+
+  DropdownMenuItem<String> _buildDropdownMemberItem(ConversationMember member) =>
+    DropdownMenuItem<String>(value: member.accountId ?? '', child:
+      Container(decoration: _dropdownMemberDecoration, child:
+        Row(children: [
+          _buildAvtarWidget([member]),
+          Expanded(child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+              _buildParticipantNameWidget(member,
+                  nameTextStyleName: 'widget.card.title.small.fat',
+                  statusTextStyleName: 'widget.title.light.tiny.fat'
+              ),
+            )
+          ),
+        ],)
+      ),
+    );
+
+  double get _dropdownMemberItemHeight => GroupConversationAvtarWidget.widgetSize + 2 * _avtarSpacing;
+
+  // Avtar
+
+  Widget get _avtarWidget => _buildAvtarWidget(conversation.members);
+
+  Widget _buildAvtarWidget(List<ConversationMember>? members) =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: _avtarSpacing * 2, vertical: _avtarSpacing), child:
+      GroupConversationAvtarWidget(members),
+    );
+
+  double get _avtarSpacing => 8;
+
+  // Name
+
+  Widget get _participantNameWidget => _buildParticipantNameWidget(conversation.members?.firstOrNull,
+    nameTextStyleName: 'widget.title.large.fat',
+    statusTextStyleName: 'widget.title.light.tiny.fat'
+  );
+
+  Widget _buildParticipantNameWidget(ConversationMember? member, { required String nameTextStyleName, required String statusTextStyleName }) {
     String? fullName = (member != null) ? member.name : null;
     Member? groupMember = MemberExt.getMember(groupAdmins, userId: member?.accountId);
     String? memberStatus = groupMemberStatusToDisplayString(groupMember?.status);
     Color? memberColor = groupMemberStatusToColor(groupMember?.status);
     return RichText(textAlign: TextAlign.left, text:
-      TextSpan(style: Styles().textStyles.getTextStyle('widget.title.large.fat'), children: ((fullName != null) && fullName.isNotEmpty) ? [
+      TextSpan(style: Styles().textStyles.getTextStyle(nameTextStyleName), children: ((fullName != null) && fullName.isNotEmpty) ? [
         TextSpan(text: fullName),
         if ((memberStatus != null) && memberStatus.isNotEmpty) ...[
           TextSpan(text: ' '),
-          TextSpan(text: memberStatus.toUpperCase(), style: Styles().textStyles.getTextStyleEx('widget.title.light.tiny.fat', color: memberColor)),
+          TextSpan(text: memberStatus.toUpperCase(), style: Styles().textStyles.getTextStyleEx(statusTextStyleName, color: memberColor)),
         ]
       ] : []),
     );
@@ -316,19 +366,33 @@ class GroupConversationHeader extends StatelessWidget {
     style: Styles().textStyles.getTextStyle('widget.card.title.small.fat')
   );
 
+  Widget get _chevronDownIcon => Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
+    Styles().images.getImage('chevron-down')
+  );
+
   Widget get _deleteButton => Event2ImageCommandButton(
     Styles().images.getImage('trash', excludeFromSemantics: true),
     label: Localization().getStringEx('', 'Delete'),
     hint: Localization().getStringEx('', 'Tap to delete conversation'),
+    contentPadding: _multipleMembers ? EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16) : EdgeInsets.all(16),
     onTap: () => onDelete?.call(),
   );
 
+
+  bool get _multipleMembers => (1 < (conversation.members?.length ?? 0));
+  double _screenWidth(BuildContext context) => MediaQuery.of(context).size.width;
+
+  BoxDecoration get _dropdownMemberDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
+  );
 
   BoxDecoration get _headingDecoration => BoxDecoration(
     color: Styles().colors.surface,
     border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
     boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2))],
   );
+
 
 }
 
