@@ -323,7 +323,7 @@ class _Event2ManageDataState extends State<Event2ManageDataPanel>{
   /// returns List<String> with NetIDs if successful and error message String - otherwise
   ///
   Future<dynamic> _buildNetIdsFromCsvFile() async {
-    FilePickerResult? pickResult = await FilePicker.platform.pickFiles(allowedExtensions: ['csv'], type: FileType.custom);
+    FilePickerResult? pickResult = await FilePicker.pickFiles(allowedExtensions: ['csv'], type: FileType.custom);
     if (pickResult != null) {
       String? fileContent;
       if (PlatformUtils.isWeb) {
