@@ -20,7 +20,9 @@ import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
@@ -252,19 +254,26 @@ class GroupConversationAvtarWidget extends StatelessWidget {
 
 }
 
-class GroupConversationHeader extends StatelessWidget {
+class GroupConversationHeader extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
   final Conversation conversation;
-  final void Function()? onDelete;
   final void Function()? onTap;
 
-  GroupConversationHeader(this.conversation, {this.group, this.groupAdmins, this.onDelete, this.onTap});
+  GroupConversationHeader(this.conversation, {this.group, this.groupAdmins, this.onTap});
 
   @override
-  Widget build(BuildContext context) => InkWell(onTap: onTap, child:
+  State<StatefulWidget> createState() => _GroupConversationHeaderState();
+}
+
+class _GroupConversationHeaderState extends State<GroupConversationHeader> {
+
+  bool _deleteProgress = false;
+
+  @override
+  Widget build(BuildContext context) => InkWell(onTap: widget.onTap, child:
     Container(decoration: _headingDecoration, child: _multipleMembers ?
-    _multipleMembersDropdown(context) : _singleMemberWidget
+    _multipleMembersDropdown : _singleMemberWidget
     ),
   );
 
@@ -279,10 +288,10 @@ class GroupConversationHeader extends StatelessWidget {
   ],);
 
 
-  Widget _multipleMembersDropdown(BuildContext context) =>
+  Widget get _multipleMembersDropdown =>
     DropdownButtonHideUnderline(child:
       DropdownButton2<String>(
-        dropdownStyleData: DropdownStyleData(width: _screenWidth(context), padding: EdgeInsets.zero),
+        dropdownStyleData: DropdownStyleData(width: _screenWidth, padding: EdgeInsets.zero),
         menuItemStyleData: MenuItemStyleData(height: _dropdownMemberItemHeight, padding: EdgeInsets.zero),
         customButton: _multipleMembersWidget,
         isExpanded: false,
@@ -304,7 +313,7 @@ class GroupConversationHeader extends StatelessWidget {
 
   // Dropdown
 
-  List<DropdownMenuItem<String>> _buildDropdownMembers() => List.from(conversation.members?.sorted(ConversationMemberExt.compareNames).map((member) => _buildDropdownMemberItem(member)) ?? []);
+  List<DropdownMenuItem<String>> _buildDropdownMembers() => List.from(widget.conversation.members?.sorted(ConversationMemberExt.compareNames).map((member) => _buildDropdownMemberItem(member)) ?? []);
 
   DropdownMenuItem<String> _buildDropdownMemberItem(ConversationMember member) =>
     DropdownMenuItem<String>(value: member.accountId ?? '', child:
@@ -327,7 +336,7 @@ class GroupConversationHeader extends StatelessWidget {
 
   // Avtar
 
-  Widget get _avtarWidget => _buildAvtarWidget(conversation.members);
+  Widget get _avtarWidget => _buildAvtarWidget(widget.conversation.members);
 
   Widget _buildAvtarWidget(List<ConversationMember>? members) =>
     Padding(padding: EdgeInsets.symmetric(horizontal: _avtarSpacing * 2, vertical: _avtarSpacing), child:
@@ -338,14 +347,14 @@ class GroupConversationHeader extends StatelessWidget {
 
   // Name
 
-  Widget get _participantNameWidget => _buildParticipantNameWidget(conversation.members?.firstOrNull,
+  Widget get _participantNameWidget => _buildParticipantNameWidget(widget.conversation.members?.firstOrNull,
     nameTextStyleName: 'widget.title.large.fat',
     statusTextStyleName: 'widget.title.light.tiny.fat'
   );
 
   Widget _buildParticipantNameWidget(ConversationMember? member, { required String nameTextStyleName, required String statusTextStyleName }) {
     String? fullName = (member != null) ? member.name : null;
-    Member? groupMember = MemberExt.getMember(groupAdmins, userId: member?.accountId);
+    Member? groupMember = MemberExt.getMember(widget.groupAdmins, userId: member?.accountId);
     String? memberStatus = groupMemberStatusToDisplayString(groupMember?.status);
     Color? memberColor = groupMemberStatusToColor(groupMember?.status);
     return RichText(textAlign: TextAlign.left, text:
@@ -359,7 +368,7 @@ class GroupConversationHeader extends StatelessWidget {
     );
   }
 
-  Widget get _participantNamesWidget => Text(conversation.membersString ?? '',
+  Widget get _participantNamesWidget => Text(widget.conversation.membersString ?? '',
     textAlign: TextAlign.left,
     overflow: TextOverflow.ellipsis,
     maxLines: 1,
@@ -371,16 +380,19 @@ class GroupConversationHeader extends StatelessWidget {
   );
 
   Widget get _deleteButton => Event2ImageCommandButton(
-    Styles().images.getImage('trash', excludeFromSemantics: true),
+    _deleteProgress ? _deleteProgressIcon : _deleteButtonIcon,
     label: Localization().getStringEx('', 'Delete'),
     hint: Localization().getStringEx('', 'Tap to delete conversation'),
     contentPadding: _multipleMembers ? EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16) : EdgeInsets.all(16),
-    onTap: () => onDelete?.call(),
+    onTap: _onDelete,
   );
 
+  Widget? get _deleteButtonIcon => Styles().images.getImage('trash', size: _deleteIconSize, excludeFromSemantics: true);
+  Widget get _deleteProgressIcon => SizedBox.square(dimension: _deleteIconSize - 2, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,));
+  double get _deleteIconSize => 20;
 
-  bool get _multipleMembers => (1 < (conversation.members?.length ?? 0));
-  double _screenWidth(BuildContext context) => MediaQuery.of(context).size.width;
+  bool get _multipleMembers => (1 < (widget.conversation.members?.length ?? 0));
+  double get _screenWidth => MediaQuery.of(context).size.width;
 
   BoxDecoration get _dropdownMemberDecoration => BoxDecoration(
     color: Styles().colors.surface,
@@ -393,7 +405,27 @@ class GroupConversationHeader extends StatelessWidget {
     boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2))],
   );
 
-
+  void _onDelete() async {
+    if (_deleteProgress == false) {
+      bool? deleteConfirmed = await GroupConversationConfirmDeleteDialog.show(context);
+      if ((deleteConfirmed == true) && mounted) {
+        setState(() {
+          _deleteProgress = true;
+        });
+        bool? result = await Social().deleteConverstion(conversationId: widget.conversation.id ?? '');
+        if (mounted) {
+          setState(() {
+            _deleteProgress = false;
+          });
+          if (result == true) {
+            Navigator.pop(context);
+          } else {
+            AppAlert.showDialogResult(context, Localization().getStringEx('', 'Failed to delete messages thread'));
+          }
+        }
+      }
+    }
+  }
 }
 
 class GroupConversationMessageCard extends StatelessWidget {
@@ -813,20 +845,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     TextEditingController linkTextCtrl = TextEditingController(text: selectedText);
     TextEditingController linkUrlCtrl = TextEditingController(text: selectedLink?.value);
 
-    bool? linkConfirmed = await showDialog(context: context, builder: (_) => AlertDialog(
-      contentPadding: const EdgeInsets.only(left: 24, right: 24, top: 24, bottom: 6),
-      content: GroupConversationLinkDialog(linkTextController: linkTextCtrl, linkUrlController: linkUrlCtrl),
-      actions: [
-        TextButton(child: Text(Localization().getStringEx('dialog.ok.title', 'OK')), onPressed: () {
-          Analytics().logSelect(target: 'Set Link Url');
-          Navigator.of(context).pop(true);
-        },),
-        TextButton(child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')), onPressed: () {
-          Analytics().logSelect(target: 'Cancel');
-          Navigator.of(context).pop(false);
-        },),
-      ],
-    ));
+    bool? linkConfirmed = await GroupConversationLinkDialog.show(context, linkTextController: linkTextCtrl, linkUrlController: linkUrlCtrl);
 
     final linkText = linkTextCtrl.text;
     String linkSourceUrl = linkUrlCtrl.text.trim();
@@ -905,6 +924,12 @@ class GroupConversationLinkDialog extends StatelessWidget {
 
   GroupConversationLinkDialog({this.linkTextController, this.linkUrlController});
 
+  static Future<bool?>show(BuildContext context, {TextEditingController? linkTextController, final TextEditingController? linkUrlController}) =>
+    showDialog(context: context, builder: (_) => AlertDialog(
+      contentPadding: const EdgeInsets.all(24),
+      content: GroupConversationLinkDialog(linkTextController: linkTextController, linkUrlController: linkUrlController),
+    ));
+
   @override
   Widget build(BuildContext context) =>
     Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -931,6 +956,25 @@ class GroupConversationLinkDialog extends StatelessWidget {
           style: Styles().textStyles.getTextStyle('widget.input_field.text.regular'),
         ),
       ),
+      Padding(padding: const EdgeInsets.only(top: 24), child:
+        Row(children: [
+          Expanded(flex: 1, child: Container()),
+          Expanded(flex: 10, child:
+            CompactRoundedButton(label: Localization().getStringEx('dialog.cancel.title', 'Cancel'), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4), onTap: () {
+              Analytics().logSelect(target: 'Cancel');
+              Navigator.of(context).pop(false);
+            },),
+          ),
+          Expanded(flex: 2, child: Container()),
+          Expanded(flex: 10, child:
+            CompactRoundedButton(label: Localization().getStringEx('dialog.ok.title', 'OK'), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4), onTap: () {
+              Analytics().logSelect(target: 'Set Link Url');
+              Navigator.of(context).pop(true);
+            },),
+          ),
+          Expanded(flex: 1, child: Container()),
+        ],)
+      )
     ],);
 
   InputDecoration get _textInputDecoration => InputDecoration(
@@ -938,5 +982,42 @@ class GroupConversationLinkDialog extends StatelessWidget {
         borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0,),
       ),
   );
+
+}
+
+class GroupConversationConfirmDeleteDialog extends StatelessWidget {
+
+  static Future<bool?>show(BuildContext context) =>
+    showDialog(context: context, builder: (_) => AlertDialog(
+      contentPadding: const EdgeInsets.all(24),
+      content: GroupConversationConfirmDeleteDialog(),
+    ));
+
+  @override
+  Widget build(BuildContext context) =>
+    Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Text(Localization().getStringEx('', 'Delete this conversation?',),
+        style: Styles().textStyles.getTextStyle('widget.detail.regular'),
+      ),
+      Padding(padding: const EdgeInsets.only(top: 24), child:
+        Row(children: [
+          Expanded(flex: 1, child: Container()),
+          Expanded(flex: 10, child:
+            CompactRoundedButton(label: Localization().getStringEx('dialog.cancel.title', 'Cancel'), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4), onTap: () {
+              Analytics().logSelect(target: 'Cancel');
+              Navigator.of(context).pop(false);
+            },),
+          ),
+          Expanded(flex: 2, child: Container()),
+          Expanded(flex: 10, child:
+            CompactRoundedButton(label: Localization().getStringEx('dialog.delete.title', 'Delete'), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4), onTap: () {
+              Analytics().logSelect(target: 'Delete');
+              Navigator.of(context).pop(true);
+            },),
+          ),
+          Expanded(flex: 1, child: Container()),
+        ],)
+      )
+    ],);
 
 }

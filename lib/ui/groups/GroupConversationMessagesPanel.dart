@@ -119,7 +119,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   }
 
   Widget get _messagesContent => Column(children: [
-    GroupConversationHeader(widget.conversation, group: widget.group, groupAdmins: widget.groupAdmins, onDelete: _onDeleteConversation, onTap: _isKeyboardVisible ? _onHideKeyboard : null,),
+    GroupConversationHeader(widget.conversation, group: widget.group, groupAdmins: widget.groupAdmins, onTap: _isKeyboardVisible ? _onHideKeyboard : null,),
     Expanded(child:
       RefreshIndicator(onRefresh: _onRefresh, child:
         SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), scrollDirection: Axis.vertical, child:
@@ -366,11 +366,6 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   Future<void> _onRefresh() async {
     Analytics().logSelect(target: 'Refresh');
     return _refreshContent();
-  }
-
-  void _onDeleteConversation() {
-    Analytics().logSelect(target: 'Delete Conversation');
-
   }
 }
 
