@@ -6,6 +6,7 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesHomePanel.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesWidgets.dart';
@@ -45,9 +46,13 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
 
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
-  
+
+  late StudentCoursesViewType _viewType;
+
   @override
   void initState() {
+
+    _viewType = StudentCoursesViewTypeExt.fromJson(Storage().getHomeFavoriteSelectedContent(widget.favoriteId)) ?? StudentCoursesViewType.list;
 
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
@@ -185,7 +190,33 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
       return HomeMessageCard(message: Localization().getStringEx('widget.home.student_courses.text.empty.description', 'You do not appear to be enrolled in any courses for the selected term.'),);
     }
     else {
-      return _buildCoursesContent();
+      return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 8), child: _buildViewTypeToggle()),
+        (_viewType == StudentCoursesViewType.calendar) ? Container() : _buildCoursesContent(),
+      ]);
+    }
+  }
+
+  Widget _buildViewTypeToggle() => Row(children: <Widget>[
+    Expanded(child: HomeFavTabBarBtn(
+      StudentCoursesViewType.calendar.pillTitle.toUpperCase(),
+      position: HomeFavTabBarBtnPos.first,
+      selected: (_viewType == StudentCoursesViewType.calendar),
+      onTap: () => _onTapViewType(StudentCoursesViewType.calendar),
+    )),
+    Expanded(child: HomeFavTabBarBtn(
+      StudentCoursesViewType.list.pillTitle.toUpperCase(),
+      position: HomeFavTabBarBtnPos.last,
+      selected: (_viewType == StudentCoursesViewType.list),
+      onTap: () => _onTapViewType(StudentCoursesViewType.list),
+    )),
+  ]);
+
+  void _onTapViewType(StudentCoursesViewType viewType) {
+    if (_viewType != viewType) {
+      setStateIfMounted(() {
+        _viewType = viewType;
+      });
     }
   }
 

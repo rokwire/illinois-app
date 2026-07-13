@@ -23,6 +23,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCourseDetailPanel.dart';
+import 'package:illinois/ui/academics/student_courses/StudentCoursesCalendarLayout.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -66,7 +67,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
   late final List<Color> _coursePalette;
   Map<String, Color> _courseColors = <String, Color>{};
 
-  Map<int, List<_CourseBlock>> _blocksByWeekday = <int, List<_CourseBlock>>{};
+  Map<int, List<StudentCourseBlock>> _blocksByWeekday = <int, List<StudentCourseBlock>>{};
 
   @override
   void initState() {
@@ -127,7 +128,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
                       Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                         _buildTimeColumn(),
                         ..._weekdayOrder.map((int weekday) => Expanded(child:
-                          _buildDayColumn(blocks: _blocksByWeekday[weekday] ?? <_CourseBlock>[]),
+                          _buildDayColumn(blocks: _blocksByWeekday[weekday] ?? <StudentCourseBlock>[]),
                         )),
                       ]),
                     ),
@@ -147,77 +148,23 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
   // Data prep
 
   void _updateBlocksByWeekday() {
-    Map<int, List<_CourseBlock>> blocksByWeekday = <int, List<_CourseBlock>>{};
+    Map<int, List<StudentCourseBlock>> blocksByWeekday = <int, List<StudentCourseBlock>>{};
     for (StudentCourse course in widget.courses ?? <StudentCourse>[]) {
       int? startMinutes = course.section?.startTimeMinutes;
       if (startMinutes != null) {
         for (int weekday in course.section?.weekdays ?? <int>[]) {
-          blocksByWeekday.putIfAbsent(weekday, () => <_CourseBlock>[]).add(
-            _CourseBlock(course: course, startMinutes: startMinutes, durationMinutes: _fixedDurationMinutes)
+          blocksByWeekday.putIfAbsent(weekday, () => <StudentCourseBlock>[]).add(
+            StudentCourseBlock(course: course, startMinutes: startMinutes, durationMinutes: _fixedDurationMinutes)
           );
         }
       }
     }
-    blocksByWeekday.forEach((_, List<_CourseBlock> blocks) => _layoutOverlappingBlocks(blocks));
+    blocksByWeekday.forEach((_, List<StudentCourseBlock> blocks) => StudentCoursesCalendarLayout.layoutOverlappingBlocks(blocks));
     _blocksByWeekday = blocksByWeekday;
   }
 
-  ///
-  /// Requirement: "It's important that the same color is not used for two separate classes (unless the user is taking more than 6 classes that semester)."
-  ///
   void _updateCourseColors() {
-    List<String> courseKeys = <String>[];
-    for (StudentCourse course in widget.courses ?? <StudentCourse>[]) {
-      String? courseKey = course.number;
-      if ((courseKey != null) && !courseKeys.contains(courseKey)) {
-        courseKeys.add(courseKey);
-      }
-    }
-
-    List<Color> shuffledPalette = List<Color>.from(_coursePalette)..shuffle(math.Random(courseKeys.join(',').hashCode));
-
-    Map<String, Color> courseColors = <String, Color>{};
-    for (int index = 0; index < courseKeys.length; index++) {
-      courseColors[courseKeys[index]] = shuffledPalette[index % shuffledPalette.length];
-    }
-    _courseColors = courseColors;
-  }
-
-  void _layoutOverlappingBlocks(List<_CourseBlock> blocks) {
-    blocks.sort((_CourseBlock block1, _CourseBlock block2) => block1.startMinutes.compareTo(block2.startMinutes));
-
-    int groupStart = 0;
-    int groupEndMinutes = -1;
-    for (int i = 0; i < blocks.length; i++) {
-      if ((groupEndMinutes >= 0) && (blocks[i].startMinutes >= groupEndMinutes)) {
-        _assignColumns(blocks, groupStart, i);
-        groupStart = i;
-        groupEndMinutes = -1;
-      }
-      groupEndMinutes = (groupEndMinutes < 0) ? blocks[i].endMinutes : math.max(groupEndMinutes, blocks[i].endMinutes);
-    }
-    if (blocks.isNotEmpty) {
-      _assignColumns(blocks, groupStart, blocks.length);
-    }
-  }
-
-  void _assignColumns(List<_CourseBlock> blocks, int fromIndex, int toIndex) {
-    List<int> columnEndMinutes = <int>[];
-    for (int i = fromIndex; i < toIndex; i++) {
-      _CourseBlock block = blocks[i];
-      int column = columnEndMinutes.indexWhere((int endMinutes) => (endMinutes <= block.startMinutes));
-      if (column < 0) {
-        column = columnEndMinutes.length;
-        columnEndMinutes.add(block.endMinutes);
-      }
-      else {
-        columnEndMinutes[column] = block.endMinutes;
-      }
-      block.column = column;
-    }
-    for (int i = fromIndex; i < toIndex; i++) {
-      blocks[i].columnCount = columnEndMinutes.length;
-    }
+    _courseColors = StudentCoursesCalendarLayout.computeCourseColors(widget.courses, _coursePalette);
   }
 
   Widget _buildDayHeaderRow({required int todayWeekday}) {
@@ -320,13 +267,13 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
     }
   }
 
-  Widget _buildDayColumn({required List<_CourseBlock> blocks}) {
+  Widget _buildDayColumn({required List<StudentCourseBlock> blocks}) {
     return Container(
       decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.surfaceAccent, width: 1))),
       child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) =>
         Stack(children: <Widget>[
           _buildHourLines(),
-          ...blocks.map((_CourseBlock block) => _buildCourseBlock(block, dayWidth: constraints.maxWidth)),
+          ...blocks.map((StudentCourseBlock block) => _buildCourseBlock(block, dayWidth: constraints.maxWidth)),
         ]),
       ),
     );
@@ -338,7 +285,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
     ));
   }
 
-  Widget _buildCourseBlock(_CourseBlock block, {required double dayWidth}) {
+  Widget _buildCourseBlock(StudentCourseBlock block, {required double dayWidth}) {
     double columnWidth = dayWidth / block.columnCount;
     return Positioned(
       top: (block.startMinutes / 60.0) * _hourHeight,
@@ -397,16 +344,4 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
     Analytics().logSelect(target: "Student Course: ${course.title}");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCourseDetailPanel(course: course, analyticsFeature: widget.analyticsFeature)));
   }
-}
-
-class _CourseBlock {
-  final StudentCourse course;
-  final int startMinutes;
-  final int durationMinutes;
-  int column = 0;
-  int columnCount = 1;
-
-  _CourseBlock({required this.course, required this.startMinutes, required this.durationMinutes});
-
-  int get endMinutes => startMinutes + durationMinutes;
 }
