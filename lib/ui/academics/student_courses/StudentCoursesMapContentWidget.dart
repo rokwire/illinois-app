@@ -29,13 +29,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-// Map view content for StudentCoursesHomePanel: shows the buildings of the courses passed in
-// (already loaded by the host, so this widget does not fetch its own data) as map markers, with a
-// bottom tray listing all courses by default (narrowing to a tapped marker/group's courses, like the
-// main Map tab's Map2HomePanel behaves), reusing Map2TraySheet (which already renders
-// StudentCourseCard for StudentCourse explores). Modeled on Map2HomePanel/Map2LocationPanel's
-// `StudentCourses` case, but trimmed down: no building-search button, no pin-drop/"select location"
-// workflow, and no own HeaderBar/Scaffold (the host panel already provides those).
 class StudentCoursesMapContentWidget extends StatefulWidget {
   final List<StudentCourse>? courses;
   final AnalyticsFeature? analyticsFeature;
@@ -114,9 +107,6 @@ class _StudentCoursesMapContentWidgetState extends Map2BasePanelState<StudentCou
     ),
   );
 
-  // Defaults to showing all explores (like Map2HomePanel does for content types that are always
-  // implicitly "filtered" by term selection); narrows down to just the tapped marker/group once one
-  // is selected.
   List<Explore>? _sortExplores(Iterable<Explore>? explores) => (explores != null) ?
     (List<Explore>.from(explores)..sort((Explore e1, Explore e2) => (e1.exploreTitle ?? '').compareTo(e2.exploreTitle ?? ''))) :
     null;
@@ -161,7 +151,6 @@ class _StudentCoursesMapContentWidgetState extends Map2BasePanelState<StudentCou
 
   // Map Overrides
 
-  // Courses without a valid building/location (e.g. online sections) are naturally excluded here.
   List<Explore>? get _explores => widget.courses?.validList;
 
   @override
@@ -195,9 +184,6 @@ class _StudentCoursesMapContentWidgetState extends Map2BasePanelState<StudentCou
   @override
   void onTapMarker(dynamic origin) {
     if (origin is Explore) {
-      // A single (non-grouped) marker: like Map2HomePanel, this opens the course detail directly
-      // instead of "selecting" it, and clears any active group selection so the tray falls back to
-      // showing all courses again.
       Analytics().logSelect(target: "Map Marker: ${origin.exploreTitle}");
       if (_selectedExploreGroup != null) {
         setState(() {
