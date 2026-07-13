@@ -6,10 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Update research form and settings text [#5852](https://github.com/rokwire/illinois-app/issues/5852)
 - Upgrade to Flutter 3.44.4 [#5869](https://github.com/rokwire/illinois-app/issues/5869).
 ### Added
 - Canvas content to related My Courses [#5584](https://github.com/rokwire/illinois-app/issues/5584).
+
+## 8.1.1 - 2026-06-23
+### Changed
+- Update research form and settings text [#5852](https://github.com/rokwire/illinois-app/issues/5852)
 
 ## 8.1.0 - 2026-06-08
 ### Changed
