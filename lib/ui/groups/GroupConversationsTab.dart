@@ -1,6 +1,7 @@
 
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -8,9 +9,11 @@ import 'package:illinois/ui/groups/GroupConversationMessagesPanel.dart';
 import 'package:illinois/ui/groups/GroupConversationWidgets.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -28,12 +31,13 @@ class GroupConversationsTab extends StatefulWidget {
   State<StatefulWidget> createState() => _GroupConversationsTabState();
 }
 
-class _GroupConversationsTabState extends State<GroupConversationsTab> {
+class _GroupConversationsTabState extends State<GroupConversationsTab> with NotificationsListener {
   List<Conversation>? _conversations;
-  bool _loadingConversations = false;
+  ContentActivity? _conversationsActivity;
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [ Social.notifyConversationsUpdated ]);
     widget.updateController?.stream.listen(_onUpdate);
     _initConversations();
     super.initState();
@@ -41,12 +45,22 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> {
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     super.dispose();
   }
 
   @override
+  void onNotification(String name, dynamic param) {
+    if (name == Social.notifyConversationsUpdated) {
+      if (mounted) {
+        _refreshConversations();
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (_loadingConversations) {
+    if (_conversationsActivity == ContentActivity.reload) {
       return _loadingContent;
     }
     else if (_conversations == null) {
@@ -100,13 +114,14 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> {
   // Conversations content
 
   Future<List<Conversation>?> _initConversations() async {
-    if (_loadingConversations == false) {
+    if (_conversationsActivity != ContentActivity.reload) {
       setStateIfMounted(() {
-        _loadingConversations = true;
+        _conversationsActivity = ContentActivity.reload;
       });
       List<Conversation>? conversations = await Social().loadConversations();
-      setStateIfMounted(() {
-        _loadingConversations = false;
+      if ((_conversationsActivity == ContentActivity.reload) && mounted)
+      setState(() {
+        _conversationsActivity = null;
         _conversations = conversations;
       });
       return conversations;
@@ -116,17 +131,20 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> {
   }
 
   Future<List<Conversation>?> _refreshConversations() async {
-    if (_loadingConversations == false) {
+    if ((_conversationsActivity != ContentActivity.reload) && (_conversationsActivity != ContentActivity.refresh)) {
       setStateIfMounted(() {
-        _loadingConversations = true;
+        _conversationsActivity = ContentActivity.refresh;
       });
       List<Conversation>? conversations = await Social().loadConversations();
-      setStateIfMounted(() {
-        _loadingConversations = false;
-        if (conversations != null) {
-          _conversations = conversations;
-        }
-      });
+      if ((_conversationsActivity == ContentActivity.refresh) && mounted) {
+        setState(() {
+          _conversationsActivity = null;
+          if ((conversations != null) && !DeepCollectionEquality().equals(_conversations, conversations)) {
+            _conversations = conversations;
+          }
+        });
+
+      }
       return conversations;
     } else {
       return null;
