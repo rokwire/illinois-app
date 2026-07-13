@@ -264,4 +264,8 @@ class NullableValue<T> {
 }
 
 enum ContentActivity { reload, refresh, extend }
+extension ContentActivityImpl on ContentActivity {
+  bool get loading => (this == ContentActivity.reload) || (this == ContentActivity.refresh);
+  bool get extending => (this == ContentActivity.extend);
+}
 

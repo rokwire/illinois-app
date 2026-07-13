@@ -363,7 +363,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   }
 
   Future<void> _refreshContent() async {
-    if (((_contentActivity != ContentActivity.reload) && (_contentActivity != ContentActivity.refresh)) && mounted) {
+    if ((_contentActivity?.loading != true) && mounted) {
       setState(() {
         _contentActivity = ContentActivity.refresh;
       });

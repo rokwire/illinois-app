@@ -131,7 +131,7 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
   }
 
   Future<List<Conversation>?> _refreshConversations() async {
-    if ((_conversationsActivity != ContentActivity.reload) && (_conversationsActivity != ContentActivity.refresh)) {
+    if (_conversationsActivity?.loading != true) {
       setStateIfMounted(() {
         _conversationsActivity = ContentActivity.refresh;
       });

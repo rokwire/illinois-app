@@ -316,7 +316,7 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
   }
 
   Future<void> _refreshMembers() async {
-    if ((_membersActivity != ContentActivity.reload) && (_membersActivity != ContentActivity.refresh) && mounted) {
+    if ((_membersActivity?.loading != true) && mounted) {
       setState(() {
         _membersActivity = ContentActivity.refresh;
       });
