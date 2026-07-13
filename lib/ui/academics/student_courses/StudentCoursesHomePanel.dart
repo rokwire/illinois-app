@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -52,12 +51,12 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
   List<StudentCourse>? _courses;
   bool _loading = false;
 
-  late _StudentCoursesViewType _selectedViewType;
+  late StudentCoursesViewType _selectedViewType;
 
   @override
   void initState() {
     super.initState();
-    _selectedViewType = Storage()._studentCoursesViewType ?? _StudentCoursesViewType.calendar;
+    _selectedViewType = Storage()._studentCoursesViewType ?? StudentCoursesViewType.calendar;
 
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
@@ -267,7 +266,7 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
       ),
       child: Semantics(label: _selectedViewType.pillTitle, hint: Localization().getStringEx('panel.student_courses.view_type_dropdown.hint', 'Double tap to select view'), button: true, container: true, child:
         DropdownButtonHideUnderline(child: _wrapDropDownTheme(
-          DropdownButton<_StudentCoursesViewType>(
+          DropdownButton<StudentCoursesViewType>(
             icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('chevron-down', excludeFromSemantics: true)),
             isExpanded: false,
             dropdownColor: Styles().colors.white,
@@ -283,16 +282,16 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
     );
   }
 
-  List<DropdownMenuItem<_StudentCoursesViewType>> _buildViewTypeDropDownItems() {
-    return _StudentCoursesViewType.values.map((_StudentCoursesViewType viewType) =>
-      DropdownMenuItem<_StudentCoursesViewType>(
+  List<DropdownMenuItem<StudentCoursesViewType>> _buildViewTypeDropDownItems() {
+    return StudentCoursesViewType.values.map((StudentCoursesViewType viewType) =>
+      DropdownMenuItem<StudentCoursesViewType>(
         value: viewType,
         child: Text(viewType.pillTitle, style: _getDropDownItemStyle(bold: (viewType == _selectedViewType))),
       )
     ).toList();
   }
 
-  void _onViewTypeDropDownValueChanged(_StudentCoursesViewType? viewType) {
+  void _onViewTypeDropDownValueChanged(StudentCoursesViewType? viewType) {
     if (viewType != null) {
       setStateIfMounted(() {
         Storage()._studentCoursesViewType = _selectedViewType = viewType;
@@ -303,11 +302,11 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
 
   Widget get _rawViewTypeContentWidget {
     switch (_selectedViewType) {
-      case _StudentCoursesViewType.calendar:
+      case StudentCoursesViewType.calendar:
         return StudentCoursesCalendarContentWidget(courses: _courses, analyticsFeature: widget.analyticsFeature);
-      case _StudentCoursesViewType.list:
+      case StudentCoursesViewType.list:
         return StudentCoursesListContentWidget(courses: _courses, analyticsFeature: widget.analyticsFeature);
-      case _StudentCoursesViewType.map:
+      case StudentCoursesViewType.map:
         return StudentCoursesMapContentWidget(courses: _courses, analyticsFeature: widget.analyticsFeature);
     }
   }
@@ -319,20 +318,37 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
   bool get _showNavigationBars => widget.showNavigationBars == true;
 }
 
-enum _StudentCoursesViewType { calendar, list, map }
+enum StudentCoursesViewType { calendar, list, map }
 
-extension _StudentCoursesViewTypeExt on _StudentCoursesViewType {
+extension StudentCoursesViewTypeExt on StudentCoursesViewType {
   String get pillTitle {
     switch (this) {
-      case _StudentCoursesViewType.calendar: return Localization().getStringEx('panel.student_courses.view_type.calendar.pill.title', 'Calendar');
-      case _StudentCoursesViewType.list: return Localization().getStringEx('panel.student_courses.view_type.list.pill.title', 'List');
-      case _StudentCoursesViewType.map: return Localization().getStringEx('panel.student_courses.view_type.map.pill.title', 'Map');
+      case StudentCoursesViewType.calendar: return Localization().getStringEx('panel.student_courses.view_type.calendar.pill.title', 'Calendar');
+      case StudentCoursesViewType.list: return Localization().getStringEx('panel.student_courses.view_type.list.pill.title', 'List');
+      case StudentCoursesViewType.map: return Localization().getStringEx('panel.student_courses.view_type.map.pill.title', 'Map');
     }
+  }
+
+  String toJson() {
+    switch (this) {
+      case StudentCoursesViewType.calendar: return 'calendar';
+      case StudentCoursesViewType.list: return 'list';
+      case StudentCoursesViewType.map: return 'map';
+    }
+  }
+
+  static StudentCoursesViewType? fromJson(dynamic value) {
+    switch (value) {
+      case 'calendar': return StudentCoursesViewType.calendar;
+      case 'list': return StudentCoursesViewType.list;
+      case 'map': return StudentCoursesViewType.map;
+    }
+    return null;
   }
 }
 
 extension _StorageStudentCoursesExt on Storage {
-  _StudentCoursesViewType? get _studentCoursesViewType =>
-    _StudentCoursesViewType.values.firstWhereOrNull((_StudentCoursesViewType type) => (type.name == studentCoursesViewType));
-  set _studentCoursesViewType(_StudentCoursesViewType? value) => studentCoursesViewType = value?.name;
+  StudentCoursesViewType? get _studentCoursesViewType =>
+    StudentCoursesViewTypeExt.fromJson(studentCoursesViewType);
+  set _studentCoursesViewType(StudentCoursesViewType? value) => studentCoursesViewType = value?.toJson();
 }
