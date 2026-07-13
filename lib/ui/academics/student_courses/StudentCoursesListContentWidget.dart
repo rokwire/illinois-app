@@ -17,11 +17,8 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/StudentCourse.dart';
-import 'package:illinois/ui/academics/StudentCourses.dart';
+import 'package:illinois/ui/academics/student_courses/StudentCoursesWidgets.dart';
 
-// List view content for StudentCoursesHomePanel — reuses the existing StudentCourseCard
-// (lib/ui/academics/StudentCourses.dart) unchanged. Term selection lives in the host's filter bar,
-// so this widget only renders the course cards.
 class StudentCoursesListContentWidget extends StatelessWidget {
   final List<StudentCourse>? courses;
   final AnalyticsFeature? analyticsFeature;

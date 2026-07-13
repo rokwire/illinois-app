@@ -36,7 +36,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class StudentCoursesHomePanel extends StatefulWidget with AnalyticsInfo {
-  StudentCoursesHomePanel();
+
+  final bool? showNavigationBars;
+  StudentCoursesHomePanel({this.showNavigationBars = true});
 
   @override
   State<StudentCoursesHomePanel> createState() => _StudentCoursesHomePanelState();
@@ -65,7 +67,7 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
       StudentCourses.notifyCachedCoursesChanged,
     ]);
 
-    if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn) {
+    if (_canLoadCourses) {
       _loading = true;
       StudentCourses().loadCourses(termId: StudentCourses().displayTermId!, forceLoad: true).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
@@ -109,14 +111,14 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('panel.student_courses.header.title', 'My Courses')),
+      appBar: _showNavigationBars ? HeaderBar(title: Localization().getStringEx('panel.student_courses.header.title', 'My Courses')) : null,
       body: Column(children: <Widget>[
         _buildFilterBar(),
         Container(height: 1, color: Styles().colors.surfaceAccent),
         Expanded(child: _buildContent()),
       ]),
-      backgroundColor: Styles().colors.white,
-      bottomNavigationBar: uiuc.TabBar(),
+      backgroundColor: _showNavigationBars ? Styles().colors.white : Styles().colors.background,
+      bottomNavigationBar: _showNavigationBars ? uiuc.TabBar() : null,
     );
   }
 
@@ -230,7 +232,7 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
   }
 
   void _updateCourses({bool forceLoad = true}) {
-    if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn) {
+    if (_canLoadCourses) {
       setStateIfMounted(() {
         _loading = true;
       });
@@ -311,6 +313,10 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
   }
 
   BorderRadius get _dropdownMenuBorderRadius => BorderRadius.circular(8);
+
+  bool get _canLoadCourses => (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn);
+
+  bool get _showNavigationBars => widget.showNavigationBars == true;
 }
 
 enum _StudentCoursesViewType { calendar, list, map }
