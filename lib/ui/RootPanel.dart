@@ -32,6 +32,7 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Gateway.dart';
+import 'package:illinois/service/GBV.dart';
 import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Safety.dart';
 import 'package:illinois/service/SkillsSelfEvaluation.dart';
@@ -58,6 +59,7 @@ import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/safety/SafetyHomePanel.dart';
+import 'package:illinois/ui/gbv/GBVPathwaysPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
@@ -254,6 +256,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       Wellness.notifyCategorySelect,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
+      GBV.notifyLaunchGBVPathways,
 
       // Select
       HomePanel.notifySelect,
@@ -662,6 +665,9 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
     else if (name == SkillsSelfEvaluation.notifyLaunchSkillsSelfEvaluation) {
       _onFirebaseAcademicsNotification(AcademicsContentType.skills_self_evaluation);
+    }
+    else if (name == GBV.notifyLaunchGBVPathways) {
+      _onGBVPathwaysNotification();
     }
     else if (name == LocalNotifications.notifyLocalNotificationTapped) {
       _onLocalNotification(param);
@@ -1349,6 +1355,12 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
   void _onFirebaseWellnessNotification(WellnessContentType content) {
     if (context.mounted) {
       WellnessHomePanel.present(context, content);
+    }
+  }
+
+  void _onGBVPathwaysNotification() {
+    if (context.mounted) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVPathwaysPanel()));
     }
   }
 

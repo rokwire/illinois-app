@@ -37,6 +37,7 @@ import 'package:illinois/service/CustomCourses.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Gateway.dart';
+import 'package:illinois/service/GBV.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/Questionnaire.dart';
@@ -181,6 +182,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       MTD(),
       Assistant(),
       SkillsSelfEvaluation(),
+      GBV(),
       Gateway(),
       Places(),
       Safety(),

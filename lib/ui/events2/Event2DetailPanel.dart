@@ -1,7 +1,7 @@
+import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:ai_barcode_scanner/ai_barcode_scanner.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/DeviceCalendar.dart';
@@ -1137,10 +1137,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
     if (canSelfCheckIn) {
       setState(() { _selfCheckingIn = true; });
 
-      // WEB: FlutterBarcodeScanner does not work for web
-      // String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#E84A27';
-      // String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
-      // String scanResult = await FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR);
+      // WEB: barcode_scan2 does not work for web!
       dynamic pushResult = await Navigator.of(context).push(CupertinoPageRoute(
           builder: (context) => AiBarcodeScanner(
               controller: MobileScannerController(

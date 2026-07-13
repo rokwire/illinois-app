@@ -615,14 +615,21 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         _onScanFinished("$uin");
       }); */
 
-      // WEB: FlutterBarcodeScanner does not work for web
-      // String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#E84A27';
+      // WEB: barcode_scan2 does not work for web!
+      // ScanResult? scanResult;
       // String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
-      // FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR).then((String scanResult) {
-      //   if (mounted) {
-      //     _onScanFinished(scanResult);
-      //   }
-      // });
+      // try {
+      //   scanResult = await BarcodeScanner.scan(options: ScanOptions(
+      //     restrictFormat: <BarcodeFormat>[BarcodeFormat.qr],
+      //     strings: <String, String>{
+      //       'cancel': cancelButtonTitle,
+      //     }
+      //   ));
+      // }
+      // catch (e) { print(e); }
+      // if (mounted) {
+      //   _onScanFinished(scanResult);
+      // }
       dynamic pushResult = await Navigator.of(context).push(CupertinoPageRoute(
           builder: (context) => AiBarcodeScanner(
               controller: MobileScannerController(

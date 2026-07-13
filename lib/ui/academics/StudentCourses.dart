@@ -1,13 +1,19 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Canvas.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Map2.dart';
 import 'package:illinois/service/StudentCourses.dart';
+import 'package:illinois/ui/canvas/CanvasCourseAssignmentsPanel.dart';
 import 'package:illinois/ui/explore/DisplayFloorPlanPanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
@@ -435,6 +441,9 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
                   if ((widget.course?.section?.isInPerson == true) && (widget.course?.hasValidLocation == true))
                     _buildNavDirections(),
 
+                  if (_canvasVisible)
+                    _buildCanvasContent(),
+
                   Container(height: 32),
                   
                   if (widget.course?.section?.isInPerson == true)
@@ -549,6 +558,30 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
       ),
     );
 
+  Widget _buildCanvasContent() {
+    return Padding(padding: EdgeInsets.only(top: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Container(height: 1, color: Styles().colors.surfaceAccent2,),
+      _buildCanvasButton(label: Localization().getStringEx('panel.student_courses.canvas.assignments.view.label', 'View Assignments in Canvas'), onTap: _onCanvasAssignments),
+      _buildCanvasButton(label: Localization().getStringEx('panel.student_courses.canvas.launch.view.label', 'Launch Canvas'), onTap: _onCanvasLaunch),
+    ],),);
+  }
+
+  Widget _buildCanvasButton({required String label, required void Function() onTap}) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.only(top: 16),
+          child: Row(
+            children: [
+              _buildDetailIcon('canvas'),
+              Expanded(
+                child: Text(label, style: Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline")),
+              ),
+            ],
+          ),
+        ));
+  }
+
   void _onLocation() {
     Analytics().logSelect(target: "Location Directions");
     widget.course?.launchDirections();
@@ -572,8 +605,37 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
     });
   }
 
+  void _onCanvasAssignments() {
+    Analytics().logSelect(target: 'View Assignments in Canvas');
+    int? courseId = _canvasCourse?.id;
+    if (courseId != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseAssignmentsPanel(courseId: courseId, analyticsFeature: widget.analyticsFeature)));
+    }
+  }
+
+  void _onCanvasLaunch() async {
+    Analytics().logSelect(target: 'Launch Canvas');
+    String? courseDeepLinkFormat = Config().canvasCourseDeepLinkFormat;
+    String? courseDeepLink = StringUtils.isNotEmpty(courseDeepLinkFormat) ? sprintf(courseDeepLinkFormat!, [_canvasCourse?.id]) : null;
+    if (StringUtils.isNotEmpty(courseDeepLink)) {
+      await Canvas().openCanvasAppDeepLink(courseDeepLink!);
+    }
+  }
+
   void _onMap() {
     Analytics().logSelect(target: "View on Map");
     NotificationService().notify(Map2.notifySelect, Map2ContentType.StudentCourses);
   }
+
+  String? get _courseNumber => widget.course?.number;
+
+  bool get _canvasVisible => (_canvasCourse != null);
+
+  ///
+  /// #5584:
+  /// "the coursenumber property coming from the gatway building block should match the CRN of the canvas course."
+  ///
+  CanvasCourse? get _canvasCourse => (_courseNumber != null) ?
+    Canvas().courses?.firstWhereOrNull((item) => (item.crn == _courseNumber)) :
+    null;
 }
