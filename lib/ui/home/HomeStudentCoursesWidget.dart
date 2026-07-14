@@ -2,12 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
+import 'package:illinois/ui/academics/student_courses/StudentCourseDetailPanel.dart';
+import 'package:illinois/ui/academics/student_courses/StudentCoursesCalendarLayout.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesHomePanel.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesWidgets.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
@@ -15,6 +18,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -192,7 +196,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
     else {
       return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
         Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 8), child: _buildViewTypeToggle()),
-        (_viewType == StudentCoursesViewType.calendar) ? Container() : _buildCoursesContent(),
+        (_viewType == StudentCoursesViewType.calendar) ? _buildCalendarContent() : _buildCoursesContent(),
       ]);
     }
   }
@@ -219,6 +223,11 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
       });
     }
   }
+
+  Widget _buildCalendarContent() => _HomeStudentCoursesCalendarContentWidget(
+    courses: _courses,
+    weekday: DateTimeUni.nowUniOrLocal().weekday,
+  );
 
   Widget _buildCoursesContent() {
 
@@ -303,5 +312,176 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
   void _onViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCoursesHomePanel()));
+  }
+}
+
+///////////////////////////////
+// _HomeStudentCoursesCalendarContentWidget
+
+class _HomeStudentCoursesCalendarContentWidget extends StatefulWidget {
+  final List<StudentCourse>? courses;
+  final int weekday;
+
+  _HomeStudentCoursesCalendarContentWidget({this.courses, required this.weekday});
+
+  @override
+  State<StatefulWidget> createState() => _HomeStudentCoursesCalendarContentWidgetState();
+}
+
+class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCoursesCalendarContentWidget> {
+
+  static const double _hourHeight = 40;
+  static const double _timeColumnWidth = 64;
+  static const int _startHour = 8;
+  static const int _endHour = 16; // 4 PM
+
+  static const double _hourLabelRightMargin = 24;
+  static const double _hourLineLength = 20;
+  static const double _hourLineRightOvershoot = 4;
+  static const double _closingRowHeight = 20;
+
+  late final List<Color> _coursePalette;
+  Map<String, Color> _courseColors = <String, Color>{};
+  List<StudentCourseBlock> _blocks = <StudentCourseBlock>[];
+
+  @override
+  void initState() {
+    super.initState();
+    _coursePalette = StudentCoursesCalendarLayout.defaultPalette;
+    _updateCourseColors();
+    _updateBlocks();
+  }
+
+  @override
+  void didUpdateWidget(_HomeStudentCoursesCalendarContentWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _updateCourseColors();
+    _updateBlocks();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    int visibleHourCount = _endHour - _startHour;
+    return SizedBox(
+      height: (visibleHourCount * _hourHeight) + _closingRowHeight,
+      child: Stack(clipBehavior: Clip.hardEdge, children: <Widget>[
+        Positioned(top: 0, left: 0, right: 0, height: visibleHourCount * _hourHeight, child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            _buildTimeColumn(),
+            Expanded(child: _buildDayColumn()),
+          ]),
+        ),
+        Positioned(top: visibleHourCount * _hourHeight, left: 0, right: 0, child: _buildClosingHourRow()),
+      ]),
+    );
+  }
+
+  // Data prep
+
+  void _updateBlocks() {
+    List<StudentCourseBlock> blocks = <StudentCourseBlock>[];
+    for (StudentCourse course in widget.courses ?? <StudentCourse>[]) {
+      int? startMinutes = course.section?.startTimeMinutes;
+      bool matchesWeekday = course.section?.weekdays.contains(widget.weekday) ?? false;
+      if ((startMinutes != null) && matchesWeekday) {
+        StudentCourseBlock block = StudentCourseBlock(course: course, startMinutes: startMinutes, durationMinutes: StudentCoursesCalendarLayout.fixedDurationMinutes);
+        if ((block.startMinutes < (_endHour * 60)) && (block.endMinutes > (_startHour * 60))) {
+          blocks.add(block);
+        }
+      }
+    }
+    StudentCoursesCalendarLayout.layoutOverlappingBlocks(blocks);
+    _blocks = blocks;
+  }
+
+  void _updateCourseColors() {
+    _courseColors = StudentCoursesCalendarLayout.computeCourseColors(widget.courses, _coursePalette);
+  }
+
+  // Hour grid + course blocks
+
+  Widget _buildTimeColumn() {
+    int visibleHourCount = _endHour - _startHour;
+    return SizedBox(width: _timeColumnWidth, height: visibleHourCount * _hourHeight, child:
+      Stack(clipBehavior: Clip.none, children: <Widget>[
+        ...List<Widget>.generate(visibleHourCount, (int index) =>
+          Positioned(top: index * _hourHeight, right: -_hourLineRightOvershoot, width: _hourLineLength, child:
+            Container(height: 1, color: Styles().colors.surfaceAccent),
+          )
+        ),
+        ...List<Widget>.generate(visibleHourCount, (int index) =>
+          Positioned(top: (index * _hourHeight) - 7, left: 0, right: _hourLabelRightMargin, child:
+            Text(StudentCoursesCalendarLayout.hourLabel(_startHour + index), textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.message.tiny')),
+          )
+        ),
+      ]),
+    );
+  }
+
+  Widget _buildClosingHourRow() {
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      SizedBox(width: _timeColumnWidth, height: _closingRowHeight, child:
+        Stack(clipBehavior: Clip.none, children: <Widget>[
+          Positioned(top: 0, right: -_hourLineRightOvershoot, width: _hourLineLength, child:
+            Container(height: 1, color: Styles().colors.surfaceAccent),
+          ),
+          Positioned(top: -7, left: 0, right: _hourLabelRightMargin, child:
+            Text(StudentCoursesCalendarLayout.hourLabel(_endHour), textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.message.tiny')),
+          ),
+        ]),
+      ),
+      Expanded(child: Container(height: 1, color: Styles().colors.surfaceAccent)),
+    ]);
+  }
+
+  Widget _buildDayColumn() {
+    return Container(
+      decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.surfaceAccent, width: 1))),
+      child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) =>
+        Stack(children: <Widget>[
+          _buildHourLines(),
+          ..._blocks.map((StudentCourseBlock block) => _buildCourseBlock(block, dayWidth: constraints.maxWidth)),
+        ]),
+      ),
+    );
+  }
+
+  Widget _buildHourLines() {
+    int visibleHourCount = _endHour - _startHour;
+    return Column(children: List<Widget>.generate(visibleHourCount, (_) =>
+      Container(height: _hourHeight, decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))))
+    ));
+  }
+
+  Widget _buildCourseBlock(StudentCourseBlock block, {required double dayWidth}) {
+    double columnWidth = dayWidth / block.columnCount;
+    double windowStartMinutes = (_startHour * 60).toDouble();
+    return Positioned(
+      top: ((block.startMinutes - windowStartMinutes) / 60.0) * _hourHeight,
+      left: block.column * columnWidth,
+      width: columnWidth,
+      height: (block.durationMinutes / 60.0) * _hourHeight,
+      child: Padding(padding: EdgeInsets.all(1), child:
+        InkWell(onTap: () => _onTapCourse(block.course), child:
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            decoration: BoxDecoration(
+              color: _courseColors[block.course.shortName] ?? Styles().colors.background,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(block.course.shortName ?? (block.course.title ?? ''),
+              maxLines: 3, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center,
+              style: Styles().textStyles.getTextStyle('widget.message.tiny.fat'),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _onTapCourse(StudentCourse course) {
+    Analytics().logSelect(target: "Student Course: ${course.title}");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCourseDetailPanel(course: course)));
   }
 }

@@ -44,7 +44,6 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
   static const double _minHourHeight = 40;
   static const double _timeColumnWidth = 64;
   static const int _initialVisibleHour = 7;
-  static const int _fixedDurationMinutes = 60; // backend provides no real class duration
 
   static const double _dayHeaderRowHeight = 44;
   static const double _dayHeaderDividerHeight = 8;
@@ -73,14 +72,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    _coursePalette = <Color>[
-      Styles().colors.getColor('studentCourseYellowColor') ?? const Color(0xFFEFEECE),
-      Styles().colors.getColor('studentCourseOrangeColor') ?? const Color(0xFFF4E5CE),
-      Styles().colors.getColor('studentCourseRedColor') ?? const Color(0xFFF6E6E2),
-      Styles().colors.getColor('studentCoursePurpleColor') ?? const Color(0xFFEDE3F4),
-      Styles().colors.getColor('studentCourseBlueColor') ?? const Color(0xFFD2E6EC),
-      Styles().colors.getColor('studentCourseGreenColor') ?? const Color(0xFFE1EED4),
-    ];
+    _coursePalette = StudentCoursesCalendarLayout.defaultPalette;
     _updateCourseColors();
     _updateBlocksByWeekday();
   }
@@ -154,7 +146,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
       if (startMinutes != null) {
         for (int weekday in course.section?.weekdays ?? <int>[]) {
           blocksByWeekday.putIfAbsent(weekday, () => <StudentCourseBlock>[]).add(
-            StudentCourseBlock(course: course, startMinutes: startMinutes, durationMinutes: _fixedDurationMinutes)
+            StudentCourseBlock(course: course, startMinutes: startMinutes, durationMinutes: StudentCoursesCalendarLayout.fixedDurationMinutes)
           );
         }
       }
@@ -229,7 +221,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
         ),
         ...List<Widget>.generate(24, (int hour) =>
           Positioned(top: (hour * _hourHeight) - 7, left: 0, right: _hourLabelRightMargin, child:
-            Text(_hourLabel(hour), textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.message.tiny')),
+            Text(StudentCoursesCalendarLayout.hourLabel(hour), textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.message.tiny')),
           )
         ),
       ]),
@@ -244,27 +236,12 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
             Container(height: 1, color: Styles().colors.surfaceAccent),
           ),
           Positioned(top: -7, left: 0, right: _hourLabelRightMargin, child:
-            Text(_hourLabel(0), textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.message.tiny')),
+            Text(StudentCoursesCalendarLayout.hourLabel(0), textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.message.tiny')),
           ),
         ]),
       ),
       Expanded(child: Container(height: 1, color: Styles().colors.surfaceAccent)),
     ]);
-  }
-
-  String _hourLabel(int hour) {
-    if (hour == 0) {
-      return '12 AM';
-    }
-    else if (hour < 12) {
-      return '$hour AM';
-    }
-    else if (hour == 12) {
-      return '12 PM';
-    }
-    else {
-      return '${hour - 12} PM';
-    }
   }
 
   Widget _buildDayColumn({required List<StudentCourseBlock> blocks}) {

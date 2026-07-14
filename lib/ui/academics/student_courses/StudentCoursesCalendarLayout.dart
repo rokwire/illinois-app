@@ -18,6 +18,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class StudentCourseBlock {
   final StudentCourse course;
@@ -32,6 +33,33 @@ class StudentCourseBlock {
 }
 
 class StudentCoursesCalendarLayout {
+
+  // The backend provides no real class duration, so every course block is rendered with this fixed duration.
+  static const int fixedDurationMinutes = 60;
+
+  static List<Color> get defaultPalette => <Color>[
+    Styles().colors.getColor('studentCourseYellowColor') ?? const Color(0xFFEFEECE),
+    Styles().colors.getColor('studentCourseOrangeColor') ?? const Color(0xFFF4E5CE),
+    Styles().colors.getColor('studentCourseRedColor') ?? const Color(0xFFF6E6E2),
+    Styles().colors.getColor('studentCoursePurpleColor') ?? const Color(0xFFEDE3F4),
+    Styles().colors.getColor('studentCourseBlueColor') ?? const Color(0xFFD2E6EC),
+    Styles().colors.getColor('studentCourseGreenColor') ?? const Color(0xFFE1EED4),
+  ];
+
+  static String hourLabel(int hour) {
+    if (hour == 0) {
+      return '12 AM';
+    }
+    else if (hour < 12) {
+      return '$hour AM';
+    }
+    else if (hour == 12) {
+      return '12 PM';
+    }
+    else {
+      return '${hour - 12} PM';
+    }
+  }
 
   static void layoutOverlappingBlocks(List<StudentCourseBlock> blocks) {
     blocks.sort((StudentCourseBlock block1, StudentCourseBlock block2) => block1.startMinutes.compareTo(block2.startMinutes));
