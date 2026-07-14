@@ -48,6 +48,8 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   double _screenInsetsBottom = 0;
   Timer? _screenInsetsBottomChangedTimer;
 
+  String? _deletingMessageId;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -168,6 +170,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
           group: widget.group,
           //groupMember: MemberExt.getMember(widget.groupAdmins, userId: message.sender?.accountId),
           onCommand: () => _onMessageCommand(message),
+          commandProgress: ((_deletingMessageId != null) && (_deletingMessageId == message.globalId)),
           analyticsFeature: widget.analyticsFeature,
         ),
       ),);
@@ -427,13 +430,42 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbusePanel(options: options, groupId: widget.group?.id ?? '', socialEntityId: message.globalId, socialEntityType: SocialEntityType.message,)));
   }
 
+  void _onDeleteMessage(Message message) async {
+    Analytics().logSelect(target: 'Delete Message');
+    Navigator.pop(context);
+
+    if (_deletingMessageId != message.globalId) {
+
+      bool? deleteConfirmed = await GroupConversationConfirmDeleteDialog.show(context,
+        Localization().getStringEx('', 'Deleting messages cannot be reversed.'),
+        Localization().getStringEx('', 'How would you like to proceed?',));
+
+      if ((deleteConfirmed == true) && mounted) {
+        setState(() {
+          _deletingMessageId = message.globalId;
+        });
+
+        bool succeeded = await Social().deleteConversationMessage(conversationId: widget.conversation.id ?? '', globalMessageId: message.globalId ?? '');
+        if (mounted) {
+          setState(() {
+            _deletingMessageId = null;
+          });
+          if (succeeded) {
+            setState(() {
+              _contentList?.removeWhere((entry) => (entry.globalId == message.globalId));
+            });
+          } else {
+            AppAlert.showDialogResult(context, Localization().getStringEx('', 'Failed to delete message'));
+          }
+        }
+      }
+    }
+  }
+
   void _onEditMessage(Message message) {
     Analytics().logSelect(target: 'Edit Message');
   }
 
-  void _onDeleteMessage(Message message) {
-    Analytics().logSelect(target: 'Delete Message');
-  }
 }
 
 enum _ContentActivity { reload, refresh, update, extend }

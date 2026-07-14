@@ -405,7 +405,7 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
 
   void _onDelete() async {
     if (_deleteProgress == false) {
-      bool? deleteConfirmed = await GroupConversationConfirmDeleteDialog.show(context);
+      bool? deleteConfirmed = await GroupConversationConfirmDeleteDialog.show(context, Localization().getStringEx('', 'Delete this conversation?',));
       if ((deleteConfirmed == true) && mounted) {
         setState(() {
           _deleteProgress = true;
@@ -583,8 +583,8 @@ class GroupConversationMessageHeader extends StatelessWidget {
     onTap: onCommand,
   );
 
-  Widget get _commandProgressIndicator => Padding(padding: EdgeInsets.all(_buttonPadding), child:
-    SizedBox.square(dimension: _buttonIconSize, child:
+  Widget get _commandProgressIndicator => Padding(padding: EdgeInsets.all(_buttonPadding + 2), child:
+    SizedBox.square(dimension: _buttonIconSize - 2, child:
       CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary),
     )
   );
@@ -999,19 +999,24 @@ class GroupConversationLinkDialog extends StatelessWidget {
 }
 
 class GroupConversationConfirmDeleteDialog extends StatelessWidget {
+  final String? statement1;
+  final String? statement2;
 
-  static Future<bool?>show(BuildContext context) =>
+  GroupConversationConfirmDeleteDialog({this.statement1, this.statement2});
+
+  static Future<bool?>show(BuildContext context, [String? statement1, String? statement2]) =>
     showDialog(context: context, builder: (_) => AlertDialog(
       contentPadding: const EdgeInsets.all(24),
-      content: GroupConversationConfirmDeleteDialog(),
+      content: GroupConversationConfirmDeleteDialog(statement1: statement1, statement2: statement2),
     ));
 
   @override
   Widget build(BuildContext context) =>
     Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Text(Localization().getStringEx('', 'Delete this conversation?',),
-        style: Styles().textStyles.getTextStyle('widget.detail.regular'),
-      ),
+      if (statement1?.isNotEmpty == true)
+        Text(statement1 ?? '', style: Styles().textStyles.getTextStyle('widget.detail.regular'),),
+      if (statement2?.isNotEmpty == true)
+        Text(statement2 ?? '', style: Styles().textStyles.getTextStyle('widget.detail.regular'),),
       Padding(padding: const EdgeInsets.only(top: 24), child:
         Row(children: [
           Expanded(flex: 1, child: Container()),
