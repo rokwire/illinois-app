@@ -48,7 +48,15 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   double _screenInsetsBottom = 0;
   Timer? _screenInsetsBottomChangedTimer;
 
-  String? _deletingMessageId;
+  FocusNode _editFocusNode = FocusNode();
+
+  Message? _deletingMessage;
+  String? get _deletingMessageId => _deletingMessage?.globalId;
+
+  Message? _editingMessage;
+  String? get _editingMessageText => _editingMessage?.message;
+  String? get _editingMessageId => _editingMessage?.globalId;
+  bool get _isEditingMessage => (_editingMessageId?.isNotEmpty == true);
 
   @override
   void initState() {
@@ -72,6 +80,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     WidgetsBinding.instance.removeObserver(this);
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
+    _editFocusNode.dispose();
     super.dispose();
   }
 
@@ -145,8 +154,12 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     ),
     GroupConversationMessageEditBar(
       autofocus: false,
-      title: Localization().getStringEx('', 'REPLY'),
-      onSendMessage: (widget.conversation.id?.isNotEmpty == true) ? _onSendMessage : null ,
+      focusNode: _editFocusNode,
+      title: _isEditingMessage ? Localization().getStringEx('', 'EDiT') : Localization().getStringEx('', 'REPLY'),
+      text: _isEditingMessage ? _editingMessageText : null,
+      showSubmitProgress: _isEditingMessage,
+      onSubmitMessage: (widget.conversation.id?.isNotEmpty == true) ? _onSubmitMessage : null,
+      onCancelEdit: _isEditingMessage ? _onCancelEdit : null,
     ),
   ],);
 
@@ -171,6 +184,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
           //groupMember: MemberExt.getMember(widget.groupAdmins, userId: message.sender?.accountId),
           onCommand: () => _onMessageCommand(message),
           commandProgress: ((_deletingMessageId != null) && (_deletingMessageId == message.globalId)),
+          commandIcon: ((_editingMessageId != null) && (_editingMessageId == message.globalId)) ? _editingMessageIcon : null,
           analyticsFeature: widget.analyticsFeature,
         ),
       ),);
@@ -208,6 +222,8 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
       ),
     ),
   );
+  
+  Widget? get _editingMessageIcon => Styles().images.getImage('edit', size: GroupConversationMessageHeader.buttonIconSize);
 
   Widget get _hideKeyboardLayer =>
     Visibility(visible: _keyboardVisible, child:
@@ -354,6 +370,9 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     }
   }
 
+  Future<bool> _onSubmitMessage(String message) =>
+    _isEditingMessage ? _onUpdateMessage(message) : _onSendMessage(message);
+
   Future<bool> _onSendMessage(String message) async {
     // Create a temporary message and add it immediately
     Message tempMessage = Message(
@@ -377,13 +396,19 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
 
     if (mounted) {
       Message? newMessage = newMessages?.firstOrNull;
+
+      int? index = _contentList?.indexOf(tempMessage);
+      if ((index != null) && (index >= 0)) {
+        setState(() {
+          if (newMessage != null) {
+            _contentList?[index] = newMessage;
+          } else {
+            _contentList?.removeAt(index);
+          }
+        });
+      }
+
       if (newMessage != null) {
-        int? index = _contentList?.indexOf(tempMessage);
-        if ((index != null) && (index >= 0)) {
-          setState(() {
-            _contentList![index] = newMessage;
-          });
-        }
         return true;
       } else {
         AppAlert.showDialogResult(context, Localization().getStringEx('', 'Failed to send message.'));
@@ -391,6 +416,59 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
       }
     } else {
       return false;
+    }
+  }
+
+  Future<bool> _onUpdateMessage(String message) async {
+    if (_isEditingMessage) {
+      if (message == _editingMessage?.message) {
+        setState(() {
+          _editingMessage = null;
+        });
+        return true;
+      }
+      else {
+        bool success = await Social().updateConversationMessage(
+          conversationId: widget.conversation.id ?? '',
+          globalMessageId: _editingMessage?.globalId ?? '',
+          newText: message,
+        );
+        if (mounted) {
+          if (success) {
+            Message updatedMessage = Message.fromOther(_editingMessage,
+              message: message,
+              dateUpdatedUtc: DateTime.now().toUtc(), // Mark it as edited
+            );
+            int? index = _contentList?.indexWhere((msg) => msg.globalId == _editingMessage?.globalId);
+            setState(() {
+              if ((index != null) && (index >= 0)) {
+                _contentList?[index] = updatedMessage;
+              }
+              _editingMessage = null;
+            });
+            return true;
+          }
+          else {
+            AppAlert.showDialogResult(context, Localization().getStringEx('', 'Failed to update message'));
+            return false;
+          }
+        }
+        else {
+          return false;
+        }
+      }
+    }
+    else {
+      return false;
+    }
+  }
+
+  void _onCancelEdit() {
+    if (_isEditingMessage) {
+      setState(() {
+        _editingMessage = null;
+      });
+      FocusScope.of(context).unfocus();
     }
   }
 
@@ -442,13 +520,13 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
 
       if ((deleteConfirmed == true) && mounted) {
         setState(() {
-          _deletingMessageId = message.globalId;
+          _deletingMessage = message;
         });
 
         bool succeeded = await Social().deleteConversationMessage(conversationId: widget.conversation.id ?? '', globalMessageId: message.globalId ?? '');
         if (mounted) {
           setState(() {
-            _deletingMessageId = null;
+            _deletingMessage = null;
           });
           if (succeeded) {
             setState(() {
@@ -464,6 +542,16 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
 
   void _onEditMessage(Message message) {
     Analytics().logSelect(target: 'Edit Message');
+    Navigator.pop(context);
+    
+    if (!_isEditingMessage && (_deletingMessageId != message.id)) {
+      setState(() {
+        _editingMessage = message;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _editFocusNode.requestFocus();
+      });
+    }
   }
 
 }

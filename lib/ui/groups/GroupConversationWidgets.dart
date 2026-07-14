@@ -432,16 +432,17 @@ class GroupConversationMessageCard extends StatelessWidget {
   final Group? group;
   final Member? groupMember;
   final void Function()? onCommand;
+  final Widget? commandIcon;
   final bool commandProgress;
   final AnalyticsFeature? analyticsFeature;
 
-  GroupConversationMessageCard(this.message, { this.conversation, this.group, this.groupMember, this.onCommand, this.commandProgress = false, this.analyticsFeature });
+  GroupConversationMessageCard(this.message, { this.conversation, this.group, this.groupMember, this.onCommand, this.commandIcon, this.commandProgress = false, this.analyticsFeature });
 
   @override
   Widget build(BuildContext context) =>
     Container(decoration: _cardDecoration, child:
       Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        GroupConversationMessageHeader(message, conversation: conversation, group: group, groupMember: groupMember, onCommand: onCommand, commandProgress: commandProgress),
+        GroupConversationMessageHeader(message, conversation: conversation, group: group, groupMember: groupMember, onCommand: onCommand, commandIcon: commandIcon, commandProgress: commandProgress),
         Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding), child:
           SelectionArea(child:
             _bodyHtmlWidget,
@@ -504,8 +505,9 @@ class GroupConversationMessageHeader extends StatelessWidget {
   final Member? groupMember;
   final void Function()? onCommand;
   final bool commandProgress;
+  final Widget? commandIcon;
 
-  GroupConversationMessageHeader(this.message, { this.conversation, this.group, this.groupMember, this.onCommand, this.commandProgress = false });
+  GroupConversationMessageHeader(this.message, { this.conversation, this.group, this.groupMember, this.onCommand, this.commandIcon, this.commandProgress = false });
 
   @override
   Widget build(BuildContext context) => Row(crossAxisAlignment: CrossAxisAlignment.start, children:[
@@ -525,6 +527,8 @@ class GroupConversationMessageHeader extends StatelessWidget {
 
     if (commandProgress)
       _commandProgressIndicator
+    else if (commandIcon != null)
+      _commandIconIndicator
     else if (onCommand != null)
       _commandButton
   ]);
@@ -568,7 +572,7 @@ class GroupConversationMessageHeader extends StatelessWidget {
 
   Widget get _avtarWidget => DirectoryProfilePhoto(
     photoUrl: _avtarPhotoUrl,
-    photoSize: _photoSize,
+    photoSize: photoSize,
     photoUrlHeaders: DirectoryProfilePhotoUtils.authHeaders,
   );
 
@@ -576,28 +580,33 @@ class GroupConversationMessageHeader extends StatelessWidget {
     Content().getUserPhotoUrl(accountId: message.sender?.accountId, type: UserProfileImageType.medium,) : null;
 
   Widget get _commandButton => Event2ImageCommandButton(
-    Styles().images.getImage('more', size: _buttonIconSize, excludeFromSemantics: true),
+    Styles().images.getImage('more', size: buttonIconSize, excludeFromSemantics: true),
     label: Localization().getStringEx('', 'Commands'),
     hint: Localization().getStringEx('', ''),
-    contentPadding: EdgeInsets.all(_buttonPadding),
+    contentPadding: EdgeInsets.all(buttonPadding),
     onTap: onCommand,
   );
 
-  Widget get _commandProgressIndicator => Padding(padding: EdgeInsets.all(_buttonPadding + 2), child:
-    SizedBox.square(dimension: _buttonIconSize - 2, child:
+  Widget get _commandProgressIndicator => Padding(padding: EdgeInsets.all(buttonPadding + 2), child:
+    SizedBox.square(dimension: buttonIconSize - 2, child:
       CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary),
+    )
+  );
+
+  Widget get _commandIconIndicator => Padding(padding: EdgeInsets.all(buttonPadding), child:
+    SizedBox.square(dimension: buttonIconSize, child:
+      commandIcon,
     )
   );
 
   static const double _horzPadding = GroupConversationMessageCard._horzPadding;
   static const double _vertPadding = GroupConversationMessageCard._vertPadding;
-  static const double _buttonPadding = _vertPadding;
-  static const double _buttonIconSize = 18;
-  static const double _photoSize = 36;
+  static const double buttonPadding = _vertPadding;
+  static const double buttonIconSize = 18;
+  static const double photoSize = 36;
 }
 
 class GroupConversationMessageEditBar extends StatefulWidget {
-  final Future<bool> Function(String message)? onSendMessage;
 
   final String? title;
 
@@ -609,19 +618,29 @@ class GroupConversationMessageEditBar extends StatefulWidget {
   final int minLines;
   final int maxLines;
   final bool autofocus;
+  final FocusNode? focusNode;
 
   final EdgeInsetsGeometry padding;
 
-  GroupConversationMessageEditBar({ required this.onSendMessage,
+  final Future<bool> Function(String message)? onSubmitMessage;
+  final void Function()? onCancelEdit;
+  final bool showSubmitProgress;
+
+  GroupConversationMessageEditBar({
     this.title,
     this.text, this.hint, this.textStyle, this.linkTextStyle, // ignore: unused_element_parameter
-    this.minLines = 1, this.maxLines = 12, this.autofocus = false, // ignore: unused_element_parameter
+    this.minLines = 1, this.maxLines = 12, this.autofocus = false, this.focusNode, // ignore: unused_element_parameter
     this.padding = const EdgeInsetsGeometry.only(left: 24, right: 16, top: 8, bottom: 24), // ignore: unused_element_parameter
+    required this.onSubmitMessage, this.showSubmitProgress = false, this.onCancelEdit,
   });
 
   quill.Document get textDocument {
-    try { return quill.Document.fromDelta(HtmlToDelta().convert(text ?? '')); }
-    catch(e) { return quill.Document()..insert(0, text ?? ''); }
+    try {
+      return quill.Document.fromDelta(HtmlToDelta().convert(text ?? ''));
+    }
+    catch(e) {
+      return quill.Document()..insert(0, text ?? '');
+    }
   }
 
   @override
@@ -634,7 +653,6 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
 
   late quill.QuillController _quillController;
   late Delta _initialQuillDelta;
-  late FocusNode _focusNode;
   late TextStyle _textStyle;
   late TextStyle _linkTextStyle;
   Set<_EditBarCommand> _selectedCommands = <_EditBarCommand>{};
@@ -648,7 +666,6 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     ) : quill.QuillController.basic();
     _quillController.addListener(_onTextChanged);
     _initialQuillDelta = _quillController.document.toDelta();
-    _focusNode = FocusNode();
     _textStyle = widget.textStyle ?? Styles().textStyles.getTextStyle('widget.message.regular') ?? _defaultTextStyle;
     _linkTextStyle = widget.linkTextStyle ?? _textStyle.apply(color: _linkTextColor, decoration: TextDecoration.underline, decorationColor: _linkTextColor);
     super.initState();
@@ -658,8 +675,18 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
   void dispose() {
     _quillController.removeListener(_onTextChanged);
     _quillController.dispose();
-    _focusNode.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(GroupConversationMessageEditBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (mounted) {
+      if (widget.text != oldWidget.text) {
+        _quillUpdate();
+      } else {
+      }
+    }
   }
 
   @override
@@ -678,7 +705,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
             Padding(padding: _textPadding, child:
               quill.QuillEditor.basic(
                 controller: _quillController,
-                focusNode: _focusNode,
+                focusNode: widget.focusNode,
                 config: quill.QuillEditorConfig(
                   autoFocus: widget.autofocus,
                   placeholder: widget.hint,
@@ -701,28 +728,11 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
               ),
             ),
           ),
-          _submitButton,
-          // _submitting ? _submittingProgress : _submitButton,
+          (widget.showSubmitProgress && _submitting) ? _submittingProgress : _submitButton,
+          if (_hasCancelEdit)
+            _cancelEditButton,
         ],)
       );
-
-  Widget get _submitButton => Event2ImageCommandButton(
-    Styles().images.getImage('paper-plane',
-      color: _canSubmit ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-      size: _buttonIconSize,
-      excludeFromSemantics: true
-    ),
-    label: Localization().getStringEx('', 'Send'),
-    hint: Localization().getStringEx('', 'Tap to send message'),
-    contentPadding: _buttonPadding,
-    onTap: _canSubmit ? _onSubmit : null,
-  );
-
-  /* Widget get _submittingProgress => Padding(padding: _buttonPadding, child:
-    SizedBox.square(dimension: 18, child:
-      CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary),
-    )
-  ); */
 
   BoxDecoration get _textDecoration => BoxDecoration(
       color: Styles().colors.surface,
@@ -763,7 +773,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
         _formatButtonImage(command),
         label: command.accLabel,
         hint: command.accHint,
-        contentPadding: _buttonPadding,
+        contentPadding: _singleButtonPadding,
         onTap: onTap,
       );
 
@@ -777,9 +787,6 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
   Color _formatButtonColor(_EditBarCommand? command) =>
     ((command != null) && _selectedCommands.contains(command)) ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary;
 
-  static const double _buttonIconSize = 16;
-  static const EdgeInsetsGeometry _buttonPadding = const EdgeInsetsGeometry.symmetric(horizontal: 12, vertical: 8);
-
   bool _hasTextFormat(quill.Attribute attribute) =>
     _quillController.getSelectionStyle().attributes.containsKey(attribute.key);
 
@@ -787,8 +794,6 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     _quillController.formatSelection(
       _hasTextFormat(attribute) ? quill.Attribute.clone(attribute, null) : attribute,
     );
-
-  bool get _canSubmit => _selectedCommands.contains(_EditBarCommand.submit) && (widget.onSendMessage != null);
 
   String get _quillHtml {
     final deltaOps = _quillController.document.toDelta().toJson();
@@ -804,15 +809,36 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
   }
 
   void _quillReset() {
+    _quillController.removeListener(_onTextChanged);
+    _quillController.dispose();
+
+    quill.QuillController quillController = quill.QuillController.basic();
+    quillController.addListener(_onTextChanged);
+
     setState(() {
-      _quillController.removeListener(_onTextChanged);
-      _quillController.dispose();
-
-      _quillController = quill.QuillController.basic();
-      _quillController.addListener(_onTextChanged);
-
+      _quillController = quillController;
       _initialQuillDelta = _quillController.document.toDelta();
     });
+
+    _onTextChanged();
+  }
+
+  void _quillUpdate() {
+    _quillController.removeListener(_onTextChanged);
+    _quillController.dispose();
+
+    quill.QuillController quillController = (widget.text?.isNotEmpty == true) ? quill.QuillController(
+      document: widget.textDocument,
+      selection: const TextSelection.collapsed(offset: 0, ),
+    ) : quill.QuillController.basic();
+    quillController.addListener(_onTextChanged);
+
+    setState(() {
+      _quillController = quillController;
+      _initialQuillDelta = _quillController.document.toDelta();
+    });
+
+    _onTextChanged();
   }
 
   void _onTextChanged() {
@@ -880,6 +906,47 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     Analytics().logSelect(target: 'Picture');
   }
 
+  bool get _canSubmit => _selectedCommands.contains(_EditBarCommand.submit) && (widget.onSubmitMessage != null);
+  bool get _hasCancelEdit => (widget.onCancelEdit != null);
+
+  Widget get _submitButton => Event2ImageCommandButton(
+    Styles().images.getImage('paper-plane',
+      color: _canSubmit ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+      size: _buttonIconSize,
+      excludeFromSemantics: true
+    ),
+    label: Localization().getStringEx('', 'Send'),
+    hint: Localization().getStringEx('', 'Tap to send message'),
+    contentPadding: _hasCancelEdit ? _firstButtonPadding : _singleButtonPadding,
+    onTap: _canSubmit ? _onSubmit : null,
+  );
+
+  Widget get _submittingProgress =>
+    Padding(padding: _hasCancelEdit ? _firstButtonPadding : _singleButtonPadding, child:
+      SizedBox.square(dimension: _buttonIconSize, child:
+        CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary),
+      )
+    );
+
+  Widget get _cancelEditButton => Event2ImageCommandButton(
+    Styles().images.getImage('close-circle',
+      color: Styles().colors.fillColorSecondary,
+      size: _buttonIconSize,
+      excludeFromSemantics: true
+    ),
+    label: Localization().getStringEx('', 'Cancel'),
+    hint: Localization().getStringEx('', 'Tap to cancel edit'),
+    contentPadding: _lastButtonPadding,
+    onTap: _onCancel,
+  );
+
+  static const double _buttonIconSize = 16;
+  static const double _buttonPaddingH = 12;
+  static const double _buttonPaddingV = 8;
+  static const EdgeInsetsGeometry _singleButtonPadding = const EdgeInsetsGeometry.symmetric(horizontal: _buttonPaddingH, vertical: _buttonPaddingV);
+  static const EdgeInsetsGeometry _firstButtonPadding = const EdgeInsetsGeometry.only(left: _buttonPaddingH, right: _buttonPaddingH / 2, top: _buttonPaddingV, bottom: _buttonPaddingV);
+  static const EdgeInsetsGeometry _lastButtonPadding = const EdgeInsetsGeometry.only(left: _buttonPaddingH / 2, right: _buttonPaddingH, top: _buttonPaddingV, bottom: _buttonPaddingV);
+
   void _onSubmit() async {
     Analytics().logSelect(target: 'Submit');
     if (_canSubmit && !_submitting)
@@ -887,11 +954,22 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
       _submitting = true;
     });
 
-    bool? succeeded = await widget.onSendMessage?.call(_quillHtml);
+    bool? succeeded = await widget.onSubmitMessage?.call(_quillHtml);
 
-    if (mounted && (succeeded == true)) {
-      _quillReset();
+    if (mounted) {
+      setState(() {
+        _submitting = false;
+      });
+      if (succeeded == true) {
+        FocusScope.of(context).unfocus();
+        _quillReset();
+      }
     }
+  }
+
+  void _onCancel() {
+    Analytics().logSelect(target: 'Submit');
+    widget.onCancelEdit?.call();
   }
 
 }
