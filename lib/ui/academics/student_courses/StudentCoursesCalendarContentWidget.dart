@@ -298,7 +298,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             decoration: BoxDecoration(
-              color: _courseColors[block.course.number] ?? Styles().colors.background,
+              color: _courseColors[block.course.shortName] ?? Styles().colors.background,
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(block.course.shortName ?? (block.course.title ?? ''),

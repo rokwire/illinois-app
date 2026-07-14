@@ -71,12 +71,14 @@ class StudentCoursesCalendarLayout {
   }
 
   ///
-  /// Requirement: "It's important that the same color is not used for two separate classes (unless the user is taking more than 6 classes that semester)."
+  /// Requirement:
+  ///  - "It's important that the same color is not used for two separate classes (unless the user is taking more than 6 classes that semester)."
+  ///  - "... that example is one course based on the course short name so it would use the same color ..."
   ///
   static Map<String, Color> computeCourseColors(List<StudentCourse>? courses, List<Color> palette) {
     List<String> courseKeys = <String>[];
     for (StudentCourse course in courses ?? <StudentCourse>[]) {
-      String? courseKey = course.number;
+      String? courseKey = course.shortName;
       if ((courseKey != null) && !courseKeys.contains(courseKey)) {
         courseKeys.add(courseKey);
       }
