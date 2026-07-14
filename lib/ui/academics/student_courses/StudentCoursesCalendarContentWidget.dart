@@ -53,11 +53,6 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
   static const double _hourLineRightOvershoot = 4;
   static const double _closingRowHeight = 20;
 
-  static const List<int> _weekdayOrder = <int>[
-    DateTime.sunday, DateTime.monday, DateTime.tuesday, DateTime.wednesday,
-    DateTime.thursday, DateTime.friday, DateTime.saturday,
-  ];
-
   late final ScrollController _scrollController;
 
   double _hourHeight = _minHourHeight;
@@ -104,7 +99,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
     TZDateTime now = DateTimeUni.nowUniOrLocal();
 
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-      double dayColumnWidth = (constraints.maxWidth - _timeColumnWidth) / _weekdayOrder.length;
+      double dayColumnWidth = (constraints.maxWidth - _timeColumnWidth) / StudentCoursesCalendarLayout.weekdayOrder.length;
       _hourHeight = math.max(dayColumnWidth, _minHourHeight);
       WidgetsBinding.instance.addPostFrameCallback((_) => _applyInitialScrollOffsetIfNeeded());
 
@@ -119,7 +114,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
                     Positioned(top: 0, left: 0, right: 0, height: 24 * _hourHeight, child:
                       Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                         _buildTimeColumn(),
-                        ..._weekdayOrder.map((int weekday) => Expanded(child:
+                        ...StudentCoursesCalendarLayout.weekdayOrder.map((int weekday) => Expanded(child:
                           _buildDayColumn(blocks: _blocksByWeekday[weekday] ?? <StudentCourseBlock>[]),
                         )),
                       ]),
@@ -169,7 +164,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
       ),
       child: Row(children: <Widget>[
         SizedBox(width: _timeColumnWidth),
-        ..._weekdayOrder.map((int weekday) => Expanded(child:
+        ...StudentCoursesCalendarLayout.weekdayOrder.map((int weekday) => Expanded(child:
           Stack(children: <Widget>[
             _buildDayHeaderCell(weekday: weekday, isToday: (weekday == todayWeekday)),
             Positioned(left: 0, bottom: 0, child: _buildDayHeaderDivider()),
@@ -289,7 +284,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
   }
 
   Widget _buildNowLine({required int nowMinutes, required int todayWeekday}) {
-    int todayIndex = _weekdayOrder.indexOf(todayWeekday);
+    int todayIndex = StudentCoursesCalendarLayout.weekdayOrder.indexOf(todayWeekday);
     if (todayIndex < 0) {
       return Container();
     }

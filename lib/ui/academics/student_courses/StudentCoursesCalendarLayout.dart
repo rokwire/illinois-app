@@ -39,6 +39,11 @@ class StudentCoursesCalendarLayout {
   ///
   static const int fixedDurationMinutes = 60;
 
+  static const List<int> weekdayOrder = <int>[
+    DateTime.sunday, DateTime.monday, DateTime.tuesday, DateTime.wednesday,
+    DateTime.thursday, DateTime.friday, DateTime.saturday,
+  ];
+
   static List<Color> get defaultPalette => <Color>[
     Styles().colors.getColor('studentCourseYellowColor') ?? const Color(0xFFEFEECE),
     Styles().colors.getColor('studentCourseOrangeColor') ?? const Color(0xFFF4E5CE),
