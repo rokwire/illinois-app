@@ -1251,7 +1251,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     RibbonButton(
                       key: _canReportAbuse && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
                       leftIconKey: "report",
-                      title: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                      title: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.label", "Report to Dean of Students"),
                       onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true)   ),
                     )),
                 ])));

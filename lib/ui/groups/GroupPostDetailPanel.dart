@@ -595,12 +595,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
             children: <Widget>[
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconKey: "report",
-                title: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                title: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.label", "Report to Dean of Students"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), entityId: widget.post!.id!, entityType: SocialEntityType.post),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconKey: "report",
-                title: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
+                title: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.label", "Report to Group Administrator(s)"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), entityId: widget.post!.id!, entityType: SocialEntityType.post),
               )),
             ],
@@ -650,12 +650,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconKey: "feedback",
-                title: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                title: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.label", "Report to Dean of Students"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents: true), entityId: reply.id!, entityType: SocialEntityType.comment),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconKey: "feedback",
-                title: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
+                title: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.label", "Report to Group Administrator(s)"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), entityId: reply.id!, entityType: SocialEntityType.comment),
               )),
             ],

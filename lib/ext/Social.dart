@@ -156,6 +156,9 @@ extension CreatorExt on Creator{
 }
 
 extension ConversationMemberExt on ConversationMember {
+
+  bool get isCurrentUser => accountId == Auth2().accountId;
+
   static int compareNames(ConversationMember m1, ConversationMember m2) {
     String? n1 = m1.name, n2 = m2.name;
     if ((n1 != null) && (n2 != null)) {

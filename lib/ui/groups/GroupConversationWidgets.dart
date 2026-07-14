@@ -258,9 +258,8 @@ class GroupConversationHeader extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
   final Conversation conversation;
-  final void Function()? onTap;
 
-  GroupConversationHeader(this.conversation, {this.group, this.groupAdmins, this.onTap});
+  GroupConversationHeader(this.conversation, {this.group, this.groupAdmins});
 
   @override
   State<StatefulWidget> createState() => _GroupConversationHeaderState();
@@ -271,11 +270,10 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
   bool _deleteProgress = false;
 
   @override
-  Widget build(BuildContext context) => InkWell(onTap: widget.onTap, child:
+  Widget build(BuildContext context) =>
     Container(decoration: _headingDecoration, child: _multipleMembers ?
-    _multipleMembersDropdown : _singleMemberWidget
-    ),
-  );
+      _multipleMembersDropdown : _singleMemberWidget
+    );
 
   Widget get _singleMemberWidget => Row(children: [
     _avtarWidget,
@@ -433,15 +431,17 @@ class GroupConversationMessageCard extends StatelessWidget {
   final Conversation? conversation;
   final Group? group;
   final Member? groupMember;
+  final void Function()? onCommand;
+  final bool commandProgress;
   final AnalyticsFeature? analyticsFeature;
 
-  GroupConversationMessageCard(this.message, { this.conversation, this.group, this.groupMember, this.analyticsFeature });
+  GroupConversationMessageCard(this.message, { this.conversation, this.group, this.groupMember, this.onCommand, this.commandProgress = false, this.analyticsFeature });
 
   @override
   Widget build(BuildContext context) =>
     Container(decoration: _cardDecoration, child:
       Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        GroupConversationMessageHeader(message, conversation: conversation, group: group, groupMember: groupMember, onCommands: null,),
+        GroupConversationMessageHeader(message, conversation: conversation, group: group, groupMember: groupMember, onCommand: onCommand, commandProgress: commandProgress),
         Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding), child:
           SelectionArea(child:
             _bodyHtmlWidget,
@@ -502,9 +502,10 @@ class GroupConversationMessageHeader extends StatelessWidget {
   final Conversation? conversation;
   final Group? group;
   final Member? groupMember;
-  final void Function()? onCommands;
+  final void Function()? onCommand;
+  final bool commandProgress;
 
-  GroupConversationMessageHeader(this.message, { this.conversation, this.group, this.groupMember, this.onCommands });
+  GroupConversationMessageHeader(this.message, { this.conversation, this.group, this.groupMember, this.onCommand, this.commandProgress = false });
 
   @override
   Widget build(BuildContext context) => Row(crossAxisAlignment: CrossAxisAlignment.start, children:[
@@ -521,7 +522,11 @@ class GroupConversationMessageHeader extends StatelessWidget {
         ),
       ],),
     ),
-    _commandsButton,
+
+    if (commandProgress)
+      _commandProgressIndicator
+    else if (onCommand != null)
+      _commandButton
   ]);
 
   Widget get _detailsWidget =>
@@ -570,16 +575,24 @@ class GroupConversationMessageHeader extends StatelessWidget {
   String? get _avtarPhotoUrl => (message.sender?.accountId?.isNotEmpty == true) ?
     Content().getUserPhotoUrl(accountId: message.sender?.accountId, type: UserProfileImageType.medium,) : null;
 
-  Widget get _commandsButton => Event2ImageCommandButton(
-    Styles().images.getImage('more', excludeFromSemantics: true),
+  Widget get _commandButton => Event2ImageCommandButton(
+    Styles().images.getImage('more', size: _buttonIconSize, excludeFromSemantics: true),
     label: Localization().getStringEx('', 'Commands'),
     hint: Localization().getStringEx('', ''),
-    contentPadding: EdgeInsets.all(_vertPadding),
-    onTap: onCommands,
+    contentPadding: EdgeInsets.all(_buttonPadding),
+    onTap: onCommand,
+  );
+
+  Widget get _commandProgressIndicator => Padding(padding: EdgeInsets.all(_buttonPadding), child:
+    SizedBox.square(dimension: _buttonIconSize, child:
+      CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary),
+    )
   );
 
   static const double _horzPadding = GroupConversationMessageCard._horzPadding;
   static const double _vertPadding = GroupConversationMessageCard._vertPadding;
+  static const double _buttonPadding = _vertPadding;
+  static const double _buttonIconSize = 18;
   static const double _photoSize = 36;
 }
 

@@ -2,13 +2,18 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Group.dart';
+import 'package:illinois/ext/Social.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/ui/groups/GroupConversationWidgets.dart';
+import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
@@ -39,6 +44,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   bool? _lastPageLoadedAll;
   static const int _contentPageLength = 8;
 
+  bool _keyboardVisible = false;
   double _screenInsetsBottom = 0;
   Timer? _screenInsetsBottomChangedTimer;
 
@@ -80,13 +86,14 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   void didChangeMetrics() {
     if (mounted) {
       double screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
+      debugPrint('didChangeMetrics: $_screenInsetsBottom => $screenInsetsBottom');
       if (screenInsetsBottom != _screenInsetsBottom) {
         _screenInsetsBottom = screenInsetsBottom;
         _screenInsetsBottomChangedTimer?.cancel();
-        _screenInsetsBottomChangedTimer = Timer(Duration(milliseconds: 100), (){
-          if (mounted) {
+        _screenInsetsBottomChangedTimer = Timer(Duration(milliseconds: 300), (){
+          if (mounted && (_screenInsetsBottom == screenInsetsBottom)) {
             _screenInsetsBottomChangedTimer = null;
-            _onKeyboardVisibilityChanged();
+            _checkKeyboardVisibility();
           }
         });
       }
@@ -118,23 +125,26 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     }
   }
 
-  Widget get _messagesContent => Column(children: [
-    GroupConversationHeader(widget.conversation, group: widget.group, groupAdmins: widget.groupAdmins, onTap: _isKeyboardVisible ? _onHideKeyboard : null,),
+  Widget get _messagesContent =>
+  Column(children: [
+    Stack(children: <Widget>[
+      GroupConversationHeader(widget.conversation, group: widget.group, groupAdmins: widget.groupAdmins),
+      _hideKeyboardLayer,
+    ],),
     Expanded(child:
-      RefreshIndicator(onRefresh: _onRefresh, child:
-        SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), scrollDirection: Axis.vertical, child:
-          Stack(children: [
+      Stack(children: <Widget>[
+        RefreshIndicator(onRefresh: _onRefresh, child:
+          SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), scrollDirection: Axis.vertical, child:
             _listContent,
-            Positioned.fill(child:
-              InkWell(onTap: _isKeyboardVisible ?  _onHideKeyboard : null, child: Container()),
-            )
-          ],)
-        )
-      )
+          )
+        ),
+        _hideKeyboardLayer,
+      ],),
     ),
     GroupConversationMessageEditBar(
-      onSendMessage: (widget.conversation.id?.isNotEmpty == true) ? _onSendMessage : null ,
+      autofocus: false,
       title: Localization().getStringEx('', 'REPLY'),
+      onSendMessage: (widget.conversation.id?.isNotEmpty == true) ? _onSendMessage : null ,
     ),
   ],);
 
@@ -157,6 +167,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
           conversation: widget.conversation,
           group: widget.group,
           //groupMember: MemberExt.getMember(widget.groupAdmins, userId: message.sender?.accountId),
+          onCommand: () => _onMessageCommand(message),
           analyticsFeature: widget.analyticsFeature,
         ),
       ),);
@@ -166,6 +177,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
       Column(children:  cardsList,)
     );
   }
+
 
   Widget _buildMessageContent(String message, { String? title }) => Center(child:
     Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
@@ -193,6 +205,15 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
       ),
     ),
   );
+
+  Widget get _hideKeyboardLayer =>
+    Visibility(visible: _keyboardVisible, child:
+      Positioned.fill(child:
+        GestureDetector(onTap: _onHideKeyboard, child:
+          Container(color: Color(0x99000000))
+        )
+      )
+    );
 
   double get _screenHeight => MediaQuery.of(context).size.height;
   double get _screenWidth => MediaQuery.of(context).size.width;
@@ -293,14 +314,21 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     _scrollController.jumpTo(scrollMaxExtent);
   }
 
-  void _onKeyboardVisibilityChanged() {
-    if (_isKeyboardVisible && mounted) {
-      _scrollToLast();
+  void _checkKeyboardVisibility() {
+    if (mounted) {
+      double screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
+      bool keyboardVisible = (screenInsetsBottom > 50);
+      debugPrint('_checkKeyboardVisibility: $keyboardVisible ($screenInsetsBottom)');
+      if (_keyboardVisible != keyboardVisible) {
+        setState((){
+          _keyboardVisible = keyboardVisible;
+        });
+      }
+      if (keyboardVisible) {
+        _scrollToLast();
+      }
     }
-    setStateIfMounted();
   }
-
-  bool get _isKeyboardVisible => (_screenInsetsBottom > 0);
 
   void _onHideKeyboard() {
     FocusScope.of(context).unfocus();
@@ -366,6 +394,45 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   Future<void> _onRefresh() async {
     Analytics().logSelect(target: 'Refresh');
     return _refreshContent();
+  }
+
+  void _onMessageCommand(Message message) {
+    Analytics().logSelect(target: 'Conversation Message Commands', attributes: widget.group?.analyticsAttributes);
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Styles().colors.surface,
+      isScrollControlled: true,
+      isDismissible: true,
+      barrierLabel: "Dismiss Menu",
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (context) => Padding(padding: EdgeInsetsGeometry.all(16), child:
+        Column(mainAxisSize: MainAxisSize.min, children: _buildMessageCommandEntries(message))
+      )
+    );
+  }
+
+  List<Widget> _buildMessageCommandEntries(Message message) => <Widget>[
+    if (message.sender?.isCurrentUser != true) ...<Widget>[
+      RibbonButton(title: Localization().getStringEx('panel.group.detail.post.button.report.students_dean.label', 'Report to Dean of Students'), leftIconKey: 'comment', onTap: () => _onReportMessageAbuse(message, options: GroupPostReportAbuseOptions(reportToDeanOfStudents: true))),
+      RibbonButton(title: Localization().getStringEx('panel.group.detail.post.button.report.group_admins.label', 'Report to Group Administrator(s)'), leftIconKey: 'comment', onTap: () => _onReportMessageAbuse(message, options: GroupPostReportAbuseOptions(reportToGroupAdmins: true))),
+    ] else ...<Widget>[
+      RibbonButton(title: Localization().getStringEx('dialog.edit.title', 'Edit'), leftIconKey: 'edit', onTap: () => _onEditMessage(message)),
+      RibbonButton(title: Localization().getStringEx('dialog.delete.title', 'Delete'), leftIconKey: 'trash', onTap: () => _onDeleteMessage(message)),
+    ]
+
+  ];
+
+  void _onReportMessageAbuse(Message message, {required GroupPostReportAbuseOptions options}) {
+    Analytics().logSelect(target: options.analyticsSelectTarget);
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbusePanel(options: options, groupId: widget.group?.id ?? '', socialEntityId: message.globalId, socialEntityType: SocialEntityType.message,)));
+  }
+
+  void _onEditMessage(Message message) {
+    Analytics().logSelect(target: 'Edit Message');
+  }
+
+  void _onDeleteMessage(Message message) {
+    Analytics().logSelect(target: 'Delete Message');
   }
 }
 

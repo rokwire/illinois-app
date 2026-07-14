@@ -954,6 +954,7 @@
     "recurrence": {"src": "images/icon-recurring-event.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "attendance": {"src": "0xf7f3", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
     "report": {"src": "0xf06a", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 20},
+    "comment": {"src": "0xf075", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "clock": {"src": "0xf017", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
     "toilet": {"src": "0xf7d8", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
     "times": {"src": "0xf00d", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 18},
