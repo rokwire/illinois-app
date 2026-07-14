@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -224,9 +225,11 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
     }
   }
 
-  Widget _buildCalendarContent() => _HomeStudentCoursesCalendarContentWidget(
-    courses: _courses,
-    weekday: DateTimeUni.nowUniOrLocal().weekday,
+  Widget _buildCalendarContent() => Padding(padding: HomeCard.defaultSingleCardMargin, child:
+    _HomeStudentCoursesCalendarContentWidget(
+      courses: _courses,
+      weekday: DateTimeUni.nowUniOrLocal().weekday,
+    ),
   );
 
   Widget _buildCoursesContent() {
@@ -330,15 +333,17 @@ class _HomeStudentCoursesCalendarContentWidget extends StatefulWidget {
 
 class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCoursesCalendarContentWidget> {
 
-  static const double _hourHeight = 40;
-  static const double _timeColumnWidth = 64;
+  static const double _minHourHeight = 24; // floor so hour rows never become unreadably small
   static const int _startHour = 8;
   static const int _endHour = 16; // 4 PM
 
-  static const double _hourLabelRightMargin = 24;
-  static const double _hourLineLength = 20;
-  static const double _hourLineRightOvershoot = 4;
-  static const double _closingRowHeight = 20;
+  static const double _cardPadding = 16;
+  static const double _headerHeight = 32;
+  static const double _gridTopPadding = 8;
+  static const double _timeColumnGap = 8; // space between the hour labels and the day column
+  static const double _closingRowHeight = 16;
+
+  double _hourHeight = _minHourHeight;
 
   late final List<Color> _coursePalette;
   Map<String, Color> _courseColors = <String, Color>{};
@@ -362,18 +367,59 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
   @override
   Widget build(BuildContext context) {
     int visibleHourCount = _endHour - _startHour;
-    return SizedBox(
-      height: (visibleHourCount * _hourHeight) + _closingRowHeight,
-      child: Stack(clipBehavior: Clip.hardEdge, children: <Widget>[
-        Positioned(top: 0, left: 0, right: 0, height: visibleHourCount * _hourHeight, child:
+    double targetCardHeight = StudentCourseCard.height(context);
+    double chromeHeight = _headerHeight + _gridTopPadding + _cardPadding + _closingRowHeight;
+    _hourHeight = math.max((targetCardHeight - chromeHeight) / visibleHourCount, _minHourHeight);
+
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: HomeCard.boxDecoration,
+      child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        _buildHeader(),
+        Padding(padding: EdgeInsets.fromLTRB(_cardPadding, _gridTopPadding, _cardPadding, _cardPadding), child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             _buildTimeColumn(),
-            Expanded(child: _buildDayColumn()),
+            SizedBox(width: _timeColumnGap),
+            Expanded(child: SizedBox(height: visibleHourCount * _hourHeight, child: _buildDayColumn())),
           ]),
         ),
-        Positioned(top: visibleHourCount * _hourHeight, left: 0, right: 0, child: _buildClosingHourRow()),
       ]),
     );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      height: _headerHeight,
+      padding: EdgeInsets.symmetric(horizontal: _cardPadding),
+      decoration: BoxDecoration(
+        color: HomeCard.backColor,
+        border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
+        boxShadow: <BoxShadow>[BoxShadow(color: Styles().colors.blackTransparent018, blurRadius: 2, offset: Offset(0, 1))],
+      ),
+      child: Align(alignment: Alignment.centerLeft, child:
+        Text(_dayLabel, style: Styles().textStyles.getTextStyle('widget.card.title.tiny.fat')),
+      ),
+    );
+  }
+
+  String get _dayLabel {
+    bool isToday = (widget.weekday == DateTimeUni.nowUniOrLocal().weekday);
+    return isToday ?
+      Localization().getStringEx('widget.home.student_courses.calendar.day.today.label', 'TODAY') :
+      _weekdayName(widget.weekday);
+  }
+
+  String _weekdayName(int weekday) {
+    switch (weekday) {
+      case DateTime.monday: return Localization().getStringEx('widget.home.student_courses.calendar.day.monday.label', 'MONDAY');
+      case DateTime.tuesday: return Localization().getStringEx('widget.home.student_courses.calendar.day.tuesday.label', 'TUESDAY');
+      case DateTime.wednesday: return Localization().getStringEx('widget.home.student_courses.calendar.day.wednesday.label', 'WEDNESDAY');
+      case DateTime.thursday: return Localization().getStringEx('widget.home.student_courses.calendar.day.thursday.label', 'THURSDAY');
+      case DateTime.friday: return Localization().getStringEx('widget.home.student_courses.calendar.day.friday.label', 'FRIDAY');
+      case DateTime.saturday: return Localization().getStringEx('widget.home.student_courses.calendar.day.saturday.label', 'SATURDAY');
+      case DateTime.sunday: return Localization().getStringEx('widget.home.student_courses.calendar.day.sunday.label', 'SUNDAY');
+      default: return '';
+    }
   }
 
   // Data prep
@@ -402,55 +448,28 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
 
   Widget _buildTimeColumn() {
     int visibleHourCount = _endHour - _startHour;
-    return SizedBox(width: _timeColumnWidth, height: visibleHourCount * _hourHeight, child:
-      Stack(clipBehavior: Clip.none, children: <Widget>[
+    return IntrinsicWidth(child:
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.end, children: <Widget>[
         ...List<Widget>.generate(visibleHourCount, (int index) =>
-          Positioned(top: index * _hourHeight, right: -_hourLineRightOvershoot, width: _hourLineLength, child:
-            Container(height: 1, color: Styles().colors.surfaceAccent),
-          )
+          SizedBox(height: _hourHeight, child: Align(alignment: Alignment.centerRight, child:
+            _buildHourLabelText(StudentCoursesCalendarLayout.hourLabel(_startHour + index)),
+          )),
         ),
-        ...List<Widget>.generate(visibleHourCount, (int index) =>
-          Positioned(top: (index * _hourHeight) - 7, left: 0, right: _hourLabelRightMargin, child:
-            Text(StudentCoursesCalendarLayout.hourLabel(_startHour + index), textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.message.tiny')),
-          )
-        ),
+        SizedBox(height: _closingRowHeight, child: Align(alignment: Alignment.centerRight, child:
+          _buildHourLabelText(StudentCoursesCalendarLayout.hourLabel(_endHour)),
+        )),
       ]),
     );
   }
 
-  Widget _buildClosingHourRow() {
-    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      SizedBox(width: _timeColumnWidth, height: _closingRowHeight, child:
-        Stack(clipBehavior: Clip.none, children: <Widget>[
-          Positioned(top: 0, right: -_hourLineRightOvershoot, width: _hourLineLength, child:
-            Container(height: 1, color: Styles().colors.surfaceAccent),
-          ),
-          Positioned(top: -7, left: 0, right: _hourLabelRightMargin, child:
-            Text(StudentCoursesCalendarLayout.hourLabel(_endHour), textAlign: TextAlign.right, style: Styles().textStyles.getTextStyle('widget.message.tiny')),
-          ),
-        ]),
-      ),
-      Expanded(child: Container(height: 1, color: Styles().colors.surfaceAccent)),
-    ]);
-  }
+  Widget _buildHourLabelText(String label) => Text(label, style: Styles().textStyles.getTextStyle('widget.message.tiny'));
 
   Widget _buildDayColumn() {
-    return Container(
-      decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors.surfaceAccent, width: 1))),
-      child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) =>
-        Stack(children: <Widget>[
-          _buildHourLines(),
-          ..._blocks.map((StudentCourseBlock block) => _buildCourseBlock(block, dayWidth: constraints.maxWidth)),
-        ]),
-      ),
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) =>
+      Stack(children: <Widget>[
+        ..._blocks.map((StudentCourseBlock block) => _buildCourseBlock(block, dayWidth: constraints.maxWidth)),
+      ]),
     );
-  }
-
-  Widget _buildHourLines() {
-    int visibleHourCount = _endHour - _startHour;
-    return Column(children: List<Widget>.generate(visibleHourCount, (_) =>
-      Container(height: _hourHeight, decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1))))
-    ));
   }
 
   Widget _buildCourseBlock(StudentCourseBlock block, {required double dayWidth}) {
@@ -465,19 +484,25 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
         InkWell(onTap: () => _onTapCourse(block.course), child:
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: _courseColors[block.course.shortName] ?? Styles().colors.background,
               borderRadius: BorderRadius.circular(4),
             ),
-            child: Text(block.course.shortName ?? (block.course.title ?? ''),
-              maxLines: 3, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center,
-              style: Styles().textStyles.getTextStyle('widget.message.tiny.fat'),
-            ),
+            child: _buildCourseBlockText(block),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildCourseBlockText(StudentCourseBlock block) {
+    String timeRange = StudentCoursesCalendarLayout.displayTimeRange(block.startMinutes);
+    return RichText(maxLines: 1, overflow: TextOverflow.ellipsis, text: TextSpan(children: <TextSpan>[
+      TextSpan(text: block.course.shortName ?? (block.course.title ?? ''), style: Styles().textStyles.getTextStyle('widget.message.tiny.fat')),
+      TextSpan(text: ' | $timeRange', style: Styles().textStyles.getTextStyle('widget.message.tiny')),
+    ]));
   }
 
   void _onTapCourse(StudentCourse course) {

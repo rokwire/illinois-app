@@ -34,7 +34,9 @@ class StudentCourseBlock {
 
 class StudentCoursesCalendarLayout {
 
-  // The backend provides no real class duration, so every course block is rendered with this fixed duration.
+  ///
+  /// The backend provides no real class duration, so every course block is rendered with this fixed duration.
+  ///
   static const int fixedDurationMinutes = 60;
 
   static List<Color> get defaultPalette => <Color>[
@@ -61,6 +63,14 @@ class StudentCoursesCalendarLayout {
     }
   }
 
+  ///
+  /// The backend always sends equal start/end times, so a real end time is derived as start + fixedDurationMinutes for display.
+  ///
+  static String displayTimeRange(int startMinutes) {
+    int endMinutes = startMinutes + fixedDurationMinutes;
+    return '${_formatClockMinutes(startMinutes, includeIndicator: false)}-${_formatClockMinutes(endMinutes, includeIndicator: true)}';
+  }
+
   static void layoutOverlappingBlocks(List<StudentCourseBlock> blocks) {
     blocks.sort((StudentCourseBlock block1, StudentCourseBlock block2) => block1.startMinutes.compareTo(block2.startMinutes));
 
@@ -76,25 +86,6 @@ class StudentCoursesCalendarLayout {
     }
     if (blocks.isNotEmpty) {
       _assignColumns(blocks, groupStart, blocks.length);
-    }
-  }
-
-  static void _assignColumns(List<StudentCourseBlock> blocks, int fromIndex, int toIndex) {
-    List<int> columnEndMinutes = <int>[];
-    for (int i = fromIndex; i < toIndex; i++) {
-      StudentCourseBlock block = blocks[i];
-      int column = columnEndMinutes.indexWhere((int endMinutes) => (endMinutes <= block.startMinutes));
-      if (column < 0) {
-        column = columnEndMinutes.length;
-        columnEndMinutes.add(block.endMinutes);
-      }
-      else {
-        columnEndMinutes[column] = block.endMinutes;
-      }
-      block.column = column;
-    }
-    for (int i = fromIndex; i < toIndex; i++) {
-      blocks[i].columnCount = columnEndMinutes.length;
     }
   }
 
@@ -119,5 +110,36 @@ class StudentCoursesCalendarLayout {
       courseColors[courseKeys[index]] = shuffledPalette[index % shuffledPalette.length];
     }
     return courseColors;
+  }
+
+  static String _formatClockMinutes(int totalMinutes, {required bool includeIndicator}) {
+    int hours24 = (totalMinutes ~/ 60) % 24;
+    int minutes = totalMinutes % 60;
+    int hours12 = hours24 % 12;
+    if (hours12 == 0) {
+      hours12 = 12;
+    }
+    String minutesStr = minutes.toString().padLeft(2, '0');
+    String indicator = includeIndicator ? ((hours24 < 12) ? 'AM' : 'PM') : '';
+    return '$hours12:$minutesStr$indicator';
+  }
+
+  static void _assignColumns(List<StudentCourseBlock> blocks, int fromIndex, int toIndex) {
+    List<int> columnEndMinutes = <int>[];
+    for (int i = fromIndex; i < toIndex; i++) {
+      StudentCourseBlock block = blocks[i];
+      int column = columnEndMinutes.indexWhere((int endMinutes) => (endMinutes <= block.startMinutes));
+      if (column < 0) {
+        column = columnEndMinutes.length;
+        columnEndMinutes.add(block.endMinutes);
+      }
+      else {
+        columnEndMinutes[column] = block.endMinutes;
+      }
+      block.column = column;
+    }
+    for (int i = fromIndex; i < toIndex; i++) {
+      blocks[i].columnCount = columnEndMinutes.length;
+    }
   }
 }
