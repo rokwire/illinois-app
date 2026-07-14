@@ -52,8 +52,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
 
-  PageController? _calendarPageController;
-  Key _calendarPageViewKey = UniqueKey();
+  int? _calendarPageIndex;
 
   late StudentCoursesViewType _viewType;
 
@@ -88,7 +87,6 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
   void dispose() {
     NotificationService().unsubscribe(this);
     _pageController?.dispose();
-    _calendarPageController?.dispose();
     super.dispose();
   }
 
@@ -230,39 +228,15 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
   }
 
   Widget _buildCalendarContent() {
-    List<Widget> dayPages = StudentCoursesCalendarLayout.weekdayOrder.map((int weekday) =>
-      Padding(padding: HomeCard.defaultPageMargin, child:
-        _HomeStudentCoursesCalendarContentWidget(courses: _courses, weekday: weekday),
-      ),
-    ).toList();
+    int todayIndex = StudentCoursesCalendarLayout.weekdayOrder.indexOf(DateTimeUni.nowUniOrLocal().weekday);
+    int initialPageIndex = _calendarPageIndex ?? ((0 <= todayIndex) ? todayIndex : 0);
 
-    if (_calendarPageController == null) {
-      double screenWidth = MediaQuery.of(context).size.width;
-      double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
-      int initialPage = StudentCoursesCalendarLayout.weekdayOrder.indexOf(DateTimeUni.nowUniOrLocal().weekday);
-      _calendarPageController = PageController(viewportFraction: pageViewport, initialPage: (0 <= initialPage) ? initialPage : 0);
-    }
-
-    double pageHeight = StudentCourseCard.height(context);
-
-    return Column(children: [
-      Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        AccessiblePageView(
-          key: _calendarPageViewKey,
-          controller: _calendarPageController,
-          estimatedPageSize: pageHeight,
-          allowImplicitScrolling: true,
-          children: dayPages,
-        ),
-      ),
-      AccessibleViewPagerNavigationButtons(controller: _calendarPageController, pagesCount: () => dayPages.length, centerWidget:
-        HomeBrowseLinkButton(
-          title: Localization().getStringEx('widget.home.student_courses.button.all.title', 'View All'),
-          hint: Localization().getStringEx('widget.home.student_courses.button.all.hint', 'Tap to view all courses'),
-          onTap: _onViewAll,
-        ),
-      ),
-    ]);
+    return _HomeStudentCoursesCalendarPager(
+      courses: _courses,
+      initialPageIndex: initialPageIndex,
+      onPageIndexChanged: (int index) => _calendarPageIndex = index,
+      onViewAll: _onViewAll,
+    );
   }
 
   Widget _buildCoursesContent() {
@@ -348,6 +322,69 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
   void _onViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCoursesHomePanel()));
+  }
+}
+
+///////////////////////////////
+// _HomeStudentCoursesCalendarPager
+
+class _HomeStudentCoursesCalendarPager extends StatefulWidget {
+  final List<StudentCourse>? courses;
+  final int initialPageIndex;
+  final ValueChanged<int> onPageIndexChanged;
+  final VoidCallback onViewAll;
+
+  _HomeStudentCoursesCalendarPager({required this.courses, required this.initialPageIndex, required this.onPageIndexChanged, required this.onViewAll});
+
+  @override
+  State<_HomeStudentCoursesCalendarPager> createState() => _HomeStudentCoursesCalendarPagerState();
+}
+
+class _HomeStudentCoursesCalendarPagerState extends State<_HomeStudentCoursesCalendarPager> {
+  PageController? _pageController;
+  final Key _pageViewKey = UniqueKey();
+
+  @override
+  void dispose() {
+    _pageController?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> dayPages = StudentCoursesCalendarLayout.weekdayOrder.map((int weekday) =>
+      Padding(padding: HomeCard.defaultPageMargin, child:
+        _HomeStudentCoursesCalendarContentWidget(courses: widget.courses, weekday: weekday),
+      ),
+    ).toList();
+
+    if (_pageController == null) {
+      double screenWidth = MediaQuery.of(context).size.width;
+      double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
+      _pageController = PageController(viewportFraction: pageViewport, initialPage: widget.initialPageIndex);
+    }
+
+    double pageHeight = StudentCourseCard.height(context);
+
+    return Column(children: [
+      Container(constraints: BoxConstraints(minHeight: pageHeight), child:
+        AccessiblePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: pageHeight,
+          allowImplicitScrolling: true,
+          onPageChanged: widget.onPageIndexChanged,
+          children: dayPages,
+        ),
+      ),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, initialPage: widget.initialPageIndex, pagesCount: () => dayPages.length, centerWidget:
+        HomeBrowseLinkButton(
+          title: Localization().getStringEx('widget.home.student_courses.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.student_courses.button.all.hint', 'Tap to view all courses'),
+          onTap: widget.onViewAll,
+        ),
+      ),
+    ]);
   }
 }
 
