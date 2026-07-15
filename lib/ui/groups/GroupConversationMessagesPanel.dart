@@ -99,14 +99,14 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
       double screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
       debugPrint('didChangeMetrics: $_screenInsetsBottom => $screenInsetsBottom');
       if (screenInsetsBottom != _screenInsetsBottom) {
+        if (screenInsetsBottom < _screenInsetsBottom) {
+          _onKeyboardWillHide();
+        } else if (_screenInsetsBottom < screenInsetsBottom) {
+          _onKeyboardWillShow();
+        }
         _screenInsetsBottom = screenInsetsBottom;
         _screenInsetsBottomChangedTimer?.cancel();
-        _screenInsetsBottomChangedTimer = Timer(Duration(milliseconds: 300), (){
-          if (mounted && (_screenInsetsBottom == screenInsetsBottom)) {
-            _screenInsetsBottomChangedTimer = null;
-            _checkKeyboardVisibility();
-          }
-        });
+        _screenInsetsBottomChangedTimer = Timer(_screenInsetsBottomChangedTimerDuration, _onScreenInsetsBottomChangedTimer);
       }
     }
   }
@@ -229,7 +229,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     Visibility(visible: _keyboardVisible, child:
       Positioned.fill(child:
         GestureDetector(onTap: _onHideKeyboard, child:
-          Container(color: Color(0x99000000))
+          Container(color: Colors.transparent /* Color(0x40000000) */)
         )
       )
     );
@@ -333,11 +333,42 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     _scrollController.jumpTo(scrollMaxExtent);
   }
 
-  void _checkKeyboardVisibility() {
+  static const Duration _screenInsetsBottomChangedTimerDuration = const Duration(milliseconds: 150);
+
+  void _onScreenInsetsBottomChangedTimer() {
     if (mounted) {
       double screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
-      bool keyboardVisible = (screenInsetsBottom > 50);
-      debugPrint('_checkKeyboardVisibility: $keyboardVisible ($screenInsetsBottom)');
+      if (_screenInsetsBottom != screenInsetsBottom) {
+        _screenInsetsBottom = screenInsetsBottom;
+        _screenInsetsBottomChangedTimer = Timer(_screenInsetsBottomChangedTimerDuration, _onScreenInsetsBottomChangedTimer);
+      } else {
+        _screenInsetsBottomChangedTimer = null;
+        _onKeyboardFinishedAnimation();
+      }
+    }
+  }
+
+  void _onKeyboardWillShow() {
+    if (_keyboardVisible != true) {
+      setState((){
+        _keyboardVisible = true;
+      });
+    }
+  }
+
+  void _onKeyboardWillHide() {
+    if (_keyboardVisible != false) {
+      setState((){
+        _keyboardVisible = false;
+      });
+    }
+  }
+
+  void _onKeyboardFinishedAnimation() {
+    if (mounted) {
+      double screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
+      bool keyboardVisible = (screenInsetsBottom > 0);
+      debugPrint('onKeyboardFinishedAnimation: $keyboardVisible ($screenInsetsBottom)');
       if (_keyboardVisible != keyboardVisible) {
         setState((){
           _keyboardVisible = keyboardVisible;
@@ -350,6 +381,11 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   }
 
   void _onHideKeyboard() {
+    if (_isEditingMessage) {
+      setState(() {
+        _editingMessage = null;
+      });
+    }
     FocusScope.of(context).unfocus();
   }
 
