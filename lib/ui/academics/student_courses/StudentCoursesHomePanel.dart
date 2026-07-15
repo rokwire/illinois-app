@@ -83,7 +83,7 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
 
     if (_canLoadCourses) {
       _loading = true;
-      StudentCourses().loadCourses(termId: StudentCourses().displayTermId!, forceLoad: true).then((List<StudentCourse>? courses) {
+      StudentCourses().loadCourses(termId: StudentCourses().displayTermId!).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
           _courses = courses;
           _sortCourses();
