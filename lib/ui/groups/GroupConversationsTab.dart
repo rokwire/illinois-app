@@ -5,9 +5,12 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupConversationMessagesPanel.dart';
 import 'package:illinois/ui/groups/GroupConversationWidgets.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -23,17 +26,20 @@ class GroupConversationsTab extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
   final StreamController<dynamic>? updateController;
+  final bool editMode;
   final AnalyticsFeature? analyticsFeature;
 
-  GroupConversationsTab({ super.key, this.group, this.updateController, this.groupAdmins, this.analyticsFeature });
+  GroupConversationsTab({ super.key, this.group, this.updateController, this.groupAdmins, this.editMode = false, this.analyticsFeature });
 
   @override
   State<StatefulWidget> createState() => _GroupConversationsTabState();
 }
 
-class _GroupConversationsTabState extends State<GroupConversationsTab> with NotificationsListener {
+class _GroupConversationsTabState extends State<GroupConversationsTab> with NotificationsListener, AutomaticKeepAliveClientMixin<GroupConversationsTab> {
   List<Conversation>? _conversations;
   ContentActivity? _conversationsActivity;
+  Set<String> _selectedConversations = <String>{};
+  bool _selectedConversationsProgress = false;
 
   @override
   void initState() {
@@ -50,6 +56,14 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
   }
 
   @override
+  void didUpdateWidget(covariant GroupConversationsTab oldWidget) {
+    if (oldWidget.editMode != widget.editMode) {
+      _selectedConversations.clear();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void onNotification(String name, dynamic param) {
     if (name == Social.notifyConversationsUpdated) {
       if (mounted) {
@@ -59,7 +73,11 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     if (_conversationsActivity == ContentActivity.reload) {
       return _loadingContent;
     }
@@ -75,19 +93,63 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
   }
 
   Widget get _conversationsContent =>
-    Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 16), child:
-      Column(mainAxisSize: MainAxisSize.min, children: [
-        ..._conversations?.map((Conversation conversation) =>
-          Padding(padding: EdgeInsets.only(top: 8), child:
-            GroupConversationCard(conversation,
-              groupAdmins: widget.groupAdmins,
-              onTap: () => _onTapConversation(conversation),
-            ),
+    Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+      if (widget.editMode && _selectedConversations.isNotEmpty)
+        _editBar,
+      ..._conversations?.map((Conversation conversation) =>
+        Padding(padding: EdgeInsets.only(top: 8), child:
+          _conversationListItem(conversation),
+        )
+      ) ?? <Widget>[],
+      Padding(padding: EdgeInsets.only(top: 8),),
+    ],);
+
+  Widget _conversationListItem(Conversation conversation) => widget.editMode ?
+      Row(children: [
+        _conversationSelectWidget(conversation),
+        Expanded(child:
+          Padding(padding: EdgeInsetsGeometry.only(right: 16), child:
+            _conversationCard(conversation)
           )
-        ) ?? <Widget>[],
-        Padding(padding: EdgeInsets.only(top: 8),),
-      ],),
+        )
+      ],) :
+      Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 16), child:
+        _conversationCard(conversation)
+      );
+
+  Widget _conversationSelectWidget(Conversation conversation) => Event2ImageCommandButton(
+      Styles().images.getImage(_selectedConversations.contains(conversation.id) ? 'check-circle-filled' : 'check-circle-outline-gray', size: 24, excludeFromSemantics: true),
+      label: Localization().getStringEx('', 'Select'),
+      hint: Localization().getStringEx('', 'Tap to select conversation'),
+      contentPadding: EdgeInsets.all(16),
+      onTap: () => _onSelectConversation(conversation),
     );
+
+  Widget _conversationCard(Conversation conversation) =>
+    GroupConversationCard(conversation,
+      groupAdmins: widget.groupAdmins,
+      onTap: () => _onTapConversation(conversation),
+    );
+
+  Widget get _editBar => Row(children: [
+    Expanded(child:
+      LinkButton(
+        title: (1 < _selectedConversations.length) ? Localization().getStringEx('', 'Delete Selected Messages') : Localization().getStringEx('', 'Delete Selected Message'),
+        textAlign: TextAlign.start,
+        textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.fat.underline'),
+        padding: EdgeInsetsGeometry.symmetric(horizontal: 16, vertical: 8),
+        onTap: _onTapDelete,
+      )
+    ),
+    if (_selectedConversationsProgress)
+      _editBarProgress
+  ],);
+
+  Widget get _editBarProgress => Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 16), child:
+      SizedBox.square(dimension: 14, child:
+          CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,)
+      )
+  );
 
   Widget get _loadingContent =>
     Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 32, vertical: 64), child:
@@ -161,5 +223,50 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
         analyticsFeature: widget.analyticsFeature,
       )
     ));
+  }
+
+  void _onSelectConversation(Conversation conversation) {
+    Analytics().logSelect(target: 'Conversation');
+    String? conversationId = conversation.id;
+    if ((conversationId != null) && conversationId.isNotEmpty) {
+      setState(() {
+        if (_selectedConversations.contains(conversationId)) {
+          _selectedConversations.remove(conversationId);
+        } else {
+          _selectedConversations.add(conversationId);
+        }
+      });
+    }
+  }
+
+  void _onTapDelete() async {
+    Analytics().logSelect(target: 'Delete Selected Messages');
+
+    if (_selectedConversationsProgress == false) {
+      bool? deleteConfirmed = await GroupConversationConfirmDeleteDialog.show(context,
+        Localization().getStringEx('', 'Deleting messages cannot be reversed.'),
+        Localization().getStringEx('', 'How would you like to proceed?',));
+
+      if ((deleteConfirmed == true) && mounted) {
+        setState(() {
+          _selectedConversationsProgress = true;
+        });
+        bool? deleteSucceeded = await Social().deleteConverstions(conversationIds: List.from(_selectedConversations));
+        if (mounted) {
+          if (deleteSucceeded == true) {
+            setState(() {
+              _selectedConversations.clear();
+              _selectedConversationsProgress = false;
+            });
+            _refreshConversations();
+          } else {
+            setState(() {
+              _selectedConversationsProgress = false;
+            });
+            AppAlert.showDialogResult(context, Localization().getStringEx('', 'Failed to delete messages'));
+          }
+        }
+      }
+    }
   }
 }

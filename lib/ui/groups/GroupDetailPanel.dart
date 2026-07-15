@@ -160,6 +160,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
 
   bool               _confirmationLoading = false;
   bool               _researchProjectConsent = false;
+  bool               _editingConversationMessages = false;
 
   int                _progress = 0;
   DateTime?         _pausedDateTime;
@@ -872,7 +873,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       case DetailTab.Messages:
         return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Conversations:
-        return GroupConversationsTab(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
+        return GroupConversationsTab(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, editMode: _editingConversationMessages, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Polls:
         return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
 
@@ -1306,6 +1307,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                         Navigator.of(context).pop();
                         _onTapCreateConversationMessage();
                       })),
+                  Visibility(visible: _canCreateConversation, child:
+                    RibbonButton(
+                      key: _canCreateConversation && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
+                      leftIconKey: "check-circle-2",
+                      title: _editingConversationMessages ?
+                        Localization().getStringEx("", "Finish Edit Conversation Messages") : Localization().getStringEx("", "Edit Conversation Messages"),//localize tbd
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        if (_editingConversationMessages) {
+                          _onFinishEditConversationMessages();
+                        } else {
+                          _onEditConversationMessages();
+                        }
+                      })),
                     Visibility(visible: _canAddEvent, child:
                       RibbonButton(
                         key: _canAddEvent && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
@@ -1598,6 +1613,33 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   void _onTapCreateConversationMessage() {
     Analytics().logSelect(target: "Create Conversation Message", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupConversationCreatePanel(group: _group, groupAdmins: _groupAdmins, analyticsFeature: AnalyticsFeature.Groups,)));
+  }
+
+  void _onEditConversationMessages() {
+    Analytics().logSelect(target: "Edit Conversation Messages", attributes: _group?.analyticsAttributes);
+    setState(() {
+      _editingConversationMessages = true;
+    });
+    _selectConversationsTab();
+  }
+
+  void _onFinishEditConversationMessages() {
+    Analytics().logSelect(target: "Finish Edit Conversation Messages", attributes: _group?.analyticsAttributes);
+    setState(() {
+      _editingConversationMessages = false;
+    });
+    _selectConversationsTab();
+  }
+
+  void _selectConversationsTab() {
+    if (_currentTab != DetailTab.Conversations) {
+      _currentTab = DetailTab.Conversations;
+      int index = _indexOfTab(DetailTab.Conversations);
+      if (0 <= index) {
+        _tabController?.animateTo(index, duration: Duration(milliseconds: _animationDurationInMilliSeconds));
+        _pageController?.animateToPage(index, duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
+      }
+    }
   }
 
   void _onTapCreatePoll() {
