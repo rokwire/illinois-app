@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -44,10 +45,6 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   bool? _lastPageLoadedAll;
   static const int _contentPageLength = 8;
 
-  bool _keyboardVisible = false;
-  double _screenInsetsBottom = 0;
-  Timer? _screenInsetsBottomChangedTimer;
-
   FocusNode _editFocusNode = FocusNode();
 
   Message? _deletingMessage;
@@ -65,9 +62,6 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     ]);
 
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
-    });
 
     _scrollController.addListener(_scrollListener);
     _reloadContent();
@@ -95,20 +89,6 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
 
   @override
   void didChangeMetrics() {
-    if (mounted) {
-      double screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
-      debugPrint('didChangeMetrics: $_screenInsetsBottom => $screenInsetsBottom');
-      if (screenInsetsBottom != _screenInsetsBottom) {
-        if (screenInsetsBottom < _screenInsetsBottom) {
-          _onKeyboardWillHide();
-        } else if (_screenInsetsBottom < screenInsetsBottom) {
-          _onKeyboardWillShow();
-        }
-        _screenInsetsBottom = screenInsetsBottom;
-        _screenInsetsBottomChangedTimer?.cancel();
-        _screenInsetsBottomChangedTimer = Timer(_screenInsetsBottomChangedTimerDuration, _onScreenInsetsBottomChangedTimer);
-      }
-    }
   }
 
   @override
@@ -226,12 +206,12 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   Widget? get _editingMessageIcon => Styles().images.getImage('edit', size: GroupConversationMessageHeader.buttonIconSize);
 
   Widget get _hideKeyboardLayer =>
-    Visibility(visible: _keyboardVisible, child:
+    KeyboardVisibilityBuilder(builder: (context, isKeyboardVisible) => isKeyboardVisible ?
       Positioned.fill(child:
-        GestureDetector(onTap: _onHideKeyboard, child:
-          Container(color: Colors.transparent /* Color(0x40000000) */)
+        GestureDetector(onTap: _onHideKeyboard, behavior: HitTestBehavior.translucent,
+          // child: Container(color: Color(0x50000000))
         )
-      )
+      ) : Container()
     );
 
   double get _screenHeight => MediaQuery.of(context).size.height;
@@ -331,53 +311,6 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   void _scrollToLast() {
     double scrollMaxExtent = _scrollController.position.maxScrollExtent;
     _scrollController.jumpTo(scrollMaxExtent);
-  }
-
-  static const Duration _screenInsetsBottomChangedTimerDuration = const Duration(milliseconds: 150);
-
-  void _onScreenInsetsBottomChangedTimer() {
-    if (mounted) {
-      double screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
-      if (_screenInsetsBottom != screenInsetsBottom) {
-        _screenInsetsBottom = screenInsetsBottom;
-        _screenInsetsBottomChangedTimer = Timer(_screenInsetsBottomChangedTimerDuration, _onScreenInsetsBottomChangedTimer);
-      } else {
-        _screenInsetsBottomChangedTimer = null;
-        _onKeyboardFinishedAnimation();
-      }
-    }
-  }
-
-  void _onKeyboardWillShow() {
-    if (_keyboardVisible != true) {
-      setState((){
-        _keyboardVisible = true;
-      });
-    }
-  }
-
-  void _onKeyboardWillHide() {
-    if (_keyboardVisible != false) {
-      setState((){
-        _keyboardVisible = false;
-      });
-    }
-  }
-
-  void _onKeyboardFinishedAnimation() {
-    if (mounted) {
-      double screenInsetsBottom = MediaQuery.of(context).viewInsets.bottom;
-      bool keyboardVisible = (screenInsetsBottom > 0);
-      debugPrint('onKeyboardFinishedAnimation: $keyboardVisible ($screenInsetsBottom)');
-      if (_keyboardVisible != keyboardVisible) {
-        setState((){
-          _keyboardVisible = keyboardVisible;
-        });
-      }
-      if (keyboardVisible) {
-        _scrollToLast();
-      }
-    }
   }
 
   void _onHideKeyboard() {
