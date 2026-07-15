@@ -44,6 +44,20 @@ class StudentCoursesHomePanel extends StatefulWidget with AnalyticsInfo {
 
   @override
   AnalyticsFeature? get analyticsFeature => AnalyticsFeature.AcademicsStudentCourses;
+
+  static Widget wrapDropDownTheme(Widget dropDown) => Theme(
+    data: ThemeData(
+      hoverColor: Styles().colors.white,
+      focusColor: Styles().colors.white,
+      canvasColor: Styles().colors.white,
+      primaryColor: Styles().colors.white,
+      highlightColor: Styles().colors.white,
+      splashColor: Styles().colors.white,
+    ),
+    child: dropDown,
+  );
+
+  static BorderRadius get dropdownMenuBorderRadius => BorderRadius.circular(8);
 }
 
 class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with NotificationsListener {
@@ -167,18 +181,6 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
     Styles().textStyles.getTextStyle("widget.message.regular.fat") :
     Styles().textStyles.getTextStyle("widget.message.regular");
 
-  Widget _wrapDropDownTheme(Widget dropDown) => Theme(
-    data: ThemeData(
-      hoverColor: Styles().colors.white,
-      focusColor: Styles().colors.white,
-      canvasColor: Styles().colors.white,
-      primaryColor: Styles().colors.white,
-      highlightColor: Styles().colors.white,
-      splashColor: Styles().colors.white,
-    ),
-    child: dropDown,
-  );
-
   Widget _buildTermsDropDown() {
     StudentCourseTerm? currentTerm = StudentCourses().displayTerm;
 
@@ -191,13 +193,13 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
           borderRadius: BorderRadius.circular(28),
         ),
         child: Semantics(label: currentTerm?.name, hint: Localization().getStringEx('panel.student_courses.term_dropdown.hint', 'Double tap to select term'), button: true, container: true, child:
-          DropdownButtonHideUnderline(child: _wrapDropDownTheme(
+          DropdownButtonHideUnderline(child: StudentCoursesHomePanel.wrapDropDownTheme(
             DropdownButton<String>(
               icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('chevron-down', excludeFromSemantics: true)),
               isExpanded: false,
               dropdownColor: Styles().colors.white,
               focusColor: Styles().colors.white,
-              borderRadius: _dropdownMenuBorderRadius,
+              borderRadius: StudentCoursesHomePanel.dropdownMenuBorderRadius,
               style: _getDropDownItemStyle(),
               hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: _getDropDownItemStyle()) : null,
               items: _buildTermDropDownItems(),
@@ -265,13 +267,13 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
         borderRadius: BorderRadius.circular(28),
       ),
       child: Semantics(label: _selectedViewType.pillTitle, hint: Localization().getStringEx('panel.student_courses.view_type_dropdown.hint', 'Double tap to select view'), button: true, container: true, child:
-        DropdownButtonHideUnderline(child: _wrapDropDownTheme(
+        DropdownButtonHideUnderline(child: StudentCoursesHomePanel.wrapDropDownTheme(
           DropdownButton<StudentCoursesViewType>(
             icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('chevron-down', excludeFromSemantics: true)),
             isExpanded: false,
             dropdownColor: Styles().colors.white,
             focusColor: Styles().colors.white,
-            borderRadius: _dropdownMenuBorderRadius,
+            borderRadius: StudentCoursesHomePanel.dropdownMenuBorderRadius,
             style: _getDropDownItemStyle(),
             hint: Text(_selectedViewType.pillTitle, style: _getDropDownItemStyle()),
             items: _buildViewTypeDropDownItems(),
@@ -310,8 +312,6 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
         return StudentCoursesMapContentWidget(courses: _courses, analyticsFeature: widget.analyticsFeature);
     }
   }
-
-  BorderRadius get _dropdownMenuBorderRadius => BorderRadius.circular(8);
 
   bool get _canLoadCourses => (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn);
 

@@ -138,24 +138,27 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
     child: _buildContent(),
   );
 
-  TextStyle? getTermDropDownItemStyle({bool selected = false}) => selected ? Styles().textStyles.getTextStyle("widget.button.title.small.fat") : Styles().textStyles.getTextStyle("widget.button.title.small");
+  TextStyle? _getTermDropDownItemStyle({bool selected = false}) => selected ? Styles().textStyles.getTextStyle("widget.button.title.small.fat") : Styles().textStyles.getTextStyle("widget.button.title.small");
 
   Widget _buildTermsDropDown() {
     StudentCourseTerm? currentTerm = StudentCourses().displayTerm;
 
     return Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
-      DropdownButtonHideUnderline(child:
+      DropdownButtonHideUnderline(child: StudentCoursesHomePanel.wrapDropDownTheme(
         DropdownButton<String>(
           icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('chevron-down', excludeFromSemantics: true)),
           isExpanded: false,
           isDense: true,
-          style: getTermDropDownItemStyle(selected: false),
-          hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: Styles().textStyles.getTextStyle("widget.title.small.semi_fat")) : null,
+          dropdownColor: Styles().colors.white,
+          focusColor: Styles().colors.white,
+          borderRadius: StudentCoursesHomePanel.dropdownMenuBorderRadius,
+          style: _getTermDropDownItemStyle(selected: false),
+          hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: _getTermDropDownItemStyle(selected: true)) : null,
           alignment: AlignmentDirectional.centerEnd,
           items: _buildTermDropDownItems(),
           onChanged: _onTermDropDownValueChanged
         ),
-      ),
+      )),
     );
   }
 
@@ -169,7 +172,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
       for (StudentCourseTerm term in terms) {
         items.add(DropdownMenuItem<String>(
           value: term.id,
-          child: Text(term.name ?? '', style: getTermDropDownItemStyle(selected: term.id == currentTermId),)
+          child: Text(term.name ?? '', style: _getTermDropDownItemStyle(selected: term.id == currentTermId),)
         ));
       }
     }
