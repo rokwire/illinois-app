@@ -25,7 +25,6 @@ import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
@@ -553,22 +552,6 @@ class _DirectoryProfilePhotoState extends State<DirectoryProfilePhoto> {
     _loadNetworkPhoto();
   }
 
-  void _loadNetworkPhoto() {
-    String? photoUrl = widget.photoUrl;
-    if ((_photoBytes == null) && StringUtils.isNotEmpty(photoUrl)) {
-      Network().get(photoUrl, headers: widget.photoUrlHeaders).then((response) {
-        int? responseCode = response?.statusCode;
-        if ((responseCode != null) && (responseCode >= 200) && (responseCode <= 301)) {
-          setStateIfMounted(() {
-            _photoBytes = response?.bodyBytes;
-          });
-        } else {
-          debugPrint('${responseCode}: Failed to load photo with url: ${widget.photoUrl}');
-        }
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     ImageProvider<Object>? decorationImage = _decorationImage;
@@ -596,6 +579,20 @@ class _DirectoryProfilePhotoState extends State<DirectoryProfilePhoto> {
           ),
         )
       ): (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: widget.imageSize + widget.borderSize) ?? Container());
+  }
+
+  void _loadNetworkPhoto() async {
+    String? photoUrl = widget.photoUrl;
+    if ((_photoBytes == null) && (photoUrl != null) && photoUrl.isNotEmpty) {
+      Uint8List? photoBytes = await Content().loadEntity(photoUrl, headers: widget.photoUrlHeaders);
+      if (photoBytes != null) {
+        setStateIfMounted(() {
+          _photoBytes = photoBytes;
+        });
+      } else {
+        debugPrint('Failed to load photo with url: ${widget.photoUrl}');
+      }
+    }
   }
 
   ImageProvider<Object>? get _decorationImage {
