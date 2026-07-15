@@ -325,13 +325,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
 
   void _onViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCoursesHomePanel(initialViewType: _viewType))).then((_) {
-      // The favorite widget does not have map view
-      StudentCoursesViewType? panelViewType = StudentCoursesViewTypeExt.fromJson(Storage().studentCoursesViewType);
-      if ((panelViewType != null) && (panelViewType != StudentCoursesViewType.map)) {
-        _onTapViewType(panelViewType);
-      }
-    });
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCoursesHomePanel(initialViewType: _viewType)));
   }
 }
 
