@@ -102,6 +102,9 @@ extension MessageExt on Message {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime( dateUpdatedUtc ?? dateSentUtc);
     return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;
   }
+
+  String? get identityKey => (((id != null) && (id?.isNotEmpty == true)) && ((globalId != null) && (globalId?.isNotEmpty == true))) ?
+    "${id}:${globalId}" : null;
 }
 
 extension ConversationExt on Conversation {

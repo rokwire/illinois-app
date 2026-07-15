@@ -57,9 +57,9 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
 
   Message? _editingMessage;
   String? get _editingMessageText => _editingMessage?.message;
-  String? get _editingMessageId => _editingMessage?.globalId;
-  bool get _isEditingMessage => (_editingMessageId?.isNotEmpty == true);
-  GlobalKey? get _editingMessageCardKey => _isEditingMessage ? _cardKeys[_editingMessageId] : null;
+  String? get _editingMessageIdentityKey => _editingMessage?.identityKey;
+  bool get _isEditingMessage => (_editingMessageIdentityKey?.isNotEmpty == true);
+  GlobalKey? get _editingMessageCardKey => _isEditingMessage ? _cardKeys[_editingMessageIdentityKey] : null;
 
   @override
   void initState() {
@@ -154,20 +154,21 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     }
 
     int messagesStart = cardsList.length;
+    String? editingMessageIdentityKey = _editingMessage?.identityKey;
     List<Message> messages = ListUtils.from(_contentList?.reversed) ?? [];
     for (Message message in messages) {
-      String? messageGlobalId = message.globalId;
+      String? messageIdentityKey = message.identityKey;
       bool isCurrentUserSender = message.sender?.accountId == Auth2().accountId;
       EdgeInsetsGeometry cardPadding = EdgeInsets.only(top: (cardsList.length > messagesStart) ? 16 : 0, left: isCurrentUserSender ? 0 : _cardOffset, right: isCurrentUserSender ? _cardOffset : 0);
       cardsList.add(Padding(padding: cardPadding, child:
         GroupConversationMessageCard(message,
-          key: ((messageGlobalId != null) && messageGlobalId.isNotEmpty) ? (_cardKeys[messageGlobalId] ??= GlobalKey()) : null,
+          key: ((messageIdentityKey != null) && messageIdentityKey.isNotEmpty) ? (_cardKeys[messageIdentityKey] ??= GlobalKey()) : null,
           conversation: widget.conversation,
           group: widget.group,
           //groupMember: MemberExt.getMember(widget.groupAdmins, userId: message.sender?.accountId),
           onCommand: () => _onMessageCommand(message),
           commandProgress: ((_deletingMessageId != null) && (_deletingMessageId == message.globalId)),
-          commandIcon: ((_editingMessageId != null) && (_editingMessageId == message.globalId)) ? _editingMessageIcon : null,
+          commandIcon: ((messageIdentityKey != null) && messageIdentityKey.isNotEmpty && (messageIdentityKey == editingMessageIdentityKey)) ? _editingMessageIcon : null,
           analyticsFeature: widget.analyticsFeature,
         ),
       ),);
