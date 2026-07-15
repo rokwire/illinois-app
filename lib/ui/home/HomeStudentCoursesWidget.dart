@@ -223,6 +223,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
     if (_viewType != viewType) {
       setStateIfMounted(() {
         _viewType = viewType;
+        Storage().setHomeFavoriteSelectedContent(widget.favoriteId, viewType.toJson());
       });
     }
   }
