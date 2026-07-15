@@ -36,7 +36,7 @@ class GroupConversationMessagesPanel extends StatefulWidget {
   State<StatefulWidget> createState() => _GroupConversationMessagesPanelState();
 }
 
-class _GroupConversationMessagesPanelState extends State<GroupConversationMessagesPanel> with NotificationsListener, WidgetsBindingObserver {
+class _GroupConversationMessagesPanelState extends State<GroupConversationMessagesPanel> with NotificationsListener {
 
   ScrollController _scrollController = ScrollController();
 
@@ -45,7 +45,12 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   bool? _lastPageLoadedAll;
   static const int _contentPageLength = 8;
 
+  Map<String, GlobalKey> _cardKeys = <String, GlobalKey>{};
+
   FocusNode _editFocusNode = FocusNode();
+
+  late KeyboardVisibilityController _keyboardVisibilityController;
+  late StreamSubscription<bool> _keyboardSubscription;
 
   Message? _deletingMessage;
   String? get _deletingMessageId => _deletingMessage?.globalId;
@@ -54,15 +59,15 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   String? get _editingMessageText => _editingMessage?.message;
   String? get _editingMessageId => _editingMessage?.globalId;
   bool get _isEditingMessage => (_editingMessageId?.isNotEmpty == true);
+  GlobalKey? get _editingMessageCardKey => _isEditingMessage ? _cardKeys[_editingMessageId] : null;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
       FirebaseMessaging.notifySocialMessageNotification
     ]);
-
-    WidgetsBinding.instance.addObserver(this);
-
+    _keyboardVisibilityController = KeyboardVisibilityController();
+    _keyboardSubscription = _keyboardVisibilityController.onChange.listen(_onKeyboardVisibilityChanged);
     _scrollController.addListener(_scrollListener);
     _reloadContent();
     super.initState();
@@ -71,7 +76,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    WidgetsBinding.instance.removeObserver(this);
+    _keyboardSubscription.cancel();
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     _editFocusNode.dispose();
@@ -85,10 +90,6 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
         _onFirebaseSocialMessageNotification(param);
       }
     }
-  }
-
-  @override
-  void didChangeMetrics() {
   }
 
   @override
@@ -155,10 +156,12 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     int messagesStart = cardsList.length;
     List<Message> messages = ListUtils.from(_contentList?.reversed) ?? [];
     for (Message message in messages) {
+      String? messageGlobalId = message.globalId;
       bool isCurrentUserSender = message.sender?.accountId == Auth2().accountId;
       EdgeInsetsGeometry cardPadding = EdgeInsets.only(top: (cardsList.length > messagesStart) ? 16 : 0, left: isCurrentUserSender ? 0 : _cardOffset, right: isCurrentUserSender ? _cardOffset : 0);
       cardsList.add(Padding(padding: cardPadding, child:
         GroupConversationMessageCard(message,
+          key: ((messageGlobalId != null) && messageGlobalId.isNotEmpty) ? (_cardKeys[messageGlobalId] ??= GlobalKey()) : null,
           conversation: widget.conversation,
           group: widget.group,
           //groupMember: MemberExt.getMember(widget.groupAdmins, userId: message.sender?.accountId),
@@ -203,7 +206,9 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     ),
   );
   
-  Widget? get _editingMessageIcon => Styles().images.getImage('edit', size: GroupConversationMessageHeader.buttonIconSize);
+  Widget? get _editingMessageIcon =>
+    SizedBox.square(dimension: GroupConversationMessageHeader.buttonIconSize,);
+  // Styles().images.getImage('ellipsis', size: GroupConversationMessageHeader.buttonIconSize);
 
   Widget get _hideKeyboardLayer =>
     KeyboardVisibilityBuilder(builder: (context, isKeyboardVisible) => isKeyboardVisible ?
@@ -242,7 +247,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
           _contentActivity = null;
         });
 
-        WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToLast());
+        WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToLast());
       }
     }
   }
@@ -267,7 +272,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
           }
           _contentActivity = null;
         });
-        WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToLast());
+        WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToLast());
       }
     }
   }
@@ -308,10 +313,31 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
     }
   }
 
-  void _scrollToLast() {
-    double scrollMaxExtent = _scrollController.position.maxScrollExtent;
-    _scrollController.jumpTo(scrollMaxExtent);
+  void _jumpToLast() =>
+    _scrollController.jumpTo(_maxScrollExtent);
+
+  void _onKeyboardVisibilityChanged(bool visible) {
+    if (visible) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration(milliseconds: 300), _ensureScrollTargetVisibile);
+      });
+    }
   }
+
+  void _ensureScrollTargetVisibile() {
+    if (mounted) {
+      BuildContext? editingContext = _editingMessageCardKey?.currentContext;
+      if ((editingContext != null) && editingContext.mounted) {
+        Scrollable.ensureVisible(editingContext, alignment: 0.5, duration: _scrollAnimationDuration, curve: _scrollAnimationCurve);
+      } else {
+        _scrollController.animateTo(_maxScrollExtent, duration: _scrollAnimationDuration, curve: _scrollAnimationCurve);
+      }
+    }
+  }
+
+  double get _maxScrollExtent => _scrollController.position.maxScrollExtent;
+  static const Duration _scrollAnimationDuration = const Duration(milliseconds: 300);
+  static const Curve _scrollAnimationCurve = Curves.easeInOut;
 
   void _onHideKeyboard() {
     if (_isEditingMessage) {
@@ -355,7 +381,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
       _contentList?.insert(0, tempMessage);
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToLast());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToLast());
 
     List<Message>? newMessages = await Social().createConversationMessage(
       conversationId: widget.conversation.id ?? '',
