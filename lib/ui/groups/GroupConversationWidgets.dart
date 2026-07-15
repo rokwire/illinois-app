@@ -435,8 +435,10 @@ class GroupConversationMessageCard extends StatelessWidget {
   final Widget? commandIcon;
   final bool commandProgress;
   final AnalyticsFeature? analyticsFeature;
+  final Key _reactionsKey;
 
-  GroupConversationMessageCard(this.message, { this.conversation, this.group, this.groupMember, this.onCommand, this.commandIcon, this.commandProgress = false, this.analyticsFeature });
+  GroupConversationMessageCard(this.message, { super.key, this.conversation, this.group, this.groupMember, this.onCommand, this.commandIcon, this.commandProgress = false, this.analyticsFeature }) :
+    _reactionsKey = ValueKey('social-message-${message.globalId}-reactions' );
 
   @override
   Widget build(BuildContext context) =>
@@ -449,7 +451,7 @@ class GroupConversationMessageCard extends StatelessWidget {
           ),
         ),
         Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding, vertical: _horzPadding), child:
-          GroupReactionsLayout(group: group, entityId: message.id, reactionSource: SocialEntityType.post, analyticsFeature: analyticsFeature,)
+          GroupReactionsLayout(key: _reactionsKey, group: group, entityId: message.id, reactionSource: SocialEntityType.message, analyticsFeature: analyticsFeature,)
         ),
       ],)
     );
