@@ -37,7 +37,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class StudentCoursesHomePanel extends StatefulWidget with AnalyticsInfo {
 
   final bool? showNavigationBars;
-  StudentCoursesHomePanel({this.showNavigationBars = true});
+  final StudentCoursesViewType? initialViewType;
+  StudentCoursesHomePanel({this.showNavigationBars = true, this.initialViewType});
 
   @override
   State<StudentCoursesHomePanel> createState() => _StudentCoursesHomePanelState();
@@ -70,7 +71,7 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
   @override
   void initState() {
     super.initState();
-    _selectedViewType = Storage()._studentCoursesViewType ?? StudentCoursesViewType.calendar;
+    _selectedViewType = widget.initialViewType ?? Storage()._studentCoursesViewType ?? StudentCoursesViewType.calendar;
 
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
