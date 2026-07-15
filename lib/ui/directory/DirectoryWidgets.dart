@@ -25,7 +25,6 @@ import 'package:rokwire_plugin/service/auth2.directory.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
@@ -602,21 +601,18 @@ class _DirectoryProfilePhotoState extends State<DirectoryProfilePhoto> {
       ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: widget.photoSize) ?? Container());
   }
 
-  void _loadNetworkPhoto() {
+  void _loadNetworkPhoto() async {
     String? photoUrl = widget.photoUrl;
-    if ((_photoBytes == null) && StringUtils.isNotEmpty(photoUrl)) {
+    if ((_photoBytes == null) && (photoUrl != null) && photoUrl.isNotEmpty) {
       setState(() {
         _loadingNetworkPhoto = true;
       });
-      Network().get(photoUrl, headers: widget.photoUrlHeaders).then((response) {
-        int? responseCode = response?.statusCode;
-        Uint8List? photoBytes = ((responseCode != null) && (responseCode >= 200) && (responseCode <= 301)) ? response?.bodyBytes : null;
-        setStateIfMounted((){
-          if (photoBytes != null) {
-            _photoBytes = photoBytes;
-          }
-          _loadingNetworkPhoto = false;
-        });
+      Uint8List? photoBytes = await Content().loadEntity(photoUrl, headers: widget.photoUrlHeaders);
+      setStateIfMounted((){
+        if (photoBytes != null) {
+          _photoBytes = photoBytes;
+        }
+        _loadingNetworkPhoto = false;
       });
     }
   }
