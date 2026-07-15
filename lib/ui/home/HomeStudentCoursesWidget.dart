@@ -440,8 +440,13 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
   @override
   void didUpdateWidget(_HomeStudentCoursesCalendarContentWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _updateCourseColors();
-    _updateBlocks();
+    bool coursesChanged = !identical(widget.courses, oldWidget.courses);
+    if (coursesChanged) {
+      _updateCourseColors();
+    }
+    if (coursesChanged || (widget.weekday != oldWidget.weekday)) {
+      _updateBlocks();
+    }
   }
 
   @override
