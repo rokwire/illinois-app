@@ -110,7 +110,7 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
       _updateCourses();
     }
     else if (name == StudentCourses.notifyTermsChanged) {
-      setStateIfMounted(() {});
+      _updateCourses();
     }
     else if (name == StudentCourses.notifySelectedTermChanged) {
       _updateCourses();

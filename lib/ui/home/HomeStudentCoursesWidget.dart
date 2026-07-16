@@ -104,7 +104,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
       _updateCourses();
     }
     else if (name == StudentCourses.notifyTermsChanged) {
-      setStateIfMounted(() {});
+      _updateCourses();
     }
     else if (name == StudentCourses.notifySelectedTermChanged) {
       _updateCourses();
