@@ -636,7 +636,7 @@ class GroupConversationMessageEditBar extends StatefulWidget {
     required this.onSubmitMessage, this.showSubmitProgress = false, this.onCancelEdit,
   });
 
-  quill.Document get textDocument {
+  quill.Document createTextDocument() {
     try {
       return quill.Document.fromDelta(HtmlToDelta().convert(text ?? ''));
     }
@@ -644,6 +644,18 @@ class GroupConversationMessageEditBar extends StatefulWidget {
       return quill.Document()..insert(0, text ?? '');
     }
   }
+
+  quill.QuillController createTextController() {
+    if (text?.isNotEmpty == true) {
+      quill.Document textDocument = createTextDocument();
+      TextSelection textSelection = TextSelection.collapsed(offset: max(textDocument.toPlainText().length - 1, 0));
+      return quill.QuillController(document: textDocument, selection: textSelection,);
+    } else {
+      return quill.QuillController.basic();
+    }
+  }
+
+
 
   @override
   State<StatefulWidget> createState() => _GroupConversationMessageEditBarState();
@@ -662,10 +674,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
 
   @override
   void initState() {
-    _quillController = (widget.text?.isNotEmpty == true) ? quill.QuillController(
-      document: widget.textDocument,
-      selection: const TextSelection.collapsed(offset: 0),
-    ) : quill.QuillController.basic();
+    _quillController = widget.createTextController();
     _quillController.addListener(_onTextChanged);
     _initialQuillDelta = _quillController.document.toDelta();
     _textStyle = widget.textStyle ?? Styles().textStyles.getTextStyle('widget.message.regular') ?? _defaultTextStyle;
@@ -829,10 +838,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     _quillController.removeListener(_onTextChanged);
     _quillController.dispose();
 
-    quill.QuillController quillController = (widget.text?.isNotEmpty == true) ? quill.QuillController(
-      document: widget.textDocument,
-      selection: const TextSelection.collapsed(offset: 0, ),
-    ) : quill.QuillController.basic();
+    quill.QuillController quillController = widget.createTextController();
     quillController.addListener(_onTextChanged);
 
     setState(() {
