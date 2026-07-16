@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Acknowledged entity caching feature from Content service for user photos [#5889](https://github.com/rokwire/illinois-app/issues/5889).
 - My Courses Calendar View [#5858](https://github.com/rokwire/illinois-app/issues/5858).
+### Changed
+- Initial version of Groups Direct Messaging 2 [#5581](https://github.com/rokwire/illinois-app/issues/5581).
 
 ## 8.1.2 - 2026-07-13
 ### Changed

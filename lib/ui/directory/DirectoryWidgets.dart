@@ -136,9 +136,9 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
             Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
               DirectoryProfilePhoto(
                 photoUrl: _photoUrl,
-                imageSize: _photoImageSize,
+                photoSize: _photoImageSize,
                 photoUrlHeaders: _photoAuthHeaders,
-                borderSize: 12,
+                borderSize: 1, padding: 12,
               ),
               _expandedCommandsBar,
             ],),
@@ -219,10 +219,10 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
       )
     );
 
-  String? get _photoUrl => StringUtils.isNotEmpty(widget.account.profile?.photoUrl) ?
+  String? get _photoUrl => StringUtils.isNotEmpty(widget.account.profile?.photoUrl) /* TMP || true */ ?
     Content().getUserPhotoUrl(type: UserProfileImageType.medium, accountId: widget.account.id, params: DirectoryProfilePhotoUtils.tokenUrlParam(widget.photoImageToken)) : null;
 
-  double get _photoImageSize => MediaQuery.of(context).size.width / 4;
+  double get _photoImageSize => MediaQuery.of(context).size.width / 3.60;
 
   Map<String, String>? get _photoAuthHeaders => DirectoryProfilePhotoUtils.authHeaders;
 
@@ -364,7 +364,7 @@ class _DirectoryAccountContactCardState extends State<DirectoryAccountContactCar
       DirectoryProfilePhoto(
         photoUrl: _photoImageUrl,
         photoUrlHeaders: _photoAuthHeaders,
-        imageSize: _photoImageSize,
+        photoSize: _photoImageSize,
       ),
 
       Padding(padding: EdgeInsets.only(top: 12), child:
@@ -533,10 +533,14 @@ class DirectoryProfilePhoto extends StatefulWidget {
   final String? photoUrl;
   final Map<String, String>? photoUrlHeaders;
   final Uint8List? photoData;
-  final double imageSize;
+  final double photoSize;
   final double borderSize;
+  final double padding;
 
-  DirectoryProfilePhoto({ super.key, this.photoUrl, this.photoUrlHeaders, this.photoData, this.borderSize = 0, required this.imageSize });
+  double get imageSize => photoSize - borderSize - padding;
+
+  DirectoryProfilePhoto({ super.key, this.photoUrl, this.photoUrlHeaders, this.photoData, required this.photoSize, this.borderSize = 0, this.padding = 0 });
+
 
   @override
   State<DirectoryProfilePhoto> createState() => _DirectoryProfilePhotoState();
@@ -544,6 +548,22 @@ class DirectoryProfilePhoto extends StatefulWidget {
 
 class _DirectoryProfilePhotoState extends State<DirectoryProfilePhoto> {
   Uint8List? _photoBytes;
+  bool _loadingNetworkPhoto = false;
+
+  static const double _maxProgressSize = 24;
+  static const double _maxProgressImageSize = 120;
+  static const double _minProgressSize = 10;
+  static const double _minProgressImageSize = 20;
+  double get _progressSize {
+    if (_maxProgressImageSize <= widget.imageSize) {
+      return _maxProgressSize;
+    } else if (widget.imageSize <= _minProgressImageSize) {
+      return _minProgressSize;
+    } else {
+      return _minProgressSize + (widget.imageSize - _minProgressImageSize) / (_maxProgressImageSize - _minProgressImageSize) * (_maxProgressSize - _minProgressSize);
+    }
+  }
+  double get _progressStrokeWidth => _progressSize / 12;
 
   @override
   void initState() {
@@ -555,43 +575,45 @@ class _DirectoryProfilePhotoState extends State<DirectoryProfilePhoto> {
   @override
   Widget build(BuildContext context) {
     ImageProvider<Object>? decorationImage = _decorationImage;
-    return (decorationImage != null) ?
+    return ((decorationImage != null) || _loadingNetworkPhoto) ?
       AccessibleImageHolder(imageUrl: UrlUtils.stripQueryParameters(widget.photoUrl), child:
         Container(
-          width: widget.imageSize + widget.borderSize, height: widget.imageSize + widget.borderSize,
+          width: widget.photoSize, height: widget.photoSize,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Styles().colors.white,
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+            color: (decorationImage != null) ? Styles().colors.white : null,
+            border: (0 < widget.borderSize) ? Border.all(color: Styles().colors.surfaceAccent, width: widget.borderSize) : null,
           ),
-          child: Center(
-            child: Container(
+          child: Center(child: (decorationImage != null) ?
+            Container(
               width: widget.imageSize, height: widget.imageSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Styles().colors.background,
-                image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: decorationImage
-                ),
-              ),
+                image: DecorationImage(fit: BoxFit.cover, image: decorationImage),
+              )
+            ) :
+            SizedBox.square(dimension: _progressSize, child:
+              CircularProgressIndicator(strokeWidth: _progressStrokeWidth, color: Styles().colors.fillColorSecondary,)
             )
           ),
         )
-      ): (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: widget.imageSize + widget.borderSize) ?? Container());
+      ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: widget.photoSize) ?? Container());
   }
 
   void _loadNetworkPhoto() async {
     String? photoUrl = widget.photoUrl;
     if ((_photoBytes == null) && (photoUrl != null) && photoUrl.isNotEmpty) {
+      setState(() {
+        _loadingNetworkPhoto = true;
+      });
       Uint8List? photoBytes = await Content().loadEntity(photoUrl, headers: widget.photoUrlHeaders);
-      if (photoBytes != null) {
-        setStateIfMounted(() {
+      setStateIfMounted((){
+        if (photoBytes != null) {
           _photoBytes = photoBytes;
-        });
-      } else {
-        debugPrint('Failed to load photo with url: ${widget.photoUrl}');
-      }
+        }
+        _loadingNetworkPhoto = false;
+      });
     }
   }
 

@@ -250,7 +250,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
             photoUrl: _photoImageUrl,
             photoUrlHeaders: _photoAuthHeaders,
             photoData: _photoImageData,
-            imageSize: _photoImageSize,
+            photoSize: _photoImageSize,
           ),
         )
       ),

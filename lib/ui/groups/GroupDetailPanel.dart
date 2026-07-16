@@ -32,6 +32,8 @@ import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupAboutContentWidget.dart';
+import 'package:illinois/ui/groups/GroupConversationCreatePanel.dart';
+import 'package:illinois/ui/groups/GroupConversationsTab.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
@@ -158,6 +160,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
 
   bool               _confirmationLoading = false;
   bool               _researchProjectConsent = false;
+  bool               _editingConversationMessages = false;
 
   int                _progress = 0;
   DateTime?         _pausedDateTime;
@@ -864,7 +867,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       case DetailTab.ScheduledPosts:
         return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Messages:
-        return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
+        return GroupConversationsTab(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, editMode: _editingConversationMessages, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Polls:
         return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
 
@@ -1243,7 +1246,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     RibbonButton(
                       key: _canReportAbuse && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
                       leftIconKey: "report",
-                      title: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                      title: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.label", "Report to Dean of Students"),
                       onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true)   ),
                     )),
                 ])));
@@ -1287,8 +1290,22 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                         title: Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message"),//localize tbd
                         onTap: () {
                           Navigator.of(context).pop();
-                          _onTapCreatePost(type: PostType.direct_message);
+                          _onTapCreateConversation();
                         })),
+                  Visibility(visible: _canCreateMessage, child:
+                    RibbonButton(
+                      key: _canCreateMessage && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
+                      leftIconKey: "check-circle-2",
+                      title: _editingConversationMessages ?
+                        Localization().getStringEx("", "Finish Messages Selection") : Localization().getStringEx("", "Select Messages"),//localize tbd
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        if (_editingConversationMessages) {
+                          _onFinishEditConversations();
+                        } else {
+                          _onEditConversations();
+                        }
+                      })),
                     Visibility(visible: _canAddEvent, child:
                       RibbonButton(
                         key: _canAddEvent && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
@@ -1326,6 +1343,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         _currentTab = tab;
 
       _pageController?.animateToPage(_indexOfTab(tab), duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
+    }
+  }
+
+  void _selectTab(DetailTab tab) {
+    if (_currentTab != tab) {
+      _currentTab = tab;
+      int index = _indexOfTab(tab);
+      if (0 <= index) {
+        _tabController?.animateTo(index, duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
+        _pageController?.animateToPage(index, duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
+      }
     }
   }
 
@@ -1578,7 +1606,29 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     }
   }
 
+  void _onTapCreateConversation() {
+    Analytics().logSelect(target: "Create Direct Message", attributes: _group?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupConversationCreatePanel(group: _group, groupAdmins: _groupAdmins, analyticsFeature: AnalyticsFeature.Groups,)));
+  }
+
+  void _onEditConversations() {
+    Analytics().logSelect(target: "Select Messages", attributes: _group?.analyticsAttributes);
+    setState(() {
+      _editingConversationMessages = true;
+    });
+    _selectTab(DetailTab.Messages);
+  }
+
+  void _onFinishEditConversations() {
+    Analytics().logSelect(target: "Finish Messages Selection", attributes: _group?.analyticsAttributes);
+    setState(() {
+      _editingConversationMessages = false;
+    });
+    _selectTab(DetailTab.Messages);
+  }
+
   void _onTapCreatePoll() {
+    Analytics().logSelect(target: "Create Poll", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel(group: _group)));
   }
 
@@ -1728,7 +1778,6 @@ class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsLi
 
   @override
   Widget build(BuildContext context) {
-    Log.d("_GroupDetailEventsState.build");
     super.build(context);
     return _buildEvents();
   }
@@ -2287,6 +2336,7 @@ class _GroupMessagesContent extends StatefulWidget {
   final StreamController<dynamic>? updateController;
   final AnalyticsFeature? analyticsFeature;
 
+  // ignore: unused_element_parameter
   const _GroupMessagesContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature});
 
   String get _emptyText => Localization().getStringEx("", "No messages");

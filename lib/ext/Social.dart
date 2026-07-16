@@ -97,6 +97,14 @@ extension ReactionExt on Reaction {
 extension MessageExt on Message {
   DateTime? get dateSentLocal =>  AppDateTime().getDeviceTimeFromUtcTime(dateSentUtc);
   String? get dateSentLocalString => DateTimeUtils.localDateTimeToString(dateSentLocal, format: 'MMMM dd, yyyy');
+
+  String? get displayDateTime {
+    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime( dateUpdatedUtc ?? dateSentUtc);
+    return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;
+  }
+
+  String? get identityKey => (((id != null) && (id?.isNotEmpty == true)) && ((globalId != null) && (globalId?.isNotEmpty == true))) ?
+    "${id}:${globalId}" : null;
 }
 
 extension ConversationExt on Conversation {
@@ -129,6 +137,32 @@ extension ConversationExt on Conversation {
     }
     return null;
   }
+
+  String? get displayUpdateTime {
+    if(lastActivityTimeUtc != null) {
+      DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(lastActivityTimeUtc);
+      return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;
+    }
+    else {
+      return null;
+    }
+  }
+
+  List<Message> buildDisplayMessageList(List<Message> messages, { Set<String>? globalMessageIds, bool mustCopy = true }) => isGroupConversation ?
+    _buildGroupDisplayMessageList(messages, globalMessageIds: globalMessageIds ?? <String>{}) :
+    (mustCopy ? List<Message>.from(messages) : messages);
+
+  List<Message> _buildGroupDisplayMessageList(Iterable<Message> messages, { required Set<String> globalMessageIds }) {
+    List<Message> displayMessages = <Message>[];
+    for (Message message in messages) {
+      String? messageGlobalId = message.globalId;
+      if ((messageGlobalId != null) && messageGlobalId.isNotEmpty && (globalMessageIds.contains(messageGlobalId) != true)) {
+        displayMessages.add(message);
+        globalMessageIds.add(messageGlobalId);
+      }
+    }
+    return displayMessages;
+  }
 }
 
 extension CreatorExt on Creator{
@@ -137,5 +171,30 @@ extension CreatorExt on Creator{
       member.userId == accountId
     );
     return CollectionUtils.isNotEmpty(creators) ? creators!.first : null;
+  }
+}
+
+extension ConversationMemberExt on ConversationMember {
+
+  bool get isCurrentUser => accountId == Auth2().accountId;
+
+  static int compareNames(ConversationMember m1, ConversationMember m2) {
+    String? n1 = m1.name, n2 = m2.name;
+    if ((n1 != null) && (n2 != null)) {
+      List<String> fn1 = n1.split(' ');
+      List<String> fn2 = n2.split(' ');
+      if ((1 < fn1.length) && (1 < fn2.length)) {
+        int result = fn1.last.compareTo(fn2.last);
+        if (result != 0) {
+          return result;
+        } else {
+          return fn1.first.compareTo(fn2.first);
+        }
+      } else {
+        return n1.compareTo(n2);
+      }
+    } else {
+      return 0;
+    }
   }
 }

@@ -39,6 +39,8 @@
 	"dialog.print.hint":"",
 	"dialog.copy.title":"Copy",
 	"dialog.copy.hint":"",
+	"dialog.done.title":"Done",
+	"dialog.copy.hint":"",
 
 	"tabbar.home.title":"主页",
 	"tabbar.home.hint":"主页",
@@ -2891,6 +2893,7 @@
 	"panel.group_detail.button.leave_group.title": "退出群组",
 	"panel.group_detail.button.create_post.title": "创建贴文",
 	"panel.group_detail.button.create_message.title": "Create Direct Message",
+	"panel.group_detail.button.create_message2.title": "Create Direct Message2",
 	"panel.group_detail.button.previous_post.title": "查看过去贴文",
 	"panel.group_detail.button.favorites.title": "Favorites",
 	"panel.group_detail.button.remove_event.title": "移除活动",

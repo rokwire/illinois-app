@@ -59,7 +59,7 @@ class ProfileInfoPreviewPageState extends State<ProfileInfoPreviewPage> {
             photoUrl: _photoImageUrl,
             photoUrlHeaders: _photoAuthHeaders,
             photoData: widget.photoImageData,
-            imageSize: _photoImageSize,
+            photoSize: _photoImageSize,
           ),
         )
       )

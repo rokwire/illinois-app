@@ -40,6 +40,8 @@
     "dialog.print.hint":"",
     "dialog.copy.title":"Copy",
     "dialog.copy.hint":"",
+    "dialog.done.title":"Done",
+    "dialog.copy.hint":"",
 
     "tabbar.home.title":"Home",
     "tabbar.home.hint":"Home Page",
@@ -2908,6 +2910,7 @@
     "panel.group_detail.button.leave_group.title": "Leave group",
     "panel.group_detail.button.create_post.title": "Create Post",
     "panel.group_detail.button.create_message.title": "Create Direct Message",
+    "panel.group_detail.button.create_message2.title": "Create Direct Message2",
     "panel.group_detail.button.previous_post.title": "See previous posts",
     "panel.group_detail.button.favorites.title": "Favorites",
     "panel.group_detail.button.remove_event.title": "Remove Event",
