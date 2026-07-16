@@ -222,7 +222,7 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
       for (StudentCourseTerm term in terms) {
         items.add(DropdownMenuItem<String>(
           value: term.id,
-          child: Text(term.name ?? '', style: _getDropDownItemStyle(bold: term.id == currentTermId),)
+          child: Text(term.name ?? '', style: _getDropDownItemStyle(bold: (term.id == currentTermId)),)
         ));
       }
     }
@@ -316,7 +316,7 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
 
   bool get _canLoadCourses => (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn);
 
-  bool get _showNavigationBars => widget.showNavigationBars == true;
+  bool get _showNavigationBars => (widget.showNavigationBars == true);
 }
 
 enum StudentCoursesViewType { calendar, list, map }

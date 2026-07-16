@@ -4237,6 +4237,7 @@
     "widget.home.gies_canvas_courses.button.all.hint": "Tap to view all courses",
 
     "widget.home.student_courses.header.label": "My Courses",
+    "widget.home.student_courses.term_dropdown.hint": "Double tap to select term",
     "widget.home.student_courses.text.empty.description": "You do not appear to be enrolled in any courses for the selected term.",
     "widget.home.student_courses.text.offline.description": "My Courses is not available while offline.",
     "widget.home.student_courses.text.logged_out.description": "You need to be signed in with your NetID to access My Courses. Set your privacy level to 4 or 5 under Settings. Then find the sign-in prompt under Profile.",

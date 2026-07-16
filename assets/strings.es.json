@@ -4236,6 +4236,7 @@
     "widget.home.gies_canvas_courses.button.all.hint": "Toca para ver todos los cursos",
 
     "widget.home.student_courses.header.label": "Mis cursos",
+    "widget.home.student_courses.term_dropdown.hint": "Doble toque para seleccionar el término",
     "widget.home.student_courses.text.empty.description": "No parece estar inscrito en ningún curso para el período seleccionado",
     "widget.home.student_courses.text.offline.description": "No parece estar inscrito en ningún curso para el término seleccionado.",
     "widget.home.student_courses.text.logged_out.description": "Debe iniciar sesión con su NetID para acceder a Mis cursos. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",

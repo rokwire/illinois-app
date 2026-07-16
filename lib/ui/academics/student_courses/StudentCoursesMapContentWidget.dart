@@ -121,12 +121,12 @@ class _StudentCoursesMapContentWidgetState extends Map2BasePanelState<StudentCou
       bool hadTray = _trayExplores?.isNotEmpty == true;
       bool haveTray = trayExplores?.isNotEmpty == true;
       if (haveTray == hadTray) {
-        setState(() {
+        setStateIfMounted(() {
           _trayExplores = trayExplores;
         });
       }
       else if (haveTray) {
-        setState(() {
+        setStateIfMounted(() {
           _trayExplores = trayExplores;
         });
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -186,7 +186,7 @@ class _StudentCoursesMapContentWidgetState extends Map2BasePanelState<StudentCou
     if (origin is Explore) {
       Analytics().logSelect(target: "Map Marker: ${origin.exploreTitle}");
       if (_selectedExploreGroup != null) {
-        setState(() {
+        setStateIfMounted(() {
           _selectedExploreGroup = null;
         });
         updateMapMarkers();
@@ -196,7 +196,7 @@ class _StudentCoursesMapContentWidgetState extends Map2BasePanelState<StudentCou
     }
     else if (origin is Set<Explore>) {
       Analytics().logSelect(target: "Map Marker: { ${origin.length} items }");
-      setState(() {
+      setStateIfMounted(() {
         _selectedExploreGroup = DeepCollectionEquality().equals(_selectedExploreGroup, origin) ? null : origin;
       });
       updateMapMarkers();
@@ -206,7 +206,7 @@ class _StudentCoursesMapContentWidgetState extends Map2BasePanelState<StudentCou
 
   void _clearSelection() {
     if (_selectedExploreGroup != null) {
-      setState(() {
+      setStateIfMounted(() {
         _selectedExploreGroup = null;
       });
       updateMapMarkers();

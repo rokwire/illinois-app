@@ -29,7 +29,7 @@ class StudentCourseBlock {
 
   StudentCourseBlock({required this.course, required this.startMinutes, required this.durationMinutes});
 
-  int get endMinutes => startMinutes + durationMinutes;
+  int get endMinutes => (startMinutes + durationMinutes);
 }
 
 class StudentCoursesCalendarLayout {

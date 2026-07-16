@@ -4210,6 +4210,7 @@
 	"widget.home.gies_canvas_courses.button.all.hint": "點擊查看所有課程",
 
 	"widget.home.student_courses.header.label": "我的課程",
+	"widget.home.student_courses.term_dropdown.hint": "雙擊選擇學期",
 	"widget.home.student_courses.text.empty.description": "您似乎沒有註冊所選學期的任何課程。",
 	"widget.home.student_courses.text.offline.description": "我的課程在離線時不可用。",
 	"widget.home.student_courses.text.logged_out.description": "您需要使用您的 NetID 登入才能訪問我的課程。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登入提示。",

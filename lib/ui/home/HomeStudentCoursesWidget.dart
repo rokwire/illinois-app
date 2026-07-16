@@ -143,7 +143,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
   Widget _buildTermsDropDown() {
     StudentCourseTerm? currentTerm = StudentCourses().displayTerm;
 
-    return Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
+    return Semantics(label: currentTerm?.name, hint: Localization().getStringEx('widget.home.student_courses.term_dropdown.hint', 'Double tap to select term'), button: true, container: true, child:
       DropdownButtonHideUnderline(child: StudentCoursesHomePanel.wrapDropDownTheme(
         DropdownButton<String>(
           icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('chevron-down', excludeFromSemantics: true)),
@@ -172,7 +172,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
       for (StudentCourseTerm term in terms) {
         items.add(DropdownMenuItem<String>(
           value: term.id,
-          child: Text(term.name ?? '', style: _getTermDropDownItemStyle(selected: term.id == currentTermId),)
+          child: Text(term.name ?? '', style: _getTermDropDownItemStyle(selected: (term.id == currentTermId)),)
         ));
       }
     }
@@ -307,8 +307,8 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
 
   void _updateCourses({bool forceLoad = false, bool showProgress = true}) {
     if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn && !_loading) {
-      if (mounted && showProgress) {
-        setState(() {
+      if (showProgress) {
+        setStateIfMounted(() {
           _loading = true;
         });
       }
@@ -408,14 +408,14 @@ class _HomeStudentCoursesCalendarContentWidget extends StatefulWidget {
 
 class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCoursesCalendarContentWidget> {
 
-  static const double _minHourHeight = 24; // floor so hour rows never become unreadably small
+  static const double _minHourHeight = 24;
   static const int _startHour = 8;
-  static const int _endHour = 16; // 4 PM
+  static const int _endHour = 16;
 
   static const double _cardPadding = 16;
   static const double _headerHeight = 32;
   static const double _gridTopPadding = 8;
-  static const double _timeColumnGap = 8; // space between the hour labels and the day column
+  static const double _timeColumnGap = 8;
   static const double _closingRowHeight = 16;
 
   double _hourHeight = _minHourHeight;
