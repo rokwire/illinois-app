@@ -202,7 +202,8 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
     else {
       return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
         Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 8), child: _buildViewTypeToggle()),
-        (_viewType == StudentCoursesViewType.calendar) ? _buildCalendarContent() : _buildCoursesContent(),
+        Visibility(visible: (_viewType == StudentCoursesViewType.calendar), maintainState: true, child: _buildCalendarContent()),
+        Visibility(visible: (_viewType == StudentCoursesViewType.list), maintainState: true, child: _buildCoursesContent()),
       ]);
     }
   }
