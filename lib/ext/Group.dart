@@ -274,7 +274,6 @@ extension GroupContentItemExt on GroupContentItem{
       case 'posts' : return 'Posts';
       case 'scheduled' : return 'Scheduled';
       case 'messages' : return 'Messages';
-      case 'conversations' : return 'Conversations';
       case 'polls' : return 'Polls';
       default : return "unknown";
     }
@@ -287,7 +286,6 @@ extension GroupContentItemExt on GroupContentItem{
       case 'posts' : return DetailTab.Posts;
       case 'scheduled' : return DetailTab.ScheduledPosts;
       case 'messages' : return DetailTab.Messages;
-      case 'conversations' : return DetailTab.Conversations;
       case 'polls' : return DetailTab.Polls;
     }
     return null;

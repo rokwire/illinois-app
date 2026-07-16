@@ -81,7 +81,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum DetailTab { Events, PastEvents, Posts, ScheduledPosts, Messages, Conversations, Polls }
+enum DetailTab { Events, PastEvents, Posts, ScheduledPosts, Messages, Polls }
 
 class GroupDetailPanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'group_detail_content_panel';
@@ -238,13 +238,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   bool get _canUserCreatePost => _isAdmin || (_isMember && _group?.isMemberAllowedToCreatePost == true && FlexUI().isSharingAvailable);
 
   bool get _canCreateMessage => _containsTab(DetailTab.Messages) && _canUserCreateMessage;
-  bool get _canCreateConversation => _containsTab(DetailTab.Conversations) && _canUserCreateMessage;
   bool get _canUserCreateMessage => _isAdmin || (_isMember && _group?.isMemberAllowedToPostToSpecificMembers == true && FlexUI().isSharingAvailable);
 
   bool get _canCreatePoll => _containsTab(DetailTab.Polls) && _canUserCreatePoll;
   bool get _canUserCreatePoll => _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && FlexUI().isSharingAvailable);
 
-  bool get _hasCreateOptions => _canCreatePost || _canCreateMessage || _canCreateConversation || _canAddEvent || _canCreatePoll;
+  bool get _hasCreateOptions => _canCreatePost || _canCreateMessage || _canAddEvent || _canCreatePoll;
 
   bool get _canManageMembers => _isAdmin;
   bool get _canViewMembers => _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
@@ -772,9 +771,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         case DetailTab.Messages:
           title = Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
           break;
-        case DetailTab.Conversations:
-          title = Localization().getStringEx("panel.group_detail.button.conversations.title", 'Conversations');
-          break;
         case DetailTab.Polls:
           title = Localization().getStringEx("panel.group_detail.button.polls.title", 'Polls');
           break;
@@ -871,8 +867,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       case DetailTab.ScheduledPosts:
         return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Messages:
-        return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
-      case DetailTab.Conversations:
         return GroupConversationsTab(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, editMode: _editingConversationMessages, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Polls:
         return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
@@ -1296,29 +1290,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                         title: Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message"),//localize tbd
                         onTap: () {
                           Navigator.of(context).pop();
-                          _onTapCreatePost(type: PostType.direct_message);
+                          _onTapCreateConversation();
                         })),
-                  Visibility(visible: _canCreateConversation, child:
+                  Visibility(visible: _canCreateMessage, child:
                     RibbonButton(
-                      key: _canCreateConversation && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
-                      leftIconKey: "plus-circle",
-                      title: Localization().getStringEx("", "Create Conversation Message"),//localize tbd
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        _onTapCreateConversationMessage();
-                      })),
-                  Visibility(visible: _canCreateConversation, child:
-                    RibbonButton(
-                      key: _canCreateConversation && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
+                      key: _canCreateMessage && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
                       leftIconKey: "check-circle-2",
                       title: _editingConversationMessages ?
-                        Localization().getStringEx("", "Finish Edit Conversation Messages") : Localization().getStringEx("", "Edit Conversation Messages"),//localize tbd
+                        Localization().getStringEx("", "Finish Messages Selection") : Localization().getStringEx("", "Select Messages"),//localize tbd
                       onTap: () {
                         Navigator.of(context).pop();
                         if (_editingConversationMessages) {
-                          _onFinishEditConversationMessages();
+                          _onFinishEditConversations();
                         } else {
-                          _onEditConversationMessages();
+                          _onEditConversations();
                         }
                       })),
                     Visibility(visible: _canAddEvent, child:
@@ -1358,6 +1343,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         _currentTab = tab;
 
       _pageController?.animateToPage(_indexOfTab(tab), duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
+    }
+  }
+
+  void _selectTab(DetailTab tab) {
+    if (_currentTab != tab) {
+      _currentTab = tab;
+      int index = _indexOfTab(tab);
+      if (0 <= index) {
+        _tabController?.animateTo(index, duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
+        _pageController?.animateToPage(index, duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
+      }
     }
   }
 
@@ -1610,36 +1606,25 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     }
   }
 
-  void _onTapCreateConversationMessage() {
-    Analytics().logSelect(target: "Create Conversation Message", attributes: _group?.analyticsAttributes);
+  void _onTapCreateConversation() {
+    Analytics().logSelect(target: "Create Direct Message", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupConversationCreatePanel(group: _group, groupAdmins: _groupAdmins, analyticsFeature: AnalyticsFeature.Groups,)));
   }
 
-  void _onEditConversationMessages() {
-    Analytics().logSelect(target: "Edit Conversation Messages", attributes: _group?.analyticsAttributes);
+  void _onEditConversations() {
+    Analytics().logSelect(target: "Select Messages", attributes: _group?.analyticsAttributes);
     setState(() {
       _editingConversationMessages = true;
     });
-    _selectConversationsTab();
+    _selectTab(DetailTab.Messages);
   }
 
-  void _onFinishEditConversationMessages() {
-    Analytics().logSelect(target: "Finish Edit Conversation Messages", attributes: _group?.analyticsAttributes);
+  void _onFinishEditConversations() {
+    Analytics().logSelect(target: "Finish Messages Selection", attributes: _group?.analyticsAttributes);
     setState(() {
       _editingConversationMessages = false;
     });
-    _selectConversationsTab();
-  }
-
-  void _selectConversationsTab() {
-    if (_currentTab != DetailTab.Conversations) {
-      _currentTab = DetailTab.Conversations;
-      int index = _indexOfTab(DetailTab.Conversations);
-      if (0 <= index) {
-        _tabController?.animateTo(index, duration: Duration(milliseconds: _animationDurationInMilliSeconds));
-        _pageController?.animateToPage(index, duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
-      }
-    }
+    _selectTab(DetailTab.Messages);
   }
 
   void _onTapCreatePoll() {
