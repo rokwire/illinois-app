@@ -447,7 +447,11 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
         _submitting = true;
       });
 
-      Conversation? conversation = await Social().createConversation(memberIds: List.from(_selectedMemberIds));
+      Conversation? conversation = await Social().createConversation(
+        type: ConversationType.groupSubset,
+        context: ContextItem.group(widget.group?.id),
+        memberIds: List.from(_selectedMemberIds)
+      );
       if (mounted) {
         setState(() {
           _submitting = true;
