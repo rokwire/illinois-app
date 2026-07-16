@@ -449,7 +449,7 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
 
       Conversation? conversation = await Social().createConversation(
         type: ConversationType.groupSubset,
-        context: ContextItem.group(widget.group?.id),
+        context: ContextItem.fromGroup(widget.group?.id),
         memberIds: List.from(_selectedMemberIds)
       );
       if (mounted) {
