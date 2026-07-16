@@ -147,6 +147,22 @@ extension ConversationExt on Conversation {
       return null;
     }
   }
+
+  List<Message> buildDisplayMessageList(List<Message> messages, { Set<String>? globalMessageIds, bool mustCopy = true }) => isGroupConversation ?
+    _buildGroupDisplayMessageList(messages, globalMessageIds: globalMessageIds ?? <String>{}) :
+    (mustCopy ? List<Message>.from(messages) : messages);
+
+  List<Message> _buildGroupDisplayMessageList(Iterable<Message> messages, { required Set<String> globalMessageIds }) {
+    List<Message> displayMessages = <Message>[];
+    for (Message message in messages) {
+      String? messageGlobalId = message.globalId;
+      if ((messageGlobalId != null) && messageGlobalId.isNotEmpty && (globalMessageIds.contains(messageGlobalId) != true)) {
+        displayMessages.add(message);
+        globalMessageIds.add(messageGlobalId);
+      }
+    }
+    return displayMessages;
+  }
 }
 
 extension CreatorExt on Creator{

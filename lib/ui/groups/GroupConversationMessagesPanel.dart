@@ -41,6 +41,7 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
   ScrollController _scrollController = ScrollController();
 
   List<Message>? _contentList;
+  final Set<String> _contentGlobalIds = {};
   _ContentActivity? _contentActivity;
   bool? _lastPageLoadedAll;
   static const int _contentPageLength = 8;
@@ -243,7 +244,8 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
 
       if (mounted && (_contentActivity == _ContentActivity.reload)) {
         setState(() {
-          _contentList = (contentList != null) ? List<Message>.from(contentList) : null;
+          _contentGlobalIds.clear();
+          _contentList = (contentList != null) ? widget.conversation.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds) : null;
           _lastPageLoadedAll = (contentList != null) ? (contentList.length >= limit) : null;
           _contentActivity = null;
         });
@@ -268,7 +270,8 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
       if (mounted && (_contentActivity == activity)) {
         setState(() {
           if (contentList != null) {
-            _contentList = List<Message>.from(contentList);
+            _contentGlobalIds.clear();
+            _contentList = widget.conversation.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds);
             _lastPageLoadedAll = (contentList.length >= contentLength);
           }
           _contentActivity = null;
@@ -295,9 +298,9 @@ class _GroupConversationMessagesPanelState extends State<GroupConversationMessag
         setState(() {
           if (contentList != null) {
             if (_contentList != null) {
-              _contentList?.addAll(contentList);
+              _contentList?.addAll(widget.conversation.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds, mustCopy: false));
             } else {
-              _contentList = List<Message>.from(contentList);
+              _contentList = widget.conversation.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds);
             }
             _lastPageLoadedAll = (contentList.length >= contentLength);
           }
