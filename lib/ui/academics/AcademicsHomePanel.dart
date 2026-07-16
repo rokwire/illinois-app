@@ -27,12 +27,12 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/academics/AcademicsLinks.dart';
+import 'package:illinois/ui/academics/student_courses/StudentCoursesHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
 import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
 import 'package:illinois/ui/academics/MedicineCoursesContentWidget.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
-import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
@@ -399,7 +399,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContentType.canvas_courses: return CanvasCoursesContentWidget();
       case AcademicsContentType.gies_canvas_courses: return GiesCanvasCoursesContentWidget();
       case AcademicsContentType.medicine_courses: return MedicineCoursesContentWidget();
-      case AcademicsContentType.student_courses: return StudentCoursesContentWidget();
+      case AcademicsContentType.student_courses: return StudentCoursesHomePanel(showNavigationBars: false,);
       case AcademicsContentType.skills_self_evaluation: return SkillsSelfEvaluationWidget();
       case AcademicsContentType.essential_skills_coach: return EssentialSkillsCoachDashboard();
       case AcademicsContentType.todo_list: return WellnessToDoHomeContentWidget(analyticsFeature: AnalyticsFeature.AcademicsToDoList,);
@@ -473,6 +473,7 @@ extension AcademicsContentTypeImpl on AcademicsContentType {
     switch (this) {
       case AcademicsContentType.appointments:
       case AcademicsContentType.skills_self_evaluation:
+      case AcademicsContentType.student_courses:
       case AcademicsContentType.essential_skills_coach: return EdgeInsets.zero;
       default: return EdgeInsets.only(top: 16, left: 16, right: 16,);
     }
