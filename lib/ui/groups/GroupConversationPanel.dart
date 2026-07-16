@@ -24,19 +24,19 @@ import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class GroupConversationMessagesPanel extends StatefulWidget {
+class GroupConversationPanel extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
   final Conversation conversation;
   final AnalyticsFeature? analyticsFeature;
 
-  GroupConversationMessagesPanel(this.conversation, { super.key, this.group, this.groupAdmins, this.analyticsFeature });
+  GroupConversationPanel(this.conversation, { super.key, this.group, this.groupAdmins, this.analyticsFeature });
 
   @override
-  State<StatefulWidget> createState() => _GroupConversationMessagesPanelState();
+  State<StatefulWidget> createState() => _GroupConversationPanelState();
 }
 
-class _GroupConversationMessagesPanelState extends State<GroupConversationMessagesPanel> with NotificationsListener {
+class _GroupConversationPanelState extends State<GroupConversationPanel> with NotificationsListener {
 
   ScrollController _scrollController = ScrollController();
 

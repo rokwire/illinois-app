@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/groups/GroupConversationMessagesPanel.dart';
+import 'package:illinois/ui/groups/GroupConversationPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -458,7 +458,7 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
         });
         if (conversation != null) {
           Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) =>
-            GroupConversationMessagesPanel(conversation,
+            GroupConversationPanel(conversation,
               group: widget.group,
               groupAdmins: widget.groupAdmins,
               analyticsFeature: widget.analyticsFeature,

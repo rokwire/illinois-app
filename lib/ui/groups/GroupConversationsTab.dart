@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
-import 'package:illinois/ui/groups/GroupConversationMessagesPanel.dart';
+import 'package:illinois/ui/groups/GroupConversationPanel.dart';
 import 'package:illinois/ui/groups/GroupConversationWidgets.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -217,7 +217,7 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
 
   void _onTapConversation(Conversation conversation) {
     Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
-      GroupConversationMessagesPanel(conversation,
+      GroupConversationPanel(conversation,
         group: widget.group,
         groupAdmins: widget.groupAdmins,
         analyticsFeature: widget.analyticsFeature,
