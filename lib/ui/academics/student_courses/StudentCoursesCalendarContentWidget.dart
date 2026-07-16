@@ -43,7 +43,9 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
 
   static const double _minHourHeight = 40;
   static const double _timeColumnWidth = 64;
-  static const int _initialVisibleHour = 7;
+  static const double _initialVisibleStartHour = 7;
+  static const double _initialVisibleEndHour = 20;
+  static const double _initialWindowEdgeMargin = 12;
 
   static const double _dayHeaderRowHeight = 44;
   static const double _dayHeaderDividerHeight = 8;
@@ -56,6 +58,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
   late final ScrollController _scrollController;
 
   double _hourHeight = _minHourHeight;
+  double _dayColumnWidth = _minHourHeight;
   bool _initialScrollApplied = false;
 
   late final List<Color> _coursePalette;
@@ -88,10 +91,12 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
   }
 
   void _applyInitialScrollOffsetIfNeeded() {
-    if (!_initialScrollApplied && _scrollController.hasClients) {
-      _initialScrollApplied = true;
-      _scrollController.jumpTo(_gridTopGap + (_initialVisibleHour * _hourHeight));
+    if (_initialScrollApplied || !_scrollController.hasClients) {
+      return;
     }
+    _initialScrollApplied = true;
+    double target = _gridTopGap + (_initialVisibleStartHour * _hourHeight) - _initialWindowEdgeMargin;
+    _scrollController.jumpTo(math.max(0, target));
   }
 
   @override
@@ -99,8 +104,11 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
     TZDateTime now = DateTimeUni.nowUniOrLocal();
 
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-      double dayColumnWidth = (constraints.maxWidth - _timeColumnWidth) / StudentCoursesCalendarLayout.weekdayOrder.length;
-      _hourHeight = math.max(dayColumnWidth, _minHourHeight);
+      _dayColumnWidth = (constraints.maxWidth - _timeColumnWidth) / StudentCoursesCalendarLayout.weekdayOrder.length;
+      double availableGridHeight = constraints.maxHeight - _dayHeaderRowHeight;
+      double windowHours = _initialVisibleEndHour - _initialVisibleStartHour;
+      double fitHourHeight = (availableGridHeight - (2 * _initialWindowEdgeMargin)) / windowHours;
+      _hourHeight = math.max(_minHourHeight, math.min(_dayColumnWidth, fitHourHeight));
       WidgetsBinding.instance.addPostFrameCallback((_) => _applyInitialScrollOffsetIfNeeded());
 
       return Stack(children: <Widget>[
@@ -289,16 +297,16 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
       return Container();
     }
 
-    double columnLeft = _timeColumnWidth + (todayIndex * _hourHeight); // _hourHeight doubles as the square day-column width
+    double columnLeft = _timeColumnWidth + (todayIndex * _dayColumnWidth);
     double lineTop = (nowMinutes / 60.0) * _hourHeight;
 
     return Positioned.fill(child:
       Stack(clipBehavior: Clip.none, children: <Widget>[
-        Positioned(top: lineTop, left: columnLeft, width: _hourHeight, child:
+        Positioned(top: lineTop, left: columnLeft, width: _dayColumnWidth, child:
           Container(height: 2, color: _nowLineColor),
         ),
         _buildNowLineDot(top: lineTop, centerX: columnLeft),
-        _buildNowLineDot(top: lineTop, centerX: columnLeft + _hourHeight),
+        _buildNowLineDot(top: lineTop, centerX: columnLeft + _dayColumnWidth),
       ]),
     );
   }
