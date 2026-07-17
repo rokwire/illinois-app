@@ -416,7 +416,7 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
   static const double _headerHeight = 32;
   static const double _gridTopPadding = 8;
   static const double _timeColumnGap = 8;
-  static const double _closingRowHeight = 16;
+  static const double _closingRowHeight = _minHourHeight;
 
   double _hourHeight = _minHourHeight;
 
@@ -450,6 +450,7 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
     double targetCardHeight = StudentCourseCard.height(context);
     double chromeHeight = _headerHeight + _gridTopPadding + _cardPadding + _closingRowHeight;
     _hourHeight = math.max((targetCardHeight - chromeHeight) / visibleHourCount, _minHourHeight);
+    double gridHeight = visibleHourCount * _hourHeight;
 
     return Container(
       clipBehavior: Clip.antiAlias,
@@ -460,7 +461,7 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             _buildTimeColumn(),
             SizedBox(width: _timeColumnGap),
-            Expanded(child: SizedBox(height: visibleHourCount * _hourHeight, child: _buildDayColumn())),
+            Expanded(child: SizedBox(height: gridHeight + _closingRowHeight, child: _buildDayColumn())),
           ]),
         ),
       ]),
@@ -512,7 +513,7 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
       if ((startMinutes != null) && matchesWeekday) {
         int durationMinutes = StudentCoursesCalendarLayout.resolveDurationMinutes(startMinutes: startMinutes, endMinutes: course.section?.endTimeMinutes);
         StudentCourseBlock block = StudentCourseBlock(course: course, startMinutes: startMinutes, durationMinutes: durationMinutes);
-        if ((block.startMinutes < (_endHour * 60)) && (block.endMinutes > (_startHour * 60))) {
+        if ((block.startMinutes < ((_endHour + 1) * 60)) && (block.endMinutes > (_startHour * 60))) {
           blocks.add(block);
         }
       }
@@ -553,14 +554,31 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
     );
   }
 
+  double _minutesToOffset(double minutes) {
+    double windowStartMinutes = (_startHour * 60).toDouble();
+    double windowFullEndMinutes = (_endHour * 60).toDouble();
+    double windowOverflowEndMinutes = windowFullEndMinutes + 60;
+
+    double clampedMinutes = minutes.clamp(windowStartMinutes, windowOverflowEndMinutes);
+    if (clampedMinutes <= windowFullEndMinutes) {
+      return ((clampedMinutes - windowStartMinutes) / 60.0) * _hourHeight;
+    }
+    else {
+      double fullScaleHeight = ((windowFullEndMinutes - windowStartMinutes) / 60.0) * _hourHeight;
+      return fullScaleHeight + ((clampedMinutes - windowFullEndMinutes) / 60.0) * _closingRowHeight;
+    }
+  }
+
   Widget _buildCourseBlock(StudentCourseBlock block, {required double dayWidth}) {
     double columnWidth = dayWidth / block.columnCount;
-    double windowStartMinutes = (_startHour * 60).toDouble();
+    double top = _minutesToOffset(block.startMinutes.toDouble());
+    double bottom = _minutesToOffset(block.endMinutes.toDouble());
+
     return Positioned(
-      top: ((block.startMinutes - windowStartMinutes) / 60.0) * _hourHeight,
+      top: top,
       left: block.column * columnWidth,
       width: columnWidth,
-      height: (block.durationMinutes / 60.0) * _hourHeight,
+      height: math.max(bottom - top, 0),
       child: Padding(padding: EdgeInsets.all(1), child:
         InkWell(onTap: () => _onTapCourse(block.course), child:
           Container(
