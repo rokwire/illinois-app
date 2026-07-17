@@ -1125,3 +1125,63 @@ class GroupConversationConfirmDeleteDialog extends StatelessWidget {
     ],);
 
 }
+
+enum GroupConversationCreateOption { groupMessage, individualMessages }
+
+class GroupConversationCreateOptionsDialog extends StatelessWidget {
+
+  GroupConversationCreateOptionsDialog();
+
+  static Future<GroupConversationCreateOption?>show(BuildContext context, ) =>
+    showDialog(context: context, builder: (_) => AlertDialog(
+      content: GroupConversationCreateOptionsDialog(),
+      contentPadding: const EdgeInsets.only(bottom: 24),
+    ));
+
+  @override
+  Widget build(BuildContext context) =>
+    Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Align(alignment: Alignment.centerRight, child:
+        _closeButton(context),
+      ),
+      Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 32), child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Text(Localization().getStringEx('', 'How would you like to send this message?'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.detail.regular'),),
+          SizedBox(height: 24,),
+          RoundedButton(
+            label: Localization().getStringEx('', 'Send as a Group Message'),
+            textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            borderWidth: 1.5,
+            onTap: () {
+              Analytics().logAlert(text: 'How would you like to send this message?', selection: 'Send as a Group Message');
+              Navigator.of(context).pop(GroupConversationCreateOption.groupMessage);
+            },),
+          SizedBox(height: 8,),
+          RoundedButton(
+            label: Localization().getStringEx('', 'Send as Individual Messages'),
+            textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            borderWidth: 1.5,
+            onTap: () {
+              Analytics().logAlert(text: 'How would you like to send this message?', selection: 'Send as Individual Messages');
+              Navigator.of(context).pop(GroupConversationCreateOption.individualMessages);
+          },),
+        ],)
+      )
+    ],);
+
+  Widget _closeButton(BuildContext context) =>
+    Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+      InkWell(onTap : () => _onTapClose(context), child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Styles().images.getImage('close-circle', excludeFromSemantics: true),
+        ),
+      ),
+    );
+
+  void _onTapClose(BuildContext context) {
+    Analytics().logAlert(text: 'How would you like to send this message?', selection: 'Close');
+    Navigator.of(context).pop();
+  }
+}
