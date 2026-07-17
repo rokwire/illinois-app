@@ -16,7 +16,23 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class GroupPostReportAbuseOptions {
   final bool reportToDeanOfStudents;
   final bool reportToGroupAdmins;
+
   GroupPostReportAbuseOptions({ this.reportToDeanOfStudents = false, this.reportToGroupAdmins = false});
+
+  String? get analyticsSelectTarget {
+    if (reportToDeanOfStudents && !reportToGroupAdmins) {
+      return Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students', language: 'en');
+    }
+    else if (!reportToDeanOfStudents && reportToGroupAdmins) {
+      return Localization().getStringEx('panel.group.detail.post.report_abuse.group_admins.description.text', 'Report obscene, threatening, or harassing content to Group Administrators', language: 'en');
+    }
+    else if (reportToDeanOfStudents && reportToGroupAdmins) {
+      return Localization().getStringEx('panel.group.detail.post.report_abuse.both.description.text', 'Report violation of Student Code to Dean of Students and obscene, threatening, or harassing content to Group Administrators', language: 'en');
+    }
+    else {
+      return null;
+    }
+  }
 }
 
 class GroupPostReportAbusePanel extends StatefulWidget {

@@ -1,0 +1,159 @@
+/*
+ * Copyright 2026 Board of Trustees of the University of Illinois.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+import 'package:illinois/model/StudentCourse.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+
+class StudentCourseBlock {
+  final StudentCourse course;
+  final int startMinutes;
+  final int durationMinutes;
+  int column = 0;
+  int columnCount = 1;
+
+  StudentCourseBlock({required this.course, required this.startMinutes, required this.durationMinutes});
+
+  int get endMinutes => (startMinutes + durationMinutes);
+}
+
+class StudentCoursesCalendarLayout {
+
+  ///
+  /// The backend provides no real class duration, so every course block is rendered with this fixed duration.
+  ///
+  static const int fixedDurationMinutes = 60;
+
+  static const List<int> weekdayOrder = <int>[
+    DateTime.sunday, DateTime.monday, DateTime.tuesday, DateTime.wednesday,
+    DateTime.thursday, DateTime.friday, DateTime.saturday,
+  ];
+
+  static List<Color> get defaultPalette => <Color>[
+    Styles().colors.getColor('studentCourseYellowColor') ?? const Color(0xFFEFEECE),
+    Styles().colors.getColor('studentCourseOrangeColor') ?? const Color(0xFFF4E5CE),
+    Styles().colors.getColor('studentCourseRedColor') ?? const Color(0xFFF6E6E2),
+    Styles().colors.getColor('studentCoursePurpleColor') ?? const Color(0xFFEDE3F4),
+    Styles().colors.getColor('studentCourseBlueColor') ?? const Color(0xFFD2E6EC),
+    Styles().colors.getColor('studentCourseGreenColor') ?? const Color(0xFFE1EED4),
+  ];
+
+  static String hourLabel(int hour) {
+    if (hour == 0) {
+      return '12 AM';
+    }
+    else if (hour < 12) {
+      return '$hour AM';
+    }
+    else if (hour == 12) {
+      return '12 PM';
+    }
+    else {
+      return '${hour - 12} PM';
+    }
+  }
+
+  ///
+  /// The backend usually sends an end time equal to the start time, in which case
+  /// fixedDurationMinutes is used as a fallback. If end time is after start time, the
+  /// real duration is used instead.
+  ///
+  static int resolveDurationMinutes({required int startMinutes, int? endMinutes}) {
+    if ((endMinutes != null) && (startMinutes < endMinutes)) {
+      return endMinutes - startMinutes;
+    }
+    return fixedDurationMinutes;
+  }
+
+  static String displayTimeRange({required int startMinutes, required int durationMinutes}) {
+    int endMinutes = startMinutes + durationMinutes;
+    return '${_formatClockMinutes(startMinutes, includeIndicator: false)}-${_formatClockMinutes(endMinutes, includeIndicator: true)}';
+  }
+
+  static void layoutOverlappingBlocks(List<StudentCourseBlock> blocks) {
+    blocks.sort((StudentCourseBlock block1, StudentCourseBlock block2) => block1.startMinutes.compareTo(block2.startMinutes));
+
+    int groupStart = 0;
+    int groupEndMinutes = -1;
+    for (int i = 0; i < blocks.length; i++) {
+      if ((groupEndMinutes >= 0) && (blocks[i].startMinutes >= groupEndMinutes)) {
+        _assignColumns(blocks, groupStart, i);
+        groupStart = i;
+        groupEndMinutes = -1;
+      }
+      groupEndMinutes = (groupEndMinutes < 0) ? blocks[i].endMinutes : math.max(groupEndMinutes, blocks[i].endMinutes);
+    }
+    if (blocks.isNotEmpty) {
+      _assignColumns(blocks, groupStart, blocks.length);
+    }
+  }
+
+  ///
+  /// Requirement:
+  ///  - "It's important that the same color is not used for two separate classes (unless the user is taking more than 6 classes that semester)."
+  ///  - "... that example is one course based on the course short name so it would use the same color ..."
+  ///
+  static Map<String, Color> computeCourseColors(List<StudentCourse>? courses, List<Color> palette) {
+    List<String> courseKeys = <String>[];
+    for (StudentCourse course in courses ?? <StudentCourse>[]) {
+      String? courseKey = course.shortName;
+      if ((courseKey != null) && !courseKeys.contains(courseKey)) {
+        courseKeys.add(courseKey);
+      }
+    }
+
+    List<Color> shuffledPalette = List<Color>.from(palette)..shuffle(math.Random(courseKeys.join(',').hashCode));
+
+    Map<String, Color> courseColors = <String, Color>{};
+    for (int index = 0; index < courseKeys.length; index++) {
+      courseColors[courseKeys[index]] = shuffledPalette[index % shuffledPalette.length];
+    }
+    return courseColors;
+  }
+
+  static String _formatClockMinutes(int totalMinutes, {required bool includeIndicator}) {
+    int hours24 = (totalMinutes ~/ 60) % 24;
+    int minutes = totalMinutes % 60;
+    int hours12 = hours24 % 12;
+    if (hours12 == 0) {
+      hours12 = 12;
+    }
+    String minutesStr = minutes.toString().padLeft(2, '0');
+    String indicator = includeIndicator ? ((hours24 < 12) ? 'AM' : 'PM') : '';
+    return '$hours12:$minutesStr$indicator';
+  }
+
+  static void _assignColumns(List<StudentCourseBlock> blocks, int fromIndex, int toIndex) {
+    List<int> columnEndMinutes = <int>[];
+    for (int i = fromIndex; i < toIndex; i++) {
+      StudentCourseBlock block = blocks[i];
+      int column = columnEndMinutes.indexWhere((int endMinutes) => (endMinutes <= block.startMinutes));
+      if (column < 0) {
+        column = columnEndMinutes.length;
+        columnEndMinutes.add(block.endMinutes);
+      }
+      else {
+        columnEndMinutes[column] = block.endMinutes;
+      }
+      block.column = column;
+    }
+    for (int i = fromIndex; i < toIndex; i++) {
+      blocks[i].columnCount = columnEndMinutes.length;
+    }
+  }
+}

@@ -15,7 +15,7 @@ import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/academics/StudentCourses.dart';
+import 'package:illinois/ui/academics/student_courses/StudentCoursesWidgets.dart';
 import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';

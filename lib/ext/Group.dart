@@ -264,8 +264,8 @@ extension GroupSettingsExt on GroupSettings{
 }
 
 extension GroupContentItemExt on GroupContentItem{
-  static final List<String> availableContentCodes =   ["posts", "events", "messages", "polls"];
-  static final List<String> defaultContentCodes =  ["posts", "events", "messages", "polls"];
+  static final List<String> availableContentCodes =   ["posts", "events", "messages", "conversations", "polls"];
+  static final List<String> defaultContentCodes =  ["posts", "events", "messages", "conversations", "polls"];
 
   static String getTitleByCode(String code) {
     switch(code){
@@ -307,6 +307,34 @@ extension MemberExt on Member {
     }
     return userIds;
   }
+
+  static Member? getMember(List<Member>? members, { String? userId }) {
+    if (members != null) {
+      for (Member member in members) {
+        if ((userId != null) && (member.userId == userId)) {
+          return member;
+        }
+      }
+    }
+    return null;
+  }
+
+  static Map<String, Member>? mapFromList(List<Member>? membersList) {
+    if (membersList != null) {
+      Map<String, Member> membersMap = <String, Member>{};
+      for (Member member in membersList) {
+        String? memberId = member.userId;
+        if ((memberId != null) && memberId.isNotEmpty) {
+          membersMap[memberId] = member;
+        }
+      }
+      return membersMap;
+    } else {
+      return null;
+    }
+  }
+
+  bool matchLowercaseText(String text) => (name?.toLowerCase().contains(text) == true);
 }
 
 extension GroupsExt on Groups {

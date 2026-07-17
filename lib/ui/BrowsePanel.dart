@@ -18,9 +18,9 @@ import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/academics/AcademicsLinks.dart';
 import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
+import 'package:illinois/ui/academics/student_courses/StudentCoursesHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
-import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
@@ -722,7 +722,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapStudentCourses(BuildContext context) {
     Analytics().logSelect(target: "Student Courses");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCoursesListPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCoursesHomePanel()));
   }
 
   static void _onTapCampusReminders(BuildContext context) {

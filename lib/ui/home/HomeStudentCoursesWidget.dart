@@ -1,18 +1,25 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
-import 'package:illinois/ui/academics/StudentCourses.dart';
+import 'package:illinois/ui/academics/student_courses/StudentCourseDetailPanel.dart';
+import 'package:illinois/ui/academics/student_courses/StudentCoursesCalendarLayout.dart';
+import 'package:illinois/ui/academics/student_courses/StudentCoursesHomePanel.dart';
+import 'package:illinois/ui/academics/student_courses/StudentCoursesWidgets.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -44,9 +51,15 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
 
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
-  
+
+  int? _calendarPageIndex;
+
+  late StudentCoursesViewType _viewType;
+
   @override
   void initState() {
+
+    _viewType = StudentCoursesViewTypeExt.fromJson(Storage().getHomeFavoriteSelectedContent(widget.favoriteId)) ?? StudentCoursesViewType.calendar;
 
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
@@ -91,7 +104,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
       _updateCourses();
     }
     else if (name == StudentCourses.notifyTermsChanged) {
-      setStateIfMounted(() {});
+      _updateCourses();
     }
     else if (name == StudentCourses.notifySelectedTermChanged) {
       _updateCourses();
@@ -125,24 +138,27 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
     child: _buildContent(),
   );
 
-  TextStyle? getTermDropDownItemStyle({bool selected = false}) => selected ? Styles().textStyles.getTextStyle("widget.button.title.small.fat") : Styles().textStyles.getTextStyle("widget.button.title.small");
+  TextStyle? _getTermDropDownItemStyle({bool selected = false}) => selected ? Styles().textStyles.getTextStyle("widget.button.title.small.fat") : Styles().textStyles.getTextStyle("widget.button.title.small");
 
   Widget _buildTermsDropDown() {
     StudentCourseTerm? currentTerm = StudentCourses().displayTerm;
 
-    return Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
-      DropdownButtonHideUnderline(child:
+    return Semantics(label: currentTerm?.name, hint: Localization().getStringEx('widget.home.student_courses.term_dropdown.hint', 'Double tap to select term'), button: true, container: true, child:
+      DropdownButtonHideUnderline(child: StudentCoursesHomePanel.wrapDropDownTheme(
         DropdownButton<String>(
           icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('chevron-down', excludeFromSemantics: true)),
           isExpanded: false,
           isDense: true,
-          style: getTermDropDownItemStyle(selected: false),
-          hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: Styles().textStyles.getTextStyle("widget.title.small.semi_fat")) : null,
+          dropdownColor: Styles().colors.white,
+          focusColor: Styles().colors.white,
+          borderRadius: StudentCoursesHomePanel.dropdownMenuBorderRadius,
+          style: _getTermDropDownItemStyle(selected: false),
+          hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: _getTermDropDownItemStyle(selected: true)) : null,
           alignment: AlignmentDirectional.centerEnd,
           items: _buildTermDropDownItems(),
           onChanged: _onTermDropDownValueChanged
         ),
-      ),
+      )),
     );
   }
 
@@ -156,7 +172,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
       for (StudentCourseTerm term in terms) {
         items.add(DropdownMenuItem<String>(
           value: term.id,
-          child: Text(term.name ?? '', style: getTermDropDownItemStyle(selected: term.id == currentTermId),)
+          child: Text(term.name ?? '', style: _getTermDropDownItemStyle(selected: (term.id == currentTermId)),)
         ));
       }
     }
@@ -184,8 +200,48 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
       return HomeMessageCard(message: Localization().getStringEx('widget.home.student_courses.text.empty.description', 'You do not appear to be enrolled in any courses for the selected term.'),);
     }
     else {
-      return _buildCoursesContent();
+      return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 8), child: _buildViewTypeToggle()),
+        Visibility(visible: (_viewType == StudentCoursesViewType.calendar), maintainState: true, child: _buildCalendarContent()),
+        Visibility(visible: (_viewType == StudentCoursesViewType.list), maintainState: true, child: _buildCoursesContent()),
+      ]);
     }
+  }
+
+  Widget _buildViewTypeToggle() => Row(children: <Widget>[
+    Expanded(child: HomeFavTabBarBtn(
+      StudentCoursesViewType.calendar.pillTitle.toUpperCase(),
+      position: HomeFavTabBarBtnPos.first,
+      selected: (_viewType == StudentCoursesViewType.calendar),
+      onTap: () => _onTapViewType(StudentCoursesViewType.calendar),
+    )),
+    Expanded(child: HomeFavTabBarBtn(
+      StudentCoursesViewType.list.pillTitle.toUpperCase(),
+      position: HomeFavTabBarBtnPos.last,
+      selected: (_viewType == StudentCoursesViewType.list),
+      onTap: () => _onTapViewType(StudentCoursesViewType.list),
+    )),
+  ]);
+
+  void _onTapViewType(StudentCoursesViewType viewType) {
+    if (_viewType != viewType) {
+      setStateIfMounted(() {
+        _viewType = viewType;
+        Storage().setHomeFavoriteSelectedContent(widget.favoriteId, viewType.toJson());
+      });
+    }
+  }
+
+  Widget _buildCalendarContent() {
+    int todayIndex = StudentCoursesCalendarLayout.weekdayOrder.indexOf(DateTimeUni.nowUniOrLocal().weekday);
+    int initialPageIndex = _calendarPageIndex ?? ((0 <= todayIndex) ? todayIndex : 0);
+
+    return _HomeStudentCoursesCalendarPager(
+      courses: _courses,
+      initialPageIndex: initialPageIndex,
+      onPageIndexChanged: (int index) => _calendarPageIndex = index,
+      onViewAll: _onViewAll,
+    );
   }
 
   Widget _buildCoursesContent() {
@@ -251,8 +307,8 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
 
   void _updateCourses({bool forceLoad = false, bool showProgress = true}) {
     if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn && !_loading) {
-      if (mounted && showProgress) {
-        setState(() {
+      if (showProgress) {
+        setStateIfMounted(() {
           _loading = true;
         });
       }
@@ -270,6 +326,286 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
 
   void _onViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCoursesListPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCoursesHomePanel(initialViewType: _viewType)));
+  }
+}
+
+///////////////////////////////
+// _HomeStudentCoursesCalendarPager
+
+class _HomeStudentCoursesCalendarPager extends StatefulWidget {
+  final List<StudentCourse>? courses;
+  final int initialPageIndex;
+  final ValueChanged<int> onPageIndexChanged;
+  final VoidCallback onViewAll;
+
+  _HomeStudentCoursesCalendarPager({required this.courses, required this.initialPageIndex, required this.onPageIndexChanged, required this.onViewAll});
+
+  @override
+  State<_HomeStudentCoursesCalendarPager> createState() => _HomeStudentCoursesCalendarPagerState();
+}
+
+class _HomeStudentCoursesCalendarPagerState extends State<_HomeStudentCoursesCalendarPager> {
+  PageController? _pageController;
+  final Key _pageViewKey = UniqueKey();
+
+  @override
+  void dispose() {
+    _pageController?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> dayPages = StudentCoursesCalendarLayout.weekdayOrder.map((int weekday) =>
+      Padding(padding: HomeCard.defaultPageMargin, child:
+        _HomeStudentCoursesCalendarContentWidget(courses: widget.courses, weekday: weekday),
+      ),
+    ).toList();
+
+    if (_pageController == null) {
+      double screenWidth = MediaQuery.of(context).size.width;
+      double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
+      _pageController = PageController(viewportFraction: pageViewport, initialPage: widget.initialPageIndex);
+    }
+
+    double pageHeight = StudentCourseCard.height(context);
+
+    return Column(children: [
+      Container(constraints: BoxConstraints(minHeight: pageHeight), child:
+        AccessiblePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: pageHeight,
+          allowImplicitScrolling: true,
+          onPageChanged: widget.onPageIndexChanged,
+          children: dayPages,
+        ),
+      ),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, initialPage: widget.initialPageIndex, pagesCount: () => dayPages.length, centerWidget:
+        HomeBrowseLinkButton(
+          title: Localization().getStringEx('widget.home.student_courses.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.student_courses.button.all.hint', 'Tap to view all courses'),
+          onTap: widget.onViewAll,
+        ),
+      ),
+    ]);
+  }
+}
+
+///////////////////////////////
+// _HomeStudentCoursesCalendarContentWidget
+
+class _HomeStudentCoursesCalendarContentWidget extends StatefulWidget {
+  final List<StudentCourse>? courses;
+  final int weekday;
+
+  _HomeStudentCoursesCalendarContentWidget({this.courses, required this.weekday});
+
+  @override
+  State<StatefulWidget> createState() => _HomeStudentCoursesCalendarContentWidgetState();
+}
+
+class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCoursesCalendarContentWidget> {
+
+  static const double _minHourHeight = 24;
+  static const int _startHour = 8;
+  static const int _endHour = 16;
+
+  static const double _cardPadding = 16;
+  static const double _headerHeight = 32;
+  static const double _gridTopPadding = 8;
+  static const double _timeColumnGap = 8;
+  static const double _closingRowHeight = _minHourHeight;
+
+  double _hourHeight = _minHourHeight;
+
+  late final List<Color> _coursePalette;
+  Map<String, Color> _courseColors = <String, Color>{};
+  List<StudentCourseBlock> _blocks = <StudentCourseBlock>[];
+
+  @override
+  void initState() {
+    super.initState();
+    _coursePalette = StudentCoursesCalendarLayout.defaultPalette;
+    _updateCourseColors();
+    _updateBlocks();
+  }
+
+  @override
+  void didUpdateWidget(_HomeStudentCoursesCalendarContentWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    bool coursesChanged = !identical(widget.courses, oldWidget.courses);
+    if (coursesChanged) {
+      _updateCourseColors();
+    }
+    if (coursesChanged || (widget.weekday != oldWidget.weekday)) {
+      _updateBlocks();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    int visibleHourCount = _endHour - _startHour;
+    double targetCardHeight = StudentCourseCard.height(context);
+    double chromeHeight = _headerHeight + _gridTopPadding + _cardPadding + _closingRowHeight;
+    _hourHeight = math.max((targetCardHeight - chromeHeight) / visibleHourCount, _minHourHeight);
+    double gridHeight = visibleHourCount * _hourHeight;
+
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: HomeCard.boxDecoration,
+      child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        _buildHeader(),
+        Padding(padding: EdgeInsets.fromLTRB(_cardPadding, _gridTopPadding, _cardPadding, _cardPadding), child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            _buildTimeColumn(),
+            SizedBox(width: _timeColumnGap),
+            Expanded(child: SizedBox(height: gridHeight + _closingRowHeight, child: _buildDayColumn())),
+          ]),
+        ),
+      ]),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      height: _headerHeight,
+      padding: EdgeInsets.symmetric(horizontal: _cardPadding),
+      decoration: BoxDecoration(
+        color: HomeCard.backColor,
+        border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
+        boxShadow: <BoxShadow>[BoxShadow(color: Styles().colors.blackTransparent018, blurRadius: 2, offset: Offset(0, 1))],
+      ),
+      child: Align(alignment: Alignment.centerLeft, child:
+        Text(_dayLabel, style: Styles().textStyles.getTextStyle('widget.card.title.tiny.fat')),
+      ),
+    );
+  }
+
+  String get _dayLabel {
+    bool isToday = (widget.weekday == DateTimeUni.nowUniOrLocal().weekday);
+    return isToday ?
+      Localization().getStringEx('widget.home.student_courses.calendar.day.today.label', 'TODAY') :
+      _weekdayName(widget.weekday);
+  }
+
+  String _weekdayName(int weekday) {
+    switch (weekday) {
+      case DateTime.monday: return Localization().getStringEx('widget.home.student_courses.calendar.day.monday.label', 'MONDAY');
+      case DateTime.tuesday: return Localization().getStringEx('widget.home.student_courses.calendar.day.tuesday.label', 'TUESDAY');
+      case DateTime.wednesday: return Localization().getStringEx('widget.home.student_courses.calendar.day.wednesday.label', 'WEDNESDAY');
+      case DateTime.thursday: return Localization().getStringEx('widget.home.student_courses.calendar.day.thursday.label', 'THURSDAY');
+      case DateTime.friday: return Localization().getStringEx('widget.home.student_courses.calendar.day.friday.label', 'FRIDAY');
+      case DateTime.saturday: return Localization().getStringEx('widget.home.student_courses.calendar.day.saturday.label', 'SATURDAY');
+      case DateTime.sunday: return Localization().getStringEx('widget.home.student_courses.calendar.day.sunday.label', 'SUNDAY');
+      default: return '';
+    }
+  }
+
+  // Data prep
+
+  void _updateBlocks() {
+    List<StudentCourseBlock> blocks = <StudentCourseBlock>[];
+    for (StudentCourse course in widget.courses ?? <StudentCourse>[]) {
+      int? startMinutes = course.section?.startTimeMinutes;
+      bool matchesWeekday = course.section?.weekdays.contains(widget.weekday) ?? false;
+      if ((startMinutes != null) && matchesWeekday) {
+        int durationMinutes = StudentCoursesCalendarLayout.resolveDurationMinutes(startMinutes: startMinutes, endMinutes: course.section?.endTimeMinutes);
+        StudentCourseBlock block = StudentCourseBlock(course: course, startMinutes: startMinutes, durationMinutes: durationMinutes);
+        if ((block.startMinutes < ((_endHour + 1) * 60)) && (block.endMinutes > (_startHour * 60))) {
+          blocks.add(block);
+        }
+      }
+    }
+    StudentCoursesCalendarLayout.layoutOverlappingBlocks(blocks);
+    _blocks = blocks;
+  }
+
+  void _updateCourseColors() {
+    _courseColors = StudentCoursesCalendarLayout.computeCourseColors(widget.courses, _coursePalette);
+  }
+
+  // Hour grid + course blocks
+
+  Widget _buildTimeColumn() {
+    int visibleHourCount = _endHour - _startHour;
+    return IntrinsicWidth(child:
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.end, children: <Widget>[
+        ...List<Widget>.generate(visibleHourCount, (int index) =>
+          SizedBox(height: _hourHeight, child: Align(alignment: Alignment.centerRight, child:
+            _buildHourLabelText(StudentCoursesCalendarLayout.hourLabel(_startHour + index)),
+          )),
+        ),
+        SizedBox(height: _closingRowHeight, child: Align(alignment: Alignment.centerRight, child:
+          _buildHourLabelText(StudentCoursesCalendarLayout.hourLabel(_endHour)),
+        )),
+      ]),
+    );
+  }
+
+  Widget _buildHourLabelText(String label) => Text(label, style: Styles().textStyles.getTextStyle('widget.message.tiny'));
+
+  Widget _buildDayColumn() {
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) =>
+      Stack(children: <Widget>[
+        ..._blocks.map((StudentCourseBlock block) => _buildCourseBlock(block, dayWidth: constraints.maxWidth)),
+      ]),
+    );
+  }
+
+  double _minutesToOffset(double minutes) {
+    double windowStartMinutes = (_startHour * 60).toDouble();
+    double windowFullEndMinutes = (_endHour * 60).toDouble();
+    double windowOverflowEndMinutes = windowFullEndMinutes + 60;
+
+    double clampedMinutes = minutes.clamp(windowStartMinutes, windowOverflowEndMinutes);
+    if (clampedMinutes <= windowFullEndMinutes) {
+      return ((clampedMinutes - windowStartMinutes) / 60.0) * _hourHeight;
+    }
+    else {
+      double fullScaleHeight = ((windowFullEndMinutes - windowStartMinutes) / 60.0) * _hourHeight;
+      return fullScaleHeight + ((clampedMinutes - windowFullEndMinutes) / 60.0) * _closingRowHeight;
+    }
+  }
+
+  Widget _buildCourseBlock(StudentCourseBlock block, {required double dayWidth}) {
+    double columnWidth = dayWidth / block.columnCount;
+    double top = _minutesToOffset(block.startMinutes.toDouble());
+    double bottom = _minutesToOffset(block.endMinutes.toDouble());
+
+    return Positioned(
+      top: top,
+      left: block.column * columnWidth,
+      width: columnWidth,
+      height: math.max(bottom - top, 0),
+      child: Padding(padding: EdgeInsets.all(1), child:
+        InkWell(onTap: () => _onTapCourse(block.course), child:
+          Container(
+            width: double.infinity,
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: _courseColors[block.course.shortName] ?? Styles().colors.background,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: _buildCourseBlockText(block),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCourseBlockText(StudentCourseBlock block) {
+    String timeRange = StudentCoursesCalendarLayout.displayTimeRange(startMinutes: block.startMinutes, durationMinutes: block.durationMinutes);
+    return RichText(maxLines: 1, overflow: TextOverflow.ellipsis, text: TextSpan(children: <TextSpan>[
+      TextSpan(text: block.course.shortName ?? (block.course.title ?? ''), style: Styles().textStyles.getTextStyle('widget.message.tiny.fat')),
+      TextSpan(text: ' | $timeRange', style: Styles().textStyles.getTextStyle('widget.message.tiny')),
+    ]));
+  }
+
+  void _onTapCourse(StudentCourse course) {
+    Analytics().logSelect(target: "Student Course: ${course.title}");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCourseDetailPanel(course: course)));
   }
 }

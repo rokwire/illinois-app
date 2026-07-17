@@ -175,4 +175,30 @@ extension StudentCourseSectionExt on StudentCourseSection {
 
   bool get isInPerson => (buildingId?.isNotEmpty == true) || (building?.hasValidLocation == true);
 
+  List<int> get weekdays {
+    List<int> result = <int>[];
+    if (days != null) {
+      for (String dayAbbreviation in days!.split(',')) {
+        int? weekday = _dayAbbreviations[dayAbbreviation];
+        if (weekday != null) {
+          result.add(weekday);
+        }
+      }
+    }
+    return result;
+  }
+
+  int? get startTimeMinutes => _parseTimeMinutes(startTime);
+  int? get endTimeMinutes => _parseTimeMinutes(endTime);
+
+  static int? _parseTimeMinutes(String? time) {
+    if ((time != null) && (4 <= time.length)) {
+      int? hours = int.tryParse(time.substring(0, 2));
+      int? minutes = int.tryParse(time.substring(2, 4));
+      if ((hours != null) && (minutes != null)) {
+        return (hours * 60) + minutes;
+      }
+    }
+    return null;
+  }
 }
