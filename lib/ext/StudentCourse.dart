@@ -188,10 +188,13 @@ extension StudentCourseSectionExt on StudentCourseSection {
     return result;
   }
 
-  int? get startTimeMinutes {
-    if ((startTime != null) && (4 <= startTime!.length)) {
-      int? hours = int.tryParse(startTime!.substring(0, 2));
-      int? minutes = int.tryParse(startTime!.substring(2, 4));
+  int? get startTimeMinutes => _parseTimeMinutes(startTime);
+  int? get endTimeMinutes => _parseTimeMinutes(endTime);
+
+  static int? _parseTimeMinutes(String? time) {
+    if ((time != null) && (4 <= time.length)) {
+      int? hours = int.tryParse(time.substring(0, 2));
+      int? minutes = int.tryParse(time.substring(2, 4));
       if ((hours != null) && (minutes != null)) {
         return (hours * 60) + minutes;
       }

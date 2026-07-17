@@ -147,9 +147,10 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
     for (StudentCourse course in widget.courses ?? <StudentCourse>[]) {
       int? startMinutes = course.section?.startTimeMinutes;
       if (startMinutes != null) {
+        int durationMinutes = StudentCoursesCalendarLayout.resolveDurationMinutes(startMinutes: startMinutes, endMinutes: course.section?.endTimeMinutes);
         for (int weekday in course.section?.weekdays ?? <int>[]) {
           blocksByWeekday.putIfAbsent(weekday, () => <StudentCourseBlock>[]).add(
-            StudentCourseBlock(course: course, startMinutes: startMinutes, durationMinutes: StudentCoursesCalendarLayout.fixedDurationMinutes)
+            StudentCourseBlock(course: course, startMinutes: startMinutes, durationMinutes: durationMinutes)
           );
         }
       }
