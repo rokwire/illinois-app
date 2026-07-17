@@ -69,10 +69,19 @@ class StudentCoursesCalendarLayout {
   }
 
   ///
-  /// The backend always sends equal start/end times, so a real end time is derived as start + fixedDurationMinutes for display.
+  /// The backend usually sends an end time equal to the start time, in which case
+  /// fixedDurationMinutes is used as a fallback. If end time is after start time, the
+  /// real duration is used instead.
   ///
-  static String displayTimeRange(int startMinutes) {
-    int endMinutes = startMinutes + fixedDurationMinutes;
+  static int resolveDurationMinutes({required int startMinutes, int? endMinutes}) {
+    if ((endMinutes != null) && (startMinutes < endMinutes)) {
+      return endMinutes - startMinutes;
+    }
+    return fixedDurationMinutes;
+  }
+
+  static String displayTimeRange({required int startMinutes, required int durationMinutes}) {
+    int endMinutes = startMinutes + durationMinutes;
     return '${_formatClockMinutes(startMinutes, includeIndicator: false)}-${_formatClockMinutes(endMinutes, includeIndicator: true)}';
   }
 

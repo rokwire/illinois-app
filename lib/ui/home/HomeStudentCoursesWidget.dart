@@ -510,7 +510,8 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
       int? startMinutes = course.section?.startTimeMinutes;
       bool matchesWeekday = course.section?.weekdays.contains(widget.weekday) ?? false;
       if ((startMinutes != null) && matchesWeekday) {
-        StudentCourseBlock block = StudentCourseBlock(course: course, startMinutes: startMinutes, durationMinutes: StudentCoursesCalendarLayout.fixedDurationMinutes);
+        int durationMinutes = StudentCoursesCalendarLayout.resolveDurationMinutes(startMinutes: startMinutes, endMinutes: course.section?.endTimeMinutes);
+        StudentCourseBlock block = StudentCourseBlock(course: course, startMinutes: startMinutes, durationMinutes: durationMinutes);
         if ((block.startMinutes < (_endHour * 60)) && (block.endMinutes > (_startHour * 60))) {
           blocks.add(block);
         }
@@ -578,7 +579,7 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
   }
 
   Widget _buildCourseBlockText(StudentCourseBlock block) {
-    String timeRange = StudentCoursesCalendarLayout.displayTimeRange(block.startMinutes);
+    String timeRange = StudentCoursesCalendarLayout.displayTimeRange(startMinutes: block.startMinutes, durationMinutes: block.durationMinutes);
     return RichText(maxLines: 1, overflow: TextOverflow.ellipsis, text: TextSpan(children: <TextSpan>[
       TextSpan(text: block.course.shortName ?? (block.course.title ?? ''), style: Styles().textStyles.getTextStyle('widget.message.tiny.fat')),
       TextSpan(text: ' | $timeRange', style: Styles().textStyles.getTextStyle('widget.message.tiny')),
