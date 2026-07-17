@@ -487,14 +487,14 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
         });
 
         Conversation? conversation = await Social().createConversation(
-          type: ConversationType.groupSubset,
+          type: conversationType,
           context: ContextItem.fromGroup(widget.group?.id),
-          memberIds: List.from(_selectedMemberIds)
+          memberIds: (conversationType != ConversationType.groupAll) ? List.from(_selectedMemberIds) : null,
         );
 
         if (mounted) {
           setState(() {
-            _submitting = true;
+            _submitting = false;
           });
           if (conversation != null) {
             Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) =>

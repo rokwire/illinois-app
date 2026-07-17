@@ -35,12 +35,15 @@ class GroupConversationCard extends StatelessWidget {
 
   GroupConversationCard(this.conversation, { this.groupAdmins, this.onTap });
 
+  List<ConversationMember>? get _participants => this.conversation.members;
+  int get _participantsCount => _participants?.length ?? 0;
+
   @override
   Widget build(BuildContext context) =>
     InkWell(onTap: onTap, child:
       Container(decoration: _cardDecoration, padding: _cardPadding, child:
         Row(children: [
-          GroupConversationAvtarWidget(conversation.members),
+          GroupConversationAvtarWidget(conversation),
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
@@ -55,10 +58,11 @@ class GroupConversationCard extends StatelessWidget {
     );
 
   Widget get _titleWidget {
-    int participantsCount = conversation.members?.length ?? 0;
-    if (1 < participantsCount) {
+    if (conversation.isGroupAll) {
+      return _participantsGroupMembersWidget;
+    } if (1 < _participantsCount) {
       return _participantNamesWidget;
-    } else if (0 < participantsCount) {
+    } else if (0 < _participantsCount) {
       return _participantNameWidget;
     } else {
       return Container();
@@ -83,10 +87,17 @@ class GroupConversationCard extends StatelessWidget {
   }
 
   Widget get _participantNamesWidget => Text(conversation.membersString ?? '',
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
     textAlign: TextAlign.left,
     overflow: TextOverflow.ellipsis,
     maxLines: 1,
-    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat')
+  );
+
+  Widget get _participantsGroupMembersWidget => Text(Localization().getStringEx('', 'All Group Members'),
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
+    textAlign: TextAlign.left,
+    overflow: TextOverflow.ellipsis,
+    maxLines: 1,
   );
 
   Widget get _updateTimeWidget {
@@ -126,11 +137,12 @@ class GroupConversationAvtarWidget extends StatelessWidget {
   static const double _avtar2Size = _avtarSize * 2 / 3;
   static const double _avtar2Offset = _avtarOffset + 1.5;
 
-  final List<ConversationMember>? participants;
+  final Conversation? conversation;
 
-  GroupConversationAvtarWidget(this.participants);
+  GroupConversationAvtarWidget(this.conversation);
 
-  int get _participantsCount => participants?.length ?? 0;
+  List<ConversationMember>? get _participants => this.conversation?.members;
+  int get _participantsCount => _participants?.length ?? 0;
 
   @override
   Widget build(BuildContext context) =>
@@ -165,7 +177,9 @@ class GroupConversationAvtarWidget extends StatelessWidget {
   }*/
 
   Widget? get _participantsIcon {
-    if (_participantsCount > 1) {
+    if (conversation?.isGroupAll == true) {
+      return _groupAllMembersParticipantIcon;
+    } if (_participantsCount > 1) {
       return _multipleParticipantsIcon;
     } else if (_participantsCount == 1) {
       return _singleParticipantIcon;
@@ -178,7 +192,7 @@ class GroupConversationAvtarWidget extends StatelessWidget {
     DirectoryProfilePhoto(
       photoUrl: Content().getUserPhotoUrl(
         type: UserProfileImageType.medium,
-        accountId: participants?.firstOrNull?.accountId,
+        accountId: _participants?.firstOrNull?.accountId,
         //params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken),
       ),
       photoSize: widgetSize,
@@ -186,9 +200,9 @@ class GroupConversationAvtarWidget extends StatelessWidget {
     );
 
   Widget get _multipleParticipantsIcon {
-    ConversationMember? participant1 = ListUtils.entry(participants, 0);
-    ConversationMember? participant2 = ListUtils.entry(participants, 1);
-    ConversationMember? participant3 = ListUtils.entry(participants, 2);
+    ConversationMember? participant1 = ListUtils.entry(_participants, 0);
+    ConversationMember? participant2 = ListUtils.entry(_participants, 1);
+    ConversationMember? participant3 = ListUtils.entry(_participants, 2);
 
     return Stack(children: [
 
@@ -246,6 +260,12 @@ class GroupConversationAvtarWidget extends StatelessWidget {
     ],);
   }
 
+  Widget get _groupAllMembersParticipantIcon =>
+    DirectoryProfilePhoto(
+      placeholderImage: Styles().images.getImage('guide-groups', size: widgetSize, color: Styles().colors.fillColorPrimary, excludeFromSemantics: true, ),
+      photoSize: widgetSize,
+    );
+
   BoxDecoration get _avtarDecoration => BoxDecoration(
     color: Styles().colors.textBackgroundVariant2,
     shape: BoxShape.circle,
@@ -271,9 +291,27 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
 
   @override
   Widget build(BuildContext context) =>
-    Container(decoration: _headingDecoration, child: _multipleMembers ?
-      _multipleMembersDropdown : _singleMemberWidget
-    );
+    Container(decoration: _headingDecoration, child: _contentWIdget);
+
+  Widget get _contentWIdget {
+    if (widget.conversation.isGroupAll) {
+      return _allGroupMembersWidget;
+    } else if (_multipleMembers) {
+      return _multipleMembersDropdown;
+    } else {
+      return _singleMemberWidget;
+    }
+  }
+
+  Widget get _allGroupMembersWidget => Row(children: [
+    _avtarWidget,
+    Expanded(child:
+      Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+        _participantNamesWidget,
+      )
+    ),
+    _deleteButton,
+  ],);
 
   Widget get _singleMemberWidget => Row(children: [
     _avtarWidget,
@@ -317,12 +355,12 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
     DropdownMenuItem<String>(value: member.accountId ?? '', child:
       Container(decoration: _dropdownMemberDecoration, child:
         Row(children: [
-          _buildAvtarWidget([member]),
+          _buildAvtarWidget(Conversation(type: ConversationType.groupSubset, members: [member]) ),
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
               _buildParticipantNameWidget(member,
-                  nameTextStyleName: 'widget.card.title.small.fat',
-                  statusTextStyleName: 'widget.title.light.tiny.fat'
+                nameTextStyleName: 'widget.card.title.small.fat',
+                statusTextStyleName: 'widget.title.light.tiny.fat'
               ),
             )
           ),
@@ -334,11 +372,11 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
 
   // Avtar
 
-  Widget get _avtarWidget => _buildAvtarWidget(widget.conversation.members);
+  Widget get _avtarWidget => _buildAvtarWidget(widget.conversation);
 
-  Widget _buildAvtarWidget(List<ConversationMember>? members) =>
+  Widget _buildAvtarWidget(Conversation? conversation) =>
     Padding(padding: EdgeInsets.symmetric(horizontal: _avtarSpacing * 2, vertical: _avtarSpacing), child:
-      GroupConversationAvtarWidget(members),
+      GroupConversationAvtarWidget(conversation),
     );
 
   double get _avtarSpacing => 8;
@@ -366,12 +404,15 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
     );
   }
 
-  Widget get _participantNamesWidget => Text(widget.conversation.membersString ?? '',
+  Widget get _participantNamesWidget => Text(_participantNamesText,
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
     textAlign: TextAlign.left,
     overflow: TextOverflow.ellipsis,
     maxLines: 1,
-    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat')
   );
+
+  String get _participantNamesText => widget.conversation.isGroupAll ?
+    Localization().getStringEx('', 'All Group Members') : (widget.conversation.membersString ?? '');
 
   Widget get _chevronDownIcon => Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
     Styles().images.getImage('chevron-down')
@@ -389,7 +430,7 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
   Widget get _deleteProgressIcon => SizedBox.square(dimension: _deleteIconSize - 2, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,));
   double get _deleteIconSize => 20;
 
-  bool get _multipleMembers => (1 < (widget.conversation.members?.length ?? 0));
+  bool get _multipleMembers => (widget.conversation.isGroupSubset && (1 < (widget.conversation.members?.length ?? 0)));
   double get _screenWidth => MediaQuery.of(context).size.width;
 
   BoxDecoration get _dropdownMemberDecoration => BoxDecoration(

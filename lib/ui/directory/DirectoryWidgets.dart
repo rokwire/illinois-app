@@ -533,13 +533,15 @@ class DirectoryProfilePhoto extends StatefulWidget {
   final String? photoUrl;
   final Map<String, String>? photoUrlHeaders;
   final Uint8List? photoData;
+  final String? placeholderImageKey;
+  final Widget? placeholderImage;
   final double photoSize;
   final double borderSize;
   final double padding;
 
   double get imageSize => photoSize - borderSize - padding;
 
-  DirectoryProfilePhoto({ super.key, this.photoUrl, this.photoUrlHeaders, this.photoData, required this.photoSize, this.borderSize = 0, this.padding = 0 });
+  DirectoryProfilePhoto({ super.key, this.photoUrl, this.photoUrlHeaders, this.photoData, this.placeholderImage, this.placeholderImageKey, required this.photoSize, this.borderSize = 0, this.padding = 0 });
 
 
   @override
@@ -598,7 +600,7 @@ class _DirectoryProfilePhotoState extends State<DirectoryProfilePhoto> {
             )
           ),
         )
-      ) : (Styles().images.getImage('profile-placeholder', excludeFromSemantics: true, size: widget.photoSize) ?? Container());
+      ) : (widget.placeholderImage ?? Styles().images.getImage(widget.placeholderImageKey ?? 'profile-placeholder', excludeFromSemantics: true, size: widget.photoSize) ?? Container());
   }
 
   void _loadNetworkPhoto() async {
