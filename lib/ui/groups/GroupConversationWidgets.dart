@@ -43,7 +43,7 @@ class GroupConversationCard extends StatelessWidget {
     InkWell(onTap: onTap, child:
       Container(decoration: _cardDecoration, padding: _cardPadding, child:
         Row(children: [
-          GroupConversationAvtarWidget(conversation),
+          GroupConversationAvtarWidget(conversation: conversation),
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
@@ -59,9 +59,9 @@ class GroupConversationCard extends StatelessWidget {
 
   Widget get _titleWidget {
     if (conversation.isGroupAll) {
-      return _participantsGroupMembersWidget;
+      return _groupChatNameWidget;
     } if (1 < _participantsCount) {
-      return _participantNamesWidget;
+      return _participantsNamesWidget;
     } else if (0 < _participantsCount) {
       return _participantNameWidget;
     } else {
@@ -86,14 +86,14 @@ class GroupConversationCard extends StatelessWidget {
     );
   }
 
-  Widget get _participantNamesWidget => Text(conversation.membersString ?? '',
+  Widget get _participantsNamesWidget => Text(conversation.membersString ?? '',
     style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
     textAlign: TextAlign.left,
     overflow: TextOverflow.ellipsis,
     maxLines: 1,
   );
 
-  Widget get _participantsGroupMembersWidget => Text(Localization().getStringEx('', 'All Group Members'),
+  Widget get _groupChatNameWidget => Text(Localization().getStringEx('', 'All Group Members'),
     style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
     textAlign: TextAlign.left,
     overflow: TextOverflow.ellipsis,
@@ -138,15 +138,16 @@ class GroupConversationAvtarWidget extends StatelessWidget {
   static const double _avtar2Offset = _avtarOffset + 1.5;
 
   final Conversation? conversation;
+  final ConversationMember? conversationMember;
 
-  GroupConversationAvtarWidget(this.conversation);
+  GroupConversationAvtarWidget({ this.conversation, this.conversationMember });
 
   List<ConversationMember>? get _participants => this.conversation?.members;
   int get _participantsCount => _participants?.length ?? 0;
 
   @override
   Widget build(BuildContext context) =>
-    Container(width: widgetSize, height: widgetSize, decoration: _avtarDecoration, child: _participantsIcon);
+    Container(width: widgetSize, height: widgetSize, decoration: _avtarDecoration, child: _avtarIcon);
 
   /*Widget build(BuildContext context) {
     return Container(width: _widgetSize, height: _widgetSize, decoration: _avtarDecoration, child:
@@ -176,23 +177,25 @@ class GroupConversationAvtarWidget extends StatelessWidget {
     );
   }*/
 
-  Widget? get _participantsIcon {
+  Widget? get _avtarIcon {
     if (conversation?.isGroupAll == true) {
-      return _groupAllMembersParticipantIcon;
+      return _groupChatIcon;
     } if (_participantsCount > 1) {
       return _multipleParticipantsIcon;
     } else if (_participantsCount == 1) {
-      return _singleParticipantIcon;
+      return _singleParticipantIcon(_participants?.firstOrNull);
+    } else if (conversationMember != null) {
+      return _singleParticipantIcon(conversationMember);
     } else {
       return null;
     }
   }
 
-  Widget get _singleParticipantIcon =>
+  Widget _singleParticipantIcon(ConversationMember? member) =>
     DirectoryProfilePhoto(
       photoUrl: Content().getUserPhotoUrl(
         type: UserProfileImageType.medium,
-        accountId: _participants?.firstOrNull?.accountId,
+        accountId: member?.accountId,
         //params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken),
       ),
       photoSize: widgetSize,
@@ -260,11 +263,8 @@ class GroupConversationAvtarWidget extends StatelessWidget {
     ],);
   }
 
-  Widget get _groupAllMembersParticipantIcon =>
-    DirectoryProfilePhoto(
-      placeholderImage: Styles().images.getImage('guide-groups', size: widgetSize, color: Styles().colors.fillColorPrimary, excludeFromSemantics: true, ),
-      photoSize: widgetSize,
-    );
+  Widget get _groupChatIcon =>
+    DirectoryProfilePhoto(placeholderImageKey: 'group-chat', photoSize: widgetSize,);
 
   BoxDecoration get _avtarDecoration => BoxDecoration(
     color: Styles().colors.textBackgroundVariant2,
@@ -291,11 +291,11 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
 
   @override
   Widget build(BuildContext context) =>
-    Container(decoration: _headingDecoration, child: _contentWIdget);
+    Container(decoration: _headingDecoration, child: _contentWidget);
 
-  Widget get _contentWIdget {
+  Widget get _contentWidget {
     if (widget.conversation.isGroupAll) {
-      return _allGroupMembersWidget;
+      return _groupChatWidget;
     } else if (_multipleMembers) {
       return _multipleMembersDropdown;
     } else {
@@ -303,11 +303,11 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
     }
   }
 
-  Widget get _allGroupMembersWidget => Row(children: [
+  Widget get _groupChatWidget => Row(children: [
     _avtarWidget,
     Expanded(child:
       Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-        _participantNamesWidget,
+        _groupChatNameWidget,
       )
     ),
     _deleteButton,
@@ -355,7 +355,7 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
     DropdownMenuItem<String>(value: member.accountId ?? '', child:
       Container(decoration: _dropdownMemberDecoration, child:
         Row(children: [
-          _buildAvtarWidget(Conversation(type: ConversationType.groupSubset, members: [member]) ),
+          _buildAvtarWidget(conversationMember: member),
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
               _buildParticipantNameWidget(member,
@@ -372,11 +372,11 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
 
   // Avtar
 
-  Widget get _avtarWidget => _buildAvtarWidget(widget.conversation);
+  Widget get _avtarWidget => _buildAvtarWidget(conversation: widget.conversation);
 
-  Widget _buildAvtarWidget(Conversation? conversation) =>
+  Widget _buildAvtarWidget({ Conversation? conversation, ConversationMember? conversationMember }) =>
     Padding(padding: EdgeInsets.symmetric(horizontal: _avtarSpacing * 2, vertical: _avtarSpacing), child:
-      GroupConversationAvtarWidget(conversation),
+      GroupConversationAvtarWidget(conversation: conversation, conversationMember: conversationMember),
     );
 
   double get _avtarSpacing => 8;
@@ -404,15 +404,19 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
     );
   }
 
-  Widget get _participantNamesWidget => Text(_participantNamesText,
+  Widget get _participantNamesWidget => Text(widget.conversation.membersString ?? '',
     style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
     textAlign: TextAlign.left,
     overflow: TextOverflow.ellipsis,
     maxLines: 1,
   );
 
-  String get _participantNamesText => widget.conversation.isGroupAll ?
-    Localization().getStringEx('', 'All Group Members') : (widget.conversation.membersString ?? '');
+  Widget get _groupChatNameWidget => Text(Localization().getStringEx('', 'All Group Members'),
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
+    textAlign: TextAlign.left,
+    overflow: TextOverflow.ellipsis,
+    maxLines: 1,
+  );
 
   Widget get _chevronDownIcon => Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
     Styles().images.getImage('chevron-down')
