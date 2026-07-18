@@ -27,10 +27,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class GroupConversationPanel extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
-  final Conversation conversation;
+  final Conversation? conversation;
   final AnalyticsFeature? analyticsFeature;
 
-  GroupConversationPanel(this.conversation, { super.key, this.group, this.groupAdmins, this.analyticsFeature });
+  GroupConversationPanel({ super.key, this.conversation, this.group, this.groupAdmins, this.analyticsFeature });
 
   @override
   State<StatefulWidget> createState() => _GroupConversationPanelState();
@@ -61,6 +61,9 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   String? get _editingMessageIdentityKey => _editingMessage?.identityKey;
   bool get _isEditingMessage => (_editingMessageIdentityKey?.isNotEmpty == true);
   GlobalKey? get _editingMessageCardKey => _isEditingMessage ? _cardKeys[_editingMessageIdentityKey] : null;
+
+  bool get _isConversation => (widget.conversation?.id?.isNotEmpty == true);
+  bool get _isGroupBroadcastMessage => ((widget.conversation?.id?.isNotEmpty != true)) && (widget.group?.id?.isNotEmpty == true);
 
   @override
   void initState() {
@@ -102,26 +105,33 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   );
 
   Widget get _bodyWidget {
-    if (_contentActivity == _ContentActivity.reload) {
-      return _loadingContent;
+    if (_isConversation) {
+      if (_contentActivity == _ContentActivity.reload) {
+        return _loadingContent;
+      }
+      //else if (_contentActivity == _ContentActivity.refresh) {
+      //  return Container();
+      //}
+      else if ((_contentList == null)) {
+        return _buildMessageContent(Localization().getStringEx('', 'Failed to load messages'),
+          title: Localization().getStringEx('common.label.failed', 'Failed')
+        );
+      }
+      else {
+        return _messagesContent;
+      }
     }
-    else if (_contentActivity == _ContentActivity.refresh) {
-      return Container();
-    }
-    else if (_contentList == null) {
-      return _buildMessageContent(Localization().getStringEx('', 'Failed to load messages'),
-        title: Localization().getStringEx('common.label.failed', 'Failed')
-      );
-    }
-    else {
+    else if (_isGroupBroadcastMessage) {
       return _messagesContent;
+    } else {
+      return Container();
     }
   }
 
   Widget get _messagesContent =>
   Column(children: [
     Stack(children: <Widget>[
-      GroupConversationHeader(widget.conversation, group: widget.group, groupAdmins: widget.groupAdmins),
+      GroupConversationHeader(conversation: widget.conversation, group: widget.group, groupAdmins: widget.groupAdmins),
       _hideKeyboardLayer,
     ],),
     Expanded(child:
@@ -139,8 +149,8 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       focusNode: _editFocusNode,
       title: _isEditingMessage ? Localization().getStringEx('', 'EDiT') : Localization().getStringEx('', 'REPLY'),
       text: _isEditingMessage ? _editingMessageText : null,
-      showSubmitProgress: _isEditingMessage,
-      onSubmitMessage: (widget.conversation.id?.isNotEmpty == true) ? _onSubmitMessage : null,
+      showSubmitProgress: _isEditingMessage || _isGroupBroadcastMessage,
+      onSubmitMessage: _onSubmitMessage,
       onCancelEdit: _isEditingMessage ? _onCancelEdit : null,
     ),
   ],);
@@ -232,20 +242,20 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   int get _refreshContentLength => max(_listSafeContentLength, _contentPageLength);
 
   Future<void> _reloadContent({ int limit = _contentPageLength }) async {
-    if ((_contentActivity != _ContentActivity.reload) && mounted) {
+    if (_isConversation && (_contentActivity != _ContentActivity.reload) && mounted) {
       setState(() {
         _contentActivity = _ContentActivity.reload;
       });
 
       List<Message>? contentList = await Social().loadConversationMessages(
-        conversationId: widget.conversation.id ?? '',
+        conversationId: widget.conversation?.id ?? '',
         offset: 0, limit: limit,
       );
 
       if (mounted && (_contentActivity == _ContentActivity.reload)) {
         setState(() {
           _contentGlobalIds.clear();
-          _contentList = (contentList != null) ? widget.conversation.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds) : null;
+          _contentList = (contentList != null) ? widget.conversation?.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds) : null;
           _lastPageLoadedAll = (contentList != null) ? (contentList.length >= limit) : null;
           _contentActivity = null;
         });
@@ -256,14 +266,14 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   }
 
   Future<void> _refreshContent({ _ContentActivity activity = _ContentActivity.refresh }) async {
-    if (((_contentActivity != _ContentActivity.reload) && (_contentActivity != activity)) && mounted) {
+    if (_isConversation && (_contentActivity != _ContentActivity.reload) && (_contentActivity != activity) && mounted) {
       setState(() {
         _contentActivity = activity;
       });
 
       int contentLength = _refreshContentLength;
       List<Message>? contentList = await Social().loadConversationMessages(
-        conversationId: widget.conversation.id ?? '',
+        conversationId: widget.conversation?.id ?? '',
         offset: 0, limit: contentLength,
       );
 
@@ -271,7 +281,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
         setState(() {
           if (contentList != null) {
             _contentGlobalIds.clear();
-            _contentList = widget.conversation.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds);
+            _contentList = widget.conversation?.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds);
             _lastPageLoadedAll = (contentList.length >= contentLength);
           }
           _contentActivity = null;
@@ -282,7 +292,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   }
 
   Future<void> _extendContent() async {
-    if ((_contentActivity == null) && mounted) {
+    if (_isConversation && (_contentActivity == null) && mounted) {
       setState(() {
         _contentActivity = _ContentActivity.extend;
       });
@@ -290,7 +300,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       int contentOffset = _contentList?.length ?? 0;
       int contentLength = _contentPageLength;
       List<Message>? contentList = await Social().loadConversationMessages(
-        conversationId: widget.conversation.id ?? '',
+        conversationId: widget.conversation?.id ?? '',
         offset: contentOffset, limit: contentLength,
       );
 
@@ -298,9 +308,9 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
         setState(() {
           if (contentList != null) {
             if (_contentList != null) {
-              _contentList?.addAll(widget.conversation.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds, mustCopy: false));
+              _contentList?.addAll(widget.conversation?.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds, mustCopy: false) ?? <Message>[]);
             } else {
-              _contentList = widget.conversation.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds);
+              _contentList = widget.conversation?.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds);
             }
             _lastPageLoadedAll = (contentList.length >= contentLength);
           }
@@ -312,7 +322,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
 
   void _scrollListener() {
     double scrollOffset = _scrollController.offset;
-    if ((scrollOffset <= 0) && (_hasMoreContent != false) && (_contentActivity == null)) {
+    if (_isConversation && (scrollOffset <= 0) && (_hasMoreContent != false) && (_contentActivity == null)) {
       _extendContent();
     }
   }
@@ -364,13 +374,22 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
 
   void _onFirebaseSocialMessageNotification(dynamic param) {
     String? conversationId = (param is Map<String, dynamic>) ? JsonUtils.stringValue(param['entity_id']) : null;
-    if (conversationId == widget.conversation.id) {
+    if (conversationId == widget.conversation?.id) {
       _refreshContent(activity: _ContentActivity.update);
     }
   }
 
-  Future<bool> _onSubmitMessage(String message) =>
-    _isEditingMessage ? _onUpdateMessage(message) : _onSendMessage(message);
+  Future<bool> _onSubmitMessage(String message) async {
+    if (_isEditingMessage) {
+      return _onUpdateMessage(message);
+    } else if (_isConversation) {
+      return _onSendMessage(message);
+    } else if (_isGroupBroadcastMessage) {
+      return _onBroadcastMessage(message);
+    } else {
+      return false;
+    }
+  }
 
   Future<bool> _onSendMessage(String message) async {
     // Create a temporary message and add it immediately
@@ -388,7 +407,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToLast());
 
     List<Message>? newMessages = await Social().createConversationMessage(
-      conversationId: widget.conversation.id ?? '',
+      conversationId: widget.conversation?.id ?? '',
       message: message,
       //fileAttachments: fileAttachments,
     );
@@ -428,7 +447,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       }
       else {
         bool success = await Social().updateConversationMessage(
-          conversationId: widget.conversation.id ?? '',
+          conversationId: widget.conversation?.id ?? '',
           globalMessageId: _editingMessage?.globalId ?? '',
           newText: message,
         );
@@ -468,6 +487,27 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
         _editingMessage = null;
       });
       FocusScope.of(context).unfocus();
+    }
+  }
+
+  Future<bool> _onBroadcastMessage(String message) async {
+    List<Conversation>? conversations = await Social().broadcastIndividualMessage(
+      context: ContextItem.group(widget.group?.id ?? ''),
+      message: message,
+      //fileAttachments: fileAttachments,
+      extraParams: {
+        'all_group_members': true
+      }
+    );
+    if (conversations != null) {
+      Navigator.pop(context);
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        GroupConversationReportBroadcastIndividualDialog.show(context);
+      });
+      return true;
+    } else {
+      AppAlert.showDialogResult(context, Localization().getStringEx('', 'Failed to send message.'));
+      return false;
     }
   }
 
@@ -522,7 +562,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
           _deletingMessage = message;
         });
 
-        bool succeeded = await Social().deleteConversationMessage(conversationId: widget.conversation.id ?? '', globalMessageId: message.globalId ?? '');
+        bool succeeded = await Social().deleteConversationMessage(conversationId: widget.conversation?.id ?? '', globalMessageId: message.globalId ?? '');
         if (mounted) {
           setState(() {
             _deletingMessage = null;

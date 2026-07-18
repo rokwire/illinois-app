@@ -467,10 +467,16 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
         if (_allMembersSelected) {
           GroupConversationCreateOption? createOption = await GroupConversationCreateOptionsDialog.show(context);
           if (mounted) {
-            if (createOption == GroupConversationCreateOption.individualMessages) {
-              AppAlert.showTextMessage(context, Localization().getStringEx('', 'TBD'));
-            } else if (createOption == GroupConversationCreateOption.groupMessage) {
+            if (createOption == GroupConversationCreateOption.groupMessage) {
               conversationType = ConversationType.groupAll;
+            } else if (createOption == GroupConversationCreateOption.individualMessages) {
+              Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) =>
+                GroupConversationPanel(
+                  group: widget.group,
+                  groupAdmins: widget.groupAdmins,
+                  analyticsFeature: widget.analyticsFeature,
+                )
+              ));
             }
           }
         } else {
@@ -488,7 +494,7 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
 
         Conversation? conversation = await Social().createConversation(
           type: conversationType,
-          context: ContextItem.fromGroup(widget.group?.id),
+          context: ContextItem.group(widget.group?.id),
           memberIds: (conversationType != ConversationType.groupAll) ? List.from(_selectedMemberIds) : null,
         );
 
@@ -498,7 +504,8 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
           });
           if (conversation != null) {
             Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) =>
-              GroupConversationPanel(conversation,
+              GroupConversationPanel(
+                conversation: conversation,
                 group: widget.group,
                 groupAdmins: widget.groupAdmins,
                 analyticsFeature: widget.analyticsFeature,

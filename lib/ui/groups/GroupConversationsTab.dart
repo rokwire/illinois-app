@@ -84,7 +84,7 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
     else if (_conversations == null) {
       return _messageContent(Localization().getStringEx('', 'Failed to load groups messages'));
     }
-    else if (_conversations?.isEmpty == true) {
+    else if (_conversations?.isNotEmpty != true) {
       return _messageContent(Localization().getStringEx('', 'No group messages'));
     }
     else {
@@ -217,7 +217,8 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
 
   void _onTapConversation(Conversation conversation) {
     Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
-      GroupConversationPanel(conversation,
+      GroupConversationPanel(
+        conversation: conversation,
         group: widget.group,
         groupAdmins: widget.groupAdmins,
         analyticsFeature: widget.analyticsFeature,
