@@ -1297,7 +1297,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                       key: _canCreateMessage && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
                       leftIconKey: "check-circle-2",
                       title: _editingConversationMessages ?
-                        Localization().getStringEx("", "Finish Messages Selection") : Localization().getStringEx("", "Select Messages"),//localize tbd
+                        Localization().getStringEx("", "Finish Direct Messages Edit") : Localization().getStringEx("", "Edit Direct Messages"),//localize tbd
                       onTap: () {
                         Navigator.of(context).pop();
                         if (_editingConversationMessages) {

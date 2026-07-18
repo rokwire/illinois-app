@@ -252,7 +252,7 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
         setState(() {
           _selectedConversationsProgress = true;
         });
-        bool? deleteSucceeded = await Social().deleteConverstions(conversationIds: List.from(_selectedConversations));
+        bool? deleteSucceeded = await Social().deleteConverstions(List.from(_selectedConversations));
         if (mounted) {
           if (deleteSucceeded == true) {
             setState(() {

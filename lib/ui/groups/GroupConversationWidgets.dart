@@ -461,7 +461,7 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
         setState(() {
           _deleteProgress = true;
         });
-        bool? result = await Social().deleteConverstion(conversationId: widget.conversation?.id ?? '');
+        bool? result = await Social().deleteConverstion(widget.conversation?.id ?? '');
         if (mounted) {
           setState(() {
             _deleteProgress = false;
