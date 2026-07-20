@@ -362,8 +362,19 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
 
   Future<void> _extendContent() async {
     if (_isConversation && (_contentActivity == null) && mounted) {
+      double? initialScrollExtent = _maxScrollExtent;
+      double scrollOffset = _scrollController.offset;
+
       setState(() {
         _contentActivity = _ContentActivity.extend;
+      });
+
+      late double loadingScrollExtent;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        loadingScrollExtent = _maxScrollExtent;
+        if ((initialScrollExtent < loadingScrollExtent)) {
+          _scrollController.jumpTo(loadingScrollExtent - initialScrollExtent + scrollOffset);
+        }
       });
 
       int contentOffset = _contentList?.length ?? 0;
@@ -384,6 +395,12 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
             _lastPageLoadedAll = (contentList.length >= contentLength);
           }
           _contentActivity = null;
+        });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          double newScrollExtent = _maxScrollExtent;
+          if ((loadingScrollExtent < newScrollExtent)) {
+            _scrollController.jumpTo(newScrollExtent - loadingScrollExtent);
+          }
         });
       }
     }
