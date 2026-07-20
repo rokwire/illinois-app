@@ -105,6 +105,13 @@ extension MessageExt on Message {
 
   String? get identityKey => (((id != null) && (id?.isNotEmpty == true)) && ((globalId != null) && (globalId?.isNotEmpty == true))) ?
     "${id}:${globalId}" : null;
+
+  static bool matchIdentityKey(String identityKey, { String? messageId, String? messageGlobalId}) {
+    List<String> sections = identityKey.split(':');
+    return (sections.length == 2) &&
+      ((messageId == null) || (messageId == sections.first)) &&
+      ((messageGlobalId == null) || (messageGlobalId == sections.last));
+  }
 }
 
 extension ConversationExt on Conversation {

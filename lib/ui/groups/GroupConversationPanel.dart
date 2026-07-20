@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -18,6 +19,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
@@ -28,9 +30,11 @@ class GroupConversationPanel extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
   final Conversation? conversation;
+  final String? targetMessageId;
+  final String? targetMessageGlobalId;
   final AnalyticsFeature? analyticsFeature;
 
-  GroupConversationPanel({ super.key, this.conversation, this.group, this.groupAdmins, this.analyticsFeature });
+  GroupConversationPanel({ super.key, this.conversation, this.group, this.groupAdmins, this.targetMessageId, this.targetMessageGlobalId, this.analyticsFeature });
 
   @override
   State<StatefulWidget> createState() => _GroupConversationPanelState();
@@ -45,6 +49,9 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   _ContentActivity? _contentActivity;
   bool? _lastPageLoadedAll;
   static const int _contentPageLength = 8;
+
+  Group? _group;
+  List<Member>? _groupAdmins;
 
   Map<String, GlobalKey> _cardKeys = <String, GlobalKey>{};
 
@@ -62,8 +69,12 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   bool get _isEditingMessage => (_editingMessageIdentityKey?.isNotEmpty == true);
   GlobalKey? get _editingMessageCardKey => _isEditingMessage ? _cardKeys[_editingMessageIdentityKey] : null;
 
+  String? get _targetMessageIdentityKey => (widget.targetMessageGlobalId?.isNotEmpty == true) ?
+    _cardKeys.keys.firstWhereOrNull((String identityKey) => MessageExt.matchIdentityKey(identityKey, messageGlobalId: widget.targetMessageGlobalId)) : null;
+  GlobalKey? get _targetMessageKey => _cardKeys[_targetMessageIdentityKey];
+
   bool get _isConversation => (widget.conversation?.id?.isNotEmpty == true);
-  bool get _isGroupBroadcastMessage => ((widget.conversation?.id?.isNotEmpty != true)) && (widget.group?.id?.isNotEmpty == true);
+  bool get _isGroupBroadcastMessage => ((widget.conversation?.id?.isNotEmpty != true)) && (_group?.id?.isNotEmpty == true);
 
   @override
   void initState() {
@@ -73,7 +84,9 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     _keyboardVisibilityController = KeyboardVisibilityController();
     _keyboardSubscription = _keyboardVisibilityController.onChange.listen(_onKeyboardVisibilityChanged);
     _scrollController.addListener(_scrollListener);
-    _reloadContent();
+    _group = widget.group;
+    _groupAdmins = widget.groupAdmins;
+    initContent();
     super.initState();
   }
 
@@ -131,7 +144,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   Widget get _messagesContent =>
   Column(children: [
     Stack(children: <Widget>[
-      GroupConversationHeader(conversation: widget.conversation, group: widget.group, groupAdmins: widget.groupAdmins),
+      GroupConversationHeader(conversation: widget.conversation, group: _group, groupAdmins: _groupAdmins),
       _hideKeyboardLayer,
     ],),
     Expanded(child:
@@ -175,8 +188,8 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
         GroupConversationMessageCard(message,
           key: ((messageIdentityKey != null) && messageIdentityKey.isNotEmpty) ? (_cardKeys[messageIdentityKey] ??= GlobalKey()) : null,
           conversation: widget.conversation,
-          group: widget.group,
-          //groupMember: MemberExt.getMember(widget.groupAdmins, userId: message.sender?.accountId),
+          group: _group,
+          //groupMember: MemberExt.getMember(_groupAdmins, userId: message.sender?.accountId),
           onCommand: () => _onMessageCommand(message),
           commandProgress: ((_deletingMessageId != null) && (_deletingMessageId == message.globalId)),
           commandIcon: ((messageIdentityKey != null) && messageIdentityKey.isNotEmpty && (messageIdentityKey == editingMessageIdentityKey)) ? _editingMessageIcon : null,
@@ -241,7 +254,63 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   int get _listSafeContentLength => _contentList?.length ?? 0;
   int get _refreshContentLength => max(_listSafeContentLength, _contentPageLength);
 
-  Future<void> _reloadContent({ int limit = _contentPageLength }) async {
+  Future<void> initContent() async {
+    if (_isConversation && (_contentActivity != _ContentActivity.reload) && mounted) {
+      String? conversationGroupId = (widget.conversation?.type?.isGroup == true) ? widget.conversation?.context?.identifier : null;
+      List<Future<dynamic>> futures = [];
+
+      int messagesIndex = futures.length;
+      futures.add(Social().loadConversationMessages(
+        conversationId: widget.conversation?.id ?? '',
+        offset: 0,
+        limit: _contentPageLength,
+        extendLimitToMessageId: (widget.targetMessageGlobalId == null) ? widget.targetMessageId : null,
+        extendLimitToGlobalMessageId: widget.targetMessageGlobalId,
+      ));
+
+      int? groupIndex = ((widget.group == null) && (conversationGroupId != null) && conversationGroupId.isNotEmpty) ? futures.length : null;
+      if (groupIndex != null) {
+        futures.add(Groups().loadGroup(conversationGroupId));
+      }
+
+      int? groupAdminsIndex = ((widget.groupAdmins == null) && (conversationGroupId != null) && conversationGroupId.isNotEmpty) ? futures.length : null;
+      if (groupAdminsIndex != null) {
+        futures.add(Groups().loadMembers(groupId: conversationGroupId, statuses: [GroupMemberStatus.admin]));
+      }
+
+      if (futures.isNotEmpty) {
+        setState(() {
+          _contentActivity = _ContentActivity.reload;
+        });
+        List<dynamic> results = await Future.wait(futures);
+
+        List<Message>? contentList = ((messagesIndex < results.length) && (results[messagesIndex] is List<Message>)) ? results[messagesIndex] : null;
+        Group? group = ((groupIndex != null) && (groupIndex < results.length) && (results[groupIndex] is Group)) ? results[groupIndex] : null;
+        List<Member>? groupAdmins = ((groupAdminsIndex != null) && (groupAdminsIndex < results.length) && (results[groupAdminsIndex] is List<Member>)) ? results[groupAdminsIndex] : null;
+
+        if (mounted && (_contentActivity == _ContentActivity.reload)) {
+          setState(() {
+            _contentGlobalIds.clear();
+            _contentList = (contentList != null) ? widget.conversation?.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds) : null;
+            _lastPageLoadedAll = (contentList != null) ? ((widget.targetMessageGlobalId == null) && (contentList.length >= _contentPageLength)) : null;
+            if (group != null) {
+              _group = group;
+            }
+            if (groupAdmins != null) {
+              _groupAdmins = groupAdmins;
+            }
+            _contentActivity = null;
+          });
+
+          WidgetsBinding.instance.addPostFrameCallback((_) =>
+            (widget.targetMessageGlobalId != null) ? _jumpToTargetMessage() : _jumpToLast()
+          );
+        }
+      }
+    }
+  }
+
+  /*Future<void> _reloadContent({ int limit = _contentPageLength }) async {
     if (_isConversation && (_contentActivity != _ContentActivity.reload) && mounted) {
       setState(() {
         _contentActivity = _ContentActivity.reload;
@@ -263,7 +332,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
         WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToLast());
       }
     }
-  }
+  }*/
 
   Future<void> _refreshContent({ _ContentActivity activity = _ContentActivity.refresh }) async {
     if (_isConversation && (_contentActivity != _ContentActivity.reload) && (_contentActivity != activity) && mounted) {
@@ -329,6 +398,15 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
 
   void _jumpToLast() =>
     _scrollController.jumpTo(_maxScrollExtent);
+
+  void _jumpToTargetMessage()  {
+    BuildContext? targetMessageContext = _targetMessageKey?.currentContext;
+    if ((targetMessageContext != null) && targetMessageContext.mounted) {
+      Scrollable.ensureVisible(targetMessageContext, alignment: 0.5, duration: _scrollAnimationDuration, curve: _scrollAnimationCurve);
+    } else {
+      _scrollController.animateTo(_maxScrollExtent, duration: _scrollAnimationDuration, curve: _scrollAnimationCurve);
+    }
+  }
 
   void _onKeyboardVisibilityChanged(bool visible) {
     if (visible) {
@@ -492,7 +570,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
 
   Future<bool> _onBroadcastMessage(String message) async {
     List<Conversation>? conversations = await Social().broadcastIndividualMessage(
-      context: ContextItem.group(widget.group?.id ?? ''),
+      context: ContextItem.group(_group?.id ?? ''),
       message: message,
       //fileAttachments: fileAttachments,
       extraParams: {
@@ -517,7 +595,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   }
 
   void _onMessageCommand(Message message) {
-    Analytics().logSelect(target: 'Conversation Message Commands', attributes: widget.group?.analyticsAttributes);
+    Analytics().logSelect(target: 'Conversation Message Commands', attributes: _group?.analyticsAttributes);
     showModalBottomSheet(
       context: context,
       backgroundColor: Styles().colors.surface,
@@ -544,7 +622,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
 
   void _onReportMessageAbuse(Message message, {required GroupPostReportAbuseOptions options}) {
     Analytics().logSelect(target: options.analyticsSelectTarget);
-    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbusePanel(options: options, groupId: widget.group?.id ?? '', socialEntityId: message.globalId, socialEntityType: SocialEntityType.message,)));
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbusePanel(options: options, groupId: _group?.id ?? '', socialEntityId: message.globalId, socialEntityType: SocialEntityType.message,)));
   }
 
   void _onDeleteMessage(Message message) async {
