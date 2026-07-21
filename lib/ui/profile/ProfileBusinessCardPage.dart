@@ -32,7 +32,9 @@ class ProfileBusinessCardPage extends StatefulWidget {
   final Uint8List? _pronunciationAudioData;
   final Map<String, dynamic>? params;
 
-  ProfileBusinessCardPage({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? photoImageData, Uint8List? pronunciationAudioData, this.params, super.key}) :
+  final bool referredExternally;
+
+  ProfileBusinessCardPage({Auth2UserProfile? profile, Auth2UserPrivacy? privacy, Uint8List? photoImageData, Uint8List? pronunciationAudioData, this.referredExternally = false, this.params, super.key}) :
     _profile = profile,
     _privacy = privacy,
     _photoImageData = photoImageData,
@@ -55,6 +57,7 @@ class _ProfileBusinessCardPageState extends State<ProfileBusinessCardPage> {
   Auth2UserPrivacy? _privacy;
   Uint8List? _photoImageData;
   Uint8List? _pronunciationAudioData;
+  bool _referredExternally = false;
   bool _loading = false;
 
   @override
@@ -70,7 +73,8 @@ class _ProfileBusinessCardPageState extends State<ProfileBusinessCardPage> {
   Widget get _pageContent => ProfileBusinessCardWidget(
     publicProfile: _publicProfile,
     photoImageData: _photoImageData,
-    pronunciationAudioData: _pronunciationAudioData
+    pronunciationAudioData: _pronunciationAudioData,
+    referredExternally: _referredExternally
   );
 
   Widget get _loadingContent => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64,), child:
@@ -86,6 +90,7 @@ class _ProfileBusinessCardPageState extends State<ProfileBusinessCardPage> {
     _privacy = widget.privacy;
     _photoImageData = widget.photoImageData;
     _pronunciationAudioData = widget.pronunciationAudioData;
+    _referredExternally = widget.referredExternally;
     _publicProfile = _profile?.buildPublic(_privacy, permitted: { Auth2FieldVisibility.public });
 
     if ((_profile == null) || (_privacy == null) ||
@@ -177,10 +182,12 @@ class ProfileBusinessCardWidget extends StatefulWidget {
   final Uint8List? pronunciationAudioData;
   final double topOffset;
   final double contentPaddingX;
+  final bool referredExternally;
 
   ProfileBusinessCardWidget({this.publicProfile, this.photoImageData, this.pronunciationAudioData,
     this.topOffset = 16,
     this.contentPaddingX = 0,
+    this.referredExternally = false
   });
 
   @override
@@ -399,18 +406,21 @@ class _ProfileBusinessCardWidgetState extends State<ProfileBusinessCardWidget> {
 
   void _onTapEditProfile() {
     Analytics().logSelect(target: 'Edit My Info');
-    /*ProfileHomePanel.present(context,
-      contentType: ProfileContentType.profile,
-      contentParams: {
-        ProfileInfoPage.editParamKey : true,
-      }
-    );*/
-    NotificationService().notify(ProfileHomePanel.notifySelectContent, [
-      ProfileContentType.profile,
-      <String, dynamic>{
-        ProfileInfoPage.editParamKey : true,
-      }
-    ]);
+    if (widget.referredExternally) {
+      ProfileHomePanel.present(context,
+          contentType: ProfileContentType.profile,
+          contentParams: {
+            ProfileInfoPage.editParamKey: true,
+          }
+      );
+    } else {
+      NotificationService().notify(ProfileHomePanel.notifySelectContent, [
+        ProfileContentType.profile,
+        <String, dynamic>{
+          ProfileInfoPage.editParamKey: true,
+        }
+      ]);
+    }
   }
 
   Future<String?> _saveImage({bool addToGallery = false} ) async {

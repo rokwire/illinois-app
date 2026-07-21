@@ -424,6 +424,7 @@
     "panel.wallet.content_type.illini_cash.label": "Illini Cash",
     "panel.wallet.content_type.add_illini_cash.label": "Add Illini Cash",
     "panel.wallet.content_type.library_card.label": "University Library Card",
+    "panel.wallet.content_type.digital_business_card.label": "My Digital Business Card",
 
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Search by Event Title",
