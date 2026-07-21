@@ -17,10 +17,12 @@
 import 'package:collection/collection.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -209,4 +211,29 @@ extension ConversationMemberExt on ConversationMember {
       return 0;
     }
   }
+}
+
+enum AttachmentFileType { image, video, audio, file }
+
+extension AttachmentFileTypeImpl on AttachmentFileType {
+  static AttachmentFileType? fromString(String? value) => (value != null) ?
+    AttachmentFileType.values.firstWhereOrNull((e) => e.name == value) : null;
+}
+
+extension AttachmentFileTypeUtils on String {
+  AttachmentFileType? get attachmentFileTypeFromPath {
+    if (FileUtils.isVideo(this)) {
+      return AttachmentFileType.video;
+    } else if (FileUtils.isImage(this)) {
+      return AttachmentFileType.image;
+    } else if (FileUtils.isAudio(this)) {
+      return AttachmentFileType.audio;
+    } else {
+      return AttachmentFileType.file;
+    }
+  }
+}
+
+extension AudioResultSocialUtils on AudioResult {
+  String get audioFileName => 'audio_${hashCode}${audioFileExtension}';
 }

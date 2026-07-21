@@ -41,7 +41,6 @@ import 'package:illinois/platform_impl/stub.dart'
 if (dart.library.io) 'package:illinois/platform_impl/mobile.dart'
 if (dart.library.html) 'package:illinois/platform_impl/web.dart';
 
-enum FileType { image, video, audio, file }
 
 class MessagesConversationPanel extends StatefulWidget {
   final Conversation? conversation;
@@ -345,7 +344,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
               ]),
               ),
               if (CollectionUtils.isNotEmpty(message.fileAttachments))
-                _buildAttachedFilesListWidget(message: message),
+                 _buildAttachedFilesListWidget(message: message),
             ],
           ),
         ),
@@ -903,8 +902,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
   Widget _buildAttachedFilesListWidget({Message? message}) {
     return Container(
       height: (message?.fileAttachments ?? _attachedFiles.toList()).firstWhereOrNull((e) {
-        FileType type = _getFileType(e);
-        return type == FileType.image || type == FileType.video;
+        AttachmentFileType type = _getFileType(e);
+        return type == AttachmentFileType.image || type == AttachmentFileType.video;
       }) != null ? message != null ? 300.0 : 200.0 : 100.0,
       child: ListView.separated(
         padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
@@ -927,11 +926,11 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       if (file == null) {
         return SizedBox();
       }
-      FileType type = _getFileTypeFromString(file.type);
-      if (type == FileType.image || type == FileType.video) {
+      AttachmentFileType type = AttachmentFileTypeImpl.fromString(file.type) ?? AttachmentFileType.file;
+      if (type == AttachmentFileType.image || type == AttachmentFileType.video) {
         return _buildAttachedMediaEntry(context, file, type);
       }
-      if (type == FileType.audio) {
+      if (type == AttachmentFileType.audio) {
         return _buildAudioAttachment(context, file, type);
       }
       name = file.name;
@@ -941,13 +940,13 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     } else {
       dynamic file = _attachedFiles.elementAt(index);
       name = _getFileName(file);
-      FileType type = _getFileType(file);
+      AttachmentFileType type = _getFileType(file);
       showProgress = (message == null) && (_uploadingFiles[name] == true);
       allowRemove = !_uploadingFiles.containsKey(name);
-      if (type == FileType.image || type == FileType.video) {
+      if (type == AttachmentFileType.image || type == AttachmentFileType.video) {
         return _buildAttachedMediaEntry(context, file, type, inMessage: false, showProgress: showProgress, allowRemove: allowRemove);
       }
-      if (type == FileType.audio) {
+      if (type == AttachmentFileType.audio) {
         return _buildAudioAttachment(context, file, type, inMessage: false, showProgress: showProgress, allowRemove: allowRemove);
       }
       textStyleKey = 'widget.title.small';
@@ -1005,7 +1004,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     );
   }
 
-  Widget _buildAudioAttachment(BuildContext context, dynamic file, FileType type,
+  Widget _buildAudioAttachment(BuildContext context, dynamic file, AttachmentFileType type,
       {bool inMessage = true, bool showProgress = false, bool allowRemove = true}) {
     String? url;
     Uint8List? bytes;
@@ -1060,7 +1059,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     );
   }
 
-  Widget _buildAttachedMediaEntry(BuildContext context, dynamic file, FileType type,
+  Widget _buildAttachedMediaEntry(BuildContext context, dynamic file, AttachmentFileType type,
       {bool inMessage = true, bool showProgress = false, bool allowRemove = true}) {
     String? path, url;
     Uint8List? data;
@@ -1080,7 +1079,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       return const SizedBox();
     }
     Widget? widget;
-    if (type == FileType.image) {
+    if (type == AttachmentFileType.image) {
       if (data != null) {
         widget = Image.memory(data, fit: BoxFit.cover,
           errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) =>
@@ -1116,7 +1115,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         return const SizedBox();
       }
     }
-    else if (type == FileType.video) {
+    else if (type == AttachmentFileType.video) {
       widget = VideoPlayerWidget(key: ValueKey(path),
           filePath: path, url: url, showControls: false,
           muted: true, fill: true, interactive: false);
@@ -1282,7 +1281,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     if (loadAttachmentUrls) {
       List<String> fileIds = [];
       for (Message message in loadedMessages ?? []) {
-        fileIds.addAll(message.fileAttachments?.where((e) => e.type != FileType.file).map((e) => e.id).nonNulls ?? []);
+        fileIds.addAll(message.fileAttachments?.where((e) => e.type != AttachmentFileType.file).map((e) => e.id).nonNulls ?? []);
       }
 
       if (CollectionUtils.isNotEmpty(fileIds)) {
@@ -1365,7 +1364,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       List<String>? fileIds;
       if (CollectionUtils.isNotEmpty(newMessages)) {
         newMessage = newMessages!.first;
-        fileIds = newMessage.fileAttachments?.where((e) => e.type != FileType.file).map((e) => e.id).nonNulls.toList();
+        fileIds = newMessage.fileAttachments?.where((e) => e.type != AttachmentFileType.file).map((e) => e.id).nonNulls.toList();
       }
       if (CollectionUtils.isNotEmpty(fileIds)) {
         List<FileContentItemReference>? fileRefs = await Content().getFileContentDownloadUrls(fileIds!, Content.conversationsContentCategory, entityId: _conversationId);
@@ -1672,33 +1671,29 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     return 'audio_${result.hashCode}${result.audioFileExtension}';
   }
 
-  FileType _getFileType(dynamic file) {
+  AttachmentFileType _getFileType(dynamic file) {
     if (file is FileAttachment) {
-      return _getFileTypeFromString(file.type);
+      return AttachmentFileTypeImpl.fromString(file.type) ?? AttachmentFileType.file;
     }
     if (file is AudioResult) {
-      return FileType.audio;
+      return AttachmentFileType.audio;
     }
-    FileType type = FileType.file;
+    AttachmentFileType type = AttachmentFileType.file;
     String? path = kIsWeb ?  _getFileName(file) : _getFilePath(file) ?? _getFileName(file);
     if (FileUtils.isVideo(path)) {
-      type = FileType.video;
+      type = AttachmentFileType.video;
     } else if (FileUtils.isImage(path)) {
-      type = FileType.image;
+      type = AttachmentFileType.image;
     } else if (FileUtils.isAudio(path)) {
-      type = FileType.audio;
+      type = AttachmentFileType.audio;
     }
     return type;
-  }
-
-  FileType _getFileTypeFromString(String? type) {
-    return FileType.values.firstWhereOrNull((e) => e.name == type) ?? FileType.file;
   }
 
   List<FileAttachment> _getMessageFileAttachments(List<FileContentItemReference>? fileRefs) {
     return fileRefs != null ? List.generate(_attachedFiles.length, (index) {
       dynamic file = _attachedFiles.elementAt(index);
-      FileType type = _getFileType(file);
+      AttachmentFileType type = _getFileType(file);
       String? name = _getFileName(file);
       FileContentItemReference ref = fileRefs.firstWhere((ref) => ref.name == name, orElse: () => FileContentItemReference());
       return FileAttachment(name: name, type: type.name, id: ref.key);
