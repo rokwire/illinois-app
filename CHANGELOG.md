@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - My Courses: Match the drop-down button style with Events and Groups [#5858](https://github.com/rokwire/illinois-app/issues/5858).
+### Fixed
+- Fixed processing of group message Firebase notifications [#5581](https://github.com/rokwire/illinois-app/issues/5581).
+- Fixed scroll position on content extension in group's conversation messages panel [#5581](https://github.com/rokwire/illinois-app/issues/5581).
+### Added
+- Added support for group-all conversaion type and individual broadcast message [#5767](https://github.com/rokwire/illinois-app/issues/5767).
 
 ## [8.1.3] - 2026-07-17
 ### Added
