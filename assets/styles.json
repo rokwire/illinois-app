@@ -1071,6 +1071,7 @@
     "messages-group-dark-blue": {"src": "0xf0c0", "type": "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 16},
     "edit-dark-blue": {"src": "0xf044", "type": "fa.icon", "weight": "solid", "color": "fillColorPrimary", "size": 20, "todo": "remove if not neefed"},
 
+
     "comment-vacuum-start": "Below is a sample for fa pro icons. Remove them when there is no need.",
     "lightVacuum": {"src": "0xe04d", "type": "fa.icon", "weight": "light", "color": "fillColorSecondary", "size": 38},
     "thinVacuum": {"src": "0xe04d", "type": "fa.icon", "weight": "thin", "color": "fillColorSecondary", "size": 38},
@@ -1267,6 +1268,7 @@
     "streak": {"src": "images/streak.png", "type": "flutter.asset", "size": 240},
     "pause-filled-blue": {"src": "images/pause-filled-blue.png", "type": "flutter.asset", "size": 32},
     "pause-empty-blue": {"src": "images/pause-empty-blue.png", "type": "flutter.asset", "size": 32},
+    "group-chat": {"src": "images/icon-group-chat.png", "type": "flutter.asset", "size": 48},
 
     "external-link": {"src": "images/external-link.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "wrong size"},
 

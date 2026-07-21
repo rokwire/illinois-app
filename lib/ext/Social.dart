@@ -105,9 +105,21 @@ extension MessageExt on Message {
 
   String? get identityKey => (((id != null) && (id?.isNotEmpty == true)) && ((globalId != null) && (globalId?.isNotEmpty == true))) ?
     "${id}:${globalId}" : null;
+
+  static bool matchIdentityKey(String identityKey, { String? messageId, String? messageGlobalId}) {
+    List<String> sections = identityKey.split(':');
+    return (sections.length == 2) &&
+      ((messageId == null) || (messageId == sections.first)) &&
+      ((messageGlobalId == null) || (messageGlobalId == sections.last));
+  }
 }
 
 extension ConversationExt on Conversation {
+
+  bool get isGroup => (type?.isGroup == true);
+  bool get isGroupAll => (type == ConversationType.groupAll);
+  bool get isGroupSubset => (type == ConversationType.groupSubset);
+
   String? get displayDateTime {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(lastActivityTimeUtc);
     if (deviceDateTime != null) {

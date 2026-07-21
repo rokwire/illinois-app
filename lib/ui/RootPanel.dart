@@ -51,6 +51,7 @@ import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePlaceDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupConversationPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
@@ -75,6 +76,7 @@ import 'package:rokwire_plugin/model/actions.dart';
 import 'package:rokwire_plugin/model/auth2.dart' show Auth2UserPrefs;
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/events.dart';
@@ -1202,15 +1204,25 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
-  void _presentSocialMessagePanel({String? conversationId, String? messageId, String? messageGlobalId}) {
+  Future<void> _presentSocialMessagePanel({String? conversationId, String? messageId, String? messageGlobalId}) async {
+    Conversation? conversation = await Social().loadConversation(conversationId);
     if (context.mounted) {
-      if (StringUtils.isNotEmpty(conversationId)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(
-          conversationId: conversationId,
-          targetMessageId: messageId,
-          targetMessageGlobalId: messageGlobalId,
-        )));
-      } else {
+      if (conversation != null) {
+        if (conversation.type?.isGroup == true) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupConversationPanel(
+            conversation: conversation,
+            targetMessageId: messageId,
+            targetMessageGlobalId: messageGlobalId,
+          )));
+        } else {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(
+            conversationId: conversationId,
+            targetMessageId: messageId,
+            targetMessageGlobalId: messageGlobalId,
+          )));
+        }
+      }
+      else {
         AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
       }
     }

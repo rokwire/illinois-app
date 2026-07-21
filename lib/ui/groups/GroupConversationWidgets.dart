@@ -35,12 +35,15 @@ class GroupConversationCard extends StatelessWidget {
 
   GroupConversationCard(this.conversation, { this.groupAdmins, this.onTap });
 
+  List<ConversationMember>? get _participants => this.conversation.members;
+  int get _participantsCount => _participants?.length ?? 0;
+
   @override
   Widget build(BuildContext context) =>
     InkWell(onTap: onTap, child:
       Container(decoration: _cardDecoration, padding: _cardPadding, child:
         Row(children: [
-          GroupConversationAvtarWidget(conversation.members),
+          GroupConversationAvtarWidget(conversation: conversation),
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
@@ -55,10 +58,11 @@ class GroupConversationCard extends StatelessWidget {
     );
 
   Widget get _titleWidget {
-    int participantsCount = conversation.members?.length ?? 0;
-    if (1 < participantsCount) {
-      return _participantNamesWidget;
-    } else if (0 < participantsCount) {
+    if (conversation.isGroupAll) {
+      return _groupChatNameWidget;
+    } if (1 < _participantsCount) {
+      return _participantsNamesWidget;
+    } else if (0 < _participantsCount) {
       return _participantNameWidget;
     } else {
       return Container();
@@ -82,11 +86,18 @@ class GroupConversationCard extends StatelessWidget {
     );
   }
 
-  Widget get _participantNamesWidget => Text(conversation.membersString ?? '',
+  Widget get _participantsNamesWidget => Text(conversation.membersString ?? '',
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
     textAlign: TextAlign.left,
     overflow: TextOverflow.ellipsis,
     maxLines: 1,
-    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat')
+  );
+
+  Widget get _groupChatNameWidget => Text(Localization().getStringEx('', 'All Group Members Chat'),
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
+    textAlign: TextAlign.left,
+    overflow: TextOverflow.ellipsis,
+    maxLines: 1,
   );
 
   Widget get _updateTimeWidget {
@@ -126,59 +137,42 @@ class GroupConversationAvtarWidget extends StatelessWidget {
   static const double _avtar2Size = _avtarSize * 2 / 3;
   static const double _avtar2Offset = _avtarOffset + 1.5;
 
-  final List<ConversationMember>? participants;
+  final Group? group;
+  final Conversation? conversation;
+  final ConversationMember? conversationMember;
 
-  GroupConversationAvtarWidget(this.participants);
+  GroupConversationAvtarWidget({ this.group, this.conversation, this.conversationMember });
 
-  int get _participantsCount => participants?.length ?? 0;
+  List<ConversationMember>? get _participants => this.conversation?.members;
+  int get _participantsCount => _participants?.length ?? 0;
 
   @override
   Widget build(BuildContext context) =>
-    Container(width: widgetSize, height: widgetSize, decoration: _avtarDecoration, child: _participantsIcon);
+    Container(width: widgetSize, height: widgetSize, decoration: _avtarDecoration, child: _avtarIcon);
 
-  /*Widget build(BuildContext context) {
-    return Container(width: _widgetSize, height: _widgetSize, decoration: _avtarDecoration, child:
-      Stack(children: [
-        Positioned.fill(child:
-          Align(alignment: Alignment.topLeft, child:
-            Padding(padding: EdgeInsets.only(left: _avtarOffset, top: _avtarOffset,), child:
-              Container(width: _avtarSize, height: _avtarSize, decoration: _participantDecoration(Colors.blueAccent)),
-            )
-          )
-        ),
-        Positioned.fill(child:
-          Align(alignment: Alignment.bottomRight, child:
-            Padding(padding: EdgeInsets.only(right: _avtarOffset, bottom: _avtarOffset,), child:
-              Container(width: _avtarSize, height: _avtarSize, decoration: _participantDecoration(Colors.yellowAccent)),
-            )
-          )
-        ),
-        Positioned.fill(child:
-          Align(alignment: Alignment.bottomLeft, child:
-            Padding(padding: EdgeInsets.only(left: _avtar2Offset, bottom: _avtar2Offset,), child:
-              Container(width: _avtar2Size, height: _avtar2Size, decoration: _participantDecoration(Colors.greenAccent)),
-            )
-          )
-        ),
-      ],)
-    );
-  }*/
-
-  Widget? get _participantsIcon {
-    if (_participantsCount > 1) {
-      return _multipleParticipantsIcon;
-    } else if (_participantsCount == 1) {
-      return _singleParticipantIcon;
+  Widget? get _avtarIcon {
+    if (conversation != null) {
+      if (conversation?.isGroupAll == true) {
+        return _groupChatIcon;
+      } else if (conversation?.isGroupSubset == true) {
+        return (_participantsCount == 1) ? _singleParticipantIcon(_participants?.firstOrNull) : _multipleParticipantsIcon;
+      } else {
+        return null;
+      }
+    } else if (conversationMember != null) {
+      return _singleParticipantIcon(conversationMember);
+    } else if (group != null) {
+      return _groupMembersIcon;
     } else {
       return null;
     }
   }
 
-  Widget get _singleParticipantIcon =>
+  Widget _singleParticipantIcon(ConversationMember? member) =>
     DirectoryProfilePhoto(
       photoUrl: Content().getUserPhotoUrl(
         type: UserProfileImageType.medium,
-        accountId: participants?.firstOrNull?.accountId,
+        accountId: member?.accountId,
         //params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken),
       ),
       photoSize: widgetSize,
@@ -186,9 +180,9 @@ class GroupConversationAvtarWidget extends StatelessWidget {
     );
 
   Widget get _multipleParticipantsIcon {
-    ConversationMember? participant1 = ListUtils.entry(participants, 0);
-    ConversationMember? participant2 = ListUtils.entry(participants, 1);
-    ConversationMember? participant3 = ListUtils.entry(participants, 2);
+    ConversationMember? participant1 = ListUtils.entry(_participants, 0);
+    ConversationMember? participant2 = ListUtils.entry(_participants, 1);
+    ConversationMember? participant3 = ListUtils.entry(_participants, 2);
 
     return Stack(children: [
 
@@ -246,6 +240,12 @@ class GroupConversationAvtarWidget extends StatelessWidget {
     ],);
   }
 
+  Widget get _groupChatIcon =>
+    DirectoryProfilePhoto(placeholderImageKey: 'group-chat', photoSize: widgetSize,);
+
+  Widget get _groupMembersIcon =>
+    DirectoryProfilePhoto(placeholderImageKey: 'profile-placeholder', photoSize: widgetSize,);
+
   BoxDecoration get _avtarDecoration => BoxDecoration(
     color: Styles().colors.textBackgroundVariant2,
     shape: BoxShape.circle,
@@ -257,9 +257,9 @@ class GroupConversationAvtarWidget extends StatelessWidget {
 class GroupConversationHeader extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
-  final Conversation conversation;
+  final Conversation? conversation;
 
-  GroupConversationHeader(this.conversation, {this.group, this.groupAdmins});
+  GroupConversationHeader({ this.conversation, this.group, this.groupAdmins });
 
   @override
   State<StatefulWidget> createState() => _GroupConversationHeaderState();
@@ -269,11 +269,49 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
 
   bool _deleteProgress = false;
 
+  bool get _multipleMembers => ((widget.conversation?.isGroupSubset == true) && (1 < (widget.conversation?.members?.length ?? 0)));
+
   @override
   Widget build(BuildContext context) =>
-    Container(decoration: _headingDecoration, child: _multipleMembers ?
-      _multipleMembersDropdown : _singleMemberWidget
-    );
+    Container(decoration: _headingDecoration, child: _contentWidget);
+
+  Widget? get _contentWidget {
+    if (widget.conversation != null) {
+      if (widget.conversation?.isGroupAll == true) {
+        return _groupChatWidget;
+      } if (widget.conversation?.isGroupSubset == true) {
+        return _multipleMembers ? _multipleMembersDropdown : _singleMemberWidget;
+      } else {
+        return null;
+      }
+    }
+    else if (widget.group != null) {
+      return _groupMembersWidget;
+    } else {
+      return null;
+    }
+  }
+
+  Widget get _groupChatWidget => Row(children: [
+    _avtarWidget,
+    Expanded(child:
+      Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+        _groupChatNameWidget,
+      )
+    ),
+    _deleteButton,
+  ],);
+
+  Widget get _groupMembersWidget => Row(children: [
+    _avtarWidget,
+    Expanded(child:
+      Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+        _groupMembersNameWidget,
+      )
+    ),
+    //_deleteButton,
+  ],);
+
 
   Widget get _singleMemberWidget => Row(children: [
     _avtarWidget,
@@ -311,18 +349,18 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
 
   // Dropdown
 
-  List<DropdownMenuItem<String>> _buildDropdownMembers() => List.from(widget.conversation.members?.sorted(ConversationMemberExt.compareNames).map((member) => _buildDropdownMemberItem(member)) ?? []);
+  List<DropdownMenuItem<String>> _buildDropdownMembers() => List.from(widget.conversation?.members?.sorted(ConversationMemberExt.compareNames).map((member) => _buildDropdownMemberItem(member)) ?? []);
 
   DropdownMenuItem<String> _buildDropdownMemberItem(ConversationMember member) =>
     DropdownMenuItem<String>(value: member.accountId ?? '', child:
       Container(decoration: _dropdownMemberDecoration, child:
         Row(children: [
-          _buildAvtarWidget([member]),
+          _buildAvtarWidget(conversationMember: member),
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
               _buildParticipantNameWidget(member,
-                  nameTextStyleName: 'widget.card.title.small.fat',
-                  statusTextStyleName: 'widget.title.light.tiny.fat'
+                nameTextStyleName: 'widget.card.title.small.fat',
+                statusTextStyleName: 'widget.title.light.tiny.fat'
               ),
             )
           ),
@@ -334,18 +372,18 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
 
   // Avtar
 
-  Widget get _avtarWidget => _buildAvtarWidget(widget.conversation.members);
+  Widget get _avtarWidget => _buildAvtarWidget(conversation: widget.conversation, group: widget.group);
 
-  Widget _buildAvtarWidget(List<ConversationMember>? members) =>
+  Widget _buildAvtarWidget({ Group? group, Conversation? conversation, ConversationMember? conversationMember }) =>
     Padding(padding: EdgeInsets.symmetric(horizontal: _avtarSpacing * 2, vertical: _avtarSpacing), child:
-      GroupConversationAvtarWidget(members),
+      GroupConversationAvtarWidget(group: group, conversation: conversation, conversationMember: conversationMember),
     );
 
   double get _avtarSpacing => 8;
 
   // Name
 
-  Widget get _participantNameWidget => _buildParticipantNameWidget(widget.conversation.members?.firstOrNull,
+  Widget get _participantNameWidget => _buildParticipantNameWidget(widget.conversation?.members?.firstOrNull,
     nameTextStyleName: 'widget.title.large.fat',
     statusTextStyleName: 'widget.title.light.tiny.fat'
   );
@@ -366,11 +404,25 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
     );
   }
 
-  Widget get _participantNamesWidget => Text(widget.conversation.membersString ?? '',
+  Widget get _participantNamesWidget => Text(widget.conversation?.membersString ?? '',
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
     textAlign: TextAlign.left,
     overflow: TextOverflow.ellipsis,
     maxLines: 1,
-    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat')
+  );
+
+  Widget get _groupChatNameWidget => Text(Localization().getStringEx('', 'All Group Members Chat'),
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
+    textAlign: TextAlign.left,
+    overflow: TextOverflow.ellipsis,
+    maxLines: 1,
+  );
+
+  Widget get _groupMembersNameWidget => Text(Localization().getStringEx('', 'All Group Members (Individually)'),
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
+    textAlign: TextAlign.left,
+    overflow: TextOverflow.ellipsis,
+    maxLines: 1,
   );
 
   Widget get _chevronDownIcon => Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
@@ -389,7 +441,6 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
   Widget get _deleteProgressIcon => SizedBox.square(dimension: _deleteIconSize - 2, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,));
   double get _deleteIconSize => 20;
 
-  bool get _multipleMembers => (1 < (widget.conversation.members?.length ?? 0));
   double get _screenWidth => MediaQuery.of(context).size.width;
 
   BoxDecoration get _dropdownMemberDecoration => BoxDecoration(
@@ -410,7 +461,7 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
         setState(() {
           _deleteProgress = true;
         });
-        bool? result = await Social().deleteConverstion(conversationId: widget.conversation.id ?? '');
+        bool? result = await Social().deleteConverstion(widget.conversation?.id ?? '');
         if (mounted) {
           setState(() {
             _deleteProgress = false;
@@ -1124,4 +1175,104 @@ class GroupConversationConfirmDeleteDialog extends StatelessWidget {
       )
     ],);
 
+}
+
+enum GroupConversationCreateOption { groupMessage, individualMessages }
+
+class GroupConversationCreateOptionsDialog extends StatelessWidget {
+
+  GroupConversationCreateOptionsDialog();
+
+  static Future<GroupConversationCreateOption?>show(BuildContext context, ) =>
+    showDialog(context: context, builder: (_) => AlertDialog(
+      content: GroupConversationCreateOptionsDialog(),
+      contentPadding: const EdgeInsets.only(bottom: 24),
+    ));
+
+  @override
+  Widget build(BuildContext context) =>
+    Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Align(alignment: Alignment.centerRight, child:
+        _closeButton(context),
+      ),
+      Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 32), child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Text(Localization().getStringEx('', 'How would you like to send this message?'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.detail.regular'),),
+          SizedBox(height: 24,),
+          RoundedButton(
+            label: Localization().getStringEx('', 'Send as a Group Message'),
+            textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            borderWidth: 1.5,
+            onTap: () {
+              Analytics().logAlert(text: 'How would you like to send this message?', selection: 'Send as a Group Message');
+              Navigator.of(context).pop(GroupConversationCreateOption.groupMessage);
+            },),
+          SizedBox(height: 8,),
+          RoundedButton(
+            label: Localization().getStringEx('', 'Send as Individual Messages'),
+            textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            borderWidth: 1.5,
+            onTap: () {
+              Analytics().logAlert(text: 'How would you like to send this message?', selection: 'Send as Individual Messages');
+              Navigator.of(context).pop(GroupConversationCreateOption.individualMessages);
+          },),
+        ],)
+      )
+    ],);
+
+  Widget _closeButton(BuildContext context) =>
+    Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+      InkWell(onTap : () => _onTapClose(context), child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Styles().images.getImage('close-circle', excludeFromSemantics: true),
+        ),
+      ),
+    );
+
+  void _onTapClose(BuildContext context) {
+    Analytics().logAlert(text: 'How would you like to send this message?', selection: 'Close');
+    Navigator.of(context).pop();
+  }
+}
+
+class GroupConversationReportBroadcastIndividualDialog extends StatelessWidget {
+
+  GroupConversationReportBroadcastIndividualDialog();
+
+  static Future<GroupConversationCreateOption?>show(BuildContext context, ) =>
+    showDialog(context: context, builder: (_) => AlertDialog(
+      content: GroupConversationReportBroadcastIndividualDialog(),
+      contentPadding: const EdgeInsets.only(bottom: 48),
+    ));
+
+  @override
+  Widget build(BuildContext context) =>
+    Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Align(alignment: Alignment.centerRight, child:
+        _closeButton(context),
+      ),
+      Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 32), child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Styles().images.getImage('paper-plane') ?? Container(),
+          SizedBox(height: 8,),
+          Text(Localization().getStringEx('', 'Your message has been sent to each group member individually.'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.detail.regular'),),
+        ],)
+      )
+    ],);
+
+  Widget _closeButton(BuildContext context) =>
+    Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+      InkWell(onTap : () => _onTapClose(context), child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Styles().images.getImage('close-circle', excludeFromSemantics: true),
+        ),
+      ),
+    );
+
+  void _onTapClose(BuildContext context) {
+    Analytics().logAlert(text: 'How would you like to send this message?', selection: 'Close');
+    Navigator.of(context).pop();
+  }
 }
