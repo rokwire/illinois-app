@@ -183,7 +183,7 @@ class Storage extends rokwire.Storage with NotificationsListener {
     setStringWithName(offsetDateKey, AppDateTime().formatDateTime(value, ignoreTimeZone: true));
   }
 
-  // Recent Items - backward compatability
+  // Recent Items - backward compatibility
   static const String recentItemsKey  = '_recent_items_json_string';
   String? get recentItemsSource => getStringWithName(recentItemsKey);
   List<dynamic>? get recentItems => JsonUtils.decodeList(recentItemsSource);
