@@ -101,7 +101,7 @@ class AuthCard {
 
   DateTime? get expirationDateTimeUtc {
     Location? universityLocation = AppDateTime().universityLocation;
-    DateTime? expirationDateTimeUtc = (expirationDate != null) ? DateTimeUtils.parseDateTime(expirationDate!, format: "yyyy-MM-dd", isUtc: true) : null;
+    DateTime? expirationDateTimeUtc = (expirationDate != null) ? DateTimeUtils.dateTimeFromString(expirationDate!, format: "yyyy-MM-dd", isUtc: true) : null;
     return  ((expirationDateTimeUtc != null) && (universityLocation != null)) ? TZDateTime(universityLocation, expirationDateTimeUtc.year, expirationDateTimeUtc.month, expirationDateTimeUtc.day).toUtc() : null;
   }
 
