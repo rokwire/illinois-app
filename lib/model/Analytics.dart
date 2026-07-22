@@ -77,6 +77,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   WalletIlliniID                 = AnalyticsFeature("Wallet: Illini ID", key: "ICard", priority: 1);
   static const AnalyticsFeature   WalletMealPlan                 = AnalyticsFeature("Wallet: Meal Plan", key: "MealPlan", priority: 1);
   static const AnalyticsFeature   WalletLibraryCard              = AnalyticsFeature("Wallet: Library Card", key: "LibraryCard", priority: 1);
+  static const AnalyticsFeature   WalletBusinessCard             = AnalyticsFeature("Wallet: Digital Business Card", key: "BusinessCard", priority: 1);
 
   static const AnalyticsFeature   Wellness                       = AnalyticsFeature("Wellness");
   static const AnalyticsFeature   WellnessDailyTips              = AnalyticsFeature("Wellness: Tips", key: {"WellnessDailyTip"}, priority: 1);
@@ -170,6 +171,7 @@ class AnalyticsFeature {
     WalletIlliniID,
     WalletMealPlan,
     WalletLibraryCard,
+    WalletBusinessCard,
 
     Wellness,
     WellnessDailyTips,
