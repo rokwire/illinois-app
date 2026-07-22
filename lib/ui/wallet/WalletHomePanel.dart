@@ -21,8 +21,8 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/profile/ProfileBusinessCardPage.dart';
 import 'package:illinois/ui/wallet/WalletAddIlliniCashPage.dart';
+import 'package:illinois/ui/wallet/WalletBusinessCardPage.dart';
 import 'package:illinois/ui/wallet/WalletICardPage.dart';
 import 'package:illinois/ui/wallet/WalletIlliniCashPage.dart';
 import 'package:illinois/ui/wallet/WalletLibraryCardPage.dart';
@@ -262,7 +262,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
       case WalletContentType.busPass:       return WalletBusPassPage(key: _contentPageKey, topOffset: 80);
       case WalletContentType.libraryCard:   return WalletLibraryCardPage(key: _contentPageKey, topOffset: 80,);
       case WalletContentType.mealPlan:      return WalletMealPlanPage(key: _contentPageKey, headerHeight: 82,);
-      case WalletContentType.businessCard: return Padding(padding: EdgeInsets.only(top: 80, left: 16, right: 16), child: ProfileBusinessCardPage(key: _contentPageKey));
+      case WalletContentType.businessCard:  return WalletBusinessCardPage(key: _contentPageKey, topOffset: 80);
       case WalletContentType.illiniCash:    return WalletIlliniCashPage(key: _contentPageKey, headerHeight: 88);
       case WalletContentType.addIlliniCash: return WalletAddIlliniCashPage(key: _contentPageKey, topOffset: 82, hasCancel: false,);
       default: return null;
