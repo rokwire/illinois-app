@@ -114,7 +114,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String notifyAppointmentNotification                    = "$notifyBase.appointment";
   static const String notifyWellnessToDoItemNotification               = "$notifyBase.wellness.to_do";
   static const String notifyProfileMyNotification                      = "$notifyBase.profile.my";
-  static const String notifyProfileWhoAreYouNotification               = "$notifyBase.profile.who_are_you";
+  static const String notifyProfileRolesNotification               = "$notifyBase.profile.who_are_you";
   static const String notifyProfileLoginNotification                        = "$notifyBase.profile.login";
   static const String notifySettingsSectionsNotification               = "$notifyBase.settings.sections";  //TBD deprecate and delete. Use profile.login instead
   static const String notifySettingsFoodFiltersNotification            = "$notifyBase.settings.food_filters";
@@ -271,7 +271,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String payloadTypeWellnessToDoItem = 'wellness_todo_entry';
   static const String payloadTypePoll = 'poll';
   static const String payloadTypeProfileMy = 'profile.my';
-  static const String payloadTypeProfileWhoAreYou = 'profile.who_are_you';
+  static const String payloadTypeProfileRoles = 'profile.who_are_you';
   static const String payloadTypeProfileLogin = 'profile.login';
   static const String payloadTypeSettingsSections = 'settings.sections';
   static const String payloadTypeSettingsFoodFilters = 'settings.food_filters';
@@ -615,8 +615,8 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
     else if (type == payloadTypeProfileMy) {
       NotificationService().notify(notifyProfileMyNotification, data);
     }
-    else if (type == payloadTypeProfileWhoAreYou) {
-      NotificationService().notify(notifyProfileWhoAreYouNotification, data);
+    else if (type == payloadTypeProfileRoles) {
+      NotificationService().notify(notifyProfileRolesNotification, data);
     }
     else if (type == payloadTypeProfileLogin) {
       NotificationService().notify(notifyProfileLoginNotification, data);

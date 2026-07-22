@@ -308,7 +308,7 @@
 
     "panel.browse.entry.career_exploration.career_planing_links.title": "Career Planning Links",
     "panel.browse.entry.career_exploration.interest_explorer.title": "Interest Explorer",
-    "panel.browse.entry.career_exploration.digital_card.title": "My Digital Business Card",
+    "panel.browse.entry.career_exploration.business_card.title": "My Digital Business Card",
     "panel.browse.entry.career_exploration.skills_self_evaluation.title": "Skills Self-Evaluation",
     "panel.browse.entry.career_exploration.essential_skills_coach.title": "Essential Skills Coach",
     "panel.browse.entry.career_exploration.job_board.title": "Virtual Job Board",
@@ -424,7 +424,7 @@
     "panel.wallet.content_type.illini_cash.label": "Illini Cash",
     "panel.wallet.content_type.add_illini_cash.label": "Add Illini Cash",
     "panel.wallet.content_type.library_card.label": "University Library Card",
-    "panel.wallet.content_type.digital_business_card.label": "My Digital Business Card",
+    "panel.wallet.content_type.business_card.label": "My Digital Business Card",
 
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Search by Event Title",
@@ -2045,10 +2045,10 @@
     "panel.settings.home.copyright.text": "Copyright © {{COPYRIGHT_YEAR}} University of Illinois Board of Trustees",
 
     "panel.settings.profile.content.profile.label": "My Profile",
-    "panel.settings.profile.content.who_are_you.label": "Who Are You",
+    "panel.settings.profile.content.roles.label": "Who Are You",
     "panel.settings.profile.content.privacy.label": "My App Privacy Settings",
     "panel.settings.profile.content.login.label": "Sign In/Sign Out",
-    "panel.settings.profile.content.share.label": "My Digital Business Card",
+    "panel.settings.profile.content.business_card.label": "My Digital Business Card",
     "panel.settings.profile.header.profile.label": "Profile",
 
     "panel.settings.notifications.content.preferences.label": "My Notification Preferences",

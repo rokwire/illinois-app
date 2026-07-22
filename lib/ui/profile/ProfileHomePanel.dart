@@ -31,7 +31,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum ProfileContentType { login, profile, share, who_are_you, }
+enum ProfileContentType { login, profile, businessCard, roles, }
 
 class ProfileHomePanel extends StatefulWidget {
   static const String notifySelectContent = "edu.illinois.rokwire.profile.command.select";
@@ -351,9 +351,9 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
 
   Widget get _contentPage {
     switch (_selectedContentType) {
-      case ProfileContentType.profile: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.info, contentParams: _contentParams[ProfileContentType.profile], key: _profileInfoKey);
-      case ProfileContentType.share: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.share, contentParams: _contentParams[ProfileContentType.share]);
-      case ProfileContentType.who_are_you: return ProfileRolesPage();
+      case ProfileContentType.profile: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.profile, contentParams: _contentParams[ProfileContentType.profile], key: _profileInfoKey);
+      case ProfileContentType.businessCard: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.businessCard, contentParams: _contentParams[ProfileContentType.businessCard]);
+      case ProfileContentType.roles: return ProfileRolesPage();
       case ProfileContentType.login: return ProfileLoginPage();
       default: return Container();
     }
@@ -369,8 +369,8 @@ extension ProfileContentTypeImpl on ProfileContentType {
   String displayTitleLng([String? language]) {
     switch (this) {
       case ProfileContentType.profile: return Localization().getStringEx('panel.settings.profile.content.profile.label', 'My Profile', language: language);
-      case ProfileContentType.share: return Localization().getStringEx('panel.settings.profile.content.share.label', 'My Digital Business Card', language: language);
-      case ProfileContentType.who_are_you: return Localization().getStringEx('panel.settings.profile.content.who_are_you.label', 'Who Are You', language: language);
+      case ProfileContentType.businessCard: return Localization().getStringEx('panel.settings.profile.content.business_card.label', 'My Digital Business Card', language: language);
+      case ProfileContentType.roles: return Localization().getStringEx('panel.settings.profile.content.roles.label', 'Who Are You', language: language);
       case ProfileContentType.login: return Localization().getStringEx('panel.settings.profile.content.login.label', 'Sign In/Sign Out', language: language);
     }
   }
@@ -378,8 +378,8 @@ extension ProfileContentTypeImpl on ProfileContentType {
   String get jsonString {
     switch (this) {
       case ProfileContentType.profile: return 'profile';
-      case ProfileContentType.share: return 'share';
-      case ProfileContentType.who_are_you: return 'who_are_you';
+      case ProfileContentType.businessCard: return 'business_card';
+      case ProfileContentType.roles: return 'roles';
       case ProfileContentType.login: return 'login';
     }
   }
@@ -387,8 +387,8 @@ extension ProfileContentTypeImpl on ProfileContentType {
   static ProfileContentType? fromJsonString(String? value) {
     switch(value) {
       case 'profile': return ProfileContentType.profile;
-      case 'share': return ProfileContentType.share;
-      case 'who_are_you': return ProfileContentType.who_are_you;
+      case 'business_card': return ProfileContentType.businessCard;
+      case 'roles': return ProfileContentType.roles;
       case 'login': return ProfileContentType.login;
       default: return null;
     }

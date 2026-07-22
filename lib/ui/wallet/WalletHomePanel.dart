@@ -36,7 +36,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum WalletContentType { illiniId, busPass, libraryCard, mealPlan, digitalBusinessCard, illiniCash, addIlliniCash }
+enum WalletContentType { illiniId, busPass, libraryCard, mealPlan, businessCard, illiniCash, addIlliniCash }
 
 class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
 
@@ -47,7 +47,7 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
     WalletContentType.busPass,
     WalletContentType.libraryCard,
     WalletContentType.mealPlan,
-    WalletContentType.digitalBusinessCard,
+    WalletContentType.businessCard,
     WalletContentType.illiniCash,
   };
 
@@ -262,7 +262,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
       case WalletContentType.busPass:       return WalletBusPassPage(key: _contentPageKey, topOffset: 80);
       case WalletContentType.libraryCard:   return WalletLibraryCardPage(key: _contentPageKey, topOffset: 80,);
       case WalletContentType.mealPlan:      return WalletMealPlanPage(key: _contentPageKey, headerHeight: 82,);
-      case WalletContentType.digitalBusinessCard: return Padding(padding: EdgeInsets.only(top: 80, left: 16, right: 16), child: ProfileBusinessCardPage(key: _contentPageKey));
+      case WalletContentType.businessCard: return Padding(padding: EdgeInsets.only(top: 80, left: 16, right: 16), child: ProfileBusinessCardPage(key: _contentPageKey));
       case WalletContentType.illiniCash:    return WalletIlliniCashPage(key: _contentPageKey, headerHeight: 88);
       case WalletContentType.addIlliniCash: return WalletAddIlliniCashPage(key: _contentPageKey, topOffset: 82, hasCancel: false,);
       default: return null;
@@ -399,7 +399,7 @@ extension WalletContentTypeImpl on WalletContentType {
       case WalletContentType.busPass: return Localization().getStringEx('panel.wallet.content_type.bus_pass.label', 'Bus Pass', language: language);
       case WalletContentType.libraryCard: return Localization().getStringEx('panel.wallet.content_type.library_card.label', 'University Library Card', language: language);
       case WalletContentType.mealPlan: return Localization().getStringEx('panel.wallet.content_type.meal_plan.label', 'Meal Plan', language: language);
-      case WalletContentType.digitalBusinessCard: return Localization().getStringEx('panel.wallet.content_type.digital_business_card.label', 'My Digital Business Card', language: language);
+      case WalletContentType.businessCard: return Localization().getStringEx('panel.wallet.content_type.business_card.label', 'My Digital Business Card', language: language);
       case WalletContentType.illiniCash: return Localization().getStringEx('panel.wallet.content_type.illini_cash.label', 'Illini Cash', language: language);
       case WalletContentType.addIlliniCash: return Localization().getStringEx('panel.wallet.content_type.add_illini_cash.label', 'Add Illini Cash', language: language);
     }
@@ -411,7 +411,7 @@ extension WalletContentTypeImpl on WalletContentType {
       case WalletContentType.busPass: return 'bus_pass';
       case WalletContentType.libraryCard: return 'library_card';
       case WalletContentType.mealPlan: return 'meal_plan';
-      case WalletContentType.digitalBusinessCard: return 'digital_card';
+      case WalletContentType.businessCard: return 'business_card';
       case WalletContentType.illiniCash: return 'illini_cash';
       case WalletContentType.addIlliniCash: return 'add_illini_cash';
     }
@@ -423,7 +423,7 @@ extension WalletContentTypeImpl on WalletContentType {
       case 'bus_pass': return WalletContentType.busPass;
       case 'library_card': return WalletContentType.libraryCard;
       case 'meal_plan': return WalletContentType.mealPlan;
-      case 'digital_card': return WalletContentType.digitalBusinessCard;
+      case 'business_card': return WalletContentType.businessCard;
       case 'illini_cash': return WalletContentType.illiniCash;
       case 'add_illini_cash': return WalletContentType.addIlliniCash;
       default: return null;
@@ -436,7 +436,7 @@ extension WalletContentTypeImpl on WalletContentType {
       case WalletContentType.busPass:     return AnalyticsFeature.WalletBusPass;
       case WalletContentType.libraryCard: return AnalyticsFeature.WalletLibraryCard;
       case WalletContentType.mealPlan:    return AnalyticsFeature.WalletMealPlan;
-      case WalletContentType.digitalBusinessCard: return AnalyticsFeature.WalletDigitalBusinessCard;
+      case WalletContentType.businessCard: return AnalyticsFeature.WalletBusinessCard;
       case WalletContentType.illiniCash:  return AnalyticsFeature.WalletIlliniCash;
       default: return null;
     }
