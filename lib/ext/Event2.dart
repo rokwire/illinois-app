@@ -99,14 +99,14 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayDateAndTime({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime nowLocal = DateTimeLocal.nowLocalTZ();
+      TZDateTime nowLocal = _event2DisplayNowTZDateTime();
       TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
 
-      TZDateTime startDateTimeLocal = startTimeUtc!.toLocalTZ();
+      TZDateTime startDateTimeLocal = _event2DisplayTZDateTime(startTimeUtc!);
       TZDateTime startDateTimeMidnightLocal = TZDateTimeUtils.dateOnly(startDateTimeLocal);
       int statDaysDiff = startDateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
 
-      TZDateTime? endDateTimeLocal = endTimeUtc?.toLocalTZ();
+      TZDateTime? endDateTimeLocal = (endTimeUtc != null) ? _event2DisplayTZDateTime(endTimeUtc!) : null;
       TZDateTime? endDateTimeMidnightLocal = (endDateTimeLocal != null) ? TZDateTimeUtils.dateOnly(endDateTimeLocal) : null;
       int? endDaysDiff = (endDateTimeMidnightLocal != null) ? endDateTimeMidnightLocal.difference(nowMidnightLocal).inDays : null;
 
@@ -176,7 +176,7 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayStartDateTime({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime startDateTimeLocal = startTimeUtc!.toLocalTZ();
+      TZDateTime startDateTimeLocal = _event2DisplayTZDateTime(startTimeUtc!);
       String startDateFormat = (longFormat ? 'EEEE, MMMM d, yyyy' : 'MMM d, yyyy');
       String displayStartDate = DateFormat(startDateFormat).format(startDateTimeLocal);
       String startTimeFormat = 'h:mma';
@@ -195,14 +195,14 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayDate({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime nowLocal = DateTimeLocal.nowLocalTZ();
+      TZDateTime nowLocal = _event2DisplayNowTZDateTime();
       TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
 
-      TZDateTime startDateTimeLocal = startTimeUtc!.toLocalTZ();
+      TZDateTime startDateTimeLocal = _event2DisplayTZDateTime(startTimeUtc!);
       TZDateTime startDateTimeMidnightLocal = TZDateTimeUtils.dateOnly(startDateTimeLocal);
       int statDaysDiff = startDateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
 
-      TZDateTime? endDateTimeLocal = endTimeUtc?.toLocalTZ();
+      TZDateTime? endDateTimeLocal = (endTimeUtc != null) ? _event2DisplayTZDateTime(endTimeUtc!) : null;
       TZDateTime? endDateTimeMidnightLocal = (endDateTimeLocal != null) ? TZDateTimeUtils.dateOnly(endDateTimeLocal) : null;
       int? endDaysDiff = (endDateTimeMidnightLocal != null) ? endDateTimeMidnightLocal.difference(nowMidnightLocal).inDays : null;
 
@@ -246,14 +246,14 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayTime({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime nowLocal = DateTimeLocal.nowLocalTZ();
+      TZDateTime nowLocal = _event2DisplayNowTZDateTime();
       TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
 
-      TZDateTime startDateTimeLocal = startTimeUtc!.toLocalTZ();
+      TZDateTime startDateTimeLocal = _event2DisplayTZDateTime(startTimeUtc!);
       TZDateTime startDateTimeMidnightLocal = TZDateTimeUtils.dateOnly(startDateTimeLocal);
       int statDaysDiff = startDateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
 
-      TZDateTime? endDateTimeLocal =  endTimeUtc?.toLocalTZ();
+      TZDateTime? endDateTimeLocal = (endTimeUtc != null) ? _event2DisplayTZDateTime(endTimeUtc!) : null;
       TZDateTime? endDateTimeMidnightLocal = (endDateTimeLocal != null) ? TZDateTimeUtils.dateOnly(endDateTimeLocal) : null;
       int? endDaysDiff = (endDateTimeMidnightLocal != null) ? endDateTimeMidnightLocal.difference(nowMidnightLocal).inDays : null;
 
@@ -291,6 +291,11 @@ extension Event2Ext on Event2 {
       return null;
     }
   }
+
+  TZDateTime _event2DisplayTZDateTime(DateTime utcDateTime) =>
+      (AppDateTime().getDateTimeToCompare(dateTimeUtc: utcDateTime) as TZDateTime?) ?? utcDateTime.toLocalTZ();
+
+  TZDateTime _event2DisplayNowTZDateTime() => _event2DisplayTZDateTime(DateTime.now().toUtc());
 
   String? getDisplayDistance(Position? userLocation) =>
     userLocation?.displayDistance(location);
