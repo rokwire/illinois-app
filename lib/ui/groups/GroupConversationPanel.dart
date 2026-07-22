@@ -1,11 +1,13 @@
 
 import 'dart:async';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:illinois/ext/Content.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -19,12 +21,14 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 class GroupConversationPanel extends StatefulWidget {
   final Group? group;
@@ -260,7 +264,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       List<Future<dynamic>> futures = [];
 
       int messagesIndex = futures.length;
-      futures.add(Social().loadConversationMessages(
+      futures.add(_loadMessages(
         conversationId: widget.conversation?.id ?? '',
         offset: 0,
         limit: _contentPageLength,
@@ -316,7 +320,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
         _contentActivity = _ContentActivity.reload;
       });
 
-      List<Message>? contentList = await Social().loadConversationMessages(
+      List<Message>? contentList = await _loadMessages(
         conversationId: widget.conversation?.id ?? '',
         offset: 0, limit: limit,
       );
@@ -341,7 +345,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       });
 
       int contentLength = _refreshContentLength;
-      List<Message>? contentList = await Social().loadConversationMessages(
+      List<Message>? contentList = await _loadMessages(
         conversationId: widget.conversation?.id ?? '',
         offset: 0, limit: contentLength,
       );
@@ -379,7 +383,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
 
       int contentOffset = _contentList?.length ?? 0;
       int contentLength = _contentPageLength;
-      List<Message>? contentList = await Social().loadConversationMessages(
+      List<Message>? contentList = await _loadMessages(
         conversationId: widget.conversation?.id ?? '',
         offset: contentOffset, limit: contentLength,
       );
@@ -404,6 +408,32 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
         });
       }
     }
+  }
+
+  static Future<List<Message>?> _loadMessages({
+      required String conversationId,
+      int offset = 0, int limit = _contentPageLength,
+      String? extendLimitToMessageId, String? extendLimitToGlobalMessageId
+  }) async {
+
+    List<Message>? contentList = await Social().loadConversationMessages(
+      conversationId: conversationId,
+      offset: offset, limit: limit,
+      extendLimitToMessageId: extendLimitToMessageId,
+      extendLimitToGlobalMessageId: extendLimitToGlobalMessageId,
+    );
+
+    if ((contentList != null) && contentList.isNotEmpty) {
+      List<String> fileKeys = MessageExt.collectAttachmentFileKeysFromList(contentList);
+      if (fileKeys.isNotEmpty) {
+        List<FileContentItemReference>? fileRefsList = await Content().getFileContentDownloadUrls(fileKeys, Content.conversationsContentCategory, entityId: conversationId);
+        if ((fileRefsList != null) && fileRefsList.isNotEmpty) {
+          MessageExt.applyContentRefsToList(contentList, fileRefsMap: FileContentItemReferenceUtils.mapList(fileRefsList));
+        }
+      }
+    }
+
+    return contentList;
   }
 
   void _scrollListener() {
@@ -474,11 +504,11 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     }
   }
 
-  Future<bool> _onSubmitMessage(String message) async {
+  Future<bool> _onSubmitMessage(String message, { Iterable<dynamic>? attachments }) async {
     if (_isEditingMessage) {
       return _onUpdateMessage(message);
     } else if (_isConversation) {
-      return _onSendMessage(message);
+      return _onSendMessage(message, attachments: attachments);
     } else if (_isGroupBroadcastMessage) {
       return _onBroadcastMessage(message);
     } else {
@@ -486,12 +516,15 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     }
   }
 
-  Future<bool> _onSendMessage(String message) async {
+  Future<bool> _onSendMessage(String message, { Iterable<dynamic>? attachments }) async {
+    // Upload attached files
+    List<FileAttachment>? fileAttachments = ((attachments != null) && attachments.isNotEmpty) ? await _uploadAttachments(attachments) : null;
+
     // Create a temporary message and add it immediately
     Message tempMessage = Message(
       sender: ConversationMember(accountId: Auth2().accountId, name: Auth2().fullName ?? ''),
       message: message,
-      //fileAttachments: fileAttachments,
+      fileAttachments: fileAttachments,
       dateSentUtc: DateTime.now().toUtc(),
     );
 
@@ -504,7 +537,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     List<Message>? newMessages = await Social().createConversationMessage(
       conversationId: widget.conversation?.id ?? '',
       message: message,
-      //fileAttachments: fileAttachments,
+      fileAttachments: fileAttachments,
     );
 
     if (mounted) {
@@ -522,6 +555,12 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       }
 
       if (newMessage != null) {
+        if ((attachments != null) && attachments.isNotEmpty) {
+          int failedFileCount = attachments.length - (fileAttachments?.length ?? 0);
+          if (0 < failedFileCount) {
+            AppAlert.showDialogResult(context, sprintf(Localization().getStringEx('panel.messages.conversation.upload.failed.message', 'Failed to upload %s file(s)'), [failedFileCount]));
+          }
+        }
         return true;
       } else {
         AppAlert.showDialogResult(context, Localization().getStringEx('', 'Failed to send message.'));
@@ -530,6 +569,48 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     } else {
       return false;
     }
+  }
+
+  Future<List<FileAttachment>?> _uploadAttachments(Iterable<dynamic> attachments) async {
+
+    List<dynamic> attachmentsList = <dynamic>[];
+    Map<String, FutureOr<Uint8List?>> dataToUpload = <String, FutureOr<Uint8List?>>{};
+    Map<String, AttachmentFileType> dataTypes = <String, AttachmentFileType>{};
+    for (dynamic attachment in attachments) {
+      if (attachment is FileAttachment) {
+        attachmentsList.add(attachment);
+      } else {
+        AttachmentDetails? details = AttachmentDetails.fromAttachment(attachment);
+        String? name = details?.name;
+        if (name != null) {
+          FutureOr<Uint8List?> data = details?.asyncOrData;
+          if (data != null) {
+            dataToUpload[name] = data;
+          }
+          AttachmentFileType? type = AttachmentFileTypeImpl.fromAttachment(attachment);
+          if (type != null) {
+            dataTypes[name] = type;
+          }
+          attachmentsList.add(name);
+        }
+      }
+    }
+
+    List<FileContentItemReference>? uploaded = await Content().uploadFileContentItems(dataToUpload, Content.conversationsContentCategory, entityId: widget.conversation?.id);
+
+    List<FileAttachment> attachmentsResult = <FileAttachment>[];
+    for (dynamic attachmentsListEntry in attachmentsList) {
+      if (attachmentsListEntry is FileAttachment) {
+        attachmentsResult.add(attachmentsListEntry);
+      } else if (attachmentsListEntry is String) {
+        FileContentItemReference? uploadedRef = uploaded?.firstWhereOrNull((ref) => ref.name == attachmentsListEntry);
+        AttachmentFileType? type = dataTypes[attachmentsListEntry];
+        if (uploadedRef != null) {
+          attachmentsResult.add(FileAttachment(id: uploadedRef.key, url: uploadedRef.url, name: uploadedRef.name, type: type?.name,));
+        }
+      }
+    }
+    return attachmentsResult;
   }
 
   Future<bool> _onUpdateMessage(String message) async {

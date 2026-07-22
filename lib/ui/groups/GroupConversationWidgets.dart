@@ -1,9 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
@@ -23,7 +23,6 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/VideoPlayerWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path_pkg;
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -509,6 +508,8 @@ class GroupConversationMessageCard extends StatelessWidget {
             _bodyHtmlWidget,
           ),
         ),
+        if (message.fileAttachments?.isNotEmpty == true)
+          _attachmentsWidget,
         Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding, vertical: _horzPadding), child:
           GroupReactionsLayout(key: _reactionsKey, group: group, entityId: message.id, reactionSource: SocialEntityType.message, analyticsFeature: analyticsFeature,)
         ),
@@ -530,6 +531,16 @@ class GroupConversationMessageCard extends StatelessWidget {
   );
 
   String get _bodyHtmlStyle => 'white-space: normal'; // 'text-overflow: ellipsis; max-lines: 3'
+
+  Widget get _attachmentsWidget => Container(height: 300, child:
+    ListView.separated(
+      padding: EdgeInsets.only(top: _horzPadding, left: _horzPadding, right: _horzPadding),
+      separatorBuilder: (context, index) => SizedBox(width: 8),
+      itemCount: message.fileAttachments?.length ?? 0,
+      itemBuilder: (context, index) => _GroupConversationAttachmentCard(ListUtils.entry(message.fileAttachments, index)),
+      scrollDirection: Axis.horizontal,
+    ),
+  );
 
   void _onTapLink(String url) {
     Uri? uri = Uri.tryParse(url);
@@ -685,7 +696,7 @@ class GroupConversationMessageEditBar extends StatefulWidget {
   final Iterable<FileAttachment>? attachments;
 
 
-  final Future<bool> Function(String message)? onSubmitMessage;
+  final Future<bool> Function(String message, { Iterable<dynamic>? attachments })? onSubmitMessage;
   final void Function()? onCancelEdit;
   final bool showSubmitProgress;
 
@@ -983,15 +994,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
   void _onPicture() async {
     Analytics().logSelect(target: 'Picture');
     if (_submitting == false) {
-      _GroupConversationAttachmentType? attType = await showModalBottomSheet(
-        context: context,
-        backgroundColor: Styles().colors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),),
-        isScrollControlled: true,
-        clipBehavior: Clip.antiAlias,
-        useSafeArea: true,
-        builder: (context) => _GroupConversationAttachSheet(),
-      );
+      _GroupConversationAttachmentType? attType = await _GroupConversationAttachSheet.showModal(context);
 
       XFile? media;
       List<XFile>? mediaList;
@@ -1016,16 +1019,21 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     }
   }
 
-  Widget get _attachmentsList =>
-      Container(height: 200, child:
-        ListView.separated(
-          padding: EdgeInsets.only(top: 16, left: 0, right: 0),
-          separatorBuilder: (context, index) => SizedBox(width: 8),
-          itemCount: _attachments.length,
-          itemBuilder: (context, index) => _GroupConversationAttachmentCard(_attachments[index]),
-          scrollDirection: Axis.horizontal,
-        ),
-      );
+  Widget get _attachmentsList => Container(height: 150, child:
+    ListView.separated(
+      padding: EdgeInsets.only(top: 16, left: 0, right: 0),
+      separatorBuilder: (context, index) => SizedBox(width: 8),
+      itemCount: _attachments.length,
+      itemBuilder: (context, index) => _GroupConversationAttachmentCard(_attachments[index]),
+      scrollDirection: Axis.horizontal,
+    ),
+  );
+
+  void _resetAttachments() {
+    setState(() {
+      _attachments.clear();
+    });
+  }
 
   void _updateAttachments() {
     setState(() {
@@ -1082,7 +1090,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
       _submitting = true;
     });
 
-    bool? succeeded = await widget.onSubmitMessage?.call(_quillHtml);
+    bool? succeeded = await widget.onSubmitMessage?.call(_quillHtml, attachments: _attachments);
 
     if (mounted) {
       setState(() {
@@ -1091,6 +1099,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
       if (succeeded == true) {
         FocusScope.of(context).unfocus();
         _quillReset();
+        _resetAttachments();
       }
     }
   }
@@ -1211,21 +1220,23 @@ class _GroupConversationAttachmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
     Stack(children: [
-      _attachmentWidget
+      AspectRatio(aspectRatio: 1/1, child:
+        _attachmentWidget
+      ),
     ],);
 
   Widget get _attachmentWidget {
-    switch(_attachmentFileType) {
-      case AttachmentFileType.image: return _imageAttachmentWidget;
-      case AttachmentFileType.video: return _videoAttachmentWidget;
-      case AttachmentFileType.audio: return _audioAttachmentWidget;
-      case AttachmentFileType.file: return _fileAttachmentWidget;
+    switch(AttachmentFileTypeImpl.fromAttachment(attachment)) {
+      case AttachmentFileType.image: return AspectRatio(aspectRatio: 1/1, child: _imageAttachmentWidget);
+      case AttachmentFileType.video: return AspectRatio(aspectRatio: 1/1, child: _videoAttachmentWidget);
+      case AttachmentFileType.audio: return _GroupConversationAttachmentContainer(child:_audioAttachmentWidget);
+      case AttachmentFileType.file: return _GroupConversationAttachmentContainer(child:_fileAttachmentWidget);
       default: return Container();
     }
   }
 
   Widget get _imageAttachmentWidget {
-    _AttachmentDetails? details =  _AttachmentDetails.fromAttachment(attachment);
+    AttachmentDetails? details =  AttachmentDetails.fromAttachment(attachment);
     if (details?.data != null) {
       return Image.memory(details?.data ?? Uint8List(0), fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => _imageErrorBuilder,
@@ -1237,30 +1248,37 @@ class _GroupConversationAttachmentCard extends StatelessWidget {
         errorBuilder: (context, error, stackTrace) => _imageErrorBuilder,
       );
     } else if (details?.path != null) {
-      return Image.file(File(details?.path ?? ''), fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _imageErrorBuilder,
-      );
+      if (kIsWeb) {
+        return Image.network(details?.path ?? '', fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) => (loadingProgress != null) ?
+            _imageProgressBuilder(loadingProgress) : child,
+          errorBuilder: (context, error, stackTrace) => _imageErrorBuilder,
+        );
+      } else {
+        return Image.file(File(details?.path ?? ''), fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => _imageErrorBuilder,
+        );
+      }
     } else {
       return const SizedBox();
     }
   }
 
   Widget get _videoAttachmentWidget {
-    _AttachmentDetails? details =  _AttachmentDetails.fromAttachment(attachment);
+    AttachmentDetails? details =  AttachmentDetails.fromAttachment(attachment);
     return VideoPlayerWidget(key: ValueKey(details?.path ?? details?.url),
       filePath: details?.path, url: details?.url, showControls: false, muted: true, fill: true, interactive: false);
   }
 
   Widget get _audioAttachmentWidget {
-    _AttachmentDetails? details = _AttachmentDetails.fromAttachment(attachment);
-    return _GroupConversationAttachmentContainer(child: AudioPlayerWidget(url: details?.url, bytes: details?.data));
+    AttachmentDetails? details = AttachmentDetails.fromAttachment(attachment);
+    return AudioPlayerWidget(url: details?.url, bytes: details?.data);
   }
 
   Widget get _fileAttachmentWidget {
     String? textStyleKey = 'widget.title.small'; // inMessage: 'widget.title.dark.small';
-    _AttachmentDetails? details = _AttachmentDetails.fromAttachment(attachment);
-    return _GroupConversationAttachmentContainer(child:
-      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    AttachmentDetails? details = AttachmentDetails.fromAttachment(attachment);
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Styles().images.getImage('file', size: 24) ?? Container(height: 48),
         SizedBox(width: 12),
         Expanded(child:
@@ -1278,28 +1296,7 @@ class _GroupConversationAttachmentCard extends StatelessWidget {
             ),
           ],),
         ),
-      ]),
-    );
-  }
-
-  AttachmentFileType? get _attachmentFileType {
-    if (attachment is FileAttachment) {
-      return AttachmentFileTypeImpl.fromString((attachment as FileAttachment).type);
-    }
-    else if (attachment is XFile) {
-      XFile file = (attachment as XFile);
-      return kIsWeb ? file.name.attachmentFileTypeFromPath : file.path.attachmentFileTypeFromPath;
-    }
-    else if (attachment is AudioResult) {
-      return AttachmentFileType.audio;
-    }
-    else if (attachment is PlatformFile) {
-      PlatformFile file = (attachment as PlatformFile);
-      return kIsWeb ? file.name.attachmentFileTypeFromPath : file.path?.attachmentFileTypeFromPath;
-    }
-    else {
-      return null;
-    }
+      ]);
   }
 
   Widget get _imageErrorBuilder => AspectRatio(aspectRatio: 16/9, child:
@@ -1327,12 +1324,13 @@ class _GroupConversationAttachmentCard extends StatelessWidget {
 
 class _GroupConversationAttachmentContainer extends StatelessWidget {
   final Widget? child;
+  final Size size;
 
-  _GroupConversationAttachmentContainer({this.child});
+  _GroupConversationAttachmentContainer({this.child, this.size = const Size(200, 80)});
 
   @override
   Widget build(BuildContext context) =>
-    Container(width: 200, height: 80, padding: _widgetPadding, decoration: _widgetDecoration, child:
+    Container(width: size.width, height: size.height, padding: _widgetPadding, decoration: _widgetDecoration, child:
       child,
     );
 
@@ -1348,9 +1346,22 @@ class _GroupConversationAttachmentContainer extends StatelessWidget {
 enum _GroupConversationAttachmentType { existing, newPicture, newVideo }
 
 class _GroupConversationAttachSheet extends StatelessWidget {
+  
+  static Future<_GroupConversationAttachmentType?> showModal(BuildContext context) =>
+    showModalBottomSheet(
+    context: context,
+    backgroundColor: Styles().colors.surface,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),),
+    isScrollControlled: true,
+    clipBehavior: Clip.antiAlias,
+    useSafeArea: true,
+    //constraints: BoxConstraints(maxHeight: 250, minHeight: 250),
+    builder: (context) => _GroupConversationAttachSheet(),
+  );
+
   @override
   Widget build(BuildContext context) =>
-    Container(constraints: BoxConstraints(maxHeight: 400), child:
+    Container(constraints: BoxConstraints(maxHeight: 250), child:
       Column(children: [
         _headerBar(context),
         Expanded(child:
@@ -1420,38 +1431,6 @@ extension _GroupConversationAttachmentTypeImpl on _GroupConversationAttachmentTy
       case _GroupConversationAttachmentType.existing: return 'image';
       case _GroupConversationAttachmentType.newPicture: return 'camera';
       case _GroupConversationAttachmentType.newVideo: return 'video-camera';
-    }
-  }
-}
-
-class _AttachmentDetails {
-  final String? url;
-  final String? path;
-  final Uint8List? data;
-  final String? name;
-  final String? extension;
-
-  _AttachmentDetails({ this.url, this.path, this.data, this.name, this.extension });
-
-  static _AttachmentDetails? fromAttachment(dynamic attachment) {
-    if (attachment is FileAttachment) {
-      return _AttachmentDetails(url: attachment.url, name: attachment.name, extension: attachment.extension);
-    } else if (attachment is XFile) {
-      if (kIsWeb) {
-        return _AttachmentDetails(url: attachment.path, name: attachment.name, extension: path_pkg.extension(attachment.path));
-      } else {
-        return _AttachmentDetails(path: attachment.path, name: attachment.name, extension: path_pkg.extension(attachment.path));
-      }
-    } else if (attachment is PlatformFile) {
-      if (kIsWeb) {
-        return _AttachmentDetails(data: attachment.bytes, name: attachment.name, extension: attachment.extension);
-      } else {
-        return _AttachmentDetails(path: attachment.path, name: attachment.name, extension: attachment.extension);
-      }
-    } else if (attachment is AudioResult) {
-      return _AttachmentDetails(data: attachment.audioData, name: attachment.audioFileName, extension: attachment.audioFileExtension);
-    } else {
-      return null;
     }
   }
 }
