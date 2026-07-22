@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed scroll position on content extension in group's conversation messages panel [#5581](https://github.com/rokwire/illinois-app/issues/5581).
 ### Added
 - Added support for group-all conversaion type and individual broadcast message [#5767](https://github.com/rokwire/illinois-app/issues/5767).
+- Added 'My Digital Business Card' to the wallet [#5867](https://github.com/rokwire/illinois-app/issues/5867).
 
 ## [8.1.3] - 2026-07-17
 ### Added

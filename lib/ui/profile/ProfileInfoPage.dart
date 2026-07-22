@@ -497,7 +497,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
   void _onShareInfo() {
     Analytics().logSelect(target: 'Export Business Card');
     NotificationService().notify(ProfileHomePanel.notifySelectContent, [
-      ProfileContentType.share,
+      ProfileContentType.businessCard,
       <String, dynamic>{
         ProfileBusinessCardPage.profileResultKey : ProfileInfoLoadResult(
           profile: _profile,

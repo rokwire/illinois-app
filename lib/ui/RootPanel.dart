@@ -218,7 +218,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyAppointmentNotification,
       FirebaseMessaging.notifyWellnessToDoItemNotification,
       FirebaseMessaging.notifyProfileMyNotification,
-      FirebaseMessaging.notifyProfileWhoAreYouNotification,
+      FirebaseMessaging.notifyProfileRolesNotification,
       FirebaseMessaging.notifyProfileLoginNotification,
       FirebaseMessaging.notifySettingsSectionsNotification, //TBD deprecate. Use notifyProfileLoginNotification
       FirebaseMessaging.notifySettingsFoodFiltersNotification,
@@ -527,8 +527,8 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == FirebaseMessaging.notifyProfileMyNotification) {
       _onFirebaseProfileNotification(profileContent: ProfileContentType.profile);
     }
-    else if (name == FirebaseMessaging.notifyProfileWhoAreYouNotification) {
-      _onFirebaseProfileNotification(profileContent: ProfileContentType.who_are_you);
+    else if (name == FirebaseMessaging.notifyProfileRolesNotification) {
+      _onFirebaseProfileNotification(profileContent: ProfileContentType.roles);
     }
     else if (name == FirebaseMessaging.notifyProfileLoginNotification) {
       _onFirebaseProfileNotification(profileContent: ProfileContentType.login);
