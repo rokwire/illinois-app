@@ -199,7 +199,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
                   )
                 )
               ),
-              _buildContent(),
+              _buildPageContent(),
             ])
           )
         )
@@ -208,9 +208,11 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
   }
 
 
-  Widget _buildContent() {
+  Widget _buildPageContent() {
     return Stack(children: [
-      _contentWidget,
+      ProfileHomePage(child:
+        _contentPage,
+      ),
       Container(height: _contentHeight),
       _buildContentValuesContainer()
     ]);
@@ -347,7 +349,7 @@ class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsL
     return ((pageHeight != null) && (pageHeaderHeight != null)) ? (pageHeight - pageHeaderHeight) : null;
   }
 
-  Widget get _contentWidget {
+  Widget get _contentPage {
     switch (_selectedContentType) {
       case ProfileContentType.profile: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.info, contentParams: _contentParams[ProfileContentType.profile], key: _profileInfoKey);
       case ProfileContentType.share: return ProfileInfoWrapperPage(ProfileInfoWrapperContent.share, contentParams: _contentParams[ProfileContentType.share]);
@@ -406,4 +408,15 @@ extension _ProfileContentTypeList on List<ProfileContentType> {
 extension _StorageProfileExt on Storage {
   ProfileContentType? get _profileContentType => ProfileContentTypeImpl.fromJsonString(profileContentType);
   set _profileContentType(ProfileContentType? value) => profileContentType = value?.jsonString;
+}
+
+class ProfileHomePage extends InheritedWidget {
+  ProfileHomePage({Key? key, required Widget child}) :
+    super(key: key, child: child);
+
+  static ProfileHomePage? of(BuildContext context) =>
+    context.dependOnInheritedWidgetOfExactType<ProfileHomePage>();
+
+  @override
+  bool updateShouldNotify(ProfileHomePage oldWidget) => false;
 }

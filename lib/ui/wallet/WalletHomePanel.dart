@@ -36,8 +36,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-import '../profile/ProfileHomePanel.dart';
-
 enum WalletContentType { illiniId, busPass, libraryCard, mealPlan, digitalBusinessCard, illiniCash, addIlliniCash }
 
 class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
@@ -264,7 +262,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
       case WalletContentType.busPass:       return WalletBusPassPage(key: _contentPageKey, topOffset: 80);
       case WalletContentType.libraryCard:   return WalletLibraryCardPage(key: _contentPageKey, topOffset: 80,);
       case WalletContentType.mealPlan:      return WalletMealPlanPage(key: _contentPageKey, headerHeight: 82,);
-      case WalletContentType.digitalBusinessCard: return Padding(padding: EdgeInsets.only(top: 80, left: 16, right: 16), child: ProfileBusinessCardPage(key: _contentPageKey, referredExternally: true));
+      case WalletContentType.digitalBusinessCard: return Padding(padding: EdgeInsets.only(top: 80, left: 16, right: 16), child: ProfileBusinessCardPage(key: _contentPageKey));
       case WalletContentType.illiniCash:    return WalletIlliniCashPage(key: _contentPageKey, headerHeight: 88);
       case WalletContentType.addIlliniCash: return WalletAddIlliniCashPage(key: _contentPageKey, topOffset: 82, hasCancel: false,);
       default: return null;
