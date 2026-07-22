@@ -29,7 +29,6 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/tracking_services.dart';
 import 'package:rokwire_plugin/utils/datetime_utils.dart';
@@ -378,70 +377,7 @@ class AppSemantics {
     // }
 }
 
-class AppDateTimeUtils {
-
-
-  static String getDisplayDateTime(DateTime? dateTimeUtc, {bool? allDay = false, bool considerSettingsDisplayTime = true}) {
-    String? timePrefix = getDisplayDay(dateTimeUtc: dateTimeUtc, allDay: allDay, considerSettingsDisplayTime: considerSettingsDisplayTime, includeAtSuffix: true);
-    String? timeSuffix = getDisplayTime(dateTimeUtc: dateTimeUtc, allDay: allDay, considerSettingsDisplayTime: considerSettingsDisplayTime);
-    return '$timePrefix $timeSuffix';
-  }
-
-  static String? getDisplayDay({DateTime? dateTimeUtc, bool? allDay = false, bool considerSettingsDisplayTime = true, bool includeAtSuffix = false}) {
-    String? displayDay = '';
-    if(dateTimeUtc != null) {
-      DateTime dateTimeToCompare = _getDateTimeToCompare(dateTimeUtc: dateTimeUtc, considerSettingsDisplayTime: considerSettingsDisplayTime)!;
-      DateTime nowDevice = DateTime.now();
-      DateTime nowUtc = nowDevice.toUtc();
-      DateTime? nowUniLocal = AppDateTime().getUniLocalTimeFromUtcTime(nowUtc);
-      DateTime nowToCompare = AppDateTime().useDeviceLocalTimeZone ? nowDevice : nowUniLocal!;
-      int calendarDaysDiff = dateTimeToCompare.day - nowToCompare.day;
-      int timeDaysDiff = dateTimeToCompare.difference(nowToCompare).inDays;
-      if ((calendarDaysDiff != 0) && (calendarDaysDiff > timeDaysDiff)) {
-        timeDaysDiff += 1;
-      }
-      if (timeDaysDiff == 0) {
-        displayDay = Localization().getStringEx('model.explore.date_time.today', 'Today');
-        if (!allDay! && includeAtSuffix) {
-          displayDay = "$displayDay ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
-        }
-      }
-      else if (timeDaysDiff == 1) {
-        displayDay = Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow');
-        if (!allDay! && includeAtSuffix) {
-          displayDay = "$displayDay ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
-        }
-      }
-      else {
-        displayDay = AppDateTime().formatDateTime(dateTimeToCompare, format: "MMM dd", ignoreTimeZone: true, showTzSuffix: false);
-      }
-    }
-    return displayDay;
-  }
-
-  static String? getDisplayTime({DateTime? dateTimeUtc, bool? allDay = false, bool considerSettingsDisplayTime = true}) {
-    String? timeToString = '';
-    if (dateTimeUtc != null && !allDay!) {
-      DateTime dateTimeToCompare = _getDateTimeToCompare(dateTimeUtc: dateTimeUtc, considerSettingsDisplayTime: considerSettingsDisplayTime)!;
-      String format = (dateTimeToCompare.minute == 0) ? 'ha' : 'h:mma';
-      timeToString = AppDateTime().formatDateTime(dateTimeToCompare, format: format, ignoreTimeZone: true, showTzSuffix: !AppDateTime().useDeviceLocalTimeZone)?.toLowerCase();
-    }
-    return timeToString;
-  }
-
-  static DateTime? _getDateTimeToCompare({DateTime? dateTimeUtc, bool considerSettingsDisplayTime = true}) {
-    if (dateTimeUtc == null) {
-      return null;
-    }
-    DateTime? dateTimeToCompare;
-    //workaround for receiving incorrect date times from server for games: http://fightingillini.com/services/schedule_xml_2.aspx
-    if (AppDateTime().useDeviceLocalTimeZone && considerSettingsDisplayTime) {
-      dateTimeToCompare = AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc);
-    } else {
-      dateTimeToCompare = AppDateTime().getUniLocalTimeFromUtcTime(dateTimeUtc);
-    }
-    return dateTimeToCompare;
-  }
+class AppRelativeTime {
 
   static String getDayPartGreeting({DayPart? dayPart}) {
     dayPart ??= DateTimeUtils.getDayPart();
@@ -453,7 +389,10 @@ class AppDateTimeUtils {
     }
   }
 
-  static String timeAgoSinceDate(DateTime date, {bool numericDates = true}) {
+  static String? timeAgoSinceDate(DateTime? date, {bool numericDates = true}) {
+    if (date == null) {
+      return null;
+    }
     final date2 = DateTime.now();
     final difference = date2.difference(date);
 

@@ -151,7 +151,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
 
   String? get _title1 {
     if (_dayPart != null) {
-      String greeting = AppDateTimeUtils.getDayPartGreeting(dayPart: _dayPart);
+      String greeting = AppRelativeTime.getDayPartGreeting(dayPart: _dayPart);
       if (_firstName?.isNotEmpty ?? false) {
         return "$greeting,";
       }

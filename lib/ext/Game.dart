@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -62,7 +61,7 @@ extension GameExt on Game {
       dateFormatted += ' ${StringUtils.ensureNotEmpty(timeToString)}';
       return dateFormatted;
     } else {
-      return AppDateTimeUtils.getDisplayDateTime(dateTimeUtc, allDay: allDay ?? false);
+      return AppDateTime().getDisplayDateTime(dateTimeUtc!, allDay: allDay ?? false);
     }
   }
 

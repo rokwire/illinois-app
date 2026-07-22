@@ -37,10 +37,7 @@ extension PostExt on Post {
 
   int get commentsCount => (details?.commentsCount ?? 0);
 
-  String? get displayDateTime {
-    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
-    return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;
-  }
+  String? get displayDateTime => AppRelativeTime.timeAgoSinceDate(dateCreatedUtc);
 
   String? get displayScheduledTime {
     DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateActivatedUtc);
@@ -58,10 +55,7 @@ extension PostExt on Post {
 }
 
 extension CommentExt on Comment {
-  String? get displayDateTime {
-    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
-    return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;
-  }
+  String? get displayDateTime => AppRelativeTime.timeAgoSinceDate(dateCreatedUtc);
 
   String? get creatorName => creator?.name;
   String? get creatorId => creator?.accountId;
@@ -99,10 +93,7 @@ extension MessageExt on Message {
   DateTime? get dateSentLocal =>  AppDateTime().getDeviceTimeFromUtcTime(dateSentUtc);
   String? get dateSentLocalString => DateTimeUtils.localDateTimeToString(dateSentLocal, format: 'MMMM dd, yyyy');
 
-  String? get displayDateTime {
-    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime( dateUpdatedUtc ?? dateSentUtc);
-    return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;
-  }
+  String? get displayDateTime => AppRelativeTime.timeAgoSinceDate(dateUpdatedUtc ?? dateSentUtc);
 
   String? get identityKey => (((id != null) && (id?.isNotEmpty == true)) && ((globalId != null) && (globalId?.isNotEmpty == true))) ?
     "${id}:${globalId}" : null;
@@ -151,15 +142,7 @@ extension ConversationExt on Conversation {
     return null;
   }
 
-  String? get displayUpdateTime {
-    if(lastActivityTimeUtc != null) {
-      DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(lastActivityTimeUtc);
-      return (deviceDateTime != null) ? AppDateTimeUtils.timeAgoSinceDate(deviceDateTime) : null;
-    }
-    else {
-      return null;
-    }
-  }
+  String? get displayUpdateTime => AppRelativeTime.timeAgoSinceDate(lastActivityTimeUtc);
 
   List<Message> buildDisplayMessageList(List<Message> messages, { Set<String>? globalMessageIds, bool mustCopy = true }) => isGroupConversation ?
     _buildGroupDisplayMessageList(messages, globalMessageIds: globalMessageIds ?? <String>{}) :
