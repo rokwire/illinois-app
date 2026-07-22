@@ -118,7 +118,7 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeAppointment,
       FirebaseMessaging.payloadTypePoll,
       FirebaseMessaging.payloadTypeProfileMy,
-      FirebaseMessaging.payloadTypeProfileWhoAreYou,
+      FirebaseMessaging.payloadTypeProfileRoles,
       FirebaseMessaging.payloadTypeProfileLogin,
       FirebaseMessaging.payloadTypeSettingsSections, //TBD deprecate. Use payloadTypeProfileLogin instead
       FirebaseMessaging.payloadTypeSettingsFoodFilters,
