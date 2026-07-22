@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:timezone/timezone.dart' as timezone;
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 

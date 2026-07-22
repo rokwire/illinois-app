@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:timezone/timezone.dart';
 
 
