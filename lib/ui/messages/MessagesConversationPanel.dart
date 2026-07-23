@@ -1126,7 +1126,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
         if (widget != null) {
           String? filename = _getFileName(file);
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => MessagesMediaFullscreenPanel(media: widget ?? SizedBox(), filename: filename, url: url),
+            builder: (context) => MessagesMediaFullscreenPanel(mediaBuilder: (_) => widget ?? SizedBox(), filename: filename, url: url),
           ));
         }
       } : null,

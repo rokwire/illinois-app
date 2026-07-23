@@ -19,6 +19,7 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/messages/MessagesMediaFullscreenPanel.dart';
 import 'package:illinois/ui/profile/ProfileVoiceRecordigWidgets.dart';
 import 'package:illinois/ui/widgets/AudioPlayerWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -511,7 +512,7 @@ class GroupConversationMessageCard extends StatelessWidget {
           ),
         ),
         if (message.fileAttachments?.isNotEmpty == true)
-          _attachmentsWidget,
+          _attachmentsWidget(context),
         Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding, vertical: _horzPadding), child:
           GroupReactionsLayout(key: _reactionsKey, group: group, entityId: message.id, reactionSource: SocialEntityType.message, analyticsFeature: analyticsFeature,)
         ),
@@ -534,19 +535,28 @@ class GroupConversationMessageCard extends StatelessWidget {
 
   String get _bodyHtmlStyle => 'white-space: normal'; // 'text-overflow: ellipsis; max-lines: 3'
 
-  Widget get _attachmentsWidget => Container(height: 300, child:
+  Widget _attachmentsWidget(BuildContext context) => Container(height: 300, child:
     ListView.separated(
       padding: EdgeInsets.only(top: _horzPadding, left: _horzPadding, right: _horzPadding),
       separatorBuilder: (context, index) => SizedBox(width: 8),
       itemCount: message.fileAttachments?.length ?? 0,
-      itemBuilder: (context, index) => _attachmentCard(ListUtils.entry(message.fileAttachments, index)),
+      itemBuilder: (context, index) => _attachmentCard(context, ListUtils.entry(message.fileAttachments, index)),
       scrollDirection: Axis.horizontal,
     ),
   );
 
-  Widget _attachmentCard(dynamic attachment) => Center(child:
-    _GroupConversationAttachmentCard(attachment,)
-  );
+  Widget _attachmentCard(BuildContext context, FileAttachment? attachment) =>
+    Center(child:
+      Stack(children: [
+        _GroupConversationAttachmentCard(attachment,),
+        if ((attachment != null) && (attachment.type != AttachmentFileType.audio.name))
+          Positioned.fill(child:
+            GestureDetector(onTap: () => _onTapAttachment(context, attachment), behavior: HitTestBehavior.opaque, child:
+              Container(),
+            ),
+          ),
+      ],)
+    );
 
   void _onTapLink(String url) {
     Uri? uri = Uri.tryParse(url);
@@ -562,6 +572,45 @@ class GroupConversationMessageCard extends StatelessWidget {
       }
       else {
         AppLaunchUrl.launchExternal(url: url);
+      }
+    }
+  }
+
+/*
+  void _onTapImageAttachment(FileAttachment attachment) {}
+  void _onTapVideoAttachment(FileAttachment attachment) {}
+  void _onTapFileAttachment(FileAttachment attachment) {}
+
+  void Function()? onTap;
+  switch(attachment.type) {
+    case AttachmentFileType.image: onTap = () => _onTapImageAttachment(attachment); break;
+    case AttachmentFileType.video: onTap = () => _onTapVideoAttachment(attachment); break;
+    case AttachmentFileType.file: onTap = () => _onTapFileAttachment(attachment); break;
+    default: break;
+  }
+*/
+
+  void _onTapAttachment(BuildContext context, FileAttachment attachment) async {
+    if (attachment.type == AttachmentFileType.image.name) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+        MessagesMediaFullscreenPanel(mediaBuilder: (_) => _GroupConversationAttachmentCard._imageAttachmentWidgetImpl(attachment), filename: attachment.name, url: attachment.url),
+      ));
+    } else if (attachment.type == AttachmentFileType.video.name) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+        MessagesMediaFullscreenPanel(mediaBuilder: (_) => _GroupConversationAttachmentCard._videoAttachmentWidgetImpl(attachment), filename: attachment.name, url: attachment.url),
+      ));
+    } else if (attachment.type == AttachmentFileType.file.name) {
+      _downloadAttachment(context, attachment);
+    }
+  }
+
+  Future<void> _downloadAttachment(BuildContext context, FileAttachment attachment) async {
+    String? attachmentId = attachment.id;
+    if (attachmentId != null) {
+      Map<String, Uint8List> files = await Content().getFileContentItems([attachmentId], Content.conversationsContentCategory, entityId: conversation?.id);
+      Uint8List? attachmentData = files[attachmentId];
+      if ((attachmentData != null) && attachmentData.isNotEmpty) {
+        AppFile.downloadFile(context: context, fileName: attachment.name ?? 'file.out', fileBytes: attachmentData);
       }
     }
   }
@@ -1003,7 +1052,9 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
   void _onPicture() async {
     Analytics().logSelect(target: 'Picture');
     if (_submitting == false) {
-      _GroupConversationAttachmentType? attType = await _GroupConversationAttachSheet.showModal(context);
+      _GroupConversationAttachmentType? attType = await _GroupConversationAttachSheet.showModal(context,
+          availableTypes: <_GroupConversationAttachmentType>{ _GroupConversationAttachmentType.photoOrVideo, _GroupConversationAttachmentType.newPhoto, _GroupConversationAttachmentType.newVideo }
+      );
 
       dynamic media;
       List<dynamic>? mediaList;
@@ -1048,11 +1099,12 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
   Widget _attachmentCard(int index) => Center(child:
     Stack(children: [
       _GroupConversationAttachmentCard(ListUtils.entry(_attachments, index),),
-      Positioned.fill(child:
-        Align(alignment: Alignment.topRight, child:
-          _deleteAttachmentButton(ListUtils.entry(_attachments, index), index)
+      if (_submitting == false)
+        Positioned.fill(child:
+          Align(alignment: Alignment.topRight, child:
+            _deleteAttachmentButton(ListUtils.entry(_attachments, index), index)
+          ),
         ),
-      ),
     ],)
   );
 
@@ -1297,7 +1349,10 @@ class _GroupConversationAttachmentCard extends StatelessWidget {
     }
   }
 
-  Widget get _imageAttachmentWidget {
+  Widget get _imageAttachmentWidget =>
+    _imageAttachmentWidgetImpl(attachment);
+
+  static Widget _imageAttachmentWidgetImpl(dynamic attachment) {
     AttachmentDetails? details =  AttachmentDetails.fromAttachment(attachment);
     if (details?.data != null) {
       return Image.memory(details?.data ?? Uint8List(0), fit: BoxFit.cover,
@@ -1326,7 +1381,9 @@ class _GroupConversationAttachmentCard extends StatelessWidget {
     }
   }
 
-  Widget get _videoAttachmentWidget {
+  Widget get _videoAttachmentWidget => _videoAttachmentWidgetImpl(attachment);
+
+  static Widget _videoAttachmentWidgetImpl(dynamic attachment) {
     AttachmentDetails? details =  AttachmentDetails.fromAttachment(attachment);
     return VideoPlayerWidget(key: ValueKey(details?.path ?? details?.url),
       filePath: details?.path, url: details?.url, showControls: false, muted: true, fill: true, interactive: false);
@@ -1356,7 +1413,7 @@ class _GroupConversationAttachmentCard extends StatelessWidget {
       ]),);
   }
 
-  Widget get _imageErrorBuilder => AspectRatio(aspectRatio: 16/9, child:
+  static Widget get _imageErrorBuilder => AspectRatio(aspectRatio: 16/9, child:
     Container(color: Styles().colors.surfaceAccent, child:
       Padding(padding: const EdgeInsets.symmetric(horizontal: 32), child:
         Center(child: Styles().images.getImage('exclamation', size: 48),
@@ -1367,7 +1424,7 @@ class _GroupConversationAttachmentCard extends StatelessWidget {
     )
   );
 
-  Widget _imageProgressBuilder(ImageChunkEvent loadingProgress) =>
+  static Widget _imageProgressBuilder(ImageChunkEvent loadingProgress) =>
     Container(color: Styles().colors.surfaceAccent, child:
       Center(child:
         CircularProgressIndicator(
