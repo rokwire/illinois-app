@@ -47,7 +47,7 @@ extension PostExt on Post {
     return null;
   }
 
-  DateTime? get dateActivatedLocal => dateActivatedUtc?.toLocalTZ();
+  DateTime? get dateActivatedLocal => (dateActivatedUtc != null) ? AppDateTime().getDisplayTZDateTime(dateActivatedUtc!) : null;
 
   String? get creatorName => creator?.name;
   String? get creatorId => creator?.accountId;
