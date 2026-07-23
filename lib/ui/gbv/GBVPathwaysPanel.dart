@@ -101,10 +101,6 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
         slantColor: Styles().colors.gradientColorPrimary,
         slantPainterHeadingHeight: 0,
         backgroundColor: Styles().colors.background,
-        children: [
-          _buildLinkDetail('Browsing History Settings')
-        ],
-        childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 38),
         allowOverlap: false,
       )
     );
@@ -285,25 +281,6 @@ class _GBVPathwaysPanelState extends State<GBVPathwaysPanel> {
     String? contentCategory = Config().gbvContentCategory;
     dynamic contentItem = (contentCategory != null) ? await Content().loadContentItem(contentCategory) : null;
     return GBVData.fromJson(JsonUtils.mapValue(contentItem));
-  }
-
-  Widget _buildLinkDetail(String? text) =>
-      Semantics(label: text, button: true, child:
-        InkWell(onTap: _onTapDisplaySettings, child:
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Padding(padding: EdgeInsets.only(right: 5, top: 12, bottom: 12), child:
-              Styles().images.getImage('settings', excludeFromSemantics: true)),
-            Expanded(child:
-              Padding(padding: EdgeInsets.only(top: 8), child:
-                Text(text ?? '', style: Styles().textStyles.getTextStyle('widget.button.title.medium.underline'), semanticsLabel: "",)
-              )
-            )
-          ])
-        ),
-      );
-
-  void _onTapDisplaySettings() {
-    SettingsHomePanel.present(context, content: SettingsContentType.recent_items);
   }
 
   void _onTapOptions(BuildContext context) {

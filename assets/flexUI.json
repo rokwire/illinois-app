@@ -12,14 +12,13 @@
 				"polls",
 				"daily_illini", "illini_radio", "illordle",
 				"safewalk_request", "safety_resources",
-				"recent_items",
 				"wellness_resources", "wellness_mental_health", "wellness_rings", "wellness_tips",
 				"my_appointments", "my_mtd_stops", "my_locations"
 			],
 			"home.system": ["tout", "welcome_message", "emergency", "voter_registration", "connect"],
 			"home.connect": ["netid", "phone_or_email"],
 
-			"browse": ["academics", "appointments", "athletics", "campus_guide", "career_exploration", "dining", "directory", "events", "laundry", "groups", "messages", "mtd", "my", "polls", "music_and_news", "recent", "safety", "sexual_misconduct", "surveys", "research_projects", "wellness"],
+			"browse": ["academics", "appointments", "athletics", "campus_guide", "career_exploration", "dining", "directory", "events", "laundry", "groups", "messages", "mtd", "my", "polls", "music_and_news", "safety", "sexual_misconduct", "surveys", "research_projects", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "campus_reminders", "academic_links", "my_illini"],
 			"browse.appointments": ["appointments"],
 			"browse.athletics": ["sport_events", "sport_news", "sport_teams", "my_game_day"],
@@ -78,7 +77,7 @@
 			"appointment.providers.monitored": ["grainger"],
 			"appointment.providers.enabled": ["grainger"],
 
-			"settings": ["food_filters", "sports", "favorites", "assessments", "recent_items", "appointments_and_events", "language", "about", "research", "privacy", "notifications", "accessibility"],
+			"settings": ["food_filters", "sports", "favorites", "assessments", "appointments_and_events", "language", "about", "research", "privacy", "notifications", "accessibility"],
 			"settings.assessments": ["health_screener"],
 			"settings.assessments.skills_self_evaluation": ["save"],
 			"settings.assessments.health_screener": ["save"],
