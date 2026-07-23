@@ -427,7 +427,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     if ((contentList != null) && contentList.isNotEmpty) {
       List<String> fileKeys = MessageExt.collectAttachmentFileKeysFromList(contentList);
       if (fileKeys.isNotEmpty) {
-        List<FileContentItemReference>? fileRefsList = await Content().getFileContentDownloadUrls(fileKeys, Content.conversationsContentCategory, entityId: conversationId);
+        List<FileContentItemReference>? fileRefsList = await Content().getFileContentDownloadUrls(fileKeys, Content.conversationsContentCategory, /* entityId: conversationId */);
         if ((fileRefsList != null) && fileRefsList.isNotEmpty) {
           MessageExt.applyContentRefsToList(contentList, fileRefsMap: FileContentItemReferenceUtils.mapList(fileRefsList));
         }
@@ -511,7 +511,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     } else if (_isConversation) {
       return _onSendMessage(message, attachments: attachments);
     } else if (_isGroupBroadcastMessage) {
-      return _onBroadcastMessage(message);
+      return _onBroadcastMessage(message, attachments: attachments);
     } else {
       return false;
     }
@@ -608,14 +608,14 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       }
     }
 
-    List<FileContentItemReference>? uploadedRefs = await Content().uploadFileContentItems(dataToUpload, Content.conversationsContentCategory, entityId: widget.conversation?.id);
+    List<FileContentItemReference>? uploadedRefs = await Content().uploadFileContentItems(dataToUpload, Content.conversationsContentCategory, /* entityId: widget.conversation?.id */ );
     Map<String, FileContentItemReference>? uploadedRefOnNameMap = (uploadedRefs != null) ? FileContentItemReferenceUtils.mapList(uploadedRefs, keyAccess: FileContentItemReferenceUtils.accessRefName) : null;
 
     Map<String, FileContentItemReference>? uploadedUrlRefsOnKeyMap;
     if ((uploadedRefs != null) && uploadedRefs.isNotEmpty) {
       List<String> uploadedKeys = uploadedRefs.map((ref) => ref.key).nonNulls.toList();
       if (uploadedKeys.isNotEmpty) {
-        List<FileContentItemReference>? uploadedUrlRefs = await Content().getFileContentDownloadUrls(uploadedKeys, Content.conversationsContentCategory, entityId: widget.conversation?.id);
+        List<FileContentItemReference>? uploadedUrlRefs = await Content().getFileContentDownloadUrls(uploadedKeys, Content.conversationsContentCategory, /* entityId: widget.conversation?.id */);
         if ((uploadedUrlRefs != null) && uploadedUrlRefs.isNotEmpty) {
           uploadedUrlRefsOnKeyMap = FileContentItemReferenceUtils.mapList(uploadedUrlRefs);
         }
@@ -691,15 +691,19 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     }
   }
 
-  Future<bool> _onBroadcastMessage(String message) async {
+  Future<bool> _onBroadcastMessage(String message, { Iterable<dynamic>? attachments }) async {
+    // Upload attached files
+    List<FileAttachment>? fileAttachments = ((attachments != null) && attachments.isNotEmpty) ? await _uploadAttachments(attachments) : null;
+
     List<Conversation>? conversations = await Social().broadcastIndividualMessage(
       context: ContextItem.group(_group?.id ?? ''),
       message: message,
-      //fileAttachments: fileAttachments,
+      fileAttachments: fileAttachments,
       extraParams: {
         'all_group_members': true
       }
     );
+
     if (conversations != null) {
       Navigator.pop(context);
       WidgetsBinding.instance.addPostFrameCallback((_){
