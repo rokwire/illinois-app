@@ -540,9 +540,20 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       fileAttachments: fileAttachments,
     );
 
-    if (mounted) {
-      Message? newMessage = newMessages?.firstOrNull;
+    Message? newMessage = newMessages?.firstOrNull;
 
+    // Populate attachment URLs
+    List<FileAttachment>? newMessageAttachments = newMessage?.fileAttachments;
+    if ((newMessageAttachments != null) && newMessageAttachments.isNotEmpty && (fileAttachments != null) && fileAttachments.isNotEmpty) {
+      Map<String, FileAttachment> attachmentsMap = FileAttachmentUtils.mapList(fileAttachments);
+      for (FileAttachment newMessageAttachment in newMessageAttachments) {
+        if (newMessageAttachment.url?.isNotEmpty != true) {
+          newMessageAttachment.url = attachmentsMap[newMessageAttachment.id]?.url;
+        }
+      }
+    }
+
+    if (mounted) {
       int? index = _contentList?.indexOf(tempMessage);
       if ((index != null) && (index >= 0)) {
         setState(() {
@@ -596,17 +607,30 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       }
     }
 
-    List<FileContentItemReference>? uploaded = await Content().uploadFileContentItems(dataToUpload, Content.conversationsContentCategory, entityId: widget.conversation?.id);
+    List<FileContentItemReference>? uploadedRefs = await Content().uploadFileContentItems(dataToUpload, Content.conversationsContentCategory, entityId: widget.conversation?.id);
+    Map<String, FileContentItemReference>? uploadedRefOnNameMap = (uploadedRefs != null) ? FileContentItemReferenceUtils.mapList(uploadedRefs, keyAccess: FileContentItemReferenceUtils.accessRefName) : null;
+
+    Map<String, FileContentItemReference>? uploadedUrlRefsOnKeyMap;
+    if ((uploadedRefs != null) && uploadedRefs.isNotEmpty) {
+      List<String> uploadedKeys = uploadedRefs.map((ref) => ref.key).nonNulls.toList();
+      if (uploadedKeys.isNotEmpty) {
+        List<FileContentItemReference>? uploadedUrlRefs = await Content().getFileContentDownloadUrls(uploadedKeys, Content.conversationsContentCategory, entityId: widget.conversation?.id);
+        if ((uploadedUrlRefs != null) && uploadedUrlRefs.isNotEmpty) {
+          uploadedUrlRefsOnKeyMap = FileContentItemReferenceUtils.mapList(uploadedUrlRefs);
+        }
+      }
+    }
 
     List<FileAttachment> attachmentsResult = <FileAttachment>[];
     for (dynamic attachmentsListEntry in attachmentsList) {
       if (attachmentsListEntry is FileAttachment) {
         attachmentsResult.add(attachmentsListEntry);
       } else if (attachmentsListEntry is String) {
-        FileContentItemReference? uploadedRef = uploaded?.firstWhereOrNull((ref) => ref.name == attachmentsListEntry);
-        AttachmentFileType? type = dataTypes[attachmentsListEntry];
+        FileContentItemReference? uploadedRef = uploadedRefOnNameMap?[attachmentsListEntry];
         if (uploadedRef != null) {
-          attachmentsResult.add(FileAttachment(id: uploadedRef.key, url: uploadedRef.url, name: uploadedRef.name, type: type?.name,));
+          AttachmentFileType? type = dataTypes[attachmentsListEntry];
+          String? uploadedUrl = uploadedUrlRefsOnKeyMap?[uploadedRef.key]?.url ?? uploadedRef.url;
+          attachmentsResult.add(FileAttachment(id: uploadedRef.key, url: uploadedUrl, name: uploadedRef.name, type: type?.name,));
         }
       }
     }

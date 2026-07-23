@@ -324,3 +324,21 @@ class AttachmentDetails {
     }
   }
 }
+
+extension FileAttachmentUtils on FileAttachment {
+
+  static Map<String, FileAttachment> mapList(List<FileAttachment> list, { String? Function(FileAttachment ref) keyAccess = accessAttachmentId }) {
+    Map<String, FileAttachment> map = <String, FileAttachment>{};
+    for (FileAttachment entry in list) {
+      String? entryKey = keyAccess(entry);
+      if (entryKey != null) {
+        map[entryKey] = entry;
+      }
+    }
+    return map;
+  }
+
+  static String? accessAttachmentId(FileAttachment attachment) => attachment.id;
+  static String? accessAttachmentName(FileAttachment attachment) => attachment.name;
+
+}
