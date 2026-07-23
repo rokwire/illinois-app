@@ -537,9 +537,13 @@ class GroupConversationMessageCard extends StatelessWidget {
       padding: EdgeInsets.only(top: _horzPadding, left: _horzPadding, right: _horzPadding),
       separatorBuilder: (context, index) => SizedBox(width: 8),
       itemCount: message.fileAttachments?.length ?? 0,
-      itemBuilder: (context, index) => _GroupConversationAttachmentCard(ListUtils.entry(message.fileAttachments, index)),
+      itemBuilder: (context, index) => _attachmentCard(ListUtils.entry(message.fileAttachments, index)),
       scrollDirection: Axis.horizontal,
     ),
+  );
+
+  Widget _attachmentCard(dynamic attachment) => Center(child:
+    _GroupConversationAttachmentCard(attachment,)
   );
 
   void _onTapLink(String url) {
@@ -1024,9 +1028,13 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
       padding: EdgeInsets.only(top: 16, left: 0, right: 0),
       separatorBuilder: (context, index) => SizedBox(width: 8),
       itemCount: _attachments.length,
-      itemBuilder: (context, index) => _GroupConversationAttachmentCard(_attachments[index]),
+      itemBuilder: (context, index) => _attachmentCard(ListUtils.entry(_attachments, index)),
       scrollDirection: Axis.horizontal,
     ),
+  );
+
+  Widget _attachmentCard(dynamic attachment) => Center(child:
+    _GroupConversationAttachmentCard(attachment,)
   );
 
   void _resetAttachments() {
@@ -1220,9 +1228,7 @@ class _GroupConversationAttachmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
     Stack(children: [
-      AspectRatio(aspectRatio: 1/1, child:
-        _attachmentWidget
-      ),
+      _attachmentWidget
     ],);
 
   Widget get _attachmentWidget {
@@ -1337,8 +1343,9 @@ class _GroupConversationAttachmentContainer extends StatelessWidget {
   EdgeInsetsGeometry get _widgetPadding => EdgeInsets.all(8);
 
   BoxDecoration get _widgetDecoration => BoxDecoration(
+    color: Styles().colors.background, //Styles().colors.backgroundVariant, // inMessage: Styles().colors.surfaceAccent
+    border: Border.all(color: Styles().colors.mediumGray, width: 1),
     borderRadius: BorderRadius.circular(8),
-    color: Styles().colors.backgroundVariant, // inMessage: Styles().colors.surfaceAccent
   );
 }
 
