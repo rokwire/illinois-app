@@ -1028,14 +1028,41 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
       padding: EdgeInsets.only(top: 16, left: 0, right: 0),
       separatorBuilder: (context, index) => SizedBox(width: 8),
       itemCount: _attachments.length,
-      itemBuilder: (context, index) => _attachmentCard(ListUtils.entry(_attachments, index)),
+      itemBuilder: (context, index) => _attachmentCard(index),
       scrollDirection: Axis.horizontal,
     ),
   );
 
-  Widget _attachmentCard(dynamic attachment) => Center(child:
-    _GroupConversationAttachmentCard(attachment,)
+  Widget _attachmentCard(int index) => Center(child:
+    Stack(children: [
+      _GroupConversationAttachmentCard(ListUtils.entry(_attachments, index),),
+      Positioned.fill(child:
+        Align(alignment: Alignment.topRight, child:
+          _attachmentDeleteButton(index)
+        ),
+      ),
+    ],)
   );
+
+  Widget _attachmentDeleteButton(int index) =>
+    InkWell(onTap: () => _onDeleteAttachment(index), child:
+      Stack(children: [
+        Padding(padding: EdgeInsets.only(left: 18, right: 6, top: 10, bottom: 14), child:
+          Styles().images.getImage('close-circle', size: 16, color: Styles().colors.black, excludeFromSemantics: true,)
+        ),
+        Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 16), child:
+          Styles().images.getImage('close-circle', size: 16, color: Styles().colors.white, excludeFromSemantics: true,)
+        ),
+
+      ],)
+    );
+
+  void _onDeleteAttachment(int index) {
+    Analytics().logSelect(target: 'Delete Attachment');
+    setState(() {
+      ListUtils.remove(_attachments, index);
+    });
+  }
 
   void _resetAttachments() {
     setState(() {
@@ -1332,7 +1359,7 @@ class _GroupConversationAttachmentContainer extends StatelessWidget {
   final Widget? child;
   final Size size;
 
-  _GroupConversationAttachmentContainer({this.child, this.size = const Size(200, 80)});
+  _GroupConversationAttachmentContainer({this.child, this.size = const Size(200, 80)}); // ignore: unused_element_parameter
 
   @override
   Widget build(BuildContext context) =>
