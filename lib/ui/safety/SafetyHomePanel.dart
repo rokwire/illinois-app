@@ -13,7 +13,8 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum SafetyContentType { safeWalkRequest, safeRides, safetyResources }
+enum SafetyContentType { safeWalkRequest, safetyResources }
+// enum SafetyContentType { safeWalkRequest, safeRides, safetyResources }
 
 class SafetyHomePanel extends StatefulWidget {
   final SafetyContentType? contentType;
@@ -150,14 +151,7 @@ class _SafetyHomePanelState extends State<SafetyHomePanel>  {
   }
 
   bool _preprocessContentType(SafetyContentType contentType) {
-    if (contentType == SafetyContentType.safeRides) {
-      Map<String, dynamic>? safeRidesGuideEntry = Guide().entryById(Config().safeRidesGuideId);
-      if (safeRidesGuideEntry != null) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntry: safeRidesGuideEntry)));
-      }
-      return true;
-    }
-    else if (contentType == SafetyContentType.safetyResources) {
+    if (contentType == SafetyContentType.safetyResources) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusSafetyResourcesPanel()));
       return true;
     }
@@ -182,7 +176,6 @@ class _SafetyHomePanelState extends State<SafetyHomePanel>  {
 String? _safetyContentTypeToDisplayString(SafetyContentType? contentType) {
   switch (contentType) {
     case SafetyContentType.safeWalkRequest: return Localization().getStringEx('panel.safety.content_type.safe_walk_request.label', 'Request a SafeWalk');
-    case SafetyContentType.safeRides: return Localization().getStringEx('panel.safety.content_type.safe_rides.label', 'SafeRides (MTD)');
     case SafetyContentType.safetyResources: return Localization().getStringEx('panel.safety.content_type.safety_resources.label', 'Safety Resources');
     default: return null;
   }

@@ -11,7 +11,7 @@
 				"laundry", "dining", "events", "groups", "research_projects",
 				"polls",
 				"daily_illini", "illini_radio", "illordle",
-				"safewalk_request", "saferides", "safety_resources",
+				"safewalk_request", "safety_resources",
 				"recent_items",
 				"wellness_resources", "wellness_mental_health", "wellness_rings", "wellness_tips",
 				"my_appointments", "my_mtd_stops", "my_locations"
@@ -36,7 +36,7 @@
 			"browse.polls": ["polls"],
 			"browse.music_and_news": ["illini_radio", "daily_illini", "illordle"],
 			"browse.recent": ["recent_items"],
-			"browse.safety": ["safewalk_request", "saferides", "safety_resources", "sexual_misconduct"],
+			"browse.safety": ["safewalk_request", "safety_resources", "sexual_misconduct"],
 			"browse.sexual_misconduct": ["sexual_misconduct"],
 			"browse.wellness": ["wellness_recreation", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener", "wellness_links"],
 

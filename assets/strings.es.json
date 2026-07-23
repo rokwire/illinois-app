@@ -3658,7 +3658,6 @@
 
     "panel.safety.header.title": "Safety",
     "panel.safety.content_type.safe_walk_request.label": "Request a SafeWalk",
-    "panel.safety.content_type.safe_rides.label": "SafeRides (MTD)",
     "panel.safety.content_type.safety_resources.label": "Safety Resources",
 
     "panel.safewalks_request.header.title": "SafeWalks",
