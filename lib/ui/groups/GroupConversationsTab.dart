@@ -43,7 +43,11 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [ Social.notifyConversationsUpdated ]);
+    NotificationService().subscribe(this, [
+      Social.notifyConversationsUpdated,
+      Social.notifyMessageSent,
+      Social.notifyMessageEdited,
+    ]);
     widget.updateController?.stream.listen(_onUpdate);
     _initConversations();
     super.initState();
@@ -65,7 +69,9 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Social.notifyConversationsUpdated) {
+    if ((name == Social.notifyConversationsUpdated) ||
+        (name == Social.notifyMessageSent) ||
+        (name == Social.notifyMessageEdited)) {
       if (mounted) {
         _refreshConversations();
       }
