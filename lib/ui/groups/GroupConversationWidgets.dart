@@ -749,6 +749,7 @@ class GroupConversationMessageEditBar extends StatefulWidget {
   final FocusNode? focusNode;
 
   final Iterable<FileAttachment>? attachments;
+  final bool canEditAttachments;
 
 
   final Future<bool> Function(String message, { Iterable<dynamic>? attachments })? onSubmitMessage;
@@ -759,7 +760,7 @@ class GroupConversationMessageEditBar extends StatefulWidget {
     this.padding = const EdgeInsetsGeometry.only(left: 24, right: 16, top: 8, bottom: 24),
     this.text, this.hint, this.textStyle, this.linkTextStyle,
     this.minLines = 1, this.maxLines = 12, this.autofocus = false, this.focusNode,
-    this.attachments,
+    this.attachments, this.canEditAttachments = false,
     required this.onSubmitMessage, this.showSubmitProgress = false, this.onCancelEdit,
   });
 
@@ -841,7 +842,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
         Padding(padding: EdgeInsetsGeometry.only(right: 8), child:
           _textBar
         ),
-        if (_attachments.isNotEmpty)
+        if (widget.canEditAttachments && _attachments.isNotEmpty)
           Padding(padding: EdgeInsetsGeometry.only(right: 8), child:
             _attachmentsList,
           ),
@@ -913,7 +914,8 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
         _formatButton(_EditBarCommand.italic, onTap: _onItalic),
         _formatButton(_EditBarCommand.underline, onTap: _onUnderline),
         _formatButton(_EditBarCommand.link, onTap: _onLink),
-        _formatButton(_EditBarCommand.picture, onTap: _onPicture),
+        if (widget.canEditAttachments)
+          _formatButton(_EditBarCommand.picture, onTap: _onPicture),
       ],),
     )
   ],);

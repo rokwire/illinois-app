@@ -169,6 +169,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       showSubmitProgress: true,
       onSubmitMessage: _onSubmitMessage,
       onCancelEdit: _isEditingMessage ? _onCancelEdit : null,
+      canEditAttachments: (_isEditingMessage == false),
     ),
   ],);
 
