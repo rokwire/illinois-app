@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
@@ -18,6 +19,7 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/profile/ProfileVoiceRecordigWidgets.dart';
 import 'package:illinois/ui/widgets/AudioPlayerWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/VideoPlayerWidget.dart';
@@ -745,6 +747,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
   late TextStyle _linkTextStyle;
   Set<_EditBarCommand> _selectedCommands = <_EditBarCommand>{};
   List<dynamic> _attachments = <dynamic>[];
+  late ScrollController _attachmentsScrollController;
   bool _submitting = false;
 
 
@@ -756,6 +759,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     _initialQuillDelta = _quillController.document.toDelta();
     _textStyle = widget.textStyle ?? Styles().textStyles.getTextStyle('widget.message.regular') ?? _defaultTextStyle;
     _linkTextStyle = widget.linkTextStyle ?? _textStyle.apply(color: _linkTextColor, decoration: TextDecoration.underline, decorationColor: _linkTextColor);
+    _attachmentsScrollController = ScrollController();
     _attachments.addAll(widget.attachments ?? <FileAttachment>[]);
   }
 
@@ -763,6 +767,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
   void dispose() {
     _quillController.removeListener(_onTextChanged);
     _quillController.dispose();
+    _attachmentsScrollController.dispose();
     super.dispose();
   }
 
@@ -1000,28 +1005,34 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     if (_submitting == false) {
       _GroupConversationAttachmentType? attType = await _GroupConversationAttachSheet.showModal(context);
 
-      XFile? media;
-      List<XFile>? mediaList;
+      dynamic media;
+      List<dynamic>? mediaList;
       switch (attType) {
-        case _GroupConversationAttachmentType.existing: mediaList = await ImagePicker().pickMultipleMedia(limit: 10, imageQuality: 60, maxHeight: 1080, maxWidth: 1080); break;
-        case _GroupConversationAttachmentType.newPicture: media = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 60, maxHeight: 1080, maxWidth: 1080); break;
+        case _GroupConversationAttachmentType.photoOrVideo: mediaList = await ImagePicker().pickMultipleMedia(limit: 10, imageQuality: 60, maxHeight: 1080, maxWidth: 1080); break;
+        case _GroupConversationAttachmentType.newPhoto: media = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 60, maxHeight: 1080, maxWidth: 1080); break;
         case _GroupConversationAttachmentType.newVideo: media = await ImagePicker().pickVideo(source: ImageSource.camera); break;
+        case _GroupConversationAttachmentType.newAudio: media = await _GroupConversationSoundRecorderDialog.show(context); break;
+        case _GroupConversationAttachmentType.file: mediaList = await _GroupConversationFilePicker.pick();
         default: break;
       }
       if (media != null) {
         if (mediaList != null) {
           mediaList.add(media);
         } else {
-          mediaList = <XFile>[media];
+          mediaList = <dynamic>[media];
         }
       }
       if (mediaList != null) {
         setState(() {
           _attachments.addAll(mediaList ?? []);
         });
+        WidgetsBinding.instance.addPostFrameCallback((_) =>
+          _attachmentsScrollController.animateTo(_attachmentsScrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 300), curve: Curves.linear)
+        );
       }
     }
   }
+
 
   Widget get _attachmentsList => Container(height: 150, child:
     ListView.separated(
@@ -1030,6 +1041,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
       itemCount: _attachments.length,
       itemBuilder: (context, index) => _attachmentCard(index),
       scrollDirection: Axis.horizontal,
+      controller: _attachmentsScrollController,
     ),
   );
 
@@ -1038,14 +1050,28 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
       _GroupConversationAttachmentCard(ListUtils.entry(_attachments, index),),
       Positioned.fill(child:
         Align(alignment: Alignment.topRight, child:
-          _attachmentDeleteButton(index)
+          _deleteAttachmentButton(ListUtils.entry(_attachments, index), index)
         ),
       ),
     ],)
   );
 
-  Widget _attachmentDeleteButton(int index) =>
+  Widget _deleteAttachmentButton(dynamic attachment, int index) =>
     InkWell(onTap: () => _onDeleteAttachment(index), child:
+      _deleteAttachmentImage(attachment)
+    );
+
+  Widget _deleteAttachmentImage(dynamic attachment) {
+    switch(AttachmentFileTypeImpl.fromAttachment(attachment)) {
+      case AttachmentFileType.image: return _deletePhotoOrVideoAttachmentImage;
+      case AttachmentFileType.video: return _deletePhotoOrVideoAttachmentImage;
+      case AttachmentFileType.audio: return _deleteAudioOrFileAttachmentImage;
+      case AttachmentFileType.file: return _deleteAudioOrFileAttachmentImage;
+      default: return Container();
+    }
+  }
+
+  Widget get _deletePhotoOrVideoAttachmentImage =>
       Stack(children: [
         Padding(padding: EdgeInsets.only(left: 18, right: 6, top: 10, bottom: 14), child:
           Styles().images.getImage('close-circle', size: 16, color: Styles().colors.black, excludeFromSemantics: true,)
@@ -1053,8 +1079,11 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
         Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 16), child:
           Styles().images.getImage('close-circle', size: 16, color: Styles().colors.white, excludeFromSemantics: true,)
         ),
+      ],);
 
-      ],)
+  Widget get _deleteAudioOrFileAttachmentImage =>
+    Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 16), child:
+      Styles().images.getImage('close-circle', size: 16, color: Styles().colors.fillColorSecondary, excludeFromSemantics: true,)
     );
 
   void _onDeleteAttachment(int index) {
@@ -1309,27 +1338,22 @@ class _GroupConversationAttachmentCard extends StatelessWidget {
   }
 
   Widget get _fileAttachmentWidget {
-    String? textStyleKey = 'widget.title.small'; // inMessage: 'widget.title.dark.small';
+    String? textStyleKey = 'widget.title.dark.small'; // 'widget.title.small' inMessage: 'widget.title.dark.small';
     AttachmentDetails? details = AttachmentDetails.fromAttachment(attachment);
-    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Styles().images.getImage('file', size: 24) ?? Container(height: 48),
-        SizedBox(width: 12),
+    return Center(child:
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(padding: EdgeInsetsGeometry.only(top: 4), child:
+          Styles().images.getImage('file', size: 24) ?? Container(height: 24),
+        ),
+        SizedBox(width: 8),
         Expanded(child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
             Text(details?.name ?? '', style: Styles().textStyles.getTextStyle(textStyleKey), overflow: TextOverflow.ellipsis,),
-            Padding(padding: const EdgeInsets.only(top: 8, right: 8), child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                if ((details?.extension != null) && (details?.extension?.isNotEmpty == true))
-                  Text(details?.extension?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle(textStyleKey),),
-                /*if (message != null)
-                  Padding(padding: const EdgeInsets.only(left: 16), child:
-                    Styles().images.getImage('download'),
-                  ),*/
-              ],),
-            ),
+            if ((details?.extension != null) && (details?.extension?.isNotEmpty == true))
+              Text(details?.extension?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle(textStyleKey),),
           ],),
         ),
-      ]);
+      ]),);
   }
 
   Widget get _imageErrorBuilder => AspectRatio(aspectRatio: 16/9, child:
@@ -1377,11 +1401,15 @@ class _GroupConversationAttachmentContainer extends StatelessWidget {
 }
 
 
-enum _GroupConversationAttachmentType { existing, newPicture, newVideo }
+enum _GroupConversationAttachmentType { photoOrVideo, newPhoto, newVideo, newAudio, file}
 
 class _GroupConversationAttachSheet extends StatelessWidget {
+
+  final Set<_GroupConversationAttachmentType>? availableTypes;
+
+  _GroupConversationAttachSheet({this.availableTypes});
   
-  static Future<_GroupConversationAttachmentType?> showModal(BuildContext context) =>
+  static Future<_GroupConversationAttachmentType?> showModal(BuildContext context, { Set<_GroupConversationAttachmentType>? availableTypes }) =>
     showModalBottomSheet(
     context: context,
     backgroundColor: Styles().colors.surface,
@@ -1389,22 +1417,18 @@ class _GroupConversationAttachSheet extends StatelessWidget {
     isScrollControlled: true,
     clipBehavior: Clip.antiAlias,
     useSafeArea: true,
-    //constraints: BoxConstraints(maxHeight: 250, minHeight: 250),
-    builder: (context) => _GroupConversationAttachSheet(),
+    //constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9, minHeight: MediaQuery.of(context).size.height * 0.3),
+    builder: (context) => _GroupConversationAttachSheet(availableTypes: availableTypes,),
   );
 
   @override
   Widget build(BuildContext context) =>
-    Container(constraints: BoxConstraints(maxHeight: 250), child:
-      Column(children: [
-        _headerBar(context),
-        Expanded(child:
-          Padding(padding: EdgeInsets.only(left: 16.0, right: 16, bottom: 4), child:
-            _commandsList(context),
-          ),
-        ),
-      ],),
-    );
+    Column(mainAxisSize: MainAxisSize.min, children: [
+      _headerBar(context),
+      Padding(padding: EdgeInsets.only(left: 16.0, right: 16, bottom: 16), child:
+        _commandsList(context),
+      ),
+    ],);
 
   Widget _headerBar(BuildContext context) => Row(children: [
     Expanded(child:
@@ -1428,7 +1452,7 @@ class _GroupConversationAttachSheet extends StatelessWidget {
   ],);
 
   Widget _commandsList(BuildContext context) => Column(children:
-    List.from(_GroupConversationAttachmentType.values.map((attType) => _commandListEntry(context, attType)))
+    List.from(_GroupConversationAttachmentType.values.where((type) => (availableTypes?.contains(type) != false)).map((attType) => _commandListEntry(context, attType)))
   );
 
   Widget _commandListEntry(BuildContext context, _GroupConversationAttachmentType attType) =>
@@ -1454,19 +1478,47 @@ class _GroupConversationAttachSheet extends StatelessWidget {
 extension _GroupConversationAttachmentTypeImpl on _GroupConversationAttachmentType {
   String get commandTitle {
     switch (this) {
-      case _GroupConversationAttachmentType.existing: return Localization().getStringEx('panel.messages.conversation.select.image_video.button.label', 'Upload an image or video');
-      case _GroupConversationAttachmentType.newPicture: return Localization().getStringEx('panel.messages.conversation.select.image.button.label', 'Take a photo');
+      case _GroupConversationAttachmentType.photoOrVideo: return Localization().getStringEx('panel.messages.conversation.select.image_video.button.label', 'Upload an image or video');
+      case _GroupConversationAttachmentType.newPhoto: return Localization().getStringEx('panel.messages.conversation.select.image.button.label', 'Take a photo');
       case _GroupConversationAttachmentType.newVideo: return Localization().getStringEx('panel.messages.conversation.select.video.button.label', 'Record a video');
+      case _GroupConversationAttachmentType.newAudio: return Localization().getStringEx('panel.messages.conversation.select.audio.button.label', 'Record an audio clip');
+      case _GroupConversationAttachmentType.file: return Localization().getStringEx('panel.messages.conversation.select.file.button.label', 'Upload a file');
     }
   }
 
   String get commandIconKey {
     switch (this) {
-      case _GroupConversationAttachmentType.existing: return 'image';
-      case _GroupConversationAttachmentType.newPicture: return 'camera';
+      case _GroupConversationAttachmentType.photoOrVideo: return 'image';
+      case _GroupConversationAttachmentType.newPhoto: return 'camera';
       case _GroupConversationAttachmentType.newVideo: return 'video-camera';
+      case _GroupConversationAttachmentType.newAudio: return 'microphone';
+      case _GroupConversationAttachmentType.file: return 'file';
     }
   }
+}
+
+class _GroupConversationSoundRecorderDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) =>
+    Material(type: MaterialType.transparency, borderRadius: BorderRadius.all(Radius.circular(5)), child:
+      ProfileSoundRecorderDialog(onSave: (audio, extension) async => ((audio != null) && audio.isNotEmpty) ?
+        AudioResult.succeed(audioData: audio, extension: extension) : AudioResult.error(AudioErrorType.fileNameNotSupplied, 'Missing file.')),
+    );
+
+  static Future<AudioResult?> show(BuildContext context) =>
+    showDialog<AudioResult?>(context: context, builder: (_) => _GroupConversationSoundRecorderDialog());
+}
+
+class _GroupConversationFilePicker {
+  static Future<List<PlatformFile>?> pick() async {
+    final FilePickerResult? result = await FilePicker.pickFiles(
+      allowMultiple: true,
+      withData: true,
+      dialogTitle: Localization().getStringEx("panel.messages.conversation.attach_files.message", "Select file(s) to upload"),
+    );
+    return result?.files;
+  }
+
 }
 
 class GroupConversationConfirmDeleteDialog extends StatelessWidget {

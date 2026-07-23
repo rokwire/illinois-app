@@ -166,7 +166,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       focusNode: _editFocusNode,
       title: _isEditingMessage ? Localization().getStringEx('', 'EDiT') : Localization().getStringEx('', 'REPLY'),
       text: _isEditingMessage ? _editingMessageText : null,
-      showSubmitProgress: _isEditingMessage || _isGroupBroadcastMessage,
+      showSubmitProgress: true,
       onSubmitMessage: _onSubmitMessage,
       onCancelEdit: _isEditingMessage ? _onCancelEdit : null,
     ),
