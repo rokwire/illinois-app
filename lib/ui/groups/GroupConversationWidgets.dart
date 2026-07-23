@@ -514,7 +514,7 @@ class GroupConversationMessageCard extends StatelessWidget {
         if (message.fileAttachments?.isNotEmpty == true)
           _attachmentsWidget(context),
         Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding, vertical: _horzPadding), child:
-          GroupReactionsLayout(key: _reactionsKey, group: group, entityId: message.id, reactionSource: SocialEntityType.message, analyticsFeature: analyticsFeature,)
+          GroupReactionsLayout(key: _reactionsKey, group: group, entityId: message.globalId, reactionSource: SocialEntityType.message, analyticsFeature: analyticsFeature,)
         ),
       ],)
     );
