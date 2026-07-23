@@ -48,11 +48,11 @@ extension GroupExt on Group {
   }
 
   String? get displayUpdateTime {
-    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateUpdatedUtc);
-    if (deviceDateTime != null) {
+    DateTime? displayDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: dateUpdatedUtc);
+    if (displayDateTime != null) {
       DateTime now = DateTime.now();
-      if (deviceDateTime.compareTo(now) < 0) {
-        Duration difference = DateTime.now().difference(deviceDateTime);
+      if (displayDateTime.compareTo(now) < 0) {
+        Duration difference = DateTime.now().difference(displayDateTime);
         if (difference.inSeconds < 60) {
           return Localization().getStringEx('model.group.updated.now', 'Updated now');
         }
@@ -84,7 +84,7 @@ extension GroupExt on Group {
           }
         }
       }
-      String value = DateFormat("MMM dd, yyyy").format(deviceDateTime);
+      String value = DateFormat("MMM dd, yyyy").format(displayDateTime);
       return sprintf(
         Localization().getStringEx('model.group.updated.date', 'Updated on %s'),
         [value]);
@@ -93,18 +93,18 @@ extension GroupExt on Group {
   }
 
   String? get displayManagedMembershipUpdateTime {
-    DateTime? deviceManagedDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateManagedMembershipUpdatedUtc);
-    if (deviceManagedDateTime != null) {
-      String formattedManagedDateTime = DateFormat('yyyy/MM/dd h:mma').format(deviceManagedDateTime);
+    DateTime? displayManagedDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: dateManagedMembershipUpdatedUtc);
+    if (displayManagedDateTime != null) {
+      String formattedManagedDateTime = DateFormat('yyyy/MM/dd h:mma').format(displayManagedDateTime);
       return formattedManagedDateTime;
     }
     return null;
   }
 
   String? get displayMembershipUpdateTime {
-    DateTime? deviceMembershipDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateMembershipUpdatedUtc);
-    if (deviceMembershipDateTime != null) {
-      String formattedMembershipDateTime = DateFormat('yyyy/MM/dd h:mma').format(deviceMembershipDateTime);
+    DateTime? displayMembershipDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: dateMembershipUpdatedUtc);
+    if (displayMembershipDateTime != null) {
+      String formattedMembershipDateTime = DateFormat('yyyy/MM/dd h:mma').format(displayMembershipDateTime);
       return formattedMembershipDateTime;
     }
     return null;

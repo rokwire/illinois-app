@@ -40,9 +40,9 @@ extension PostExt on Post {
   String? get displayDateTime => AppRelativeTime.timeAgoSinceDate(dateCreatedUtc);
 
   String? get displayScheduledTime {
-    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateActivatedUtc);
-    if (deviceDateTime != null) {
-      return DateFormat("MMM dd, HH:mm").format(deviceDateTime);
+    DateTime? displayDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: dateActivatedUtc);
+    if (displayDateTime != null) {
+      return DateFormat("MMM dd, HH:mm").format(displayDateTime);
     }
     return null;
   }
@@ -90,7 +90,7 @@ extension ReactionExt on Reaction {
 }
 
 extension MessageExt on Message {
-  DateTime? get dateSentLocal =>  AppDateTime().getDeviceTimeFromUtcTime(dateSentUtc);
+  DateTime? get dateSentLocal =>  AppDateTime().getDateTimeToCompare(dateTimeUtc: dateSentUtc);
   String? get dateSentLocalString => DateTimeUtils.localDateTimeToString(dateSentLocal, format: 'MMMM dd, yyyy');
 
   String? get displayDateTime => AppRelativeTime.timeAgoSinceDate(dateUpdatedUtc ?? dateSentUtc);
@@ -113,11 +113,11 @@ extension ConversationExt on Conversation {
   bool get isGroupSubset => (type == ConversationType.groupSubset);
 
   String? get displayDateTime {
-    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(lastActivityTimeUtc);
-    if (deviceDateTime != null) {
+    DateTime? displayDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: lastActivityTimeUtc);
+    if (displayDateTime != null) {
       DateTime now = DateTime.now();
-      if (deviceDateTime.compareTo(now) < 0) {
-        Duration difference = DateTime.now().difference(deviceDateTime);
+      if (displayDateTime.compareTo(now) < 0) {
+        Duration difference = DateTime.now().difference(displayDateTime);
         if (difference.inSeconds < 60) {
           return Localization().getStringEx("generic.time.now", "now");
         }
@@ -137,7 +137,7 @@ extension ConversationExt on Conversation {
           }
         }
       }
-      return DateFormat("MMM dd, yyyy").format(deviceDateTime);
+      return DateFormat("MMM dd, yyyy").format(displayDateTime);
     }
     return null;
   }
