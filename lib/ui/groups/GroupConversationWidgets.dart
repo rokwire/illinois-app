@@ -42,6 +42,7 @@ class GroupConversationCard extends StatelessWidget {
   final Conversation conversation;
   final List<Member>? groupAdmins;
   final void Function()? onTap;
+  final UniqueKey _avtarKey = UniqueKey();
 
   GroupConversationCard(this.conversation, { this.groupAdmins, this.onTap });
 
@@ -53,7 +54,7 @@ class GroupConversationCard extends StatelessWidget {
     InkWell(onTap: onTap, child:
       Container(decoration: _cardDecoration, padding: _cardPadding, child:
         Row(children: [
-          GroupConversationAvtarWidget(conversation: conversation),
+          GroupConversationAvtarWidget(key: _avtarKey, conversation: conversation),
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
@@ -151,7 +152,7 @@ class GroupConversationAvtarWidget extends StatelessWidget {
   final Conversation? conversation;
   final ConversationMember? conversationMember;
 
-  GroupConversationAvtarWidget({ this.group, this.conversation, this.conversationMember });
+  GroupConversationAvtarWidget({ super.key, this.group, this.conversation, this.conversationMember });
 
   List<ConversationMember>? get _participants => this.conversation?.members;
   int get _participantsCount => _participants?.length ?? 0;
