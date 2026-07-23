@@ -444,13 +444,13 @@ class Guide with Service, NotificationsListener {
       DateTime now = DateTime.now().toUtc();
       
       String? startString = JsonUtils.stringValue(interval['start']);
-      DateTime? startTime = (startString != null) ? DateTime.tryParse(startString)?.toUtc() : null;
+      DateTime? startTime = (startString != null) ? DateTimeUtils.dateTimeFromString(startString)?.toUtc() : null;
       if ((startTime != null) && now.isBefore(startTime)) {
         return false;
       }
-      
+
       String? endString = JsonUtils.stringValue(interval['end']);
-      DateTime? endTime = (endString != null) ? DateTime.tryParse(endString)?.toUtc() : null;
+      DateTime? endTime = (endString != null) ? DateTimeUtils.dateTimeFromString(endString)?.toUtc() : null;
       if ((endTime != null) && now.isAfter(endTime)) {
         return false;
       }
