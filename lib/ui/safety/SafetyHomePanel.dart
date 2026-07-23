@@ -1,11 +1,7 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
-import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/safety/SafetySafeWalkRequestPage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -14,7 +10,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 enum SafetyContentType { safeWalkRequest, safetyResources }
-// enum SafetyContentType { safeWalkRequest, safeRides, safetyResources }
 
 class SafetyHomePanel extends StatefulWidget {
   final SafetyContentType? contentType;
