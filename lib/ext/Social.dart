@@ -298,8 +298,8 @@ class AttachmentDetails {
   FutureOr<Uint8List?> get asyncOrData {
     if (data != null) {
       return data;
-    } else if (asyncOrData != null) {
-      return asyncOrData;
+    } else if (asyncData != null) {
+      return asyncData;
     } else if (path != null) {
       try { return File(path ?? '').readAsBytes(); }
       catch(e) { print(e); return null; }
