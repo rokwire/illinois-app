@@ -1158,7 +1158,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     });
   }
 
-  bool get _canSubmit => _selectedCommands.contains(_EditBarCommand.submit) && (widget.onSubmitMessage != null);
+  bool get _canSubmit => (_selectedCommands.contains(_EditBarCommand.submit) || !DeepCollectionEquality().equals(_attachments, widget.attachments?.toList() ?? [])) && (widget.onSubmitMessage != null);
   bool get _hasCancelEdit => (widget.onCancelEdit != null);
 
   Widget get _submitButton => Event2ImageCommandButton(
