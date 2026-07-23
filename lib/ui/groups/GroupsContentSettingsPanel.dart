@@ -49,7 +49,7 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
   @override
   void initState() {
     _availableCodes = List.from(GroupContentItemExt.availableContentCodes);
-    _selection = (widget.group?.settings?.contentCodes ?? List.from(GroupContentItemExt.defaultContentCodes)).reversed.toList(); //We draw in reverse order, so reverse again to match GroupContent
+    _selection = (widget.group?.settings?.contentCodes?.where((code) => _availableCodes.contains(code)).toList() ?? List.from(GroupContentItemExt.defaultContentCodes)).reversed.toList(); //We draw in reverse order, so reverse again to match GroupContent
 
     super.initState();
   }
@@ -181,7 +181,7 @@ class _GroupContentSettingsState extends State<GroupContentSettingsPanel> implem
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
                   Semantics(label: GroupContentItemExt.getTitleByCode(code), header: true, excludeSemantics: true, child:
-                    Text(GroupContentItemExt.getTitleByCode(code), style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),)
+                    Text(GroupContentItemExt.getTitleByCode(code) ?? 'unknown', style: Styles().textStyles.getTextStyle("widget.title.medium.fat"),)
                   )
                 )
               ),
