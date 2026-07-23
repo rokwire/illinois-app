@@ -100,7 +100,7 @@ extension AppointmentProviderUtils on AppointmentProvider {
 
 extension AppointmentUnitExt on AppointmentUnit {
   String? get displayNextAvailableTime => (nextAvailableTimeUtc != null) ?
-    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(_appointmentDisplayDateTime(nextAvailableTimeUtc!)) : null;
+    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(AppDateTime().getDisplayTZDateTime(nextAvailableTimeUtc!)) : null;
 
   String? get displayNumberOfPersons {
     int count = numberOfPersons ?? 0;
@@ -123,7 +123,7 @@ extension AppointmentUnitExt on AppointmentUnit {
 
 extension AppointmentPersonExt on AppointmentPerson {
   String? get displayNextAvailableTime => (nextAvailableTimeUtc != null) ?
-    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(_appointmentDisplayDateTime(nextAvailableTimeUtc!)) :
+    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(AppDateTime().getDisplayTZDateTime(nextAvailableTimeUtc!)) :
     Localization().getStringEx('panel.appointment.schedule.next_available_appointment.unknown.label', 'Unknown');
 
   String? get displayNumberOfAvailableSlots {
@@ -141,8 +141,8 @@ extension AppointmentPersonExt on AppointmentPerson {
 
 extension AppointmentTimeSlotExt on AppointmentTimeSlot {
 
-  DateTime? get startTime => (startTimeUtc != null) ? _appointmentDisplayDateTime(startTimeUtc!) : null;
-  DateTime? get endTime => (endTimeUtc != null) ? _appointmentDisplayDateTime(endTimeUtc!) : null;
+  DateTime? get startTime => (startTimeUtc != null) ? AppDateTime().getDisplayTZDateTime(startTimeUtc!) : null;
+  DateTime? get endTime => (endTimeUtc != null) ? AppDateTime().getDisplayTZDateTime(endTimeUtc!) : null;
 
   String? get displayLongScheduleTime =>
     getLongDisplayScheduleTime(startTimeUtc, endTimeUtc);
@@ -153,12 +153,12 @@ extension AppointmentTimeSlotExt on AppointmentTimeSlot {
   static String? getLongDisplayScheduleTime(DateTime? startTimeUtc, DateTime? endTimeUtc) {
     if (startTimeUtc != null) {
       if (endTimeUtc != null) {
-        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy h:mm').format(_appointmentDisplayDateTime(startTimeUtc));
-        String endTimeStr = DateFormat('h:mm aaa').format(_appointmentDisplayDateTime(endTimeUtc));
+        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy h:mm').format(AppDateTime().getDisplayTZDateTime(startTimeUtc));
+        String endTimeStr = DateFormat('h:mm aaa').format(AppDateTime().getDisplayTZDateTime(endTimeUtc));
         return "$startTimeStr - $endTimeStr";
       }
       else {
-        return DateFormat('EEEE, MMMM d, yyyy h:mm aaa').format(_appointmentDisplayDateTime(startTimeUtc));
+        return DateFormat('EEEE, MMMM d, yyyy h:mm aaa').format(AppDateTime().getDisplayTZDateTime(startTimeUtc));
       }
     }
     return null;
@@ -167,12 +167,12 @@ extension AppointmentTimeSlotExt on AppointmentTimeSlot {
   static String? getShortDisplayScheduleTime(DateTime? startTimeUtc, DateTime? endTimeUtc) {
     if (startTimeUtc != null) {
       if (endTimeUtc != null) {
-        String startTimeStr = DateFormat('EEE, MMM d, yyyy h:mm').format(_appointmentDisplayDateTime(startTimeUtc));
-        String endTimeStr = DateFormat('h:mm aaa').format(_appointmentDisplayDateTime(endTimeUtc));
+        String startTimeStr = DateFormat('EEE, MMM d, yyyy h:mm').format(AppDateTime().getDisplayTZDateTime(startTimeUtc));
+        String endTimeStr = DateFormat('h:mm aaa').format(AppDateTime().getDisplayTZDateTime(endTimeUtc));
         return "$startTimeStr-$endTimeStr";
       }
       else {
-        return DateFormat('EEE, MMM d, yyyy h:mm aaa').format(_appointmentDisplayDateTime(startTimeUtc));
+        return DateFormat('EEE, MMM d, yyyy h:mm aaa').format(AppDateTime().getDisplayTZDateTime(startTimeUtc));
       }
     }
     return null;
@@ -184,9 +184,6 @@ extension AppointmentTimeSlotExt on AppointmentTimeSlot {
   static int? getStartMinutesSinceMidnightUtc(DateTime? startTimeUtc) =>
     (startTimeUtc != null) ? (startTimeUtc.hour * 60 + startTimeUtc.minute) : null;
 }
-
-DateTime _appointmentDisplayDateTime(DateTime utcDateTime) =>
-    AppDateTime().getDateTimeToCompare(dateTimeUtc: utcDateTime) ?? utcDateTime.toUniOrLocal();
 
 ///////////////////////////////
 /// AppointmentType

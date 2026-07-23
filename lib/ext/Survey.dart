@@ -31,26 +31,21 @@ extension SurveyExt on Survey {
       switch(daysDiff) {
         case 0: return Localization().getStringEx('model.explore.date_time.today', 'Today');
         case 1: return Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow');
-        default: return DateFormat(format).format(_surveyDisplayTZDateTime(dateTime));
+        default: return DateFormat(format).format(AppDateTime().getDisplayTZDateTime(dateTime));
       }
     }
     return null;
   }
 
   static int displayDateDiff(DateTime dateTime) {
-    TZDateTime nowDisplay = _surveyDisplayNowTZDateTime();
+    TZDateTime nowDisplay = AppDateTime().getDisplayNowTZDateTime();
     TZDateTime nowMidnightDisplay = TZDateTimeUtils.dateOnly(nowDisplay);
 
-    TZDateTime dateTimeDisplay = _surveyDisplayTZDateTime(dateTime);
+    TZDateTime dateTimeDisplay = AppDateTime().getDisplayTZDateTime(dateTime);
     TZDateTime dateTimeMidnightDisplay = TZDateTimeUtils.dateOnly(dateTimeDisplay);
 
     return dateTimeMidnightDisplay.difference(nowMidnightDisplay).inDays;
   }
-
-  static TZDateTime _surveyDisplayTZDateTime(DateTime utcDateTime) =>
-      (AppDateTime().getDateTimeToCompare(dateTimeUtc: utcDateTime) as TZDateTime?) ?? utcDateTime.toLocalTZ();
-
-  static TZDateTime _surveyDisplayNowTZDateTime() => _surveyDisplayTZDateTime(DateTime.now().toUtc());
 
   bool get isCompleted => (stats?.isSurveyCompleted == true);
 }
