@@ -264,19 +264,12 @@ extension GroupSettingsExt on GroupSettings{
 }
 
 extension GroupContentItemExt on GroupContentItem{
-  static final List<String> availableContentCodes =   ["posts", "events", "messages", "conversations", "polls"];
-  static final List<String> defaultContentCodes =  ["posts", "events", "messages", "conversations", "polls"];
+  static final List<String> availableContentCodes =   ["posts", "events", "messages", "polls"];
+  static final List<String> defaultContentCodes =  ["posts", "events", "messages", "polls"];
 
-  static String getTitleByCode(String code) {
-    switch(code){
-      case 'events' : return 'Events';
-      case 'past_events' : return 'Past Events';
-      case 'posts' : return 'Posts';
-      case 'scheduled' : return 'Scheduled';
-      case 'messages' : return 'Messages';
-      case 'polls' : return 'Polls';
-      default : return "unknown";
-    }
+  static String? getTitleByCode(String code) {
+    DetailTab? tab = getDetailTabByCode(code);
+    return tab?.title;
   }
   
   static DetailTab? getDetailTabByCode(String? code){
