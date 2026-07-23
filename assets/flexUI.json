@@ -13,14 +13,14 @@
 				"daily_illini", "illini_radio", "illordle",
 				"safewalk_request", "saferides", "safety_resources",
 				"recent_items",
-				"wellness_resources", "wellness_mental_health", "wellness_todo", "wellness_rings", "wellness_tips",
+				"wellness_resources", "wellness_mental_health", "wellness_rings", "wellness_tips",
 				"my_appointments", "my_mtd_stops", "my_locations"
 			],
 			"home.system": ["tout", "welcome_message", "emergency", "voter_registration", "connect"],
 			"home.connect": ["netid", "phone_or_email"],
 
 			"browse": ["academics", "appointments", "athletics", "campus_guide", "career_exploration", "dining", "directory", "events", "laundry", "groups", "messages", "mtd", "my", "polls", "music_and_news", "recent", "safety", "sexual_misconduct", "surveys", "research_projects", "wellness"],
-			"browse.academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "academic_links", "my_illini"],
+			"browse.academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "campus_reminders", "academic_links", "my_illini"],
 			"browse.appointments": ["appointments"],
 			"browse.athletics": ["sport_events", "sport_news", "sport_teams", "my_game_day"],
 			"browse.laundry": ["laundry"],
@@ -56,7 +56,7 @@
 			"authenticate.linked.phone": ["info", "remove", "verify"],
 			"authenticate.linked.email": ["info", "remove", "verify"],
 	
-			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academic_links", "academics_events", "todo_list", "skills_self_evaluation", "essential_skills_coach", "my_illini", "skills_dashboard"],
+			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academic_links", "academics_events", "skills_self_evaluation", "essential_skills_coach", "my_illini", "skills_dashboard"],
 			"academics.appointments.features": ["authentication", "netid_login"],
 
 			"career_exploration.skills_self_evaluation.features": ["authentication", "login"],
