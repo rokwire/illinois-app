@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed processing of group message Firebase notifications [#5581](https://github.com/rokwire/illinois-app/issues/5581).
 - Fixed scroll position on content extension in group's conversation messages panel [#5581](https://github.com/rokwire/illinois-app/issues/5581).
+- Removed the forgotten "conversations" test code for group content [#5895](https://github.com/rokwire/illinois-app/issues/5581).
 ### Added
 - Added support for group-all conversaion type and individual broadcast message [#5767](https://github.com/rokwire/illinois-app/issues/5767).
 - Added 'My Digital Business Card' to the wallet [#5867](https://github.com/rokwire/illinois-app/issues/5867).

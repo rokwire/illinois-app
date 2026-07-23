@@ -754,31 +754,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
 
     List<Widget> tabs = [];
     for (DetailTab? tab in _tabs! ) {
-      String title;
-      switch (tab) {
-        case DetailTab.Events:
-          title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
-          break;
-        case DetailTab.PastEvents:
-          title = Localization().getStringEx("panel.group_detail.button.past_events.title", 'Past Events');
-          break;
-        case DetailTab.Posts:
-          title = Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
-          break;
-        case DetailTab.ScheduledPosts:
-          title = Localization().getStringEx("panel.group_detail.button.schediled_posts.title", 'Scheduled');
-          break;
-        case DetailTab.Messages:
-          title = Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
-          break;
-        case DetailTab.Polls:
-          title = Localization().getStringEx("panel.group_detail.button.polls.title", 'Polls');
-          break;
-        // case DetailTab.About:
-        //   title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
-        //   break;
-        default: title = "Unknown";
-      }
+      String title = tab?.title ?? "Unknown";
 
       Tab tabWidget = Tab(/* text: title */ child:
         Container(
@@ -2831,3 +2807,16 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
   }
 }
 
+extension DetailTabImpl on DetailTab {
+  String get title {
+    switch (this) {
+      case DetailTab.Events: return Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
+      case DetailTab.PastEvents: return Localization().getStringEx("panel.group_detail.button.past_events.title", 'Past Events');
+      case DetailTab.Posts: return Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
+      case DetailTab.ScheduledPosts: return Localization().getStringEx("panel.group_detail.button.schediled_posts.title", 'Scheduled');
+      case DetailTab.Messages: return Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
+      case DetailTab.Polls: return Localization().getStringEx("panel.group_detail.button.polls.title", 'Polls');
+      // case DetailTab.About: return Localization().getStringEx("panel.group_detail.button.about.title", 'About');
+    }
+  }
+}
