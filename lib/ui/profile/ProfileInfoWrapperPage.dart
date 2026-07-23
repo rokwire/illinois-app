@@ -13,7 +13,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum ProfileInfoWrapperContent { info, share }
+enum ProfileInfoWrapperContent { profile, businessCard }
 
 class ProfileInfoWrapperPage extends StatefulWidget {
 
@@ -78,13 +78,13 @@ class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> with Not
 
   Widget get _pageWidget {
     switch(widget.content) {
-      case ProfileInfoWrapperContent.info: return ProfileInfoPage(
+      case ProfileInfoWrapperContent.profile: return ProfileInfoPage(
         key: _profileInfoKey,
-        params: widget.contentParams(ProfileInfoWrapperContent.info),
+        params: widget.contentParams(ProfileInfoWrapperContent.profile),
       );
 
-      case ProfileInfoWrapperContent.share: return ProfileBusinessCardPage(
-        params: widget.contentParams(ProfileInfoWrapperContent.share)
+      case ProfileInfoWrapperContent.businessCard: return ProfileBusinessCardPage(
+        params: widget.contentParams(ProfileInfoWrapperContent.businessCard)
       );
     }
   }
@@ -123,15 +123,15 @@ class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> with Not
 
   String get _featureName {
     switch(widget.content) {
-      case ProfileInfoWrapperContent.info: return Localization().getStringEx('panel.profile.info_and_directory.message.signed_out.feature.info', 'your profile');
-      case ProfileInfoWrapperContent.share: return Localization().getStringEx('panel.profile.info_and_directory.message.signed_out.feature.share', 'your Digital Business Card');
+      case ProfileInfoWrapperContent.profile: return Localization().getStringEx('panel.profile.info_and_directory.message.signed_out.feature.info', 'your profile');
+      case ProfileInfoWrapperContent.businessCard: return Localization().getStringEx('panel.profile.info_and_directory.message.signed_out.feature.share', 'your Digital Business Card');
     }
   }
 
   String get _signInLinkText {
     switch(widget.content) {
-      case ProfileInfoWrapperContent.info: return Localization().getStringEx('panel.profile.info_and_directory.message.signed_out.link.login', "sign in");
-      case ProfileInfoWrapperContent.share: return Localization().getStringEx('panel.profile.info_and_directory.message.signed_out.link_oidc.login', "sign in with your NetID");
+      case ProfileInfoWrapperContent.profile: return Localization().getStringEx('panel.profile.info_and_directory.message.signed_out.link.login', "sign in");
+      case ProfileInfoWrapperContent.businessCard: return Localization().getStringEx('panel.profile.info_and_directory.message.signed_out.link_oidc.login', "sign in with your NetID");
     }
   }
 
@@ -152,8 +152,8 @@ class ProfileInfoWrapperPageState extends State<ProfileInfoWrapperPage> with Not
 
   bool get _isLoggedIn {
     switch(widget.content) {
-      case ProfileInfoWrapperContent.info: return Auth2().isLoggedIn;
-      case ProfileInfoWrapperContent.share: return Auth2().isOidcLoggedIn;
+      case ProfileInfoWrapperContent.profile: return Auth2().isLoggedIn;
+      case ProfileInfoWrapperContent.businessCard: return Auth2().isOidcLoggedIn;
     }
   }
 }

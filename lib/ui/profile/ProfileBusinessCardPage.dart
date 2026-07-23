@@ -447,18 +447,21 @@ class _ProfileBusinessCardWidgetState extends State<ProfileBusinessCardWidget> {
 
   void _onTapEditProfile() {
     Analytics().logSelect(target: 'Edit My Info');
-    /*ProfileHomePanel.present(context,
-      contentType: ProfileContentType.profile,
-      contentParams: {
-        ProfileInfoPage.editParamKey : true,
-      }
-    );*/
-    NotificationService().notify(ProfileHomePanel.notifySelectContent, [
-      ProfileContentType.profile,
-      <String, dynamic>{
-        ProfileInfoPage.editParamKey : true,
-      }
-    ]);
+    if (ProfileHomePage.of(context) != null) {
+      NotificationService().notify(ProfileHomePanel.notifySelectContent, [
+        ProfileContentType.profile,
+        <String, dynamic>{
+          ProfileInfoPage.editParamKey : true,
+        }
+      ]);
+    } else {
+      ProfileHomePanel.present(context,
+        contentType: ProfileContentType.profile,
+        contentParams: {
+          ProfileInfoPage.editParamKey : true,
+        }
+      );
+    }
   }
 
   Future<String?> _saveImage({bool addToGallery = false} ) async {

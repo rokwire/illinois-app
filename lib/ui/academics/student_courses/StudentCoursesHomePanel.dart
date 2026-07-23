@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import 'dart:math' as math;
+
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -25,6 +28,7 @@ import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesCalendarContentWidget.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesListContentWidget.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesMapContentWidget.dart';
+import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -67,6 +71,9 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
   bool _loading = false;
 
   late StudentCoursesViewType _selectedViewType;
+
+  double? _termsDropdownWidth;
+  double? _viewTypeDropdownWidth;
 
   @override
   void initState() {
@@ -184,32 +191,33 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
 
   Widget _buildTermsDropDown() {
     StudentCourseTerm? currentTerm = StudentCourses().displayTerm;
+    _termsDropdownWidth ??= _evaluateTermsDropdownWidth();
 
     return Visibility(visible: CollectionUtils.isNotEmpty(StudentCourses().terms), child:
-      Container(
-        padding: EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: Styles().colors.white,
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-          borderRadius: BorderRadius.circular(28),
-        ),
-        child: Semantics(label: currentTerm?.name, hint: Localization().getStringEx('panel.student_courses.term_dropdown.hint', 'Double tap to select term'), button: true, container: true, child:
-          DropdownButtonHideUnderline(child: StudentCoursesHomePanel.wrapDropDownTheme(
-            DropdownButton<String>(
-              icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('chevron-down', excludeFromSemantics: true)),
-              isExpanded: false,
-              dropdownColor: Styles().colors.white,
-              focusColor: Styles().colors.white,
-              borderRadius: StudentCoursesHomePanel.dropdownMenuBorderRadius,
-              style: _getDropDownItemStyle(),
-              hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: _getDropDownItemStyle()) : null,
-              items: _buildTermDropDownItems(),
-              onChanged: _onTermDropDownValueChanged,
+      Semantics(label: currentTerm?.name, hint: Localization().getStringEx('panel.student_courses.term_dropdown.hint', 'Double tap to select term'), button: true, container: true, child:
+        DropdownButtonHideUnderline(child:
+          DropdownButton2<String>(
+            dropdownStyleData: DropdownStyleData(width: _termsDropdownWidth, padding: EdgeInsets.zero),
+            buttonStyleData: ButtonStyleData(overlayColor: WidgetStateProperty.all(Colors.transparent)),
+            customButton: Map2FilterTextButton(
+              title: currentTerm?.name ?? '',
+              rightIcon: Styles().images.getImage('chevron-down'),
             ),
-          )),
+            isExpanded: false,
+            items: _buildTermDropDownItems(),
+            onChanged: _onTermDropDownValueChanged,
+          ),
         ),
       ),
     );
+  }
+
+  double _evaluateTermsDropdownWidth() {
+    double width = 0;
+    for (StudentCourseTerm term in StudentCourses().terms ?? <StudentCourseTerm>[]) {
+      width = math.max(width, _measureDropDownItemTextWidth(term.name ?? ''));
+    }
+    return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width / 2);
   }
 
   List<DropdownMenuItem<String>>? _buildTermDropDownItems() {
@@ -260,30 +268,38 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
   }
 
   Widget _buildViewTypeDropDown() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: Styles().colors.white,
-        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-        borderRadius: BorderRadius.circular(28),
-      ),
-      child: Semantics(label: _selectedViewType.pillTitle, hint: Localization().getStringEx('panel.student_courses.view_type_dropdown.hint', 'Double tap to select view'), button: true, container: true, child:
-        DropdownButtonHideUnderline(child: StudentCoursesHomePanel.wrapDropDownTheme(
-          DropdownButton<StudentCoursesViewType>(
-            icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('chevron-down', excludeFromSemantics: true)),
-            isExpanded: false,
-            dropdownColor: Styles().colors.white,
-            focusColor: Styles().colors.white,
-            borderRadius: StudentCoursesHomePanel.dropdownMenuBorderRadius,
-            style: _getDropDownItemStyle(),
-            hint: Text(_selectedViewType.pillTitle, style: _getDropDownItemStyle()),
-            items: _buildViewTypeDropDownItems(),
-            onChanged: _onViewTypeDropDownValueChanged,
+    _viewTypeDropdownWidth ??= _evaluateViewTypeDropdownWidth();
+
+    return Semantics(label: _selectedViewType.pillTitle, hint: Localization().getStringEx('panel.student_courses.view_type_dropdown.hint', 'Double tap to select view'), button: true, container: true, child:
+      DropdownButtonHideUnderline(child:
+        DropdownButton2<StudentCoursesViewType>(
+          dropdownStyleData: DropdownStyleData(width: _viewTypeDropdownWidth, padding: EdgeInsets.zero),
+          buttonStyleData: ButtonStyleData(overlayColor: WidgetStateProperty.all(Colors.transparent)),
+          customButton: Map2FilterTextButton(
+            title: _selectedViewType.pillTitle,
+            rightIcon: Styles().images.getImage('chevron-down'),
           ),
-        )),
+          isExpanded: false,
+          items: _buildViewTypeDropDownItems(),
+          onChanged: _onViewTypeDropDownValueChanged,
+        ),
       ),
     );
   }
+
+  double _evaluateViewTypeDropdownWidth() {
+    double width = 0;
+    for (StudentCoursesViewType viewType in StudentCoursesViewType.values) {
+      width = math.max(width, _measureDropDownItemTextWidth(viewType.pillTitle));
+    }
+    return math.min(width + 3 * 18 + 4, MediaQuery.of(context).size.width / 2);
+  }
+
+  double _measureDropDownItemTextWidth(String text) => (TextPainter(
+    text: TextSpan(text: text, style: _getDropDownItemStyle(bold: true)),
+    textScaler: MediaQuery.of(context).textScaler,
+    textDirection: TextDirection.ltr,
+  )..layout()).size.width;
 
   List<DropdownMenuItem<StudentCoursesViewType>> _buildViewTypeDropDownItems() {
     return StudentCoursesViewType.values.map((StudentCoursesViewType viewType) =>

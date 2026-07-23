@@ -43,7 +43,11 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [ Social.notifyConversationsUpdated ]);
+    NotificationService().subscribe(this, [
+      Social.notifyConversationsUpdated,
+      Social.notifyMessageSent,
+      Social.notifyMessageEdited,
+    ]);
     widget.updateController?.stream.listen(_onUpdate);
     _initConversations();
     super.initState();
@@ -65,7 +69,9 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Social.notifyConversationsUpdated) {
+    if ((name == Social.notifyConversationsUpdated) ||
+        (name == Social.notifyMessageSent) ||
+        (name == Social.notifyMessageEdited)) {
       if (mounted) {
         _refreshConversations();
       }
@@ -84,7 +90,7 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
     else if (_conversations == null) {
       return _messageContent(Localization().getStringEx('', 'Failed to load groups messages'));
     }
-    else if (_conversations?.isEmpty == true) {
+    else if (_conversations?.isNotEmpty != true) {
       return _messageContent(Localization().getStringEx('', 'No group messages'));
     }
     else {
@@ -180,7 +186,7 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
       setStateIfMounted(() {
         _conversationsActivity = ContentActivity.reload;
       });
-      List<Conversation>? conversations = await Social().loadConversations(contextId: widget.group?.id, type: ConversationType.groupSubset);
+      List<Conversation>? conversations = await Social().loadConversations(contextId: widget.group?.id);
       if ((_conversationsActivity == ContentActivity.reload) && mounted)
       setState(() {
         _conversationsActivity = null;
@@ -217,7 +223,8 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
 
   void _onTapConversation(Conversation conversation) {
     Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
-      GroupConversationPanel(conversation,
+      GroupConversationPanel(
+        conversation: conversation,
         group: widget.group,
         groupAdmins: widget.groupAdmins,
         analyticsFeature: widget.analyticsFeature,
@@ -251,7 +258,7 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
         setState(() {
           _selectedConversationsProgress = true;
         });
-        bool? deleteSucceeded = await Social().deleteConverstions(conversationIds: List.from(_selectedConversations));
+        bool? deleteSucceeded = await Social().deleteConverstions(List.from(_selectedConversations));
         if (mounted) {
           if (deleteSucceeded == true) {
             setState(() {

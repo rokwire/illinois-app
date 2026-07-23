@@ -1,10 +1,13 @@
 
 import 'dart:async';
 import 'dart:math';
+import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:illinois/ext/Content.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -18,19 +21,24 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
+import 'package:rokwire_plugin/service/content.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 class GroupConversationPanel extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
-  final Conversation conversation;
+  final Conversation? conversation;
+  final String? targetMessageId;
+  final String? targetMessageGlobalId;
   final AnalyticsFeature? analyticsFeature;
 
-  GroupConversationPanel(this.conversation, { super.key, this.group, this.groupAdmins, this.analyticsFeature });
+  GroupConversationPanel({ super.key, this.conversation, this.group, this.groupAdmins, this.targetMessageId, this.targetMessageGlobalId, this.analyticsFeature });
 
   @override
   State<StatefulWidget> createState() => _GroupConversationPanelState();
@@ -45,6 +53,9 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   _ContentActivity? _contentActivity;
   bool? _lastPageLoadedAll;
   static const int _contentPageLength = 8;
+
+  Group? _group;
+  List<Member>? _groupAdmins;
 
   Map<String, GlobalKey> _cardKeys = <String, GlobalKey>{};
 
@@ -62,6 +73,13 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   bool get _isEditingMessage => (_editingMessageIdentityKey?.isNotEmpty == true);
   GlobalKey? get _editingMessageCardKey => _isEditingMessage ? _cardKeys[_editingMessageIdentityKey] : null;
 
+  String? get _targetMessageIdentityKey => (widget.targetMessageGlobalId?.isNotEmpty == true) ?
+    _cardKeys.keys.firstWhereOrNull((String identityKey) => MessageExt.matchIdentityKey(identityKey, messageGlobalId: widget.targetMessageGlobalId)) : null;
+  GlobalKey? get _targetMessageKey => _cardKeys[_targetMessageIdentityKey];
+
+  bool get _isConversation => (widget.conversation?.id?.isNotEmpty == true);
+  bool get _isGroupBroadcastMessage => ((widget.conversation?.id?.isNotEmpty != true)) && (_group?.id?.isNotEmpty == true);
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -70,7 +88,9 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     _keyboardVisibilityController = KeyboardVisibilityController();
     _keyboardSubscription = _keyboardVisibilityController.onChange.listen(_onKeyboardVisibilityChanged);
     _scrollController.addListener(_scrollListener);
-    _reloadContent();
+    _group = widget.group;
+    _groupAdmins = widget.groupAdmins;
+    initContent();
     super.initState();
   }
 
@@ -102,26 +122,33 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   );
 
   Widget get _bodyWidget {
-    if (_contentActivity == _ContentActivity.reload) {
-      return _loadingContent;
+    if (_isConversation) {
+      if (_contentActivity == _ContentActivity.reload) {
+        return _loadingContent;
+      }
+      //else if (_contentActivity == _ContentActivity.refresh) {
+      //  return Container();
+      //}
+      else if ((_contentList == null)) {
+        return _buildMessageContent(Localization().getStringEx('', 'Failed to load messages'),
+          title: Localization().getStringEx('common.label.failed', 'Failed')
+        );
+      }
+      else {
+        return _messagesContent;
+      }
     }
-    else if (_contentActivity == _ContentActivity.refresh) {
-      return Container();
-    }
-    else if (_contentList == null) {
-      return _buildMessageContent(Localization().getStringEx('', 'Failed to load messages'),
-        title: Localization().getStringEx('common.label.failed', 'Failed')
-      );
-    }
-    else {
+    else if (_isGroupBroadcastMessage) {
       return _messagesContent;
+    } else {
+      return Container();
     }
   }
 
   Widget get _messagesContent =>
   Column(children: [
     Stack(children: <Widget>[
-      GroupConversationHeader(widget.conversation, group: widget.group, groupAdmins: widget.groupAdmins),
+      GroupConversationHeader(conversation: widget.conversation, group: _group, groupAdmins: _groupAdmins),
       _hideKeyboardLayer,
     ],),
     Expanded(child:
@@ -139,9 +166,10 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       focusNode: _editFocusNode,
       title: _isEditingMessage ? Localization().getStringEx('', 'EDiT') : Localization().getStringEx('', 'REPLY'),
       text: _isEditingMessage ? _editingMessageText : null,
-      showSubmitProgress: _isEditingMessage,
-      onSubmitMessage: (widget.conversation.id?.isNotEmpty == true) ? _onSubmitMessage : null,
+      showSubmitProgress: true,
+      onSubmitMessage: _onSubmitMessage,
       onCancelEdit: _isEditingMessage ? _onCancelEdit : null,
+      canEditAttachments: (_isEditingMessage == false),
     ),
   ],);
 
@@ -165,8 +193,8 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
         GroupConversationMessageCard(message,
           key: ((messageIdentityKey != null) && messageIdentityKey.isNotEmpty) ? (_cardKeys[messageIdentityKey] ??= GlobalKey()) : null,
           conversation: widget.conversation,
-          group: widget.group,
-          //groupMember: MemberExt.getMember(widget.groupAdmins, userId: message.sender?.accountId),
+          group: _group,
+          //groupMember: MemberExt.getMember(_groupAdmins, userId: message.sender?.accountId),
           onCommand: () => _onMessageCommand(message),
           commandProgress: ((_deletingMessageId != null) && (_deletingMessageId == message.globalId)),
           commandIcon: ((messageIdentityKey != null) && messageIdentityKey.isNotEmpty && (messageIdentityKey == editingMessageIdentityKey)) ? _editingMessageIcon : null,
@@ -231,21 +259,77 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   int get _listSafeContentLength => _contentList?.length ?? 0;
   int get _refreshContentLength => max(_listSafeContentLength, _contentPageLength);
 
-  Future<void> _reloadContent({ int limit = _contentPageLength }) async {
-    if ((_contentActivity != _ContentActivity.reload) && mounted) {
+  Future<void> initContent() async {
+    if (_isConversation && (_contentActivity != _ContentActivity.reload) && mounted) {
+      String? conversationGroupId = (widget.conversation?.type?.isGroup == true) ? widget.conversation?.context?.identifier : null;
+      List<Future<dynamic>> futures = [];
+
+      int messagesIndex = futures.length;
+      futures.add(_loadMessages(
+        conversationId: widget.conversation?.id ?? '',
+        offset: 0,
+        limit: _contentPageLength,
+        extendLimitToMessageId: (widget.targetMessageGlobalId == null) ? widget.targetMessageId : null,
+        extendLimitToGlobalMessageId: widget.targetMessageGlobalId,
+      ));
+
+      int? groupIndex = ((widget.group == null) && (conversationGroupId != null) && conversationGroupId.isNotEmpty) ? futures.length : null;
+      if (groupIndex != null) {
+        futures.add(Groups().loadGroup(conversationGroupId));
+      }
+
+      int? groupAdminsIndex = ((widget.groupAdmins == null) && (conversationGroupId != null) && conversationGroupId.isNotEmpty) ? futures.length : null;
+      if (groupAdminsIndex != null) {
+        futures.add(Groups().loadMembers(groupId: conversationGroupId, statuses: [GroupMemberStatus.admin]));
+      }
+
+      if (futures.isNotEmpty) {
+        setState(() {
+          _contentActivity = _ContentActivity.reload;
+        });
+        List<dynamic> results = await Future.wait(futures);
+
+        List<Message>? contentList = ((messagesIndex < results.length) && (results[messagesIndex] is List<Message>)) ? results[messagesIndex] : null;
+        Group? group = ((groupIndex != null) && (groupIndex < results.length) && (results[groupIndex] is Group)) ? results[groupIndex] : null;
+        List<Member>? groupAdmins = ((groupAdminsIndex != null) && (groupAdminsIndex < results.length) && (results[groupAdminsIndex] is List<Member>)) ? results[groupAdminsIndex] : null;
+
+        if (mounted && (_contentActivity == _ContentActivity.reload)) {
+          setState(() {
+            _contentGlobalIds.clear();
+            _contentList = (contentList != null) ? widget.conversation?.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds) : null;
+            _lastPageLoadedAll = (contentList != null) ? ((widget.targetMessageGlobalId == null) && (contentList.length >= _contentPageLength)) : null;
+            if (group != null) {
+              _group = group;
+            }
+            if (groupAdmins != null) {
+              _groupAdmins = groupAdmins;
+            }
+            _contentActivity = null;
+          });
+
+          WidgetsBinding.instance.addPostFrameCallback((_) =>
+            (widget.targetMessageGlobalId != null) ? _jumpToTargetMessage() : _jumpToLast()
+          );
+        }
+      }
+    }
+  }
+
+  /*Future<void> _reloadContent({ int limit = _contentPageLength }) async {
+    if (_isConversation && (_contentActivity != _ContentActivity.reload) && mounted) {
       setState(() {
         _contentActivity = _ContentActivity.reload;
       });
 
-      List<Message>? contentList = await Social().loadConversationMessages(
-        conversationId: widget.conversation.id ?? '',
+      List<Message>? contentList = await _loadMessages(
+        conversationId: widget.conversation?.id ?? '',
         offset: 0, limit: limit,
       );
 
       if (mounted && (_contentActivity == _ContentActivity.reload)) {
         setState(() {
           _contentGlobalIds.clear();
-          _contentList = (contentList != null) ? widget.conversation.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds) : null;
+          _contentList = (contentList != null) ? widget.conversation?.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds) : null;
           _lastPageLoadedAll = (contentList != null) ? (contentList.length >= limit) : null;
           _contentActivity = null;
         });
@@ -253,17 +337,17 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
         WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToLast());
       }
     }
-  }
+  }*/
 
   Future<void> _refreshContent({ _ContentActivity activity = _ContentActivity.refresh }) async {
-    if (((_contentActivity != _ContentActivity.reload) && (_contentActivity != activity)) && mounted) {
+    if (_isConversation && (_contentActivity != _ContentActivity.reload) && (_contentActivity != activity) && mounted) {
       setState(() {
         _contentActivity = activity;
       });
 
       int contentLength = _refreshContentLength;
-      List<Message>? contentList = await Social().loadConversationMessages(
-        conversationId: widget.conversation.id ?? '',
+      List<Message>? contentList = await _loadMessages(
+        conversationId: widget.conversation?.id ?? '',
         offset: 0, limit: contentLength,
       );
 
@@ -271,7 +355,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
         setState(() {
           if (contentList != null) {
             _contentGlobalIds.clear();
-            _contentList = widget.conversation.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds);
+            _contentList = widget.conversation?.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds);
             _lastPageLoadedAll = (contentList.length >= contentLength);
           }
           _contentActivity = null;
@@ -282,15 +366,26 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   }
 
   Future<void> _extendContent() async {
-    if ((_contentActivity == null) && mounted) {
+    if (_isConversation && (_contentActivity == null) && mounted) {
+      double? initialScrollExtent = _maxScrollExtent;
+      double scrollOffset = _scrollController.offset;
+
       setState(() {
         _contentActivity = _ContentActivity.extend;
       });
 
+      late double loadingScrollExtent;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        loadingScrollExtent = _maxScrollExtent;
+        if ((initialScrollExtent < loadingScrollExtent)) {
+          _scrollController.jumpTo(loadingScrollExtent - initialScrollExtent + scrollOffset);
+        }
+      });
+
       int contentOffset = _contentList?.length ?? 0;
       int contentLength = _contentPageLength;
-      List<Message>? contentList = await Social().loadConversationMessages(
-        conversationId: widget.conversation.id ?? '',
+      List<Message>? contentList = await _loadMessages(
+        conversationId: widget.conversation?.id ?? '',
         offset: contentOffset, limit: contentLength,
       );
 
@@ -298,27 +393,68 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
         setState(() {
           if (contentList != null) {
             if (_contentList != null) {
-              _contentList?.addAll(widget.conversation.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds, mustCopy: false));
+              _contentList?.addAll(widget.conversation?.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds, mustCopy: false) ?? <Message>[]);
             } else {
-              _contentList = widget.conversation.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds);
+              _contentList = widget.conversation?.buildDisplayMessageList(contentList, globalMessageIds: _contentGlobalIds);
             }
             _lastPageLoadedAll = (contentList.length >= contentLength);
           }
           _contentActivity = null;
         });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          double newScrollExtent = _maxScrollExtent;
+          if ((loadingScrollExtent < newScrollExtent)) {
+            _scrollController.jumpTo(newScrollExtent - loadingScrollExtent);
+          }
+        });
       }
     }
   }
 
+  static Future<List<Message>?> _loadMessages({
+      required String conversationId,
+      int offset = 0, int limit = _contentPageLength,
+      String? extendLimitToMessageId, String? extendLimitToGlobalMessageId
+  }) async {
+
+    List<Message>? contentList = await Social().loadConversationMessages(
+      conversationId: conversationId,
+      offset: offset, limit: limit,
+      extendLimitToMessageId: extendLimitToMessageId,
+      extendLimitToGlobalMessageId: extendLimitToGlobalMessageId,
+    );
+
+    if ((contentList != null) && contentList.isNotEmpty) {
+      List<String> fileKeys = MessageExt.collectAttachmentFileKeysFromList(contentList);
+      if (fileKeys.isNotEmpty) {
+        List<FileContentItemReference>? fileRefsList = await Content().getFileContentDownloadUrls(fileKeys, Content.conversationsContentCategory, /* entityId: conversationId */);
+        if ((fileRefsList != null) && fileRefsList.isNotEmpty) {
+          MessageExt.applyContentRefsToList(contentList, fileRefsMap: FileContentItemReferenceUtils.mapList(fileRefsList));
+        }
+      }
+    }
+
+    return contentList;
+  }
+
   void _scrollListener() {
     double scrollOffset = _scrollController.offset;
-    if ((scrollOffset <= 0) && (_hasMoreContent != false) && (_contentActivity == null)) {
+    if (_isConversation && (scrollOffset <= 0) && (_hasMoreContent != false) && (_contentActivity == null)) {
       _extendContent();
     }
   }
 
   void _jumpToLast() =>
     _scrollController.jumpTo(_maxScrollExtent);
+
+  void _jumpToTargetMessage()  {
+    BuildContext? targetMessageContext = _targetMessageKey?.currentContext;
+    if ((targetMessageContext != null) && targetMessageContext.mounted) {
+      Scrollable.ensureVisible(targetMessageContext, alignment: 0.5, duration: _scrollAnimationDuration, curve: _scrollAnimationCurve);
+    } else {
+      _scrollController.animateTo(_maxScrollExtent, duration: _scrollAnimationDuration, curve: _scrollAnimationCurve);
+    }
+  }
 
   void _onKeyboardVisibilityChanged(bool visible) {
     if (visible) {
@@ -364,20 +500,32 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
 
   void _onFirebaseSocialMessageNotification(dynamic param) {
     String? conversationId = (param is Map<String, dynamic>) ? JsonUtils.stringValue(param['entity_id']) : null;
-    if (conversationId == widget.conversation.id) {
+    if (conversationId == widget.conversation?.id) {
       _refreshContent(activity: _ContentActivity.update);
     }
   }
 
-  Future<bool> _onSubmitMessage(String message) =>
-    _isEditingMessage ? _onUpdateMessage(message) : _onSendMessage(message);
+  Future<bool> _onSubmitMessage(String message, { Iterable<dynamic>? attachments }) async {
+    if (_isEditingMessage) {
+      return _onUpdateMessage(message);
+    } else if (_isConversation) {
+      return _onSendMessage(message, attachments: attachments);
+    } else if (_isGroupBroadcastMessage) {
+      return _onBroadcastMessage(message, attachments: attachments);
+    } else {
+      return false;
+    }
+  }
 
-  Future<bool> _onSendMessage(String message) async {
+  Future<bool> _onSendMessage(String message, { Iterable<dynamic>? attachments }) async {
+    // Upload attached files
+    List<FileAttachment>? fileAttachments = ((attachments != null) && attachments.isNotEmpty) ? await _uploadAttachments(attachments) : null;
+
     // Create a temporary message and add it immediately
     Message tempMessage = Message(
       sender: ConversationMember(accountId: Auth2().accountId, name: Auth2().fullName ?? ''),
       message: message,
-      //fileAttachments: fileAttachments,
+      fileAttachments: fileAttachments,
       dateSentUtc: DateTime.now().toUtc(),
     );
 
@@ -388,14 +536,25 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToLast());
 
     List<Message>? newMessages = await Social().createConversationMessage(
-      conversationId: widget.conversation.id ?? '',
+      conversationId: widget.conversation?.id ?? '',
       message: message,
-      //fileAttachments: fileAttachments,
+      fileAttachments: fileAttachments,
     );
 
-    if (mounted) {
-      Message? newMessage = newMessages?.firstOrNull;
+    Message? newMessage = newMessages?.firstOrNull;
 
+    // Populate attachment URLs
+    List<FileAttachment>? newMessageAttachments = newMessage?.fileAttachments;
+    if ((newMessageAttachments != null) && newMessageAttachments.isNotEmpty && (fileAttachments != null) && fileAttachments.isNotEmpty) {
+      Map<String, FileAttachment> attachmentsMap = FileAttachmentUtils.mapList(fileAttachments);
+      for (FileAttachment newMessageAttachment in newMessageAttachments) {
+        if (newMessageAttachment.url?.isNotEmpty != true) {
+          newMessageAttachment.url = attachmentsMap[newMessageAttachment.id]?.url;
+        }
+      }
+    }
+
+    if (mounted) {
       int? index = _contentList?.indexOf(tempMessage);
       if ((index != null) && (index >= 0)) {
         setState(() {
@@ -408,6 +567,12 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       }
 
       if (newMessage != null) {
+        if ((attachments != null) && attachments.isNotEmpty) {
+          int failedFileCount = attachments.length - (fileAttachments?.length ?? 0);
+          if (0 < failedFileCount) {
+            AppAlert.showDialogResult(context, sprintf(Localization().getStringEx('panel.messages.conversation.upload.failed.message', 'Failed to upload %s file(s)'), [failedFileCount]));
+          }
+        }
         return true;
       } else {
         AppAlert.showDialogResult(context, Localization().getStringEx('', 'Failed to send message.'));
@@ -416,6 +581,61 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     } else {
       return false;
     }
+  }
+
+  Future<List<FileAttachment>?> _uploadAttachments(Iterable<dynamic> attachments) async {
+
+    List<dynamic> attachmentsList = <dynamic>[];
+    Map<String, FutureOr<Uint8List?>> dataToUpload = <String, FutureOr<Uint8List?>>{};
+    Map<String, AttachmentFileType> dataTypes = <String, AttachmentFileType>{};
+    for (dynamic attachment in attachments) {
+      if (attachment is FileAttachment) {
+        attachmentsList.add(attachment);
+      } else {
+        AttachmentDetails? details = AttachmentDetails.fromAttachment(attachment);
+        String? name = details?.name;
+        if (name != null) {
+          FutureOr<Uint8List?> data = details?.asyncOrData;
+          if (data != null) {
+            dataToUpload[name] = data;
+          }
+          AttachmentFileType? type = AttachmentFileTypeImpl.fromAttachment(attachment);
+          if (type != null) {
+            dataTypes[name] = type;
+          }
+          attachmentsList.add(name);
+        }
+      }
+    }
+
+    List<FileContentItemReference>? uploadedRefs = await Content().uploadFileContentItems(dataToUpload, Content.conversationsContentCategory, /* entityId: widget.conversation?.id */ );
+    Map<String, FileContentItemReference>? uploadedRefOnNameMap = (uploadedRefs != null) ? FileContentItemReferenceUtils.mapList(uploadedRefs, keyAccess: FileContentItemReferenceUtils.accessRefName) : null;
+
+    Map<String, FileContentItemReference>? uploadedUrlRefsOnKeyMap;
+    if ((uploadedRefs != null) && uploadedRefs.isNotEmpty) {
+      List<String> uploadedKeys = uploadedRefs.map((ref) => ref.key).nonNulls.toList();
+      if (uploadedKeys.isNotEmpty) {
+        List<FileContentItemReference>? uploadedUrlRefs = await Content().getFileContentDownloadUrls(uploadedKeys, Content.conversationsContentCategory, /* entityId: widget.conversation?.id */);
+        if ((uploadedUrlRefs != null) && uploadedUrlRefs.isNotEmpty) {
+          uploadedUrlRefsOnKeyMap = FileContentItemReferenceUtils.mapList(uploadedUrlRefs);
+        }
+      }
+    }
+
+    List<FileAttachment> attachmentsResult = <FileAttachment>[];
+    for (dynamic attachmentsListEntry in attachmentsList) {
+      if (attachmentsListEntry is FileAttachment) {
+        attachmentsResult.add(attachmentsListEntry);
+      } else if (attachmentsListEntry is String) {
+        FileContentItemReference? uploadedRef = uploadedRefOnNameMap?[attachmentsListEntry];
+        if (uploadedRef != null) {
+          AttachmentFileType? type = dataTypes[attachmentsListEntry];
+          String? uploadedUrl = uploadedUrlRefsOnKeyMap?[uploadedRef.key]?.url ?? uploadedRef.url;
+          attachmentsResult.add(FileAttachment(id: uploadedRef.key, url: uploadedUrl, name: uploadedRef.name, type: type?.name,));
+        }
+      }
+    }
+    return attachmentsResult;
   }
 
   Future<bool> _onUpdateMessage(String message) async {
@@ -428,7 +648,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       }
       else {
         bool success = await Social().updateConversationMessage(
-          conversationId: widget.conversation.id ?? '',
+          conversationId: widget.conversation?.id ?? '',
           globalMessageId: _editingMessage?.globalId ?? '',
           newText: message,
         );
@@ -471,13 +691,38 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     }
   }
 
+  Future<bool> _onBroadcastMessage(String message, { Iterable<dynamic>? attachments }) async {
+    // Upload attached files
+    List<FileAttachment>? fileAttachments = ((attachments != null) && attachments.isNotEmpty) ? await _uploadAttachments(attachments) : null;
+
+    List<Conversation>? conversations = await Social().broadcastIndividualMessage(
+      context: ContextItem.group(_group?.id ?? ''),
+      message: message,
+      fileAttachments: fileAttachments,
+      extraParams: {
+        'all_group_members': true
+      }
+    );
+
+    if (conversations != null) {
+      Navigator.pop(context);
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        GroupConversationReportBroadcastIndividualDialog.show(context);
+      });
+      return true;
+    } else {
+      AppAlert.showDialogResult(context, Localization().getStringEx('', 'Failed to send message.'));
+      return false;
+    }
+  }
+
   Future<void> _onRefresh() async {
     Analytics().logSelect(target: 'Refresh');
     return _refreshContent();
   }
 
   void _onMessageCommand(Message message) {
-    Analytics().logSelect(target: 'Conversation Message Commands', attributes: widget.group?.analyticsAttributes);
+    Analytics().logSelect(target: 'Conversation Message Commands', attributes: _group?.analyticsAttributes);
     showModalBottomSheet(
       context: context,
       backgroundColor: Styles().colors.surface,
@@ -504,7 +749,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
 
   void _onReportMessageAbuse(Message message, {required GroupPostReportAbuseOptions options}) {
     Analytics().logSelect(target: options.analyticsSelectTarget);
-    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbusePanel(options: options, groupId: widget.group?.id ?? '', socialEntityId: message.globalId, socialEntityType: SocialEntityType.message,)));
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbusePanel(options: options, groupId: _group?.id ?? '', socialEntityId: message.globalId, socialEntityType: SocialEntityType.message,)));
   }
 
   void _onDeleteMessage(Message message) async {
@@ -522,7 +767,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
           _deletingMessage = message;
         });
 
-        bool succeeded = await Social().deleteConversationMessage(conversationId: widget.conversation.id ?? '', globalMessageId: message.globalId ?? '');
+        bool succeeded = await Social().deleteConversationMessage(conversationId: widget.conversation?.id ?? '', globalMessageId: message.globalId ?? '');
         if (mounted) {
           setState(() {
             _deletingMessage = null;

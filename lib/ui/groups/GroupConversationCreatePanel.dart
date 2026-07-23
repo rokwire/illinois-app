@@ -8,6 +8,7 @@ import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/groups/GroupConversationPanel.dart';
+import 'package:illinois/ui/groups/GroupConversationWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -188,9 +189,13 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
     ],),
   );
 
-  Widget get _selectAllButton {
+  bool get _allMembersSelected {
     Iterable<String>? allMemberIds = _membersMap?.keys;
-    bool allMembersSelected = (allMemberIds != null) && _selectedMemberIds.containsAll(allMemberIds);
+    return ((allMemberIds != null) && _selectedMemberIds.containsAll(allMemberIds));
+  }
+
+  Widget get _selectAllButton {
+    bool allMembersSelected = _allMembersSelected;
     String buttonTitle = allMembersSelected ?
       Localization().getStringEx('', 'Unselect All') : Localization().getStringEx('', 'Select All');
     String semanticsHint = allMembersSelected ?
@@ -215,13 +220,16 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
           Text(Localization().getStringEx('', 'To: '), style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),),
         ),
         Expanded(child:
-          Wrap(spacing: _selectedMembersWrapSpacing, runSpacing: _selectedMembersWrapSpacing, children:
-            List<Widget>.from(List.from(_selectedMemberIds).reversed.map((memberId) => _SelectedMemberWidget(_membersMap?[memberId] , onRemove: () => _onRemoveMember(memberId),)))
+          Wrap(spacing: _selectedMembersWrapSpacing, runSpacing: _selectedMembersWrapSpacing,
+            children: _allMembersSelected ? <Widget>[_allGroupMembersWidget] : _selectedMembersWidgets
           )
         )
       ],)
     )
   );
+
+  Widget get _allGroupMembersWidget => _SelectedMemberWidget.allGroupMembers(onRemove: _onRemoveAllMembers,);
+  List<Widget> get _selectedMembersWidgets => List<Widget>.from(List.from(_selectedMemberIds).reversed.map((memberId) => _SelectedMemberWidget.member(_membersMap?[memberId] , onRemove: () => _onRemoveMember(memberId),)));
 
   BoxConstraints get _selectedMembersConstraints => BoxConstraints(minHeight: _selectedMembersHeight(1), maxHeight: _selectedMembersHeight(3));
   static double _selectedMembersHeight(int lineNum) => max(lineNum, 0) * _SelectedMemberWidget.height + max(lineNum - 1, 0) * _selectedMembersWrapSpacing + 2 * _selectedMembersSpacing;
@@ -391,7 +399,7 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
       });
     }
   }
-  
+
   void _onSelectAll() {
     Iterable<String>? allMemberIds = _membersMap?.keys;
     if ((allMemberIds != null) && (_selectedMemberIds.containsAll(allMemberIds) != true)) {
@@ -438,34 +446,74 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
     }
   }
 
+  void _onRemoveAllMembers() {
+    Analytics().logSelect(target: 'Remove All Group Member');
+    if (_selectedMemberIds.isNotEmpty) {
+      setState(() {
+        _selectedMemberIds.clear();
+      });
+    }
+  }
+
   bool get _canSubmit => _selectedMemberIds.isNotEmpty;
+
 
   void _onSubmit() async {
     Analytics().logSelect(target: 'Done');
     if (_canSubmit && (_submitting == false)) {
-      setState(() {
-        _submitting = true;
-      });
 
-      Conversation? conversation = await Social().createConversation(
-        type: ConversationType.groupSubset,
-        context: ContextItem.fromGroup(widget.group?.id),
-        memberIds: List.from(_selectedMemberIds)
-      );
-      if (mounted) {
+      ConversationType? conversationType;
+      if (widget.group?.currentUserIsAdmin == true) {
+        if (_allMembersSelected) {
+          GroupConversationCreateOption? createOption = await GroupConversationCreateOptionsDialog.show(context);
+          if (mounted) {
+            if (createOption == GroupConversationCreateOption.groupMessage) {
+              conversationType = ConversationType.groupAll;
+            } else if (createOption == GroupConversationCreateOption.individualMessages) {
+              Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) =>
+                GroupConversationPanel(
+                  group: widget.group,
+                  groupAdmins: widget.groupAdmins,
+                  analyticsFeature: widget.analyticsFeature,
+                )
+              ));
+            }
+          }
+        } else {
+          conversationType = ConversationType.groupSubset;
+        }
+      } else {
+        conversationType = ConversationType.groupSubset;
+      }
+
+      if (mounted && (conversationType != null)) {
+
         setState(() {
           _submitting = true;
         });
-        if (conversation != null) {
-          Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) =>
-            GroupConversationPanel(conversation,
-              group: widget.group,
-              groupAdmins: widget.groupAdmins,
-              analyticsFeature: widget.analyticsFeature,
-            )
-          ));
-        } else {
-          AppAlert.showTextMessage(context, Localization().getStringEx('', 'Failed to create new message'));
+
+        Conversation? conversation = await Social().createConversation(
+          type: conversationType,
+          context: ContextItem.group(widget.group?.id),
+          memberIds: (conversationType != ConversationType.groupAll) ? List.from(_selectedMemberIds) : null,
+        );
+
+        if (mounted) {
+          setState(() {
+            _submitting = false;
+          });
+          if (conversation != null) {
+            Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) =>
+              GroupConversationPanel(
+                conversation: conversation,
+                group: widget.group,
+                groupAdmins: widget.groupAdmins,
+                analyticsFeature: widget.analyticsFeature,
+              )
+            ));
+          } else {
+            AppAlert.showTextMessage(context, Localization().getStringEx('', 'Failed to create new message'));
+          }
         }
       }
     }
@@ -474,21 +522,25 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
 
 class _SelectedMemberWidget extends StatelessWidget {
   final Member? member;
+  final bool? allGroupMembers;
   final void Function()? onRemove;
 
-  _SelectedMemberWidget(this.member, { this.onRemove});
+  _SelectedMemberWidget({ this.member, this.allGroupMembers, this.onRemove});
+
+  factory _SelectedMemberWidget.member(Member? member, { void Function()? onRemove }) =>
+      _SelectedMemberWidget(member: member, onRemove: onRemove,);
+
+  factory _SelectedMemberWidget.allGroupMembers({ void Function()? onRemove }) =>
+      _SelectedMemberWidget(allGroupMembers: true, onRemove: onRemove,);
 
   @override
   Widget build(BuildContext context) =>
     Container(decoration: _widgetDecoration, child:
-      Semantics(
-        label: member?.name ?? '',
-        hint: Localization().getStringEx('', 'Tap to remove ${member?.name ?? ''}'),
-        button: true,
-        child: InkWell(onTap: onRemove, child:
+      Semantics(label: _title ?? '', hint: _semanticsHint, button: true, child:
+        InkWell(onTap: onRemove, child:
           Row(mainAxisSize: MainAxisSize.min, children: [
             Padding(padding: EdgeInsetsGeometry.only(left: _spacing, top: _halfSpacing, bottom: _halfSpacing), child:
-              Text(member?.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
+              Text(_title ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
             ),
             Padding(padding: EdgeInsets.only(left: _halfSpacing, right: _spacing, top: _spacing, bottom: _spacing), child:
               Styles().images.getImage('close', color: Styles().colors.fillColorPrimary, size: _iconSize)
@@ -497,6 +549,13 @@ class _SelectedMemberWidget extends StatelessWidget {
         )
       ),
     );
+
+  String? get _title => (allGroupMembers == true) ?
+    Localization().getStringEx('', 'All Group Members') : member?.name;
+
+  String? get _semanticsHint => (allGroupMembers == true) ?
+    Localization().getStringEx('', 'Tap to remove all group members') :
+    Localization().getStringEx('', 'Tap to remove ${member?.name ?? ''}');
   
   BoxDecoration get _widgetDecoration => BoxDecoration(
     color: Styles().colors.background,

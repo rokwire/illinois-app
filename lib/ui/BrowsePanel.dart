@@ -641,7 +641,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "career_exploration.career_planing_links": _onTapCareerPlaningLinks(context); break;
       case "career_exploration.interest_explorer": _onTapInterestExplorer(context); break;
-      case "career_exploration.digital_card": _onTapDigitalCard(context); break;
+      case "career_exploration.business_card": _onTapBusinessCard(context); break;
       case "career_exploration.skills_self_evaluation":_onTapSkillSelfEvaluation(context); break;
       case "career_exploration.essential_skills_coach":_onTapEssentialSkillCoach(context); break;
       case "career_exploration.job_board":   _onTapJobBoard(context); break;
@@ -809,9 +809,9 @@ class _BrowseEntry extends StatelessWidget {
     _launchUrl(context, Config().jobBoardUrl);
   }
 
-  static void _onTapDigitalCard(BuildContext context) {
+  static void _onTapBusinessCard(BuildContext context) {
     Analytics().logSelect(target: "My Digital Business Card");
-    ProfileHomePanel.present(context, contentType: ProfileContentType.share,);
+    ProfileHomePanel.present(context, contentType: ProfileContentType.businessCard,);
   }
 
   static void _onTapDailyIllini(BuildContext context) {

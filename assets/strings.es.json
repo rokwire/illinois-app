@@ -307,7 +307,7 @@
 
     "panel.browse.entry.career_exploration.career_planing_links.title": "Career Planning Links",
     "panel.browse.entry.career_exploration.interest_explorer.title": "Interest Explorer",
-    "panel.browse.entry.career_exploration.digital_card.title": "My Digital Business Card",
+    "panel.browse.entry.career_exploration.business_card.title": "My Digital Business Card",
     "panel.browse.entry.career_exploration.skills_self_evaluation.title": "Skills Self-Evaluation",
     "panel.browse.entry.career_exploration.essential_skills_coach.title": "Essential Skills Coach",
     "panel.browse.entry.career_exploration.job_board.title": "Virtual Job Board",
@@ -425,6 +425,7 @@
     "panel.wallet.content_type.illini_cash.label": "Illini Cash",
     "panel.wallet.content_type.add_illini_cash.label": "Add Illini Cash",
     "panel.wallet.content_type.library_card.label": "University Library Card",
+    "panel.wallet.content_type.business_card.label": "My Digital Business Card",
 
     "panel.search.header.title":"Buscar",
     "panel.search.label.search_for":"Buscar por Título del Evento",
@@ -2063,10 +2064,10 @@
     "panel.settings.home.copyright.text": "Copyright © {{COPYRIGHT_YEAR}} Junta de Síndicos de la Universidad de Illinois",
 
     "panel.settings.profile.content.profile.label": "Mi perfil",
-    "panel.settings.profile.content.who_are_you.label": "Quién eres tú",
+    "panel.settings.profile.content.roles.label": "Quién eres tú",
     "panel.settings.profile.content.privacy.label": "Configuración de privacidad de mi aplicación",
     "panel.settings.profile.content.login.label": "Sign In/Sign Out",
-    "panel.settings.profile.content.share.label": "My Digital Business Card",
+    "panel.settings.profile.content.business_card.label": "My Digital Business Card",
     "panel.settings.profile.header.profile.label": "Perfil",
 
     "panel.settings.notifications.content.preferences.label": "Mis preferencias de notificación",

@@ -1,12 +1,16 @@
+import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:flutter_quill_delta_from_html/parser/html_to_delta.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart' as html;
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/model/Analytics.dart';
@@ -15,7 +19,13 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/messages/MessagesMediaFullscreenPanel.dart';
+import 'package:illinois/ui/profile/ProfileVoiceRecordigWidgets.dart';
+import 'package:illinois/ui/widgets/AudioPlayerWidget.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/VideoPlayerWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -32,15 +42,19 @@ class GroupConversationCard extends StatelessWidget {
   final Conversation conversation;
   final List<Member>? groupAdmins;
   final void Function()? onTap;
+  final UniqueKey _avtarKey = UniqueKey();
 
   GroupConversationCard(this.conversation, { this.groupAdmins, this.onTap });
+
+  List<ConversationMember>? get _participants => this.conversation.members;
+  int get _participantsCount => _participants?.length ?? 0;
 
   @override
   Widget build(BuildContext context) =>
     InkWell(onTap: onTap, child:
       Container(decoration: _cardDecoration, padding: _cardPadding, child:
         Row(children: [
-          GroupConversationAvtarWidget(conversation.members),
+          GroupConversationAvtarWidget(key: _avtarKey, conversation: conversation),
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
@@ -55,10 +69,11 @@ class GroupConversationCard extends StatelessWidget {
     );
 
   Widget get _titleWidget {
-    int participantsCount = conversation.members?.length ?? 0;
-    if (1 < participantsCount) {
-      return _participantNamesWidget;
-    } else if (0 < participantsCount) {
+    if (conversation.isGroupAll) {
+      return _groupChatNameWidget;
+    } if (1 < _participantsCount) {
+      return _participantsNamesWidget;
+    } else if (0 < _participantsCount) {
       return _participantNameWidget;
     } else {
       return Container();
@@ -82,11 +97,18 @@ class GroupConversationCard extends StatelessWidget {
     );
   }
 
-  Widget get _participantNamesWidget => Text(conversation.membersString ?? '',
+  Widget get _participantsNamesWidget => Text(conversation.membersString ?? '',
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
     textAlign: TextAlign.left,
     overflow: TextOverflow.ellipsis,
     maxLines: 1,
-    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat')
+  );
+
+  Widget get _groupChatNameWidget => Text(Localization().getStringEx('', 'All Group Members Chat'),
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
+    textAlign: TextAlign.left,
+    overflow: TextOverflow.ellipsis,
+    maxLines: 1,
   );
 
   Widget get _updateTimeWidget {
@@ -126,59 +148,42 @@ class GroupConversationAvtarWidget extends StatelessWidget {
   static const double _avtar2Size = _avtarSize * 2 / 3;
   static const double _avtar2Offset = _avtarOffset + 1.5;
 
-  final List<ConversationMember>? participants;
+  final Group? group;
+  final Conversation? conversation;
+  final ConversationMember? conversationMember;
 
-  GroupConversationAvtarWidget(this.participants);
+  GroupConversationAvtarWidget({ super.key, this.group, this.conversation, this.conversationMember });
 
-  int get _participantsCount => participants?.length ?? 0;
+  List<ConversationMember>? get _participants => this.conversation?.members;
+  int get _participantsCount => _participants?.length ?? 0;
 
   @override
   Widget build(BuildContext context) =>
-    Container(width: widgetSize, height: widgetSize, decoration: _avtarDecoration, child: _participantsIcon);
+    Container(width: widgetSize, height: widgetSize, decoration: _avtarDecoration, child: _avtarIcon);
 
-  /*Widget build(BuildContext context) {
-    return Container(width: _widgetSize, height: _widgetSize, decoration: _avtarDecoration, child:
-      Stack(children: [
-        Positioned.fill(child:
-          Align(alignment: Alignment.topLeft, child:
-            Padding(padding: EdgeInsets.only(left: _avtarOffset, top: _avtarOffset,), child:
-              Container(width: _avtarSize, height: _avtarSize, decoration: _participantDecoration(Colors.blueAccent)),
-            )
-          )
-        ),
-        Positioned.fill(child:
-          Align(alignment: Alignment.bottomRight, child:
-            Padding(padding: EdgeInsets.only(right: _avtarOffset, bottom: _avtarOffset,), child:
-              Container(width: _avtarSize, height: _avtarSize, decoration: _participantDecoration(Colors.yellowAccent)),
-            )
-          )
-        ),
-        Positioned.fill(child:
-          Align(alignment: Alignment.bottomLeft, child:
-            Padding(padding: EdgeInsets.only(left: _avtar2Offset, bottom: _avtar2Offset,), child:
-              Container(width: _avtar2Size, height: _avtar2Size, decoration: _participantDecoration(Colors.greenAccent)),
-            )
-          )
-        ),
-      ],)
-    );
-  }*/
-
-  Widget? get _participantsIcon {
-    if (_participantsCount > 1) {
-      return _multipleParticipantsIcon;
-    } else if (_participantsCount == 1) {
-      return _singleParticipantIcon;
+  Widget? get _avtarIcon {
+    if (conversation != null) {
+      if (conversation?.isGroupAll == true) {
+        return _groupChatIcon;
+      } else if (conversation?.isGroupSubset == true) {
+        return (_participantsCount == 1) ? _singleParticipantIcon(_participants?.firstOrNull) : _multipleParticipantsIcon;
+      } else {
+        return null;
+      }
+    } else if (conversationMember != null) {
+      return _singleParticipantIcon(conversationMember);
+    } else if (group != null) {
+      return _groupMembersIcon;
     } else {
       return null;
     }
   }
 
-  Widget get _singleParticipantIcon =>
+  Widget _singleParticipantIcon(ConversationMember? member) =>
     DirectoryProfilePhoto(
       photoUrl: Content().getUserPhotoUrl(
         type: UserProfileImageType.medium,
-        accountId: participants?.firstOrNull?.accountId,
+        accountId: member?.accountId,
         //params: DirectoryProfilePhotoUtils.tokenUrlParam(_photoImageToken),
       ),
       photoSize: widgetSize,
@@ -186,9 +191,9 @@ class GroupConversationAvtarWidget extends StatelessWidget {
     );
 
   Widget get _multipleParticipantsIcon {
-    ConversationMember? participant1 = ListUtils.entry(participants, 0);
-    ConversationMember? participant2 = ListUtils.entry(participants, 1);
-    ConversationMember? participant3 = ListUtils.entry(participants, 2);
+    ConversationMember? participant1 = ListUtils.entry(_participants, 0);
+    ConversationMember? participant2 = ListUtils.entry(_participants, 1);
+    ConversationMember? participant3 = ListUtils.entry(_participants, 2);
 
     return Stack(children: [
 
@@ -246,6 +251,12 @@ class GroupConversationAvtarWidget extends StatelessWidget {
     ],);
   }
 
+  Widget get _groupChatIcon =>
+    DirectoryProfilePhoto(placeholderImageKey: 'group-chat', photoSize: widgetSize,);
+
+  Widget get _groupMembersIcon =>
+    DirectoryProfilePhoto(placeholderImageKey: 'profile-placeholder', photoSize: widgetSize,);
+
   BoxDecoration get _avtarDecoration => BoxDecoration(
     color: Styles().colors.textBackgroundVariant2,
     shape: BoxShape.circle,
@@ -257,9 +268,9 @@ class GroupConversationAvtarWidget extends StatelessWidget {
 class GroupConversationHeader extends StatefulWidget {
   final Group? group;
   final List<Member>? groupAdmins;
-  final Conversation conversation;
+  final Conversation? conversation;
 
-  GroupConversationHeader(this.conversation, {this.group, this.groupAdmins});
+  GroupConversationHeader({ this.conversation, this.group, this.groupAdmins });
 
   @override
   State<StatefulWidget> createState() => _GroupConversationHeaderState();
@@ -269,11 +280,49 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
 
   bool _deleteProgress = false;
 
+  bool get _multipleMembers => ((widget.conversation?.isGroupSubset == true) && (1 < (widget.conversation?.members?.length ?? 0)));
+
   @override
   Widget build(BuildContext context) =>
-    Container(decoration: _headingDecoration, child: _multipleMembers ?
-      _multipleMembersDropdown : _singleMemberWidget
-    );
+    Container(decoration: _headingDecoration, child: _contentWidget);
+
+  Widget? get _contentWidget {
+    if (widget.conversation != null) {
+      if (widget.conversation?.isGroupAll == true) {
+        return _groupChatWidget;
+      } if (widget.conversation?.isGroupSubset == true) {
+        return _multipleMembers ? _multipleMembersDropdown : _singleMemberWidget;
+      } else {
+        return null;
+      }
+    }
+    else if (widget.group != null) {
+      return _groupMembersWidget;
+    } else {
+      return null;
+    }
+  }
+
+  Widget get _groupChatWidget => Row(children: [
+    _avtarWidget,
+    Expanded(child:
+      Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+        _groupChatNameWidget,
+      )
+    ),
+    _deleteButton,
+  ],);
+
+  Widget get _groupMembersWidget => Row(children: [
+    _avtarWidget,
+    Expanded(child:
+      Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+        _groupMembersNameWidget,
+      )
+    ),
+    //_deleteButton,
+  ],);
+
 
   Widget get _singleMemberWidget => Row(children: [
     _avtarWidget,
@@ -311,18 +360,18 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
 
   // Dropdown
 
-  List<DropdownMenuItem<String>> _buildDropdownMembers() => List.from(widget.conversation.members?.sorted(ConversationMemberExt.compareNames).map((member) => _buildDropdownMemberItem(member)) ?? []);
+  List<DropdownMenuItem<String>> _buildDropdownMembers() => List.from(widget.conversation?.members?.sorted(ConversationMemberExt.compareNames).map((member) => _buildDropdownMemberItem(member)) ?? []);
 
   DropdownMenuItem<String> _buildDropdownMemberItem(ConversationMember member) =>
     DropdownMenuItem<String>(value: member.accountId ?? '', child:
       Container(decoration: _dropdownMemberDecoration, child:
         Row(children: [
-          _buildAvtarWidget([member]),
+          _buildAvtarWidget(conversationMember: member),
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
               _buildParticipantNameWidget(member,
-                  nameTextStyleName: 'widget.card.title.small.fat',
-                  statusTextStyleName: 'widget.title.light.tiny.fat'
+                nameTextStyleName: 'widget.card.title.small.fat',
+                statusTextStyleName: 'widget.title.light.tiny.fat'
               ),
             )
           ),
@@ -334,18 +383,18 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
 
   // Avtar
 
-  Widget get _avtarWidget => _buildAvtarWidget(widget.conversation.members);
+  Widget get _avtarWidget => _buildAvtarWidget(conversation: widget.conversation, group: widget.group);
 
-  Widget _buildAvtarWidget(List<ConversationMember>? members) =>
+  Widget _buildAvtarWidget({ Group? group, Conversation? conversation, ConversationMember? conversationMember }) =>
     Padding(padding: EdgeInsets.symmetric(horizontal: _avtarSpacing * 2, vertical: _avtarSpacing), child:
-      GroupConversationAvtarWidget(members),
+      GroupConversationAvtarWidget(group: group, conversation: conversation, conversationMember: conversationMember),
     );
 
   double get _avtarSpacing => 8;
 
   // Name
 
-  Widget get _participantNameWidget => _buildParticipantNameWidget(widget.conversation.members?.firstOrNull,
+  Widget get _participantNameWidget => _buildParticipantNameWidget(widget.conversation?.members?.firstOrNull,
     nameTextStyleName: 'widget.title.large.fat',
     statusTextStyleName: 'widget.title.light.tiny.fat'
   );
@@ -366,11 +415,25 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
     );
   }
 
-  Widget get _participantNamesWidget => Text(widget.conversation.membersString ?? '',
+  Widget get _participantNamesWidget => Text(widget.conversation?.membersString ?? '',
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
     textAlign: TextAlign.left,
     overflow: TextOverflow.ellipsis,
     maxLines: 1,
-    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat')
+  );
+
+  Widget get _groupChatNameWidget => Text(Localization().getStringEx('', 'All Group Members Chat'),
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
+    textAlign: TextAlign.left,
+    overflow: TextOverflow.ellipsis,
+    maxLines: 1,
+  );
+
+  Widget get _groupMembersNameWidget => Text(Localization().getStringEx('', 'All Group Members (Individually)'),
+    style: Styles().textStyles.getTextStyle('widget.card.title.small.fat'),
+    textAlign: TextAlign.left,
+    overflow: TextOverflow.ellipsis,
+    maxLines: 1,
   );
 
   Widget get _chevronDownIcon => Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
@@ -389,7 +452,6 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
   Widget get _deleteProgressIcon => SizedBox.square(dimension: _deleteIconSize - 2, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,));
   double get _deleteIconSize => 20;
 
-  bool get _multipleMembers => (1 < (widget.conversation.members?.length ?? 0));
   double get _screenWidth => MediaQuery.of(context).size.width;
 
   BoxDecoration get _dropdownMemberDecoration => BoxDecoration(
@@ -410,7 +472,7 @@ class _GroupConversationHeaderState extends State<GroupConversationHeader> {
         setState(() {
           _deleteProgress = true;
         });
-        bool? result = await Social().deleteConverstion(conversationId: widget.conversation.id ?? '');
+        bool? result = await Social().deleteConverstion(widget.conversation?.id ?? '');
         if (mounted) {
           setState(() {
             _deleteProgress = false;
@@ -450,8 +512,10 @@ class GroupConversationMessageCard extends StatelessWidget {
             _bodyHtmlWidget,
           ),
         ),
+        if (message.fileAttachments?.isNotEmpty == true)
+          _attachmentsWidget(context),
         Padding(padding: EdgeInsets.symmetric(horizontal: _horzPadding, vertical: _horzPadding), child:
-          GroupReactionsLayout(key: _reactionsKey, group: group, entityId: message.id, reactionSource: SocialEntityType.message, analyticsFeature: analyticsFeature,)
+          GroupReactionsLayout(key: _reactionsKey, group: group, entityId: message.globalId, reactionSource: SocialEntityType.message, analyticsFeature: analyticsFeature,)
         ),
       ],)
     );
@@ -463,7 +527,7 @@ class GroupConversationMessageCard extends StatelessWidget {
     onLinkTap: _onTapLink,
   ); */
 
-  Widget get _bodyHtmlWidget => HtmlWidget(
+  Widget get _bodyHtmlWidget => html.HtmlWidget(
       "<div style= $_bodyHtmlStyle> ${message.message ?? ''}</div>",
       onTapUrl : (url) { _onTapLink(url); return true; },
       textStyle:  Styles().textStyles.getTextStyle("widget.detail.regular"),
@@ -471,6 +535,29 @@ class GroupConversationMessageCard extends StatelessWidget {
   );
 
   String get _bodyHtmlStyle => 'white-space: normal'; // 'text-overflow: ellipsis; max-lines: 3'
+
+  Widget _attachmentsWidget(BuildContext context) => Container(height: 300, child:
+    ListView.separated(
+      padding: EdgeInsets.only(top: _horzPadding, left: _horzPadding, right: _horzPadding),
+      separatorBuilder: (context, index) => SizedBox(width: 8),
+      itemCount: message.fileAttachments?.length ?? 0,
+      itemBuilder: (context, index) => _attachmentCard(context, ListUtils.entry(message.fileAttachments, index)),
+      scrollDirection: Axis.horizontal,
+    ),
+  );
+
+  Widget _attachmentCard(BuildContext context, FileAttachment? attachment) =>
+    Center(child:
+      Stack(children: [
+        _GroupConversationAttachmentCard(attachment,),
+        if ((attachment != null) && (attachment.type != AttachmentFileType.audio.name))
+          Positioned.fill(child:
+            GestureDetector(onTap: () => _onTapAttachment(context, attachment), behavior: HitTestBehavior.opaque, child:
+              Container(),
+            ),
+          ),
+      ],)
+    );
 
   void _onTapLink(String url) {
     Uri? uri = Uri.tryParse(url);
@@ -486,6 +573,45 @@ class GroupConversationMessageCard extends StatelessWidget {
       }
       else {
         AppLaunchUrl.launchExternal(url: url);
+      }
+    }
+  }
+
+/*
+  void _onTapImageAttachment(FileAttachment attachment) {}
+  void _onTapVideoAttachment(FileAttachment attachment) {}
+  void _onTapFileAttachment(FileAttachment attachment) {}
+
+  void Function()? onTap;
+  switch(attachment.type) {
+    case AttachmentFileType.image: onTap = () => _onTapImageAttachment(attachment); break;
+    case AttachmentFileType.video: onTap = () => _onTapVideoAttachment(attachment); break;
+    case AttachmentFileType.file: onTap = () => _onTapFileAttachment(attachment); break;
+    default: break;
+  }
+*/
+
+  void _onTapAttachment(BuildContext context, FileAttachment attachment) async {
+    if (attachment.type == AttachmentFileType.image.name) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+        MessagesMediaFullscreenPanel(mediaBuilder: (_) => _GroupConversationAttachmentCard._imageAttachmentWidgetImpl(attachment), filename: attachment.name, url: attachment.url),
+      ));
+    } else if (attachment.type == AttachmentFileType.video.name) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+        MessagesMediaFullscreenPanel(mediaBuilder: (_) => _GroupConversationAttachmentCard._videoAttachmentWidgetImpl(attachment), filename: attachment.name, url: attachment.url),
+      ));
+    } else if (attachment.type == AttachmentFileType.file.name) {
+      _downloadAttachment(context, attachment);
+    }
+  }
+
+  Future<void> _downloadAttachment(BuildContext context, FileAttachment attachment) async {
+    String? attachmentId = attachment.id;
+    if (attachmentId != null) {
+      Map<String, Uint8List> files = await Content().getFileContentItems([attachmentId], Content.conversationsContentCategory, entityId: conversation?.id);
+      Uint8List? attachmentData = files[attachmentId];
+      if ((attachmentData != null) && attachmentData.isNotEmpty) {
+        AppFile.downloadFile(context: context, fileName: attachment.name ?? 'file.out', fileBytes: attachmentData);
       }
     }
   }
@@ -611,6 +737,7 @@ class GroupConversationMessageHeader extends StatelessWidget {
 class GroupConversationMessageEditBar extends StatefulWidget {
 
   final String? title;
+  final EdgeInsetsGeometry padding;
 
   final String? text;
   final String? hint;
@@ -622,17 +749,19 @@ class GroupConversationMessageEditBar extends StatefulWidget {
   final bool autofocus;
   final FocusNode? focusNode;
 
-  final EdgeInsetsGeometry padding;
+  final Iterable<FileAttachment>? attachments;
+  final bool canEditAttachments;
 
-  final Future<bool> Function(String message)? onSubmitMessage;
+
+  final Future<bool> Function(String message, { Iterable<dynamic>? attachments })? onSubmitMessage;
   final void Function()? onCancelEdit;
   final bool showSubmitProgress;
 
-  GroupConversationMessageEditBar({
-    this.title,
-    this.text, this.hint, this.textStyle, this.linkTextStyle, // ignore: unused_element_parameter
-    this.minLines = 1, this.maxLines = 12, this.autofocus = false, this.focusNode, // ignore: unused_element_parameter
-    this.padding = const EdgeInsetsGeometry.only(left: 24, right: 16, top: 8, bottom: 24), // ignore: unused_element_parameter
+  GroupConversationMessageEditBar({this.title,
+    this.padding = const EdgeInsetsGeometry.only(left: 24, right: 16, top: 8, bottom: 24),
+    this.text, this.hint, this.textStyle, this.linkTextStyle,
+    this.minLines = 1, this.maxLines = 12, this.autofocus = false, this.focusNode,
+    this.attachments, this.canEditAttachments = false,
     required this.onSubmitMessage, this.showSubmitProgress = false, this.onCancelEdit,
   });
 
@@ -655,8 +784,6 @@ class GroupConversationMessageEditBar extends StatefulWidget {
     }
   }
 
-
-
   @override
   State<StatefulWidget> createState() => _GroupConversationMessageEditBarState();
 }
@@ -670,22 +797,28 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
   late TextStyle _textStyle;
   late TextStyle _linkTextStyle;
   Set<_EditBarCommand> _selectedCommands = <_EditBarCommand>{};
+  List<dynamic> _attachments = <dynamic>[];
+  late ScrollController _attachmentsScrollController;
   bool _submitting = false;
+
 
   @override
   void initState() {
+    super.initState();
     _quillController = widget.createTextController();
     _quillController.addListener(_onTextChanged);
     _initialQuillDelta = _quillController.document.toDelta();
     _textStyle = widget.textStyle ?? Styles().textStyles.getTextStyle('widget.message.regular') ?? _defaultTextStyle;
     _linkTextStyle = widget.linkTextStyle ?? _textStyle.apply(color: _linkTextColor, decoration: TextDecoration.underline, decorationColor: _linkTextColor);
-    super.initState();
+    _attachmentsScrollController = ScrollController();
+    _attachments.addAll(widget.attachments ?? <FileAttachment>[]);
   }
 
   @override
   void dispose() {
     _quillController.removeListener(_onTextChanged);
     _quillController.dispose();
+    _attachmentsScrollController.dispose();
     super.dispose();
   }
 
@@ -695,7 +828,9 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     if (mounted) {
       if (widget.text != oldWidget.text) {
         _quillUpdate();
-      } else {
+      }
+      if (!DeepCollectionEquality().equals(widget.attachments, oldWidget.attachments)) {
+        _updateAttachments();
       }
     }
   }
@@ -705,7 +840,13 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     Padding(padding: widget.padding, child:
       Column(mainAxisSize: MainAxisSize.min, children: [
         _commandBar,
-        Padding(padding: EdgeInsetsGeometry.only(right: 8), child: _textBar),
+        Padding(padding: EdgeInsetsGeometry.only(right: 8), child:
+          _textBar
+        ),
+        if (widget.canEditAttachments && _attachments.isNotEmpty)
+          Padding(padding: EdgeInsetsGeometry.only(right: 8), child:
+            _attachmentsList,
+          ),
       ],),
     );
 
@@ -774,7 +915,8 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
         _formatButton(_EditBarCommand.italic, onTap: _onItalic),
         _formatButton(_EditBarCommand.underline, onTap: _onUnderline),
         _formatButton(_EditBarCommand.link, onTap: _onLink),
-        _formatButton(_EditBarCommand.picture, onTap: _onPicture),
+        if (widget.canEditAttachments)
+          _formatButton(_EditBarCommand.picture, onTap: _onPicture),
       ],),
     )
   ],);
@@ -910,11 +1052,116 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     });
   }
 
-  void _onPicture() {
+  void _onPicture() async {
     Analytics().logSelect(target: 'Picture');
+    if (_submitting == false) {
+      _GroupConversationAttachmentType? attType = await _GroupConversationAttachSheet.showModal(context,
+          availableTypes: <_GroupConversationAttachmentType>{ _GroupConversationAttachmentType.photoOrVideo, _GroupConversationAttachmentType.newPhoto, _GroupConversationAttachmentType.newVideo }
+      );
+
+      dynamic media;
+      List<dynamic>? mediaList;
+      switch (attType) {
+        case _GroupConversationAttachmentType.photoOrVideo: mediaList = await ImagePicker().pickMultipleMedia(limit: 10, imageQuality: 60, maxHeight: 1080, maxWidth: 1080); break;
+        case _GroupConversationAttachmentType.newPhoto: media = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 60, maxHeight: 1080, maxWidth: 1080); break;
+        case _GroupConversationAttachmentType.newVideo: media = await ImagePicker().pickVideo(source: ImageSource.camera); break;
+        case _GroupConversationAttachmentType.newAudio: media = await _GroupConversationSoundRecorderDialog.show(context); break;
+        case _GroupConversationAttachmentType.file: mediaList = await _GroupConversationFilePicker.pick();
+        default: break;
+      }
+      if (media != null) {
+        if (mediaList != null) {
+          mediaList.add(media);
+        } else {
+          mediaList = <dynamic>[media];
+        }
+      }
+      if (mediaList != null) {
+        setState(() {
+          _attachments.addAll(mediaList ?? []);
+        });
+        WidgetsBinding.instance.addPostFrameCallback((_) =>
+          _attachmentsScrollController.animateTo(_attachmentsScrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 300), curve: Curves.linear)
+        );
+      }
+    }
   }
 
-  bool get _canSubmit => _selectedCommands.contains(_EditBarCommand.submit) && (widget.onSubmitMessage != null);
+
+  Widget get _attachmentsList => Container(height: 150, child:
+    ListView.separated(
+      padding: EdgeInsets.only(top: 16, left: 0, right: 0),
+      separatorBuilder: (context, index) => SizedBox(width: 8),
+      itemCount: _attachments.length,
+      itemBuilder: (context, index) => _attachmentCard(index),
+      scrollDirection: Axis.horizontal,
+      controller: _attachmentsScrollController,
+    ),
+  );
+
+  Widget _attachmentCard(int index) => Center(child:
+    Stack(children: [
+      _GroupConversationAttachmentCard(ListUtils.entry(_attachments, index),),
+      if (_submitting == false)
+        Positioned.fill(child:
+          Align(alignment: Alignment.topRight, child:
+            _deleteAttachmentButton(ListUtils.entry(_attachments, index), index)
+          ),
+        ),
+    ],)
+  );
+
+  Widget _deleteAttachmentButton(dynamic attachment, int index) =>
+    InkWell(onTap: () => _onDeleteAttachment(index), child:
+      _deleteAttachmentImage(attachment)
+    );
+
+  Widget _deleteAttachmentImage(dynamic attachment) {
+    switch(AttachmentFileTypeImpl.fromAttachment(attachment)) {
+      case AttachmentFileType.image: return _deletePhotoOrVideoAttachmentImage;
+      case AttachmentFileType.video: return _deletePhotoOrVideoAttachmentImage;
+      case AttachmentFileType.audio: return _deleteAudioOrFileAttachmentImage;
+      case AttachmentFileType.file: return _deleteAudioOrFileAttachmentImage;
+      default: return Container();
+    }
+  }
+
+  Widget get _deletePhotoOrVideoAttachmentImage =>
+      Stack(children: [
+        Padding(padding: EdgeInsets.only(left: 18, right: 6, top: 10, bottom: 14), child:
+          Styles().images.getImage('close-circle', size: 16, color: Styles().colors.black, excludeFromSemantics: true,)
+        ),
+        Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 16), child:
+          Styles().images.getImage('close-circle', size: 16, color: Styles().colors.white, excludeFromSemantics: true,)
+        ),
+      ],);
+
+  Widget get _deleteAudioOrFileAttachmentImage =>
+    Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 16), child:
+      Styles().images.getImage('close-circle', size: 16, color: Styles().colors.fillColorSecondary, excludeFromSemantics: true,)
+    );
+
+  void _onDeleteAttachment(int index) {
+    Analytics().logSelect(target: 'Delete Attachment');
+    setState(() {
+      ListUtils.remove(_attachments, index);
+    });
+  }
+
+  void _resetAttachments() {
+    setState(() {
+      _attachments.clear();
+    });
+  }
+
+  void _updateAttachments() {
+    setState(() {
+      _attachments.clear();
+      _attachments.addAll(widget.attachments ?? <FileAttachment>[]);
+    });
+  }
+
+  bool get _canSubmit => (_selectedCommands.contains(_EditBarCommand.submit) || !DeepCollectionEquality().equals(_attachments, widget.attachments?.toList() ?? [])) && (widget.onSubmitMessage != null);
   bool get _hasCancelEdit => (widget.onCancelEdit != null);
 
   Widget get _submitButton => Event2ImageCommandButton(
@@ -962,7 +1209,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
       _submitting = true;
     });
 
-    bool? succeeded = await widget.onSubmitMessage?.call(_quillHtml);
+    bool? succeeded = await widget.onSubmitMessage?.call(_quillHtml, attachments: _attachments);
 
     if (mounted) {
       setState(() {
@@ -971,6 +1218,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
       if (succeeded == true) {
         FocusScope.of(context).unfocus();
         _quillReset();
+        _resetAttachments();
       }
     }
   }
@@ -979,8 +1227,9 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     Analytics().logSelect(target: 'Submit');
     widget.onCancelEdit?.call();
   }
-
 }
+
+
 
 extension _EditBarCommandImpl on _EditBarCommand {
   String get iconKey {
@@ -1081,6 +1330,254 @@ class GroupConversationLinkDialog extends StatelessWidget {
         borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0,),
       ),
   );
+}
+
+class _GroupConversationAttachmentCard extends StatelessWidget {
+  final dynamic attachment;
+  _GroupConversationAttachmentCard(this.attachment, );
+
+  @override
+  Widget build(BuildContext context) =>
+    Stack(children: [
+      _attachmentWidget
+    ],);
+
+  Widget get _attachmentWidget {
+    switch(AttachmentFileTypeImpl.fromAttachment(attachment)) {
+      case AttachmentFileType.image: return AspectRatio(aspectRatio: 1/1, child: _imageAttachmentWidget);
+      case AttachmentFileType.video: return AspectRatio(aspectRatio: 1/1, child: _videoAttachmentWidget);
+      case AttachmentFileType.audio: return _GroupConversationAttachmentContainer(child:_audioAttachmentWidget);
+      case AttachmentFileType.file: return _GroupConversationAttachmentContainer(child:_fileAttachmentWidget);
+      default: return Container();
+    }
+  }
+
+  Widget get _imageAttachmentWidget =>
+    _imageAttachmentWidgetImpl(attachment);
+
+  static Widget _imageAttachmentWidgetImpl(dynamic attachment) {
+    AttachmentDetails? details =  AttachmentDetails.fromAttachment(attachment);
+    if (details?.data != null) {
+      return Image.memory(details?.data ?? Uint8List(0), fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => _imageErrorBuilder,
+      );
+    } else if (details?.url != null) {
+      return Image.network(details?.url ?? '', fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) => (loadingProgress != null) ?
+          _imageProgressBuilder(loadingProgress) : child,
+        errorBuilder: (context, error, stackTrace) => _imageErrorBuilder,
+      );
+    } else if (details?.path != null) {
+      if (kIsWeb) {
+        return Image.network(details?.path ?? '', fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) => (loadingProgress != null) ?
+            _imageProgressBuilder(loadingProgress) : child,
+          errorBuilder: (context, error, stackTrace) => _imageErrorBuilder,
+        );
+      } else {
+        return Image.file(File(details?.path ?? ''), fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => _imageErrorBuilder,
+        );
+      }
+    } else {
+      return const SizedBox();
+    }
+  }
+
+  Widget get _videoAttachmentWidget => _videoAttachmentWidgetImpl(attachment);
+
+  static Widget _videoAttachmentWidgetImpl(dynamic attachment) {
+    AttachmentDetails? details =  AttachmentDetails.fromAttachment(attachment);
+    return VideoPlayerWidget(key: ValueKey(details?.path ?? details?.url),
+      filePath: details?.path, url: details?.url, showControls: false, muted: true, fill: true, interactive: false);
+  }
+
+  Widget get _audioAttachmentWidget {
+    AttachmentDetails? details = AttachmentDetails.fromAttachment(attachment);
+    return AudioPlayerWidget(url: details?.url, bytes: details?.data);
+  }
+
+  Widget get _fileAttachmentWidget {
+    String? textStyleKey = 'widget.title.dark.small'; // 'widget.title.small' inMessage: 'widget.title.dark.small';
+    AttachmentDetails? details = AttachmentDetails.fromAttachment(attachment);
+    return Center(child:
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(padding: EdgeInsetsGeometry.only(top: 4), child:
+          Styles().images.getImage('file', size: 24) ?? Container(height: 24),
+        ),
+        SizedBox(width: 8),
+        Expanded(child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+            Text(details?.name ?? '', style: Styles().textStyles.getTextStyle(textStyleKey), overflow: TextOverflow.ellipsis,),
+            if ((details?.extension != null) && (details?.extension?.isNotEmpty == true))
+              Text(details?.extension?.toUpperCase() ?? '', style: Styles().textStyles.getTextStyle(textStyleKey),),
+          ],),
+        ),
+      ]),);
+  }
+
+  static Widget get _imageErrorBuilder => AspectRatio(aspectRatio: 16/9, child:
+    Container(color: Styles().colors.surfaceAccent, child:
+      Padding(padding: const EdgeInsets.symmetric(horizontal: 32), child:
+        Center(child: Styles().images.getImage('exclamation', size: 48),
+          // Text(Localization().getStringEx('', 'This image type is not supported'),
+          //     style: Styles().textStyles.getTextStyle('widget.title.dark.small')),
+        ),
+      ),
+    )
+  );
+
+  static Widget _imageProgressBuilder(ImageChunkEvent loadingProgress) =>
+    Container(color: Styles().colors.surfaceAccent, child:
+      Center(child:
+        CircularProgressIndicator(
+          color: Styles().colors.fillColorSecondary,
+          value: (loadingProgress.expectedTotalBytes != null) ? (loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!) : null,
+        ),
+      ),
+    );
+
+}
+
+class _GroupConversationAttachmentContainer extends StatelessWidget {
+  final Widget? child;
+  final Size size;
+
+  _GroupConversationAttachmentContainer({this.child, this.size = const Size(200, 80)}); // ignore: unused_element_parameter
+
+  @override
+  Widget build(BuildContext context) =>
+    Container(width: size.width, height: size.height, padding: _widgetPadding, decoration: _widgetDecoration, child:
+      child,
+    );
+
+  EdgeInsetsGeometry get _widgetPadding => EdgeInsets.all(8);
+
+  BoxDecoration get _widgetDecoration => BoxDecoration(
+    color: Styles().colors.background, //Styles().colors.backgroundVariant, // inMessage: Styles().colors.surfaceAccent
+    border: Border.all(color: Styles().colors.mediumGray, width: 1),
+    borderRadius: BorderRadius.circular(8),
+  );
+}
+
+
+enum _GroupConversationAttachmentType { photoOrVideo, newPhoto, newVideo, newAudio, file}
+
+class _GroupConversationAttachSheet extends StatelessWidget {
+
+  final Set<_GroupConversationAttachmentType>? availableTypes;
+
+  _GroupConversationAttachSheet({this.availableTypes});
+  
+  static Future<_GroupConversationAttachmentType?> showModal(BuildContext context, { Set<_GroupConversationAttachmentType>? availableTypes }) =>
+    showModalBottomSheet(
+    context: context,
+    backgroundColor: Styles().colors.surface,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),),
+    isScrollControlled: true,
+    clipBehavior: Clip.antiAlias,
+    useSafeArea: true,
+    //constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9, minHeight: MediaQuery.of(context).size.height * 0.3),
+    builder: (context) => _GroupConversationAttachSheet(availableTypes: availableTypes,),
+  );
+
+  @override
+  Widget build(BuildContext context) =>
+    Column(mainAxisSize: MainAxisSize.min, children: [
+      _headerBar(context),
+      Padding(padding: EdgeInsets.only(left: 16.0, right: 16, bottom: 16), child:
+        _commandsList(context),
+      ),
+    ],);
+
+  Widget _headerBar(BuildContext context) => Row(children: [
+    Expanded(child:
+      Padding(padding: EdgeInsets.only(left: 16), child:
+        Text(Localization().getStringEx('panel.messages.conversation.attach_files.header.label', 'Attach Files'),
+          style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),
+        ),
+      ),
+    ),
+    Semantics(
+      label: Localization().getStringEx('dialog.close.title', 'Close'),
+      hint: Localization().getStringEx('dialog.close.hint', ''),
+      inMutuallyExclusiveGroup: true,
+      button: true,
+      child: InkWell(onTap: () => _onTapClose(context), child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Styles().images.getImage('close-circle', excludeFromSemantics: true),
+        ),
+      ),
+    ),
+  ],);
+
+  Widget _commandsList(BuildContext context) => Column(children:
+    List.from(_GroupConversationAttachmentType.values.where((type) => (availableTypes?.contains(type) != false)).map((attType) => _commandListEntry(context, attType)))
+  );
+
+  Widget _commandListEntry(BuildContext context, _GroupConversationAttachmentType attType) =>
+    Padding(padding: EdgeInsetsGeometry.only(top: 4), child:
+      RibbonButton(
+        title: attType.commandTitle,
+        leftIconKey: attType.commandIconKey,
+        onTap: () => _onTapCommand(context, attType)
+      )
+    );
+
+  void _onTapCommand(BuildContext context, _GroupConversationAttachmentType command) {
+    Analytics().logSelect(target: 'Close');
+    Navigator.of(context).pop(command);
+  }
+
+  void _onTapClose(BuildContext context) {
+    Analytics().logSelect(target: 'Close');
+    Navigator.of(context).pop(null);
+  }
+}
+
+extension _GroupConversationAttachmentTypeImpl on _GroupConversationAttachmentType {
+  String get commandTitle {
+    switch (this) {
+      case _GroupConversationAttachmentType.photoOrVideo: return Localization().getStringEx('panel.messages.conversation.select.image_video.button.label', 'Upload an image or video');
+      case _GroupConversationAttachmentType.newPhoto: return Localization().getStringEx('panel.messages.conversation.select.image.button.label', 'Take a photo');
+      case _GroupConversationAttachmentType.newVideo: return Localization().getStringEx('panel.messages.conversation.select.video.button.label', 'Record a video');
+      case _GroupConversationAttachmentType.newAudio: return Localization().getStringEx('panel.messages.conversation.select.audio.button.label', 'Record an audio clip');
+      case _GroupConversationAttachmentType.file: return Localization().getStringEx('panel.messages.conversation.select.file.button.label', 'Upload a file');
+    }
+  }
+
+  String get commandIconKey {
+    switch (this) {
+      case _GroupConversationAttachmentType.photoOrVideo: return 'image';
+      case _GroupConversationAttachmentType.newPhoto: return 'camera';
+      case _GroupConversationAttachmentType.newVideo: return 'video-camera';
+      case _GroupConversationAttachmentType.newAudio: return 'microphone';
+      case _GroupConversationAttachmentType.file: return 'file';
+    }
+  }
+}
+
+class _GroupConversationSoundRecorderDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) =>
+    Material(type: MaterialType.transparency, borderRadius: BorderRadius.all(Radius.circular(5)), child:
+      ProfileSoundRecorderDialog(onSave: (audio, extension) async => ((audio != null) && audio.isNotEmpty) ?
+        AudioResult.succeed(audioData: audio, extension: extension) : AudioResult.error(AudioErrorType.fileNameNotSupplied, 'Missing file.')),
+    );
+
+  static Future<AudioResult?> show(BuildContext context) =>
+    showDialog<AudioResult?>(context: context, builder: (_) => _GroupConversationSoundRecorderDialog());
+}
+
+class _GroupConversationFilePicker {
+  static Future<List<PlatformFile>?> pick() async {
+    final FilePickerResult? result = await FilePicker.pickFiles(
+      allowMultiple: true,
+      withData: true,
+      dialogTitle: Localization().getStringEx("panel.messages.conversation.attach_files.message", "Select file(s) to upload"),
+    );
+    return result?.files;
+  }
 
 }
 
@@ -1124,4 +1621,104 @@ class GroupConversationConfirmDeleteDialog extends StatelessWidget {
       )
     ],);
 
+}
+
+enum GroupConversationCreateOption { groupMessage, individualMessages }
+
+class GroupConversationCreateOptionsDialog extends StatelessWidget {
+
+  GroupConversationCreateOptionsDialog();
+
+  static Future<GroupConversationCreateOption?>show(BuildContext context, ) =>
+    showDialog(context: context, builder: (_) => AlertDialog(
+      content: GroupConversationCreateOptionsDialog(),
+      contentPadding: const EdgeInsets.only(bottom: 24),
+    ));
+
+  @override
+  Widget build(BuildContext context) =>
+    Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Align(alignment: Alignment.centerRight, child:
+        _closeButton(context),
+      ),
+      Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 32), child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Text(Localization().getStringEx('', 'How would you like to send this message?'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.detail.regular'),),
+          SizedBox(height: 24,),
+          RoundedButton(
+            label: Localization().getStringEx('', 'Send as a Group Message'),
+            textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            borderWidth: 1.5,
+            onTap: () {
+              Analytics().logAlert(text: 'How would you like to send this message?', selection: 'Send as a Group Message');
+              Navigator.of(context).pop(GroupConversationCreateOption.groupMessage);
+            },),
+          SizedBox(height: 8,),
+          RoundedButton(
+            label: Localization().getStringEx('', 'Send as Individual Messages'),
+            textStyle: Styles().textStyles.getTextStyle('widget.button.title.medium.fat'),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            borderWidth: 1.5,
+            onTap: () {
+              Analytics().logAlert(text: 'How would you like to send this message?', selection: 'Send as Individual Messages');
+              Navigator.of(context).pop(GroupConversationCreateOption.individualMessages);
+          },),
+        ],)
+      )
+    ],);
+
+  Widget _closeButton(BuildContext context) =>
+    Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+      InkWell(onTap : () => _onTapClose(context), child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Styles().images.getImage('close-circle', excludeFromSemantics: true),
+        ),
+      ),
+    );
+
+  void _onTapClose(BuildContext context) {
+    Analytics().logAlert(text: 'How would you like to send this message?', selection: 'Close');
+    Navigator.of(context).pop();
+  }
+}
+
+class GroupConversationReportBroadcastIndividualDialog extends StatelessWidget {
+
+  GroupConversationReportBroadcastIndividualDialog();
+
+  static Future<GroupConversationCreateOption?>show(BuildContext context, ) =>
+    showDialog(context: context, builder: (_) => AlertDialog(
+      content: GroupConversationReportBroadcastIndividualDialog(),
+      contentPadding: const EdgeInsets.only(bottom: 48),
+    ));
+
+  @override
+  Widget build(BuildContext context) =>
+    Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Align(alignment: Alignment.centerRight, child:
+        _closeButton(context),
+      ),
+      Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 32), child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Styles().images.getImage('paper-plane') ?? Container(),
+          SizedBox(height: 8,),
+          Text(Localization().getStringEx('', 'Your message has been sent to each group member individually.'), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.detail.regular'),),
+        ],)
+      )
+    ],);
+
+  Widget _closeButton(BuildContext context) =>
+    Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+      InkWell(onTap : () => _onTapClose(context), child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Styles().images.getImage('close-circle', excludeFromSemantics: true),
+        ),
+      ),
+    );
+
+  void _onTapClose(BuildContext context) {
+    Analytics().logAlert(text: 'How would you like to send this message?', selection: 'Close');
+    Navigator.of(context).pop();
+  }
 }

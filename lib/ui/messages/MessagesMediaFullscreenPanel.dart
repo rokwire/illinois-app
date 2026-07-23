@@ -5,10 +5,10 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class MessagesMediaFullscreenPanel extends StatefulWidget {
-  final Widget media;
+  final Widget Function(BuildContext context) mediaBuilder;
   final String? url;
   final String? filename;
-  const MessagesMediaFullscreenPanel({super.key, required this.media, this.url,
+  const MessagesMediaFullscreenPanel({super.key, required this.mediaBuilder, this.url,
     this.filename});
 
   @override
@@ -53,7 +53,7 @@ class _MessagesMediaFullscreenPanelState extends State<MessagesMediaFullscreenPa
       body: SafeArea(
         child: Stack(
           children: [
-            Center(child: widget.media),
+            Center(child: widget.mediaBuilder(context)),
             Positioned(
               top: 16,
               left: 16,
