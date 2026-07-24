@@ -159,12 +159,12 @@ class Tweet {
   String? get detailUrl => TweetEntityUrl.detailUrlFromList(entities?.urls);
 
   String? get displayTime {
-    
-    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(createdAtUtc);
-    if (deviceDateTime != null) {
+
+    DateTime? displayDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: createdAtUtc);
+    if (displayDateTime != null) {
       DateTime now = DateTime.now();
-      if (deviceDateTime.compareTo(now) < 0) {
-        Duration difference = DateTime.now().difference(deviceDateTime);
+      if (displayDateTime.compareTo(now) < 0) {
+        Duration difference = DateTime.now().difference(displayDateTime);
         if (difference.inSeconds < 60) {
           return 'Now';
         }
@@ -184,7 +184,7 @@ class Tweet {
           }
         }
       }
-      return DateFormat("MMM dd, yyyy").format(deviceDateTime);
+      return DateFormat("MMM dd, yyyy").format(displayDateTime);
     }
     else {
       return null;

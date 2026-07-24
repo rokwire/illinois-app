@@ -46,12 +46,12 @@ class RewardHistoryEntry {
         dateUpdated: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_updated']), isUtc: true));
   }
 
-  DateTime? get dateCreatedLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(dateCreated);
+  DateTime? get displayDateCreated {
+    return AppDateTime().getDateTimeToCompare(dateTimeUtc: dateCreated);
   }
 
-  String? get displayDate {
-    return AppDateTime().formatDateTime(dateCreatedLocal, format: 'MM-dd-yy h:mm a');
+  String? get displayDateString {
+    return AppDateTime().formatDateTime(displayDateCreated, format: 'MM-dd-yy h:mm a');
   }
 
   String? get displayDescription {

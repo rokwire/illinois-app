@@ -78,8 +78,8 @@ class DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
   factory DeviceCalendarEvent.fromCanvasCalendarEvent(CanvasCalendarEvent event) => DeviceCalendarEvent(
     title: event.title,
     internalEventId: event.id?.toString(),
-    startDate: event.startAtLocal,
-    endDate: event.endAtLocal,
+    startDate: AppDateTime().getUniLocalTimeFromUtcTime(event.startAt),
+    endDate: AppDateTime().getUniLocalTimeFromUtcTime(event.endAt),
     deepLinkUrl: "${Canvas().canvasEventDetailUrl}?event_id=${event.id}"
   );
 }

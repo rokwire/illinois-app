@@ -318,18 +318,18 @@ class CanvasAssignment {
         : null;
   }
 
-  DateTime? get dueAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(dueAt);
+  DateTime? get dueAtDisplay {
+    return AppDateTime().getDateTimeToCompare(dateTimeUtc: dueAt);
   }
 
   String? get dueDisplayDateTime {
-    if (dueAtLocal == null) {
+    if (dueAtDisplay == null) {
       return null;
     }
     int nowYear = DateTime.now().year;
-    int dueYear = dueAtLocal!.year;
+    int dueYear = dueAtDisplay!.year;
     String dateTimeFormat = (nowYear != dueYear) ? 'yyyy-MM-dd' : 'MMM d, h:mma';
-    String? dueDisplayDate = AppDateTime().formatDateTime(dueAtLocal, format: dateTimeFormat);
+    String? dueDisplayDate = AppDateTime().formatDateTime(dueAtDisplay, format: dateTimeFormat);
     return dueDisplayDate;
   }
 
@@ -385,18 +385,18 @@ class CanvasSubmission {
 
   CanvasSubmission({this.id, this.submittedAt});
 
-  DateTime? get submittedAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(submittedAt);
+  DateTime? get submittedAtDisplay {
+    return AppDateTime().getDateTimeToCompare(dateTimeUtc: submittedAt);
   }
 
   String? get submittedDisplayDateTime {
-    if (submittedAtLocal == null) {
+    if (submittedAtDisplay == null) {
       return null;
     }
     int nowYear = DateTime.now().year;
-    int dueYear = submittedAtLocal!.year;
+    int dueYear = submittedAtDisplay!.year;
     String dateTimeFormat = (nowYear != dueYear) ? 'yyyy-MM-dd' : 'MMM d, h:mma';
-    String? dueDisplayDate = AppDateTime().formatDateTime(submittedAtLocal, format: dateTimeFormat);
+    String? dueDisplayDate = AppDateTime().formatDateTime(submittedAtDisplay, format: dateTimeFormat);
     return dueDisplayDate;
   }
 
@@ -438,12 +438,12 @@ class CanvasDiscussionTopic {
         : null;
   }
 
-  DateTime? get postedAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(postedAt);
+  DateTime? get postedAtDisplay {
+    return AppDateTime().getDateTimeToCompare(dateTimeUtc: postedAt);
   }
 
   String? get postedAtDisplayDate {
-    return AppDateTime().formatDateTime(postedAtLocal, format: _canvasDisplayDateTimeFormat);
+    return AppDateTime().formatDateTime(postedAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasDiscussionTopic>? listFromJson(List<dynamic>? jsonList) {
@@ -621,12 +621,12 @@ class CanvasCollaboration {
         : null;
   }
 
-  DateTime? get createdAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(createdAt);
+  DateTime? get createdAtDisplay {
+    return AppDateTime().getDateTimeToCompare(dateTimeUtc: createdAt);
   }
 
   String? get createdAtDisplayDate {
-    return AppDateTime().formatDateTime(createdAtLocal, format: _canvasDisplayDateTimeFormat);
+    return AppDateTime().formatDateTime(createdAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasCollaboration>? listFromJson(List<dynamic>? jsonList) {
@@ -687,32 +687,32 @@ class CanvasCalendarEvent implements Favorite {
         : null;
   }
 
-  DateTime? get startAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(startAt);
+  DateTime? get startAtDisplay {
+    return AppDateTime().getDateTimeToCompare(dateTimeUtc: startAt);
   }
 
-  DateTime? get endAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(endAt);
+  DateTime? get endAtDisplay {
+    return AppDateTime().getDateTimeToCompare(dateTimeUtc: endAt);
   }
 
   String? get startAtDisplayDate {
-    return AppDateTime().formatDateTime(startAtLocal, format: _canvasDisplayDateTimeFormat);
+    return AppDateTime().formatDateTime(startAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   String? get endAtDisplayDate {
-    return AppDateTime().formatDateTime(endAtLocal, format: _canvasDisplayDateTimeFormat);
+    return AppDateTime().formatDateTime(endAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   String? get displayDateTime {
     const String emptyTime = 'N/A';
     const dayFormat = 'MMM d';
     const timeFormat = 'h:mma';
-    String? startTime = AppDateTime().formatDateTime(startAtLocal, format: '$dayFormat $timeFormat');
+    String? startTime = AppDateTime().formatDateTime(startAtDisplay, format: '$dayFormat $timeFormat');
     String endTimeFormat = timeFormat;
-    if (startAtLocal?.day != endAtLocal?.day) {
+    if (startAtDisplay?.day != endAtDisplay?.day) {
       endTimeFormat = '$dayFormat ' + endTimeFormat;
     }
-    String? endTime = AppDateTime().formatDateTime(endAtLocal, format: endTimeFormat);
+    String? endTime = AppDateTime().formatDateTime(endAtDisplay, format: endTimeFormat);
     return StringUtils.ensureNotEmpty(startTime, defaultValue: emptyTime) +
         ' - ' +
         StringUtils.ensureNotEmpty(endTime, defaultValue: emptyTime);
@@ -806,16 +806,16 @@ class CanvasAccountNotification {
         : null;
   }
 
-  DateTime? get startAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(startAt);
+  DateTime? get startAtDisplay {
+    return AppDateTime().getDateTimeToCompare(dateTimeUtc: startAt);
   }
 
-  DateTime? get endAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(endAt);
+  DateTime? get endAtDisplay {
+    return AppDateTime().getDateTimeToCompare(dateTimeUtc: endAt);
   }
 
   String? get startAtDisplayDate {
-    return AppDateTime().formatDateTime(startAtLocal, format: _canvasDisplayDateTimeFormat);
+    return AppDateTime().formatDateTime(startAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasAccountNotification>? listFromJson(List<dynamic>? jsonList) {

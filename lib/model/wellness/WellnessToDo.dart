@@ -99,7 +99,7 @@ class WellnessToDoItem {
   }
 
   DateTime? get dueDateTime {
-    return AppDateTime().getDeviceTimeFromUtcTime(dueDateTimeUtc);
+    return AppDateTime().getDateTimeToCompare(dateTimeUtc: dueDateTimeUtc);
   }
 
   String? get displayDueDate {
@@ -110,7 +110,7 @@ class WellnessToDoItem {
   }
 
   DateTime? get reminderDateTime {
-    return AppDateTime().getDeviceTimeFromUtcTime(reminderDateTimeUtc);
+    return AppDateTime().getDateTimeToCompare(dateTimeUtc: reminderDateTimeUtc);
   }
 
   Color get color {

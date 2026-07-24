@@ -35,8 +35,8 @@ class DailyIlliniItem {
   DailyIlliniItem({this.title, this.link, this.description, this.thumbImageUrl, this.pubDateTimeUtc, this.category});
 
   String? get displayPubDate {
-    DateTime? localDateTime = AppDateTime().getDeviceTimeFromUtcTime(pubDateTimeUtc);
-    return AppDateTime().formatDateTime(localDateTime, format: 'LLLL d, yyyy', ignoreTimeZone: true);
+    DateTime? displayDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: pubDateTimeUtc);
+    return AppDateTime().formatDateTime(displayDateTime, format: 'LLLL d, yyyy', ignoreTimeZone: true);
   }
 
   static DailyIlliniItem? fromXml(XmlElement? xml) {

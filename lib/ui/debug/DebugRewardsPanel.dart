@@ -92,7 +92,7 @@ class _DebugRewardsPanelState extends State<DebugRewardsPanel>{
 
   Widget _buildEntryWidget(RewardHistoryEntry entry) {
     return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Expanded(child: Text(StringUtils.ensureNotEmpty(entry.displayDate), style: _defaultRegularTextStyle)),
+      Expanded(child: Text(StringUtils.ensureNotEmpty(entry.displayDateString), style: _defaultRegularTextStyle)),
       Expanded(
           flex: 3,
           child: Padding(
