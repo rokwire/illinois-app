@@ -269,8 +269,6 @@
     "panel.browse.section.polls.description": "Enter a poll number to vote, or create and share your own poll.",
     "panel.browse.section.music_and_news.title": "Illini Music, News & Games",
     "panel.browse.section.music_and_news.description": "Listen to {{app_title}} Public Media and student-run WPGU or catch the latest from The DI.",
-    "panel.browse.section.recent.title": "Visited Recently",
-    "panel.browse.section.recent.description": "Revisit your recent app activity.",
     "panel.browse.section.safety.title": "Safety",
     "panel.browse.section.safety.description": "Get home safely, prepare for emergencies, and discover support resources.",
     "panel.browse.section.sexual_misconduct.title": "Concerns about Sexual, Dating, or Harassment Experiences",
@@ -335,8 +333,6 @@
     "panel.browse.entry.mtd.my_locations.title": "My Locations",
 
     "panel.browse.entry.polls.polls.title": "Encuestas",
-
-    "panel.browse.entry.recent.recent_items.title": "Visited Recently",
 
     "panel.browse.entry.safety.safewalk_request.title": "Request a SafeWalk",
     "panel.browse.entry.safety.safety_resources.title": "Safety Resources",
@@ -1987,7 +1983,6 @@
     "panel.settings.home.header.settings.label": "Ajustes",
     "panel.settings.home.settings.sections.food_filter.label": "Mi Filtro de Comida",
     "panel.settings.home.settings.sections.sports.label": "Mis Equipos Deportivos",
-    "panel.settings.home.settings.sections.recent_items.label": "My Browsing History",
     "panel.settings.home.settings.sections.appointments_and_events.label": "My Appointments & Events",
     "panel.settings.home.settings.sections.favorites.label": "Personalizar Mis Favoritos",
     "panel.settings.home.settings.sections.assessments.label": "Mis Evaluaciones",
@@ -2055,11 +2050,6 @@
     "panel.settings.home.research.title": "Research Participation",
     "panel.settings.home.research.questionnaire.title": "Formulario de interés de investigación",
     "panel.settings.home.research.prompt.title": "Se eliminarán todas las respuestas de su formulario de intereses de investigación. ¿Desea continuar?",
-
-    "panel.settings.home.recent_items.title": "Browsing History",
-    "panel.settings.home.recent_items.enable.toggle.title": "Display recently viewed app content",
-    "panel.settings.home.recent_items.enable.toggle.info": "When enabled, the Illinois app will display the items you recently viewed under Home > Sections > Visited Recently. For quick access, star the Visited Recently section to add it to your Favorites.",
-    "panel.settings.home.recent_items.disable.toggle.prompt": "This will clear your browsing history. Proceed?",
 
     "panel.settings.home.appointments_and_events.appointments.section.text.format": "Mostrar citas en la aplicación {{app_title}} para:",
     "panel.settings.home.appointments_and_events.appointments.mckinley.text": "MyMcKinley",
@@ -3962,16 +3952,6 @@
     "widget.home.suggested_events.text.empty.description": "No hay eventos sugeridos disponibles.",
     "widget.home.suggested_events.button.all.title":"Ver todo",
     "widget.home.suggested_events.button.all.hint":"Toca para ver todos los eventos",
-
-    "widget.home.recent_items.label.header.title":"Visited Recently",
-    "widget.home.recent_items.label.browsing_history.title":"Browsing History",
-    "widget.home.recent_items.text.empty.description": "There is no visited recently app content to display.",
-    "widget.home.recent_items.text.disabled.description": "Displaying visited recently app content is turned off.",
-    "widget.home.recent_items.button.view_all.title":"Ver todo",
-    "widget.home.recent_items.button.view_all.hint":"Toca para ver todos los elementos",
-    "widget.home.recent_items.button.clear_all.title":"Clear All",
-    "widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
-    "widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history>",
 
     "widget.home.public_surveys.label.header.title":"Surveys",
     "widget.home.public_surveys.label.description.failed": "Failed to load surveys.",

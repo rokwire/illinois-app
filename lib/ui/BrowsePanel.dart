@@ -33,7 +33,6 @@ import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
@@ -605,8 +604,6 @@ class _BrowseEntry extends StatelessWidget {
 
       case "polls.polls":                    _onTapPolls(context); break;
 
-      case "recent.recent_items":            _onTapRecentItems(context); break;
-
       case "safety.safewalk_request":        _onTapSafewalkRequest(context); break;
       case "safety.safety_resources":        _onTapSafetyResources(context); break;
       case "safety.sexual_misconduct":       _onTapSexualMisconduct(context, analyticsTarget: "Sexual Misconduct Resources"); break;
@@ -835,11 +832,6 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapPolls(BuildContext context) {
     Analytics().logSelect(target: "Polls");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
-  }
-
-  static void _onTapRecentItems(BuildContext context) {
-    Analytics().logSelect(target: "Recent Items");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeRecentItemsPanel()));
   }
 
   static void _onTapSafewalkRequest(BuildContext context) {

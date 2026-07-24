@@ -59,7 +59,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomeCampusRemindersWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsGameDayWidget.dart';
 import 'package:illinois/ui/home/HomeGroupsWidget.dart';
-import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeCampusHighlightsWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -157,15 +156,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeEvents2Widget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeEvents2Widget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'recent_items') {
-      if (title) {
-        return HomeRecentItemsWidget.title;
-      } else if (handle) {
-        return HomeRecentItemsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeRecentItemsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'campus_highlights') {
