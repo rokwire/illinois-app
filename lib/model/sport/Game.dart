@@ -134,15 +134,15 @@ class Game with Explore implements Favorite {
     DateTime universityLocalGameStartDateTime = date!; //dateTimeUtc.add(durationDifferenceUniversityToGmt);
     DateTime? universityLocalGameEndDateTime = endDate; //AppDateTime().getUniLocalTimeFromUtcTime(endDateTimeUtc);
     DateTime nowUtcDateTime = AppDateTime().now.toUtc();
-    DateTime nowUniversityDateTime = AppDateTime().getUniLocalTimeFromUtcTime(nowUtcDateTime)!;
-    bool startDateIsToday = (nowUniversityDateTime.year == universityLocalGameStartDateTime.year) &&
-        (nowUniversityDateTime.month == universityLocalGameStartDateTime.month) &&
-        (nowUniversityDateTime.day == universityLocalGameStartDateTime.day);
-    bool endDateIsToday = (nowUniversityDateTime.year == universityLocalGameEndDateTime?.year) &&
-        (nowUniversityDateTime.month == universityLocalGameEndDateTime?.month) &&
-        (nowUniversityDateTime.day == universityLocalGameEndDateTime?.day);
-    bool nowIsBetweenGameDates = (nowUniversityDateTime.isAfter(universityLocalGameStartDateTime) &&
-        (universityLocalGameEndDateTime != null ? nowUniversityDateTime.isBefore(universityLocalGameEndDateTime) : false));
+    DateTime nowDisplayDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: nowUtcDateTime)!;
+    bool startDateIsToday = (nowDisplayDateTime.year == universityLocalGameStartDateTime.year) &&
+        (nowDisplayDateTime.month == universityLocalGameStartDateTime.month) &&
+        (nowDisplayDateTime.day == universityLocalGameStartDateTime.day);
+    bool endDateIsToday = (nowDisplayDateTime.year == universityLocalGameEndDateTime?.year) &&
+        (nowDisplayDateTime.month == universityLocalGameEndDateTime?.month) &&
+        (nowDisplayDateTime.day == universityLocalGameEndDateTime?.day);
+    bool nowIsBetweenGameDates = (nowDisplayDateTime.isAfter(universityLocalGameStartDateTime) &&
+        (universityLocalGameEndDateTime != null ? nowDisplayDateTime.isBefore(universityLocalGameEndDateTime) : false));
     return (startDateIsToday || endDateIsToday) || nowIsBetweenGameDates;
   }
 
