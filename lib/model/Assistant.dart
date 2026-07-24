@@ -29,7 +29,6 @@ Map<String, String> deeplinkNameMap = {
   'academics.todo_list': 'To-Do List',
   'academics.due_date_catalog': 'Due Date Catalog',
   'academics.my_illini': 'myIllini',
-  'academics.appointments': 'Appointments',
   'career_exploration.skills_self_evaluation': 'Skills Self-Evaluation',
   'career_exploration.essential_skills_coach': 'Essential Skills Coach',
   'wellness': 'Wellness',

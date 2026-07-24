@@ -82,7 +82,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String notifyMapStoriedSitesNotification                = '$notifyBase.map.storied_sites';
   static const String notifyMapLaundryNotification                     = '$notifyBase.map.laundry';
   static const String notifyAcademicsNotification                      = "$notifyBase.academics";
-  static const String notifyAcademicsAppointmentsNotification          = "$notifyBase.academics.appointments";
   static const String notifyAcademicsCanvasCoursesNotification         = "$notifyBase.academics.canvas_courses";
   static const String notifyAcademicsGiesCanvasCoursesNotification     = "$notifyBase.academics.gies_canvas_courses";
   static const String notifyAcademicsDueDateCatalogNotification        = "$notifyBase.academics.due_date_catalog";
@@ -248,7 +247,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String payloadTypeAcademicsToDoList = 'academics.todo_list';
   static const String payloadTypeAcademicsDueDateCatalog = 'academics.due_date_catalog';
   static const String payloadTypeAcademicsMyIllini = 'academics.my_illini';
-  static const String payloadTypeAcademicsAppointments = 'academics.appointments';
   static const String payloadTypeCareerExplorationSkillsSelfEvaluation = 'career_exploration.skills_self_evaluation';
   static const String payloadTypeCareerExplorationEssentialSkillsCoach = 'career_exploration.essential_skills_coach';
   static const String payloadTypeWellness = 'wellness';
@@ -518,9 +516,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
     }
     else if (type == payloadTypeAcademics) {
       NotificationService().notify(notifyAcademicsNotification, data);
-    }
-    else if (type == payloadTypeAcademicsAppointments) {
-      NotificationService().notify(notifyAcademicsAppointmentsNotification, data);
     }
     else if (type == payloadTypeAcademicsCanvasCourses) {
       NotificationService().notify(notifyAcademicsCanvasCoursesNotification, data);

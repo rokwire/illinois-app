@@ -563,7 +563,6 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.gies_canvas_courses":   _onTapGiesCanvasCourses(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
-      case "academics.appointments":          _onTapAppointments(context, analyticsFeature: AnalyticsFeature.AcademicsAppointments); break;
       case "academics.academic_links":        _onTapAcademicLinks(context); break;
       case "academics.my_illini":             _onTapAcademicsMyIllini(context); break;
 

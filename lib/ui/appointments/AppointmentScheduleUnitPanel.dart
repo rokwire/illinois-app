@@ -80,10 +80,10 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
       return _buildLoadingContent();
     }
     else if (_providers == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.failed', 'Failed to load providers.'));
+      return _buildMessageContent(Localization().getStringEx('panel.appointments.home.message.providers.failed', 'Failed to load providers.'));
     }
     else if (_providers?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available.'));
+      return _buildMessageContent(Localization().getStringEx('panel.appointments.home.message.providers.empty', 'No providers available.'));
     }
     else if (_providers?.length == 1) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -194,16 +194,16 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
 
   Widget _buildUnitsContent() {
     if (_selectedProvider == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.provider.empty', 'No selected provider.'));
+      return _buildMessageContent(Localization().getStringEx('panel.appointments.home.message.provider.empty', 'No selected provider.'));
     }
     else if (_isLoadingUnits) {
       return _buildLoadingContent();
     }
     else if (_units == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.units.failed', 'Failed to load locations for provider.'));
+      return _buildMessageContent(Localization().getStringEx('panel.appointments.home.message.units.failed', 'Failed to load locations for provider.'));
     }
     else if (_units?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.units.empty', 'No locations available for selected provider.'));
+      return _buildMessageContent(Localization().getStringEx('panel.appointments.home.message.units.empty', 'No locations available for selected provider.'));
     }
     else  {
       return _buildUnitsList();

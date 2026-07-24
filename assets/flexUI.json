@@ -56,7 +56,6 @@
 			"authenticate.linked.email": ["info", "remove", "verify"],
 	
 			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academic_links", "academics_events", "skills_self_evaluation", "essential_skills_coach", "my_illini", "skills_dashboard"],
-			"academics.appointments.features": ["authentication", "netid_login"],
 
 			"career_exploration.skills_self_evaluation.features": ["authentication", "login"],
 			"career_exploration.essential_skills_coach.features": ["authentication", "netid_login"],
