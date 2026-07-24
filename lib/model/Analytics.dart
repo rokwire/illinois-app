@@ -129,7 +129,6 @@ class AnalyticsFeature {
     AcademicsDueDateCatalog,
     AcademicsMyIllini,
     AcademicsCampusReminders,
-    AcademicsAppointments,
 
     Map,
     MapEvents,
