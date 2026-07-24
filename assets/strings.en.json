@@ -340,7 +340,6 @@
     "panel.browse.entry.recent.recent_items.title": "Visited Recently",
 
     "panel.browse.entry.safety.safewalk_request.title": "Request a SafeWalk",
-    "panel.browse.entry.safety.saferides.title": "SafeRides (MTD)",
     "panel.browse.entry.safety.safety_resources.title": "Safety Resources",
     "panel.browse.entry.safety.sexual_misconduct.title": "Sexual Misconduct Resources",
 
@@ -4021,8 +4020,6 @@
     "widget.home.safety.safewalk_request.title": "SafeWalks",
     "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
 
-    "widget.home.safety.saferides.title": "SafeRides",
-
     "widget.home.safer.label.title": "Building Access",
     "widget.home.safer.text.empty.description": "Tap the \u2606 on items in Building Access for quick access here.",
     "widget.home.safer.button.building_access.title": "Building Access",
@@ -4636,7 +4633,6 @@
     "model.safety.safewalks.title": "SafeWalks",
     "model.safety.safewalks.request.action.text": "Request a SafeWalk",
     "model.safety.safewalks.not_available.text": "SafeWalk feature is not currently available.",
-    "model.safety.saferides.not_available.text": "SafeRides feature is not currently available.",
     "model.safety.safety_resources.not_available.text": "Safety Resources are not currently available.",
 
     "model.assistant.provider.google.label": "Google",

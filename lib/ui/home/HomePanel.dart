@@ -40,7 +40,6 @@ import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeResearchProjectsWidget.dart';
-import 'package:illinois/ui/home/HomeSafeRidesWidget.dart';
 import 'package:illinois/ui/home/HomeSafeWalkRequestWidget.dart';
 import 'package:illinois/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
@@ -340,15 +339,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeSafeWalkRequestWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeSafeWalkRequestWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'saferides') {
-      if (title) {
-        return HomeSafeRidesRequestWidget.title;
-      } else if (handle) {
-        return HomeSafeRidesRequestWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeSafeRidesRequestWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'safety_resources') {

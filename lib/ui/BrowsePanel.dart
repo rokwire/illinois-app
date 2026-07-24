@@ -32,7 +32,6 @@ import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
-import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeRadioWidget.dart';
@@ -609,7 +608,6 @@ class _BrowseEntry extends StatelessWidget {
       case "recent.recent_items":            _onTapRecentItems(context); break;
 
       case "safety.safewalk_request":        _onTapSafewalkRequest(context); break;
-      case "safety.saferides":               _onTapSafeRides(context); break;
       case "safety.safety_resources":        _onTapSafetyResources(context); break;
       case "safety.sexual_misconduct":       _onTapSexualMisconduct(context, analyticsTarget: "Sexual Misconduct Resources"); break;
       case "sexual_misconduct.sexual_misconduct": _onTapSexualMisconduct(context, analyticsTarget: "Concerns about Sexual, Dating, or Harassment Experiences"); break;
@@ -851,17 +849,6 @@ class _BrowseEntry extends StatelessWidget {
     }
     else {
       AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safewalks.not_available.text", "SafeWalk feature is not currently available."));
-    }
-  }
-
-  static void _onTapSafeRides(BuildContext context) {
-    Analytics().logSelect(target: "SafeRides (MTD)");
-    Map<String, dynamic>? safeRidesGuideEntry = Guide().entryById(Config().safeRidesGuideId);
-    if (safeRidesGuideEntry != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntry: safeRidesGuideEntry, analyticsFeature: AnalyticsFeature.Safety,)));
-    }
-    else {
-      AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.saferides.not_available.text", "SafeRides feature is not currently available."));
     }
   }
 
