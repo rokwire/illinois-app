@@ -20,7 +20,6 @@ import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
-import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
@@ -557,7 +556,6 @@ class _BrowseEntry extends StatelessWidget {
     switch("$sectionId.$entryId") {
       case "academics.gies_checklist":        _onTapGiesChecklist(context); break;
       case "academics.new_student_checklist": _onTapNewStudentChecklist(context); break;
-      case "academics.wellness_todo":         _onTapAcademicsToDo(context); break;
       case "academics.student_courses":       _onTapStudentCourses(context); break;
       case "academics.canvas_courses":        _onTapCanvasCourses(context); break;
       case "academics.gies_canvas_courses":   _onTapGiesCanvasCourses(context); break;
@@ -649,11 +647,6 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: "Essential Skills Coach");
     //AcademicsHomePanel.push(context, AcademicsContentType.essential_skills_coach);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => EssentialSkillsCoachPanel()));
-  }
-
-  static void _onTapAcademicsToDo(BuildContext context) {
-    Analytics().logSelect(target: "Academics To Do");
-    AcademicsHomePanel.push(context, AcademicsContentType.todo_list);
   }
 
   static void _onTapCanvasCourses(BuildContext context) {

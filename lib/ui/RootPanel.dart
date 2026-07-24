@@ -193,7 +193,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyAcademicsMedicineCoursesNotification,
       FirebaseMessaging.notifyAcademicsMyIlliniNotification,
       FirebaseMessaging.notifyAcademicsStudentCoursesNotification,
-      FirebaseMessaging.notifyAcademicsToDoListNotification,
       FirebaseMessaging.notifyAcademicsUiucChecklistNotification,
       FirebaseMessaging.notifyCareerExplorationSkillsSelfEvaluationNotification,
       FirebaseMessaging.notifyCareerExplorationEssentialSkillsCoachNotification,
@@ -450,9 +449,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
     else if (name == FirebaseMessaging.notifyAcademicsStudentCoursesNotification) {
       _onFirebaseAcademicsNotification(AcademicsContentType.student_courses);
-    }
-    else if (name == FirebaseMessaging.notifyAcademicsToDoListNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContentType.todo_list);
     }
     else if (name == FirebaseMessaging.notifyAcademicsUiucChecklistNotification) {
       _onFirebaseAcademicsNotification(AcademicsContentType.uiuc_checklist);
@@ -1316,7 +1312,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
         if (StringUtils.isNotEmpty(todoItemId)) {
           Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(itemId: todoItemId, optionalFieldsExpanded: true)));
         } else {
-          _onFirebaseAcademicsNotification(AcademicsContentType.todo_list);
+          _onFirebaseWellnessNotification(WellnessContentType.todo);
         }
       }
     }

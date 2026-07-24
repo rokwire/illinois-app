@@ -26,7 +26,6 @@ Map<String, String> deeplinkNameMap = {
   'academics.gies_canvas_courses': 'My Gies Canvas Courses',
   'academics.medicine_courses': 'My College of Medicine Compliance',
   'academics.student_courses': 'My Courses',
-  'academics.todo_list': 'To-Do List',
   'academics.due_date_catalog': 'Due Date Catalog',
   'academics.my_illini': 'myIllini',
   'career_exploration.skills_self_evaluation': 'Skills Self-Evaluation',
