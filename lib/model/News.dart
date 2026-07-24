@@ -17,7 +17,6 @@
 import 'package:collection/collection.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -85,9 +84,7 @@ class News implements Favorite {
     if (pubDateUtc == null) {
       return "";
     }
-    bool useDeviceLocalTimeZone = Storage().useDeviceLocalTimeZone!;
-    DateTime? pubDateTime = useDeviceLocalTimeZone ? AppDateTime().getDeviceTimeFromUtcTime(pubDateUtc) : pubDateUtc;
-    return AppDateTime().formatDateTime(pubDateTime, format: "MMM dd ", ignoreTimeZone: useDeviceLocalTimeZone);
+    return AppDateTime().formatDateTime(pubDateUtc, format: "MMM dd ");
   }
 
   // Favorite
