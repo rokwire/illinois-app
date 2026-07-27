@@ -39,6 +39,8 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+import '../widgets/SignInInfoPopup.dart';
+
 enum WalletContentType { illiniId, busPass, libraryCard, mealPlan, businessCard, illiniCash, addIlliniCash }
 
 class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
@@ -78,8 +80,9 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.wallet.offline.label', 'The Wallet is not available while offline.'));
     }
     else if (!Auth2().isOidcLoggedIn && requireOidcContentTypes.contains(_targetContentType(contentType: contentType, contentTypes: contentTypes))) {
-      showDialog(context: context, builder: (context) => _WalletSignInInfoPopup());
-      // AppAlert.showTextMessage(context, Localization().getStringEx('panel.wallet.logged_out.label', 'To access the Wallet, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.'));
+      String message = Localization().getStringEx('panel.wallet.logged_out.label',
+          "To access your wallet, <a href='{{profile_sign_in_url}}'><b>sign in</b></a> with your NetID and <a href='{{settings_privacy_url}}'><b>set your privacy level to 4 or 5</b></a>.");
+      showDialog(context: context, builder: (context) => SignInInfoPopup(message: message));
     }
     else {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
@@ -386,78 +389,6 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
   void _onTapClose() {
     Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
     Navigator.of(context).pop();
-  }
-}
-
-class _WalletSignInInfoPopup extends StatefulWidget {
-  _WalletSignInInfoPopup();
-
-  @override
-  State<_WalletSignInInfoPopup> createState() => _WalletSignInInfoPopupState();
-}
-
-class _WalletSignInInfoPopupState extends State<_WalletSignInInfoPopup> {
-
-  static const String _signInUrl = 'profile://sign_in';
-  static const String _privacyUrl = 'settings://privacy';
-  static const String _signInUrlMacro = '{{profile_sign_in_url}}';
-  static const String _privacyUrlMacro = '{{settings_privacy_url}}';
-
-  @override
-  Widget build(BuildContext context) {
-    String message = Localization().getStringEx('panel.wallet.logged_out.label',
-        "To access your wallet, <a href='$_signInUrlMacro'><b>sign in</b></a> with your NetID and <a href='$_privacyUrlMacro'><b>set your privacy level to 4 or 5</b></a>.")
-        .replaceAll(_signInUrlMacro, _signInUrl).replaceAll(_privacyUrlMacro, _privacyUrl);
-    return AlertDialog(
-        contentPadding: EdgeInsets.zero,
-        content: Container(
-            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(10.0)),
-            child: Stack(alignment: Alignment.center, children: [
-              Padding(
-                  padding: EdgeInsets.only(top: 30, bottom: 22),
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 28),
-                      child: Column(children: [
-                        Padding(
-                            padding: EdgeInsets.only(top: 14),
-                            child:
-                            HtmlWidget(message,
-                                onTapUrl: (url) => _onTapUrl(url),
-                                textStyle: Styles().textStyles.getTextStyle("panel.assistant.popup.detail.small"),
-                                customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null))
-                      ]),
-                    ),
-                  ])),
-              Positioned.fill(
-                  child: Align(
-                      alignment: Alignment.topRight,
-                      child: Semantics(
-                          button: true,
-                          label: "close",
-                          child: InkWell(
-                              onTap: () {
-                                Analytics().logSelect(target: 'Close Wallet Sign-In info popup');
-                                Navigator.of(context).pop();
-                              },
-                              child: Padding(padding: EdgeInsets.all(12), child: Styles().images.getImage('close-circle', excludeFromSemantics: true)))))),
-            ])));
-  }
-
-  bool _onTapUrl(String url) {
-    if (url == _privacyUrl) {
-      Analytics().logSelect(target: 'Settings: My App Privacy', source: widget.runtimeType.toString());
-      Navigator.of(context).pop();
-      SettingsHomePanel.present(context, content: SettingsContentType.privacy);
-      return true;
-    } else if (url == _signInUrl) {
-      Analytics().logSelect(target: 'Profile: Sign In / Sign Out', source: widget.runtimeType.toString());
-      Navigator.of(context).pop();
-      ProfileHomePanel.present(context, contentType: ProfileContentType.login);
-      return true;
-    } else {
-      return false;
-    }
   }
 }
 
