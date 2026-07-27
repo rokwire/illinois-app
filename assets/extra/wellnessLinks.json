@@ -160,7 +160,11 @@
 			"type": "external_link",
 			"categories": ["EDUCATION & PREVENTION"],
 			"title": "Wellness Events & Workshops",
-			"directoryContent": [{
+			"directoryContent": [ {
+                "content": "A list of university services that support all the dimensions of your well-being from relaxation activities to self-care workshops, wellness training, and social events.",
+                "type": "text"
+                },
+				{
 				"type": "external_link",
 				"content": "https://wellness.illinois.edu/wellness-resources/events-workshops"
 			}]
@@ -179,6 +183,10 @@
 			"categories": ["GENERAL RESOURCES"],
 			"title": "Basic Needs",
 			"directoryContent": [{
+                "content": "Basic needs resources include access to nutritious food, stable housing, healthcare, childcare, transportation, and financial resources.",
+                "type": "text"
+                },
+				{
 				"type": "external_link",
 				"content": "https://odos.illinois.edu/community-of-care/basic-needs"
 			}]
@@ -187,7 +195,11 @@
 			"type": "external_link",
 			"categories": ["GENERAL RESOURCES"],
 			"title": "Connie Frank CARE Center",
-			"directoryContent": [{
+			"directoryContent": [ {
+                "content": "Guidance with course attendance issues, options for withdrawing from the university, or questions about where to go on campus to seek different services.",
+                "type": "text"
+                },
+				{
 				"type": "external_link",
 				"content": "https://odos.illinois.edu/community-of-care/CAREcenter"
 			}]
@@ -250,7 +262,11 @@
 			"type": "external_link",
 			"categories": ["GENERAL RESOURCES"],
 			"title": "Stress Management Program",
-			"directoryContent": [{
+			"directoryContent": [  {
+                "content": "Learn stress management techniques, pick up sleep packs and stress relief packs, and make appointments with McKinley’s stress management coordinator.",
+                "type": "text"
+                },
+				{
 				"type": "external_link",
 				"content": "https://www.mckinley.illinois.edu/stress-management"
 			}]
@@ -268,7 +284,11 @@
 			"type": "external_link",
 			"categories": ["GENERAL RESOURCES"],
 			"title": "Veterans’ & Military-Connected Services",
-			"directoryContent": [{
+			"directoryContent": [  {
+                "content": "Individualized academic and career coaching to support progress and address barriers, peer and professional mentoring to foster community and networking, and health and wellness services to promote psychosocial adjustments and well-being.",
+                "type": "text"
+                },
+				{
 				"type": "external_link",
 				"content": "https://chezveteranscenter.ahs.illinois.edu"
 			}]
@@ -286,7 +306,11 @@
 			"type": "external_link",
 			"categories": ["MENTAL HEALTH RESOURCES (ON CAMPUS)"],
 			"title": "Counseling Center",
-			"directoryContent": [{
+			"directoryContent": [ {
+                "content": "Schedule an appointment online or by phone. If appointments appear full online, call for additional options. For immediate walk-in support during business hours, call ahead if possible.",
+                "type": "text"
+                },
+				{
 				"type": "external_link",
 				"content": "https://counselingcenter.illinois.edu"
 			}]
@@ -331,7 +355,11 @@
 			"type": "external_link",
 			"categories": ["MENTAL HEALTH RESOURCES (REMOTE)"],
 			"title": "HealthiestYou Telehealth",
-			"directoryContent": [{
+			"directoryContent": [ {
+                "content": "Access to doctors and mental healthcare from anywhere you are.",
+                "type": "text"
+                },
+				{
 				"type": "external_link",
 				"content": "https://si.illinois.edu/healthiestyou"
 			}]
@@ -341,6 +369,10 @@
 			"categories": ["MENTAL HEALTH RESOURCES (REMOTE)"],
 			"title": "TalkCampus",
 			"directoryContent": [{
+                "content": "Talk with peers across the globe 24/7 in 26 different languages, build community, and share thoughts and feelings while remaining anonymous.",
+                "type": "text"
+                },
+				{
 				"type": "external_link",
 				"content": "https://www.talkcampus.com/sign-up"
 			}]
@@ -349,7 +381,11 @@
 			"type": "external_link",
 			"categories": ["MENTAL HEALTH RESOURCES (REMOTE)"],
 			"title": "Telus Health Student Support",
-			"directoryContent": [{
+			"directoryContent": [ {
+                "content": "Free, confidential support for emotional health and wellbeing available 24/7 via app, telephone, and web.",
+                "type": "text"
+                },
+				{
 				"type": "external_link",
 				"content": "https://studentsupport.telushealth.com/ca/home"
 			}]
@@ -358,7 +394,11 @@
 			"type": "external_link",
 			"categories": ["MENTAL HEALTH RESOURCES (REMOTE)"],
 			"title": "WellTrack Boost App",
-			"directoryContent": [{
+			"directoryContent": [ {
+                "content": "Self-driven mental health tools to better understand thoughts, feelings, and behaviors, offering simple, effective strategies to support mental well-being.",
+                "type": "text"
+                },
+				{
 				"type": "external_link",
 				"content": "https://counselingcenter.illinois.edu/welltrack"
 			}]
@@ -386,6 +426,10 @@
 			"categories": ["PHYSICAL HEALTH RESOURCES"],
 			"title": "Immunization Requirements",
 			"directoryContent": [{
+                    "content": "Students must show proof of immunity against certain vaccine-preventable diseases. New incoming students are required to receive vaccinations and document their health status before attending classes.",
+                    "type": "text"
+                },
+				{
 				"type": "external_link",
 				"content": "https://www.mckinley.illinois.edu/medical-services/immunizations-clinic"
 			}]
@@ -440,6 +484,10 @@
 			"categories": ["SEXUAL HEALTH RESOURCES"],
 			"title": "Sexual Health Program",
 			"directoryContent": [{
+                    "content": "Make appointments with McKinley's sexual health educator, access safer sex supplies, find support groups, and get tested.",
+                    "type": "text"
+                },
+				{
 				"type": "external_link",
 				"content": "https://www.mckinley.illinois.edu/sexual-health"
 			}]
@@ -448,7 +496,11 @@
 			"type": "external_link",
 			"categories": ["SEXUAL HEALTH RESOURCES"],
 			"title": "Sexual Misconduct",
-			"directoryContent": [{
+			"directoryContent": [ {
+                    "content": "If you have experienced sexual misconduct or think you may have experienced it, help is available. It is not your fault, and there are resources to provide support and help you heal. You also have options for reporting the incident.",
+                    "type": "text"
+                },
+				{
 				"type": "external_link",
 				"content": "https://wecare.illinois.edu"
 			}]
