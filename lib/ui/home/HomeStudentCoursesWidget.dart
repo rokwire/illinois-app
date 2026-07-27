@@ -233,7 +233,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
   }
 
   Widget _buildCalendarContent() {
-    int todayIndex = StudentCoursesCalendarLayout.weekdayOrder.indexOf(DateTimeUni.nowUniOrLocal().weekday);
+    int todayIndex = StudentCoursesCalendarLayout.weekdayOrder.indexOf(AppDateTime().getDisplayNowTZDateTime().weekday);
     int initialPageIndex = _calendarPageIndex ?? ((0 <= todayIndex) ? todayIndex : 0);
 
     return _HomeStudentCoursesCalendarPager(
@@ -484,7 +484,7 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
   }
 
   String get _dayLabel {
-    bool isToday = (widget.weekday == DateTimeUni.nowUniOrLocal().weekday);
+    bool isToday = (widget.weekday == AppDateTime().getDisplayNowTZDateTime().weekday);
     return isToday ?
       Localization().getStringEx('widget.home.student_courses.calendar.day.today.label', 'TODAY') :
       _weekdayName(widget.weekday);
