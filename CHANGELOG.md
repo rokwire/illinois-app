@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Hid various sub-sections and panels [#5874](https://github.com/rokwire/illinois-app/issues/5874).
 
-## [8.1.4] - 2026-07-23
+## [8.1.5] - 2026-07-27
 ### Changed
 - My Courses: Match the drop-down button style with Events and Groups [#5858](https://github.com/rokwire/illinois-app/issues/5858).
 ### Fixed
