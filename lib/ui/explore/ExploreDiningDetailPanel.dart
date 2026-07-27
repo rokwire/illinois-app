@@ -28,7 +28,6 @@ import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Dinings.dart';
@@ -38,7 +37,6 @@ import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ui/dining/FoodDetailPanel.dart';
@@ -98,7 +96,6 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
     _reloadDiningIfNeed();
     _loadDiningFeedback();
 
-    _addRecentItem();
     _locationData = widget.initialLocationData;
     _loadCurrentLocation().then((_) {
       setState(() {});
@@ -580,10 +577,6 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
     _loadCurrentLocation().then((_) {
       setStateIfMounted();
     });
-  }
-
-  void _addRecentItem() {
-    RecentItems().addRecentItem(RecentItem.fromSource(_dining));
   }
 
   void _onFavorite() {
