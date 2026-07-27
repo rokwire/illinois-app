@@ -614,6 +614,30 @@ class AppTextUtils {
       Localization().getStringEx('auth.logged_out.feature.not_available.message.short', 'To access {{feature}}, you need to sign in with your NetID.');
     return message.replaceAll(featureMacro, featureName);
   }
+
+  // Logged Out Sign In / Privacy Message
+
+  static const String featureClauseMacro = '{{feature_clause}}';
+  static const String signInLinkMacro = '{{profile_sign_in_url}}';
+  static const String privacyLinkMacro = '{{settings_privacy_url}}';
+
+  static String loggedOutSignInPrivacyTemplate(String featureClause) {
+    String message = Localization().getStringEx('auth.logged_out.feature.not_available.message.link',
+        '$featureClauseMacro $signInLinkMacro with your NetID and $privacyLinkMacro.');
+    return message.replaceAll(featureClauseMacro, featureClause);
+  }
+
+  static String loggedOutSignInPrivacyHtml(String featureClause) {
+    return loggedOutSignInPrivacyTemplate(featureClause)
+        .replaceAll(signInLinkMacro, "<a href='$signInLinkMacro'><b>$signInLinkLabel</b></a>")
+        .replaceAll(privacyLinkMacro, "<a href='$privacyLinkMacro'><b>$privacyLinkLabel</b></a>");
+  }
+
+  static String get signInLinkLabel =>
+      Localization().getStringEx('auth.logged_out.feature.not_available.message.link.sign_in', 'sign in');
+
+  static String get privacyLinkLabel =>
+      Localization().getStringEx('auth.logged_out.feature.not_available.message.link.privacy', 'set your privacy level to 4 or 5');
 }
 
 class AppLaunchUrl {

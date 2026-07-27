@@ -9,11 +9,9 @@ import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/model/Analytics.dart';
-import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events2/Even2SetupSuperEvent.dart';
 import 'package:illinois/ui/events2/Event2AdvancedSettingsPanel.dart';
@@ -1525,10 +1523,6 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
           _displayCategories = displayCategories;
         });
       }
-    }
-
-    if (_event != null) {
-      RecentItems().addRecentItem(RecentItem.fromSource(_event));
     }
 
     // Load additional stuff that we need for this event.

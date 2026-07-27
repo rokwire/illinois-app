@@ -66,6 +66,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
   late ScrollPagerController _pagerController;
   GestureRecognizer? _loginRecognizer;
+  GestureRecognizer? _privacyRecognizer;
 
   @override
   void initState() {
@@ -80,6 +81,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     _pagerController.registerScrollController(widget.scrollController);
 
     _loginRecognizer = TapGestureRecognizer()..onTap = _onTapLogin;
+    _privacyRecognizer = TapGestureRecognizer()..onTap = _onTapPrivacy;
 
     super.initState();
   }
@@ -87,6 +89,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   @override
   void dispose() {
     _loginRecognizer?.dispose();
+    _privacyRecognizer?.dispose();
     _pagerController.deregisterScrollController();
     NotificationService().unsubscribe(this);
     super.dispose();
@@ -416,17 +419,21 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   // Logged Out
 
   Widget _buildLoggedOutContent() {
-    final String linkLoginMacro = "{{link.login}}";
-    String messageTemplate = Localization().getStringEx("panel.wellness.sections.health_screener.message.signed_out", "You are not logged in. To access Illinois Health Screener, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.");
-    List<String> messages = messageTemplate.split(linkLoginMacro);
-    List<InlineSpan> spanList = <InlineSpan>[];
-    if (0 < messages.length)
-      spanList.add(TextSpan(text: messages.first));
-    for (int index = 1; index < messages.length; index++) {
-      spanList.add(TextSpan(text: Localization().getStringEx("panel.wellness.sections.health_screener.message.signed_out.link.login", "sign in"), style : Styles().textStyles.getTextStyle("panel.wellness.sections.health_screener.link"),
-        recognizer: _loginRecognizer, ));
-      spanList.add(TextSpan(text: messages[index]));
-    }
+    String messageTemplate = AppTextUtils.loggedOutSignInPrivacyTemplate(
+        Localization().getStringEx("panel.wellness.sections.health_screener.logged_out.clause", "To access the Illinois Health Screener,"));
+
+    List<String> signInParts = messageTemplate.split(AppTextUtils.signInLinkMacro);
+    List<String> privacyParts = signInParts.last.split(AppTextUtils.privacyLinkMacro);
+    TextStyle? linkStyle = Styles().textStyles.getTextStyle("panel.wellness.sections.health_screener.link");
+
+    List<InlineSpan> spanList = <InlineSpan>[
+      TextSpan(text: signInParts.first),
+      TextSpan(text: AppTextUtils.signInLinkLabel, style: linkStyle, recognizer: _loginRecognizer),
+      TextSpan(text: privacyParts.first),
+      TextSpan(text: AppTextUtils.privacyLinkLabel, style: linkStyle, recognizer: _privacyRecognizer),
+      if (1 < privacyParts.length)
+        TextSpan(text: privacyParts.sublist(1).join(AppTextUtils.privacyLinkMacro)),
+    ];
 
     return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24), child:
       RichText(textAlign: TextAlign.left, text:
@@ -438,6 +445,11 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   void _onTapLogin() {
     Analytics().logSelect(target: "sign in");
     ProfileHomePanel.present(context, contentType: ProfileContentType.login,);
+  }
+
+  void _onTapPrivacy() {
+    Analytics().logSelect(target: "set your privacy level to 4 or 5");
+    SettingsHomePanel.present(context, content: SettingsContentType.privacy);
   }
 
   // Notifications Listener

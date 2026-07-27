@@ -18,12 +18,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Analytics.dart';
-import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/ext/Game.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -73,9 +71,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
 
   @override
   void initState() {
-    if (game != null)
-      RecentItems().addRecentItem(RecentItem.fromSource(game));
-    else
+    if (game == null)
       _loadGame();
     super.initState();
   }
@@ -92,7 +88,6 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
     _setLoading(true);
     Sports().loadGame(sportName, gameId).then((loadedGame) {
       game = loadedGame;
-      RecentItems().addRecentItem(RecentItem.fromSource(game));
       _setLoading(false);
     });
   }

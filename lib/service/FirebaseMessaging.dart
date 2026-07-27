@@ -82,7 +82,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String notifyMapStoriedSitesNotification                = '$notifyBase.map.storied_sites';
   static const String notifyMapLaundryNotification                     = '$notifyBase.map.laundry';
   static const String notifyAcademicsNotification                      = "$notifyBase.academics";
-  static const String notifyAcademicsAppointmentsNotification          = "$notifyBase.academics.appointments";
   static const String notifyAcademicsCanvasCoursesNotification         = "$notifyBase.academics.canvas_courses";
   static const String notifyAcademicsGiesCanvasCoursesNotification     = "$notifyBase.academics.gies_canvas_courses";
   static const String notifyAcademicsDueDateCatalogNotification        = "$notifyBase.academics.due_date_catalog";
@@ -91,7 +90,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String notifyAcademicsMedicineCoursesNotification       = "$notifyBase.academics.medicine_courses";
   static const String notifyAcademicsMyIlliniNotification              = "$notifyBase.academics.my_illini";
   static const String notifyAcademicsStudentCoursesNotification        = "$notifyBase.academics.student_courses";
-  static const String notifyAcademicsToDoListNotification              = "$notifyBase.academics.todo_list";
   static const String notifyAcademicsUiucChecklistNotification         = "$notifyBase.academics.uiuc_checklist";
   static const String notifyCareerExplorationSkillsSelfEvaluationNotification = "$notifyBase.career_exploration.skills_self_evaluation";
   static const String notifyCareerExplorationEssentialSkillsCoachNotification = "$notifyBase.career_exploration.essential_skills_coach";
@@ -245,10 +243,8 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
   static const String payloadTypeAcademicsGiesCanvasCourses = 'academics.gies_canvas_courses';
   static const String payloadTypeAcademicsMedicineCourses = 'academics.medicine_courses';
   static const String payloadTypeAcademicsStudentCourses = 'academics.student_courses';
-  static const String payloadTypeAcademicsToDoList = 'academics.todo_list';
   static const String payloadTypeAcademicsDueDateCatalog = 'academics.due_date_catalog';
   static const String payloadTypeAcademicsMyIllini = 'academics.my_illini';
-  static const String payloadTypeAcademicsAppointments = 'academics.appointments';
   static const String payloadTypeCareerExplorationSkillsSelfEvaluation = 'career_exploration.skills_self_evaluation';
   static const String payloadTypeCareerExplorationEssentialSkillsCoach = 'career_exploration.essential_skills_coach';
   static const String payloadTypeWellness = 'wellness';
@@ -519,9 +515,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
     else if (type == payloadTypeAcademics) {
       NotificationService().notify(notifyAcademicsNotification, data);
     }
-    else if (type == payloadTypeAcademicsAppointments) {
-      NotificationService().notify(notifyAcademicsAppointmentsNotification, data);
-    }
     else if (type == payloadTypeAcademicsCanvasCourses) {
       NotificationService().notify(notifyAcademicsCanvasCoursesNotification, data);
     }
@@ -551,9 +544,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging with NotificationsList
     }
     else if (type == payloadTypeAcademicsStudentCourses) {
       NotificationService().notify(notifyAcademicsStudentCoursesNotification, data);
-    }
-    else if (type == payloadTypeAcademicsToDoList) {
-      NotificationService().notify(notifyAcademicsToDoListNotification, data);
     }
     else if (type == payloadTypeAcademicsUiucCheckilst) {
       NotificationService().notify(notifyAcademicsUiucChecklistNotification, data);

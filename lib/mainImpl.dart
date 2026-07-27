@@ -55,7 +55,6 @@ import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Polls.dart';
-import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Rewards.dart';
 import 'package:illinois/service/Services.dart' as illinois;
 import 'package:illinois/service/Sports.dart';
@@ -155,7 +154,6 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       LocalNotifications(),
       Sports(),
       LiveStats(),
-      RecentItems(),
       Dinings(),
       IlliniCash(),
       FlexUI(),

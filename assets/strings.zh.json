@@ -120,6 +120,9 @@
 
 	"auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
 	"auth.logged_out.feature.not_available.message.short": "To access {{feature}}, you need to sign in with your NetID.",
+	"auth.logged_out.feature.not_available.message.link": "{{feature_clause}} {{profile_sign_in_url}} with your NetID and {{settings_privacy_url}}.",
+	"auth.logged_out.feature.not_available.message.link.sign_in": "sign in",
+	"auth.logged_out.feature.not_available.message.link.privacy": "set your privacy level to 4 or 5",
 
 	"generic.app.feature.illini_cash": "Illini Cash",
 	"generic.app.feature.meal_plan": "University Housing Meal Plan",
@@ -131,8 +134,8 @@
 	"generic.app.feature.notifications": "Notifications",
 	"generic.app.feature.research_projects": "Research Projects",
 	"generic.app.feature.student_courses": "My Courses",
-	"generic.app.feature.canvas_courses.uiuc": "My Canvas Courses",
-	"generic.app.feature.canvas_courses.gies": "My Gies Canvas Courses",
+	"generic.app.feature.canvas_courses.uiuc": "My Canvas",
+	"generic.app.feature.canvas_courses.gies": "My Gies Canvas",
 	"generic.app.feature.medicine_courses": "My College of Medicine Compliance",
 	"generic.app.feature.skills_self_evaluation": "Assessments",
 	"generic.app.feature.checklist.uiuc": "New Student Checklist",
@@ -219,6 +222,7 @@
 	"panel.browse.label.offline.feedback":"离线时无法提供反馈。",
 	"panel.browse.label.offline.crisis_help": "離線時無法使用危機幫助。",
 	"panel.browse.label.offline.inbox": "離線時通知不可用。",
+	"panel.notifications.logged_out.clause": "To use notifications,",
 
 	"panel.browse.label.no_card.bus_pass": "您需要有效的 Illini ID才能使用 MTD Bus Pass。",
 	"panel.browse.label.no_card.illini_id": "沒有Illini ID信息。 您沒有有效的 Illini ID。 請訪問 ID 中心。",
@@ -254,7 +258,7 @@
 	"panel.browse.section.directory.title": "Directory of Users",
 	"panel.browse.section.directory.description": "Find contact information for other {{university_name}} app users.",
 	"panel.browse.section.events.title": "活動",
-	"panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
+	"panel.browse.section.events.description": "Find in-person and online {{app_title}} events.",
 	"panel.browse.section.groups.title": "團體",
 	"panel.browse.section.groups.description": "Discover a new group or start your own.",
 	"panel.browse.section.research_projects.title": "Research Participation",
@@ -269,8 +273,6 @@
 	"panel.browse.section.polls.description": "Enter a poll number to vote, or create and share your own poll.",
 	"panel.browse.section.music_and_news.title": "Illini Music, News & Games",
 	"panel.browse.section.music_and_news.description": "Listen to {{app_title}} Public Media and student-run WPGU or catch the latest from The DI.",
-	"panel.browse.section.recent.title": "Visited Recently",
- 	"panel.browse.section.recent.description": "Revisit your recent app activity.",
 	"panel.browse.section.safety.title": "Safety",
 	"panel.browse.section.safety.description": "Get home safely, prepare for emergencies, and discover support resources.",
 	"panel.browse.section.sexual_misconduct.title": "Concerns about Sexual, Dating, or Harassment Experiences",
@@ -289,9 +291,7 @@
 	"panel.browse.entry.academics.student_courses.title": "我的課程",
 	"panel.browse.entry.academics.my_illini.title": "myIllini",
 	"panel.browse.entry.academics.campus_reminders.title": "校園提醒",
-	"panel.browse.entry.academics.wellness_todo.title": "待辦事項清單",
 	"panel.browse.entry.academics.due_date_catalog.title": "到期日目錄",
-	"panel.browse.entry.academics.appointments.title": "約會",
 	"panel.browse.entry.academics.academic_links.title": "Academic Links",
 
 	"panel.browse.entry.appointments.appointments.title": "約會",
@@ -338,10 +338,7 @@
 
 	"panel.browse.entry.polls.polls.title": "民意調查",
 
-	"panel.browse.entry.recent.recent_items.title": "Visited Recently",
-
 	"panel.browse.entry.safety.safewalk_request.title": "Request a SafeWalk",
-	"panel.browse.entry.safety.saferides.title": "SafeRides (MTD)",
 	"panel.browse.entry.safety.safety_resources.title": "Safety Resources",
 	"panel.browse.entry.safety.sexual_misconduct.title": "Sexual Misconduct Resources",
 
@@ -372,7 +369,7 @@
 	"panel.assistant.clear_all.confirm_prompt.text": "Are you sure you want to clear your Illinois Assistant history? This action cannot be undone.",
 	"panel.assistant.reset_session.label": "Reset Memory",
 	"panel.assistant.reset_session.confirm_prompt.text": "Are you sure you want to reset your current Illinois Assistant session?",
-	"panel.assistant.logged_out.label": "To access the Illinois Assistant, <a href='{{profile_sign_in_url}}'><b>sign in</b></a> with your NetID and <a href='{{settings_privacy_url}}'><b>set your privacy level to 4 or 5</b></a> under Settings.",
+	"panel.assistant.logged_out.clause": "To access the Illinois Assistant,",
 	"panel.assistant.terms.default.msg": "伊利諾伊州助理是一款搜尋工具，可以幫助您了解更多有關官方大學資源的資訊。雖然該功能旨在提供有用的信息，但響應有時可能不完整或不準確。 **您有責任在根據資訊採取行動之前確認資訊。 **\n\n繼續操作即表示您承認伊利諾伊助理是一種補充工具，不能取代官方大學資源。",
 	"panel.assistant.terms.accept.button": "我接受",
 	"panel.assistant.terms.accepted.fail.msg": "出了點問題。請稍後再試。",
@@ -416,7 +413,7 @@
 	"panel.wallet.header.title": "Wallet",
 	"panel.wallet.offline.label": "The Wallet is not available while offline.",
 	"panel.wallet.offline.content_type.label": "{{content_type}} is not available while offline.",
-	"panel.wallet.logged_out.label": "To access the Wallet, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
+	"panel.wallet.logged_out.clause": "To access your wallet,",
 	"panel.wallet.logged_out.content_type.label": "To access {{content_type}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
 	"panel.wallet.not_available.content_type.label": "{{content_type}} is not available.",
 	"panel.wallet.content_type.illini_id.label": "Illini ID",
@@ -1994,7 +1991,6 @@
 	"panel.settings.home.header.settings.label": "設置",
 	"panel.settings.home.settings.sections.food_filter.label": "我的食物過濾器",
 	"panel.settings.home.settings.sections.sports.label": "我的運動隊",
-	"panel.settings.home.settings.sections.recent_items.label": "My Browsing History",
 	"panel.settings.home.settings.sections.appointments_and_events.label": "My Appointments & Events",
 	"panel.settings.home.settings.sections.favorites.label": "自定義收藏夾",
 	"panel.settings.home.settings.sections.assessments.label": "我的評估",
@@ -2061,11 +2057,6 @@
 	"panel.settings.home.research.toggle.title": "參與研究",
 	"panel.settings.home.research.questionnaire.title": "研究興趣表",
 	"panel.settings.home.research.prompt.title": "您在“研究兴趣”表单中提交的所有内容都将被删除。您确定要继续吗？",
-
-	"panel.settings.home.recent_items.title": "Browsing History",
-	"panel.settings.home.recent_items.enable.toggle.title": "Display recently viewed app content",
-	"panel.settings.home.recent_items.enable.toggle.info": "When enabled, the Illinois app will display the items you recently viewed under Home > Sections > Visited Recently. For quick access, star the Visited Recently section to add it to your Favorites.",
-	"panel.settings.home.recent_items.disable.toggle.prompt": "This will clear your browsing history. Proceed?",
 
 	"panel.settings.home.appointments_and_events.appointments.section.text.format": "在 {{app_title}} 應用程序中顯示約會：",
 	"panel.settings.home.appointments_and_events.appointments.mckinley.text": "我的麥金萊",
@@ -2660,8 +2651,7 @@
 	"panel.wellness.sections.health_screener.label.screener.subtitle": "找到合適的資源",
 	"panel.wellness.sections.health_screener.history.clear": "全部清除",
 	"panel.wellness.sections.health_screener.history.clear.confirm": "您確定要清除歷史記錄嗎？",
-	"panel.wellness.sections.health_screener.message.signed_out": "You are not logged in. To access Illinois Health Screener, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
-	"panel.wellness.sections.health_screener.message.signed_out.link.login": "sign in",
+	"panel.wellness.sections.health_screener.logged_out.clause": "To access the Illinois Health Screener,",
 
 	"panel.wellness.sections.mental_health.video.title": "精神健康",
 
@@ -2747,20 +2737,20 @@
 	"panel.wellness.successteam.pcp.info.description": "A primary care provider (PCP) provides essential\nhealthcare services, promotes your overall wellbeing,\nand can refer you to services such as internal medicine,\nfamily practice, psychiatry, and gynecology.",
 	"panel.wellness.successteam.advisor.info.description": "An academic advisor is your go-to person for course\nregistration, degree planning, and academic support\nservices.",
 
-	"panel.academics.appointments.home.header.title": "预约",
-	"panel.academics.appointments.home.message.providers.failed": "无法加载提供者。",
-	"panel.academics.appointments.home.message.providers.empty": "没有可用的提供者。",
-	"panel.academics.appointments.home.message.provider.empty": "没有选择的提供者。",
-	"panel.academics.appointments.home.message.unit.empty": "没有选定的位置。",
-	"panel.academics.appointments.home.message.units.failed": "无法加载提供者的位置。",
-	"panel.academics.appointments.home.message.units.empty": "所选的提供者没有可用的位置。",
-	"panel.academics.appointments.home.message.persons.failed": "无法加载該位置的导师",
-	"panel.academics.appointments.home.message.persons.empty": "所选的位置沒有有空的导师。",
-	"panel.academics.appointments.home.message.appointments.failed": "无法加载预约。",
-	"panel.academics.appointments.home.message.appointments.upcoming.empty": "您目前没有与 {{app_title}} 应用程序链接的未來预约。新的预约大约需要20分钟后才会显示在 {{app_title}} 应用程序。",
-	"panel.academics.appointments.home.message.appointments.past.empty": "您沒有与 {{app_title}} 应用程序链接最近的预约。",
-	"panel.academics.appointments.home.heading.appointments.past": "最近的预约",
-	"panel.academics.appointments.home.label.providers.all": "全部的提供者",
+	"panel.appointments.home.header.title": "预约",
+	"panel.appointments.home.message.providers.failed": "无法加载提供者。",
+	"panel.appointments.home.message.providers.empty": "没有可用的提供者。",
+	"panel.appointments.home.message.provider.empty": "没有选择的提供者。",
+	"panel.appointments.home.message.unit.empty": "没有选定的位置。",
+	"panel.appointments.home.message.units.failed": "无法加载提供者的位置。",
+	"panel.appointments.home.message.units.empty": "所选的提供者没有可用的位置。",
+	"panel.appointments.home.message.persons.failed": "无法加载該位置的导师",
+	"panel.appointments.home.message.persons.empty": "所选的位置沒有有空的导师。",
+	"panel.appointments.home.message.appointments.failed": "无法加载预约。",
+	"panel.appointments.home.message.appointments.upcoming.empty": "您目前没有与 {{app_title}} 应用程序链接的未來预约。新的预约大约需要20分钟后才会显示在 {{app_title}} 应用程序。",
+	"panel.appointments.home.message.appointments.past.empty": "您沒有与 {{app_title}} 应用程序链接最近的预约。",
+	"panel.appointments.home.heading.appointments.past": "最近的预约",
+	"panel.appointments.home.label.providers.all": "全部的提供者",
 
 	"panel.wellness.home.header.title": "健康與保健",
 	"panel.wellness.home.eight_dimensions.header.title": "8健康維度",
@@ -3497,7 +3487,7 @@
 	"panel.gies_canvas_courses.header.title": "我的 Gies 帆布課程",
 	"panel.gies_canvas_courses.load.empty.error.msg": "You do not appear to be enrolled in any Gies Canvas courses.",
 	"panel.gies_canvas_courses.load.failed.error.msg": "Unable to load courses.",
-	"panel.gies_canvas_courses.load.offline.error.msg": "My Gies Canvas Courses not available while offline.",
+	"panel.gies_canvas_courses.load.offline.error.msg": "My Gies Canvas not available while offline.",
 
 	"panel.medicine_courses.load.offline.error.msg": "My College of Medicine Compliance not available while offline.",
 	"panel.medicine_courses.load.failed.error.msg": "Unable to load courses.",
@@ -3652,7 +3642,6 @@
 
 	"panel.safety.header.title": "Safety",
 	"panel.safety.content_type.safe_walk_request.label": "Request a SafeWalk",
-	"panel.safety.content_type.safe_rides.label": "SafeRides (MTD)",
 	"panel.safety.content_type.safety_resources.label": "Safety Resources",
 
 	"panel.safewalks_request.header.title": "SafeWalks",
@@ -3964,16 +3953,6 @@
 	"widget.home.suggested_events.button.all.title":"查看全部",
 	"widget.home.suggested_events.button.all.hint":"點按即可查看所有活動",
 
-	"widget.home.recent_items.label.header.title":"Visited Recently",
-	"widget.home.recent_items.label.browsing_history.title":"Browsing History",
-	"widget.home.recent_items.text.empty.description": "There is no visited recently app content to display.",
-	"widget.home.recent_items.text.disabled.description": "Displaying visited recently app content is turned off.",
-	"widget.home.recent_items.button.view_all.title":"查看全部",
-	"widget.home.recent_items.button.view_all.hint":"點擊查看所有項目",
-	"widget.home.recent_items.button.clear_all.title":"Clear All",
-	"widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
-	"widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history?",
-
 	"widget.home.public_surveys.label.header.title":"Surveys",
 	"widget.home.public_surveys.label.description.failed": "Failed to load surveys.",
 	"widget.home.public_surveys.label.description.offline": "Surveys are not available while offline",
@@ -4019,8 +3998,6 @@
 
 	"widget.home.safety.safewalk_request.title": "SafeWalks",
 	"widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
-
-	"widget.home.safety.saferides.title": "SafeRides",
 
 	"widget.home.safer.label.title": "Building Access",
 	"widget.home.safer.text.empty.description": "Tap the \u2606 on items in Building Access so you can quickly find them here.",
@@ -4403,7 +4380,6 @@
 	"widget.access.polls.name": "快速投票",
 	"widget.access.wellness.appointments.name": "MyMckinley預約",
 	"widget.access.wellness.health_screener.name": "Illinois Health Screener",
-	"widget.access.academics.appointments.name": "Academics Appointments",
 	"widget.access.assistant.name": "Illinois Assistant",
 	"widget.access.roles.unsatisfied.title": "%s 不可用",
 	"widget.access.privacy.unsatisfied.title": "更新隱私級別以訪問 %s",
@@ -4632,7 +4608,6 @@
 	"model.safety.safewalks.title": "SafeWalks",
 	"model.safety.safewalks.request.action.text": "Request a SafeWalk",
 	"model.safety.safewalks.not_available.text": "SafeWalk feature is not currently available.",
-	"model.safety.saferides.not_available.text": "SafeRides feature is not currently available.",
 	"model.safety.safety_resources.not_available.text": "Safety Resources are not currently available.",
 
 	"model.assistant.provider.google.label": "Google",

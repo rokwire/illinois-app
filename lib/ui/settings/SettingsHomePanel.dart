@@ -33,7 +33,6 @@ import 'package:illinois/ui/settings/SettingsFoodFiltersPage.dart';
 import 'package:illinois/ui/settings/SettingsLanguagePage.dart';
 import 'package:illinois/ui/settings/SettingsNotificationPreferencesPage.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPage.dart';
-import 'package:illinois/ui/settings/SettingsRecentItemsPage.dart';
 import 'package:illinois/ui/settings/SettingsResearchPage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -47,7 +46,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum SettingsContentType { food_filters, sports, favorites, assessments, recent_items, appointments_and_events, language, about, research, privacy, notifications, accessibility }
+enum SettingsContentType { food_filters, sports, favorites, assessments, appointments_and_events, language, about, research, privacy, notifications, accessibility }
 
 class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'settings_home_content_panel';
@@ -316,7 +315,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
     switch (_selectedContentType) {
       case SettingsContentType.food_filters: return SettingsFoodFiltersPage();
       case SettingsContentType.sports: return AthleticsTeamsWidget();
-      case SettingsContentType.recent_items: return SettingsRecentItemsPage();
       case SettingsContentType.appointments_and_events: return SettingsAppointmentsAndEventsPage();
       case SettingsContentType.favorites: return null;
       case SettingsContentType.assessments: return SettingsAssessmentsPage();
@@ -401,7 +399,6 @@ extension SettingsContentTypeImpl on SettingsContentType {
     switch (this) {
       case SettingsContentType.food_filters: return Localization().getStringEx('panel.settings.home.settings.sections.food_filter.label', 'My Food Filter', language: language);
       case SettingsContentType.sports: return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams', language: language);
-      case SettingsContentType.recent_items: return Localization().getStringEx('panel.settings.home.settings.sections.recent_items.label', 'My Browsing History', language: language);
       case SettingsContentType.appointments_and_events: return Localization().getStringEx('panel.settings.home.settings.sections.appointments_and_events.label', 'My Appointments & Events', language: language);
       case SettingsContentType.favorites: return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'Customize Favorites', language: language);
       case SettingsContentType.assessments: return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments', language: language);
@@ -418,7 +415,6 @@ extension SettingsContentTypeImpl on SettingsContentType {
     switch (this) {
       case SettingsContentType.food_filters: return 'food_filters';
       case SettingsContentType.sports: return 'sports';
-      case SettingsContentType.recent_items: return 'recent_items';
       case SettingsContentType.appointments_and_events: return 'appointments_and_events';
       case SettingsContentType.favorites: return 'favorites';
       case SettingsContentType.assessments: return 'assessments';
@@ -435,7 +431,6 @@ extension SettingsContentTypeImpl on SettingsContentType {
     switch(value) {
       case 'food_filters': return SettingsContentType.food_filters;
       case 'sports': return SettingsContentType.sports;
-      case 'recent_items': return SettingsContentType.recent_items;
       case 'appointments_and_events': return SettingsContentType.appointments_and_events;
       case 'favorites': return SettingsContentType.favorites;
       case 'assessments': return SettingsContentType.assessments;
