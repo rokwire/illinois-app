@@ -15,15 +15,12 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/BrightnessHighlight.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/profile/ProfileHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/wallet/WalletAddIlliniCashPage.dart';
 import 'package:illinois/ui/wallet/WalletBusinessCardPage.dart';
 import 'package:illinois/ui/wallet/WalletICardPage.dart';
@@ -80,8 +77,8 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.wallet.offline.label', 'The Wallet is not available while offline.'));
     }
     else if (!Auth2().isOidcLoggedIn && requireOidcContentTypes.contains(_targetContentType(contentType: contentType, contentTypes: contentTypes))) {
-      String message = Localization().getStringEx('panel.wallet.logged_out.label',
-          "To access your wallet, <a href='{{profile_sign_in_url}}'><b>sign in</b></a> with your NetID and <a href='{{settings_privacy_url}}'><b>set your privacy level to 4 or 5</b></a>.");
+      String message = AppTextUtils.loggedOutSignInPrivacyHtml(
+          Localization().getStringEx('panel.wallet.logged_out.clause', 'To access your wallet,'));
       showDialog(context: context, builder: (context) => SignInInfoPopup(message: message));
     }
     else {
