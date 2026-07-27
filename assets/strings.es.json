@@ -120,6 +120,9 @@
 
     "auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
     "auth.logged_out.feature.not_available.message.short": "To access {{feature}}, you need to sign in with your NetID.",
+    "auth.logged_out.feature.not_available.message.link": "{{feature_clause}} {{profile_sign_in_url}} with your NetID and {{settings_privacy_url}}.",
+    "auth.logged_out.feature.not_available.message.link.sign_in": "sign in",
+    "auth.logged_out.feature.not_available.message.link.privacy": "set your privacy level to 4 or 5",
 
     "generic.app.feature.illini_cash": "Illini Cash",
     "generic.app.feature.meal_plan": "University Housing Meal Plan",
@@ -219,6 +222,7 @@
     "panel.browse.label.offline.feedback": "Proporcionar un comentario no está disponible sin conexión.",
     "panel.browse.label.offline.crisis_help": "Ayuda en Caso de Crisis no está disponible sin conexión.",
     "panel.browse.label.offline.inbox": "Las notificaciones no están disponibles sin conexión.",
+    "panel.notifications.logged_out.clause": "To use notifications,",
 
     "panel.browse.label.no_card.bus_pass": "Necesita una tarjeta de identidad Illini válida para acceder al pase de autobús MTD.",
     "panel.browse.label.no_card.illini_id": "No hay información Illini ID. No tienes una Illini ID activa. Por favor visite el Centro de Identificación.",
@@ -365,7 +369,7 @@
     "panel.assistant.clear_all.confirm_prompt.text": "Are you sure you want to clear your Illinois Assistant history? This action cannot be undone.",
     "panel.assistant.reset_session.label": "Reset Memory",
     "panel.assistant.reset_session.confirm_prompt.text": "Are you sure you want to reset your current Illinois Assistant session?",
-    "panel.assistant.logged_out.label": "To access the Illinois Assistant, <a href='{{profile_sign_in_url}}'><b>sign in</b></a> with your NetID and <a href='{{settings_privacy_url}}'><b>set your privacy level to 4 or 5</b></a> under Settings.",
+    "panel.assistant.logged_out.clause": "To access the Illinois Assistant,",
     "panel.assistant.terms.default.msg": "El Asistente de Illinois es una herramienta de búsqueda que te ayuda a obtener más información sobre los recursos universitarios oficiales. Si bien esta función busca proporcionar información útil, en ocasiones las respuestas pueden ser incompletas o inexactas. **Eres responsable de confirmar la información antes de tomar medidas basadas en ella.**\n\nAl continuar, reconoces que el Asistente de Illinois es una herramienta complementaria y no sustituye a las fuentes universitarias oficiales.",
     "panel.assistant.terms.accept.button": "Acepto",
     "panel.assistant.terms.accepted.fail.msg": "Algo salió mal. Inténtalo de nuevo más tarde.",
@@ -407,7 +411,7 @@
     "panel.wallet.header.title": "Wallet",
     "panel.wallet.offline.label": "The Wallet is not available while offline.",
     "panel.wallet.offline.content_type.label": "{{content_type}} is not available while offline.",
-    "panel.wallet.logged_out.label": "To access the Wallet, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
+    "panel.wallet.logged_out.clause": "To access your wallet,",
     "panel.wallet.logged_out.content_type.label": "To access {{content_type}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
     "panel.wallet.not_available.content_type.label": "{{content_type}} is not available.",
     "panel.wallet.content_type.illini_id.label": "Illini ID",
@@ -2650,8 +2654,7 @@
     "panel.wellness.sections.health_screener.label.screener.subtitle": "Encuentre los recursos adecuados",
     "panel.wellness.sections.health_screener.history.clear": "Limpiar todo",
     "panel.wellness.sections.health_screener.history.clear.confirm": "¿Seguro que quieres borrar tu historial?",
-    "panel.wellness.sections.health_screener.message.signed_out": "You are not logged in. To access Illinois Health Screener, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
-    "panel.wellness.sections.health_screener.message.signed_out.link.login": "sign in",
+    "panel.wellness.sections.health_screener.logged_out.clause": "To access the Illinois Health Screener,",
 
     "panel.wellness.sections.mental_health.video.title": "Salud mental",
 
