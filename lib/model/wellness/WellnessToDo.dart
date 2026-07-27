@@ -99,7 +99,7 @@ class WellnessToDoItem {
   }
 
   DateTime? get dueDateTime {
-    return AppDateTime().getDateTimeToCompare(dateTimeUtc: dueDateTimeUtc);
+    return AppDateTime().getDisplayZonedDateTime(dateTimeUtc: dueDateTimeUtc);
   }
 
   String? get displayDueDate {
@@ -110,7 +110,7 @@ class WellnessToDoItem {
   }
 
   DateTime? get reminderDateTime {
-    return AppDateTime().getDateTimeToCompare(dateTimeUtc: reminderDateTimeUtc);
+    return AppDateTime().getDisplayZonedDateTime(dateTimeUtc: reminderDateTimeUtc);
   }
 
   Color get color {

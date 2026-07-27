@@ -41,7 +41,7 @@ extension InboxMessageExt on InboxMessage {
   }
 
   String? get displayUserInfo {
-    DateTime? displayDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: dateTimeSentUtc);
+    DateTime? displayDateTime = AppDateTime().getDisplayZonedDateTime(dateTimeUtc: dateTimeSentUtc);
     if (displayDateTime != null) {
       DateTime now = DateTime.now();
       if (displayDateTime.compareTo(now) < 0) {
@@ -73,7 +73,7 @@ extension InboxMessageExt on InboxMessage {
   }
 
   String? get displaySystemInfo {
-    DateTime? displayDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: dateTimeSentUtc);
+    DateTime? displayDateTime = AppDateTime().getDisplayZonedDateTime(dateTimeUtc: dateTimeSentUtc);
     if (displayDateTime != null) {
       DateTime now = DateTime.now();
       if (displayDateTime.compareTo(now) < 0) {

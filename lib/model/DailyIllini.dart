@@ -35,7 +35,7 @@ class DailyIlliniItem {
   DailyIlliniItem({this.title, this.link, this.description, this.thumbImageUrl, this.pubDateTimeUtc, this.category});
 
   String? get displayPubDate {
-    DateTime? displayDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: pubDateTimeUtc);
+    DateTime? displayDateTime = AppDateTime().getDisplayZonedDateTime(dateTimeUtc: pubDateTimeUtc);
     return AppDateTime().formatDateTime(displayDateTime, format: 'LLLL d, yyyy', ignoreTimeZone: true);
   }
 

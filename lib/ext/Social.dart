@@ -49,7 +49,7 @@ extension PostExt on Post {
   String? get displayDateTime => AppRelativeTime.timeAgoSinceDate(dateCreatedUtc);
 
   String? get displayScheduledTime {
-    DateTime? displayDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: dateActivatedUtc);
+    DateTime? displayDateTime = AppDateTime().getDisplayZonedDateTime(dateTimeUtc: dateActivatedUtc);
     if (displayDateTime != null) {
       return DateFormat("MMM dd, HH:mm").format(displayDateTime);
     }
@@ -99,7 +99,7 @@ extension ReactionExt on Reaction {
 }
 
 extension MessageExt on Message {
-  DateTime? get dateSentLocal =>  AppDateTime().getDateTimeToCompare(dateTimeUtc: dateSentUtc);
+  DateTime? get dateSentLocal =>  AppDateTime().getDisplayZonedDateTime(dateTimeUtc: dateSentUtc);
   String? get dateSentLocalString => DateTimeUtils.localDateTimeToString(dateSentLocal, format: 'MMMM dd, yyyy');
 
   String? get displayDateTime => AppRelativeTime.timeAgoSinceDate(dateUpdatedUtc ?? dateSentUtc);
@@ -145,7 +145,7 @@ extension ConversationExt on Conversation {
   bool get isGroupSubset => (type == ConversationType.groupSubset);
 
   String? get displayDateTime {
-    DateTime? displayDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: lastActivityTimeUtc);
+    DateTime? displayDateTime = AppDateTime().getDisplayZonedDateTime(dateTimeUtc: lastActivityTimeUtc);
     if (displayDateTime != null) {
       DateTime now = DateTime.now();
       if (displayDateTime.compareTo(now) < 0) {

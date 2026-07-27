@@ -160,7 +160,7 @@ class Tweet {
 
   String? get displayTime {
 
-    DateTime? displayDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: createdAtUtc);
+    DateTime? displayDateTime = AppDateTime().getDisplayZonedDateTime(dateTimeUtc: createdAtUtc);
     if (displayDateTime != null) {
       DateTime now = DateTime.now();
       if (displayDateTime.compareTo(now) < 0) {

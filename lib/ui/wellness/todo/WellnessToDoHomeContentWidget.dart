@@ -988,7 +988,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
   void initState() {
     super.initState();
     _item = widget.item;
-    _reminderDateTime = AppDateTime().getDateTimeToCompare(dateTimeUtc: _item.reminderDateTimeUtc) ?? _item.dueDateTime!;
+    _reminderDateTime = AppDateTime().getDisplayZonedDateTime(dateTimeUtc: _item.reminderDateTimeUtc) ?? _item.dueDateTime!;
   }
 
   @override
