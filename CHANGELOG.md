@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Update sing-in texts and add hyperlinks [#5876](https://github.com/rokwire/illinois-app/issues/5876).
+- Text changes in Browse/Sections [#5875](https://github.com/rokwire/illinois-app/issues/5875).
 ### Removed
 - Hid various sub-sections and panels [#5874](https://github.com/rokwire/illinois-app/issues/5874).
 
