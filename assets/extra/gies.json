@@ -5,7 +5,7 @@
         "heading":"<h1>Setup Your University Email Account</h1>Most correspondence is sent to your Illinois email address, so it is imperative you set up your email and check it regularly. Microsoft Office 365 is a service used for email, calendaring, and contact and task management at the University of Illinois and is vital for receiving emails and information from the University. Approximately one hour after claiming your Net ID and setting your password, you will be able to login to and start using your <a href='https://outlook.office365.com/'>Office 365 Email Account</a>. If you have questions about your email or your Exchange account, please visit the <a href='http://techservices.illinois.edu/services/email'>Technology Services Website</a>, or email <a href='mailto:consult@illinois.edu'>consult@illinois.edu</a>."
       }
     ],
-    "group_name":"GIES Onboarding Step 1",
+    "group_name":"Gies checklist 1",
     "id":"setup.university.accounts",
     "progress":1,
     "step_title":"Step 1",
@@ -19,7 +19,7 @@
       },
       {"widget": "student_info"}
     ],
-    "group_name":"GIES Onboarding Step 2",
+    "group_name":"Gies checklist 2",
     "id":"verify.personal.information",
     "buttons":[
       {
@@ -28,7 +28,7 @@
         "title":"My information is correct",
         "widget_action": {
           "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
-          "params": {"group_name":"GIES Onboarding Step 2"}
+          "params": {"group_name":"Gies checklist 2"}
         }
       }
     ],
@@ -56,7 +56,7 @@
         "heading":"<h1>Set Up Your Illinois Zoom Pro Account</h1>Zoom Pro is the way you will participate in your live sessions (lectures) for each course, office hours and more. Follow these <a href='https://answers.uillinois.edu/96159'>step-by-step instructions</a> to get setup with Zoom."
       }
     ],
-    "group_name":"GIES Onboarding Step 3",
+    "group_name":"Gies checklist 3",
     "id":"setup.zoom.accounts",
     "progress":3,
     "step_title":"Step 3",
@@ -73,7 +73,7 @@
         ]
       }
     ],
-    "group_name":"GIES Onboarding Step 4",
+    "group_name":"Gies checklist 4",
     "id":"setup.coursera.account",
     "progress":4,
     "step_title":"Step 4",
@@ -93,7 +93,7 @@
         "heading":"Make sure to check your junk mail if you have not received an email regarding Workplace."
       }
     ],
-    "group_name":"GIES Onboarding Step 5",
+    "group_name":"Gies checklist 5",
     "id":"join.workspace",
     "progress":5,
     "step_title":"Step 5",
@@ -106,7 +106,7 @@
         "heading":"<h1>Connect with your New Student Guide</h1>Pairing with your Gies Online New Student Guide begins approximately four weeks prior to the term start. You will receive an email notifying you of your New Student Guide. Your guide will be able to assist you with orientation to the program and will be a resource moving forward for general questions and more."
       }
     ],
-    "group_name":"GIES Onboarding Step 6",
+    "group_name":"Gies checklist 6",
     "id":"connect.workspace.and.student.guide",
     "buttons":[
       {
@@ -115,7 +115,7 @@
         "title":"Completed",
         "widget_action": {
           "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
-          "params": {"group_name":"GIES Onboarding Step 6"}
+          "params": {"group_name":"Gies checklist 6"}
         }
       }
     ],
@@ -142,7 +142,7 @@
         "heading":"This onboarding course takes approximately 3-4 hours to complete but is essential in your success as a Gies online student. Please be sure to complete well in advance of starting your coursework."
       }
     ],
-    "group_name":"GIES Onboarding Step 7",
+    "group_name":"Gies checklist 7",
     "id":"complete.onboarding.course",
     "progress":7,
     "step_title":"Step 7",
@@ -179,7 +179,7 @@
       }
     ],
 
-    "group_name":"GIES Onboarding Step 8",
+    "group_name":"Gies checklist 8",
     "id":"review.course.recommendations.and.register.for.courses",
     "buttons":[
       {
@@ -188,7 +188,7 @@
         "title":"Completed",
         "widget_action": {
           "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
-          "params": {"group_name":"GIES Onboarding Step 8"}
+          "params": {"group_name":"Gies checklist 8"}
         }
       }
     ],
@@ -198,7 +198,7 @@
     "title":"Review Course Recommendations and Register for Courses"
   },
   {
-    "group_name":"GIES Onboarding Step 9",
+    "group_name":"Gies checklist 9",
     "id":"sumbit.official.credentials",
     "buttons":[
       {
@@ -207,7 +207,7 @@
         "title":"I completed this",
         "widget_action": {
           "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
-          "params": {"group_name":"GIES Onboarding Step 9"}
+          "params": {"group_name":"Gies checklist 9"}
         }
       }
     ],
