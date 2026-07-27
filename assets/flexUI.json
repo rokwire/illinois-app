@@ -12,7 +12,7 @@
 				"polls",
 				"daily_illini", "illini_radio", "illordle",
 				"safewalk_request", "safety_resources",
-				"wellness_resources", "wellness_mental_health", "wellness_rings", "wellness_tips",
+				"wellness_resources", "wellness_mental_health", "wellness_todo", "wellness_rings", "wellness_tips",
 				"my_appointments", "my_mtd_stops", "my_locations"
 			],
 			"home.system": ["tout", "welcome_message", "emergency", "voter_registration", "connect"],
@@ -231,7 +231,7 @@
 				"wellness_tips"                           : false,
 				"wellness_resources"                      : false,
 				"wellness_mental_health"                  : false,
-				"wellness.wellness_todo"                  : false,
+				"wellness_todo"                           : false,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
 				"onboarding2.video_tutorial"              : [["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"], "AND", "${app.storage.onBoarding2ShowTutorial}"],
 				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
