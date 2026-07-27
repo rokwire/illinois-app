@@ -31,7 +31,7 @@ class GiesCanvasCoursesListPanel extends StatelessWidget with AnalyticsInfo {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(title: Localization().getStringEx('panel.gies_canvas_courses.header.title', 'My Gies Canvas Courses')),
+        appBar: HeaderBar(title: Localization().getStringEx('panel.gies_canvas_courses.header.title', 'My Gies Canvas')),
         body: _scaffoldContent,
         backgroundColor: Styles().colors.white,
         bottomNavigationBar: uiuc.TabBar());

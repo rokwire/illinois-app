@@ -15,7 +15,7 @@ class CanvasCoursesListPanel extends StatelessWidget with AnalyticsInfo {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(title: Localization().getStringEx('panel.canvas_courses.header.title', 'My Canvas Courses')),
+        appBar: HeaderBar(title: Localization().getStringEx('panel.canvas_courses.header.title', 'My Canvas')),
         body: _scaffoldContent,
         backgroundColor: Styles().colors.white,
         bottomNavigationBar: uiuc.TabBar());

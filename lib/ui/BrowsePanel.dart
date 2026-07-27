@@ -20,7 +20,6 @@ import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
-import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
@@ -33,9 +32,7 @@ import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
-import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
@@ -558,13 +555,11 @@ class _BrowseEntry extends StatelessWidget {
     switch("$sectionId.$entryId") {
       case "academics.gies_checklist":        _onTapGiesChecklist(context); break;
       case "academics.new_student_checklist": _onTapNewStudentChecklist(context); break;
-      case "academics.wellness_todo":         _onTapAcademicsToDo(context); break;
       case "academics.student_courses":       _onTapStudentCourses(context); break;
       case "academics.canvas_courses":        _onTapCanvasCourses(context); break;
       case "academics.gies_canvas_courses":   _onTapGiesCanvasCourses(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
-      case "academics.appointments":          _onTapAppointments(context, analyticsFeature: AnalyticsFeature.AcademicsAppointments); break;
       case "academics.academic_links":        _onTapAcademicLinks(context); break;
       case "academics.my_illini":             _onTapAcademicsMyIllini(context); break;
 
@@ -610,10 +605,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "polls.polls":                    _onTapPolls(context); break;
 
-      case "recent.recent_items":            _onTapRecentItems(context); break;
-
       case "safety.safewalk_request":        _onTapSafewalkRequest(context); break;
-      case "safety.saferides":               _onTapSafeRides(context); break;
       case "safety.safety_resources":        _onTapSafetyResources(context); break;
       case "safety.sexual_misconduct":       _onTapSexualMisconduct(context, analyticsTarget: "Sexual Misconduct Resources"); break;
       case "sexual_misconduct.sexual_misconduct": _onTapSexualMisconduct(context, analyticsTarget: "Concerns about Sexual, Dating, or Harassment Experiences"); break;
@@ -651,11 +643,6 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: "Essential Skills Coach");
     //AcademicsHomePanel.push(context, AcademicsContentType.essential_skills_coach);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => EssentialSkillsCoachPanel()));
-  }
-
-  static void _onTapAcademicsToDo(BuildContext context) {
-    Analytics().logSelect(target: "Academics To Do");
-    AcademicsHomePanel.push(context, AcademicsContentType.todo_list);
   }
 
   static void _onTapCanvasCourses(BuildContext context) {
@@ -848,11 +835,6 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
 
-  static void _onTapRecentItems(BuildContext context) {
-    Analytics().logSelect(target: "Recent Items");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeRecentItemsPanel()));
-  }
-
   static void _onTapSafewalkRequest(BuildContext context) {
     Analytics().logSelect(target: "Request a SafeWalk");
     if (FlexUI().isSafeWalkAvailable) {
@@ -860,17 +842,6 @@ class _BrowseEntry extends StatelessWidget {
     }
     else {
       AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safewalks.not_available.text", "SafeWalk feature is not currently available."));
-    }
-  }
-
-  static void _onTapSafeRides(BuildContext context) {
-    Analytics().logSelect(target: "SafeRides (MTD)");
-    Map<String, dynamic>? safeRidesGuideEntry = Guide().entryById(Config().safeRidesGuideId);
-    if (safeRidesGuideEntry != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntry: safeRidesGuideEntry, analyticsFeature: AnalyticsFeature.Safety,)));
-    }
-    else {
-      AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.saferides.not_available.text", "SafeRides feature is not currently available."));
     }
   }
 

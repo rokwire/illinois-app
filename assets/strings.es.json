@@ -120,6 +120,9 @@
 
     "auth.logged_out.feature.not_available.message.verbose": "To access {{feature}}, you need to sign in with your NetID under Profile and set your privacy level to 4 or 5 under Settings.",
     "auth.logged_out.feature.not_available.message.short": "To access {{feature}}, you need to sign in with your NetID.",
+    "auth.logged_out.feature.not_available.message.link": "{{feature_clause}} {{profile_sign_in_url}} with your NetID and {{settings_privacy_url}}.",
+    "auth.logged_out.feature.not_available.message.link.sign_in": "sign in",
+    "auth.logged_out.feature.not_available.message.link.privacy": "set your privacy level to 4 or 5",
 
     "generic.app.feature.illini_cash": "Illini Cash",
     "generic.app.feature.meal_plan": "University Housing Meal Plan",
@@ -131,8 +134,8 @@
     "generic.app.feature.notifications": "Notifications",
     "generic.app.feature.research_projects": "Research Projects",
     "generic.app.feature.student_courses": "My Courses",
-    "generic.app.feature.canvas_courses.uiuc": "My Canvas Courses",
-    "generic.app.feature.canvas_courses.gies": "My Gies Canvas Courses",
+    "generic.app.feature.canvas_courses.uiuc": "My Canvas",
+    "generic.app.feature.canvas_courses.gies": "My Gies Canvas",
     "generic.app.feature.medicine_courses": "My College of Medicine Compliance",
     "generic.app.feature.skills_self_evaluation": "Assessments",
     "generic.app.feature.checklist.uiuc": "New Student Checklist",
@@ -219,6 +222,7 @@
     "panel.browse.label.offline.feedback": "Proporcionar un comentario no está disponible sin conexión.",
     "panel.browse.label.offline.crisis_help": "Ayuda en Caso de Crisis no está disponible sin conexión.",
     "panel.browse.label.offline.inbox": "Las notificaciones no están disponibles sin conexión.",
+    "panel.notifications.logged_out.clause": "To use notifications,",
 
     "panel.browse.label.no_card.bus_pass": "Necesita una tarjeta de identidad Illini válida para acceder al pase de autobús MTD.",
     "panel.browse.label.no_card.illini_id": "No hay información Illini ID. No tienes una Illini ID activa. Por favor visite el Centro de Identificación.",
@@ -254,7 +258,7 @@
     "panel.browse.section.directory.title": "Directory of Users",
     "panel.browse.section.directory.description": "Find contact information for other {{university_name}} app users.",
     "panel.browse.section.events.title": "Eventos",
-    "panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
+    "panel.browse.section.events.description": "Find in-person and online {{app_title}} events.",
     "panel.browse.section.groups.title": "Grupos",
     "panel.browse.section.groups.description": "Discover a new group or start your own.",
     "panel.browse.section.research_projects.title": "Research Participation",
@@ -269,8 +273,6 @@
     "panel.browse.section.polls.description": "Enter a poll number to vote, or create and share your own poll.",
     "panel.browse.section.music_and_news.title": "Illini Music, News & Games",
     "panel.browse.section.music_and_news.description": "Listen to {{app_title}} Public Media and student-run WPGU or catch the latest from The DI.",
-    "panel.browse.section.recent.title": "Visited Recently",
-    "panel.browse.section.recent.description": "Revisit your recent app activity.",
     "panel.browse.section.safety.title": "Safety",
     "panel.browse.section.safety.description": "Get home safely, prepare for emergencies, and discover support resources.",
     "panel.browse.section.sexual_misconduct.title": "Concerns about Sexual, Dating, or Harassment Experiences",
@@ -289,9 +291,7 @@
     "panel.browse.entry.academics.student_courses.title": "Mis cursos",
     "panel.browse.entry.academics.my_illini.title": "myIllini",
     "panel.browse.entry.academics.campus_reminders.title": "Recordatorios del campus",
-    "panel.browse.entry.academics.wellness_todo.title": "Lista de quehaceres",
     "panel.browse.entry.academics.due_date_catalog.title": "Catálogo de fecha de vencimiento",
-    "panel.browse.entry.academics.appointments.title": "Citas",
     "panel.browse.entry.academics.academic_links.title": "Academic Links",
 
     "panel.browse.entry.appointments.appointments.title": "Citas",
@@ -338,10 +338,7 @@
 
     "panel.browse.entry.polls.polls.title": "Encuestas",
 
-    "panel.browse.entry.recent.recent_items.title": "Visited Recently",
-
     "panel.browse.entry.safety.safewalk_request.title": "Request a SafeWalk",
-    "panel.browse.entry.safety.saferides.title": "SafeRides (MTD)",
     "panel.browse.entry.safety.safety_resources.title": "Safety Resources",
     "panel.browse.entry.safety.sexual_misconduct.title": "Sexual Misconduct Resources",
 
@@ -372,7 +369,7 @@
     "panel.assistant.clear_all.confirm_prompt.text": "Are you sure you want to clear your Illinois Assistant history? This action cannot be undone.",
     "panel.assistant.reset_session.label": "Reset Memory",
     "panel.assistant.reset_session.confirm_prompt.text": "Are you sure you want to reset your current Illinois Assistant session?",
-    "panel.assistant.logged_out.label": "To access the Illinois Assistant, <a href='{{profile_sign_in_url}}'><b>sign in</b></a> with your NetID and <a href='{{settings_privacy_url}}'><b>set your privacy level to 4 or 5</b></a> under Settings.",
+    "panel.assistant.logged_out.clause": "To access the Illinois Assistant,",
     "panel.assistant.terms.default.msg": "El Asistente de Illinois es una herramienta de búsqueda que te ayuda a obtener más información sobre los recursos universitarios oficiales. Si bien esta función busca proporcionar información útil, en ocasiones las respuestas pueden ser incompletas o inexactas. **Eres responsable de confirmar la información antes de tomar medidas basadas en ella.**\n\nAl continuar, reconoces que el Asistente de Illinois es una herramienta complementaria y no sustituye a las fuentes universitarias oficiales.",
     "panel.assistant.terms.accept.button": "Acepto",
     "panel.assistant.terms.accepted.fail.msg": "Algo salió mal. Inténtalo de nuevo más tarde.",
@@ -414,7 +411,7 @@
     "panel.wallet.header.title": "Wallet",
     "panel.wallet.offline.label": "The Wallet is not available while offline.",
     "panel.wallet.offline.content_type.label": "{{content_type}} is not available while offline.",
-    "panel.wallet.logged_out.label": "To access the Wallet, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
+    "panel.wallet.logged_out.clause": "To access your wallet,",
     "panel.wallet.logged_out.content_type.label": "To access {{content_type}}, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.",
     "panel.wallet.not_available.content_type.label": "{{content_type}} is not available.",
     "panel.wallet.content_type.illini_id.label": "Illini ID",
@@ -1990,7 +1987,6 @@
     "panel.settings.home.header.settings.label": "Ajustes",
     "panel.settings.home.settings.sections.food_filter.label": "Mi Filtro de Comida",
     "panel.settings.home.settings.sections.sports.label": "Mis Equipos Deportivos",
-    "panel.settings.home.settings.sections.recent_items.label": "My Browsing History",
     "panel.settings.home.settings.sections.appointments_and_events.label": "My Appointments & Events",
     "panel.settings.home.settings.sections.favorites.label": "Personalizar Mis Favoritos",
     "panel.settings.home.settings.sections.assessments.label": "Mis Evaluaciones",
@@ -2058,11 +2054,6 @@
     "panel.settings.home.research.title": "Research Participation",
     "panel.settings.home.research.questionnaire.title": "Formulario de interés de investigación",
     "panel.settings.home.research.prompt.title": "Se eliminarán todas las respuestas de su formulario de intereses de investigación. ¿Desea continuar?",
-
-    "panel.settings.home.recent_items.title": "Browsing History",
-    "panel.settings.home.recent_items.enable.toggle.title": "Display recently viewed app content",
-    "panel.settings.home.recent_items.enable.toggle.info": "When enabled, the Illinois app will display the items you recently viewed under Home > Sections > Visited Recently. For quick access, star the Visited Recently section to add it to your Favorites.",
-    "panel.settings.home.recent_items.disable.toggle.prompt": "This will clear your browsing history. Proceed?",
 
     "panel.settings.home.appointments_and_events.appointments.section.text.format": "Mostrar citas en la aplicación {{app_title}} para:",
     "panel.settings.home.appointments_and_events.appointments.mckinley.text": "MyMcKinley",
@@ -2663,8 +2654,7 @@
     "panel.wellness.sections.health_screener.label.screener.subtitle": "Encuentre los recursos adecuados",
     "panel.wellness.sections.health_screener.history.clear": "Limpiar todo",
     "panel.wellness.sections.health_screener.history.clear.confirm": "¿Seguro que quieres borrar tu historial?",
-    "panel.wellness.sections.health_screener.message.signed_out": "You are not logged in. To access Illinois Health Screener, {{link.login}} with your NetID and set your privacy level to 4 or 5 under Settings.",
-    "panel.wellness.sections.health_screener.message.signed_out.link.login": "sign in",
+    "panel.wellness.sections.health_screener.logged_out.clause": "To access the Illinois Health Screener,",
 
     "panel.wellness.sections.mental_health.video.title": "Salud mental",
 
@@ -2750,20 +2740,20 @@
     "panel.wellness.successteam.pcp.info.description": "A primary care provider (PCP) provides essential\nhealthcare services, promotes your overall wellbeing,\nand can refer you to services such as internal medicine,\nfamily practice, psychiatry, and gynecology.",
     "panel.wellness.successteam.advisor.info.description": "An academic advisor is your go-to person for course\nregistration, degree planning, and academic support\nservices.",
 
-    "panel.academics.appointments.home.header.title": "Citas",
-    "panel.academics.appointments.home.message.providers.failed": "Error al cargar los proveedores.",
-    "panel.academics.appointments.home.message.providers.empty": "No hay proveedores disponibles.",
-    "panel.academics.appointments.home.message.provider.empty": "No hay un proveedor seleccionado.",
-    "panel.academics.appointments.home.message.unit.empty": "No hay un sitio seleccionado.",
-    "panel.academics.appointments.home.message.units.failed": "Error al cargar los sitios para el proveedor seleccionado.",
-    "panel.academics.appointments.home.message.units.empty": "No hay sitios disponibles para el proveedor seleccionado.",
-    "panel.academics.appointments.home.message.persons.failed": "Error al cargar los asesores para el sitio seleccionado.",
-    "panel.academics.appointments.home.message.persons.empty": "No hay asesores disponibles para el sitio seleccionado.",
-    "panel.academics.appointments.home.message.appointments.failed": "Error al cargar las citas.",
-    "panel.academics.appointments.home.message.appointments.upcoming.empty": "Actualmente no tienes citas futuras vinculadas en la aplicación {{app_title}}. Las nuevas citas pueden tardar hasta 20 minutos en aparecer en la aplicación {{app_title}}.",
-    "panel.academics.appointments.home.message.appointments.past.empty": "No tienes citas en el pasado reciente en la Illinois App.",
-    "panel.academics.appointments.home.heading.appointments.past": "Citas en el Pasado Reciente",
-    "panel.academics.appointments.home.label.providers.all": "Todos Proveedores",
+    "panel.appointments.home.header.title": "Citas",
+    "panel.appointments.home.message.providers.failed": "Error al cargar los proveedores.",
+    "panel.appointments.home.message.providers.empty": "No hay proveedores disponibles.",
+    "panel.appointments.home.message.provider.empty": "No hay un proveedor seleccionado.",
+    "panel.appointments.home.message.unit.empty": "No hay un sitio seleccionado.",
+    "panel.appointments.home.message.units.failed": "Error al cargar los sitios para el proveedor seleccionado.",
+    "panel.appointments.home.message.units.empty": "No hay sitios disponibles para el proveedor seleccionado.",
+    "panel.appointments.home.message.persons.failed": "Error al cargar los asesores para el sitio seleccionado.",
+    "panel.appointments.home.message.persons.empty": "No hay asesores disponibles para el sitio seleccionado.",
+    "panel.appointments.home.message.appointments.failed": "Error al cargar las citas.",
+    "panel.appointments.home.message.appointments.upcoming.empty": "Actualmente no tienes citas futuras vinculadas en la aplicación {{app_title}}. Las nuevas citas pueden tardar hasta 20 minutos en aparecer en la aplicación {{app_title}}.",
+    "panel.appointments.home.message.appointments.past.empty": "No tienes citas en el pasado reciente en la Illinois App.",
+    "panel.appointments.home.heading.appointments.past": "Citas en el Pasado Reciente",
+    "panel.appointments.home.label.providers.all": "Todos Proveedores",
 
     "panel.wellness.home.header.title": "Salud y bienestar",
     "panel.wellness.home.eight_dimensions.header.title": "8 dimensiones de bienestar",
@@ -3658,7 +3648,6 @@
 
     "panel.safety.header.title": "Safety",
     "panel.safety.content_type.safe_walk_request.label": "Request a SafeWalk",
-    "panel.safety.content_type.safe_rides.label": "SafeRides (MTD)",
     "panel.safety.content_type.safety_resources.label": "Safety Resources",
 
     "panel.safewalks_request.header.title": "SafeWalks",
@@ -3967,16 +3956,6 @@
     "widget.home.suggested_events.button.all.title":"Ver todo",
     "widget.home.suggested_events.button.all.hint":"Toca para ver todos los eventos",
 
-    "widget.home.recent_items.label.header.title":"Visited Recently",
-    "widget.home.recent_items.label.browsing_history.title":"Browsing History",
-    "widget.home.recent_items.text.empty.description": "There is no visited recently app content to display.",
-    "widget.home.recent_items.text.disabled.description": "Displaying visited recently app content is turned off.",
-    "widget.home.recent_items.button.view_all.title":"Ver todo",
-    "widget.home.recent_items.button.view_all.hint":"Toca para ver todos los elementos",
-    "widget.home.recent_items.button.clear_all.title":"Clear All",
-    "widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
-    "widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history>",
-
     "widget.home.public_surveys.label.header.title":"Surveys",
     "widget.home.public_surveys.label.description.failed": "Failed to load surveys.",
     "widget.home.public_surveys.label.description.offline": "Surveys are not available while offline",
@@ -4022,8 +4001,6 @@
 
     "widget.home.safety.safewalk_request.title": "SafeWalks",
     "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
-
-    "widget.home.safety.saferides.title": "SafeRides",
 
     "widget.home.safer.label.title": "Acceso a Edificios",
     "widget.home.safer.text.empty.description": "Toca la \u2606 en los elementos de Acceso a Edificios para encontrarlos rápidamente aquí.",
@@ -4406,7 +4383,6 @@
     "widget.access.polls.name": "Encuestas",
     "widget.access.wellness.appointments.name": "Citas MyMcKinley",
     "widget.access.wellness.health_screener.name": "Illinois Health Screener",
-    "widget.access.academics.appointments.name": "Citas Académicas",
     "widget.access.assistant.name": "Illinois Assistant",
     "widget.access.roles.unsatisfied.title": "%s no está disponible",
     "widget.access.privacy.unsatisfied.title": "Actualizar nivel de privacidad para acceder %s",
@@ -4637,7 +4613,6 @@
     "model.safety.safewalks.title": "SafeWalks",
     "model.safety.safewalks.request.action.text": "Request a SafeWalk",
     "model.safety.safewalks.not_available.text": "SafeWalk feature is not currently available.",
-    "model.safety.saferides.not_available.text": "SafeRides feature is not currently available.",
     "model.safety.safety_resources.not_available.text": "Safety Resources are not currently available.",
 
     "model.assistant.provider.google.label": "Google",

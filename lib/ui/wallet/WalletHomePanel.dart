@@ -36,6 +36,8 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+import '../widgets/SignInInfoPopup.dart';
+
 enum WalletContentType { illiniId, busPass, libraryCard, mealPlan, businessCard, illiniCash, addIlliniCash }
 
 class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
@@ -75,7 +77,9 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.wallet.offline.label', 'The Wallet is not available while offline.'));
     }
     else if (!Auth2().isOidcLoggedIn && requireOidcContentTypes.contains(_targetContentType(contentType: contentType, contentTypes: contentTypes))) {
-      AppAlert.showTextMessage(context, Localization().getStringEx('panel.wallet.logged_out.label', 'To access the Wallet, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.'));
+      String message = AppTextUtils.loggedOutSignInPrivacyHtml(
+          Localization().getStringEx('panel.wallet.logged_out.clause', 'To access your wallet,'));
+      showDialog(context: context, builder: (context) => SignInInfoPopup(message: message));
     }
     else {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
