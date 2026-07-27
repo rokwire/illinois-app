@@ -255,7 +255,7 @@
     "panel.browse.section.directory.title": "Directory of Users",
     "panel.browse.section.directory.description": "Find contact information for other {{university_name}} app users.",
     "panel.browse.section.events.title": "Events",
-    "panel.browse.section.events.description": "Find in-person and online {{app_title}} events to attend.",
+    "panel.browse.section.events.description": "Find in-person and online {{app_title}} events.",
     "panel.browse.section.groups.title": "Groups",
     "panel.browse.section.groups.description": "Discover a new group or start your own.",
     "panel.browse.section.research_projects.title": "Research Participation",
