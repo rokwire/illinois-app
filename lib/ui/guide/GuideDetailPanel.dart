@@ -7,13 +7,11 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
@@ -58,7 +56,6 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> {
   @override
   void initState() {
     _guideEntry = widget.theGuideEntry;
-    RecentItems().addRecentItem(RecentItem.fromGuideItem(_guideEntry));
     super.initState();
   }
 

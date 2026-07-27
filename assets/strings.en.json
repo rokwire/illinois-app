@@ -274,8 +274,6 @@
     "panel.browse.section.polls.description": "Enter a poll number to vote, or create and share your own poll.",
     "panel.browse.section.music_and_news.title": "Illini Music, News & Games",
     "panel.browse.section.music_and_news.description": "Listen to {{app_title}} Public Media and student-run WPGU or check out the latest news and ILLordle from The DI.",
-    "panel.browse.section.recent.title": "Visited Recently",
-    "panel.browse.section.recent.description": "Revisit your recent app activity.",
     "panel.browse.section.safety.title": "Safety",
     "panel.browse.section.safety.description": "Get home safely, prepare for emergencies, and discover support resources.",
     "panel.browse.section.sexual_misconduct.title": "Concerns about Sexual, Dating, or Harassment Experiences",
@@ -294,9 +292,7 @@
     "panel.browse.entry.academics.student_courses.title": "My Courses",
     "panel.browse.entry.academics.my_illini.title": "myIllini",
     "panel.browse.entry.academics.campus_reminders.title": "Campus Reminders",
-    "panel.browse.entry.academics.wellness_todo.title": "To-Do List",
     "panel.browse.entry.academics.due_date_catalog.title": "Due Date Catalog",
-    "panel.browse.entry.academics.appointments.title": "Appointments",
     "panel.browse.entry.academics.academic_links.title": "Academic Links",
 
     "panel.browse.entry.appointments.appointments.title": "Appointments",
@@ -343,10 +339,7 @@
 
     "panel.browse.entry.polls.polls.title": "Polls",
 
-    "panel.browse.entry.recent.recent_items.title": "Visited Recently",
-
     "panel.browse.entry.safety.safewalk_request.title": "Request a SafeWalk",
-    "panel.browse.entry.safety.saferides.title": "SafeRides (MTD)",
     "panel.browse.entry.safety.safety_resources.title": "Safety Resources",
     "panel.browse.entry.safety.sexual_misconduct.title": "Sexual Misconduct Resources",
 
@@ -1995,7 +1988,6 @@
     "panel.settings.home.header.settings.label": "Settings",
     "panel.settings.home.settings.sections.food_filter.label": "My Food Filter",
     "panel.settings.home.settings.sections.sports.label": "My Sports Teams",
-    "panel.settings.home.settings.sections.recent_items.label": "My Browsing History",
     "panel.settings.home.settings.sections.appointments_and_events.label": "My Appointments & Events",
     "panel.settings.home.settings.sections.favorites.label": "Customize Favorites",
     "panel.settings.home.settings.sections.assessments.label": "My Assessments",
@@ -2062,11 +2054,6 @@
     "panel.settings.home.research.toggle.title": "Participate in research",
     "panel.settings.home.research.questionnaire.title": "Research interest form",
     "panel.settings.home.research.prompt.title": "All of your research interest form responses will be deleted. Would you like to proceed?",
-
-    "panel.settings.home.recent_items.title": "Browsing History",
-    "panel.settings.home.recent_items.enable.toggle.title": "Display recently viewed app content",
-    "panel.settings.home.recent_items.enable.toggle.info": "When enabled, the Illinois app will display the items you recently viewed under Home > Sections > Visited Recently. For quick access, star the Visited Recently section to add it to your Favorites.",
-    "panel.settings.home.recent_items.disable.toggle.prompt": "This will clear your browsing history. Proceed?",
 
     "panel.settings.home.appointments_and_events.appointments.section.text.format": "Display appointments in the {{app_title}} app for:",
     "panel.settings.home.appointments_and_events.appointments.mckinley.text": "MyMcKinley",
@@ -2746,20 +2733,20 @@
     "panel.wellness.successteam.pcp.info.description": "A primary care provider (PCP) provides essential\nhealthcare services, promotes your overall wellbeing,\nand can refer you to services such as internal medicine,\nfamily practice, psychiatry, and gynecology.",
     "panel.wellness.successteam.advisor.info.description": "An academic advisor is your go-to person for course\nregistration, degree planning, and academic support\nservices.",
 
-    "panel.academics.appointments.home.header.title": "Appointments",
-    "panel.academics.appointments.home.message.providers.failed": "Failed to load providers.",
-    "panel.academics.appointments.home.message.providers.empty": "No providers available.",
-    "panel.academics.appointments.home.message.provider.empty": "No selected provider.",
-    "panel.academics.appointments.home.message.unit.empty": "No selected location.",
-    "panel.academics.appointments.home.message.units.failed": "Failed to load locations for provider.",
-    "panel.academics.appointments.home.message.units.empty": "No locations available for selected provider.",
-    "panel.academics.appointments.home.message.persons.failed": "Failed to load advisors for location.",
-    "panel.academics.appointments.home.message.persons.empty": "No advisors available for selected location.",
-    "panel.academics.appointments.home.message.appointments.failed": "Failed to load appointments.",
-    "panel.academics.appointments.home.message.appointments.upcoming.empty": "You currently have no upcoming appointments linked within the {{app_title}} app. New appointments may take up to 20 minutes to appear in the {{app_title}} app.",
-    "panel.academics.appointments.home.message.appointments.past.empty": "You don't have recent past appointments linked within the Illinois app.",
-    "panel.academics.appointments.home.heading.appointments.past": "Recent Past Appointments",
-    "panel.academics.appointments.home.label.providers.all": "All Providers",
+    "panel.appointments.home.header.title": "Appointments",
+    "panel.appointments.home.message.providers.failed": "Failed to load providers.",
+    "panel.appointments.home.message.providers.empty": "No providers available.",
+    "panel.appointments.home.message.provider.empty": "No selected provider.",
+    "panel.appointments.home.message.unit.empty": "No selected location.",
+    "panel.appointments.home.message.units.failed": "Failed to load locations for provider.",
+    "panel.appointments.home.message.units.empty": "No locations available for selected provider.",
+    "panel.appointments.home.message.persons.failed": "Failed to load advisors for location.",
+    "panel.appointments.home.message.persons.empty": "No advisors available for selected location.",
+    "panel.appointments.home.message.appointments.failed": "Failed to load appointments.",
+    "panel.appointments.home.message.appointments.upcoming.empty": "You currently have no upcoming appointments linked within the {{app_title}} app. New appointments may take up to 20 minutes to appear in the {{app_title}} app.",
+    "panel.appointments.home.message.appointments.past.empty": "You don't have recent past appointments linked within the Illinois app.",
+    "panel.appointments.home.heading.appointments.past": "Recent Past Appointments",
+    "panel.appointments.home.label.providers.all": "All Providers",
 
     "panel.wellness.home.header.title": "Health & Wellness",
     "panel.wellness.home.eight_dimensions.header.title": "8 Dimensions of Wellness",
@@ -3658,7 +3645,6 @@
 
     "panel.safety.header.title": "Safety",
     "panel.safety.content_type.safe_walk_request.label": "Request a SafeWalk",
-    "panel.safety.content_type.safe_rides.label": "SafeRides (MTD)",
     "panel.safety.content_type.safety_resources.label": "Safety Resources",
 
     "panel.safewalks_request.header.title": "SafeWalks",
@@ -3982,16 +3968,6 @@
     "widget.home.my_events2.label.header.title":"My Events",
     "widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.  (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)",
 
-    "widget.home.recent_items.label.header.title":"Visited Recently",
-    "widget.home.recent_items.label.browsing_history.title":"Browsing History",
-    "widget.home.recent_items.text.empty.description": "There is no visited recently app content to display.",
-    "widget.home.recent_items.text.disabled.description": "Displaying visited recently app content is turned off.",
-    "widget.home.recent_items.button.view_all.title":"View All",
-    "widget.home.recent_items.button.view_all.hint":"Tap to view all items",
-    "widget.home.recent_items.button.clear_all.title":"Clear All",
-    "widget.home.recent_items.button.clear_all.hint":"Tap to clear all items",
-    "widget.home.recent_items.prompt.clear_all.text":"Are you sure you want to CLEAR your browsing history?",
-
     "widget.home.public_surveys.label.header.title":"Surveys",
     "widget.home.public_surveys.label.description.failed": "Failed to load surveys.",
     "widget.home.public_surveys.label.description.offline": "Surveys are not available while offline",
@@ -4026,8 +4002,6 @@
 
     "widget.home.safety.safewalk_request.title": "SafeWalks",
     "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
-
-    "widget.home.safety.saferides.title": "SafeRides",
 
     "widget.home.safer.label.title": "Building Access",
     "widget.home.safer.text.empty.description": "Tap the \u2606 on items in Building Access for quick access here.",
@@ -4412,7 +4386,6 @@
     "widget.access.polls.name": "Polls",
     "widget.access.wellness.appointments.name": "MyMcKinley Appointments",
     "widget.access.wellness.health_screener.name": "Illinois Health Screener",
-    "widget.access.academics.appointments.name": "Academics Appointments",
     "widget.access.assistant.name": "Illinois Assistant",
     "widget.access.roles.unsatisfied.title": "%s is unavailable",
     "widget.access.privacy.unsatisfied.title": "Update privacy level to access %s",
@@ -4643,7 +4616,6 @@
     "model.safety.safewalks.title": "SafeWalks",
     "model.safety.safewalks.request.action.text": "Request a SafeWalk",
     "model.safety.safewalks.not_available.text": "SafeWalk feature is not currently available.",
-    "model.safety.saferides.not_available.text": "SafeRides feature is not currently available.",
     "model.safety.safety_resources.not_available.text": "Safety Resources are not currently available.",
 
     "model.assistant.provider.google.label": "Google",
