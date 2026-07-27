@@ -447,8 +447,8 @@ extension AcademicsContentTypeImpl on AcademicsContentType {
       case AcademicsContentType.events: return Localization().getStringEx('panel.academics.section.events.label', 'Speakers & Seminars');
       case AcademicsContentType.gies_checklist: return Localization().getStringEx('panel.academics.section.gies_checklist.label', 'iDegrees New Student Checklist');
       case AcademicsContentType.uiuc_checklist: return Localization().getStringEx('panel.academics.section.uiuc_checklist.label', 'New Student Checklist');
-      case AcademicsContentType.canvas_courses: return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Canvas Courses');
-      case AcademicsContentType.gies_canvas_courses: return Localization().getStringEx('panel.academics.section.gies_canvas_courses.label', 'My Gies Canvas Courses');
+      case AcademicsContentType.canvas_courses: return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Canvas');
+      case AcademicsContentType.gies_canvas_courses: return Localization().getStringEx('panel.academics.section.gies_canvas_courses.label', 'My Gies Canvas');
       case AcademicsContentType.medicine_courses: return Localization().getStringEx('panel.academics.section.medicine_courses.label', 'My College of Medicine Compliance');
       case AcademicsContentType.student_courses: return Localization().getStringEx('panel.academics.section.student_courses.label', 'My Courses');
       case AcademicsContentType.skills_self_evaluation: return Localization().getStringEx('panel.academics.section.skills_self_evaluation.label', 'Skills Self-Evaluation & Career Explorer');
