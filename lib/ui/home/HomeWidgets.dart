@@ -511,16 +511,18 @@ class HomeFavoriteButton extends FavoriteButton {
   void onFavorite(BuildContext context) {
     Analytics().logSelect(target: "Favorite: $favorite");
 
-    bool? isFavorite = this.isFavorite;
-    if (prompt) {
-      promptFavorite(context, favorite: favorite, isFavorite: isFavorite).then((bool? result) {
-        if (result == true) {
-          _toggleFavorite(isFavorite: isFavorite);
-        }
-      });
-    }
-    else {
-      _toggleFavorite(isFavorite: isFavorite);
+    if (favorite != null) {
+      bool? isFavorite = this.isFavorite;
+      if (prompt) {
+        promptFavorite(context, favorite: favorite, isFavorite: isFavorite).then((bool? result) {
+          if (result == true) {
+            _toggleFavorite(isFavorite: isFavorite);
+          }
+        });
+      }
+      else {
+        _toggleFavorite(isFavorite: isFavorite);
+      }
     }
   }
 

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Apply grey background color to 'My Digital Business Card' in WalletHomePanel [#5867](https://github.com/rokwire/illinois-app/issues/5867).
+### Fixed
+- Fixed tappable "invisible stars" for sub-sections without a favorite [#5866](https://github.com/rokwire/illinois-app/issues/5866).
 
 ## [8.1.5] - 2026-07-27
 ### Changed
