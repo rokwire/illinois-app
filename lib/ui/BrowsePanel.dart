@@ -509,26 +509,32 @@ class _BrowseEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(onTap: () => _onTap(context), child:
-        Container(
-          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
-          padding: EdgeInsets.zero,
-          child:
+    return Container(
+      decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
+      padding: EdgeInsets.zero,
+      child: Row(children: [
+        (favorite != null) ?
+          HomeFavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, prompt: true,) :
+          _favoriteSpacingWidget,
+        Expanded(child:
+          InkWell(onTap: () => _onTap(context), child:
             Row(children: [
-              Opacity(opacity: (favorite != null) ? 1 : 0, child:
-                HomeFavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, prompt: true,),
-              ),
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
                   Text(_title, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                  child: _iconWidget),
-            ],),
-        )
+                child: _iconWidget
+              ),
+            ]),
+          ),
+        ),
+      ],),
     );
   }
+
+  Widget get _favoriteSpacingWidget => Padding(padding: FavoriteStarIcon.defaultPadding, child: SizedBox(width: FavoriteStarIcon.defaultSize,),);
 
   String get _title => title(sectionId: sectionId, entryId: entryId);
 
