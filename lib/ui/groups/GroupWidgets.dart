@@ -26,6 +26,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
@@ -44,7 +45,7 @@ import 'package:illinois/ext/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/model/social.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart' hide AppDateTime;
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -716,6 +717,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   void initState() {
     NotificationService().subscribe(this, [
       Groups.notifyGroupStatsUpdated,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     _loadGroupStats();
     super.initState();
@@ -731,6 +733,8 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   void onNotification(String name, dynamic param) {
     if ((name == Groups.notifyGroupStatsUpdated) && (widget.group.id == param)) {
       _updateGroupStats();
+    } else if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {});
     }
   }
 
@@ -1105,8 +1109,31 @@ class GroupPostCard extends StatefulWidget {
   _GroupPostCardState createState() => _GroupPostCardState();
 }
 
-class _GroupPostCardState extends State<GroupPostCard> {
+class _GroupPostCardState extends State<GroupPostCard> with NotificationsListener {
   // static const double _smallImageSize = 64;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, [
+      AppDateTime.notifyTimeZoneChanged,
+    ]);
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

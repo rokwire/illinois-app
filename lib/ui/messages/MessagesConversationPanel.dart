@@ -104,6 +104,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       Styles.notifyChanged,
       SpeechToText.notifyError,
       FirebaseMessaging.notifyForegroundMessage,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     WidgetsBinding.instance.addObserver(this);
 
@@ -145,7 +146,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
     if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
         (name == Localization.notifyStringsUpdated) ||
-        (name == Styles.notifyChanged)) {
+        (name == Styles.notifyChanged) ||
+        (name == AppDateTime.notifyTimeZoneChanged)) {
       setStateIfMounted((){});
     } else if (name == SpeechToText.notifyError) {
       setState(() {

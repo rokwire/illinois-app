@@ -12,6 +12,7 @@ import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/ui/groups/GroupConversationWidgets.dart';
@@ -83,7 +84,8 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      FirebaseMessaging.notifySocialMessageNotification
+      FirebaseMessaging.notifySocialMessageNotification,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     _keyboardVisibilityController = KeyboardVisibilityController();
     _keyboardSubscription = _keyboardVisibilityController.onChange.listen(_onKeyboardVisibilityChanged);
@@ -109,6 +111,8 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     if (mounted) {
       if (name == FirebaseMessaging.notifySocialMessageNotification) {
         _onFirebaseSocialMessageNotification(param);
+      } else if (name == AppDateTime.notifyTimeZoneChanged) {
+        setState(() {});
       }
     }
   }
