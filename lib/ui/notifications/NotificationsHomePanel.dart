@@ -38,6 +38,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:timezone/timezone.dart';
 
 class NotificationsHomePanel extends StatefulWidget {
   static final String routeName = 'settings_notifications_content_panel';
@@ -165,7 +166,8 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
     NotificationService().subscribe(this, [
       Inbox.notifyInboxUserInfoChanged,
       Inbox.notifyInboxMessageRead,
-      Inbox.notifyInboxMessagesDeleted
+      Inbox.notifyInboxMessagesDeleted,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
 
     _scrollController.addListener(_scrollListener);
@@ -198,6 +200,9 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
       _refreshMessages();
     } else if (name == Inbox.notifyInboxMessagesDeleted) {
       _refreshMessages();
+    } else if (name == AppDateTime.notifyTimeZoneChanged) {
+      _dateIntervalSelectedValue = _getDateIntervalBy(filter: _TimeFilterImpl.fromJson(Storage().notificationsFilterTimeInterval));
+      _loadMessages();
     }
   }
 
@@ -524,8 +529,8 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
   }
 
   List<String> _buildDateLabels() {
-    DateTime now = DateTime.now();
-    DateTime today = DateTime(now.year, now.month, now.day);
+    TZDateTime now = AppDateTime().getDisplayNowTZDateTime();
+    TZDateTime today = TZDateTime(AppDateTime().displayLocation, now.year, now.month, now.day);
     Map<_TimeFilter, _DateInterval> intervals = _getTimeFilterIntervals();
 
     List<String> timeDates = <String>[];
@@ -815,7 +820,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
     Map<_TimeFilter, List<InboxMessage>> timesMap = Map<_TimeFilter, List<InboxMessage>>();
     List<InboxMessage>? otherList;
     for (InboxMessage? message in _messages) {
-      _TimeFilter? timeFilter = _timeFilterFromDate(message!.dateCreatedUtc?.toLocal(), intervals: intervals);
+      _TimeFilter? timeFilter = _timeFilterFromDate(AppDateTime().getDisplayZonedDateTime(dateTimeUtc: message!.dateCreatedUtc), intervals: intervals);
       if (timeFilter != null) {
         List<InboxMessage>? timeList = timesMap[timeFilter];
         if (timeList == null) {
@@ -851,17 +856,18 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
   }
 
   Map<_TimeFilter, _DateInterval> _getTimeFilterIntervals() {
-    DateTime now = DateTime.now();
+    Location location = AppDateTime().displayLocation;
+    TZDateTime now = AppDateTime().getDisplayNowTZDateTime();
     return {
-      _TimeFilter.Today: _DateInterval(startDate: DateTime(now.year, now.month, now.day)),
+      _TimeFilter.Today: _DateInterval(startDate: TZDateTime(location, now.year, now.month, now.day)),
       _TimeFilter.Yesterday:
-      _DateInterval(startDate: DateTime(now.year, now.month, now.day - 1), endDate: DateTime(now.year, now.month, now.day)),
-      _TimeFilter.ThisWeek: _DateInterval(startDate: DateTime(now.year, now.month, now.day - now.weekday + 1)),
+      _DateInterval(startDate: TZDateTime(location, now.year, now.month, now.day - 1), endDate: TZDateTime(location, now.year, now.month, now.day)),
+      _TimeFilter.ThisWeek: _DateInterval(startDate: TZDateTime(location, now.year, now.month, now.day - now.weekday + 1)),
       _TimeFilter.LastWeek: _DateInterval(
-          startDate: DateTime(now.year, now.month, now.day - now.weekday + 1 - 7),
-          endDate: DateTime(now.year, now.month, now.day - now.weekday + 1)),
-      _TimeFilter.ThisMonth: _DateInterval(startDate: DateTime(now.year, now.month, 1)),
-      _TimeFilter.LastMonth: _DateInterval(startDate: DateTime(now.year, now.month - 1, 1), endDate: DateTime(now.year, now.month, 0)),
+          startDate: TZDateTime(location, now.year, now.month, now.day - now.weekday + 1 - 7),
+          endDate: TZDateTime(location, now.year, now.month, now.day - now.weekday + 1)),
+      _TimeFilter.ThisMonth: _DateInterval(startDate: TZDateTime(location, now.year, now.month, 1)),
+      _TimeFilter.LastMonth: _DateInterval(startDate: TZDateTime(location, now.year, now.month - 1, 1), endDate: TZDateTime(location, now.year, now.month, 0)),
     };
   }
 
@@ -1032,6 +1038,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> with NotificationsL
     super.initState();
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
   }
 
@@ -1046,6 +1053,8 @@ class _InboxMessageCardState extends State<InboxMessageCard> with NotificationsL
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
+    } else if (name == AppDateTime.notifyTimeZoneChanged) {
       setStateIfMounted(() {});
     }
   }
