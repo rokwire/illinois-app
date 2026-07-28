@@ -51,6 +51,7 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
 
   List<Game>? _todayGames;
   DateTime? _pausedDateTime;
+  StreamSubscription<String>? _updateSubscription;
 
   @override
   void initState() {
@@ -61,7 +62,7 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
       Auth2UserPrefs.notifyInterestsChanged,
     ]);
 
-    widget.updateController?.stream.listen((String command) {
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
       if (command == HomePanel.notifyRefresh) {
         LiveStats().refresh();
         _loadPreferredGames();
@@ -74,6 +75,7 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateSubscription?.cancel();
     super.dispose();
   }
 

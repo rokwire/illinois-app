@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -670,6 +671,7 @@ class DirectoryPronunciationButton extends StatefulWidget {
 class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationButton> {
 
   AudioPlayer? _audioPlayer;
+  StreamSubscription<PlayerState>? _audioPlayerStateSubscription;
   bool _initializingAudioPlayer = false;
 
   @override
@@ -680,6 +682,7 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
   @override
   void dispose() {
     _audioPlayer?.dispose();
+    _audioPlayerStateSubscription?.cancel();
     super.dispose();
   }
 
@@ -734,11 +737,14 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
           if (audioData != null) {
             _audioPlayer = AudioPlayer();
 
-            _audioPlayer?.playerStateStream.listen((PlayerState state) {
+            _audioPlayerStateSubscription = _audioPlayer?.playerStateStream.listen((PlayerState state) {
               if ((state.processingState == ProcessingState.completed) && mounted) {
                 setState(() {
                   _audioPlayer?.dispose();
                   _audioPlayer = null;
+
+                  _audioPlayerStateSubscription?.cancel();
+                  _audioPlayerStateSubscription = null;
                 });
               }
             });
@@ -784,6 +790,8 @@ class _DirectoryPronunciationButtonState extends State<DirectoryPronunciationBut
       _initializingAudioPlayer = false;
       _audioPlayer?.dispose();
       _audioPlayer = null;
+      _audioPlayerStateSubscription?.cancel();
+      _audioPlayerStateSubscription = null;
     });
     AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.playback.failed.text', 'Failed to play audio stream.'));
   }

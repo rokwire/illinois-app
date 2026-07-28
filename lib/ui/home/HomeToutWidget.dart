@@ -40,7 +40,8 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
   DateTime? _imageDateTime;
   DayPart? _dayPart;
   double? _dropdownWidth;
-  
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -48,7 +49,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
       AppLivecycle.notifyStateChanged,
     ]);
 
-    widget.updateController?.stream.listen((String command) {
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
       if (command == HomePanel.notifyRefresh) {
         _refresh();
       }
@@ -68,6 +69,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateSubscription?.cancel();
     super.dispose();
   }
 

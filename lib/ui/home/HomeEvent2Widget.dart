@@ -221,6 +221,8 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
 
   Event2TimeFilter? _queryTimeFilter;
 
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
 
@@ -234,13 +236,11 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
       Auth2.notifyLoginChanged,
     ]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          _reloadIfVisible();
-        }
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        _reloadIfVisible();
+      }
+    });
 
     _initLocationServicesStatus().then((_) {
       _reload();
@@ -253,6 +253,7 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
   void dispose() {
     NotificationService().unsubscribe(this);
     _pageController?.dispose();
+    _updateSubscription?.cancel();
     super.dispose();
   }
 

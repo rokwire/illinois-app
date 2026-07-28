@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -35,6 +37,7 @@ class ProfileNamePronouncementWidget extends StatefulWidget {
 
 class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidget> with NotificationsListener {
   AudioPlayer? _audioPlayer;
+  StreamSubscription<PlayerState>? _audioPlayerStateSubscription;
   bool _playbackActivity = false;
   bool _editActivity = false;
   bool _deleteActivity = false;
@@ -48,6 +51,7 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
   @override
   void dispose() {
     _audioPlayer?.dispose();
+    _audioPlayerStateSubscription?.cancel();
     super.dispose();
   }
 
@@ -132,11 +136,13 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
           if (audioData != null) {
             _audioPlayer = AudioPlayer();
 
-            _audioPlayer?.playerStateStream.listen((PlayerState state) {
+            _audioPlayerStateSubscription = _audioPlayer?.playerStateStream.listen((PlayerState state) {
               if ((state.processingState == ProcessingState.completed) && mounted) {
                 setState(() {
                   _audioPlayer?.dispose();
                   _audioPlayer = null;
+                  _audioPlayerStateSubscription?.cancel();
+                  _audioPlayerStateSubscription = null;
                 });
               }
             });
@@ -183,6 +189,8 @@ class _ProfileNamePronouncementState extends State<ProfileNamePronouncementWidge
       _playbackActivity = false;
       _audioPlayer?.dispose();
       _audioPlayer = null;
+      _audioPlayerStateSubscription?.cancel();
+      _audioPlayerStateSubscription = null;
     });
     AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.playback.failed.text', 'Failed to play audio stream.'));
   }

@@ -116,6 +116,8 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
 
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
     super.initState();
@@ -130,13 +132,11 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
       AppLivecycle.notifyStateChanged,
     ]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          _loadGroupsIfVisible();
-        }
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        _loadGroupsIfVisible();
+      }
+    });
 
     _loadGroups();
   }
@@ -145,6 +145,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
   void dispose() {
     NotificationService().unsubscribe(this);
     _pageController?.dispose();
+    _updateSubscription?.cancel();
     super.dispose();
   }
 

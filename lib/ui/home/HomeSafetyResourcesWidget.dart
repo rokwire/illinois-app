@@ -92,6 +92,8 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
 
+  StreamSubscription<String>? _updateSubscription;
+
   static const String localScheme = 'local';
   static const String privacyScheme = 'privacy';
   static const String privacyLevelHost = 'level';
@@ -107,13 +109,11 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
       AppLivecycle.notifyStateChanged,
     ]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          Guide().refresh();
-        }
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        Guide().refresh();
+      }
+    });
 
     _resourceItems = _buildContentList();
   }
@@ -121,6 +121,7 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
   @override
   void dispose() {
     _pageController?.dispose();
+    _updateSubscription?.cancel();
     NotificationService().unsubscribe(this);
     super.dispose();
   }

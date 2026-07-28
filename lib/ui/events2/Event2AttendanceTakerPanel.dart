@@ -84,10 +84,12 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   final TextEditingController _manualNetIdController = TextEditingController();
   final FocusNode _manualNetIdFocusNode = FocusNode();
 
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
 
-    widget.updateController?.stream.listen((String command) {
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
       if (command == Event2AttendanceTakerWidget.notifyRefresh) {
         _refresh();
       }
@@ -128,6 +130,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     _manualNetIdFocusNode.dispose();
     _processedTimer?.cancel();
     _processedTimer = null;
+    _updateSubscription?.cancel();
+    _updateSubscription = null;
     super.dispose();
   }
 
