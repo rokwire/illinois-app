@@ -37,38 +37,37 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> with No
 
   Color? _tipColor;
   bool _loadingTipColor = false;
-  
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Wellness.notifyDailyTipChanged,
     ]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          if (mounted) {
-            setState(() {
-              _loadingTipColor = true;
-            });
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        if (mounted) {
+          setState(() {
+            _loadingTipColor = true;
+          });
 
+          Wellness().refreshDailyTip();
+
+          Transportation().loadAlternateColor().then((Color? activeColor) {
             Wellness().refreshDailyTip();
-
-            Transportation().loadAlternateColor().then((Color? activeColor) {
-              Wellness().refreshDailyTip();
-              if (mounted) {
-                setState(() {
-                  if (activeColor != null) {
-                    _tipColor = activeColor;
-                  }
-                  _loadingTipColor = false;
-                });
-              }
-            });
-          }
+            if (mounted) {
+              setState(() {
+                if (activeColor != null) {
+                  _tipColor = activeColor;
+                }
+                _loadingTipColor = false;
+              });
+            }
+          });
         }
-      });
-    }
+      }
+    });
 
     _loadingTipColor = true;
     Transportation().loadAlternateColor().then((Color? activeColor) {
@@ -88,6 +87,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> with No
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateSubscription?.cancel();
     super.dispose();
   }
 

@@ -56,6 +56,8 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
 
   late StudentCoursesViewType _viewType;
 
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
 
@@ -71,13 +73,11 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
     ]);
 
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          _updateCourses(forceLoad: true);
-        }
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        _updateCourses(forceLoad: true);
+      }
+    });
 
     _loadCourses();
     super.initState();
@@ -87,6 +87,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
   void dispose() {
     NotificationService().unsubscribe(this);
     _pageController?.dispose();
+    _updateSubscription?.cancel();
     super.dispose();
   }
 

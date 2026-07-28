@@ -285,11 +285,12 @@ class _ProfileStoredDataWidget extends StatefulWidget {
 class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
   bool _loading = false;
   Map<String, String>? _userData;
+  StreamSubscription<String>? _updateSubscription;
 
   @override
   void initState() {
 
-    widget.updateController?.stream.listen((String command) {
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
       if (command == ProfileStoredDataPanel._notifyRefresh) {
         _refreshUserData();
       }
@@ -302,6 +303,7 @@ class _ProfileStoredDataWidgetState extends State<_ProfileStoredDataWidget> {
 
   @override
   void dispose() {
+    _updateSubscription?.cancel();
     super.dispose();
   }
 

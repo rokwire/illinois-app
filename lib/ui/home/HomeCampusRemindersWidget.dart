@@ -56,6 +56,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  StreamSubscription<String>? _updateSubscription;
 
   @override
   void initState() {
@@ -67,19 +68,18 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
       AppLivecycle.notifyStateChanged,
     ]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          Guide().refresh();
-        }
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        Guide().refresh();
+      }
+    });
 
     _reminderItems = List<Map<String, dynamic>>.from(Guide().remindersList ?? <Map<String, dynamic>>[]);
   }
 
   @override
   void dispose() {
+    _updateSubscription?.cancel();
     _pageController?.dispose();
     NotificationService().unsubscribe(this);
     super.dispose();
