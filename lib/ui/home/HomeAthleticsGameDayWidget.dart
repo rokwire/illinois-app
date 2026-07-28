@@ -18,6 +18,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -59,6 +60,7 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
       Connectivity.notifyStatusChanged,
       AppLivecycle.notifyStateChanged,
       Auth2UserPrefs.notifyInterestsChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
 
     widget.updateController?.stream.listen((String command) {
@@ -88,6 +90,9 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
       _onAppLivecycleStateChanged(param);
     }
     else if (name == Auth2UserPrefs.notifyInterestsChanged) {
+      _loadPreferredGames();
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
       _loadPreferredGames();
     }
   }

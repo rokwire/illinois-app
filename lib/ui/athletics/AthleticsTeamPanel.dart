@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -68,7 +69,10 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> with Notificati
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyInterestsChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyInterestsChanged,
+      AppDateTime.notifyTimeZoneChanged,
+    ]);
 
     _loadSportPreferences();
     _loadGames();
@@ -584,6 +588,9 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> with Notificati
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyInterestsChanged) {
       _loadSportPreferences();
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      _loadGames();
     }
   }
 }

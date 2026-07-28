@@ -23,6 +23,7 @@ import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
@@ -67,7 +68,12 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Events2.notifyChanged, Auth2UserPrefs.notifyInterestsChanged, Auth2UserPrefs.notifyFavoritesChanged]);
+    NotificationService().subscribe(this, [
+      Events2.notifyChanged,
+      Auth2UserPrefs.notifyInterestsChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
+      AppDateTime.notifyTimeZoneChanged,
+    ]);
     _scrollController.addListener(_scrollListener);
     _starred = (widget.starred == true);
     _buildTeamsFilter();
@@ -362,6 +368,8 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       if (_starred) {
         _reloadEvents();
       }
+    } else if (name == AppDateTime.notifyTimeZoneChanged) {
+      _reloadEvents();
     }
   }
 }
