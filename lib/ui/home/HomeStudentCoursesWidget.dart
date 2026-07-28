@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
@@ -19,7 +20,6 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -68,6 +68,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
       StudentCourses.notifyCachedCoursesChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
 
 
@@ -113,6 +114,9 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
       if ((param == null) || (StudentCourses().displayTermId == param)) {
         _updateCourses();
       }
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {});
     }
   }
 
@@ -406,7 +410,7 @@ class _HomeStudentCoursesCalendarContentWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeStudentCoursesCalendarContentWidgetState();
 }
 
-class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCoursesCalendarContentWidget> {
+class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCoursesCalendarContentWidget> with NotificationsListener {
 
   static const double _minHourHeight = 24;
   static const int _startHour = 8;
@@ -427,6 +431,9 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [
+      AppDateTime.notifyTimeZoneChanged,
+    ]);
     _coursePalette = StudentCoursesCalendarLayout.defaultPalette;
     _updateCourseColors();
     _updateBlocks();
@@ -441,6 +448,23 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
     }
     if (coursesChanged || (widget.weekday != oldWidget.weekday)) {
       _updateBlocks();
+    }
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {
+        _updateBlocks();
+      });
     }
   }
 

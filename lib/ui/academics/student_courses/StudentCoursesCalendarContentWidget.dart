@@ -22,10 +22,12 @@ import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCourseDetailPanel.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesCalendarLayout.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:timezone/timezone.dart';
 
@@ -39,7 +41,7 @@ class StudentCoursesCalendarContentWidget extends StatefulWidget {
   State<StudentCoursesCalendarContentWidget> createState() => _StudentCoursesCalendarContentWidgetState();
 }
 
-class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCalendarContentWidget> {
+class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCalendarContentWidget> with NotificationsListener {
 
   static const double _minHourHeight = 40;
   static const double _timeColumnWidth = 64;
@@ -69,6 +71,9 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [
+      AppDateTime.notifyTimeZoneChanged,
+    ]);
     _scrollController = ScrollController();
     _coursePalette = StudentCoursesCalendarLayout.defaultPalette;
     _updateCourseColors();
@@ -86,8 +91,20 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     _scrollController.dispose();
     super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {
+        _updateBlocksByWeekday();
+      });
+    }
   }
 
   void _applyInitialScrollOffsetIfNeeded() {

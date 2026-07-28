@@ -34,7 +34,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/model/survey.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
@@ -154,7 +154,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
 
       ToggleRibbonButton(title: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck ?? false, onTap: _onDisableLiveGameCheckToggled),
       Container(height: 1, color: Styles().colors.surfaceAccent ,),
-      ToggleRibbonButton(title: 'Display all times in Central Time', toggled: !Storage().useDeviceLocalTimeZone!, onTap: _onUseDeviceLocalTimeZoneToggled),
+      ToggleRibbonButton(title: 'Display all times in Central Time', toggled: !AppDateTime().useDeviceLocalTimeZone, onTap: _onUseDeviceLocalTimeZoneToggled),
       Container(height: 1, color: Styles().colors.surfaceAccent ,),
       ToggleRibbonButton(title: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
       Container(height: 1, color: Styles().colors.surfaceAccent ,),
@@ -584,7 +584,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
 
   void _onUseDeviceLocalTimeZoneToggled() {
     setState(() {
-      Storage().useDeviceLocalTimeZone = !Storage().useDeviceLocalTimeZone!;
+      AppDateTime().useDeviceLocalTimeZone = !AppDateTime().useDeviceLocalTimeZone;
     });
   }
 

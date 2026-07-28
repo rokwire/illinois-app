@@ -19,10 +19,14 @@ import 'package:flutter/foundation.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart' as rokwire;
 import 'package:illinois/service/Storage.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class AppDateTime extends rokwire.AppDateTime {
+
+  // Notifications
+  static const String notifyTimeZoneChanged = "edu.illinois.rokwire.app_datetime.timezone.changed";
 
   // Singletone Factory
   
@@ -52,8 +56,14 @@ class AppDateTime extends rokwire.AppDateTime {
   @protected
   String? get universityLocationName  => Config().timezoneLocation; //TMP: 'Europe/Sofia';
 
-  @protected
   bool get useDeviceLocalTimeZone => (Storage().useDeviceLocalTimeZone == true);
+
+  set useDeviceLocalTimeZone(bool value) {
+    if (Storage().useDeviceLocalTimeZone != value) {
+      Storage().useDeviceLocalTimeZone = value;
+      NotificationService().notify(notifyTimeZoneChanged, null);
+    }
+  }
 
   @override
   DateTime get now  => Storage().offsetDate ?? super.now;

@@ -22,6 +22,7 @@ import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
@@ -86,6 +87,7 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
       StudentCourses.notifyCachedCoursesChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
 
     if (_canLoadCourses) {
@@ -126,6 +128,9 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
       if ((param == null) || (StudentCourses().displayTermId == param)) {
         _updateCourses(forceLoad: false);
       }
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {});
     }
   }
 
