@@ -49,6 +49,8 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
   late bool _isUserVisible;
   late bool _isFavoritesEmpty;
 
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -56,7 +58,7 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
       Auth2UserPrefs.notifyFavoritesChanged,
     ]);
 
-    widget.updateController?.stream.listen((String command) {
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
       if (command == HomePanel.notifyRefresh) {
         _refresh();
       }
@@ -70,6 +72,7 @@ class _HomeWelcomeMessageWidgetState extends State<HomeWelcomeMessageWidget> wit
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateSubscription?.cancel();
     super.dispose();
   }
 

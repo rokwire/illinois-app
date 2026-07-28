@@ -77,7 +77,7 @@ class _HomeDiningWidgetState extends State<HomeDiningWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, child:
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, updateController: widget.updateController, child:
       _contentWidget,
     );
   }
@@ -143,6 +143,8 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
 
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
 
@@ -152,13 +154,11 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
       AppLivecycle.notifyStateChanged,
     ]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          _refreshDiningsIfVisible();
-        }
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        _refreshDiningsIfVisible();
+      }
+    });
 
     _loadDinings();
 
@@ -169,6 +169,7 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
   void dispose() {
     NotificationService().unsubscribe(this);
     _pageController?.dispose();
+    _updateSubscription?.cancel();
     super.dispose();
   }
 

@@ -143,7 +143,9 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
   Map<Favorite, GlobalKey> _contentKeys = <Favorite, GlobalKey>{};
   Favorite? _currentFavorite;
   int _currentPage = -1;
-  
+
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -157,13 +159,11 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
       Appointments.notifyUpcomingAppointmentsChanged
     ]);
     
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          _refreshFavorites();
-        }
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        _refreshFavorites();
+      }
+    });
 
     _refreshFavorites();
     super.initState();
@@ -173,6 +173,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
   void dispose() {
     NotificationService().unsubscribe(this);
     _pageController?.dispose();
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -207,6 +208,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
   @override
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
+      updateController: widget.updateController,
       title: headingTitle,
       child: _buildContent()
     );

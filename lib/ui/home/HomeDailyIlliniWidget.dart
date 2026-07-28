@@ -59,19 +59,18 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
   bool _loadingItems = false;
   DateTime? _pausedDateTime;
   PageController? _pageController;
+  StreamSubscription<String>? _updateSubscription;
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [AppLivecycle.notifyStateChanged]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          _loadFeedItems();
-        }
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        _loadFeedItems();
+      }
+    });
 
     double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
     double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
@@ -84,6 +83,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
   void dispose() {
     super.dispose();
     _pageController?.dispose();
+    _updateSubscription?.cancel();
     NotificationService().unsubscribe(this);
   }
 
@@ -113,6 +113,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeDailyIlliniWidget.title,
+      updateController: widget.updateController,
       child: _buildContent(),
     );
   }

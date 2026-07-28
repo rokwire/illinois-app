@@ -4108,6 +4108,8 @@
 	"widget.home.laundry.button.all.hint": "點擊查看所有洗衣房",
 
 	"widget.home.tout.customize.label": "定制",
+	"widget.home.tout.show_all.label": "Show All",
+	"widget.home.tout.collapse_app.label": "Collapse All",
 	"widget.home.tout.button.info.label": "信息",
 	"widget.home.tout.button.info.hint": "點擊了解更多信息",
 	"widget.home.tout.popup.info.content": "要在{{app_title}}應用中更改您的名字，請查看<a href='{{preferred_first_name_url}}'>首選名稱說明</a>。",

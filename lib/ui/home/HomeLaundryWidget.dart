@@ -57,7 +57,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, child:
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, updateController: widget.updateController, child:
       _contentWidget,
     );
   }
@@ -121,6 +121,8 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
 
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
 
@@ -130,13 +132,11 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
       AppLivecycle.notifyStateChanged,
     ]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          _refreshLaundryIfVisible();
-        }
-      });
-    }
+   _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        _refreshLaundryIfVisible();
+      }
+    });
 
     _loadLaundry();
 
@@ -147,6 +147,7 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
   void dispose() {
     NotificationService().unsubscribe(this);
     _pageController?.dispose();
+    _updateSubscription?.cancel();
     super.dispose();
   }
 

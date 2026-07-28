@@ -6,10 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Update sing-in texts and add hyperlinks [#5876](https://github.com/rokwire/illinois-app/issues/5876).
-- Text changes in Browse/Sections [#5875](https://github.com/rokwire/illinois-app/issues/5875).
-### Removed
-- Hid various sub-sections and panels [#5874](https://github.com/rokwire/illinois-app/issues/5874).
+- Apply grey background color to 'My Digital Business Card' in WalletHomePanel [#5867](https://github.com/rokwire/illinois-app/issues/5867).
+### Fixed
+- Fixed tappable "invisible stars" for sub-sections without a favorite [#5866](https://github.com/rokwire/illinois-app/issues/5866).
+- Make sure to cancel any opened stream subscription when it is not needed any more [#5910](https://github.com/rokwire/illinois-app/issues/5910).
+### Added
+- Added Show All/Collapse All to Favorites [#5877](https://github.com/rokwire/illinois-app/issues/5877).
 
 ## [8.1.5] - 2026-07-27
 ### Changed

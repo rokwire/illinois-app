@@ -43,6 +43,8 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
 
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
 
@@ -50,13 +52,11 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
       Canvas.notifyCoursesUpdated
     ]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          _updateCourses();
-        }
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        _updateCourses();
+      }
+    });
 
     _courses = widget.isGies ? Canvas().giesCourses : Canvas().courses;
     super.initState();
@@ -66,6 +66,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
   void dispose() {
     NotificationService().unsubscribe(this);
     _pageController?.dispose();
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -83,6 +84,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
 
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: widget.isGies ? HomeCanvasCoursesWidget.giesTitle : HomeCanvasCoursesWidget.canvasTitle,
+      updateController: widget.updateController,
       child: _buildContent(),
     );
   }
