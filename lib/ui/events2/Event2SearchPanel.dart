@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Map2.dart';
@@ -105,6 +106,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> with Notification
       Event2FilterParam.notifyChanged,
       Events2.notifyChanged,
       Events2.notifyUpdated,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
 
     _scrollController.addListener(_scrollListener);
@@ -165,6 +167,9 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> with Notification
     }
     else if (name == Events2.notifyUpdated) {
       _updateEventIfNeeded(param);
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      _reload();
     }
   }
 

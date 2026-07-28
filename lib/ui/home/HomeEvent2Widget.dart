@@ -23,6 +23,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -233,6 +234,7 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
       Events2.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -290,6 +292,9 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
     }
     else if (name == Auth2.notifyLoginChanged) {
       _reloadIfVisible(); // or mark as needs refresh
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      _reloadIfVisible();
     }
   }
 

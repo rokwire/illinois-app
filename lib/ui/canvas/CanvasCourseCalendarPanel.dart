@@ -58,7 +58,10 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      AppDateTime.notifyTimeZoneChanged,
+    ]);
     _selectedCourseId = widget.courseId;
     _selectedType = CanvasCalendarEventType.event;
     _courses = Canvas().courses;
@@ -556,12 +559,6 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
     _initEventsTimeFrame();
   }
 
-  ///
-  /// Calculates month time frame including the whole weeks of the month's first and last day.
-  /// Anchored to AppDateTime().displayLocation (not the device's own physical zone) so the
-  /// query range sent to the backend, and the day-grouping of the returned events, agree
-  /// with the useDeviceLocalTimeZone display setting.
-  ///
   void _initEventsTimeFrame() {
     Location location = AppDateTime().displayLocation;
     TZDateTime monthStartDateTime = TZDateTime(location, _selectedDate.year, _selectedDate.month, 1);
@@ -642,6 +639,11 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      _selectedDate = TZDateTime(AppDateTime().displayLocation, _selectedDate.year, _selectedDate.month, _selectedDate.day);
+      _initEventsTimeFrame();
+      _loadEvents();
     }
   }
 }
