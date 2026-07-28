@@ -199,16 +199,21 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
   Widget build(BuildContext context) =>
     Scaffold(backgroundColor: Styles().colors.white, body:
       Column(children: [
-        Row(children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 16), child:
-              _headerTitle
-            )
-          ),
-          _headerCloseButton,
-        ]),
+        _headerBar,
         Container(color: Styles().colors.surfaceAccent, height: 1),
         Expanded(child: _panelContent)
+      ]),
+    );
+
+  Widget get _headerBar =>
+    Container(color: Styles().colors.white, child:
+      Row(children: [
+        Expanded(child:
+          Padding(padding: EdgeInsets.only(left: 16), child:
+            _headerTitle
+          )
+        ),
+        _headerCloseButton,
       ]),
     );
 
