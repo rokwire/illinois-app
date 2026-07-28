@@ -61,6 +61,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> with No
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessToDoWidget.title,
+      updateController: widget.updateController,
       child: Padding(padding: HomeCard.defaultChildMargin,
         child: _buildContent(),
       ),

@@ -933,6 +933,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> with Notifications
 
   String? _imageUrl;
   DateTime? _imageDateTime;
+  StreamSubscription<String>? _updateSubscription;
 
   @override
   void initState() {
@@ -941,7 +942,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> with Notifications
       Content.notifyContentImagesChanged,
     ]);
 
-    widget.updateController?.stream.listen((String command) {
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
       if (command == BrowsePanel.notifyRefresh) {
         _refresh();
       }
@@ -959,6 +960,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> with Notifications
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateSubscription?.cancel();
     super.dispose();
   }
 

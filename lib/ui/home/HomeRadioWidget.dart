@@ -28,6 +28,7 @@ class HomeRadioWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: favoriteId,
+      updateController: updateController,
       title: title,
       child: Container(
         decoration: HomeCard.boxDecoration,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class AudioPlayerWidget extends StatefulWidget {
 
 class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   AudioPlayer? _audioPlayer;
+  StreamSubscription<PlayerState>? _audioPlayerStateSubscription;
 
   @override
   void initState() {
@@ -28,6 +30,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   @override
   void dispose() {
     _audioPlayer?.dispose();
+    _audioPlayerStateSubscription?.cancel();
     super.dispose();
   }
 
@@ -36,6 +39,8 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
     setState(() {
       _audioPlayer?.dispose();
       _audioPlayer = null;
+      _audioPlayerStateSubscription?.cancel();
+      _audioPlayerStateSubscription = null;
     });
     if (showAlert) {
       AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.playback.failed.text', 'Failed to play audio stream.'));
@@ -55,7 +60,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         else if (bytes != null) {
           await _audioPlayer?.setAudioSource(Uint8ListAudioSource(bytes));
         }
-        _audioPlayer?.playerStateStream.listen((state) {
+        _audioPlayerStateSubscription = _audioPlayer?.playerStateStream.listen((state) {
           if ((state.processingState == ProcessingState.completed) && mounted) {
             setStateIfMounted(() {
               _audioPlayer?.pause();

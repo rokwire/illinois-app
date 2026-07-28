@@ -52,6 +52,7 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
 
   List<Game>? _todayGames;
   DateTime? _pausedDateTime;
+  StreamSubscription<String>? _updateSubscription;
 
   @override
   void initState() {
@@ -63,7 +64,7 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
       AppDateTime.notifyTimeZoneChanged,
     ]);
 
-    widget.updateController?.stream.listen((String command) {
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
       if (command == HomePanel.notifyRefresh) {
         LiveStats().refresh();
         _loadPreferredGames();
@@ -76,6 +77,7 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -116,12 +118,12 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
     if ((_todayGames != null) && (0 < _todayGames!.length)) {
       List<Widget> gameDayWidgets = [];
       for (Game todayGame in _todayGames!) {
-        gameDayWidgets.add(AthleticsGameDayWidget(game: todayGame, favoriteId: widget.favoriteId,));
+        gameDayWidgets.add(AthleticsGameDayWidget(game: todayGame, favoriteId: widget.favoriteId, updateController: widget.updateController,));
       }
       return Column(children: gameDayWidgets);
     }
     else {
-      return HomeFavoriteWidget(favoriteId: widget.favoriteId,
+      return HomeFavoriteWidget(favoriteId: widget.favoriteId, updateController: widget.updateController,
         title: Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
         child: HomeMessageCard(message: Localization().getStringEx('widget.game_day.label.no_games', 'No Illini Big 10 events today.')),
       );

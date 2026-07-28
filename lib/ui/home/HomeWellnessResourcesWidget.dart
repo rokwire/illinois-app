@@ -65,6 +65,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   String? _currentFavoriteId;
   int _currentPage = -1;
+  StreamSubscription<String>? _updateSubscription;
 
   static const String localScheme = 'local';
   static const String localUrlMacro = '{{local_url}}';
@@ -79,11 +80,9 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
       Wellness.notifyResourcesContentChanged,
     ]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        _updateContent();
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      _updateContent();
+    });
 
     _initContent();
     super.initState();
@@ -93,6 +92,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   void dispose() {
     NotificationService().unsubscribe(this);
     _pageController?.dispose();
+    _updateSubscription?.cancel();
     super.dispose();
   }
   
@@ -110,6 +110,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessResourcesWidget.title,
+      updateController: widget.updateController,
       child: _buildContent(),
     );
   }

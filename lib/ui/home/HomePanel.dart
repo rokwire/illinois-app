@@ -70,9 +70,11 @@ enum HomeContentType { favorites, browse }
 // HomePanel
 
 class HomePanel extends StatefulWidget with AnalyticsInfo {
-  static const String notifyRefresh  = "edu.illinois.rokwire.home.refresh";
-  static const String notifySelect   = "edu.illinois.rokwire.home.select";
-  static const String selectParamKey = "select-param";
+  static const String notifyRefresh   = "edu.illinois.rokwire.home.refresh";
+  static const String notifyExpand    = "edu.illinois.rokwire.home.expand";
+  static const String notifyCollapse  = "edu.illinois.rokwire.home.collapse";
+  static const String notifySelect    = "edu.illinois.rokwire.home.select";
+  static const String selectParamKey  = "select-param";
 
   final Map<String, dynamic> params = <String, dynamic>{};
 

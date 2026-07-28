@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -38,7 +40,9 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
   String? _imageUrl;
   DateTime? _imageDateTime;
   DayPart? _dayPart;
-  
+  double? _dropdownWidth;
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -46,7 +50,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
       AppLivecycle.notifyStateChanged,
     ]);
 
-    widget.updateController?.stream.listen((String command) {
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
       if (command == HomePanel.notifyRefresh) {
         _refresh();
       }
@@ -66,6 +70,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -77,7 +82,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
       (imageUrl != null) ? _buildImageWidget(imageUrl) : Container(),
       Visibility(visible: (widget.contentType == HomeContentType.favorites), child:
         Container(padding: EdgeInsets.only(bottom: 8,), color: Styles().colors.white, child:
-          Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Flexible(flex: 3, child:
               Padding(padding: EdgeInsets.only(left: 16, top: 16), child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -98,19 +103,8 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
               )
             ),
             Flexible(flex: 2, child:
-              InkWell(onTap: _onCustomize, child:
-                Padding(padding: EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 16), child:
-                  Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end, children: [
-                    Padding(padding: EdgeInsets.only(right: 4), child:
-                      Styles().images.getImage('edit-dark-blue', size: 14, excludeFromSemantics: true) ?? Container(),
-                    ),
-                    Flexible(child:
-                      Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
-                        style: Styles().textStyles.getTextStyle("widget.home_tout.button.link"))
-                    )
-                  ],),
-                ),
-              ),
+            //_customizeButton,
+              _commandsDropdown,
             )
           ],)
         )
@@ -145,6 +139,95 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
             child: Container(height: _triangleHeight))))
     ]);
   }
+
+  /*Widget get _customizeButton =>
+    InkWell(onTap: _onCustomize, child:
+      Padding(padding: EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 16), child:
+        Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end, children: [
+          Padding(padding: EdgeInsets.only(right: 4), child:
+            Styles().images.getImage('edit-dark-blue', size: 14, excludeFromSemantics: true) ?? Container(),
+          ),
+          Flexible(child:
+            Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
+              style: Styles().textStyles.getTextStyle("widget.home_tout.button.link"))
+          )
+        ],),
+      ),
+    );*/
+
+  Widget get _commandsDropdown {
+    _dropdownWidth ??= _evalDropdownWidth();
+    return Padding(padding: EdgeInsets.only(left: 8, right: 16), child:
+      DropdownButtonHideUnderline(child:
+        DropdownButton2<_HomeToutCommand>(
+          dropdownStyleData: DropdownStyleData(padding: EdgeInsets.zero, width: _dropdownWidth, offset: Offset(max((_dropdownWidth ?? 0) - _commandsDropdownButtonWidth, 0) * -1, 0), ),
+          menuItemStyleData: MenuItemStyleData(padding: EdgeInsets.zero),
+          customButton: _commandsDropdownButton,
+          isExpanded: false,
+          items: _commandButtons,
+          onChanged: _onDropdownCommand,
+        ),
+      )
+    );
+  }
+
+  Widget get _commandsDropdownButton =>
+    Padding(padding: EdgeInsets.only(top: 16, bottom: 16), child:
+      Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end, children: [
+        Padding(padding: EdgeInsets.only(right: _commandsDropdownButtonIconSpacing), child:
+          Styles().images.getImage('edit-dark-blue', size: _commandsDropdownButtonEditIconSize, excludeFromSemantics: true) ?? Container(),
+        ),
+        Padding(padding: EdgeInsets.only(top: 3), child:
+          Styles().images.getImage('chevron-down', size: _commandsDropdownButtonChevronIconSize, excludeFromSemantics: true) ?? Container(),
+        )
+      ],),
+    );
+
+
+  double get _commandsDropdownButtonEditIconSize => 18;
+  double get _commandsDropdownButtonChevronIconSize => 14;
+  double get _commandsDropdownButtonIconSpacing => 4;
+  double get _commandsDropdownButtonWidth => _commandsDropdownButtonEditIconSize + _commandsDropdownButtonIconSpacing + _commandsDropdownButtonChevronIconSize;
+
+
+  List<DropdownMenuItem<_HomeToutCommand>> get _commandButtons => _HomeToutCommand.values.map((command) => _buildCommandButton(command)).toList();
+
+  DropdownMenuItem<_HomeToutCommand> _buildCommandButton(_HomeToutCommand command) =>
+    DropdownMenuItem<_HomeToutCommand>(value: command, child:
+      Padding(padding: EdgeInsets.symmetric(horizontal: _commandHorzPadding, vertical: _commandVertPadding), child:
+        Row(mainAxisSize: MainAxisSize.min, children: [
+          Padding(padding: EdgeInsets.only(right: _commandIconSpacing), child:
+            command.icon ?? SizedBox(width: _HomeToutCommandImpl.iconSize,),
+          ),
+          Flexible(child:
+            Text(command.title, style: _commandTextStyle)
+          )
+        ]),
+      )
+    );
+
+  double _evalDropdownWidth() {
+    double textWidth = 0;
+    for (_HomeToutCommand command in _HomeToutCommand.values) {
+      final Size sizeFull = (TextPainter(
+          text: TextSpan(
+            text: command.title,
+            style: _commandTextStyle,
+          ),
+          textScaler: MediaQuery.of(context).textScaler,
+          textDirection: TextDirection.ltr,
+        )..layout()).size;
+      if (textWidth < sizeFull.width) {
+        textWidth = sizeFull.width;
+      }
+    }
+    return _HomeToutCommandImpl.iconSize + _commandIconSpacing + textWidth + 3 * _commandHorzPadding;
+  }
+
+  TextStyle? get _commandTextStyle => Styles().textStyles.getTextStyle('widget.home_tout.button.dropdown');
+  double get _commandHorzPadding => 8;
+  double get _commandVertPadding => 4;
+  double get _commandIconSpacing => 6;
 
   double get _triangleHeight => HomeToutWidget.triangleHeight(context);
   double get _imageAspectRatio => HomeToutWidget.imageAspectRatio;
@@ -200,6 +283,25 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
   void _onInfo() {
     Analytics().logSelect(target: "Info", source: widget.runtimeType.toString());
     _InfoDialog.show(context);
+  }
+
+  void _onDropdownCommand(_HomeToutCommand? command) {
+    switch (command) {
+      case _HomeToutCommand.showAll: _onShowAll(); break;
+      case _HomeToutCommand.collapseAll: _onCollapseAll(); break;
+      case _HomeToutCommand.customize: _onCustomize(); break;
+      default: break;
+    }
+  }
+
+  void _onShowAll() {
+    Analytics().logSelect(target: 'Show All', source: widget.runtimeType.toString());
+    widget.updateController?.add(HomePanel.notifyExpand);
+  }
+
+  void _onCollapseAll() {
+    Analytics().logSelect(target: 'Collapse All', source: widget.runtimeType.toString());
+    widget.updateController?.add(HomePanel.notifyCollapse);
   }
 
   void _onCustomize() {
@@ -289,4 +391,27 @@ class _InfoDialog extends StatelessWidget {
     }
   }
 
+}
+
+enum _HomeToutCommand { showAll, collapseAll, customize }
+
+extension _HomeToutCommandImpl on _HomeToutCommand {
+
+  String get title {
+    switch (this) {
+      case _HomeToutCommand.showAll: return Localization().getStringEx('widget.home.tout.show_all.label', 'Show All');
+      case _HomeToutCommand.collapseAll: return Localization().getStringEx('widget.home.tout.collapse_all.label', 'Collapse All');
+      case _HomeToutCommand.customize: return Localization().getStringEx('widget.home.tout.customize.label', 'Customize');
+    }
+  }
+
+  Widget? get icon {
+    switch (this) {
+      case _HomeToutCommand.showAll: return Styles().images.getImage('chevron2-up', color: Styles().colors.fillColorSecondary, size: iconSize, excludeFromSemantics: true);
+      case _HomeToutCommand.collapseAll: return Styles().images.getImage('chevron2-down', color: Styles().colors.fillColorSecondary, size: iconSize, excludeFromSemantics: true);
+      case _HomeToutCommand.customize: return Styles().images.getImage('star-partially-filled', size: iconSize, excludeFromSemantics: true);
+    }
+  }
+
+  static double iconSize = 14;
 }

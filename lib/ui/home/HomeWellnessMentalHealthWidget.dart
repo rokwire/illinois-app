@@ -62,11 +62,13 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   int _currentPage = -1;
+  StreamSubscription<String>? _updateSubscription;
 
   static const String localScheme = 'local';
   static const String localUrlMacro = '{{local_url}}';
   static const String privacyUrl = 'privacy://level';
   static const String privacyUrlMacro = '{{privacy_url}}';
+
 
   @override
   void initState() {
@@ -75,13 +77,11 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
       Guide.notifyChanged,
     ]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          Guide().refresh();
-        }
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        Guide().refresh();
+      }
+    });
 
     _resourceItems = _buildResourceItems();
     super.initState();
@@ -91,6 +91,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
   void dispose() {
     NotificationService().unsubscribe(this);
     _pageController?.dispose();
+    _updateSubscription?.cancel();
     super.dispose();
   }
   
@@ -108,6 +109,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessMentalHealthWidget.title,
+      updateController: widget.updateController,
       child: _buildContent(),
     );
   }

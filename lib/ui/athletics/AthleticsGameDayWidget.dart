@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 
@@ -29,7 +31,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 class AthleticsGameDayWidget extends StatefulWidget {
   final Game? game;
   final String? favoriteId;
-  AthleticsGameDayWidget({Key? key, this.game, this.favoriteId}) : super(key: key);
+  final StreamController<String>? updateController;
+  AthleticsGameDayWidget({Key? key, this.game, this.favoriteId, this.updateController}) : super(key: key);
 
   _AthleticsGameDayWidgetState createState() => _AthleticsGameDayWidgetState();
 
@@ -50,7 +53,7 @@ class _AthleticsGameDayWidgetState extends State<AthleticsGameDayWidget> {
   Widget build(BuildContext context) {
 
     return (widget.favoriteId != null) ?
-      HomeFavoriteWidget(favoriteId: widget.favoriteId,
+      HomeFavoriteWidget(favoriteId: widget.favoriteId, updateController: widget.updateController,
         title: Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
         child: Padding(padding: EdgeInsets.only(bottom: 48), child:
           AthleticsGameDetailHeading(game: widget.game),

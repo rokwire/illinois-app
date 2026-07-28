@@ -41,6 +41,7 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
   ContentActivity? _conversationsActivity;
   Set<String> _selectedConversations = <String>{};
   bool _selectedConversationsProgress = false;
+  StreamSubscription<dynamic>? _updateSubscription;
 
   @override
   void initState() {
@@ -50,7 +51,7 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
       Social.notifyMessageEdited,
       AppDateTime.notifyTimeZoneChanged,
     ]);
-    widget.updateController?.stream.listen(_onUpdate);
+    _updateSubscription = widget.updateController?.stream.listen(_onUpdate);
     _initConversations();
     super.initState();
   }
@@ -58,6 +59,7 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
