@@ -104,7 +104,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
 
   @override
   Widget build(BuildContext context) =>
-    HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, titleBuilder: _titleBuilder, child:
+    HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, updateController: widget.updateController, titleBuilder: _titleBuilder, child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         VisibilityDetector(
           key: _visibilityDetectorKey,

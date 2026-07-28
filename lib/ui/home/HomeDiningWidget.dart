@@ -77,7 +77,7 @@ class _HomeDiningWidgetState extends State<HomeDiningWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, child:
+    return HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, updateController: widget.updateController, child:
       _contentWidget,
     );
   }

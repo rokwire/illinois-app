@@ -133,6 +133,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
   @override
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
+      updateController: widget.updateController,
       title: HomeRecentPollsWidget.title,
       child: _buildContent(),
     );

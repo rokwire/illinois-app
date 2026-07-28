@@ -80,7 +80,7 @@ class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
 
   @override
   Widget build(BuildContext context) =>
-    HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, child:
+    HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, updateController: widget.updateController, child:
       _contentWidget,
     );
 

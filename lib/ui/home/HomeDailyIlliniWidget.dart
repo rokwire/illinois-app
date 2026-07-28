@@ -110,6 +110,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeDailyIlliniWidget.title,
+      updateController: widget.updateController,
       child: _buildContent(),
     );
   }

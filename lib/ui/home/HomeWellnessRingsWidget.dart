@@ -51,6 +51,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> with 
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessRingsWidget.title,
+      updateController: widget.updateController,
       child: Padding(padding: HomeCard.defaultChildMargin,
         child: _buildContent(),
       ),

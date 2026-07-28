@@ -108,6 +108,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> w
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.campus_reminders.label.campus_reminders', 'Campus Reminders'),
+      updateController: widget.updateController,
       child: _buildContent()
     );
   }

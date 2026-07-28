@@ -63,6 +63,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> with Notifica
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: widget._title,
+      updateController: widget.updateController,
       child: Padding(padding: HomeCard.defaultChildMargin,
         child: _buildContent(),
       ),

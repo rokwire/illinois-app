@@ -83,6 +83,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
 
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: widget.isGies ? HomeCanvasCoursesWidget.giesTitle : HomeCanvasCoursesWidget.canvasTitle,
+      updateController: widget.updateController,
       child: _buildContent(),
     );
   }
