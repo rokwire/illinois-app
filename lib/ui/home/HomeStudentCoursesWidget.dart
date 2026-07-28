@@ -134,6 +134,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
   Widget build(BuildContext context) => HomeFavoriteWidget(
     favoriteId: widget.favoriteId,
     title: HomeStudentCoursesWidget.title,
+    updateController: widget.updateController,
     actions: [ _buildTermsDropDown(), ],
     child: _buildContent(),
   );

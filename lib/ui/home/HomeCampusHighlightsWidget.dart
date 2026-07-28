@@ -113,6 +113,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeCampusHighlightsWidget.title,
+      updateController: widget.updateController,
       child: _buildContent()
     );
   }

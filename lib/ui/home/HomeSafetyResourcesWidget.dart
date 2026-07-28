@@ -150,6 +150,7 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
   @override
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
+      updateController: widget.updateController,
       title: widget._title,
       child: _buildContent()
     );

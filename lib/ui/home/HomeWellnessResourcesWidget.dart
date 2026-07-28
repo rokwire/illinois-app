@@ -110,6 +110,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessResourcesWidget.title,
+      updateController: widget.updateController,
       child: _buildContent(),
     );
   }

@@ -1,5 +1,6 @@
 
 
+import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 import 'dart:math';
@@ -266,6 +267,7 @@ class HomeFavoriteWidget extends StatefulWidget {
   final String? favoriteId;
   final List<Widget>? actions;
   final HomeFavoriteTitleBuilder? titleBuilder;
+  final StreamController<String>? updateController;
 
 
   const HomeFavoriteWidget({Key? key,
@@ -274,6 +276,7 @@ class HomeFavoriteWidget extends StatefulWidget {
     this.favoriteId,
     this.actions,
     this.titleBuilder,
+    this.updateController,
   }) : super(key: key);
 
   @override
@@ -284,6 +287,7 @@ class HomeFavoriteWidget extends StatefulWidget {
 
 class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with NotificationsListener {
   late bool _expanded;
+  StreamSubscription<String>? _updateSubscription;
 
   static const EdgeInsets favoriteButtonPadding = const EdgeInsets.symmetric(
     horizontal: FavoriteStarIcon.defaultSpacing,
@@ -295,6 +299,13 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
     NotificationService().subscribe(this, [
       Storage.notifyHomeFavoriteExpandedChanged
     ]);
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyExpand) {
+        _onApplyExpanded(true);
+      } else if (command == HomePanel.notifyCollapse) {
+        _onApplyExpanded(false);
+      }
+    });
     _expanded = widget.isExpanded;
     super.initState();
   }
@@ -302,6 +313,7 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -404,6 +416,15 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
       setState(() {
         _expanded = expanded;
       });
+    }
+  }
+
+  void _onApplyExpanded(bool expanded) {
+    if ((_expanded != expanded) && mounted) {
+      setState(() {
+        _expanded = expanded;
+      });
+      Storage().setHomeFavoriteExpanded(widget.favoriteId, _expanded);
     }
   }
 }
@@ -923,6 +944,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   String  get contentKey => 'home.$favoriteId';
   
   String? get title;
+  StreamController<String>? get updateController;
 
   String? get emptyTitle => null;
   String? get emptyMessage;
@@ -991,6 +1013,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   @override
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: favoriteId,
+      updateController: updateController,
       title: title,
       child: _buildContent(),
     );

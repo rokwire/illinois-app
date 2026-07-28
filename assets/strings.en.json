@@ -4112,6 +4112,8 @@
     "widget.home.laundry.button.all.hint": "Tap to view all Laundry information",
 
     "widget.home.tout.customize.label": "Customize",
+    "widget.home.tout.show_all.label": "Show All",
+    "widget.home.tout.collapse_app.label": "Collapse All",
     "widget.home.tout.button.info.label": "Info",
     "widget.home.tout.button.info.hint": "Tap for more info",
     "widget.home.tout.popup.info.content": "To change your first name in the {{app_title}} app, review the <a href='{{preferred_first_name_url}}'>preferred name instructions</a>.",

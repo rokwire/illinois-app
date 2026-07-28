@@ -207,6 +207,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
   @override
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
+      updateController: widget.updateController,
       title: headingTitle,
       child: _buildContent()
     );

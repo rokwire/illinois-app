@@ -108,6 +108,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessMentalHealthWidget.title,
+      updateController: widget.updateController,
       child: _buildContent(),
     );
   }
