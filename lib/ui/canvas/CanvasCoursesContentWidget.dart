@@ -73,10 +73,10 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
 
   Widget _buildContent() {
     if (Connectivity().isOffline) {
-      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.offline.error.msg', 'My Canvas Courses not available while offline.'));
+      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.offline.error.msg', 'My Canvas not available while offline.'));
     }
     else if (!Auth2().isOidcLoggedIn) {
-      return _buildMessageContent(AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.canvas_courses.uiuc', 'My Canvas Courses'), verbose: true));
+      return _buildMessageContent(AppTextUtils.loggedOutFeatureNA(Localization().getStringEx('generic.app.feature.canvas_courses.uiuc', 'My Canvas'), verbose: true));
     }
     else if (_courses == null) {
       return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.failed.error.msg', 'Unable to load courses.'));

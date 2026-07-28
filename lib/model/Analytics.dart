@@ -30,11 +30,9 @@ class AnalyticsFeature {
   static const AnalyticsFeature   AcademicsGiesCanvasCourses     = AnalyticsFeature("Academics: Gies Canvas Courses", key: {"GiesCanvasCours"}, priority: 2);
   static const AnalyticsFeature   AcademicsMedicineCourses       = AnalyticsFeature("Academics: College of Medicine Compliance", key: {"MedicineCourse"}, priority: 1);
   static const AnalyticsFeature   AcademicsStudentCourses        = AnalyticsFeature("Academics: Courses", key: {"StudentCourse"}, priority: 1);
-  static const AnalyticsFeature   AcademicsToDoList              = AnalyticsFeature("Academics: To-Do List", priority: -1);
   static const AnalyticsFeature   AcademicsDueDateCatalog        = AnalyticsFeature("Academics: Due Date Catalog", priority: -1);
   static const AnalyticsFeature   AcademicsMyIllini              = AnalyticsFeature("Academics: myIllini", priority: -1);
   static const AnalyticsFeature   AcademicsCampusReminders       = AnalyticsFeature("Academics: Campus Reminders", priority: -1);
-  static const AnalyticsFeature   AcademicsAppointments          = AnalyticsFeature("Academics: Appointments", priority: -1);
   static const AnalyticsFeature   AcademicsLinks                 = AnalyticsFeature("Academics: Academic Links", key: {"AcademicLinks"}, priority: 1);
 
   static const AnalyticsFeature   Map                            = AnalyticsFeature("Map");
@@ -77,6 +75,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   WalletIlliniID                 = AnalyticsFeature("Wallet: Illini ID", key: "ICard", priority: 1);
   static const AnalyticsFeature   WalletMealPlan                 = AnalyticsFeature("Wallet: Meal Plan", key: "MealPlan", priority: 1);
   static const AnalyticsFeature   WalletLibraryCard              = AnalyticsFeature("Wallet: Library Card", key: "LibraryCard", priority: 1);
+  static const AnalyticsFeature   WalletBusinessCard             = AnalyticsFeature("Wallet: Digital Business Card", key: "BusinessCard", priority: 1);
 
   static const AnalyticsFeature   Wellness                       = AnalyticsFeature("Wellness");
   static const AnalyticsFeature   WellnessDailyTips              = AnalyticsFeature("Wellness: Tips", key: {"WellnessDailyTip"}, priority: 1);
@@ -125,11 +124,9 @@ class AnalyticsFeature {
     AcademicsGiesCanvasCourses,
     AcademicsMedicineCourses,
     AcademicsStudentCourses,
-    AcademicsToDoList,
     AcademicsDueDateCatalog,
     AcademicsMyIllini,
     AcademicsCampusReminders,
-    AcademicsAppointments,
 
     Map,
     MapEvents,
@@ -170,6 +167,7 @@ class AnalyticsFeature {
     WalletIlliniID,
     WalletMealPlan,
     WalletLibraryCard,
+    WalletBusinessCard,
 
     Wellness,
     WellnessDailyTips,

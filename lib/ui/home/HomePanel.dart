@@ -40,7 +40,6 @@ import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeResearchProjectsWidget.dart';
-import 'package:illinois/ui/home/HomeSafeRidesWidget.dart';
 import 'package:illinois/ui/home/HomeSafeWalkRequestWidget.dart';
 import 'package:illinois/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
@@ -60,7 +59,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomeCampusRemindersWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsGameDayWidget.dart';
 import 'package:illinois/ui/home/HomeGroupsWidget.dart';
-import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeCampusHighlightsWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -72,9 +70,11 @@ enum HomeContentType { favorites, browse }
 // HomePanel
 
 class HomePanel extends StatefulWidget with AnalyticsInfo {
-  static const String notifyRefresh  = "edu.illinois.rokwire.home.refresh";
-  static const String notifySelect   = "edu.illinois.rokwire.home.select";
-  static const String selectParamKey = "select-param";
+  static const String notifyRefresh   = "edu.illinois.rokwire.home.refresh";
+  static const String notifyExpand    = "edu.illinois.rokwire.home.expand";
+  static const String notifyCollapse  = "edu.illinois.rokwire.home.collapse";
+  static const String notifySelect    = "edu.illinois.rokwire.home.select";
+  static const String selectParamKey  = "select-param";
 
   final Map<String, dynamic> params = <String, dynamic>{};
 
@@ -158,15 +158,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeEvents2Widget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeEvents2Widget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'recent_items') {
-      if (title) {
-        return HomeRecentItemsWidget.title;
-      } else if (handle) {
-        return HomeRecentItemsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeRecentItemsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'campus_highlights') {
@@ -340,15 +331,6 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeSafeWalkRequestWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeSafeWalkRequestWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
-      }
-    }
-    else if (code == 'saferides') {
-      if (title) {
-        return HomeSafeRidesRequestWidget.title;
-      } else if (handle) {
-        return HomeSafeRidesRequestWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
-      } else {
-        return HomeSafeRidesRequestWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'safety_resources') {

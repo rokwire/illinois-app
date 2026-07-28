@@ -5,42 +5,66 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [8.1.6] - 2026-07-28
+### Changed
+- Apply grey background color to 'My Digital Business Card' in WalletHomePanel [#5867](https://github.com/rokwire/illinois-app/issues/5867).
+### Fixed
+- Fixed tappable "invisible stars" for sub-sections without a favorite [#5866](https://github.com/rokwire/illinois-app/issues/5866).
+- Make sure to cancel any opened stream subscription when it is not needed any more [#5910](https://github.com/rokwire/illinois-app/issues/5910).
+### Added
+- Added Show All/Collapse All to Favorites [#5877](https://github.com/rokwire/illinois-app/issues/5877).
+- Fixed group direct messages loading against Social BB 1.59.0 [#5912](https://github.com/rokwire/illinois-app/issues/5912).
+
+## [8.1.5] - 2026-07-27
+### Changed
+- Update sing-in texts and add hyperlinks [#5876](https://github.com/rokwire/illinois-app/issues/5876).
+- Text changes in Browse/Sections [#5875](https://github.com/rokwire/illinois-app/issues/5875).
+### Removed
+- Hid various sub-sections and panels [#5874](https://github.com/rokwire/illinois-app/issues/5874).
+
+## [8.1.4] - 2026-07-23
+### Changed
+- My Courses: Match the drop-down button style with Events and Groups [#5858](https://github.com/rokwire/illinois-app/issues/5858).
+### Fixed
+- Fixed processing of group message Firebase notifications [#5581](https://github.com/rokwire/illinois-app/issues/5581).
+- Fixed scroll position on content extension in group's conversation messages panel [#5581](https://github.com/rokwire/illinois-app/issues/5581).
+- Removed the forgotten "conversations" test code for group content [#5895](https://github.com/rokwire/illinois-app/issues/5581).
+### Added
+- Added support for group-all conversaion type and individual broadcast message [#5767](https://github.com/rokwire/illinois-app/issues/5767).
+- Added 'My Digital Business Card' to the wallet [#5867](https://github.com/rokwire/illinois-app/issues/5867).
+- Added message attachments support [#5581](https://github.com/rokwire/illinois-app/issues/5581).
+
+## [8.1.3] - 2026-07-17
+### Added
+- Acknowledged entity caching feature from Content service for user photos [#5889](https://github.com/rokwire/illinois-app/issues/5889).
+- My Courses Calendar View [#5858](https://github.com/rokwire/illinois-app/issues/5858).
+### Changed
+- Initial version of Groups Direct Messaging 2 [#5581](https://github.com/rokwire/illinois-app/issues/5581).
+
+## [8.1.2] - 2026-07-13
+### Changed
+- Upgrade to Flutter 3.44.4 [#5869](https://github.com/rokwire/illinois-app/issues/5869).
+### Added
+- Canvas content to related My Courses [#5584](https://github.com/rokwire/illinois-app/issues/5584).
+
+## [8.1.1] - 2026-06-23
+### Changed
 - Update research form and settings text [#5852](https://github.com/rokwire/illinois-app/issues/5852)
 
-## 8.1.0 - 2026-06-08
+## [8.1.0] - 2026-06-08
+### Changed
 - Hide assistant promo in events [#5838](https://github.com/rokwire/illinois-app/issues/5838)
-- Add QR code sharing for GBV [#5828](https://github.com/rokwire/illinois-app/issues/5828)
-- Remove Illini Cash Dining option filter and inclusion in payment types [#5829](https://github.com/rokwire/illinois-app/issues/5829)
 - Make UIN in Illini ID selectable [#5822](https://github.com/rokwire/illinois-app/issues/5822)
 - Made reporting form link in GBV open externally [#5830](https://github.com/rokwire/illinois-app/issues/5830).
 - Change phrasing in 'A Path Forward' panel within GBV [#5835](https://github.com/rokwire/illinois-app/issues/5835)
 - Hide Skills Self-Evaluation and Essential Skills Coach [#5824](https://github.com/rokwire/illinois-app/issues/5824)
 - Made University Reporting Form button wider in GBV Filing a Report screen [#5831](https://github.com/rokwire/illinois-app/issues/5831)
 - Change padding on GBV quick exit icon within "I'm not sure" survey flow to match other screens [#5832](https://github.com/rokwire/illinois-app/issues/5832)
-
-## [8.0.8] - 2026-02-27
-
-## [8.0.7] - 2026-02-25
-### Changed
-- Make Group cards a fixed height [#5719](https://github.com/rokwire/illinois-app/issues/5719).
-
-## [8.0.6] - 2026-02-24
-
-## [8.0.5] - 2026-02-21
-
-## [8.0.4] - 2026-02-17
-
-## [8.0.3] - 2026-02-16
-
-## [8.0.2] - 2026-02-04
 ### Added
-- Added exception text as reason in Share Plus error reporting [#5653](https://github.com/rokwire/illinois-app/issues/5653).
-
-## [8.0.1] - 2026-02-03
-### Fixed
-- Adding attendance takers to an event [#5705](https://github.com/rokwire/illinois-app/issues/5705).
-
-## [8.0.0] - 2026-01-29
+- Add QR code sharing for GBV [#5828](https://github.com/rokwire/illinois-app/issues/5828)
+### Removed
+- Remove Illini Cash Dining option filter and inclusion in payment types [#5829](https://github.com/rokwire/illinois-app/issues/5829)
 
 ## [8.0.8] - 2026-02-27
 

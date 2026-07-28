@@ -27,17 +27,15 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/academics/AcademicsLinks.dart';
-import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
+import 'package:illinois/ui/academics/student_courses/StudentCoursesHomePanel.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
 import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
 import 'package:illinois/ui/academics/MedicineCoursesContentWidget.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
-import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -51,7 +49,7 @@ enum AcademicsContentType { events,
   gies_checklist, uiuc_checklist,
   canvas_courses, gies_canvas_courses, medicine_courses, student_courses,
   skills_self_evaluation, essential_skills_coach,
-  todo_list, due_date_catalog, my_illini, appointments, academic_links
+  due_date_catalog, my_illini, academic_links
 }
 
 class AcademicsHomePanel extends StatefulWidget with AnalyticsInfo {
@@ -269,10 +267,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContentType.gies_canvas_courses;
     } else if (contentTypes?.contains(AcademicsContentType.student_courses) == true) {
       return AcademicsContentType.student_courses;
-    } else if (contentTypes?.contains(AcademicsContentType.events) == true) {
-      return AcademicsContentType.events;
     } else {
-      return AcademicsContentType.appointments;
+      return AcademicsContentType.events;
     }
   }
 
@@ -380,9 +376,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     ((_selectedContentType == AcademicsContentType.gies_checklist) ||
     (_selectedContentType == AcademicsContentType.uiuc_checklist) ||
     (_selectedContentType == AcademicsContentType.student_courses) ||
-    (_selectedContentType == AcademicsContentType.todo_list) ||
     (_selectedContentType == AcademicsContentType.essential_skills_coach) ||
-    (_selectedContentType == AcademicsContentType.appointments) ||
     (_selectedContentType == AcademicsContentType.academic_links) ||
     (_selectedContentType == AcademicsContentType.events)) ?
       Padding(padding: EdgeInsets.zero, child: _rawContentWidget) :
@@ -399,14 +393,12 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContentType.canvas_courses: return CanvasCoursesContentWidget();
       case AcademicsContentType.gies_canvas_courses: return GiesCanvasCoursesContentWidget();
       case AcademicsContentType.medicine_courses: return MedicineCoursesContentWidget();
-      case AcademicsContentType.student_courses: return StudentCoursesContentWidget();
+      case AcademicsContentType.student_courses: return StudentCoursesHomePanel(showNavigationBars: false,);
       case AcademicsContentType.skills_self_evaluation: return SkillsSelfEvaluationWidget();
       case AcademicsContentType.essential_skills_coach: return EssentialSkillsCoachDashboard();
-      case AcademicsContentType.todo_list: return WellnessToDoHomeContentWidget(analyticsFeature: AnalyticsFeature.AcademicsToDoList,);
       case AcademicsContentType.due_date_catalog:
         String? guideId = Guide().detailIdFromUrl(Config().dateCatalogUrl);
         return (guideId != null) ? GuideDetailWidget(key: _dueDateCatalogKey, guideEntryId: guideId, headingColor: Styles().colors.background, analyticsFeature: AnalyticsFeature.AcademicsDueDateCatalog,) : null;
-      case AcademicsContentType.appointments: return AppointmentsContentWidget(analyticsFeature: AnalyticsFeature.AcademicsAppointments,);
       case AcademicsContentType.academic_links: return AcademicLinksWidget();
       default: return null;
     }
@@ -447,16 +439,14 @@ extension AcademicsContentTypeImpl on AcademicsContentType {
       case AcademicsContentType.events: return Localization().getStringEx('panel.academics.section.events.label', 'Speakers & Seminars');
       case AcademicsContentType.gies_checklist: return Localization().getStringEx('panel.academics.section.gies_checklist.label', 'iDegrees New Student Checklist');
       case AcademicsContentType.uiuc_checklist: return Localization().getStringEx('panel.academics.section.uiuc_checklist.label', 'New Student Checklist');
-      case AcademicsContentType.canvas_courses: return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Canvas Courses');
-      case AcademicsContentType.gies_canvas_courses: return Localization().getStringEx('panel.academics.section.gies_canvas_courses.label', 'My Gies Canvas Courses');
+      case AcademicsContentType.canvas_courses: return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Canvas');
+      case AcademicsContentType.gies_canvas_courses: return Localization().getStringEx('panel.academics.section.gies_canvas_courses.label', 'My Gies Canvas');
       case AcademicsContentType.medicine_courses: return Localization().getStringEx('panel.academics.section.medicine_courses.label', 'My College of Medicine Compliance');
       case AcademicsContentType.student_courses: return Localization().getStringEx('panel.academics.section.student_courses.label', 'My Courses');
       case AcademicsContentType.skills_self_evaluation: return Localization().getStringEx('panel.academics.section.skills_self_evaluation.label', 'Skills Self-Evaluation & Career Explorer');
       case AcademicsContentType.essential_skills_coach: return Localization().getStringEx('panel.academics.section.essential_skills_coach.label', 'Essential Skills Coach');
-      case AcademicsContentType.todo_list: return Localization().getStringEx('panel.academics.section.todo_list.label', 'To-Do List');
       case AcademicsContentType.due_date_catalog: return Localization().getStringEx('panel.academics.section.due_date_catalog.label', 'Due Date Catalog');
       case AcademicsContentType.my_illini: return Localization().getStringEx('panel.academics.section.my_illini.label', 'myIllini');
-      case AcademicsContentType.appointments: return Localization().getStringEx('panel.academics.section.appointments.label', 'Appointments');
       case AcademicsContentType.academic_links: return Localization().getStringEx('panel.academics.section.academic_links.label', 'Academic Links');
     }
   }
@@ -471,8 +461,8 @@ extension AcademicsContentTypeImpl on AcademicsContentType {
 
   EdgeInsetsGeometry get contentPadding {
     switch (this) {
-      case AcademicsContentType.appointments:
       case AcademicsContentType.skills_self_evaluation:
+      case AcademicsContentType.student_courses:
       case AcademicsContentType.essential_skills_coach: return EdgeInsets.zero;
       default: return EdgeInsets.only(top: 16, left: 16, right: 16,);
     }
@@ -489,10 +479,8 @@ extension AcademicsContentTypeImpl on AcademicsContentType {
       case AcademicsContentType.student_courses: return 'student_courses';
       case AcademicsContentType.skills_self_evaluation: return 'skills_self_evaluation';
       case AcademicsContentType.essential_skills_coach: return 'essential_skills_coach';
-      case AcademicsContentType.todo_list: return 'todo_list';
       case AcademicsContentType.due_date_catalog: return 'due_date_catalog';
       case AcademicsContentType.my_illini: return 'my_illini';
-      case AcademicsContentType.appointments: return 'appointments';
       case AcademicsContentType.academic_links: return 'academic_links';
     }
   }
@@ -508,10 +496,8 @@ extension AcademicsContentTypeImpl on AcademicsContentType {
       case 'student_courses': return AcademicsContentType.student_courses;
       case 'skills_self_evaluation': return AcademicsContentType.skills_self_evaluation;
       case 'essential_skills_coach': return AcademicsContentType.essential_skills_coach;
-      case 'todo_list': return AcademicsContentType.todo_list;
       case 'due_date_catalog': return AcademicsContentType.due_date_catalog;
       case 'my_illini': return AcademicsContentType.my_illini;
-      case 'appointments': return AcademicsContentType.appointments;
       case 'academic_links': return AcademicsContentType.academic_links;
       default: return null;
     }
@@ -528,10 +514,8 @@ extension AcademicsContentTypeImpl on AcademicsContentType {
       case AcademicsContentType.student_courses:        return AnalyticsFeature.AcademicsStudentCourses;
       case AcademicsContentType.skills_self_evaluation: return AnalyticsFeature.CareerExplorationSkillsSelfEvaluation;
       case AcademicsContentType.essential_skills_coach: return AnalyticsFeature.CareerExplorationEssentialSkillsCoach;
-      case AcademicsContentType.todo_list:              return AnalyticsFeature.AcademicsToDoList;
       case AcademicsContentType.due_date_catalog:       return AnalyticsFeature.AcademicsDueDateCatalog;
       case AcademicsContentType.my_illini:              return AnalyticsFeature.AcademicsMyIllini;
-      case AcademicsContentType.appointments:           return AnalyticsFeature.AcademicsAppointments;
       case AcademicsContentType.academic_links:         return AnalyticsFeature.AcademicsLinks;
     }
   }

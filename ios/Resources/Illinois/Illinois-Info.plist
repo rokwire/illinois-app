@@ -99,6 +99,27 @@
 	<string>Allow speech recognition so the Illinois app can convert your voice to text when using the Illinois AI Assistant and other voice features.</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>Cookies will be used to enhance your experience and improve our marketing efforts.</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+			<key>UIApplicationSupportsMultipleScenes</key>
+			<false/>
+			<key>UISceneConfigurations</key>
+			<dict>
+					<key>UIWindowSceneSessionRoleApplication</key>
+					<array>
+							<dict>
+								<key>UISceneClassName</key>
+								<string>UIWindowScene</string>
+								<key>UISceneDelegateClassName</key>
+								<string>SceneDelegate</string>
+								<key>UISceneConfigurationName</key>
+								<string>flutter</string>
+								<key>UISceneStoryboardFile</key>
+								<string>Main</string>
+							</dict>
+					</array>
+			</dict>
+	</dict>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>

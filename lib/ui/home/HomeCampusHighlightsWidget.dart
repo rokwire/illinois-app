@@ -44,6 +44,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  StreamSubscription<String>? _updateSubscription;
 
   static const String localScheme = 'local';
   static const String localUrlMacro = '{{local_url}}';
@@ -63,13 +64,11 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
       AppLivecycle.notifyStateChanged,
     ]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          Guide().refresh();
-        }
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        Guide().refresh();
+      }
+    });
 
     _promotedItems = _buildContentList();
   }
@@ -78,6 +77,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   void dispose() {
     NotificationService().unsubscribe(this);
     _pageController?.dispose();
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -113,6 +113,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeCampusHighlightsWidget.title,
+      updateController: widget.updateController,
       child: _buildContent()
     );
   }

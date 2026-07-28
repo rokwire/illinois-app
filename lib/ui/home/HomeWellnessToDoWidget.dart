@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Wellness.dart';
-import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -61,6 +61,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> with No
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessToDoWidget.title,
+      updateController: widget.updateController,
       child: Padding(padding: HomeCard.defaultChildMargin,
         child: _buildContent(),
       ),
@@ -160,7 +161,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> with No
 
   void _onTapViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(contentType: AcademicsContentType.todo_list)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.todo)));
   }
 
   void _loadToDoItems() {

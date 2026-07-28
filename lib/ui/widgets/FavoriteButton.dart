@@ -15,6 +15,7 @@ class FavoriteStarIcon extends StatelessWidget {
 
   static const EdgeInsets defaultPadding = const EdgeInsets.all(defaultSpacing);
   static const double defaultSpacing = 16;
+  static const double defaultSize = 18;
 
   FavoriteStarIcon({Key? key, this.selected, required this.style, this.padding = defaultPadding }) : super(key: key);
 
@@ -49,7 +50,7 @@ class FavoriteStarIcon extends StatelessWidget {
       }
     }
     
-    return Styles().images.getImage(imageKey ?? 'star-outline-gray', excludeFromSemantics: true);
+    return Styles().images.getImage(imageKey ?? 'star-outline-gray', size: defaultSize, excludeFromSemantics: true);
   }
 }
 
@@ -76,7 +77,9 @@ class FavoriteButton extends StatelessWidget {
 
   void onFavorite(BuildContext context) {
     Analytics().logSelect(target: "Favorite: $favorite");
-    toggleFavorite();
+    if (favorite != null) {
+      toggleFavorite();
+    }
   }
 }
 

@@ -101,7 +101,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
 
   @override
   Widget build(BuildContext context) {
-    Widget? accessWidget = AccessCard.builder(resource: 'academics.appointments', padding: EdgeInsets.zero);
+    Widget? accessWidget = AccessCard.builder(resource: 'wellness.appointments', padding: EdgeInsets.zero);
     if (accessWidget != null) {
       return Column(mainAxisSize: MainAxisSize.min, children: [ accessWidget ],);
     }
@@ -109,10 +109,10 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
       return _buildLoadingContent();
     }
     else if (_providers == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.failed', 'Failed to load providers.'));
+      return _buildMessageContent(Localization().getStringEx('panel.appointments.home.message.providers.failed', 'Failed to load providers.'));
     }
     else if (_providers?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available.'));
+      return _buildMessageContent(Localization().getStringEx('panel.appointments.home.message.providers.empty', 'No providers available.'));
     }
     else if (_providers?.length == 1) {
       return Padding(
@@ -150,7 +150,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
-        title: (_selectedProvider != null) ? (_getDropDownProviderName(_selectedProvider) ?? '') : Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
+        title: (_selectedProvider != null) ? (_getDropDownProviderName(_selectedProvider) ?? '') : Localization().getStringEx('panel.appointments.home.label.providers.all', 'All Providers'),
         onTap: _onProvidersDropdown
       )
     );
@@ -189,7 +189,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
         border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         textStyle: Styles().textStyles.getTextStyle((_selectedProvider == null) ? 'widget.button.title.medium.fat.secondary' : 'widget.button.title.medium.fat'),
         rightIconKey: (_selectedProvider == null) ? 'check-accent' : null,
-        title: Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
+        title: Localization().getStringEx('panel.appointments.home.label.providers.all', 'All Providers'),
         onTap: () => _onTapProvider(null)
       ));
 
@@ -236,7 +236,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
 
   Widget _buildAppointmentsContent() {
     //if (_selectedProvider == null) {
-    //  return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.provider.empty', 'No selected provider.'));
+    //  return _buildMessageContent(Localization().getStringEx('panel.appointments.home.message.provider.empty', 'No selected provider.'));
     //}
     if (_isLoadingAppointments) {
       return _buildLoadingContent();
@@ -258,7 +258,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
   List<Widget> _buildAppointmentsList() {
     if ((_upcomingAppointments == null) || (_pastAppointments == null)) {
       return <Widget>[_buildMessageContent(
-        Localization().getStringEx('panel.academics.appointments.home.message.appointments.failed', 'Failed to load appointments.'))
+        Localization().getStringEx('panel.appointments.home.message.appointments.failed', 'Failed to load appointments.'))
       ];
     }
     else  {
@@ -266,7 +266,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
 
       if (_upcomingAppointments?.length == 0) {
         contentList.add(_buildStatusContent(
-          Localization().getStringEx('panel.academics.appointments.home.message.appointments.upcoming.empty', 'You currently have no upcoming appointments linked within the {{app_title}} app. New appointments may take up to 20 minutes to appear in the {{app_title}} app.').
+          Localization().getStringEx('panel.appointments.home.message.appointments.upcoming.empty', 'You currently have no upcoming appointments linked within the {{app_title}} app. New appointments may take up to 20 minutes to appear in the {{app_title}} app.').
             replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'))
         ));
       }
@@ -281,12 +281,12 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
       }
 
       contentList.add(_buildHeading(
-        Localization().getStringEx('panel.academics.appointments.home.heading.appointments.past', 'Recent Past Appointments'),
+        Localization().getStringEx('panel.appointments.home.heading.appointments.past', 'Recent Past Appointments'),
       ));
 
       if (_pastAppointments?.length == 0) {
         contentList.add(_buildStatusContent(
-          Localization().getStringEx('panel.academics.appointments.home.message.appointments.past.empty', "You don't have recent past appointments linked within the Illinois app.")
+          Localization().getStringEx('panel.appointments.home.message.appointments.past.empty', "You don't have recent past appointments linked within the Illinois app.")
         ));
       }
       else {
@@ -486,7 +486,7 @@ class AppointmentsListPanel extends StatelessWidget with AnalyticsInfo {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('panel.academics.appointments.home.header.title', 'Appointments')),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.appointments.home.header.title', 'Appointments')),
       body: Padding(padding: EdgeInsets.zero, child: AppointmentsContentWidget(analyticsFeature: analyticsFeature,)),
       backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar()

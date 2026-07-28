@@ -30,23 +30,23 @@ class XmlUtils {
     return (xmlString != null) ? compute(parse, xmlString) : null;
   }
 
-  static Iterable<XmlElement>? children(XmlNode? xmlNode, String name, {String? namespace}) {
-    return xmlNode?.findElements(name, namespace: namespace);
+  static Iterable<XmlElement>? children(XmlNode? xmlNode, String name, {String? namespaceUri}) {
+    return xmlNode?.findElements(name, namespaceUri: namespaceUri);
   }
 
-  static XmlElement? child(XmlNode? xmlNode, String name, {String? namespace}) {
-    Iterable<XmlElement>? list = children(xmlNode, name, namespace: namespace);
+  static XmlElement? child(XmlNode? xmlNode, String name, {String? namespaceUri}) {
+    Iterable<XmlElement>? list = children(xmlNode, name, namespaceUri: namespaceUri);
     return (list != null) && list.isNotEmpty ? list.first : null;
   }
 
-  static String? childText(XmlNode? xmlNode, String name, {String? namespace}) {
-    XmlElement? childElement = child(xmlNode, name, namespace: namespace);
+  static String? childText(XmlNode? xmlNode, String name, {String? namespaceUri}) {
+    XmlElement? childElement = child(xmlNode, name, namespaceUri: namespaceUri);
     XmlNode? childElementNode = (childElement?.children.length == 1) ? childElement?.children.first : null;
     return (childElementNode?.nodeType == XmlNodeType.TEXT) ? childElementNode?.value /*childElementNode?.innerText*/ : null;
   }
 
-  static String? childCdata(XmlNode? xmlNode, String name, {String? namespace}) {
-    XmlElement? childElement = child(xmlNode, name, namespace: namespace);
+  static String? childCdata(XmlNode? xmlNode, String name, {String? namespaceUri}) {
+    XmlElement? childElement = child(xmlNode, name, namespaceUri: namespaceUri);
     XmlNode? childElementNode = (childElement?.children.length == 1) ? childElement?.children.first : null;
     return (childElementNode?.nodeType == XmlNodeType.CDATA) ? childElementNode?.value /*childElementNode?.innerText*/ : null;
   }
@@ -262,3 +262,10 @@ class NullableValue<T> {
 
   factory  NullableValue.empty() => NullableValue(null);
 }
+
+enum ContentActivity { reload, refresh, extend }
+extension ContentActivityImpl on ContentActivity {
+  bool get loading => (this == ContentActivity.reload) || (this == ContentActivity.refresh);
+  bool get extending => (this == ContentActivity.extend);
+}
+

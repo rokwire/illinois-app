@@ -70,6 +70,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
 
   UniqueKey _photoKey = UniqueKey();
   AudioPlayer? _audioPlayer;
+  StreamSubscription<PlayerState>? _audioPlayerStateSubscription;
 
   double _screenInsetsBottom = 0;
   double? _visibilityDropdownItemsWidth;
@@ -158,6 +159,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
     }
 
     _audioPlayer?.dispose();
+    _audioPlayerStateSubscription?.cancel();
 
     super.dispose();
   }
@@ -250,7 +252,7 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
             photoUrl: _photoImageUrl,
             photoUrlHeaders: _photoAuthHeaders,
             photoData: _photoImageData,
-            imageSize: _photoImageSize,
+            photoSize: _photoImageSize,
           ),
         )
       ),
@@ -537,11 +539,13 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
 
             _audioPlayer = AudioPlayer();
 
-            _audioPlayer?.playerStateStream.listen((PlayerState state) {
+            _audioPlayerStateSubscription = _audioPlayer?.playerStateStream.listen((PlayerState state) {
               if ((state.processingState == ProcessingState.completed) && mounted) {
                 setState(() {
                   _audioPlayer?.dispose();
                   _audioPlayer = null;
+                  _audioPlayerStateSubscription?.cancel();
+                  _audioPlayerStateSubscription = null;
                 });
               }
             });
@@ -587,6 +591,8 @@ class ProfileInfoEditPageState extends State<ProfileInfoEditPage> with Notificat
       _initializingAudioPlayer = false;
       _audioPlayer?.dispose();
       _audioPlayer = null;
+      _audioPlayerStateSubscription?.cancel();
+      _audioPlayerStateSubscription = null;
     });
     AppAlert.showTextMessage(context, Localization().getStringEx('panel.profile.info.playback.failed.text', 'Failed to play audio stream.'));
   }

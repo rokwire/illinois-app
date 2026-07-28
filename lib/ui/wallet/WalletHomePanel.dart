@@ -22,6 +22,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/wallet/WalletAddIlliniCashPage.dart';
+import 'package:illinois/ui/wallet/WalletBusinessCardPage.dart';
 import 'package:illinois/ui/wallet/WalletICardPage.dart';
 import 'package:illinois/ui/wallet/WalletIlliniCashPage.dart';
 import 'package:illinois/ui/wallet/WalletLibraryCardPage.dart';
@@ -35,7 +36,9 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum WalletContentType { illiniId, busPass, libraryCard, mealPlan, illiniCash, addIlliniCash }
+import '../widgets/SignInInfoPopup.dart';
+
+enum WalletContentType { illiniId, busPass, libraryCard, mealPlan, businessCard, illiniCash, addIlliniCash }
 
 class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
 
@@ -46,6 +49,7 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
     WalletContentType.busPass,
     WalletContentType.libraryCard,
     WalletContentType.mealPlan,
+    WalletContentType.businessCard,
     WalletContentType.illiniCash,
   };
 
@@ -73,7 +77,9 @@ class WalletHomePanel extends StatefulWidget with AnalyticsInfo {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.wallet.offline.label', 'The Wallet is not available while offline.'));
     }
     else if (!Auth2().isOidcLoggedIn && requireOidcContentTypes.contains(_targetContentType(contentType: contentType, contentTypes: contentTypes))) {
-      AppAlert.showTextMessage(context, Localization().getStringEx('panel.wallet.logged_out.label', 'To access the Wallet, you need to sign in with your NetID and set your privacy level to 4 or 5 under Profile.'));
+      String message = AppTextUtils.loggedOutSignInPrivacyHtml(
+          Localization().getStringEx('panel.wallet.logged_out.clause', 'To access your wallet,'));
+      showDialog(context: context, builder: (context) => SignInInfoPopup(message: message));
     }
     else {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
@@ -193,16 +199,21 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
   Widget build(BuildContext context) =>
     Scaffold(backgroundColor: Styles().colors.white, body:
       Column(children: [
-        Row(children: [
-          Expanded(child:
-            Padding(padding: EdgeInsets.only(left: 16), child:
-              _headerTitle
-            )
-          ),
-          _headerCloseButton,
-        ]),
+        _headerBar,
         Container(color: Styles().colors.surfaceAccent, height: 1),
         Expanded(child: _panelContent)
+      ]),
+    );
+
+  Widget get _headerBar =>
+    Container(color: Styles().colors.white, child:
+      Row(children: [
+        Expanded(child:
+          Padding(padding: EdgeInsets.only(left: 16), child:
+            _headerTitle
+          )
+        ),
+        _headerCloseButton,
       ]),
     );
 
@@ -260,6 +271,7 @@ class _WalletHomePanelState extends State<WalletHomePanel> with NotificationsLis
       case WalletContentType.busPass:       return WalletBusPassPage(key: _contentPageKey, topOffset: 80);
       case WalletContentType.libraryCard:   return WalletLibraryCardPage(key: _contentPageKey, topOffset: 80,);
       case WalletContentType.mealPlan:      return WalletMealPlanPage(key: _contentPageKey, headerHeight: 82,);
+      case WalletContentType.businessCard:  return WalletBusinessCardPage(key: _contentPageKey, topOffset: 80);
       case WalletContentType.illiniCash:    return WalletIlliniCashPage(key: _contentPageKey, headerHeight: 88);
       case WalletContentType.addIlliniCash: return WalletAddIlliniCashPage(key: _contentPageKey, topOffset: 82, hasCancel: false,);
       default: return null;
@@ -396,6 +408,7 @@ extension WalletContentTypeImpl on WalletContentType {
       case WalletContentType.busPass: return Localization().getStringEx('panel.wallet.content_type.bus_pass.label', 'Bus Pass', language: language);
       case WalletContentType.libraryCard: return Localization().getStringEx('panel.wallet.content_type.library_card.label', 'University Library Card', language: language);
       case WalletContentType.mealPlan: return Localization().getStringEx('panel.wallet.content_type.meal_plan.label', 'Meal Plan', language: language);
+      case WalletContentType.businessCard: return Localization().getStringEx('panel.wallet.content_type.business_card.label', 'My Digital Business Card', language: language);
       case WalletContentType.illiniCash: return Localization().getStringEx('panel.wallet.content_type.illini_cash.label', 'Illini Cash', language: language);
       case WalletContentType.addIlliniCash: return Localization().getStringEx('panel.wallet.content_type.add_illini_cash.label', 'Add Illini Cash', language: language);
     }
@@ -407,6 +420,7 @@ extension WalletContentTypeImpl on WalletContentType {
       case WalletContentType.busPass: return 'bus_pass';
       case WalletContentType.libraryCard: return 'library_card';
       case WalletContentType.mealPlan: return 'meal_plan';
+      case WalletContentType.businessCard: return 'business_card';
       case WalletContentType.illiniCash: return 'illini_cash';
       case WalletContentType.addIlliniCash: return 'add_illini_cash';
     }
@@ -418,6 +432,7 @@ extension WalletContentTypeImpl on WalletContentType {
       case 'bus_pass': return WalletContentType.busPass;
       case 'library_card': return WalletContentType.libraryCard;
       case 'meal_plan': return WalletContentType.mealPlan;
+      case 'business_card': return WalletContentType.businessCard;
       case 'illini_cash': return WalletContentType.illiniCash;
       case 'add_illini_cash': return WalletContentType.addIlliniCash;
       default: return null;
@@ -430,6 +445,7 @@ extension WalletContentTypeImpl on WalletContentType {
       case WalletContentType.busPass:     return AnalyticsFeature.WalletBusPass;
       case WalletContentType.libraryCard: return AnalyticsFeature.WalletLibraryCard;
       case WalletContentType.mealPlan:    return AnalyticsFeature.WalletMealPlan;
+      case WalletContentType.businessCard: return AnalyticsFeature.WalletBusinessCard;
       case WalletContentType.illiniCash:  return AnalyticsFeature.WalletIlliniCash;
       default: return null;
     }

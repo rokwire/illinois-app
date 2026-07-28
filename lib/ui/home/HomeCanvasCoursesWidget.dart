@@ -29,8 +29,8 @@ class HomeCanvasCoursesWidget extends StatefulWidget {
       title: (isGies == true) ? giesTitle : canvasTitle,
     );
 
-  static String get giesTitle => Localization().getStringEx('widget.home.gies_canvas_courses.header.label', 'My Gies Canvas Courses');
-  static String get canvasTitle => Localization().getStringEx('widget.home.canvas_courses.header.label', 'My Canvas Courses');
+  static String get giesTitle => Localization().getStringEx('widget.home.gies_canvas_courses.header.label', 'My Gies Canvas');
+  static String get canvasTitle => Localization().getStringEx('widget.home.canvas_courses.header.label', 'My Canvas');
 
   @override
   _HomeCanvasCoursesWidgetState createState() => _HomeCanvasCoursesWidgetState();
@@ -43,6 +43,8 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
 
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
 
@@ -50,13 +52,11 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
       Canvas.notifyCoursesUpdated
     ]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          _updateCourses();
-        }
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        _updateCourses();
+      }
+    });
 
     _courses = widget.isGies ? Canvas().giesCourses : Canvas().courses;
     super.initState();
@@ -66,6 +66,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
   void dispose() {
     NotificationService().unsubscribe(this);
     _pageController?.dispose();
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -83,6 +84,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
 
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
       title: widget.isGies ? HomeCanvasCoursesWidget.giesTitle : HomeCanvasCoursesWidget.canvasTitle,
+      updateController: widget.updateController,
       child: _buildContent(),
     );
   }
@@ -90,14 +92,14 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> with 
   Widget _buildContent() {
     if (Connectivity().isOffline) {
       String offlineMessage = widget.isGies
-          ? Localization().getStringEx('panel.gies_canvas_courses.load.offline.error.msg', 'My Gies Canvas Courses not available while offline.')
-          : Localization().getStringEx('panel.canvas_courses.load.offline.error.msg', 'My Canvas Courses not available while offline.');
+          ? Localization().getStringEx('panel.gies_canvas_courses.load.offline.error.msg', 'My Gies Canvas not available while offline.')
+          : Localization().getStringEx('panel.canvas_courses.load.offline.error.msg', 'My Canvas  not available while offline.');
       return HomeMessageCard(message: offlineMessage);
     }
     else if (!Auth2().isOidcLoggedIn) {
       String signedOutMsg = widget.isGies
-          ? Localization().getStringEx('generic.app.feature.canvas_courses.gies', 'My Gies Canvas Courses')
-          : Localization().getStringEx('generic.app.feature.canvas_courses.uiuc', 'My Canvas Courses');
+          ? Localization().getStringEx('generic.app.feature.canvas_courses.gies', 'My Gies Canvas')
+          : Localization().getStringEx('generic.app.feature.canvas_courses.uiuc', 'My Canvas');
       return HomeMessageCard(message: AppTextUtils.loggedOutFeatureNA(signedOutMsg, verbose: true));
     }
     else if (_courses == null) {

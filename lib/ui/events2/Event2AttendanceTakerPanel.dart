@@ -2,7 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:barcode_scan2/barcode_scan2.dart';
 //import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -84,10 +84,12 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   final TextEditingController _manualNetIdController = TextEditingController();
   final FocusNode _manualNetIdFocusNode = FocusNode();
 
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
 
-    widget.updateController?.stream.listen((String command) {
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
       if (command == Event2AttendanceTakerWidget.notifyRefresh) {
         _refresh();
       }
@@ -128,6 +130,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     _manualNetIdFocusNode.dispose();
     _processedTimer?.cancel();
     _processedTimer = null;
+    _updateSubscription?.cancel();
+    _updateSubscription = null;
     super.dispose();
   }
 
@@ -595,7 +599,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     padding: EdgeInsets.zero,
   );
 
-  void _onTapScanButton() {
+  void _onTapScanButton() async {
     Analytics().logSelect(target: 'Scan Illini Id');
     Event2CreatePanel.hideKeyboard(context);
 
@@ -614,19 +618,26 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         _onScanFinished("$uin");
       }); */
       
-      String lineColor = UiColors.toHex(Styles().colors.fillColorSecondary) ?? '#E84A27';
+      ScanResult? scanResult;
       String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
-      FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR).then((String scanResult) {
-        if (mounted) {
-          _onScanFinished(scanResult);
-        }
-      });
+      try {
+        scanResult = await BarcodeScanner.scan(options: ScanOptions(
+          restrictFormat: <BarcodeFormat>[BarcodeFormat.qr],
+          strings: <String, String>{
+            'cancel': cancelButtonTitle,
+          }
+        ));
+      }
+      catch (e) { print(e); }
+      if (mounted) {
+        _onScanFinished(scanResult);
+      }
     }
   }
 
-  void _onScanFinished(String scanResult) {
-    if (scanResult != '-1') { // The user did not hit "Cancel button"
-      String? uin = _extractUin(scanResult);
+  void _onScanFinished(ScanResult? scanResult) {
+    if ((scanResult != null) &&  (scanResult.type == ResultType.Barcode)) { // The user did not hit "Cancel button"
+      String? uin = _extractUin(scanResult.rawContent);
       String? eventId = widget.event?.id;
       if (uin == null) {
         setState(() {

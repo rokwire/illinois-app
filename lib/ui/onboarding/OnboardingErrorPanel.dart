@@ -50,7 +50,8 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel> {
 
     return Scaffold(backgroundColor: Styles().colors.background, body:
       Stack(children: [
-        Styles().images.getImage('header-login', fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
+        //Styles().images.getImage('header-login', fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
+        Image.asset('images/login-header.png', fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true,),
         Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
           Expanded(child:
             SingleChildScrollView(child:

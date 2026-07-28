@@ -32,6 +32,8 @@ import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupAboutContentWidget.dart';
+import 'package:illinois/ui/groups/GroupConversationCreatePanel.dart';
+import 'package:illinois/ui/groups/GroupConversationsTab.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
@@ -153,11 +155,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
   TabController?  _tabController;
   GestureRecognizer? _studentCodeLaunchRecognizer;
   StreamController _updateController = StreamController.broadcast();
+  StreamSubscription? _updateSubscription;
 
   DetailTab?         _currentTab;
 
   bool               _confirmationLoading = false;
   bool               _researchProjectConsent = false;
+  bool               _editingConversationMessages = false;
 
   int                _progress = 0;
   DateTime?         _pausedDateTime;
@@ -284,7 +288,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       Groups.notifyGroupUpdated,
       Groups.notifyGroupStatsUpdated,
     ]);
-    _initUpdateController();
+    _updateSubscription = _updateController.stream.listen((command) {
+      if (command is Map) {
+          if(command.containsKey(GroupDetailPanel.notifyLoadMemberImage)) {
+            _loadMemberImage(command[GroupDetailPanel.notifyLoadMemberImage]);
+          }
+      }
+    });
     _tabs = _buildDetailTabs();
     _postId = widget.groupPostId;
     _studentCodeLaunchRecognizer = TapGestureRecognizer()..onTap = _onLaunchStudentCode;
@@ -300,6 +310,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     _pageController?.dispose();
     _tabController?.dispose();
     _studentCodeLaunchRecognizer?.dispose();
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -573,13 +584,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     }
   }
 
-  void _initUpdateController() => _updateController.stream.listen((command) {
-    if (command is Map) {
-        if(command.containsKey(GroupDetailPanel.notifyLoadMemberImage)) {
-          _loadMemberImage(command[GroupDetailPanel.notifyLoadMemberImage]);
-        }
-    }
-  });
 
   List<DetailTab?> _buildDetailTabs() {
     List<DetailTab?> resultTabs = <DetailTab?>[];
@@ -751,31 +755,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
 
     List<Widget> tabs = [];
     for (DetailTab? tab in _tabs! ) {
-      String title;
-      switch (tab) {
-        case DetailTab.Events:
-          title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
-          break;
-        case DetailTab.PastEvents:
-          title = Localization().getStringEx("panel.group_detail.button.past_events.title", 'Past Events');
-          break;
-        case DetailTab.Posts:
-          title = Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
-          break;
-        case DetailTab.ScheduledPosts:
-          title = Localization().getStringEx("panel.group_detail.button.schediled_posts.title", 'Scheduled');
-          break;
-        case DetailTab.Messages:
-          title = Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
-          break;
-        case DetailTab.Polls:
-          title = Localization().getStringEx("panel.group_detail.button.polls.title", 'Polls');
-          break;
-        // case DetailTab.About:
-        //   title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
-        //   break;
-        default: title = "Unknown";
-      }
+      String title = tab?.title ?? "Unknown";
 
       Tab tabWidget = Tab(/* text: title */ child:
         Container(
@@ -864,7 +844,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
       case DetailTab.ScheduledPosts:
         return _GroupScheduledPostsContent(group: _group,  updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Messages:
-        return _GroupMessagesContent(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
+        return GroupConversationsTab(group: _group, updateController: _updateController, groupAdmins:  _groupAdmins, editMode: _editingConversationMessages, analyticsFeature: widget.analyticsFeature);
       case DetailTab.Polls:
         return _GroupPollsContent(group: _group,  updateController: _updateController,  groupAdmins:  _groupAdmins, analyticsFeature: widget.analyticsFeature);
 
@@ -1243,7 +1223,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                     RibbonButton(
                       key: _canReportAbuse && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
                       leftIconKey: "report",
-                      title: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                      title: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.label", "Report to Dean of Students"),
                       onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true)   ),
                     )),
                 ])));
@@ -1287,8 +1267,22 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
                         title: Localization().getStringEx("panel.group_detail.button.create_message.title", "Create Direct Message"),//localize tbd
                         onTap: () {
                           Navigator.of(context).pop();
-                          _onTapCreatePost(type: PostType.direct_message);
+                          _onTapCreateConversation();
                         })),
+                  Visibility(visible: _canCreateMessage, child:
+                    RibbonButton(
+                      key: _canCreateMessage && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
+                      leftIconKey: "check-circle-2",
+                      title: _editingConversationMessages ?
+                        Localization().getStringEx("", "Finish Direct Messages Edit") : Localization().getStringEx("", "Edit Direct Messages"),//localize tbd
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        if (_editingConversationMessages) {
+                          _onFinishEditConversations();
+                        } else {
+                          _onEditConversations();
+                        }
+                      })),
                     Visibility(visible: _canAddEvent, child:
                       RibbonButton(
                         key: _canAddEvent && firstAvailableItemKey == null ? firstAvailableItemKey = GlobalKey() : null,
@@ -1326,6 +1320,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
         _currentTab = tab;
 
       _pageController?.animateToPage(_indexOfTab(tab), duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
+    }
+  }
+
+  void _selectTab(DetailTab tab) {
+    if (_currentTab != tab) {
+      _currentTab = tab;
+      int index = _indexOfTab(tab);
+      if (0 <= index) {
+        _tabController?.animateTo(index, duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
+        _pageController?.animateToPage(index, duration: Duration(milliseconds: _animationDurationInMilliSeconds), curve: Curves.linear);
+      }
     }
   }
 
@@ -1578,7 +1583,29 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> with NotificationsL
     }
   }
 
+  void _onTapCreateConversation() {
+    Analytics().logSelect(target: "Create Direct Message", attributes: _group?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupConversationCreatePanel(group: _group, groupAdmins: _groupAdmins, analyticsFeature: AnalyticsFeature.Groups,)));
+  }
+
+  void _onEditConversations() {
+    Analytics().logSelect(target: "Select Messages", attributes: _group?.analyticsAttributes);
+    setState(() {
+      _editingConversationMessages = true;
+    });
+    _selectTab(DetailTab.Messages);
+  }
+
+  void _onFinishEditConversations() {
+    Analytics().logSelect(target: "Finish Messages Selection", attributes: _group?.analyticsAttributes);
+    setState(() {
+      _editingConversationMessages = false;
+    });
+    _selectTab(DetailTab.Messages);
+  }
+
   void _onTapCreatePoll() {
+    Analytics().logSelect(target: "Create Poll", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel(group: _group)));
   }
 
@@ -1702,11 +1729,16 @@ class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsLi
 
   List<Event2>? _groupEvents;
   bool _updatingEvents = false;
+  StreamSubscription? _updateSubscription;
 
   @override
   void initState() {
     Log.d("_GroupDetailEventsState.initState");
-    _initUpdateListener();
+    _updateSubscription = widget.updateController?.stream.listen((command) {
+      if (command is String && command == _GroupEventsContent.notifyEventsRefresh) {
+        _loadEvents();
+      }
+    });
     NotificationService().subscribe(this, [
       Groups.notifyGroupEventsUpdated,
       Events2.notifyUpdated
@@ -1719,6 +1751,7 @@ class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsLi
   void dispose() {
     Log.d("_GroupDetailEventsState.dispose");
     NotificationService().unsubscribe(this);
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -1728,7 +1761,6 @@ class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsLi
 
   @override
   Widget build(BuildContext context) {
-    Log.d("_GroupDetailEventsState.build");
     super.build(context);
     return _buildEvents();
   }
@@ -1825,11 +1857,6 @@ class _GroupEventsState extends State<_GroupEventsContent> with  NotificationsLi
     }
   }
 
-  void _initUpdateListener() => widget.updateController?.stream.listen((command) {
-    if (command is String && command == _GroupEventsContent.notifyEventsRefresh) {
-      _loadEvents();
-    }
-  });
 
 
   @override
@@ -1866,6 +1893,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with NotificationsListe
   bool?              _loadingPostsPage;
   bool?              _hasMorePosts;
   bool?              _scrollToLastPostAfterRefresh;
+  StreamSubscription? _updateSubscription;
 
   Group? get _group => widget.group;
 
@@ -1873,12 +1901,12 @@ class _GroupPostsState extends State<_GroupPostsContent> with NotificationsListe
 
   @override
   void initState() {
-    _initUpdateListener();
     NotificationService().subscribe(this, [
       Social.notifyPostCreated,
       Social.notifyPostUpdated,
       Social.notifyPostDeleted
     ]);
+    _updateSubscription = widget.updateController?.stream.listen(_onUpdate);
 
     _loadInitialPosts();
     // _loadPinnedPosts();
@@ -1888,6 +1916,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with NotificationsListe
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -2076,7 +2105,8 @@ class _GroupPostsState extends State<_GroupPostsContent> with NotificationsListe
   }
 
   //Update Listeners
-  void _initUpdateListener() => widget.updateController?.stream.listen((command) {
+
+  void _onUpdate(command) {
     if (command is String && command == GroupDetailPanel.notifyRefresh) {
       _refreshCurrentPosts();
       // _loadPinnedPosts();
@@ -2093,7 +2123,7 @@ class _GroupPostsState extends State<_GroupPostsContent> with NotificationsListe
     //   int delta = (data is int) ? data : 0;
     //     _refreshCurrentPosts(delta: delta);
     // }
-  });
+  }
 
   @override
   void onNotification(String name, dynamic param) {
@@ -2141,6 +2171,7 @@ class _GroupPollsState extends State<_GroupPollsContent> with NotificationsListe
   GlobalKey          _pollsKey = GlobalKey();
   List<Poll>?        _groupPolls;
   bool               _pollsLoading = false;
+  StreamSubscription? _updateSubscription;
 
   Group? get _group => widget.group;
 
@@ -2155,7 +2186,7 @@ class _GroupPollsState extends State<_GroupPollsContent> with NotificationsListe
       Polls.notifyVoteChanged,
       Polls.notifyResultsChanged,
     ]);
-    _initUpdateListener();
+    _updateSubscription = widget.updateController?.stream.listen(_onUpdate);
     _loadPolls();
     super.initState();
   }
@@ -2163,6 +2194,7 @@ class _GroupPollsState extends State<_GroupPollsContent> with NotificationsListe
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -2250,11 +2282,12 @@ class _GroupPollsState extends State<_GroupPollsContent> with NotificationsListe
   }
 
   //Update Listeners
-  void _initUpdateListener() => widget.updateController?.stream.listen((command) {
+
+  void _onUpdate(command) {
     if (command is String && command == GroupDetailPanel.notifyRefresh) {
       _refreshPolls();
     }
-  });
+  }
 
   @override
   void onNotification(String name, param) {
@@ -2287,6 +2320,7 @@ class _GroupMessagesContent extends StatefulWidget {
   final StreamController<dynamic>? updateController;
   final AnalyticsFeature? analyticsFeature;
 
+  // ignore: unused_element_parameter
   const _GroupMessagesContent({this.group, this.updateController, this.groupAdmins, this.analyticsFeature});
 
   String get _emptyText => Localization().getStringEx("", "No messages");
@@ -2302,6 +2336,7 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with Notification
   bool?              _loadingMessagesPage;
   bool?              _hasMoreMessages;
   bool?              _scrollToLastMessageAfterRefresh;
+  StreamSubscription? _updateSubscription;
 
   Group? get _group => widget.group;
 
@@ -2312,7 +2347,7 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with Notification
       Social.notifyPostUpdated,
       Social.notifyPostDeleted
     ]);
-    _initUpdateListener();
+    _updateSubscription = widget.updateController?.stream.listen(_onUpdate);
     _loadInitialMessages();
     super.initState();
   }
@@ -2320,6 +2355,7 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with Notification
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -2482,7 +2518,8 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with Notification
   }
 
   //Update Listeners
-  void _initUpdateListener() => widget.updateController?.stream.listen((command) {
+
+  void _onUpdate(command) {
     if (command is String && command == GroupDetailPanel.notifyRefresh) {
       _refreshCurrentMessages();
     } else if(command is String && command == _GroupMessagesContent.notifyMessagesRefreshWithScrollToLast) {
@@ -2491,7 +2528,7 @@ class _GroupMessagesState extends State<_GroupMessagesContent> with Notification
         _refreshCurrentMessages();
       }
     }
-  });
+  }
 
   @override
   void onNotification(String name, param) {
@@ -2539,6 +2576,7 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
   bool? _loadingScheduledPostsPage;
   bool? _hasMoreScheduledPosts;
   bool? _scrollToLastScheduledPostsAfterRefresh;
+  StreamSubscription? _updateSubscription;
 
   Group? get _group => widget.group;
 
@@ -2552,7 +2590,7 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
       Social.notifyPostUpdated,
       Social.notifyPostDeleted
     ]);
-    _initUpdateListener();
+    _updateSubscription = widget.updateController?.stream.listen(_onUpdate);
     _loadInitialScheduledPosts();
     super.initState();
   }
@@ -2560,6 +2598,7 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -2745,18 +2784,17 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
   }
 
   //Update Listeners
-  void _initUpdateListener() =>
-      widget.updateController?.stream.listen((command) {
-        if (command is String && command == GroupDetailPanel.notifyRefresh) {
-          _refreshCurrentScheduledPosts();
-        } else if (command is String && command ==
-            _GroupScheduledPostsContent.notifyPostsRefreshWithScrollToLast) {
-          _scrollToLastScheduledPostsAfterRefresh = true;
-          if (_refreshingScheduledPosts != true) {
-            _refreshCurrentScheduledPosts();
-          }
-        }
-      });
+  void _onUpdate(command) {
+    if (command is String && command == GroupDetailPanel.notifyRefresh) {
+      _refreshCurrentScheduledPosts();
+    } else if (command is String && command ==
+        _GroupScheduledPostsContent.notifyPostsRefreshWithScrollToLast) {
+      _scrollToLastScheduledPostsAfterRefresh = true;
+      if (_refreshingScheduledPosts != true) {
+        _refreshCurrentScheduledPosts();
+      }
+    }
+  }
 
   @override
   void onNotification(String name, param) {
@@ -2781,3 +2819,16 @@ class _GroupScheduledPostsState extends State<_GroupScheduledPostsContent> with 
   }
 }
 
+extension DetailTabImpl on DetailTab {
+  String get title {
+    switch (this) {
+      case DetailTab.Events: return Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
+      case DetailTab.PastEvents: return Localization().getStringEx("panel.group_detail.button.past_events.title", 'Past Events');
+      case DetailTab.Posts: return Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
+      case DetailTab.ScheduledPosts: return Localization().getStringEx("panel.group_detail.button.schediled_posts.title", 'Scheduled');
+      case DetailTab.Messages: return Localization().getStringEx("panel.group_detail.button.messages.title", 'Messages');
+      case DetailTab.Polls: return Localization().getStringEx("panel.group_detail.button.polls.title", 'Polls');
+      // case DetailTab.About: return Localization().getStringEx("panel.group_detail.button.about.title", 'About');
+    }
+  }
+}

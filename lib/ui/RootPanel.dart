@@ -51,6 +51,7 @@ import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePlaceDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupConversationPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
@@ -75,6 +76,7 @@ import 'package:rokwire_plugin/model/actions.dart';
 import 'package:rokwire_plugin/model/auth2.dart' show Auth2UserPrefs;
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/events.dart';
@@ -183,7 +185,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyMapMentalHealthNotification,
       FirebaseMessaging.notifyMapLaundryNotification,
       FirebaseMessaging.notifyAcademicsNotification,
-      FirebaseMessaging.notifyAcademicsAppointmentsNotification,
       FirebaseMessaging.notifyAcademicsCanvasCoursesNotification,
       FirebaseMessaging.notifyAcademicsGiesCanvasCoursesNotification,
       FirebaseMessaging.notifyAcademicsDueDateCatalogNotification,
@@ -192,7 +193,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyAcademicsMedicineCoursesNotification,
       FirebaseMessaging.notifyAcademicsMyIlliniNotification,
       FirebaseMessaging.notifyAcademicsStudentCoursesNotification,
-      FirebaseMessaging.notifyAcademicsToDoListNotification,
       FirebaseMessaging.notifyAcademicsUiucChecklistNotification,
       FirebaseMessaging.notifyCareerExplorationSkillsSelfEvaluationNotification,
       FirebaseMessaging.notifyCareerExplorationEssentialSkillsCoachNotification,
@@ -216,7 +216,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
       FirebaseMessaging.notifyAppointmentNotification,
       FirebaseMessaging.notifyWellnessToDoItemNotification,
       FirebaseMessaging.notifyProfileMyNotification,
-      FirebaseMessaging.notifyProfileWhoAreYouNotification,
+      FirebaseMessaging.notifyProfileRolesNotification,
       FirebaseMessaging.notifyProfileLoginNotification,
       FirebaseMessaging.notifySettingsSectionsNotification, //TBD deprecate. Use notifyProfileLoginNotification
       FirebaseMessaging.notifySettingsFoodFiltersNotification,
@@ -426,9 +426,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == FirebaseMessaging.notifyAcademicsNotification) {
       _onFirebaseTabNotification(RootTab.Academics);
     }
-    else if (name == FirebaseMessaging.notifyAcademicsAppointmentsNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContentType.appointments);
-    }
     else if (name == FirebaseMessaging.notifyAcademicsCanvasCoursesNotification) {
       _onFirebaseAcademicsNotification(AcademicsContentType.canvas_courses);
     }
@@ -452,9 +449,6 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
     else if (name == FirebaseMessaging.notifyAcademicsStudentCoursesNotification) {
       _onFirebaseAcademicsNotification(AcademicsContentType.student_courses);
-    }
-    else if (name == FirebaseMessaging.notifyAcademicsToDoListNotification) {
-      _onFirebaseAcademicsNotification(AcademicsContentType.todo_list);
     }
     else if (name == FirebaseMessaging.notifyAcademicsUiucChecklistNotification) {
       _onFirebaseAcademicsNotification(AcademicsContentType.uiuc_checklist);
@@ -525,8 +519,8 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     else if (name == FirebaseMessaging.notifyProfileMyNotification) {
       _onFirebaseProfileNotification(profileContent: ProfileContentType.profile);
     }
-    else if (name == FirebaseMessaging.notifyProfileWhoAreYouNotification) {
-      _onFirebaseProfileNotification(profileContent: ProfileContentType.who_are_you);
+    else if (name == FirebaseMessaging.notifyProfileRolesNotification) {
+      _onFirebaseProfileNotification(profileContent: ProfileContentType.roles);
     }
     else if (name == FirebaseMessaging.notifyProfileLoginNotification) {
       _onFirebaseProfileNotification(profileContent: ProfileContentType.login);
@@ -1202,15 +1196,25 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     }
   }
 
-  void _presentSocialMessagePanel({String? conversationId, String? messageId, String? messageGlobalId}) {
+  Future<void> _presentSocialMessagePanel({String? conversationId, String? messageId, String? messageGlobalId}) async {
+    Conversation? conversation = await Social().loadConversation(conversationId);
     if (context.mounted) {
-      if (StringUtils.isNotEmpty(conversationId)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(
-          conversationId: conversationId,
-          targetMessageId: messageId,
-          targetMessageGlobalId: messageGlobalId,
-        )));
-      } else {
+      if (conversation != null) {
+        if (conversation.type?.isGroup == true) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupConversationPanel(
+            conversation: conversation,
+            targetMessageId: messageId,
+            targetMessageGlobalId: messageGlobalId,
+          )));
+        } else {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagesConversationPanel(
+            conversationId: conversationId,
+            targetMessageId: messageId,
+            targetMessageGlobalId: messageGlobalId,
+          )));
+        }
+      }
+      else {
         AppAlert.showDialogResult(context, Localization().getStringEx("", "Failed to load conversation data."));
       }
     }
@@ -1308,7 +1312,7 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
         if (StringUtils.isNotEmpty(todoItemId)) {
           Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(itemId: todoItemId, optionalFieldsExpanded: true)));
         } else {
-          _onFirebaseAcademicsNotification(AcademicsContentType.todo_list);
+          _onFirebaseWellnessNotification(WellnessContentType.todo);
         }
       }
     }

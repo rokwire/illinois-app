@@ -29,7 +29,7 @@ class HomeSafeWalkRequestWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomeFavoriteWidget(favoriteId: favoriteId,
+    return HomeFavoriteWidget(favoriteId: favoriteId, updateController: updateController,
       title: title,
       child: _contentWidget(context),
     );

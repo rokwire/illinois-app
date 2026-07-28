@@ -53,6 +53,8 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
 
+  StreamSubscription<String>? _updateSubscription;
+
   @override
   void initState() {
 
@@ -67,13 +69,11 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
       Polls.notifyResultsChanged,
     ]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          _refreshPolls(showProgress: true, initResult: true);
-        }
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        _refreshPolls(showProgress: true, initResult: true);
+      }
+    });
 
     if (Connectivity().isNotOffline) {
       _loadingPolls = true;
@@ -97,6 +97,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
   void dispose() {
     NotificationService().unsubscribe(this);
     _pageController?.dispose();
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -133,6 +134,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> with Noti
   @override
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: widget.favoriteId,
+      updateController: widget.updateController,
       title: HomeRecentPollsWidget.title,
       child: _buildContent(),
     );

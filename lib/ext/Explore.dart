@@ -12,7 +12,7 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/StudentCourses.dart';
-import 'package:illinois/ui/academics/StudentCourses.dart';
+import 'package:illinois/ui/academics/student_courses/StudentCourseDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';

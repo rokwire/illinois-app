@@ -61,7 +61,7 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> {
       profile: Auth2().account?.previewProfile(permitted: contentType.profileInfo.permitedVisibility),
     );*/
     ProfileHomePanel.present(context,
-      contentType: ProfileContentType.share,
+      contentType: ProfileContentType.businessCard,
     );
   }
 

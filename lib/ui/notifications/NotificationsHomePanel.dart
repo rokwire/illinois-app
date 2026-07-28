@@ -25,6 +25,7 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
+import 'package:illinois/ui/widgets/SignInInfoPopup.dart';
 import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -48,7 +49,9 @@ class NotificationsHomePanel extends StatefulWidget {
       AppAlert.showOfflineMessage(
           context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
     } else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showLoggedOutFeatureNAMessage(context, Localization().getStringEx('generic.app.feature.notifications', 'Notifications'));
+      String message = AppTextUtils.loggedOutSignInPrivacyHtml(
+          Localization().getStringEx('panel.notifications.logged_out.clause', 'To use notifications,'));
+      showDialog(context: context, builder: (context) => SignInInfoPopup(message: message));
     } else if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
@@ -87,7 +90,6 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeMapMentalHealth,
       FirebaseMessaging.payloadTypeMapLaundry,
       FirebaseMessaging.payloadTypeAcademics,
-      FirebaseMessaging.payloadTypeAcademicsAppointments,
       FirebaseMessaging.payloadTypeAcademicsGiesCanvasCourses,
       FirebaseMessaging.payloadTypeAcademicsDueDateCatalog,
       FirebaseMessaging.payloadTypeAcademicsEvents,
@@ -96,7 +98,6 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeAcademicsMyIllini,
       FirebaseMessaging.payloadTypeCareerExplorationSkillsSelfEvaluation,
       FirebaseMessaging.payloadTypeAcademicsStudentCourses,
-      FirebaseMessaging.payloadTypeAcademicsToDoList,
       FirebaseMessaging.payloadTypeAcademicsUiucCheckilst,
       FirebaseMessaging.payloadTypeWellness,
       FirebaseMessaging.payloadTypeWellnessAppointments,
@@ -118,7 +119,7 @@ class NotificationsHomePanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeAppointment,
       FirebaseMessaging.payloadTypePoll,
       FirebaseMessaging.payloadTypeProfileMy,
-      FirebaseMessaging.payloadTypeProfileWhoAreYou,
+      FirebaseMessaging.payloadTypeProfileRoles,
       FirebaseMessaging.payloadTypeProfileLogin,
       FirebaseMessaging.payloadTypeSettingsSections, //TBD deprecate. Use payloadTypeProfileLogin instead
       FirebaseMessaging.payloadTypeSettingsFoodFilters,

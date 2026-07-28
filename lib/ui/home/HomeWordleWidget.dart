@@ -52,6 +52,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   Key _visibilityDetectorKey = UniqueKey();
   DateTime? _pausedDateTime;
   FavoriteContentStatus _contentStatus = FavoriteContentStatus.none;
+  StreamSubscription<String>? _updateSubscription;
 
   final WordleKeyboardController _keyboardController = WordleKeyboardController.broadcast();
   final GlobalKey<WordleKeyboardState> _keyboardKey = GlobalKey<WordleKeyboardState>();
@@ -64,13 +65,11 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
       WordleGameWidget.notifyGameOver,
     ]);
 
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          _refreshDataIfVisible();
-        }
-      });
-    }
+    _updateSubscription = widget.updateController?.stream.listen((String command) {
+      if (command == HomePanel.notifyRefresh) {
+        _refreshDataIfVisible();
+      }
+    });
 
     _loadDataIfVisible();
 
@@ -81,6 +80,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   void dispose() {
     NotificationService().unsubscribe(this);
     _keyboardController.close();
+    _updateSubscription?.cancel();
     super.dispose();
   }
 
@@ -104,7 +104,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
 
   @override
   Widget build(BuildContext context) =>
-    HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, titleBuilder: _titleBuilder, child:
+    HomeFavoriteWidget(favoriteId: widget.favoriteId, title: widget._title, updateController: widget.updateController, titleBuilder: _titleBuilder, child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         VisibilityDetector(
           key: _visibilityDetectorKey,

@@ -183,16 +183,6 @@ class Storage extends rokwire.Storage with NotificationsListener {
     setStringWithName(offsetDateKey, AppDateTime().formatDateTime(value, ignoreTimeZone: true));
   }
 
-  // Recent Items - backward compatability
-  static const String recentItemsKey  = '_recent_items_json_string';
-  String? get recentItemsSource => getStringWithName(recentItemsKey);
-  List<dynamic>? get recentItems => JsonUtils.decodeList(recentItemsSource);
-//set recentItems(List<dynamic>? recentItems) => setStringWithName(recentItemsKey, JsonUtils.encode(recentItems));
-
-  String get recentItemsEnabledKey => 'edu.illinois.rokwire.recent_items.enabled';
-  bool? get recentItemsEnabled => getBoolWithName(recentItemsEnabledKey);
-  set recentItemsEnabled(bool? value) => setBoolWithName(recentItemsEnabledKey, value);
-
   // Local Date/Time
   static const String useDeviceLocalTimeZoneKey  = 'use_device_local_time_zone';
   bool? get useDeviceLocalTimeZone => getBoolWithName(useDeviceLocalTimeZoneKey, defaultValue: true);
@@ -570,6 +560,11 @@ class Storage extends rokwire.Storage with NotificationsListener {
   static const String academicsContentTypeKey = 'edu.illinois.rokwire.academics.content_type';
   String? get academicsContentType => getStringWithName(academicsContentTypeKey);
   set academicsContentType(String? value) => setStringWithName(academicsContentTypeKey, value);
+
+  // Student Courses
+  static const String studentCoursesViewTypeKey = 'edu.illinois.rokwire.student_courses.view_type';
+  String? get studentCoursesViewType => getStringWithName(studentCoursesViewTypeKey);
+  set studentCoursesViewType(String? value) => setStringWithName(studentCoursesViewTypeKey, value);
 
   // Athletics
   static const String athleticsContentTypeKey = 'edu.illinois.rokwire.athletics.content_type';
