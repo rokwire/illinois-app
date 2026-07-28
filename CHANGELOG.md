@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [8.1.6] - 2026-07-28
 ### Changed
 - Apply grey background color to 'My Digital Business Card' in WalletHomePanel [#5867](https://github.com/rokwire/illinois-app/issues/5867).
 ### Fixed
@@ -12,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make sure to cancel any opened stream subscription when it is not needed any more [#5910](https://github.com/rokwire/illinois-app/issues/5910).
 ### Added
 - Added Show All/Collapse All to Favorites [#5877](https://github.com/rokwire/illinois-app/issues/5877).
+- Fixed group direct messages loading against Social BB 1.59.0 [#5912](https://github.com/rokwire/illinois-app/issues/5912).
 
 ## [8.1.5] - 2026-07-27
 ### Changed
