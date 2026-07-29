@@ -738,9 +738,15 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     return Semantics(container: true, child:
       GestureDetector(onTap: () => _onTapCard(context), child:
         Container(decoration: _cardDecoration, child: ClipRRect(borderRadius: _cardBorderRadius, child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             _imageHeadingWidget,
-            _isHomeDisplayType ? Container(child: AspectRatio(aspectRatio: _contentAspectRatio, child: _contentWidget,)) : _contentWidget,
+            _isHomeDisplayType ?
+              AspectRatio(aspectRatio: _contentAspectRatio, child:
+                SingleChildScrollView(physics: NeverScrollableScrollPhysics(), child:
+                  _contentWidget,
+                )
+              ) :
+              _contentWidget,
           ]),
         ))
       )
@@ -751,6 +757,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     return Padding(
       padding: EdgeInsetsGeometry.only(left: 16, top: _imageHeadingVisible ? 8 : 16, right: 16, bottom: 16),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeading(),
