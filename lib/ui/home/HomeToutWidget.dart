@@ -206,7 +206,11 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
       Padding(padding: _commandButtonPadding(listPos), child:
         Row(mainAxisSize: MainAxisSize.min, children: [
           Padding(padding: EdgeInsets.only(right: _commandIconSpacing), child:
-            command.icon ?? SizedBox(width: _HomeToutCommandImpl.iconSize,),
+            SizedBox(width: _HomeToutCommandImpl.iconSize + 2, height: _HomeToutCommandImpl.iconSize, child:
+              Align(alignment: Alignment.centerRight, child:
+                command.icon,
+              )
+            ),
           ),
           Flexible(child:
             Text(command.title, style: _commandTextStyle)
@@ -238,7 +242,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
         textWidth = sizeFull.width;
       }
     }
-    return _HomeToutCommandImpl.iconSize + _commandIconSpacing + textWidth + 2 * _commandHorzPadding;
+    return _HomeToutCommandImpl.iconSize + 2 + _commandIconSpacing + textWidth * 1.1 + 2 * _commandHorzPadding;
   }
 
   TextStyle? get _commandTextStyle => Styles().textStyles.getTextStyle('widget.home_tout.button.dropdown');
@@ -439,7 +443,7 @@ extension _HomeToutCommandImpl on _HomeToutCommand {
     switch (this) {
       case _HomeToutCommand.showAll: return Styles().images.getImage('chevron2-up', color: Styles().colors.fillColorSecondary, size: iconSize, excludeFromSemantics: true);
       case _HomeToutCommand.collapseAll: return Styles().images.getImage('chevron2-down', color: Styles().colors.fillColorSecondary, size: iconSize, excludeFromSemantics: true);
-      case _HomeToutCommand.customize: return Styles().images.getImage('star-partially-filled', size: iconSize, excludeFromSemantics: true);
+      case _HomeToutCommand.customize: return Styles().images.getImage('star-partially-filled', width: iconSize, excludeFromSemantics: true);
     }
   }
 
