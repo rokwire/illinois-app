@@ -264,8 +264,32 @@ class NullableValue<T> {
 }
 
 enum ContentActivity { reload, refresh, extend }
+
 extension ContentActivityImpl on ContentActivity {
   bool get loading => (this == ContentActivity.reload) || (this == ContentActivity.refresh);
   bool get extending => (this == ContentActivity.extend);
 }
 
+enum ListPosition { only, first, middle, last }
+
+extension ListPositionImpl on ListPosition {
+
+  static ListPosition? fromListIndex(int index, { required int size }) {
+    if ((0 < size) && (0 <= index) && (index < size)) {
+      if (0 < index) {
+        if (index < (size - 1)) {
+          return ListPosition.middle;
+        } else {
+          return (1 < size) ? ListPosition.last : ListPosition.only;
+        }
+      } else {
+        return (1 < size) ? ListPosition.first : ListPosition.only;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  bool get middleOrLast => ((this == ListPosition.middle) || (this == ListPosition.last));
+  bool get middleOrFirst => ((this == ListPosition.middle) || (this == ListPosition.first));
+}

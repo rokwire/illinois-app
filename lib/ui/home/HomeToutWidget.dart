@@ -11,6 +11,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -156,11 +157,12 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
 
   Widget get _commandsDropdown {
     _dropdownWidth ??= _evalDropdownWidth();
+    double dropdownOffsetX = max((_dropdownWidth ?? 0) - _commandsDropdownButtonWidth, 0);
     return Padding(padding: EdgeInsets.only(left: 8, right: 16), child:
       DropdownButtonHideUnderline(child:
         DropdownButton2<_HomeToutCommand>(
-          dropdownStyleData: DropdownStyleData(padding: EdgeInsets.zero, width: _dropdownWidth, decoration: _commandsDropdownDecoration, offset: Offset(max((_dropdownWidth ?? 0) - _commandsDropdownButtonWidth, 0) * -1, 0), ),
-          menuItemStyleData: MenuItemStyleData(padding: EdgeInsets.zero),
+          dropdownStyleData: DropdownStyleData(width: _dropdownWidth, decoration: _commandsDropdownDecoration, offset: Offset(-dropdownOffsetX, 0), padding: EdgeInsets.zero, scrollPadding: EdgeInsets.zero),
+          menuItemStyleData: MenuItemStyleData(customHeights: _commandButtonsHeights, padding: EdgeInsets.zero),
           customButton: _commandsDropdownButton,
           isExpanded: false,
           items: _commandButtons,
@@ -191,11 +193,17 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
   BoxDecoration get _commandsDropdownDecoration => BoxDecoration(color: Styles().colors.surface);
 
 
-  List<DropdownMenuItem<_HomeToutCommand>> get _commandButtons => _HomeToutCommand.values.map((command) => _buildCommandButton(command)).toList();
+  List<DropdownMenuItem<_HomeToutCommand>> get _commandButtons {
+    List<DropdownMenuItem<_HomeToutCommand>> widgets = <DropdownMenuItem<_HomeToutCommand>>[];
+    for (int index = 0; index < _HomeToutCommand.values.length; index++) {
+      widgets.add(_buildCommandButton(_HomeToutCommand.values[index], listPos: ListPositionImpl.fromListIndex(index, size: _HomeToutCommand.values.length,)));
+    }
+    return widgets;
+  }
 
-  DropdownMenuItem<_HomeToutCommand> _buildCommandButton(_HomeToutCommand command) =>
+  DropdownMenuItem<_HomeToutCommand> _buildCommandButton(_HomeToutCommand command, { ListPosition? listPos }) =>
     DropdownMenuItem<_HomeToutCommand>(value: command, child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: _commandHorzPadding, vertical: _commandVertPadding), child:
+      Padding(padding: _commandButtonPadding(listPos), child:
         Row(mainAxisSize: MainAxisSize.min, children: [
           Padding(padding: EdgeInsets.only(right: _commandIconSpacing), child:
             command.icon ?? SizedBox(width: _HomeToutCommandImpl.iconSize,),
@@ -206,6 +214,14 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
         ]),
       )
     );
+
+  List<double> get _commandButtonsHeights {
+    List<double> heights = <double>[];
+    for (int index = 0; index < _HomeToutCommand.values.length; index++) {
+      heights.add(_commandButtonHeight(ListPositionImpl.fromListIndex(index, size: _HomeToutCommand.values.length,)));
+    }
+    return heights;
+  }
 
   double _evalDropdownWidth() {
     double textWidth = 0;
@@ -222,13 +238,26 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
         textWidth = sizeFull.width;
       }
     }
-    return _HomeToutCommandImpl.iconSize + _commandIconSpacing + textWidth + 3 * _commandHorzPadding;
+    return _HomeToutCommandImpl.iconSize + _commandIconSpacing + textWidth + 2 * _commandHorzPadding;
   }
 
   TextStyle? get _commandTextStyle => Styles().textStyles.getTextStyle('widget.home_tout.button.dropdown');
-  double get _commandHorzPadding => 8;
-  double get _commandVertPadding => 4;
+
+  double get _commandHorzPadding => 16;
+  double get _commandVertPadding => 16;
   double get _commandIconSpacing => 6;
+
+  EdgeInsets _commandButtonPadding(ListPosition? listPos) => EdgeInsets.only(
+    left: _commandHorzPadding,
+    right: _commandHorzPadding,
+    top: (listPos?.middleOrLast == true) ? (_commandVertPadding/2) : _commandVertPadding,
+    bottom: (listPos?.middleOrFirst == true) ? (_commandVertPadding/2) : _commandVertPadding
+  );
+
+  double _commandButtonHeight(ListPosition? listPos) {
+    EdgeInsets insets = _commandButtonPadding(listPos);
+    return MediaQuery.of(context).textScaler.scale(_commandTextStyle?.fontSize ?? 14) * 1.5  + insets.top + insets.bottom;
+  }
 
   double get _triangleHeight => HomeToutWidget.triangleHeight(context);
   double get _imageAspectRatio => HomeToutWidget.imageAspectRatio;
