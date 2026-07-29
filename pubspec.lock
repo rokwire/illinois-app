@@ -1945,7 +1945,7 @@ packages:
       path: plugin
       relative: true
     source: path
-    version: "1.13.1"
+    version: "1.13.2"
   roundcheckbox:
     dependency: "direct main"
     description:

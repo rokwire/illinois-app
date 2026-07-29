@@ -5,11 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [8.1.7] - 2026-07-29
 ### Changed
 - Don't display "TODAY" in My Courses Favorite widget. Only use the day of the week as a header [#5915](https://github.com/rokwire/illinois-app/issues/5915).
-- Make sure to always apply types paramter in Social.loadConversations call [#5919](https://github.com/rokwire/illinois-app/issues/5919).
+- Make sure to always apply types paramеter in Social.loadConversations call [#5919](https://github.com/rokwire/illinois-app/issues/5919).
 ### Fixed
 - Fixed Show All/Collapse All dropdown menu background color, tuned dropdown items heighs and layout [#5877](https://github.com/rokwire/illinois-app/issues/5877).
+- Fixed GroupCard overflow exception when displayed inside Home panel widget.
 ### Added
 - Show POT labels in My Courses favorite widget if two courses overlap [#5916](https://github.com/rokwire/illinois-app/issues/5916).
 

@@ -755,6 +755,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     return Padding(
       padding: EdgeInsetsGeometry.only(left: 16, top: _imageHeadingVisible ? 8 : 16, right: 16, bottom: 16),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeading(),
