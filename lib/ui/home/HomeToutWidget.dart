@@ -35,7 +35,7 @@ class HomeToutWidget extends StatefulWidget {
   _HomeToutWidgetState createState() => _HomeToutWidgetState();
 }
 
-class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListener {
+class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListener, WidgetsBindingObserver {
 
   String? _imageUrl;
   DateTime? _imageDateTime;
@@ -49,6 +49,8 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
       Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,
     ]);
+
+    WidgetsBinding.instance.addObserver(this);
 
     _updateSubscription = widget.updateController?.stream.listen((String command) {
       if (command == HomePanel.notifyRefresh) {
@@ -70,6 +72,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    WidgetsBinding.instance.removeObserver(this);
     _updateSubscription?.cancel();
     super.dispose();
   }
@@ -245,6 +248,16 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
     return _HomeToutCommandImpl.iconSize + 2 + _commandIconSpacing + textWidth * 1.1 + 2 * _commandHorzPadding;
   }
 
+  void _updateDropdownWidth() {
+    double dropdownWidth = _evalDropdownWidth();
+    if ((_dropdownWidth != dropdownWidth) && mounted) {
+      setState(() {
+        _dropdownWidth = dropdownWidth;
+      });
+    }
+
+  }
+
   TextStyle? get _commandTextStyle => Styles().textStyles.getTextStyle('widget.home_tout.button.dropdown');
 
   double get _commandHorzPadding => 16;
@@ -355,6 +368,13 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
     else if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
       _update();
     }
+  }
+
+  // WidgetsBindingObserver
+
+  @override
+  void didChangeTextScaleFactor() {
+    _updateDropdownWidth();
   }
 }
 
