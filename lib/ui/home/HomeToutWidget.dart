@@ -35,7 +35,7 @@ class HomeToutWidget extends StatefulWidget {
   _HomeToutWidgetState createState() => _HomeToutWidgetState();
 }
 
-class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListener {
+class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListener, WidgetsBindingObserver {
 
   String? _imageUrl;
   DateTime? _imageDateTime;
@@ -49,6 +49,8 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
       Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,
     ]);
+
+    WidgetsBinding.instance.addObserver(this);
 
     _updateSubscription = widget.updateController?.stream.listen((String command) {
       if (command == HomePanel.notifyRefresh) {
@@ -70,6 +72,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    WidgetsBinding.instance.removeObserver(this);
     _updateSubscription?.cancel();
     super.dispose();
   }
@@ -206,7 +209,11 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
       Padding(padding: _commandButtonPadding(listPos), child:
         Row(mainAxisSize: MainAxisSize.min, children: [
           Padding(padding: EdgeInsets.only(right: _commandIconSpacing), child:
-            command.icon ?? SizedBox(width: _HomeToutCommandImpl.iconSize,),
+            SizedBox(width: _HomeToutCommandImpl.iconSize + 2, height: _HomeToutCommandImpl.iconSize, child:
+              Align(alignment: Alignment.centerRight, child:
+                command.icon,
+              )
+            ),
           ),
           Flexible(child:
             Text(command.title, style: _commandTextStyle)
@@ -238,7 +245,17 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
         textWidth = sizeFull.width;
       }
     }
-    return _HomeToutCommandImpl.iconSize + _commandIconSpacing + textWidth + 2 * _commandHorzPadding;
+    return _HomeToutCommandImpl.iconSize + 2 + _commandIconSpacing + textWidth * 1.1 + 2 * _commandHorzPadding;
+  }
+
+  void _updateDropdownWidth() {
+    double dropdownWidth = _evalDropdownWidth();
+    if ((_dropdownWidth != dropdownWidth) && mounted) {
+      setState(() {
+        _dropdownWidth = dropdownWidth;
+      });
+    }
+
   }
 
   TextStyle? get _commandTextStyle => Styles().textStyles.getTextStyle('widget.home_tout.button.dropdown');
@@ -352,6 +369,13 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
       _update();
     }
   }
+
+  // WidgetsBindingObserver
+
+  @override
+  void didChangeTextScaleFactor() {
+    _updateDropdownWidth();
+  }
 }
 
 class _InfoDialog extends StatelessWidget {
@@ -439,7 +463,7 @@ extension _HomeToutCommandImpl on _HomeToutCommand {
     switch (this) {
       case _HomeToutCommand.showAll: return Styles().images.getImage('chevron2-up', color: Styles().colors.fillColorSecondary, size: iconSize, excludeFromSemantics: true);
       case _HomeToutCommand.collapseAll: return Styles().images.getImage('chevron2-down', color: Styles().colors.fillColorSecondary, size: iconSize, excludeFromSemantics: true);
-      case _HomeToutCommand.customize: return Styles().images.getImage('star-partially-filled', size: iconSize, excludeFromSemantics: true);
+      case _HomeToutCommand.customize: return Styles().images.getImage('star-partially-filled', width: iconSize, excludeFromSemantics: true);
     }
   }
 
