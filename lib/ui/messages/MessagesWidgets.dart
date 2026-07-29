@@ -160,7 +160,11 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with N
       });
 
       //TODO: add time intervals to filter
-      List<Conversation>? conversations = await Social().loadConversations(offset: 0, limit: widget.conversationPageSize, name: widget.searchText);
+      List<Conversation>? conversations = await Social().loadConversations(
+        types: ConversationTypeImpl.directTypes,
+        name: widget.searchText,
+        offset: 0, limit: widget.conversationPageSize
+      );
       setStateIfMounted(() {
         _loading = false;
         _loadingProgress = false;
@@ -188,7 +192,11 @@ class RecentConversationsPageState extends State<RecentConversationsPage> with N
       });
 
       //TODO: add time intervals to filter
-      List<Conversation>? conversations = await Social().loadConversations(offset: _conversationsCount, limit: widget.conversationPageSize, name: widget.searchText);
+      List<Conversation>? conversations = await Social().loadConversations(
+          types: ConversationTypeImpl.directTypes,
+          name: widget.searchText,
+          offset: _conversationsCount, limit: widget.conversationPageSize,
+      );
       if (mounted && _extending && !_loading) {
         setState(() {
           if (conversations != null) {
