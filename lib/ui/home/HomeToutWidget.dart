@@ -159,7 +159,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
     return Padding(padding: EdgeInsets.only(left: 8, right: 16), child:
       DropdownButtonHideUnderline(child:
         DropdownButton2<_HomeToutCommand>(
-          dropdownStyleData: DropdownStyleData(padding: EdgeInsets.zero, width: _dropdownWidth, offset: Offset(max((_dropdownWidth ?? 0) - _commandsDropdownButtonWidth, 0) * -1, 0), ),
+          dropdownStyleData: DropdownStyleData(padding: EdgeInsets.zero, width: _dropdownWidth, decoration: _commandsDropdownDecoration, offset: Offset(max((_dropdownWidth ?? 0) - _commandsDropdownButtonWidth, 0) * -1, 0), ),
           menuItemStyleData: MenuItemStyleData(padding: EdgeInsets.zero),
           customButton: _commandsDropdownButton,
           isExpanded: false,
@@ -187,6 +187,8 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
   double get _commandsDropdownButtonChevronIconSize => 14;
   double get _commandsDropdownButtonIconSpacing => 4;
   double get _commandsDropdownButtonWidth => _commandsDropdownButtonEditIconSize + _commandsDropdownButtonIconSpacing + _commandsDropdownButtonChevronIconSize;
+
+  BoxDecoration get _commandsDropdownDecoration => BoxDecoration(color: Styles().colors.surface);
 
 
   List<DropdownMenuItem<_HomeToutCommand>> get _commandButtons => _HomeToutCommand.values.map((command) => _buildCommandButton(command)).toList();
