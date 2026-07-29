@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make sure to always apply types paramter in Social.loadConversations call [#5919](https://github.com/rokwire/illinois-app/issues/5919).
 ### Fixed
 - Fixed Show All/Collapse All dropdown menu background color, tuned dropdown items heighs and layout [#5877](https://github.com/rokwire/illinois-app/issues/5877).
+### Added
+- Show POT labels in My Courses favorite widget if two courses overlap [#5916](https://github.com/rokwire/illinois-app/issues/5916).
 
 ## [8.1.6] - 2026-07-28
 ### Changed
