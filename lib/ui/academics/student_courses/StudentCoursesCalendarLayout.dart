@@ -17,7 +17,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class StudentCourseBlock {
@@ -26,6 +28,7 @@ class StudentCourseBlock {
   final int durationMinutes;
   int column = 0;
   int columnCount = 1;
+  String? potLabel;
 
   StudentCourseBlock({required this.course, required this.startMinutes, required this.durationMinutes});
 
@@ -100,6 +103,45 @@ class StudentCoursesCalendarLayout {
     }
     if (blocks.isNotEmpty) {
       _assignColumns(blocks, groupStart, blocks.length);
+    }
+  }
+
+  ///
+  /// Labels a block "POT A"/"POT B" only when it overlaps in time with exactly one other block,
+  /// and the two courses' meeting date ranges are non-overlapping and chronologically ordered
+  /// (i.e. a genuine first-half/second-half Part-of-Term split). Left unlabeled in every other
+  /// case (no overlap, more than one overlapping course, ambiguous/missing date ranges) rather
+  /// than risk mislabeling.
+  ///
+  static void assignPartOfTermLabels(List<StudentCourseBlock> blocks) {
+    for (int i = 0; i < blocks.length; i++) {
+      StudentCourseBlock block = blocks[i];
+      StudentCourseBlock? onlyOverlap;
+      bool hasMultipleOverlaps = false;
+      for (int j = 0; j < blocks.length; j++) {
+        if (i == j) {
+          continue;
+        }
+        StudentCourseBlock other = blocks[j];
+        bool overlapsInTime = (block.startMinutes < other.endMinutes) && (other.startMinutes < block.endMinutes);
+        if (overlapsInTime) {
+          if (onlyOverlap != null) {
+            hasMultipleOverlaps = true;
+            break;
+          }
+          onlyOverlap = other;
+        }
+      }
+      if (hasMultipleOverlaps || (onlyOverlap == null)) {
+        continue;
+      }
+
+      DateTimeRange? range = block.course.section?.meetingDateRange;
+      DateTimeRange? otherRange = onlyOverlap.course.section?.meetingDateRange;
+      if ((range != null) && (otherRange != null) && range.end.isBefore(otherRange.start)) {
+        block.potLabel = Localization().getStringEx('widget.home.student_courses.calendar.part_of_term.a.label', 'POT A');
+        onlyOverlap.potLabel = Localization().getStringEx('widget.home.student_courses.calendar.part_of_term.b.label', 'POT B');
+      }
     }
   }
 
