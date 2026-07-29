@@ -169,9 +169,8 @@ class _DirectoryAccountListCardState extends State<DirectoryAccountListCard> {
         });
         // Search this user across existing conversations.
         conversations = await Social().loadConversations(
-          offset: 0,
-          limit: MessagesHomePanel.conversationsPageSize,
-          name: userName,
+          types: ConversationTypeImpl.directTypes, name: userName,
+          offset: 0, limit: MessagesHomePanel.conversationsPageSize,
         );
       }
       if (mounted) {
