@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Don't display "TODAY" in My Courses Favorite widget. Only use the day of the week as a header [#5915](https://github.com/rokwire/illinois-app/issues/5915).
+### Fixed
+- Fixed Show All/Collapse All dropdown menu background color, tuned dropdown items heighs and layout [#5877](https://github.com/rokwire/illinois-app/issues/5877).
 
 ## [8.1.6] - 2026-07-28
 ### Changed
