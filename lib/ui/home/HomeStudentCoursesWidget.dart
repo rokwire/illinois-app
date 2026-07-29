@@ -485,12 +485,7 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
     );
   }
 
-  String get _dayLabel {
-    bool isToday = (widget.weekday == DateTimeUni.nowUniOrLocal().weekday);
-    return isToday ?
-      Localization().getStringEx('widget.home.student_courses.calendar.day.today.label', 'TODAY') :
-      _weekdayName(widget.weekday);
-  }
+  String get _dayLabel => _weekdayName(widget.weekday);
 
   String _weekdayName(int weekday) {
     switch (weekday) {

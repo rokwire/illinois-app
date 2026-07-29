@@ -4226,7 +4226,6 @@
     "widget.home.student_courses.text.failed.description": "Parece que no tiene cursos registrados para el término seleccionado.",
     "widget.home.student_courses.button.all.title": "Ver todo",
     "widget.home.student_courses.button.all.hint": "Toca para ver todos los cursos",
-    "widget.home.student_courses.calendar.day.today.label": "HOY",
     "widget.home.student_courses.calendar.day.monday.label": "LUNES",
     "widget.home.student_courses.calendar.day.tuesday.label": "MARTES",
     "widget.home.student_courses.calendar.day.wednesday.label": "MIÉRCOLES",

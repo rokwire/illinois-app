@@ -4227,7 +4227,6 @@
     "widget.home.student_courses.text.failed.description": "You do not appear to be registered for any courses for the selected term.",
     "widget.home.student_courses.button.all.title": "View All",
     "widget.home.student_courses.button.all.hint": "Tap to view all courses",
-    "widget.home.student_courses.calendar.day.today.label": "TODAY",
     "widget.home.student_courses.calendar.day.monday.label": "MONDAY",
     "widget.home.student_courses.calendar.day.tuesday.label": "TUESDAY",
     "widget.home.student_courses.calendar.day.wednesday.label": "WEDNESDAY",
