@@ -509,12 +509,7 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
     );
   }
 
-  String get _dayLabel {
-    bool isToday = (widget.weekday == AppDateTime().getDisplayNowTZDateTime().weekday);
-    return isToday ?
-      Localization().getStringEx('widget.home.student_courses.calendar.day.today.label', 'TODAY') :
-      _weekdayName(widget.weekday);
-  }
+  String get _dayLabel => _weekdayName(widget.weekday);
 
   String _weekdayName(int weekday) {
     switch (weekday) {
@@ -545,6 +540,7 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
       }
     }
     StudentCoursesCalendarLayout.layoutOverlappingBlocks(blocks);
+    StudentCoursesCalendarLayout.assignPartOfTermLabels(blocks);
     _blocks = blocks;
   }
 
@@ -624,8 +620,10 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
 
   Widget _buildCourseBlockText(StudentCourseBlock block) {
     String timeRange = StudentCoursesCalendarLayout.displayTimeRange(startMinutes: block.startMinutes, durationMinutes: block.durationMinutes);
+    String courseName = block.course.shortName ?? (block.course.title ?? '');
+    String title = (block.potLabel != null) ? '${block.potLabel}: $courseName' : courseName;
     return RichText(maxLines: 1, overflow: TextOverflow.ellipsis, text: TextSpan(children: <TextSpan>[
-      TextSpan(text: block.course.shortName ?? (block.course.title ?? ''), style: Styles().textStyles.getTextStyle('widget.message.tiny.fat')),
+      TextSpan(text: title, style: Styles().textStyles.getTextStyle('widget.message.tiny.fat')),
       TextSpan(text: ' | $timeRange', style: Styles().textStyles.getTextStyle('widget.message.tiny')),
     ]));
   }

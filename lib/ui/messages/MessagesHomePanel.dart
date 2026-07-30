@@ -902,10 +902,9 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with Notification
     _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
     // Load all conversations
     List<Conversation>? conversations = await Social().loadConversations(
-      mute: _selectedMutedValue,
-      offset: 0,
-      limit: _conversationsPageSize,
-      name: _searchText,
+      types: ConversationTypeImpl.directTypes,
+      name: _searchText, mute: _selectedMutedValue,
+      offset: 0, limit: _conversationsPageSize,
       fromTime: selectedTimeInterval?.fromTime,
       toTime: selectedTimeInterval?.toTime
     );
@@ -933,10 +932,9 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with Notification
 
     _DateTimeInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
     List<Conversation>? conversations = await Social().loadConversations(
-      mute: _selectedMutedValue,
-      offset: _conversations.length,
-      limit: _conversationsPageSize,
-      name: _searchText,
+      types: ConversationTypeImpl.directTypes,
+      name: _searchText, mute: _selectedMutedValue,
+      offset: _conversations.length, limit: _conversationsPageSize,
       fromTime: selectedTimeInterval?.fromTime,
       toTime: selectedTimeInterval?.toTime
     );

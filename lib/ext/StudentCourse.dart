@@ -225,4 +225,33 @@ extension StudentCourseSectionExt on StudentCourseSection {
     TZDateTime uniWallClock = TZDateTime(uniLocation, referenceDay.year, referenceDay.month, referenceDay.day, hours, minutes);
     return AppDateTime().getDisplayZonedDateTime(dateTimeUtc: uniWallClock.toUtc()) ?? uniWallClock;
   }
+
+  ///
+  /// Parses the backend's "MM/DD/YYYY - MM/DD/YYYY" meeting_dates_or_range string.
+  /// Returns null (rather than throwing) if the value is missing or not in the expected format.
+  ///
+  DateTimeRange? get meetingDateRange {
+    List<String> parts = meetingDates?.split('-') ?? <String>[];
+    if (parts.length == 2) {
+      DateTime? start = _parseMeetingDate(parts[0]);
+      DateTime? end = _parseMeetingDate(parts[1]);
+      if ((start != null) && (end != null)) {
+        return DateTimeRange(start: start, end: end);
+      }
+    }
+    return null;
+  }
+
+  static DateTime? _parseMeetingDate(String value) {
+    List<String> parts = value.trim().split('/');
+    if (parts.length == 3) {
+      int? month = int.tryParse(parts[0]);
+      int? day = int.tryParse(parts[1]);
+      int? year = int.tryParse(parts[2]);
+      if ((month != null) && (day != null) && (year != null)) {
+        return DateTime(year, month, day);
+      }
+    }
+    return null;
+  }
 }

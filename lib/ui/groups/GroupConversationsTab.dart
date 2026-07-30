@@ -192,7 +192,7 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
       setStateIfMounted(() {
         _conversationsActivity = ContentActivity.reload;
       });
-      List<Conversation>? conversations = await Social().loadConversations(contextId: widget.group?.id);
+      List<Conversation>? conversations = await Social().loadConversations(contextId: widget.group?.id, types: ConversationTypeImpl.groupTypes);
       if ((_conversationsActivity == ContentActivity.reload) && mounted)
       setState(() {
         _conversationsActivity = null;
@@ -209,7 +209,7 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
       setStateIfMounted(() {
         _conversationsActivity = ContentActivity.refresh;
       });
-      List<Conversation>? conversations = await Social().loadConversations(contextId: widget.group?.id, type: ConversationType.groupSubset);
+      List<Conversation>? conversations = await Social().loadConversations(contextId: widget.group?.id, types: ConversationTypeImpl.groupTypes);
       if ((_conversationsActivity == ContentActivity.refresh) && mounted) {
         setState(() {
           _conversationsActivity = null;

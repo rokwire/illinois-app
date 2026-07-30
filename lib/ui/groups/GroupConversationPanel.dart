@@ -32,14 +32,23 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class GroupConversationPanel extends StatefulWidget {
+  final Conversation? conversation;
+
   final Group? group;
   final List<Member>? groupAdmins;
-  final Conversation? conversation;
+  final List<Member>? groupRecepients;
+
   final String? targetMessageId;
   final String? targetMessageGlobalId;
+
   final AnalyticsFeature? analyticsFeature;
 
-  GroupConversationPanel({ super.key, this.conversation, this.group, this.groupAdmins, this.targetMessageId, this.targetMessageGlobalId, this.analyticsFeature });
+  GroupConversationPanel({ super.key,
+    this.conversation,
+    this.group, this.groupAdmins, this.groupRecepients,
+    this.targetMessageId, this.targetMessageGlobalId,
+    this.analyticsFeature
+  });
 
   @override
   State<StatefulWidget> createState() => _GroupConversationPanelState();
@@ -119,7 +128,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
 
   @override
   Widget build(BuildContext context) =>  Scaffold(
-    appBar: HeaderBar(title: Localization().getStringEx('', 'Message')),
+    appBar: HeaderBar(title: _isGroupBroadcastMessage ? Localization().getStringEx('', 'Individual Message') : Localization().getStringEx('', 'Message')),
     body: _bodyWidget,
     backgroundColor: Styles().colors.background,
     resizeToAvoidBottomInset: true,
@@ -152,7 +161,7 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   Widget get _messagesContent =>
   Column(children: [
     Stack(children: <Widget>[
-      GroupConversationHeader(conversation: widget.conversation, group: _group, groupAdmins: _groupAdmins),
+      GroupConversationHeader(conversation: widget.conversation, group: _group, groupAdmins: _groupAdmins, groupRecepients: widget.groupRecepients,),
       _hideKeyboardLayer,
     ],),
     Expanded(child:
@@ -703,15 +712,16 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       context: ContextItem.group(_group?.id ?? ''),
       message: message,
       fileAttachments: fileAttachments,
-      extraParams: {
-        'all_group_members': true
-      }
+      recepientIds: widget.groupRecepients?.map((member) => member.userId).nonNulls.toList()
     );
 
     if (conversations != null) {
       Navigator.pop(context);
       WidgetsBinding.instance.addPostFrameCallback((_){
-        GroupConversationReportBroadcastIndividualDialog.show(context);
+        GroupConversationReportMessageDialog.show(context, message: (widget.groupRecepients?.isNotEmpty == true) ?
+          Localization().getStringEx('', 'Your message has been sent to each member individually.') :
+          Localization().getStringEx('', 'Your message has been sent to each group member individually.')
+        );
       });
       return true;
     } else {

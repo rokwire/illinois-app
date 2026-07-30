@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added capability to send individual messages to a subset of group members [#5767](https://github.com/rokwire/illinois-app/issues/5767).
+
+## [8.1.7] - 2026-07-29
+### Changed
+- Don't display "TODAY" in My Courses Favorite widget. Only use the day of the week as a header [#5915](https://github.com/rokwire/illinois-app/issues/5915).
+- Make sure to always apply types paramеter in Social.loadConversations call [#5919](https://github.com/rokwire/illinois-app/issues/5919).
+### Fixed
+- Fixed Show All/Collapse All dropdown menu background color, tuned dropdown items heighs and layout [#5877](https://github.com/rokwire/illinois-app/issues/5877).
+- Fixed GroupCard overflow exception when displayed inside Home panel widget.
+### Added
+- Show POT labels in My Courses favorite widget if two courses overlap [#5916](https://github.com/rokwire/illinois-app/issues/5916).
+
+## [8.1.6] - 2026-07-28
 ### Changed
 - Apply grey background color to 'My Digital Business Card' in WalletHomePanel [#5867](https://github.com/rokwire/illinois-app/issues/5867).
 ### Fixed
@@ -12,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make sure to cancel any opened stream subscription when it is not needed any more [#5910](https://github.com/rokwire/illinois-app/issues/5910).
 ### Added
 - Added Show All/Collapse All to Favorites [#5877](https://github.com/rokwire/illinois-app/issues/5877).
+- Fixed group direct messages loading against Social BB 1.59.0 [#5912](https://github.com/rokwire/illinois-app/issues/5912).
 
 ## [8.1.5] - 2026-07-27
 ### Changed
