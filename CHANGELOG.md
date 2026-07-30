@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [8.1.8] - 2026-07-30
 ### Added
 - Added capability to send individual messages to a subset of group members [#5767](https://github.com/rokwire/illinois-app/issues/5767).
+### Changed
+- Updated group messages layout [#5924](https://github.com/rokwire/illinois-app/issues/5924).
 
 ## [8.1.7] - 2026-07-29
 ### Changed
