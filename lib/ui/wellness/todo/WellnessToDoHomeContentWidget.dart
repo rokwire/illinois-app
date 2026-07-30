@@ -65,7 +65,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       Wellness.notifyToDoItemUpdated,
       Wellness.notifyToDoItemsDeleted,
       Wellness.notifyToDoCategoryChanged,
-      Wellness.notifyToDoCategoryDeleted
+      Wellness.notifyToDoCategoryDeleted,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     _selectedTab = _ToDoTab.daily;
     _initCalendarDates();
@@ -508,7 +509,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _initCalendarDates() {
-    DateTime now = DateTime.now();
+    DateTime now = AppDateTime().getDisplayNowTZDateTime();
     _calendarStartDate = now.subtract(Duration(days: now.weekday));
     _calendarEndDate = now.add(Duration(days: (7 - (now.weekday + 1))));
   }
@@ -661,6 +662,9 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         (name == Wellness.notifyToDoCategoryDeleted)) {
         _scrollPagerController.reset();
 
+    } else if (name == AppDateTime.notifyTimeZoneChanged) {
+      _initCalendarDates();
+      _updateState();
     }
   }
 

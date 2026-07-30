@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -46,6 +47,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> with No
       Wellness.notifyToDoItemCreated,
       Wellness.notifyToDoItemUpdated,
       Wellness.notifyToDoItemsDeleted,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     _loadToDoItems();
     super.initState();
@@ -193,7 +195,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> with No
   List<WellnessToDoItem>? _buildTodayItems() {
     List<WellnessToDoItem>? todayItems;
     if (CollectionUtils.isNotEmpty(_toDoItems)) {
-      DateTime now = DateTime.now();
+      DateTime now = AppDateTime().getDisplayNowTZDateTime();
       todayItems = <WellnessToDoItem>[];
       for (WellnessToDoItem item in _toDoItems!) {
         DateTime? dueDate = item.dueDateTime;
@@ -235,6 +237,8 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> with No
       _refreshItems();
     } else if (name == Wellness.notifyToDoItemsDeleted) {
       _refreshItems();
+    } else if (name == AppDateTime.notifyTimeZoneChanged) {
+      _updateState();
     }
   }
 
