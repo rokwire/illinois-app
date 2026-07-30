@@ -197,7 +197,11 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
     for (Message message in messages) {
       String? messageIdentityKey = message.identityKey;
       bool isCurrentUserSender = message.sender?.accountId == Auth2().accountId;
-      EdgeInsetsGeometry cardPadding = EdgeInsets.only(top: (cardsList.length > messagesStart) ? 16 : 0, left: isCurrentUserSender ? 0 : _cardOffset, right: isCurrentUserSender ? _cardOffset : 0);
+      EdgeInsetsGeometry cardPadding = EdgeInsets.only(
+        top: (cardsList.length > messagesStart) ? 16 : 0,
+        left: isCurrentUserSender ? _cardOffset : 0,
+        right: isCurrentUserSender ? 0 : _cardOffset,
+      );
       cardsList.add(Padding(padding: cardPadding, child:
         GroupConversationMessageCard(message,
           key: ((messageIdentityKey != null) && messageIdentityKey.isNotEmpty) ? (_cardKeys[messageIdentityKey] ??= GlobalKey()) : null,
