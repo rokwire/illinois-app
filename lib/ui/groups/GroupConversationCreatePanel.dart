@@ -464,16 +464,17 @@ class _GroupConversationCreatePanelState extends State<GroupConversationCreatePa
 
       ConversationType? conversationType;
       if (widget.group?.currentUserIsAdmin == true) {
-        if (_allMembersSelected) {
+        if (1 < _selectedMemberIds.length) {
           GroupConversationCreateOption? createOption = await GroupConversationCreateOptionsDialog.show(context);
           if (mounted) {
             if (createOption == GroupConversationCreateOption.groupMessage) {
-              conversationType = ConversationType.groupAll;
+              conversationType = _allMembersSelected ? ConversationType.groupAll : ConversationType.groupSubset;
             } else if (createOption == GroupConversationCreateOption.individualMessages) {
               Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) =>
                 GroupConversationPanel(
                   group: widget.group,
                   groupAdmins: widget.groupAdmins,
+                  groupRecepients: _allMembersSelected ? null : _selectedMemberIds.map((memberId) => _membersMap?[memberId]).nonNulls.toList(),
                   analyticsFeature: widget.analyticsFeature,
                 )
               ));
