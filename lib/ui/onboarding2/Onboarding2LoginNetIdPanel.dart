@@ -39,6 +39,8 @@ class Onboarding2LoginNetIdPanel extends StatefulWidget with Onboarding2Panel {
   bool get onboardingProgress => (_currentState?.onboardingProgress == true);
   @override
   set onboardingProgress(bool value) => _currentState?.onboardingProgress = value;
+  @override
+  Future<bool> isOnboardingEnabled() async => Auth2().isOidcLoggedIn != true;
 
   @override
   State<StatefulWidget> createState() => _Onboarding2LoginNetIdPanelState();
