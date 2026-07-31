@@ -218,7 +218,7 @@ extension CreatorExt on Creator{
   }
 }
 
-extension ConversationMemberExt on ConversationMember {
+extension ConversationMemberImpl on ConversationMember {
 
   bool get isCurrentUser => accountId == Auth2().accountId;
 
@@ -241,6 +241,16 @@ extension ConversationMemberExt on ConversationMember {
       return 0;
     }
   }
+
+  static ConversationMember fromGroupMember(Member member) => ConversationMember(
+    accountId: member.userId,
+    name: member.name,
+  );
+
+  static ConversationMember? fromGroupMemberOrNull(Member? member) => (member != null) ? ConversationMember(
+    accountId: member.userId,
+    name: member.name,
+  ) : null;
 }
 
 enum AttachmentFileType { image, video, audio, file }
