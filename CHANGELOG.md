@@ -5,7 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [8.1.9] - 2026-07-31
 ### Changed
+- Preserve OIDC login info across app instances, make sure to process OIDC auth deep links on fresh app launches [#5932](https://github.com/rokwire/illinois-app/issues/5932).
 - Skip NetID login onboarding panel when the user is already authenticated [#5932](https://github.com/rokwire/illinois-app/issues/5932).
 
 ## [8.1.8] - 2026-07-30
