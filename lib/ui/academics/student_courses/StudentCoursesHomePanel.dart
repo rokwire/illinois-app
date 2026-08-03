@@ -30,6 +30,7 @@ import 'package:illinois/ui/academics/student_courses/StudentCoursesCalendarCont
 import 'package:illinois/ui/academics/student_courses/StudentCoursesListContentWidget.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesMapContentWidget.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
+import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -150,9 +151,12 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
 
   Widget _buildFilterBar() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-      Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-        _buildTermsDropDown(),
-        Padding(padding: EdgeInsets.only(left: 8), child: _buildViewTypeDropDown()),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+        Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          _buildTermsDropDown(),
+          Padding(padding: EdgeInsets.only(left: 8), child: _buildViewTypeDropDown()),
+        ]),
+        _buildTimeZoneButton(),
       ]),
     );
   }
@@ -313,6 +317,30 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
         child: Text(viewType.pillTitle, style: _getDropDownItemStyle(bold: (viewType == _selectedViewType))),
       )
     ).toList();
+  }
+
+  Widget _buildTimeZoneButton() {
+    String title = Localization().getStringEx('panel.student_courses.time_zone.button.title', 'Time Zone');
+    String hint = Localization().getStringEx('panel.student_courses.time_zone.button.hint', 'Double tap to open time zone settings');
+    return Semantics(label: title, hint: hint, button: true, child:
+      InkWell(onTap: _onTapTimeZone, child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 9), child:
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            Padding(padding: EdgeInsets.only(right: 6), child:
+              Styles().images.getImage('settings', size: 20, color: Styles().colors.fillColorSecondary, excludeFromSemantics: true)
+            ),
+            ExcludeSemantics(child:
+              Text(title, style: Styles().textStyles.getTextStyle('widget.button.title.small.medium.underline'))
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  void _onTapTimeZone() {
+    Analytics().logSelect(target: 'Time Zone');
+    SettingsHomePanel.present(context, content: SettingsContentType.language_and_time);
   }
 
   void _onViewTypeDropDownValueChanged(StudentCoursesViewType? viewType) {

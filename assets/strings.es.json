@@ -3505,6 +3505,8 @@
     "panel.student_courses.header.title": "Mis cursos",
     "panel.student_courses.term_dropdown.hint": "Doble toque para seleccionar el término",
     "panel.student_courses.view_type_dropdown.hint": "Doble toque para seleccionar la vista",
+    "panel.student_courses.time_zone.button.title": "Zona Horaria",
+    "panel.student_courses.time_zone.button.hint": "Doble toque para abrir la configuración de zona horaria",
     "panel.student_courses.instructor.title": "Instructor: %s",
     "panel.student_courses.room.title": "Room",
     "panel.student_courses.map.button.title": "View In-Person Courses on Map",

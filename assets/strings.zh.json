@@ -3480,6 +3480,8 @@
 	"panel.student_courses.header.title": "我的課程",
 	"panel.student_courses.term_dropdown.hint": "雙擊選擇學期",
 	"panel.student_courses.view_type_dropdown.hint": "雙擊選擇檢視",
+	"panel.student_courses.time_zone.button.title": "時區",
+	"panel.student_courses.time_zone.button.hint": "雙擊開啟時區設定",
 	"panel.student_courses.instructor.title": "Instructor: %s",
 	"panel.student_courses.room.title": "Room",
 	"panel.student_courses.map.button.title": "View In-Person Courses on Map",
