@@ -24,12 +24,12 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class SettingsLanguagePage extends StatefulWidget {
+class SettingsLanguageAndTimePage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _SettingsLanguagePageState();
+  State<StatefulWidget> createState() => _SettingsLanguageAndTimePageState();
 }
 
-class _SettingsLanguagePageState extends State<SettingsLanguagePage> with NotificationsListener {
+class _SettingsLanguageAndTimePageState extends State<SettingsLanguageAndTimePage> with NotificationsListener {
 
   bool _localeChanged = false;
 
@@ -121,7 +121,7 @@ class _SettingsLanguagePageState extends State<SettingsLanguagePage> with Notifi
       _localeChanged = false;
       Localization().setSelectedLocaleAsync((code != null) ? Locale(code) : null).then((_) {
         if (_localeChanged) {
-          _launchSettingsLanguagePanel();
+          _launchSettingsLanguageAndTimePanel();
         }
         else {
           setStateIfMounted(() { });
@@ -165,12 +165,12 @@ class _SettingsLanguagePageState extends State<SettingsLanguagePage> with Notifi
     }
   }
 
-  void _launchSettingsLanguagePanel() {
+  void _launchSettingsLanguageAndTimePanel() {
     Future.delayed(Duration(milliseconds: 500), (){
       BuildContext? context = App.instance?.currentContext;
       if (context != null) {
         SettingsHomePanel.present(context,
-          content: SettingsContentType.language,
+          content: SettingsContentType.language_and_time,
         );
       }
     });
