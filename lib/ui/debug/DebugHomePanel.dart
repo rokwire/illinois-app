@@ -154,8 +154,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
 
       ToggleRibbonButton(title: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck ?? false, onTap: _onDisableLiveGameCheckToggled),
       Container(height: 1, color: Styles().colors.surfaceAccent ,),
-      ToggleRibbonButton(title: 'Display all times in Central Time', toggled: !AppDateTime().useDeviceLocalTimeZone, onTap: _onUseDeviceLocalTimeZoneToggled),
-      Container(height: 1, color: Styles().colors.surfaceAccent ,),
       ToggleRibbonButton(title: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
       Container(height: 1, color: Styles().colors.surfaceAccent ,),
       ToggleRibbonButton(title: 'Show map levels', toggled: Storage().debugMapShowLevels!, onTap: _onMapShowLevels),
@@ -579,12 +577,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
   void _onUseTestWalletService() {
     setState(() {
       Storage().debugUseIlliniCashTestUrl = (Storage().debugUseIlliniCashTestUrl != true);
-    });
-  }
-
-  void _onUseDeviceLocalTimeZoneToggled() {
-    setState(() {
-      AppDateTime().useDeviceLocalTimeZone = !AppDateTime().useDeviceLocalTimeZone;
     });
   }
 
