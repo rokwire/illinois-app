@@ -1991,7 +1991,7 @@
     "panel.settings.home.settings.sections.appointments_and_events.label": "My Appointments & Events",
     "panel.settings.home.settings.sections.favorites.label": "Customize Favorites",
     "panel.settings.home.settings.sections.assessments.label": "My Assessments",
-    "panel.settings.home.settings.sections.language.label": "My Language",
+    "panel.settings.home.settings.sections.language.label": "My Language & Time",
     "panel.settings.home.settings.sections.about.label": "About the App",
     "panel.settings.home.settings.sections.maps.label": "Maps & Wayfinding",
     "panel.settings.home.settings.sections.research.label": "My Participation in Research",
@@ -2069,6 +2069,9 @@
     "panel.settings.home.language.en.title": "English",
     "panel.settings.home.language.es.title": "Spanish",
     "panel.settings.home.language.zh.title": "Chinese",
+
+    "panel.settings.home.time_zone.system.title": "Use System Time",
+    "panel.settings.home.time_zone.central.title": "Central Time (CT)",
 
     "panel.settings.home.accessibility.favorites.label": "Favorites",
     "panel.settings.home.accessibility.reduce_motion.label": "Reduce motion",

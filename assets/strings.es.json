@@ -1990,7 +1990,7 @@
     "panel.settings.home.settings.sections.appointments_and_events.label": "My Appointments & Events",
     "panel.settings.home.settings.sections.favorites.label": "Personalizar Mis Favoritos",
     "panel.settings.home.settings.sections.assessments.label": "Mis Evaluaciones",
-    "panel.settings.home.settings.sections.language.label": "Mi Idioma",
+    "panel.settings.home.settings.sections.language.label": "Mi Idioma y Hora",
     "panel.settings.home.settings.sections.about.label": "About the App",
     "panel.settings.home.settings.sections.maps.label": "Maps & Wayfinding",
     "panel.settings.home.settings.sections.research.label": "My Participation in Research",
@@ -2069,6 +2069,9 @@
     "panel.settings.home.language.en.title": "Inglés",
     "panel.settings.home.language.es.title": "Español",
     "panel.settings.home.language.zh.title": "Chino",
+
+    "panel.settings.home.time_zone.system.title": "Usar la hora del sistema",
+    "panel.settings.home.time_zone.central.title": "Hora Central (CT)",
 
     "panel.settings.home.accessibility.favorites.label": "Favorites",
     "panel.settings.home.accessibility.reduce_motion.label": "Reduce motion",

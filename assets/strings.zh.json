@@ -1975,7 +1975,7 @@
 	"panel.settings.home.settings.sections.appointments_and_events.label": "My Appointments & Events",
 	"panel.settings.home.settings.sections.favorites.label": "自定義收藏夾",
 	"panel.settings.home.settings.sections.assessments.label": "我的評估",
-	"panel.settings.home.settings.sections.language.label": "我的語言",
+	"panel.settings.home.settings.sections.language.label": "我的語言與時間",
 	"panel.settings.home.settings.sections.about.label": "About the App",
 	"panel.settings.home.settings.sections.maps.label": "Maps & Wayfinding",
 	"panel.settings.home.settings.sections.research.label": "My Participation in Research",
@@ -2053,6 +2053,9 @@
 	"panel.settings.home.language.en.title": "英語",
 	"panel.settings.home.language.es.title": "西班牙語",
 	"panel.settings.home.language.zh.title": "Chinese",
+
+	"panel.settings.home.time_zone.system.title": "使用系統時間",
+	"panel.settings.home.time_zone.central.title": "中部時間 (CT)",
 
 	"panel.settings.home.accessibility.favorites.label": "Favorites",
 	"panel.settings.home.accessibility.reduce_motion.label": "Reduce motion",
