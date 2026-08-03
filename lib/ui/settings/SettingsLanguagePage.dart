@@ -109,7 +109,7 @@ class _SettingsLanguagePageState extends State<SettingsLanguagePage> with Notifi
       ),
       InkWell(onTap: () => _onLanguageOption(name, code), child:
         Padding(padding: EdgeInsets.all(16), child:
-          Styles().images.getImage((Localization().selectedLocale?.languageCode == code) ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true)
+          Styles().images.getImage((Localization().selectedLocale?.languageCode == code) ? 'check-circle-filled' : 'check-circle-outline-gray', size: 24, excludeFromSemantics: true)
         )
       ),
     ],));
@@ -152,7 +152,7 @@ class _SettingsLanguagePageState extends State<SettingsLanguagePage> with Notifi
       ),
       InkWell(onTap: () => _onTimeZoneOption(name, useDeviceLocalTimeZone), child:
         Padding(padding: EdgeInsets.all(16), child:
-          Styles().images.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true)
+          Styles().images.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', size: 24, excludeFromSemantics: true)
         )
       ),
     ],));
