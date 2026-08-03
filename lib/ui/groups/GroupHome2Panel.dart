@@ -1,11 +1,9 @@
 
 import 'dart:collection';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/Group.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -52,15 +50,14 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   GlobalKey _filtersButtonKey = GlobalKey();
   GlobalKey _myGroupsFilterButtonKey = GlobalKey();
-  Map<String, GlobalKey> _cardKeys = <String, GlobalKey>{};
   ScrollController _scrollController = ScrollController();
 
-  List<Group>? _contentList;
+  LinkedHashMap<String?, List<Group>>? _contentMap;
   int? _totalContentLength;
+  final Set<String?> _collapsedSections = <String?>{};
+  List<_DisplayListItem>? _displayList;
   ContentActivity? _contentActivity;
-  bool? _lastPageLoadedAll;
   GroupsFilter? _filter;
-  static const int _contentPageLength = 16;
 
   GroupsFilter get _authValidFilter => _filter?.authValidated ?? GroupsFilter();
   bool get _myGroupsSelected => (_authValidFilter.types?.containsAll(_myGroupsFilterTypes) == true);
@@ -76,7 +73,6 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       Auth2.notifyLoginChanged,
     ]);
 
-    _scrollController.addListener(_scrollListener);
     _filter = widget.filter;
     _reloadContent();
     super.initState();
@@ -85,29 +81,116 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx("panel.groups_home.label.heading", "Groups"), leading: RootHeaderBarLeading.Back,),
-      body: _scaffoldBody,
-      backgroundColor: Styles().colors.background,
-      bottomNavigationBar: uiuc.TabBar(),
-    );
+    appBar: RootHeaderBar(title: Localization().getStringEx("panel.groups_home.label.heading", "Groups"), leading: RootHeaderBarLeading.Back,),
+    body: _scaffoldBody,
+    backgroundColor: Styles().colors.background,
+    bottomNavigationBar: uiuc.TabBar(),
+  );
 
   Widget get _scaffoldBody => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
     _commandBar,
     Expanded(child:
-      RefreshIndicator(onRefresh: _onRefresh, child:
-        SingleChildScrollView(controller: _scrollController, physics: BouncingScrollPhysics(), child:
-          _bodyContent,
-        )
-      )
+      _bodyContent,
     )
   ],);
+
+  Widget get _bodyContent {
+    if (_contentActivity == ContentActivity.reload) {
+      return _loadingContent;
+    }
+    else if (_contentActivity == ContentActivity.refresh) {
+      return Container();
+    }
+    else if (_displayList == null) {
+      return _buildMessageContent(Localization().getStringEx('panel.group.home2.failed.text', 'Failed to load groups'),
+        title: Localization().getStringEx('common.label.failed', 'Failed')
+      );
+    }
+    else if (_displayList?.length == 0) {
+      return _buildMessageContent(Localization().getStringEx('panel.group.home2.empty.text', 'There are no groups matching the selected filters.'));
+    }
+    else {
+      return _listContent;
+    }
+  }
+
+  Widget get _listContent =>
+    RefreshIndicator(onRefresh: _onRefresh, child:
+      ListView.builder(
+        controller: _scrollController,
+        physics: BouncingScrollPhysics(),
+        itemCount: _displayList?.length ?? 0,
+        itemBuilder: _buildDisplayListItem,
+        scrollDirection: Axis.vertical,
+      )
+    );
+
+  Widget? _buildDisplayListItem(BuildContext context, int index) {
+    _DisplayListItem? displayListItem = ListUtils.entry(_displayList, index);
+    if (displayListItem is _SectionHeadingListItem) {
+      return _buildSection(displayListItem.section, collapsed: _collapsedSections.contains(displayListItem.section));
+    } else if (displayListItem is _SplitterListItem) {
+      return Divider(height: 1, color: Styles().colors.surfaceAccent,);
+    } else if (displayListItem is _SpacerListItem) {
+      return SizedBox(height: displayListItem.height);
+    } else if (displayListItem is _GroupListItem) {
+      return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        GroupCard(displayListItem.group, displayType: GroupCardDisplayType.allGroups,),
+      );
+    } else {
+      return null;
+    }
+  }
+
+  Widget _buildSection(String? section, {bool? collapsed}) {
+    return Row(children: [
+      InkWell(onTap: () => _onToggleSection(section), child:
+        Padding(padding: EdgeInsetsGeometry.all(16), child:
+          Styles().images.getImage((collapsed != true) ? 'chevron2-up' : 'chevron2-down', color: Styles().colors.fillColorSecondary, size: 16, excludeFromSemantics: true)
+        )
+      ),
+      Expanded(child:
+        Padding(padding: EdgeInsetsGeometry.only(top: 8, bottom: 8, right: 16), child:
+          Text(section ?? '', style: Styles().textStyles.getTextStyle('widget.item.regular.semi_fat'),)
+        )
+      )
+    ],);
+  }
+
+  // Other Content Types
+
+  Widget _buildMessageContent(String message, { String? title }) =>
+    RefreshIndicator(onRefresh: _onRefresh, child:
+      SingleChildScrollView(controller: _scrollController, physics: BouncingScrollPhysics(), child:
+        Center(child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
+            Column(children: [
+              (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
+                Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
+              ) : Container(),
+              Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
+            ],),
+          )
+        )
+      )
+    );
+
+  Widget get _loadingContent =>
+    Column(children: [
+      Expanded(flex: 1, child: Container()),
+      SizedBox(width: 32, height: 32, child:
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary,)
+      ),
+      Expanded(flex: 2, child: Container()),
+    ],);
+
+  double get _screenHeight => MediaQuery.of(context).size.height;
 
   // Command Bar
 
@@ -237,77 +320,6 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     border: Border(top: BorderSide(color: Styles().colors.disabledTextColor, width: 1))
   );
 
-  Widget get _bodyContent {
-    if (_contentActivity == ContentActivity.reload) {
-      return _loadingContent;
-    }
-    else if (_contentActivity == ContentActivity.refresh) {
-      return Container();
-    }
-    else if (_contentList == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.group.home2.failed.text', 'Failed to load groups'),
-        title: Localization().getStringEx('common.label.failed', 'Failed')
-      );
-    }
-    else if (_contentList?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.group.home2.empty.text', 'There are no groups matching the selected filters.'));
-    }
-    else {
-      return _listContent;
-    }
-  }
-
-  Widget get _listContent {
-    List<Widget> cardsList = <Widget>[];
-    List<Group> groups = _contentList ?? [];
-    for (Group group in groups) {
-      cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 16 : 0), child:
-        GroupCard(group,
-          key: _cardKeys[group.id],
-          displayType: GroupCardDisplayType.allGroups,
-        ),
-      ),);
-    }
-    if (_contentActivity == ContentActivity.extend) {
-      cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 16 : 0), child:
-        _extendingIndicator
-      ));
-    }
-    return Padding(padding: EdgeInsets.all(16), child:
-      Column(children:  cardsList,)
-    );
-  }
-
-  Widget _buildMessageContent(String message, { String? title }) => Center(child:
-    Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
-      Column(children: [
-        (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
-          Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
-        ) : Container(),
-        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
-      ],),
-    )
-  );
-
-  Widget get _loadingContent => Column(children: [
-    Padding(padding: EdgeInsets.symmetric(vertical: _screenHeight / 4), child:
-      SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors.fillColorSecondary,)
-      )
-    ),
-    Container(height: _screenHeight / 2,)
-  ],);
-
-  Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
-    Align(alignment: Alignment.center, child:
-      SizedBox(width: 24, height: 24, child:
-        CircularProgressIndicator(strokeWidth: 3, color: Styles().colors.fillColorSecondary),
-      ),
-    ),
-  );
-
-  double get _screenHeight => MediaQuery.of(context).size.height;
-
   // Content Fetch
 
   Future<void> _onRefresh() async {
@@ -315,43 +327,46 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     return _refreshContent();
   }
 
-  void _scrollListener() {
-    double scrollOffset = _scrollController.offset;
-    double scrollMaxExtent = _scrollController.position.maxScrollExtent;
-    if ((scrollOffset >= scrollMaxExtent) && (_hasMoreContent != false) && (_contentActivity == null)) {
-      _extendContent();
-    }
-  }
+  Future<void> _reloadContent() => _loadContent(applyErrorContent: true, expandAll: true);
+  Future<void> _refreshContent() => _loadContent(contentActivity: ContentActivity.refresh, expandAll: true);
+  Future<void> _updateContent() => _loadContent(restoreScrollPosition: true);
 
-  bool? get _hasMoreContent => (_totalContentLength != null) ? (_listSafeContentLength < _totalSafeContentLength) : (_lastPageLoadedAll != false);
-  int get _totalSafeContentLength => _totalContentLength ?? 0;
-  int get _listSafeContentLength => _contentList?.length ?? 0;
-  int get _refreshContentLength => max(_listSafeContentLength, _contentPageLength);
-
-  Future<void> _reloadContent({ int limit = _contentPageLength, String? anchorId, int? anchorOffset, bool restoreScrollPosition = false }) async {
-    if ((_contentActivity != ContentActivity.reload) && mounted) {
+  Future<void> _loadContent({ ContentActivity contentActivity = ContentActivity.reload,  bool applyErrorContent = false, bool expandAll = false, bool restoreScrollPosition = false }) async {
+    if (contentActivity.canOverride(_contentActivity) && mounted) {
       double scrollPosition = _scrollController.hasClients ? _scrollController.offset : 0;
 
       setState(() {
-        _contentActivity = ContentActivity.reload;
+        _contentActivity = contentActivity;
       });
 
       GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
         filter: _filter?.authValidated,
         includeHidden: false,
-        offset: 0, limit: limit,
-        anchorId: anchorId, anchorOffset: anchorOffset,
       ));
-      List<Group>? contentList = contentResult?.groups;
-      int? totalContentLength = contentResult?.totalCount;
-
-      if (mounted && (_contentActivity == ContentActivity.reload)) {
-        setState(() {
-          _contentList = (contentList != null) ? List<Group>.from(contentList) : null;
-          _totalContentLength = totalContentLength;
-          _lastPageLoadedAll = (contentList != null) ? (contentList.length >= limit) : null;
-          _contentActivity = null;
-        });
+      if (mounted && (_contentActivity == contentActivity)) {
+        List<Group>? contentList = contentResult?.groups;
+        if  (contentList != null) {
+          LinkedHashMap<String?, List<Group>> contentMap = _buildContentMap(contentList);
+          setState(() {
+            _contentMap = contentMap;
+            _totalContentLength = contentResult?.totalCount;
+            if (expandAll) {
+              _collapsedSections.clear();
+            } else {
+              _collapsedSections.removeWhere((section) => (contentMap.containsKey(section) == false));
+            }
+            _displayList = _buildDisplayList(contentMap, collapsedSections: _collapsedSections);
+            _contentActivity = null;
+          });
+        } else if (applyErrorContent) {
+          setState(() {
+            _contentMap = null;
+            _totalContentLength = null;
+            _collapsedSections.clear();
+            _displayList = null;
+            _contentActivity = null;
+          });
+        }
 
         if (restoreScrollPosition) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -362,69 +377,46 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     }
   }
 
-  Future<void> _refreshContent() async {
-    if ((_contentActivity?.loading != true) && mounted) {
-      setState(() {
-        _contentActivity = ContentActivity.refresh;
-      });
-
-      int queryLimit = _refreshContentLength;
-      GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
-        filter: _filter?.authValidated,
-        includeHidden: false,
-        offset: 0, limit: queryLimit,
-      ));
-      List<Group>? contentList = contentResult?.groups;
-      int? totalContentLength = contentResult?.totalCount;
-
-      if (mounted && (_contentActivity == ContentActivity.refresh)) {
-        setState(() {
-          if (contentList != null) {
-            _contentList = List<Group>.from(contentList);
-            _lastPageLoadedAll = (contentList.length >= queryLimit);
-          }
-          if (totalContentLength != null) {
-            _totalContentLength = totalContentLength;
-          }
-          _contentActivity = null;
-        });
+  static LinkedHashMap<String?, List<Group>> _buildContentMap(List<Group> contentList) {
+    List<Group>? nullSectionList;
+    LinkedHashMap<String?, List<Group>> contentMap = LinkedHashMap<String?, List<Group>>();
+    for (Group group in contentList) {
+      String? section = group.section;
+      if (section != null) {
+        List<Group>? sectionList = contentMap[section];
+        if (sectionList != null) {
+          sectionList.add(group);
+        } else {
+          contentMap[section] = <Group>[group];
+        }
+      } else {
+        if (nullSectionList != null) {
+          nullSectionList.add(group);
+        } else {
+          nullSectionList = <Group>[group];
+        }
       }
     }
+    if (nullSectionList != null) {
+      contentMap[null] = nullSectionList; // We want it at the end
+    }
+    return contentMap;
   }
 
-  Future<void> _extendContent() async {
-    if ((_contentActivity == null) && mounted) {
-      setState(() {
-        _contentActivity = ContentActivity.extend;
-      });
-
-      int queryOffset = _contentList?.length ?? 0;
-      int queryLimit = _contentPageLength;
-      GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
-        filter: _filter?.authValidated,
-        includeHidden: false,
-        offset: queryOffset, limit: queryLimit,
-      ));
-      List<Group>? contentList = contentResult?.groups;
-      int? totalContentLength = contentResult?.totalCount;
-
-      if (mounted && (_contentActivity == ContentActivity.extend)) {
-        setState(() {
-          if (contentList != null) {
-            if (_contentList != null) {
-              _contentList?.addAll(contentList);
-            } else {
-              _contentList = List<Group>.from(contentList);
-            }
-            _lastPageLoadedAll = (contentList.length >= queryLimit);
-          }
-          if (totalContentLength != null) {
-            _totalContentLength = totalContentLength;
-          }
-          _contentActivity = null;
-        });
+  List<_DisplayListItem> _buildDisplayList(LinkedHashMap<String?, List<Group>> contentMap, { Set<String?>? collapsedSections }) {
+    List<_DisplayListItem> displayList = <_DisplayListItem>[];
+    for (String? section in contentMap.keys) {
+      List<Group>? sectionList = contentMap[section];
+      displayList.add(_SectionHeadingListItem(section));
+      if ((collapsedSections?.contains(section) != true) && (sectionList != null) && sectionList.isNotEmpty)  {
+        for (Group group in sectionList) {
+          displayList.add(_GroupListItem(group));
+          displayList.add(_SpacerListItem(16));
+        }
       }
+      displayList.add(_SplitterListItem());
     }
+    return displayList;
   }
 
   // Notification Handlers
@@ -437,27 +429,26 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       }
     }
     else if (name == Groups.notifyGroupUpdated) {
-      String? groupId = JsonUtils.stringValue(param);
-      if (mounted && ((groupId == null) || (_contentList?.containsGroupId(groupId) == true))) {
-        _reloadContent(limit: _refreshContentLength, restoreScrollPosition: true);
+      if (mounted) {
+        _updateContent();
       }
     }
     else if (name == Groups.notifyGroupDeleted) {
-      String? groupId = JsonUtils.stringValue(param);
-      if (mounted && (groupId != null) && (_contentList?.containsGroupId(groupId) == true)) {
-        _reloadContent(limit: max(_refreshContentLength - 1, _contentPageLength), restoreScrollPosition: true);
+      if (mounted) {
+        _updateContent();
       }
     }
     else if (name == Groups.notifyUserGroupsUpdated) {
-      _reloadContent(limit: _refreshContentLength, restoreScrollPosition: true);
+      _updateContent();
     }
     else if (name == Auth2.notifyLoginChanged) {
-      _reloadContent(limit: _refreshContentLength, restoreScrollPosition: true);
+      _updateContent();
     }
   }
 
   void _onGroupCreated(String groupId) {
     if (mounted) {
+      /* TBD:
       setState(() {
         _cardKeys[groupId] = GlobalKey();
         _filter = null;
@@ -473,6 +464,8 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
           });
         }
       });
+      */
+
     }
   }
 
@@ -545,6 +538,20 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     });
 
     _reloadContent();
+  }
+
+  void _onToggleSection(String? section) {
+    Analytics().logSelect(target: section);
+    if (_contentMap != null) {
+      setState(() {
+        if (_collapsedSections.contains(section)) {
+          _collapsedSections.remove(section);
+        } else {
+          _collapsedSections.add(section);
+        }
+        _displayList = _buildDisplayList(_contentMap ?? LinkedHashMap(), collapsedSections: _collapsedSections);
+      });
+    }
   }
 }
 
@@ -885,4 +892,39 @@ extension _GroupsFilterAuthImpl on GroupsFilter {
     types: types?.noAuthTypes,
     attributes: attributes
   );
+}
+
+extension _GroupsSectionsImpl on Group {
+  String? get section {
+    if (title != null) {
+      if (title?.isNotEmpty == true) {
+        return title?[0].toUpperCase();
+      } else {
+        return '';
+      }
+    } else {
+      return null;
+    }
+  }
+}
+
+abstract class _DisplayListItem {}
+
+class _SectionHeadingListItem extends _DisplayListItem {
+  final String? section;
+  _SectionHeadingListItem(this.section);
+}
+
+class _SplitterListItem extends _DisplayListItem {
+  _SplitterListItem();
+}
+
+class _GroupListItem extends _DisplayListItem {
+  final Group group;
+  _GroupListItem(this.group);
+}
+
+class _SpacerListItem extends _DisplayListItem {
+  final double height;
+  _SpacerListItem(this.height);
 }
