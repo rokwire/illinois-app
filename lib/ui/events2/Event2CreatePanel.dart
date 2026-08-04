@@ -556,7 +556,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _imageUrl = widget.event?.imageUrl;
     _websiteController.text = widget.event?.eventUrl ?? '';
 
-    _timeZone = timeZoneDatabase.locations[widget.event?.timezone] ?? DateTimeLocal.timezoneLocal;
+    _timeZone = timeZoneDatabase.locations[widget.event?.timezone] ?? AppDateTime().deviceLocation;
     DateTime? startTimeUtc = widget.event?.startTimeUtc;
     if (startTimeUtc != null) {
       TZDateTime startTime = TZDateTime.from(startTimeUtc, _timeZone);

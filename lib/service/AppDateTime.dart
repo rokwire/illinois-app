@@ -54,7 +54,7 @@ class AppDateTime extends rokwire.AppDateTime {
   }
 
   @protected
-  String? get universityLocationName  => Config().timezoneLocation; //TMP: 'Europe/Sofia';
+  String? get universityLocationName => Config().timezoneLocation; //TMP: 'Europe/Sofia';
 
   bool get useDeviceLocalTimeZone => (Storage().useDeviceLocalTimeZone == true);
 

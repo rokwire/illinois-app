@@ -656,7 +656,7 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
       String controllerText = StringUtils.ensureNotEmpty(notification?.body);
 
       timezone.Location? _timezone = (notification?.sendTimezone != null) ? timeZoneDatabase.locations[notification!.sendTimezone] : null ;
-      _timezone ??= DateTimeLocal.timezoneLocal;
+      _timezone ??= AppDateTime().deviceLocation;
 
       DateTime? notificationDateTime = notification?.sendDateTimeUtc != null ? TZDateTime.from(notification!.sendDateTimeUtc!, _timezone) : null;
       DateTime? sendDate = (notificationDateTime != null) ? DateUtils.dateOnly(notificationDateTime) : null;

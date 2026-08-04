@@ -45,7 +45,6 @@ import 'package:illinois/ext/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/model/social.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart' hide AppDateTime;
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -3698,7 +3697,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
 
   @override
   void initState() {
-    _timeZone = timeZoneDatabase.locations[widget.timeZone] ?? DateTimeLocal.timezoneLocal;
+    _timeZone = timeZoneDatabase.locations[widget.timeZone] ?? AppDateTime().deviceLocation;
     DateTime? dateTimeUtc = widget.scheduleTime;
     if (dateTimeUtc != null) {
       TZDateTime scheduleTime = TZDateTime.from(dateTimeUtc, _timeZone);

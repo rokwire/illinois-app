@@ -889,7 +889,7 @@ class CourseConfig {
   DateTime? nextFinalNotificationTime({bool inUtc = false}) => finalNotificationTime != null ? _nextTime(finalNotificationTime!, inUtc: inUtc) : null;
 
   DateTime? _nextTime(int timeInSeconds, {bool inUtc = false}) {
-    timezone.Location location = DateTimeLocal.timezoneLocal;
+    timezone.Location location = AppDateTime().deviceLocation;
     DateTime now = DateTime.now();
     if (!usesUserTimezone) {
       if (StringUtils.isNotEmpty(timezoneName)) {
