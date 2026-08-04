@@ -28,12 +28,14 @@ class AppDateTime extends rokwire.AppDateTime {
   // Notifications
   static const String notifyTimeZoneChanged = "edu.illinois.rokwire.app_datetime.timezone.changed";
 
-  // Singletone Factory
+  // Singleton Factory
   
   @protected
   AppDateTime.internal() : super.internal();
 
-  factory AppDateTime() => ((rokwire.AppDateTime.instance is AppDateTime) ? (rokwire.AppDateTime.instance as AppDateTime) : (rokwire.AppDateTime.instance = AppDateTime.internal()));
+  factory AppDateTime() => ((rokwire.AppDateTime.instance is AppDateTime) ?
+    (rokwire.AppDateTime.instance as AppDateTime) :
+    (rokwire.AppDateTime.instance = AppDateTime.internal()));
 
   // Service
 
