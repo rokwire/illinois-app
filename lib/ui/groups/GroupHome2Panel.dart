@@ -96,7 +96,9 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   Widget get _scaffoldBody => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
     _commandBar,
     Expanded(child:
-      _bodyContent,
+      RefreshIndicator(onRefresh: _onRefresh, child:
+        _bodyContent,
+      ),
     )
   ],);
 
@@ -121,14 +123,12 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   }
 
   Widget get _listContent =>
-    RefreshIndicator(onRefresh: _onRefresh, child:
-      ListView.builder(
-        controller: _scrollController,
-        physics: BouncingScrollPhysics(),
-        itemCount: _displayList?.length ?? 0,
-        itemBuilder: _buildDisplayListItem,
-        scrollDirection: Axis.vertical,
-      )
+    ListView.builder(
+      controller: _scrollController,
+      physics: BouncingScrollPhysics(),
+      itemCount: _displayList?.length ?? 0,
+      itemBuilder: _buildDisplayListItem,
+      scrollDirection: Axis.vertical,
     );
 
   Widget? _buildDisplayListItem(BuildContext context, int index) {
@@ -166,17 +166,15 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   // Other Content Types
 
   Widget _buildMessageContent(String message, { String? title }) =>
-    RefreshIndicator(onRefresh: _onRefresh, child:
-      SingleChildScrollView(controller: _scrollController, physics: BouncingScrollPhysics(), child:
-        Center(child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
-            Column(children: [
-              (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
-                Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
-              ) : Container(),
-              Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
-            ],),
-          )
+    SingleChildScrollView(controller: _scrollController, physics: BouncingScrollPhysics(), child:
+      Center(child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
+          Column(children: [
+            (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
+              Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
+            ) : Container(),
+            Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
+          ],),
         )
       )
     );
@@ -322,7 +320,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   // Content Fetch
 
-  Future<void> _onRefresh() async {
+  Future<void> _onRefresh() {
     Analytics().logSelect(target: 'Refresh');
     return _refreshContent();
   }
