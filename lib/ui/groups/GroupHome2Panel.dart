@@ -1,6 +1,7 @@
 
 import 'dart:collection';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -50,13 +51,15 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   GlobalKey _filtersButtonKey = GlobalKey();
   GlobalKey _myGroupsFilterButtonKey = GlobalKey();
+  GlobalKey _listViewKey = GlobalKey();
   ScrollController _scrollController = ScrollController();
 
   LinkedHashMap<String?, List<Group>>? _contentMap;
-  int? _totalContentLength;
-  final Set<String?> _collapsedSections = <String?>{};
   List<_DisplayListItem>? _displayList;
+  final Set<String?> _collapsedSections = <String?>{};
+  final Map<String, GlobalKey> _cardKeys = <String, GlobalKey>{};
   ContentActivity? _contentActivity;
+  int? _totalContentLength;
   GroupsFilter? _filter;
 
   GroupsFilter get _authValidFilter => _filter?.authValidated ?? GroupsFilter();
@@ -124,6 +127,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   Widget get _listContent =>
     ListView.builder(
+      key: _listViewKey,
       controller: _scrollController,
       physics: BouncingScrollPhysics(),
       itemCount: _displayList?.length ?? 0,
@@ -136,12 +140,12 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     if (displayListItem is _SectionHeadingListItem) {
       return _buildSection(displayListItem.section, collapsed: _collapsedSections.contains(displayListItem.section));
     } else if (displayListItem is _SplitterListItem) {
-      return Divider(height: 1, color: Styles().colors.surfaceAccent,);
+      return Divider(height: _dividerHeight, color: Styles().colors.surfaceAccent,);
     } else if (displayListItem is _SpacerListItem) {
       return SizedBox(height: displayListItem.height);
     } else if (displayListItem is _GroupListItem) {
-      return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        GroupCard(displayListItem.group, displayType: GroupCardDisplayType.allGroups,),
+      return Padding(padding: _groupCardPadding, child:
+        GroupCard(displayListItem.group, displayType: GroupCardDisplayType.allGroups, key: _cardKeys[displayListItem.group.id],),
       );
     } else {
       return null;
@@ -151,17 +155,42 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   Widget _buildSection(String? section, {bool? collapsed}) {
     return Row(children: [
       InkWell(onTap: () => _onToggleSection(section), child:
-        Padding(padding: EdgeInsetsGeometry.all(16), child:
-          Styles().images.getImage((collapsed != true) ? 'chevron2-up' : 'chevron2-down', color: Styles().colors.fillColorSecondary, size: 16, excludeFromSemantics: true)
+        Padding(padding: _sectionIconPadding, child:
+          Styles().images.getImage((collapsed != true) ? 'chevron2-up' : 'chevron2-down', color: Styles().colors.fillColorSecondary, size: _sectionIconSize, excludeFromSemantics: true)
         )
       ),
       Expanded(child:
-        Padding(padding: EdgeInsetsGeometry.only(top: 8, bottom: 8, right: 16), child:
+        Padding(padding: _sectionTextPadding, child:
           Text(section ?? '', style: Styles().textStyles.getTextStyle('widget.item.regular.semi_fat'),)
         )
       )
     ],);
   }
+
+  static const EdgeInsetsGeometry _sectionIconPadding = const EdgeInsetsGeometry.all(
+    _sectionIconPaddingSize
+  );
+  static const double _sectionIconPaddingSize = 16;
+  static const double _sectionIconSize = 16;
+
+  static const EdgeInsetsGeometry _sectionTextPadding = const EdgeInsetsGeometry.only(
+    top: _sectionTextPaddingV,
+    bottom: _sectionTextPaddingV,
+    right: _sectionTextPaddingH
+  );
+  static const double _sectionTextPaddingV = 8;
+  static const double _sectionTextPaddingH = 16;
+
+  // Group Card
+
+  static const EdgeInsetsGeometry _groupCardPadding = const EdgeInsetsGeometry.symmetric(
+    horizontal: _groupCardPaddingH,
+  );
+  static const double _groupCardPaddingH = 16;
+
+  // Divider
+
+  static const double _dividerHeight = 1;
 
   // Other Content Types
 
@@ -446,25 +475,84 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   void _onGroupCreated(String groupId) {
     if (mounted) {
-      /* TBD:
+      late GlobalKey groupKey;
       setState(() {
-        _cardKeys[groupId] = GlobalKey();
+        groupKey = _cardKeys[groupId] ??= GlobalKey();
         _filter = null;
       });
-      _reloadContent(anchorId: groupId, anchorOffset: _contentPageLength ~/ 2).then((_){
+      _loadContent(expandAll: true).then((_){
         if (mounted) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            BuildContext? cardContext = _cardKeys[groupId]?.currentContext;
+          if (_containsGroup(groupId)) {
+            WidgetsBinding.instance.addPostFrameCallback((_){
+              _ensureAvailable(groupKey, onComplete: (_){
+                if (mounted) {
+                  BuildContext? cardContext = groupKey.currentContext;
+                  if ((cardContext != null) && cardContext.mounted /* && !_isCompletelyVisibleInHeight(groupKey, parentKey: _listViewKey) */) {
+                    Scrollable.ensureVisible(cardContext, duration: Duration(milliseconds: 300), curve: Curves.easeInOut).then((_){
+                      _cardKeys.remove(groupId);
+                    });
+                  } else {
+                    _cardKeys.remove(groupId);
+                  }
+                }
+              });
+            });
+          } else {
             _cardKeys.remove(groupId);
-            if ((cardContext != null) && cardContext.mounted) {
-              Scrollable.ensureVisible(cardContext, duration: Duration(milliseconds: 300));
-            }
-          });
+          }
         }
       });
-      */
-
     }
+  }
+
+  void _ensureAvailable(GlobalKey targetKey, { void Function(bool result)? onComplete }) {
+    if (mounted) {
+      if ((targetKey.currentContext != null) && (targetKey.currentContext?.mounted == true)) {
+        onComplete?.call(true);
+      } else {
+        double scrollOffset = _scrollController.offset;
+        if (scrollOffset < _scrollController.position.maxScrollExtent) {
+          double newOffset = scrollOffset + _scrollController.position.viewportDimension;
+          _scrollController.animateTo(newOffset, duration: Duration(milliseconds: 1), curve: Curves.linear).then((_){
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                if (scrollOffset < _scrollController.offset) {
+                  _ensureAvailable(targetKey, onComplete: onComplete);
+                } else {
+                  // did not scroll
+                  onComplete?.call(false);
+                }
+              }
+            });
+          });
+        } else {
+          // no more space tp scroll
+          onComplete?.call(false);
+        }
+      }
+    }
+  }
+
+  /* bool _isCompletelyVisibleInHeight(GlobalKey childKey, { required GlobalKey parentKey} ) {
+    RenderBox? childBox =  JsonUtils.cast(childKey.currentContext?.findRenderObject());
+    RenderBox? parentBox =  JsonUtils.cast(parentKey.currentContext?.findRenderObject());
+    if ((childBox != null) && (parentBox != null)) {
+      Offset childOffset = parentBox.globalToLocal(childBox.localToGlobal(Offset.zero));
+      return (0 <= childOffset.dy) && ((childOffset.dy + childBox.size.height) < parentBox.size.height);
+    } else {
+      return false;
+    }
+  } */
+
+  bool _containsGroup(String groupId) {
+    if (_contentMap != null) {
+      for (List<Group> sectionGroups in _contentMap?.values ?? []) {
+        if (sectionGroups.firstWhereOrNull((group) => (group.id == groupId)) != null) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   // Command Handlers
