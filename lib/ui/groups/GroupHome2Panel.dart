@@ -11,7 +11,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
-import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
@@ -28,14 +27,18 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+enum _PanelMode { regular, search }
+
 class GroupHome2Panel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'edu.illinois.rokwire.group.home2';
 
+  final _PanelMode mode;
+  final String? searchText;
   final GroupsFilter? filter;
 
-  GroupHome2Panel({super.key, this.filter});
+  GroupHome2Panel({ super.key, this.searchText, this.filter, this.mode = _PanelMode.regular });
 
-  static void push(BuildContext context, {GroupsFilter? filter}) =>
+  static void push(BuildContext context, { GroupsFilter? filter }) =>
     Navigator.push(context, CupertinoPageRoute(
       settings: RouteSettings(name: routeName),
       builder: (context) => GroupHome2Panel(filter: filter,)
@@ -52,19 +55,31 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   GlobalKey _filtersButtonKey = GlobalKey();
   GlobalKey _myGroupsFilterButtonKey = GlobalKey();
   GlobalKey _listViewKey = GlobalKey();
+
   ScrollController _scrollController = ScrollController();
+  TextEditingController _searchTextController = TextEditingController();
+  FocusNode _searchTextNode = FocusNode();
 
   LinkedHashMap<String?, List<Group>>? _contentMap;
   List<_DisplayListItem>? _displayList;
-  final Set<String?> _collapsedSections = <String?>{};
-  final Map<String, GlobalKey> _cardKeys = <String, GlobalKey>{};
-  ContentActivity? _contentActivity;
   int? _totalContentLength;
+  final Map<String, GlobalKey> _cardKeys = <String, GlobalKey>{};
+
+  final Set<String?> _collapsedSections = <String?>{};
+
+  ContentActivity? _contentActivity;
+
   GroupsFilter? _filter;
+  String? _searchText;
 
   GroupsFilter get _authValidFilter => _filter?.authValidated ?? GroupsFilter();
   bool get _myGroupsSelected => (_authValidFilter.types?.containsAll(_myGroupsFilterTypes) == true);
   static const Set<GroupsFilterType> _myGroupsFilterTypes = const <GroupsFilterType> { GroupsFilterType.admin, GroupsFilterType.member };
+
+  bool get _searchMode => (widget.mode == _PanelMode.search);
+  bool get _regularMode => (widget.mode == _PanelMode.regular);
+
+  bool get _commandBarVisible => (_regularMode || (_searchMode && (_searchText?.isNotEmpty == true) && (_contentActivity == null)));
 
   @override
   void initState() {
@@ -77,7 +92,11 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     ]);
 
     _filter = widget.filter;
-    _reloadContent();
+    _searchText = widget.searchText;
+    _searchTextController.text = _searchText ?? '';
+
+    if (_regularMode || (_searchMode && (_searchText?.isNotEmpty == true)))
+      _reloadContent();
     super.initState();
   }
 
@@ -85,19 +104,24 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   void dispose() {
     NotificationService().unsubscribe(this);
     _scrollController.dispose();
+    _searchTextController.dispose();
+    _searchTextNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: RootHeaderBar(title: Localization().getStringEx("panel.groups_home.label.heading", "Groups"), leading: RootHeaderBarLeading.Back,),
+    appBar: _regularMode ? RootHeaderBar(title: widget.mode.panelTitle, leading: RootHeaderBarLeading.Back,) : HeaderBar(title: widget.mode.panelTitle),
     body: _scaffoldBody,
     backgroundColor: Styles().colors.background,
     bottomNavigationBar: uiuc.TabBar(),
   );
 
   Widget get _scaffoldBody => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-    _commandBar,
+    if (_searchMode)
+      _searchBar,
+    if (_commandBarVisible)
+      _commandBar,
     Expanded(child:
       RefreshIndicator(onRefresh: _onRefresh, child:
         _bodyContent,
@@ -110,6 +134,9 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       return _loadingContent;
     }
     else if (_contentActivity == ContentActivity.refresh) {
+      return Container();
+    }
+    else if (_searchMode && (_searchText?.isNotEmpty != true)) {
       return Container();
     }
     else if (_displayList == null) {
@@ -265,7 +292,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
         ),
     ])),
     Expanded(flex: 2, child: Wrap(alignment: WrapAlignment.end, crossAxisAlignment: WrapCrossAlignment.center, verticalDirection: VerticalDirection.up, children: [
-      Visibility(visible: Auth2().isOidcLoggedIn, child:
+      Visibility(visible: _regularMode && Auth2().isOidcLoggedIn, child:
         Event2ImageCommandButton(Styles().images.getImage('plus-circle'),
           label: Localization().getStringEx('panel.group.home2.bar.button.create.title', 'Create'),
           hint: Localization().getStringEx('panel.group.home2.bar.button.create.hint', 'Tap to create group'),
@@ -273,11 +300,13 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
           onTap: _onCreate
         ),
       ),
-      Event2ImageCommandButton(Styles().images.getImage('search'),
-        label: Localization().getStringEx('panel.group.home2.bar.button.search.title', 'Search'),
-        hint: Localization().getStringEx('panel.group.home2.bar.button.search.hint', 'Tap to search groups'),
-        contentPadding: EdgeInsets.only(left: 8, right: 16, top: 12, bottom: 12),
-        onTap: _onSearch
+      Visibility(visible: _regularMode, child:
+        Event2ImageCommandButton(Styles().images.getImage('search'),
+          label: Localization().getStringEx('panel.group.home2.bar.button.search.title', 'Search'),
+          hint: Localization().getStringEx('panel.group.home2.bar.button.search.hint', 'Tap to search groups'),
+          contentPadding: EdgeInsets.only(left: 8, right: 16, top: 12, bottom: 12),
+          onTap: _onSearch
+        ),
       ),
     ])),
   ],);
@@ -285,6 +314,11 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   Widget get _contentDescriptionBar {
     // Build description map
     LinkedHashMap<String, List<String>>? descriptionMap = LinkedHashMap<String, List<String>>();
+
+    if (_searchMode && (_searchText?.isNotEmpty == true)) {
+      String searchTitle = Localization().getStringEx('panel.group.home2.bar.description.search.title', 'Search');
+      descriptionMap[searchTitle] = <String>[_searchText ?? ''];
+    }
 
     String filterTitle = Localization().getStringEx('panel.group.home2.bar.description.filters.title', 'Filter');
     List<String>? filterDescription = _filter?.authValidated.description;
@@ -347,6 +381,61 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     border: Border(top: BorderSide(color: Styles().colors.disabledTextColor, width: 1))
   );
 
+  // Search Bar
+
+  Widget get _searchBar =>
+    Container(decoration: _searchBarDecoration, padding: EdgeInsets.only(left: 16), child:
+      Row(children: <Widget>[
+        Expanded(child:
+          _searchTextField,
+        ),
+        _buildSearchImageButton('close',
+          label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
+          hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
+          onTap: _onTapSearchClear,
+        ),
+        _buildSearchImageButton('search',
+          label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
+          hint: Localization().getStringEx('panel.search.button.search.hint', ''),
+          onTap: _onTapSearch,
+        ),
+      ],),
+    );
+
+    Decoration get _searchBarDecoration => BoxDecoration(
+      color: Styles().colors.white,
+      border: (_commandBarVisible != true) ? Border(bottom: BorderSide(color: Styles().colors.disabledTextColor, width: 1)) : null,
+    );
+
+    Widget get _searchTextField => Semantics(
+      label: Localization().getStringEx('panel.search.field.search.title', 'Search'),
+      hint: Localization().getStringEx('panel.search.field.search.hint', ''),
+      textField: true,
+      excludeSemantics: true,
+      child: TextField(
+        controller: _searchTextController,
+        focusNode: _searchTextNode,
+        onChanged: (text) => _onSearchTextChanged(text),
+        onSubmitted: (_) => _onTapSearch(),
+        autofocus: true,
+        cursorColor: Styles().colors.fillColorSecondary,
+        keyboardType: TextInputType.text,
+        style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+        ),
+      ),
+    );
+
+    Widget _buildSearchImageButton(String image, {String? label, String? hint, void Function()? onTap}) =>
+      Semantics(label: label, hint: hint, button: true, excludeSemantics: true, child:
+        InkWell(onTap: onTap, child:
+          Padding(padding: EdgeInsets.all(12), child:
+            Styles().images.getImage(image, excludeFromSemantics: true),
+          ),
+        ),
+      );
+
   // Content Fetch
 
   Future<void> _onRefresh() {
@@ -367,6 +456,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       });
 
       GroupsLoadResult? contentResult = await Groups().loadGroupsV3(GroupsQuery(
+        searchText: _searchText,
         filter: _filter?.authValidated,
         includeHidden: false,
       ));
@@ -598,7 +688,8 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   void _onSearch() {
     Analytics().logSelect(target: 'Search');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
+    //Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupHome2Panel(mode: _PanelMode.search,)));
   }
 
   void _onCreate() {
@@ -637,6 +728,52 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
         }
         _displayList = _buildDisplayList(_contentMap ?? LinkedHashMap(), collapsedSections: _collapsedSections);
       });
+    }
+  }
+
+  void _onSearchTextChanged(String text) {
+    if ((text.trim() != _searchText) && mounted) {
+      setState(() {
+        _searchText = null;
+        _filter = null;
+        _contentMap = null;
+        _totalContentLength = null;
+        _displayList = null;
+        _collapsedSections.clear();
+      });
+    }
+  }
+
+  void _onTapSearchClear() {
+    Analytics().logSelect(target: "Clear");
+    if (StringUtils.isEmpty(_searchTextController.text.trim())) {
+      Navigator.of(context).pop();
+    }
+    else if (mounted) {
+      _searchTextController.text = '';
+      _searchTextNode.requestFocus();
+      setState(() {
+        _searchText = null;
+        _filter = null;
+        _contentMap = null;
+        _totalContentLength = null;
+        _displayList = null;
+        _collapsedSections.clear();
+      });
+    }
+  }
+
+  void _onTapSearch() {
+    Analytics().logSelect(target: "Search");
+
+    String searchText = _searchTextController.text.trim();
+    if (searchText.isNotEmpty) {
+      FocusScope.of(context).requestFocus(FocusNode());
+      Analytics().logSearch(searchText);
+      setState(() {
+        _searchText = searchText;
+      });
+      _reloadContent();
     }
   }
 }
@@ -1013,4 +1150,13 @@ class _GroupListItem extends _DisplayListItem {
 class _SpacerListItem extends _DisplayListItem {
   final double height;
   _SpacerListItem(this.height);
+}
+
+extension _PanelModeImpl on _PanelMode {
+  String get panelTitle {
+    switch (this) {
+      case _PanelMode.regular: return Localization().getStringEx('panel.group.home2.label.heading', 'Groups');
+      case _PanelMode.search: return Localization().getStringEx('panel.group.search.label.heading', 'Search');
+    }
+  }
 }
