@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed crash on opening deep links [#5939](https://github.com/rokwire/illinois-app/issues/5939).
 ### Changed
 - A-Z headings for groups cleanup [#5711](https://github.com/rokwire/illinois-app/issues/5711).
+- Preserve current filter and A-Z section states accross Groups Home panel launches [#5711](https://github.com/rokwire/illinois-app/issues/5711).
 
 ## [8.2.0] - 2026-08-04
 ### Added

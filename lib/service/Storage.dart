@@ -327,6 +327,14 @@ class Storage extends rokwire.Storage with NotificationsListener {
   setChecklistNotes(String contentKey, String? value) => setStringWithName("${contentKey}_$_giesNotesKey", value);
 
   //Groups
+  static const String groupsHome2FilterKey = 'edu.illinois.rokwire.groups.home2.filter';
+  GroupsFilter? get groupsHome2Filter => GroupsFilter.fromJson(JsonUtils.decodeMap(getStringWithName(groupsHome2FilterKey))) ;
+  set groupsHome2Filter(GroupsFilter? value) => setStringWithName(groupsHome2FilterKey, JsonUtils.encode(value?.toJson()) );
+
+  static const String groupsHome2SectionsKey = 'edu.illinois.rokwire.groups.home2.sections';
+  Set<String>? get groupsHome2Sections => JsonUtils.stringSetValue(JsonUtils.decodeList(getStringWithName(groupsHome2SectionsKey))) ;
+  set groupsHome2Sections(Set<String>? value) => setStringWithName(groupsHome2SectionsKey, JsonUtils.encode(value?.toList()));
+
   static const String _groupMemberSelectionTableKey = 'group_members_selection';
 
   Map<String, List<List<Member>>>? get groupMembersSelection {
