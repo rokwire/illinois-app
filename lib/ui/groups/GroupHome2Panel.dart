@@ -188,7 +188,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       ),
       Expanded(child:
         Padding(padding: _sectionTextPadding, child:
-          Text(section ?? '', style: Styles().textStyles.getTextStyle('widget.item.regular.semi_fat'),)
+          Text(section ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
         )
       )
     ],);
@@ -444,7 +444,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   }
 
   Future<void> _reloadContent() => _loadContent(applyErrorContent: true, expandAll: true);
-  Future<void> _refreshContent() => _loadContent(contentActivity: ContentActivity.refresh, expandAll: true);
+  Future<void> _refreshContent() => _loadContent(contentActivity: ContentActivity.refresh);
   Future<void> _updateContent() => _loadContent(restoreScrollPosition: true);
 
   Future<void> _loadContent({ ContentActivity contentActivity = ContentActivity.reload,  bool applyErrorContent = false, bool expandAll = false, bool restoreScrollPosition = false }) async {
