@@ -188,7 +188,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       ),
       Expanded(child:
         Padding(padding: _sectionTextPadding, child:
-          Text(section ?? '', style: Styles().textStyles.getTextStyle('widget.item.regular.semi_fat'),)
+          Text(section ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
         )
       )
     ],);
