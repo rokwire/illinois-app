@@ -330,8 +330,8 @@ class _AssignmentPanelState extends State<AssignmentPanel> with NotificationsLis
           )
       );
 
-      String completionResponseDay = AppDateTime().getDisplayDay(dateTimeUtc: widget.courseDayFinalNotification, includeAtSuffix: true)?.toLowerCase() ?? '';
-      String completionResponseTime = AppDateTime().getDisplayTime(dateTimeUtc: widget.courseDayFinalNotification) ?? '';
+      String completionResponseDay = AppDateTime().formatDisplayDay(dateTimeUtc: widget.courseDayFinalNotification, includeAtSuffix: true)?.toLowerCase() ?? '';
+      String completionResponseTime = AppDateTime().formatDisplayTime(dateTimeUtc: widget.courseDayFinalNotification) ?? '';
       String completionResponseDateTime = 'later';
       if (completionResponseDay.isNotEmpty) {
         completionResponseDateTime = completionResponseDay;
@@ -472,7 +472,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> with NotificationsLis
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              displayTime == null ? Localization().getStringEx("panel.essential_skills_coach.assignment.history.timestamp.now.label", "Now") : '${AppDateTime().getDisplayDay(dateTimeUtc: displayTime, includeAtSuffix: true)} ${AppDateTime().getDisplayTime(dateTimeUtc: displayTime)}',
+              displayTime == null ? Localization().getStringEx("panel.essential_skills_coach.assignment.history.timestamp.now.label", "Now") : '${AppDateTime().formatDisplayDay(dateTimeUtc: displayTime, includeAtSuffix: true)} ${AppDateTime().formatDisplayTime(dateTimeUtc: displayTime)}',
               style: Styles().textStyles.getTextStyle(isSelected ? "widget.detail.regular.extra_fat" : "widget.detail.regular"),
             ),
           ),

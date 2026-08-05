@@ -465,7 +465,7 @@ class _EssentialSkillsCoachDashboardState extends State<EssentialSkillsCoachDash
     if (shouldHighlight) {
       String? unlockTimeText;
       if (isNextWithCurrentComplete && nextCourseDayStart != null) {
-        unlockTimeText = '${AppDateTime().getDisplayDay(dateTimeUtc: nextCourseDayStart, includeAtSuffix: true)} ${AppDateTime().getDisplayTime(dateTimeUtc: nextCourseDayStart)}';
+        unlockTimeText = '${AppDateTime().formatDisplayDay(dateTimeUtc: nextCourseDayStart, includeAtSuffix: true)} ${AppDateTime().formatDisplayTime(dateTimeUtc: nextCourseDayStart)}';
       }
       contentWidget = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),

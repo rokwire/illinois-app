@@ -61,7 +61,7 @@ extension GameExt on Game {
       dateFormatted += ' ${StringUtils.ensureNotEmpty(timeToString)}';
       return dateFormatted;
     } else {
-      return AppDateTime().getDisplayDateTime(dateTimeUtc!, allDay: allDay ?? false);
+      return AppDateTime().formatDisplayDateTime(dateTimeUtc!, allDay: allDay ?? false);
     }
   }
 
