@@ -118,9 +118,9 @@ class UserCourse {
       'pauses': pauses,
       'pause_uses': deviceTimeListToJson(pauseUses),
       'course': course?.toJson(),
-      'date_created': AppDateTime().dateTimeLocalToJson(dateCreated),
-      'date_updated': AppDateTime().dateTimeLocalToJson(dateUpdated),
-      'date_dropped': AppDateTime().dateTimeLocalToJson(dateDropped),
+      'date_created': DateTimeUtils.utcDateTimeToString(dateCreated),
+      'date_updated': DateTimeUtils.utcDateTimeToString(dateUpdated),
+      'date_dropped': DateTimeUtils.utcDateTimeToString(dateDropped),
     };
     json.removeWhere((key, value) => (value == null));
     return json;
@@ -159,7 +159,7 @@ class UserCourse {
     if (times != null) {
       List<String> timesJson = [];
       for (DateTime time in times) {
-        String? timeJson = AppDateTime().dateTimeLocalToJson(time);
+        String? timeJson = DateTimeUtils.utcDateTimeToString(time);
         if (timeJson != null) {
           timesJson.add(timeJson);
         }
@@ -456,8 +456,8 @@ class UserUnit {
       'completed': completed,
       'current': current,
       'unit': unit?.toJson(),
-      'date_created': AppDateTime().dateTimeLocalToJson(dateCreated),
-      'date_updated': AppDateTime().dateTimeLocalToJson(dateUpdated),
+      'date_created': DateTimeUtils.utcDateTimeToString(dateCreated),
+      'date_updated': DateTimeUtils.utcDateTimeToString(dateUpdated),
     };
     json.removeWhere((key, value) => (value == null));
     return json;
@@ -668,8 +668,8 @@ class UserContent{
       'unit_key': unitKey,
       'response': response,
       'content': content?.toJson(),
-      'date_created': AppDateTime().dateTimeLocalToJson(dateCreated),
-      'date_updated': AppDateTime().dateTimeLocalToJson(dateUpdated),
+      'date_created': DateTimeUtils.utcDateTimeToString(dateCreated),
+      'date_updated': DateTimeUtils.utcDateTimeToString(dateUpdated),
     };
     json.removeWhere((key, value) => (value == null));
     return json;
