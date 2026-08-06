@@ -25,6 +25,7 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
+import 'package:illinois/ui/widgets/FilterTextButton.dart';
 import 'package:illinois/ui/widgets/SignInInfoPopup.dart';
 import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -371,24 +372,12 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
 
   Widget _buildFilterButton() {
     String title = Localization().getStringEx('panel.inbox.button.filter.title', 'Filter');
-    return Semantics(
-        label: title,
-        button: true,
-        container: true,
-        child: InkWell(
-            onTap: _onTapFilter,
-            child: Container(
-                decoration: BoxDecoration(
-                    color: Styles().colors.white,
-                    border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
-                    borderRadius: BorderRadius.circular(18)),
-                child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 8),
-                    child: Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
-                      Padding(padding: EdgeInsets.only(right: 6), child: Styles().images.getImage('filters')),
-                      Text(title, style: Styles().textStyles.getTextStyle('widget.button.title.regular'), semanticsLabel: ''),
-                      Padding(padding: EdgeInsets.only(left: 3), child: Styles().images.getImage('chevron-right'))
-                    ])))));
+    return FilterTextButton(
+      title: title,
+      leftIcon: Styles().images.getImage('filters', size: 16),
+      rightIcon: Styles().images.getImage('chevron-right'),
+      onTap: _onTapFilter,
+    );
   }
 
   Widget _buildBanner() {
