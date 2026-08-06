@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
@@ -60,12 +61,12 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   TextEditingController _searchTextController = TextEditingController();
   FocusNode _searchTextNode = FocusNode();
 
-  LinkedHashMap<String?, List<Group>>? _contentMap;
+  LinkedHashMap<String, List<Group>>? _contentMap;
   List<_DisplayListItem>? _displayList;
   int? _totalContentLength;
   final Map<String, GlobalKey> _cardKeys = <String, GlobalKey>{};
 
-  final Set<String?> _collapsedSections = <String?>{};
+  late Set<String> _collapsedSections;
 
   ContentActivity? _contentActivity;
 
@@ -79,6 +80,20 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   bool get _searchMode => (widget.mode == _PanelMode.search);
   bool get _regularMode => (widget.mode == _PanelMode.regular);
 
+  GroupsFilter? get _storedFilter => _regularMode ? Storage().groupsHome2Filter : null;
+  set _storedFilter(GroupsFilter? value) {
+    if (_regularMode) {
+      Storage().groupsHome2Filter = value;
+    }
+  }
+
+  Set<String>? get _storedSections => _regularMode ? Storage().groupsHome2Sections : null;
+  set _storedSections(Set<String>? value) {
+    if (_regularMode) {
+      Storage().groupsHome2Sections = value;
+    }
+  }
+
   bool get _commandBarVisible => (_regularMode || (_searchMode && (_searchText?.isNotEmpty == true) && (_contentActivity == null)));
 
   @override
@@ -91,12 +106,13 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       Auth2.notifyLoginChanged,
     ]);
 
-    _filter = widget.filter;
+    _filter = widget.filter ?? _storedFilter;
     _searchText = widget.searchText;
     _searchTextController.text = _searchText ?? '';
+    _collapsedSections = _storedSections ?? <String>{};
 
     if (_regularMode || (_searchMode && (_searchText?.isNotEmpty == true)))
-      _reloadContent();
+      _loadInitialContent();
     super.initState();
   }
 
@@ -179,7 +195,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     }
   }
 
-  Widget _buildSection(String? section, {bool? collapsed}) {
+  Widget _buildSection(String section, {bool? collapsed}) {
     return Row(children: [
       InkWell(onTap: () => _onToggleSection(section), child:
         Padding(padding: _sectionIconPadding, child:
@@ -188,7 +204,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       ),
       Expanded(child:
         Padding(padding: _sectionTextPadding, child:
-          Text(section ?? '', style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
+          Text(section, style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
         )
       )
     ],);
@@ -443,6 +459,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     return _refreshContent();
   }
 
+  Future<void> _loadInitialContent() => _loadContent(applyErrorContent: true);
   Future<void> _reloadContent() => _loadContent(applyErrorContent: true, expandAll: true);
   Future<void> _refreshContent() => _loadContent(contentActivity: ContentActivity.refresh);
   Future<void> _updateContent() => _loadContent(restoreScrollPosition: true);
@@ -463,14 +480,14 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       if (mounted && (_contentActivity == contentActivity)) {
         List<Group>? contentList = contentResult?.groups;
         if  (contentList != null) {
-          LinkedHashMap<String?, List<Group>> contentMap = _buildContentMap(contentList);
+          LinkedHashMap<String, List<Group>> contentMap = _buildContentMap(contentList);
           setState(() {
             _contentMap = contentMap;
             _totalContentLength = contentResult?.totalCount;
             if (expandAll) {
-              _collapsedSections.clear();
+              _storedSections = _collapsedSections = <String>{};
             } else {
-              _collapsedSections.removeWhere((section) => (contentMap.containsKey(section) == false));
+              //_collapsedSections.removeWhere((section) => (contentMap.containsKey(section) == false));
             }
             _displayList = _buildDisplayList(contentMap, collapsedSections: _collapsedSections);
             _contentActivity = null;
@@ -479,7 +496,6 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
           setState(() {
             _contentMap = null;
             _totalContentLength = null;
-            _collapsedSections.clear();
             _displayList = null;
             _contentActivity = null;
           });
@@ -494,35 +510,23 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     }
   }
 
-  static LinkedHashMap<String?, List<Group>> _buildContentMap(List<Group> contentList) {
-    List<Group>? nullSectionList;
-    LinkedHashMap<String?, List<Group>> contentMap = LinkedHashMap<String?, List<Group>>();
+  static LinkedHashMap<String, List<Group>> _buildContentMap(List<Group> contentList) {
+    LinkedHashMap<String, List<Group>> contentMap = LinkedHashMap<String, List<Group>>();
     for (Group group in contentList) {
-      String? section = group.section;
-      if (section != null) {
-        List<Group>? sectionList = contentMap[section];
-        if (sectionList != null) {
-          sectionList.add(group);
-        } else {
-          contentMap[section] = <Group>[group];
-        }
+      String section = group.section ?? '';
+      List<Group>? sectionList = contentMap[section];
+      if (sectionList != null) {
+        sectionList.add(group);
       } else {
-        if (nullSectionList != null) {
-          nullSectionList.add(group);
-        } else {
-          nullSectionList = <Group>[group];
-        }
+        contentMap[section] = <Group>[group];
       }
-    }
-    if (nullSectionList != null) {
-      contentMap[null] = nullSectionList; // We want it at the end
     }
     return contentMap;
   }
 
-  List<_DisplayListItem> _buildDisplayList(LinkedHashMap<String?, List<Group>> contentMap, { Set<String?>? collapsedSections }) {
+  List<_DisplayListItem> _buildDisplayList(LinkedHashMap<String, List<Group>> contentMap, { Set<String>? collapsedSections }) {
     List<_DisplayListItem> displayList = <_DisplayListItem>[];
-    for (String? section in contentMap.keys) {
+    for (String section in contentMap.keys) {
       List<Group>? sectionList = contentMap[section];
       displayList.add(_SectionHeadingListItem(section));
       if ((collapsedSections?.contains(section) != true) && (sectionList != null) && sectionList.isNotEmpty)  {
@@ -568,7 +572,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       late GlobalKey groupKey;
       setState(() {
         groupKey = _cardKeys[groupId] ??= GlobalKey();
-        _filter = null;
+        _storedFilter = _filter = null;
       });
       _loadContent(expandAll: true).then((_){
         if (mounted) {
@@ -652,7 +656,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     _authValidFilter.edit(context).then((GroupsFilter? filter){
       if ((filter != null) && mounted) {
         setState(() {
-          _filter = filter;
+          _storedFilter = _filter = filter;
         });
 
         _reloadContent().then((_) =>
@@ -674,7 +678,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
     if (_filter != filter) {
       setState(() {
-        _filter = filter;
+        _storedFilter = _filter = filter;
       });
 
       _reloadContent().then((_) =>
@@ -711,13 +715,13 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   void _onClearFilter() {
     Analytics().logSelect(target: 'Clear Filter');
     setState(() {
-      _filter = null;
+      _storedFilter = _filter = null;
     });
 
     _reloadContent();
   }
 
-  void _onToggleSection(String? section) {
+  void _onToggleSection(String section) {
     Analytics().logSelect(target: section);
     if (_contentMap != null) {
       setState(() {
@@ -726,6 +730,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
         } else {
           _collapsedSections.add(section);
         }
+        _storedSections = _collapsedSections;
         _displayList = _buildDisplayList(_contentMap ?? LinkedHashMap(), collapsedSections: _collapsedSections);
       });
     }
@@ -1134,7 +1139,7 @@ extension _GroupsSectionsImpl on Group {
 abstract class _DisplayListItem {}
 
 class _SectionHeadingListItem extends _DisplayListItem {
-  final String? section;
+  final String section;
   _SectionHeadingListItem(this.section);
 }
 
