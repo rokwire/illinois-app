@@ -151,7 +151,7 @@ class Game with Explore implements Favorite {
   }
 
   DateTime? get dateTimeUniLocal {
-    return AppDateTime().getUniLocalTimeFromUtcTime(dateTimeUtc);
+    return AppDateTime().getUniversityLocalTimeFromUtcTime(dateTimeUtc);
   }
 
   DateTime? get date {

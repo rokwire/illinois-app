@@ -68,5 +68,5 @@ class AppDateTime extends rokwire.AppDateTime {
   }
 
   @override
-  DateTime get now  => Storage().offsetDate ?? super.now;
+  DateTime get now => Storage().offsetDate ?? super.now;
 }
