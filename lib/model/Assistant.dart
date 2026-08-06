@@ -10,7 +10,7 @@ Map<String, String> deeplinkNameMap = {
   'browse': 'Browse',
   'map': 'Map',
   'map.events': 'Events',
-  'map.dining': 'Residence Hall Dining',
+  'map.dining': 'University Housing Dining',
   'map.buildings': 'Campus Buildings',
   'map.student_courses': 'My Courses',
   'map.appointments': 'MyMcKinley In-Person Appointments',
