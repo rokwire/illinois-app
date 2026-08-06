@@ -1,5 +1,7 @@
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/directory/DirectoryAccountsPage.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
@@ -101,4 +103,59 @@ class _DirectoryAccountsPanelState extends State<DirectoryAccountsPanel> with No
 
   Future<void> _onRefresh() async =>
     _pageKey.currentState?.refresh();
+}
+
+// DirectoryAccountsEditOrShareDescription
+
+class DirectoryAccountsSignedOutDescription extends StatefulWidget {
+
+  final void Function()? onSignIn;
+  final EdgeInsetsGeometry padding;
+
+  DirectoryAccountsSignedOutDescription({ super.key, this.onSignIn, this.padding = const EdgeInsets.symmetric(horizontal: 32, vertical: 16) });
+
+  @override
+  State<StatefulWidget> createState() => _DirectoryAccountsSignedOutDescriptionState();
+}
+
+class _DirectoryAccountsSignedOutDescriptionState extends State<DirectoryAccountsSignedOutDescription> {
+  GestureRecognizer? _signInRecognizer;
+
+  @override
+  void initState() {
+    _signInRecognizer = TapGestureRecognizer()..onTap = _onTapSignIn;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _signInRecognizer?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final String linkLoginMacro = "{{link.login}}";
+    String messageTemplate = Localization().getStringEx('panel.directory.accounts.message.signed_out', 'To view Directory of Users, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
+    List<String> messages = messageTemplate.split(linkLoginMacro);
+    List<InlineSpan> spanList = <InlineSpan>[];
+    if (0 < messages.length)
+      spanList.add(TextSpan(text: messages.first));
+    for (int index = 1; index < messages.length; index++) {
+      spanList.add(TextSpan(text: Localization().getStringEx('panel.directory.accounts.message.signed_out.link.login', "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
+        recognizer: _signInRecognizer));
+      spanList.add(TextSpan(text: messages[index]));
+    }
+
+    return Padding(padding: widget.padding, child:
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children: spanList)
+      )
+    );
+  }
+
+  void _onTapSignIn() {
+    Analytics().logSelect(target: "sign in");
+    widget.onSignIn?.call();
+  }
 }

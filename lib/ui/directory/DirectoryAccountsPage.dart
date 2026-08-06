@@ -7,7 +7,6 @@ import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -24,7 +23,7 @@ class DirectoryAccountsPage extends StatefulWidget {
   State<StatefulWidget> createState() => DirectoryAccountsPageState();
 }
 
-class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with NotificationsListener {
+class DirectoryAccountsPageState extends State<DirectoryAccountsPage> {
 
   String _searchText = '';
   Map<String, dynamic> _filterAttributes = <String, dynamic>{};
@@ -37,7 +36,6 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
 
   @override
   void dispose() {
-    NotificationService().unsubscribe(this);
     super.dispose();
   }
 
@@ -45,7 +43,7 @@ class DirectoryAccountsPageState extends State<DirectoryAccountsPage> with Notif
   Widget build(BuildContext context) =>
     Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       if ((widget.onEditProfile != null) && (widget.onShareProfile != null))
-        DirectoryAccountsEditOrShareDescription(),
+        DirectoryAccountsEditOrShareDescription(onEditProfile: widget.onEditProfile, onShareProfile: widget.onShareProfile),
       _searchBarWidget,
       _accountsListWidget,
     ]);
@@ -163,56 +161,3 @@ class _DirectoryAccountsEditOrShareDescriptionState extends State<DirectoryAccou
   }
 }
 
-// DirectoryAccountsEditOrShareDescription
-
-class DirectoryAccountsSignedOutDescription extends StatefulWidget {
-
-  final void Function()? onSignIn;
-
-  DirectoryAccountsSignedOutDescription({ super.key, this.onSignIn });
-
-  @override
-  State<StatefulWidget> createState() => _DirectoryAccountsSignedOutDescriptionState();
-}
-
-class _DirectoryAccountsSignedOutDescriptionState extends State<DirectoryAccountsSignedOutDescription> {
-  GestureRecognizer? _signInRecognizer;
-
-  @override
-  void initState() {
-    _signInRecognizer = TapGestureRecognizer()..onTap = _onTapSignIn;
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _signInRecognizer?.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final String linkLoginMacro = "{{link.login}}";
-    String messageTemplate = Localization().getStringEx('panel.directory.accounts.message.signed_out', 'To view Directory of Users, $linkLoginMacro with your NetID and set your privacy level to 4 or 5 under Settings.');
-    List<String> messages = messageTemplate.split(linkLoginMacro);
-    List<InlineSpan> spanList = <InlineSpan>[];
-    if (0 < messages.length)
-      spanList.add(TextSpan(text: messages.first));
-    for (int index = 1; index < messages.length; index++) {
-      spanList.add(TextSpan(text: Localization().getStringEx('panel.directory.accounts.message.signed_out.link.login', "sign in"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
-        recognizer: _signInRecognizer));
-      spanList.add(TextSpan(text: messages[index]));
-    }
-
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
-      RichText(textAlign: TextAlign.left, text:
-        TextSpan(style: Styles().textStyles.getTextStyle("widget.message.dark.regular"), children: spanList)
-      )
-    );
-  }
-
-  void _onTapSignIn() {
-    Analytics().logSelect(target: "sign in");
-    widget.onSignIn?.call();
-  }
-}
