@@ -475,7 +475,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with Notification
 
   List<String> _buildTimeDates() {
     TZDateTime now = AppDateTime().getZonedNowTZTime();
-    TZDateTime today = TZDateTime(AppDateTime().displayLocation, now.year, now.month, now.day);
+    TZDateTime today = TZDateTime(AppDateTime().zonedLocation, now.year, now.month, now.day);
     Map<_TimeFilter, _DateTimeInterval> intervals = _getTimeFilterIntervals();
 
     List<String> timeDates = <String>[];
@@ -502,7 +502,7 @@ class _MessagesHomePanelState extends State<MessagesHomePanel> with Notification
   }
 
   static Map<_TimeFilter, _DateTimeInterval> _getTimeFilterIntervals() {
-    Location location = AppDateTime().displayLocation;
+    Location location = AppDateTime().zonedLocation;
     TZDateTime now = AppDateTime().getZonedNowTZTime();
     return {
       _TimeFilter.Today:     _DateTimeInterval(fromTime: TZDateTime(location, now.year, now.month, now.day)),

@@ -308,10 +308,10 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
         if ((result != null) && mounted) {
           setState(() {
 
-            _selectedDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, AppDateTime().displayLocation)!);
+            _selectedDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, AppDateTime().zonedLocation)!);
 
             _buildDaySlots(_timeSlots,
-              _selectedDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, AppDateTime().displayLocation)!)
+              _selectedDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, AppDateTime().zonedLocation)!)
             );
 
             _selectedSlot = _findSelectedTimeSlot(
@@ -452,7 +452,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   }
 
   bool _canSelectDate(DateTime dateTime) {
-    int dateStartTimestamp = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(dateTime, AppDateTime().displayLocation)!).millisecondsSinceEpoch;
+    int dateStartTimestamp = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(dateTime, AppDateTime().zonedLocation)!).millisecondsSinceEpoch;
     int dateEndTimestamp = dateStartTimestamp + 86400000; // 1 day in milliseconds = 24 * 60 * 60 * 1000
     if (_timeSlots != null) {
       for (AppointmentTimeSlot timeSlot in _timeSlots!) {

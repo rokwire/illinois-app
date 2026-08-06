@@ -480,7 +480,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
   Widget _buildWeekDaysWidget() {
     int selectedWeekDay = _selectedDate.weekday;
     TZDateTime currentWeekDate =
-        TZDateTime(AppDateTime().displayLocation, _selectedDate.year, _selectedDate.month, _selectedDate.day).subtract(Duration(days: (selectedWeekDay - 1)));
+        TZDateTime(AppDateTime().zonedLocation, _selectedDate.year, _selectedDate.month, _selectedDate.day).subtract(Duration(days: (selectedWeekDay - 1)));
 
     List<Widget> dayWidgetList = [];
     for (int i = 1; i < 8; i++) {
@@ -560,7 +560,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
   }
 
   void _initEventsTimeFrame() {
-    Location location = AppDateTime().displayLocation;
+    Location location = AppDateTime().zonedLocation;
     TZDateTime monthStartDateTime = TZDateTime(location, _selectedDate.year, _selectedDate.month, 1);
     TZDateTime monthEndDateTime = TZDateTime(location, _selectedDate.year, (_selectedDate.month + 1), 1).subtract(Duration(milliseconds: 1));
     int monthStartDateWeekDay = monthStartDateTime.weekday;
@@ -573,7 +573,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
     int newYear = (year != null) ? year : _selectedDate.year;
     int newMonth = (month != null) ? month : _selectedDate.month;
     int newDay = (day != null) ? day : _selectedDate.day;
-    _selectedDate = TZDateTime(AppDateTime().displayLocation, newYear, newMonth, newDay);
+    _selectedDate = TZDateTime(AppDateTime().zonedLocation, newYear, newMonth, newDay);
     if (mounted) {
       setState(() {});
     }
@@ -641,7 +641,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
       setState(() {});
     }
     else if (name == AppDateTime.notifyTimeZoneChanged) {
-      _selectedDate = TZDateTime(AppDateTime().displayLocation, _selectedDate.year, _selectedDate.month, _selectedDate.day);
+      _selectedDate = TZDateTime(AppDateTime().zonedLocation, _selectedDate.year, _selectedDate.month, _selectedDate.day);
       _initEventsTimeFrame();
       _loadEvents();
     }
