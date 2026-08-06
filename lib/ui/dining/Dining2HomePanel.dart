@@ -112,7 +112,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: HeaderBar(title: Localization().getStringEx('panel.dining2.header.title', 'Residence Hall Dining'),),
+    appBar: HeaderBar(title: Localization().getStringEx('panel.dining2.header.title', 'University Housing Dining'),),
     body: _scaffoldContent,
     backgroundColor: Styles().colors.background,
     bottomNavigationBar: uiuc.TabBar()
@@ -612,9 +612,9 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
     )
   );
 
-  Widget get _errorContent => _statusContent(Localization().getStringEx('panel.dining2.status.failed.title', 'Failed to load Residence Hall dining locations.'));
-  Widget get _emptyContent => _statusContent(Localization().getStringEx('panel.dining2.status.empty.title', 'There are no Residence Hall dining locations available right now.'));
-  Widget get _emptyFiltersContent => _statusContent(Localization().getStringEx('panel.dining2.status.filter.empty.title', 'There are no Residence Hall dining locations matching selected criteria'));
+  Widget get _errorContent => _statusContent(Localization().getStringEx('panel.dining2.status.failed.title', 'Failed to load University Housing dining locations.'));
+  Widget get _emptyContent => _statusContent(Localization().getStringEx('panel.dining2.status.empty.title', 'There are no University Housing dining locations available right now.'));
+  Widget get _emptyFiltersContent => _statusContent(Localization().getStringEx('panel.dining2.status.filter.empty.title', 'There are no University Housing dining locations matching selected criteria'));
 
   static const double _statusPadding = 48;
   Widget _statusContent(String status, { double hPadding = _statusPadding, double vPadding = 4 * _statusPadding }) =>

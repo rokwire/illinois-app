@@ -701,7 +701,7 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   static void _onTapDining(BuildContext context) {
-    Analytics().logSelect(target: "Residence Hall Dining");
+    Analytics().logSelect(target: "University Housing Dining");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Dining2HomePanel()));
   }
 
