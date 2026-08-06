@@ -184,10 +184,10 @@ class Storage extends rokwire.Storage with NotificationsListener {
     setStringWithName(offsetDateKey, AppDateTime().formatDateTime(value, ignoreTimeZone: true));
   }
 
-  // Local Date/Time
-  static const String useDeviceLocalTimeZoneKey  = 'use_device_local_time_zone';
-  bool? get useDeviceLocalTimeZone => getBoolWithName(useDeviceLocalTimeZoneKey, defaultValue: true);
-  set useDeviceLocalTimeZone(bool? value) => setBoolWithName(useDeviceLocalTimeZoneKey, value);
+  // University Time Zone
+  static const String useUniversityTimeZoneKey  = 'use_university_time_zone';
+  bool? get useUniversityTimeZone => getBoolWithName(useUniversityTimeZoneKey, defaultValue: false);
+  set useUniversityTimeZone(bool? value) => setBoolWithName(useUniversityTimeZoneKey, value);
 
   // Debug
   @override String get debugGeoFenceRegionRadiusKey  => 'debug_geo_fence_region_radius';

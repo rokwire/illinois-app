@@ -205,8 +205,8 @@ extension StudentCourseSectionExt on StudentCourseSection {
   /// expressed in the university's own local time (there is no timezone tag on this
   /// field - it is course schedule data, not a UTC instant). This treats that string as
   /// a university-zone time on a current reference day, then converts it
-  /// through AppDateTime().getDisplayZonedDateTime(...) so the result follows the
-  /// useDeviceLocalTimeZone setting.
+  /// through AppDateTime().getZonedTimeFromUtc(...) so the result follows the
+  /// useUniversityTimeZone setting.
   ///
   static DateTime? _displayTime(String? time) {
     if ((time == null) || (time.length < 4)) {

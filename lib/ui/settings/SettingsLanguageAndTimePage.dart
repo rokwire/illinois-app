@@ -132,14 +132,14 @@ class _SettingsLanguageAndTimePageState extends State<SettingsLanguageAndTimePag
 
   List<Widget> _buildTimeZoneOptions() {
     List<Widget> contentList = <Widget>[];
-    contentList.add(_buildTimeZoneOption(Localization().getStringEx('panel.settings.home.time_zone.system.title', 'Use System Time'), true));
+    contentList.add(_buildTimeZoneOption(Localization().getStringEx('panel.settings.home.time_zone.system.title', 'Use System Time'), false));
     contentList.add(Divider(thickness: 0.3, color: Styles().colors.mediumGray2,));
-    contentList.add(_buildTimeZoneOption(Localization().getStringEx('panel.settings.home.time_zone.central.title', 'Central Time (CT)'), false));
+    contentList.add(_buildTimeZoneOption(Localization().getStringEx('panel.settings.home.time_zone.central.title', 'Central Time (CT)'), true));
     return contentList;
   }
 
-  Widget _buildTimeZoneOption(String name, bool useDeviceLocalTimeZone) {
-    bool selected = (AppDateTime().useDeviceLocalTimeZone == useDeviceLocalTimeZone);
+  Widget _buildTimeZoneOption(String name, bool useUniversityTimeZone) {
+    bool selected = (AppDateTime().useUniversityTimeZone == useUniversityTimeZone);
     return
       Semantics(label: name, checked: selected, inMutuallyExclusiveGroup: true, child:
       Row(children: [
@@ -150,7 +150,7 @@ class _SettingsLanguageAndTimePageState extends State<SettingsLanguageAndTimePag
           )
         )
       ),
-      InkWell(onTap: () => _onTimeZoneOption(name, useDeviceLocalTimeZone), child:
+      InkWell(onTap: () => _onTimeZoneOption(name, useUniversityTimeZone), child:
         Padding(padding: EdgeInsets.all(16), child:
           Styles().images.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', size: 24, excludeFromSemantics: true)
         )
@@ -158,10 +158,10 @@ class _SettingsLanguageAndTimePageState extends State<SettingsLanguageAndTimePag
     ],));
   }
 
-  void _onTimeZoneOption(String name, bool useDeviceLocalTimeZone) {
-    if (useDeviceLocalTimeZone != AppDateTime().useDeviceLocalTimeZone) {
+  void _onTimeZoneOption(String name, bool useUniversityTimeZone) {
+    if (useUniversityTimeZone != AppDateTime().useUniversityTimeZone) {
       Analytics().logSelect(target: name);
-      AppDateTime().useDeviceLocalTimeZone = useDeviceLocalTimeZone;
+      AppDateTime().useUniversityTimeZone = useUniversityTimeZone;
     }
   }
 
