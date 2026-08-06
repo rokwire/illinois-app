@@ -66,11 +66,11 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   void initState() {
     super.initState();
 
-    TZDateTime nowDisplay = AppDateTime().getDisplayNowTZDateTime();
+    TZDateTime nowDisplay = AppDateTime().getZonedNowTZTime();
     TZDateTime? nextAvailDisplay = (widget.scheduleParam.person?.nextAvailableTimeUtc != null) ?
-      AppDateTime().getDisplayTZDateTime(widget.scheduleParam.person!.nextAvailableTimeUtc!) :
+      AppDateTime().getZonedTZTimeFromUtc(widget.scheduleParam.person!.nextAvailableTimeUtc!) :
       ((widget.scheduleParam.unit?.nextAvailableTimeUtc != null) ?
-        AppDateTime().getDisplayTZDateTime(widget.scheduleParam.unit!.nextAvailableTimeUtc!) : null);
+        AppDateTime().getZonedTZTimeFromUtc(widget.scheduleParam.unit!.nextAvailableTimeUtc!) : null);
 
     _minDate = TZDateTimeUtils.dateOnly((nextAvailDisplay != null) ?
       TZDateTimeUtils.max(nextAvailDisplay, nowDisplay) : nowDisplay);
@@ -302,7 +302,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
         initialDate: _selectedDate!,
         firstDate: _minDate,
         lastDate: _maxDate,
-        currentDate: AppDateTime().getDisplayNowTZDateTime(),
+        currentDate: AppDateTime().getZonedNowTZTime(),
         selectableDayPredicate: _canSelectDate,
       ).then((DateTime? result) {
         if ((result != null) && mounted) {
@@ -444,7 +444,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     if (timeSlots != null) {
       for (AppointmentTimeSlot timeSlot in timeSlots) {
         if ((timeSlot.startTimeUtc != null) && (minTimestamp <= timeSlot.startTimeUtc!.microsecondsSinceEpoch)) {
-          return TZDateTimeUtils.dateOnly(AppDateTime().getDisplayTZDateTime(timeSlot.startTimeUtc!));
+          return TZDateTimeUtils.dateOnly(AppDateTime().getZonedTZTimeFromUtc(timeSlot.startTimeUtc!));
         }
       }
     }

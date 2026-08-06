@@ -134,7 +134,7 @@ class Game with Explore implements Favorite {
     DateTime universityLocalGameStartDateTime = date!; //dateTimeUtc.add(durationDifferenceUniversityToGmt);
     DateTime? universityLocalGameEndDateTime = endDate; //AppDateTime().getUniLocalTimeFromUtcTime(endDateTimeUtc);
     DateTime nowUtcDateTime = AppDateTime().now.toUtc();
-    DateTime nowDisplayDateTime = AppDateTime().getDisplayZonedDateTime(dateTimeUtc: nowUtcDateTime)!;
+    DateTime nowDisplayDateTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: nowUtcDateTime)!;
     bool startDateIsToday = (nowDisplayDateTime.year == universityLocalGameStartDateTime.year) &&
         (nowDisplayDateTime.month == universityLocalGameStartDateTime.month) &&
         (nowDisplayDateTime.day == universityLocalGameStartDateTime.day);
@@ -151,7 +151,7 @@ class Game with Explore implements Favorite {
   }
 
   DateTime? get dateTimeUniLocal {
-    return AppDateTime().getUniversityLocalTimeFromUtcTime(dateTimeUtc);
+    return AppDateTime().getUniversityTimeFromUtc(dateTimeUtc);
   }
 
   DateTime? get date {

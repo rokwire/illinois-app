@@ -509,7 +509,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _initCalendarDates() {
-    DateTime now = AppDateTime().getDisplayNowTZDateTime();
+    DateTime now = AppDateTime().getZonedNowTZTime();
     _calendarStartDate = now.subtract(Duration(days: now.weekday));
     _calendarEndDate = now.add(Duration(days: (7 - (now.weekday + 1))));
   }
@@ -992,7 +992,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
   void initState() {
     super.initState();
     _item = widget.item;
-    _reminderDateTime = AppDateTime().getDisplayZonedDateTime(dateTimeUtc: _item.reminderDateTimeUtc) ?? _item.dueDateTime!;
+    _reminderDateTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: _item.reminderDateTimeUtc) ?? _item.dueDateTime!;
   }
 
   @override

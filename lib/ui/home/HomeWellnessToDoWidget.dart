@@ -195,7 +195,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> with No
   List<WellnessToDoItem>? _buildTodayItems() {
     List<WellnessToDoItem>? todayItems;
     if (CollectionUtils.isNotEmpty(_toDoItems)) {
-      DateTime now = AppDateTime().getDisplayNowTZDateTime();
+      DateTime now = AppDateTime().getZonedNowTZTime();
       todayItems = <WellnessToDoItem>[];
       for (WellnessToDoItem item in _toDoItems!) {
         DateTime? dueDate = item.dueDateTime;

@@ -319,7 +319,7 @@ class CanvasAssignment {
   }
 
   DateTime? get dueAtDisplay {
-    return AppDateTime().getDisplayZonedDateTime(dateTimeUtc: dueAt);
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dueAt);
   }
 
   String? get dueDisplayDateTime {
@@ -386,7 +386,7 @@ class CanvasSubmission {
   CanvasSubmission({this.id, this.submittedAt});
 
   DateTime? get submittedAtDisplay {
-    return AppDateTime().getDisplayZonedDateTime(dateTimeUtc: submittedAt);
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: submittedAt);
   }
 
   String? get submittedDisplayDateTime {
@@ -439,7 +439,7 @@ class CanvasDiscussionTopic {
   }
 
   DateTime? get postedAtDisplay {
-    return AppDateTime().getDisplayZonedDateTime(dateTimeUtc: postedAt);
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: postedAt);
   }
 
   String? get postedAtDisplayDate {
@@ -622,7 +622,7 @@ class CanvasCollaboration {
   }
 
   DateTime? get createdAtDisplay {
-    return AppDateTime().getDisplayZonedDateTime(dateTimeUtc: createdAt);
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: createdAt);
   }
 
   String? get createdAtDisplayDate {
@@ -688,11 +688,11 @@ class CanvasCalendarEvent implements Favorite {
   }
 
   DateTime? get startAtDisplay {
-    return AppDateTime().getDisplayZonedDateTime(dateTimeUtc: startAt);
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: startAt);
   }
 
   DateTime? get endAtDisplay {
-    return AppDateTime().getDisplayZonedDateTime(dateTimeUtc: endAt);
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: endAt);
   }
 
   String? get startAtDisplayDate {
@@ -807,11 +807,11 @@ class CanvasAccountNotification {
   }
 
   DateTime? get startAtDisplay {
-    return AppDateTime().getDisplayZonedDateTime(dateTimeUtc: startAt);
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: startAt);
   }
 
   DateTime? get endAtDisplay {
-    return AppDateTime().getDisplayZonedDateTime(dateTimeUtc: endAt);
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: endAt);
   }
 
   String? get startAtDisplayDate {

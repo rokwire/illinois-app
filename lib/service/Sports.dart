@@ -591,7 +591,7 @@ class Sports with Service, NotificationsListener {
     if (StringUtils.isNotEmpty(id)) {
       queryParams += '?id=$id';
     } else if (startDate == null) {
-      startDate = AppDateTime().getDisplayNowTZDateTime();
+      startDate = AppDateTime().getZonedNowTZTime();
     }
 
     if (startDate != null) {

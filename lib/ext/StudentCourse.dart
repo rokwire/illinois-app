@@ -223,7 +223,7 @@ extension StudentCourseSectionExt on StudentCourseSection {
     }
     TZDateTime referenceDay = TZDateTime.now(uniLocation);
     TZDateTime uniWallClock = TZDateTime(uniLocation, referenceDay.year, referenceDay.month, referenceDay.day, hours, minutes);
-    return AppDateTime().getDisplayZonedDateTime(dateTimeUtc: uniWallClock.toUtc()) ?? uniWallClock;
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: uniWallClock.toUtc()) ?? uniWallClock;
   }
 
   ///

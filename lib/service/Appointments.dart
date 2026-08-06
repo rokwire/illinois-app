@@ -587,7 +587,7 @@ class Appointments with Service, NotificationsListener {
     DateTime dayUtc = startDateUtc;
     List<AppointmentTimeSlot> result = <AppointmentTimeSlot>[];
     while (dayUtc.isBefore(endDateUtc)) {
-      DateTime dayLocal = AppDateTime().getUniversityOrDeviceTZDateTime(dayUtc);
+      DateTime dayLocal = AppDateTime().getUniversityOrDeviceTZTimeFromUtc(dayUtc);
       if ((dayLocal.weekday != DateTime.saturday) && (dayLocal.weekday != DateTime.sunday)) {
         final Duration slotDuration = Duration(minutes: 30);
         

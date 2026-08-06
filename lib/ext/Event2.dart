@@ -99,14 +99,14 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayDateAndTime({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime nowLocal = AppDateTime().getDisplayNowTZDateTime();
+      TZDateTime nowLocal = AppDateTime().getZonedNowTZTime();
       TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
 
-      TZDateTime startDateTimeLocal = AppDateTime().getDisplayTZDateTime(startTimeUtc!);
+      TZDateTime startDateTimeLocal = AppDateTime().getZonedTZTimeFromUtc(startTimeUtc!);
       TZDateTime startDateTimeMidnightLocal = TZDateTimeUtils.dateOnly(startDateTimeLocal);
       int statDaysDiff = startDateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
 
-      TZDateTime? endDateTimeLocal = (endTimeUtc != null) ? AppDateTime().getDisplayTZDateTime(endTimeUtc!) : null;
+      TZDateTime? endDateTimeLocal = (endTimeUtc != null) ? AppDateTime().getZonedTZTimeFromUtc(endTimeUtc!) : null;
       TZDateTime? endDateTimeMidnightLocal = (endDateTimeLocal != null) ? TZDateTimeUtils.dateOnly(endDateTimeLocal) : null;
       int? endDaysDiff = (endDateTimeMidnightLocal != null) ? endDateTimeMidnightLocal.difference(nowMidnightLocal).inDays : null;
 
@@ -176,7 +176,7 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayStartDateTime({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime startDateTimeLocal = AppDateTime().getDisplayTZDateTime(startTimeUtc!);
+      TZDateTime startDateTimeLocal = AppDateTime().getZonedTZTimeFromUtc(startTimeUtc!);
       String startDateFormat = (longFormat ? 'EEEE, MMMM d, yyyy' : 'MMM d, yyyy');
       String displayStartDate = DateFormat(startDateFormat).format(startDateTimeLocal);
       String startTimeFormat = 'h:mma';
@@ -195,14 +195,14 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayDate({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime nowLocal = AppDateTime().getDisplayNowTZDateTime();
+      TZDateTime nowLocal = AppDateTime().getZonedNowTZTime();
       TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
 
-      TZDateTime startDateTimeLocal = AppDateTime().getDisplayTZDateTime(startTimeUtc!);
+      TZDateTime startDateTimeLocal = AppDateTime().getZonedTZTimeFromUtc(startTimeUtc!);
       TZDateTime startDateTimeMidnightLocal = TZDateTimeUtils.dateOnly(startDateTimeLocal);
       int statDaysDiff = startDateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
 
-      TZDateTime? endDateTimeLocal = (endTimeUtc != null) ? AppDateTime().getDisplayTZDateTime(endTimeUtc!) : null;
+      TZDateTime? endDateTimeLocal = (endTimeUtc != null) ? AppDateTime().getZonedTZTimeFromUtc(endTimeUtc!) : null;
       TZDateTime? endDateTimeMidnightLocal = (endDateTimeLocal != null) ? TZDateTimeUtils.dateOnly(endDateTimeLocal) : null;
       int? endDaysDiff = (endDateTimeMidnightLocal != null) ? endDateTimeMidnightLocal.difference(nowMidnightLocal).inDays : null;
 
@@ -246,14 +246,14 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayTime({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime nowLocal = AppDateTime().getDisplayNowTZDateTime();
+      TZDateTime nowLocal = AppDateTime().getZonedNowTZTime();
       TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
 
-      TZDateTime startDateTimeLocal = AppDateTime().getDisplayTZDateTime(startTimeUtc!);
+      TZDateTime startDateTimeLocal = AppDateTime().getZonedTZTimeFromUtc(startTimeUtc!);
       TZDateTime startDateTimeMidnightLocal = TZDateTimeUtils.dateOnly(startDateTimeLocal);
       int statDaysDiff = startDateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
 
-      TZDateTime? endDateTimeLocal = (endTimeUtc != null) ? AppDateTime().getDisplayTZDateTime(endTimeUtc!) : null;
+      TZDateTime? endDateTimeLocal = (endTimeUtc != null) ? AppDateTime().getZonedTZTimeFromUtc(endTimeUtc!) : null;
       TZDateTime? endDateTimeMidnightLocal = (endDateTimeLocal != null) ? TZDateTimeUtils.dateOnly(endDateTimeLocal) : null;
       int? endDaysDiff = (endDateTimeMidnightLocal != null) ? endDateTimeMidnightLocal.difference(nowMidnightLocal).inDays : null;
 

@@ -118,7 +118,7 @@ class _StudentCoursesCalendarContentWidgetState extends State<StudentCoursesCale
 
   @override
   Widget build(BuildContext context) {
-    TZDateTime now = AppDateTime().getDisplayNowTZDateTime();
+    TZDateTime now = AppDateTime().getZonedNowTZTime();
 
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       _dayColumnWidth = (constraints.maxWidth - _timeColumnWidth) / StudentCoursesCalendarLayout.weekdayOrder.length;

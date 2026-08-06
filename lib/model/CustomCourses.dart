@@ -102,9 +102,9 @@ class UserCourse {
       pauses: JsonUtils.intValue(json['pauses']),
       pauseUses: deviceTimeListFromJson(json['pause_uses']),
       course: Course.fromJson(json['course']),
-      dateCreated: AppDateTime().getDeviceDateTimeFromJson(json['date_created']),
-      dateUpdated: AppDateTime().getDeviceDateTimeFromJson(json['date_updated']),
-      dateDropped: AppDateTime().getDeviceDateTimeFromJson(json['date_dropped']),
+      dateCreated: AppDateTime().getDeviceTimeFromJson(json['date_created']),
+      dateUpdated: AppDateTime().getDeviceTimeFromJson(json['date_updated']),
+      dateDropped: AppDateTime().getDeviceTimeFromJson(json['date_dropped']),
     );
   }
 
@@ -144,7 +144,7 @@ class UserCourse {
       List<DateTime> times = [];
       for (dynamic timeJson in JsonUtils.listValue(value) ?? []) {
         if (timeJson is String) {
-          DateTime? time = AppDateTime().getDeviceTimeFromUtcTime(DateTimeUtils.dateTimeFromString(timeJson));
+          DateTime? time = AppDateTime().getDeviceTimeFromUtc(DateTimeUtils.dateTimeFromString(timeJson));
           if (time != null) {
             times.add(time);
           }
@@ -443,8 +443,8 @@ class UserUnit {
       completed: JsonUtils.intValue(json['completed']) ?? 0,
       current: JsonUtils.boolValue(json['current']) ?? false,
       unit: Unit.fromJson(json['unit']),
-      dateCreated: AppDateTime().getDeviceDateTimeFromJson(json['date_created']),
-      dateUpdated: AppDateTime().getDeviceDateTimeFromJson(json['date_updated']),
+      dateCreated: AppDateTime().getDeviceTimeFromJson(json['date_created']),
+      dateUpdated: AppDateTime().getDeviceTimeFromJson(json['date_updated']),
       userSchedule: UserScheduleItem.listFromJson(JsonUtils.listValue(json['user_schedule']))
     );
   }
@@ -510,8 +510,8 @@ class UserScheduleItem{
     }
     return UserScheduleItem(
       userContent: UserContentReference.listFromJson(JsonUtils.listValue(json['user_content'])),
-      dateStarted: AppDateTime().getDeviceDateTimeFromJson(json['date_started']),
-      dateCompleted: AppDateTime().getDeviceDateTimeFromJson(json['date_completed']),
+      dateStarted: AppDateTime().getDeviceTimeFromJson(json['date_started']),
+      dateCompleted: AppDateTime().getDeviceTimeFromJson(json['date_completed']),
     );
   }
 
@@ -656,8 +656,8 @@ class UserContent{
       unitKey: JsonUtils.stringValue(json['unit_key']),
       content: Content.fromJson(json['content']),
       response: JsonUtils.mapValue(json['response']),
-      dateCreated: AppDateTime().getDeviceDateTimeFromJson(json['date_created']),
-      dateUpdated: AppDateTime().getDeviceDateTimeFromJson(json['date_updated']),
+      dateCreated: AppDateTime().getDeviceTimeFromJson(json['date_created']),
+      dateUpdated: AppDateTime().getDeviceTimeFromJson(json['date_updated']),
     );
   }
 

@@ -253,8 +253,8 @@ extension DiningScheduleUtils on DiningSchedule {
 
   bool get isToday {
     if (eventDateUtc != null && eventDateUtc != null) {
-      DateTime nowDisplayTime = AppDateTime().getDisplayZonedDateTime(dateTimeUtc: DateTime.now().toUtc())!;
-      DateTime scheduleDisplayTime = AppDateTime().getDisplayZonedDateTime(dateTimeUtc: eventDateUtc!.toUtc())!;
+      DateTime nowDisplayTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: DateTime.now().toUtc())!;
+      DateTime scheduleDisplayTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: eventDateUtc!.toUtc())!;
       return nowDisplayTime.year == scheduleDisplayTime.year &&
           nowDisplayTime.month == scheduleDisplayTime.month && nowDisplayTime.day == scheduleDisplayTime.day;
     }

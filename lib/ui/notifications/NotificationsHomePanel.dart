@@ -529,7 +529,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
   }
 
   List<String> _buildDateLabels() {
-    TZDateTime now = AppDateTime().getDisplayNowTZDateTime();
+    TZDateTime now = AppDateTime().getZonedNowTZTime();
     TZDateTime today = TZDateTime(AppDateTime().displayLocation, now.year, now.month, now.day);
     Map<_TimeFilter, _DateInterval> intervals = _getTimeFilterIntervals();
 
@@ -820,7 +820,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
     Map<_TimeFilter, List<InboxMessage>> timesMap = Map<_TimeFilter, List<InboxMessage>>();
     List<InboxMessage>? otherList;
     for (InboxMessage? message in _messages) {
-      _TimeFilter? timeFilter = _timeFilterFromDate(AppDateTime().getDisplayZonedDateTime(dateTimeUtc: message!.dateCreatedUtc), intervals: intervals);
+      _TimeFilter? timeFilter = _timeFilterFromDate(AppDateTime().getZonedTimeFromUtc(dateTimeUtc: message!.dateCreatedUtc), intervals: intervals);
       if (timeFilter != null) {
         List<InboxMessage>? timeList = timesMap[timeFilter];
         if (timeList == null) {
@@ -857,7 +857,7 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
 
   Map<_TimeFilter, _DateInterval> _getTimeFilterIntervals() {
     Location location = AppDateTime().displayLocation;
-    TZDateTime now = AppDateTime().getDisplayNowTZDateTime();
+    TZDateTime now = AppDateTime().getZonedNowTZTime();
     return {
       _TimeFilter.Today: _DateInterval(startDate: TZDateTime(location, now.year, now.month, now.day)),
       _TimeFilter.Yesterday:

@@ -100,7 +100,7 @@ extension AppointmentProviderUtils on AppointmentProvider {
 
 extension AppointmentUnitExt on AppointmentUnit {
   String? get displayNextAvailableTime => (nextAvailableTimeUtc != null) ?
-    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(AppDateTime().getDisplayTZDateTime(nextAvailableTimeUtc!)) : null;
+    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(AppDateTime().getZonedTZTimeFromUtc(nextAvailableTimeUtc!)) : null;
 
   String? get displayNumberOfPersons {
     int count = numberOfPersons ?? 0;
@@ -123,7 +123,7 @@ extension AppointmentUnitExt on AppointmentUnit {
 
 extension AppointmentPersonExt on AppointmentPerson {
   String? get displayNextAvailableTime => (nextAvailableTimeUtc != null) ?
-    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(AppDateTime().getDisplayTZDateTime(nextAvailableTimeUtc!)) :
+    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(AppDateTime().getZonedTZTimeFromUtc(nextAvailableTimeUtc!)) :
     Localization().getStringEx('panel.appointment.schedule.next_available_appointment.unknown.label', 'Unknown');
 
   String? get displayNumberOfAvailableSlots {
@@ -141,8 +141,8 @@ extension AppointmentPersonExt on AppointmentPerson {
 
 extension AppointmentTimeSlotExt on AppointmentTimeSlot {
 
-  DateTime? get startTime => (startTimeUtc != null) ? AppDateTime().getDisplayTZDateTime(startTimeUtc!) : null;
-  DateTime? get endTime => (endTimeUtc != null) ? AppDateTime().getDisplayTZDateTime(endTimeUtc!) : null;
+  DateTime? get startTime => (startTimeUtc != null) ? AppDateTime().getZonedTZTimeFromUtc(startTimeUtc!) : null;
+  DateTime? get endTime => (endTimeUtc != null) ? AppDateTime().getZonedTZTimeFromUtc(endTimeUtc!) : null;
 
   String? get displayLongScheduleTime =>
     getLongDisplayScheduleTime(startTimeUtc, endTimeUtc);
@@ -153,12 +153,12 @@ extension AppointmentTimeSlotExt on AppointmentTimeSlot {
   static String? getLongDisplayScheduleTime(DateTime? startTimeUtc, DateTime? endTimeUtc) {
     if (startTimeUtc != null) {
       if (endTimeUtc != null) {
-        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy h:mm').format(AppDateTime().getDisplayTZDateTime(startTimeUtc));
-        String endTimeStr = DateFormat('h:mm aaa').format(AppDateTime().getDisplayTZDateTime(endTimeUtc));
+        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy h:mm').format(AppDateTime().getZonedTZTimeFromUtc(startTimeUtc));
+        String endTimeStr = DateFormat('h:mm aaa').format(AppDateTime().getZonedTZTimeFromUtc(endTimeUtc));
         return "$startTimeStr - $endTimeStr";
       }
       else {
-        return DateFormat('EEEE, MMMM d, yyyy h:mm aaa').format(AppDateTime().getDisplayTZDateTime(startTimeUtc));
+        return DateFormat('EEEE, MMMM d, yyyy h:mm aaa').format(AppDateTime().getZonedTZTimeFromUtc(startTimeUtc));
       }
     }
     return null;
@@ -167,12 +167,12 @@ extension AppointmentTimeSlotExt on AppointmentTimeSlot {
   static String? getShortDisplayScheduleTime(DateTime? startTimeUtc, DateTime? endTimeUtc) {
     if (startTimeUtc != null) {
       if (endTimeUtc != null) {
-        String startTimeStr = DateFormat('EEE, MMM d, yyyy h:mm').format(AppDateTime().getDisplayTZDateTime(startTimeUtc));
-        String endTimeStr = DateFormat('h:mm aaa').format(AppDateTime().getDisplayTZDateTime(endTimeUtc));
+        String startTimeStr = DateFormat('EEE, MMM d, yyyy h:mm').format(AppDateTime().getZonedTZTimeFromUtc(startTimeUtc));
+        String endTimeStr = DateFormat('h:mm aaa').format(AppDateTime().getZonedTZTimeFromUtc(endTimeUtc));
         return "$startTimeStr-$endTimeStr";
       }
       else {
-        return DateFormat('EEE, MMM d, yyyy h:mm aaa').format(AppDateTime().getDisplayTZDateTime(startTimeUtc));
+        return DateFormat('EEE, MMM d, yyyy h:mm aaa').format(AppDateTime().getZonedTZTimeFromUtc(startTimeUtc));
       }
     }
     return null;

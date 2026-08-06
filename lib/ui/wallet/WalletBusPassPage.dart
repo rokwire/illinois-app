@@ -280,7 +280,7 @@ class _BusClockState extends State<_BusClock> {
   }
 
   String? get _timeString {
-    DateTime? uniTime = AppDateTime().getUniversityLocalTimeFromUtcTime(DateTime.now().toUtc());
+    DateTime? uniTime = AppDateTime().getUniversityTimeFromUtc(DateTime.now().toUtc());
     return AppDateTime().formatDateTime(uniTime, format: "hh:mm:ss", ignoreTimeZone: true);
   }
 

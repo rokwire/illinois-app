@@ -47,7 +47,7 @@ class RewardHistoryEntry {
   }
 
   DateTime? get displayDateCreated {
-    return AppDateTime().getDisplayZonedDateTime(dateTimeUtc: dateCreated);
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dateCreated);
   }
 
   String? get displayDateString {

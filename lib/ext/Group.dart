@@ -48,7 +48,7 @@ extension GroupExt on Group {
   }
 
   String? get displayUpdateTime {
-    DateTime? displayDateTime = AppDateTime().getDisplayZonedDateTime(dateTimeUtc: dateUpdatedUtc);
+    DateTime? displayDateTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dateUpdatedUtc);
     if (displayDateTime != null) {
       DateTime now = DateTime.now();
       if (displayDateTime.compareTo(now) < 0) {
@@ -93,7 +93,7 @@ extension GroupExt on Group {
   }
 
   String? get displayManagedMembershipUpdateTime {
-    DateTime? displayManagedDateTime = AppDateTime().getDisplayZonedDateTime(dateTimeUtc: dateManagedMembershipUpdatedUtc);
+    DateTime? displayManagedDateTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dateManagedMembershipUpdatedUtc);
     if (displayManagedDateTime != null) {
       String formattedManagedDateTime = DateFormat('yyyy/MM/dd h:mma').format(displayManagedDateTime);
       return formattedManagedDateTime;
@@ -102,7 +102,7 @@ extension GroupExt on Group {
   }
 
   String? get displayMembershipUpdateTime {
-    DateTime? displayMembershipDateTime = AppDateTime().getDisplayZonedDateTime(dateTimeUtc: dateMembershipUpdatedUtc);
+    DateTime? displayMembershipDateTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dateMembershipUpdatedUtc);
     if (displayMembershipDateTime != null) {
       String formattedMembershipDateTime = DateFormat('yyyy/MM/dd h:mma').format(displayMembershipDateTime);
       return formattedMembershipDateTime;

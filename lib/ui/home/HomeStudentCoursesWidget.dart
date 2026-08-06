@@ -239,7 +239,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
   }
 
   Widget _buildCalendarContent() {
-    int todayIndex = StudentCoursesCalendarLayout.weekdayOrder.indexOf(AppDateTime().getDisplayNowTZDateTime().weekday);
+    int todayIndex = StudentCoursesCalendarLayout.weekdayOrder.indexOf(AppDateTime().getZonedNowTZTime().weekday);
     int initialPageIndex = _calendarPageIndex ?? ((0 <= todayIndex) ? todayIndex : 0);
 
     return _HomeStudentCoursesCalendarPager(

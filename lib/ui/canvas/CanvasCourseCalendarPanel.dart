@@ -524,7 +524,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
   }
 
   bool _isToday(DateTime currentDate) {
-    DateTime now = AppDateTime().getDisplayNowTZDateTime();
+    DateTime now = AppDateTime().getZonedNowTZTime();
     return (currentDate.year == now.year) && (currentDate.month == now.month) && (currentDate.day == now.day);
   }
 
@@ -555,7 +555,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
   }
 
   void _initCalendarDates() {
-    _selectedDate = TZDateTimeUtils.dateOnly(AppDateTime().getDisplayNowTZDateTime());
+    _selectedDate = TZDateTimeUtils.dateOnly(AppDateTime().getZonedNowTZTime());
     _initEventsTimeFrame();
   }
 

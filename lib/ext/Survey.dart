@@ -31,17 +31,17 @@ extension SurveyExt on Survey {
       switch(daysDiff) {
         case 0: return Localization().getStringEx('model.explore.date_time.today', 'Today');
         case 1: return Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow');
-        default: return DateFormat(format).format(AppDateTime().getDisplayTZDateTime(dateTime));
+        default: return DateFormat(format).format(AppDateTime().getZonedTZTimeFromUtc(dateTime));
       }
     }
     return null;
   }
 
   static int displayDateDiff(DateTime dateTime) {
-    TZDateTime nowDisplay = AppDateTime().getDisplayNowTZDateTime();
+    TZDateTime nowDisplay = AppDateTime().getZonedNowTZTime();
     TZDateTime nowMidnightDisplay = TZDateTimeUtils.dateOnly(nowDisplay);
 
-    TZDateTime dateTimeDisplay = AppDateTime().getDisplayTZDateTime(dateTime);
+    TZDateTime dateTimeDisplay = AppDateTime().getZonedTZTimeFromUtc(dateTime);
     TZDateTime dateTimeMidnightDisplay = TZDateTimeUtils.dateOnly(dateTimeDisplay);
 
     return dateTimeMidnightDisplay.difference(nowMidnightDisplay).inDays;
