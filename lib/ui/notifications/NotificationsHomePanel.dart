@@ -40,6 +40,8 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
+import '../widgets/LinkButton.dart';
+
 class NotificationsHomePanel extends StatefulWidget {
   static final String routeName = 'settings_notifications_content_panel';
 
@@ -398,14 +400,19 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
   }
 
   Widget _buildReadAllButton() {
-    return Semantics(
-        container: true,
-        child: Container(
-            child: UnderlinedButton(
-                title: Localization().getStringEx('panel.inbox.mark_all_read.label', 'Mark all as read'),
-                padding: EdgeInsets.symmetric(vertical: 8),
-                progress: _loadingMarkAllAsRead,
-                onTap: _onTapMarkAllAsRead)));
+    return Container(child:
+      Stack(alignment: Alignment.center, children: [
+        LinkButton(
+          title: Localization().getStringEx('panel.inbox.mark_all_read.label', 'Mark all as read'),
+          textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.medium.underline'),
+          padding: EdgeInsets.symmetric(vertical: 12),
+          onTap: _onTapMarkAllAsRead,
+        ),
+        (_loadingMarkAllAsRead)
+          ? CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))
+          : Container()
+      ])
+    );
   }
 
   // Filter Widgets
