@@ -17,7 +17,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -280,10 +279,11 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     List<Widget> content = [];
     for(SurveyResponse response in _responses) {
       String? dateTakenFormatted;
+      DateTime? dateTakenZoned = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: response.dateTaken);
       if (showTimeOnly) {
-        dateTakenFormatted = DateTimeUtils.utcTimeToString(response.dateTaken, AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix);
+        dateTakenFormatted = DateTimeUtils.timeToString(dateTakenZoned, timeZoneSuffix: AppDateTime().timeZoneSuffix);
       } else {
-        dateTakenFormatted = AppDateTime().formatDisplayDateTime(response.dateTaken);
+        dateTakenFormatted = AppRelativeTime.relativeDateTimeSinceDate(dateTime: dateTakenZoned, location: AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix);
       }
       Widget widget = SurveyBuilder.surveyResponseCard(context, response, dateTakenFormatted: dateTakenFormatted);
       content.add(widget);

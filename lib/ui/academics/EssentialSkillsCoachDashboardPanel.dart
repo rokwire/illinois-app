@@ -467,7 +467,7 @@ class _EssentialSkillsCoachDashboardState extends State<EssentialSkillsCoachDash
       String? unlockTimeText;
       if (isNextWithCurrentComplete && nextCourseDayStart != null) {
         DateTime? nextCourseDayStartZoned = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: nextCourseDayStart);
-        unlockTimeText = '${AppRelativeTime.relativeDaySinceDate(dateTime: nextCourseDayStartZoned, location: AppDateTime().zonedLocation, includeAtSuffix: true)} ${DateTimeUtils.utcTimeToString(nextCourseDayStart, AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix)}';
+        unlockTimeText = '${AppRelativeTime.relativeDaySinceDate(dateTime: nextCourseDayStartZoned, location: AppDateTime().zonedLocation, includeAtSuffix: true)} ${DateTimeUtils.timeToString(nextCourseDayStartZoned, timeZoneSuffix: AppDateTime().timeZoneSuffix)}';
       }
       contentWidget = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),

@@ -450,6 +450,11 @@ class AppRelativeTime {
     return displayDay;
   }
 
+  static String relativeDateTimeSinceDate({DateTime? dateTime, timezone.Location? location, String? timeZoneSuffix, bool allDay = false, bool includeAtSuffix = false}) {
+    String? dayPart = relativeDaySinceDate(dateTime: dateTime, location: location, allDay: allDay, includeAtSuffix: includeAtSuffix);
+    String? timePart = allDay ? '' : DateTimeUtils.timeToString(dateTime, timeZoneSuffix: timeZoneSuffix);
+    return '$dayPart $timePart';
+  }
 }
 
 class AppPrivacyPolicy {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/datetime_utils.dart';
@@ -70,7 +70,8 @@ extension GameExt on Game {
       dateFormatted += ' ${StringUtils.ensureNotEmpty(timeToString)}';
       return dateFormatted;
     } else {
-      return AppDateTime().formatDisplayDateTime(dateTimeUtc!, allDay: allDay ?? false);
+      DateTime? dateTimeZoned = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dateTimeUtc);
+      return AppRelativeTime.relativeDateTimeSinceDate(dateTime: dateTimeZoned, location: AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix, allDay: allDay ?? false);
     }
   }
 

@@ -333,7 +333,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> with NotificationsLis
 
       DateTime? courseDayFinalNotificationZoned = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: widget.courseDayFinalNotification);
       String completionResponseDay = AppRelativeTime.relativeDaySinceDate(dateTime: courseDayFinalNotificationZoned, location: AppDateTime().zonedLocation, includeAtSuffix: true)?.toLowerCase() ?? '';
-      String completionResponseTime = DateTimeUtils.utcTimeToString(widget.courseDayFinalNotification, AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix) ?? '';
+      String completionResponseTime = DateTimeUtils.timeToString(courseDayFinalNotificationZoned, timeZoneSuffix: AppDateTime().timeZoneSuffix) ?? '';
       String completionResponseDateTime = 'later';
       if (completionResponseDay.isNotEmpty) {
         completionResponseDateTime = completionResponseDay;
@@ -571,7 +571,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> with NotificationsLis
   String _formatDisplayTime(DateTime dateTimeUtc) {
     DateTime? zonedDateTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dateTimeUtc);
     String prefix = AppRelativeTime.relativeDaySinceDate(dateTime: zonedDateTime, location: AppDateTime().zonedLocation, includeAtSuffix: true) ?? '';
-    String suffix = DateTimeUtils.utcTimeToString(dateTimeUtc, AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix) ?? '';
+    String suffix = DateTimeUtils.timeToString(zonedDateTime, timeZoneSuffix: AppDateTime().timeZoneSuffix) ?? '';
     return '$prefix $suffix';
   }
 
