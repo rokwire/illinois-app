@@ -15,7 +15,6 @@
  */
 
 import 'package:collection/collection.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -330,7 +329,7 @@ class CanvasAssignment {
     int nowYear = DateTime.now().year;
     int dueYear = dueAtDisplay!.year;
     String dateTimeFormat = (nowYear != dueYear) ? 'yyyy-MM-dd' : 'MMM d, h:mma';
-    String? dueDisplayDate = AppDateTime().formatDateTime(dueAtDisplay, format: dateTimeFormat);
+    String? dueDisplayDate = DateTimeUtils.dateTimeToString(dueAtDisplay, format: dateTimeFormat);
     return dueDisplayDate;
   }
 
@@ -397,7 +396,7 @@ class CanvasSubmission {
     int nowYear = DateTime.now().year;
     int dueYear = submittedAtDisplay!.year;
     String dateTimeFormat = (nowYear != dueYear) ? 'yyyy-MM-dd' : 'MMM d, h:mma';
-    String? dueDisplayDate = AppDateTime().formatDateTime(submittedAtDisplay, format: dateTimeFormat);
+    String? dueDisplayDate = DateTimeUtils.dateTimeToString(submittedAtDisplay, format: dateTimeFormat);
     return dueDisplayDate;
   }
 
@@ -444,7 +443,7 @@ class CanvasDiscussionTopic {
   }
 
   String? get postedAtDisplayDate {
-    return AppDateTime().formatDateTime(postedAtDisplay, format: _canvasDisplayDateTimeFormat);
+    return DateTimeUtils.dateTimeToString(postedAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasDiscussionTopic>? listFromJson(List<dynamic>? jsonList) {
@@ -627,7 +626,7 @@ class CanvasCollaboration {
   }
 
   String? get createdAtDisplayDate {
-    return AppDateTime().formatDateTime(createdAtDisplay, format: _canvasDisplayDateTimeFormat);
+    return DateTimeUtils.dateTimeToString(createdAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasCollaboration>? listFromJson(List<dynamic>? jsonList) {
@@ -697,23 +696,23 @@ class CanvasCalendarEvent implements Favorite {
   }
 
   String? get startAtDisplayDate {
-    return AppDateTime().formatDateTime(startAtDisplay, format: _canvasDisplayDateTimeFormat);
+    return DateTimeUtils.dateTimeToString(startAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   String? get endAtDisplayDate {
-    return AppDateTime().formatDateTime(endAtDisplay, format: _canvasDisplayDateTimeFormat);
+    return DateTimeUtils.dateTimeToString(endAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   String? get displayDateTime {
     const String emptyTime = 'N/A';
     const dayFormat = 'MMM d';
     const timeFormat = 'h:mma';
-    String? startTime = AppDateTime().formatDateTime(startAtDisplay, format: '$dayFormat $timeFormat');
+    String? startTime = DateTimeUtils.dateTimeToString(startAtDisplay, format: '$dayFormat $timeFormat');
     String endTimeFormat = timeFormat;
     if (startAtDisplay?.day != endAtDisplay?.day) {
       endTimeFormat = '$dayFormat ' + endTimeFormat;
     }
-    String? endTime = AppDateTime().formatDateTime(endAtDisplay, format: endTimeFormat);
+    String? endTime = DateTimeUtils.dateTimeToString(endAtDisplay, format: endTimeFormat);
     return StringUtils.ensureNotEmpty(startTime, defaultValue: emptyTime) +
         ' - ' +
         StringUtils.ensureNotEmpty(endTime, defaultValue: emptyTime);
@@ -816,7 +815,7 @@ class CanvasAccountNotification {
   }
 
   String? get startAtDisplayDate {
-    return AppDateTime().formatDateTime(startAtDisplay, format: _canvasDisplayDateTimeFormat);
+    return DateTimeUtils.dateTimeToString(startAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasAccountNotification>? listFromJson(List<dynamic>? jsonList) {

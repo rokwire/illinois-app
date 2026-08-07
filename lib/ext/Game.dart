@@ -55,8 +55,15 @@ extension GameExt on Game {
       }
       DateTime? startDisplayDate = useStringDateTimes ? date : dateTimeUtc;
       DateTime? endDisplayDate = useStringDateTimes ? (endDate ?? endDateTimeUtc) : endDateTimeUtc;
-      String? startDateFormatted = AppDateTime().formatDateTime(startDisplayDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
-      String? endDateFormatted = AppDateTime().formatDateTime(endDisplayDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
+      String? startDateFormatted;
+      String? endDateFormatted;
+      if (useStringDateTimes) {
+        startDateFormatted = DateTimeUtils.dateTimeToString(startDisplayDate, format: displayDateFormat);
+        endDateFormatted = DateTimeUtils.dateTimeToString(endDisplayDate, format: displayDateFormat);
+      } else {
+        startDateFormatted = DateTimeUtils.dateTimeToString(AppDateTime().getZonedTimeFromUtc(dateTimeUtc: startDisplayDate), format: displayDateFormat);
+        endDateFormatted = DateTimeUtils.dateTimeToString(AppDateTime().getZonedTimeFromUtc(dateTimeUtc: endDisplayDate), format: displayDateFormat);
+      }
       return '$startDateFormatted - $endDateFormatted';
     } else if (useStringDateTimes) {
       String dateFormatted = DateTimeUtils.dateTimeToString(date, format: displayDateFormat)!; //another workaround

@@ -16,7 +16,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -488,14 +487,14 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
       Widget dayWidget = GestureDetector(
           onTap: () => _onTapWeekDay(i),
           child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'E')),
+            Text(StringUtils.ensureNotEmpty(DateTimeUtils.dateTimeToString(currentWeekDate, format: 'E')),
                 style: Styles().textStyles.getTextStyle("widget.title.small.fat")),
             Padding(
                 padding: EdgeInsets.only(top: 3),
                 child: Container(
                     padding: EdgeInsets.all(10),
                     decoration: _weekDayBoxDecoration(currentWeekDate),
-                    child: Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'd')),
+                    child: Text(StringUtils.ensureNotEmpty(DateTimeUtils.dateTimeToString(currentWeekDate, format: 'd')),
                         style: Styles().textStyles.getTextStyle("widget.title.medium")?.copyWith(color: _weekDayTextColor(currentWeekDate))))),
             Visibility(
                 visible: _hasEvent(currentWeekDate),

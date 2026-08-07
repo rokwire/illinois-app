@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Position.dart';
 import 'package:illinois/model/Dining.dart';
@@ -11,6 +10,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 extension DiningExt on Dining {
@@ -86,11 +86,11 @@ extension DiningUtils on Dining {
   String? get displayWorkTime {
     if (diningSchedules != null && diningSchedules!.isNotEmpty) {
       for(DiningSchedule schedule in diningSchedules!){
+        String timeFormat = "h:mma";
         if((schedule.isOpen) && schedule.isToday){
-          String timeFormat = "h:mma";
-          String formattedEndTime = AppDateTime().formatDateTime(
-              schedule.endTimeUtc, format: timeFormat,
-              showTzSuffix: AppDateTime().showTimeZoneSuffix)!;
+          DateTime? zonedEndTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: schedule.endTimeUtc);
+          String formattedEndTime = DateTimeUtils.dateTimeToString(zonedEndTime, format: timeFormat,
+              timeZoneSuffix: AppDateTime().timeZoneSuffix)!;
 
           return Localization().getStringEx("model.dining.schedule.label.serving","Serving ")
               + schedule.meal!.toLowerCase()
@@ -98,10 +98,9 @@ extension DiningUtils on Dining {
               + formattedEndTime;
         }
         else if(schedule.isFuture && schedule.isToday){
-          String timeFormat = "h:mma";
-          String formattedStartTime = AppDateTime().formatDateTime(
-              schedule.startTimeUtc, format: timeFormat,
-              showTzSuffix: AppDateTime().showTimeZoneSuffix)!;
+          DateTime? zonedStartTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: schedule.startTimeUtc);
+          String formattedStartTime = DateTimeUtils.dateTimeToString(zonedStartTime, format: timeFormat,
+              timeZoneSuffix: AppDateTime().timeZoneSuffix)!;
 
           return Localization().getStringEx("model.dining.schedule.label.serving","Serving ")
               + schedule.meal!.toLowerCase()
@@ -109,10 +108,10 @@ extension DiningUtils on Dining {
               + formattedStartTime;
         }
         else if(schedule.isFuture && schedule.isNextTwoWeeks){
-          String timeFormat = 'MMM d h:mm a';
-          String formattedStartTime = AppDateTime().formatDateTime(
-              schedule.startTimeUtc, format: timeFormat,
-              showTzSuffix: AppDateTime().showTimeZoneSuffix)!;
+          String dateTimeFormat = 'MMM d h:mm a';
+          DateTime? zonedStartTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: schedule.startTimeUtc);
+          String formattedStartTime = DateTimeUtils.dateTimeToString(zonedStartTime, format: dateTimeFormat,
+              timeZoneSuffix: AppDateTime().timeZoneSuffix)!;
 
           return Localization().getStringEx("model.dining.schedule.label.open_on", "Opening on ")
               + formattedStartTime;
@@ -192,7 +191,8 @@ extension DiningUtils on Dining {
   }
 
   String? _dateToLongDisplayDate(DateTime? dateUtc) {
-    return AppDateTime().formatDateTime(dateUtc, format: 'EEEE, MMM d');
+    DateTime? zonedDate = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dateUtc);
+    return DateTimeUtils.dateTimeToString(zonedDate, format: 'EEEE, MMM d');
   }
 
   List<String> locationDetails({ Position? currentLocation }) {
@@ -279,9 +279,11 @@ extension DiningScheduleUtils on DiningSchedule {
   String getDisplayTime(String separator){
     if(startTimeUtc != null && endTimeUtc != null) {
       String timeFormat = 'h:mm a';
-      return AppDateTime().formatDateTime(startTimeUtc, format: timeFormat, showTzSuffix: AppDateTime().showTimeZoneSuffix)! +
+      DateTime? zonedStartTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: startTimeUtc);
+      DateTime? zonedEndTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: endTimeUtc);
+      return DateTimeUtils.dateTimeToString(zonedStartTime, format: timeFormat, timeZoneSuffix: AppDateTime().timeZoneSuffix)! +
           separator +
-          AppDateTime().formatDateTime(endTimeUtc, format: timeFormat, showTzSuffix: AppDateTime().showTimeZoneSuffix)!;
+          DateTimeUtils.dateTimeToString(zonedEndTime, format: timeFormat, timeZoneSuffix: AppDateTime().timeZoneSuffix)!;
     }
     return "";
   }

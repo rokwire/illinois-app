@@ -17,7 +17,6 @@
 import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -30,6 +29,7 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -113,7 +113,8 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
 
     Widget? buildingAccessIcon;
     String? buildingAccessStatus;
-    String? buildingAccessTime = AppDateTime().formatDateTime(_buildingAccessTime, format: 'MMM dd, yyyy HH:mm a');
+    DateTime? buildingAccessTimeZoned = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: _buildingAccessTime?.toUtc());
+    String? buildingAccessTime = DateTimeUtils.dateTimeToString(buildingAccessTimeZoned, format: 'MMM dd, yyyy HH:mm a');
     double buildingAccessStatusHeight = 24;
     double qrCodeImageSize = _buildingAccessIconSize + buildingAccessStatusHeight - 2;
     bool hasQrCode = (0 < (_userQRCodeContent?.length ?? 0));

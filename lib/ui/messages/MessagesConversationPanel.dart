@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/ext/Social.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -34,6 +33,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:universal_io/io.dart';
@@ -319,7 +319,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   ),
                   ),
                   if (message.dateSentUtc != null)
-                    Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
+                    Text(DateTimeUtils.dateTimeToString(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
                 ]),
                 SizedBox(height: 8),
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [

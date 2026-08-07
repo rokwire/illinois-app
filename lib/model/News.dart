@@ -15,7 +15,6 @@
  */
 
 import 'package:collection/collection.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/utils/datetime_utils.dart';
@@ -85,7 +84,8 @@ class News implements Favorite {
     if (pubDateUtc == null) {
       return "";
     }
-    return AppDateTime().formatDateTime(pubDateUtc, format: "MMM dd ");
+    DateTime? zonedPubDate = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: pubDateUtc);
+    return DateTimeUtils.dateTimeToString(zonedPubDate, format: "MMM dd ");
   }
 
   // Favorite

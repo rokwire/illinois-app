@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -52,7 +51,7 @@ class RewardHistoryEntry {
   }
 
   String? get displayDateString {
-    return AppDateTime().formatDateTime(displayDateCreated, format: 'MM-dd-yy h:mm a');
+    return DateTimeUtils.dateTimeToString(displayDateCreated, format: 'MM-dd-yy h:mm a');
   }
 
   String? get displayDescription {

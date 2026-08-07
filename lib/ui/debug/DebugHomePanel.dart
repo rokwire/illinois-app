@@ -18,7 +18,6 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/AppReview.dart';
@@ -35,7 +34,6 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/model/survey.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
@@ -55,6 +53,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/panels/survey_creation_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -350,7 +349,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
       RoundedButton(label: "Clear", fontSize: 16, padding: _smallButtonPadding, contentWeight: 0.0, onTap: _clearDateOffset,),
     ],);
 
-  String get _sportOffsetText => (_offsetDate != null) ? AppDateTime().formatDateTime(_offsetDate, format: 'MM/dd/yyyy HH:mm a')! : "None";
+  String get _sportOffsetText => (_offsetDate != null) ? DateTimeUtils.dateTimeToString(_offsetDate, format: 'MM/dd/yyyy HH:mm a')! : "None";
 
   Widget _buildAppReview() =>
       Row(children: [

@@ -15,7 +15,6 @@
  */
 
 import 'package:collection/collection.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -310,7 +309,8 @@ class MobileIdCredential {
   MobileIdCredential({this.id, this.expirationDate});
 
   String? get displayExpirationDate {
-    return AppDateTime().formatDateTime(expirationDate, format: _expirationDateFormat);
+    DateTime? zonedExpirationDate = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: expirationDate?.toUtc());
+    return DateTimeUtils.dateTimeToString(zonedExpirationDate, format: _expirationDateFormat);
   }
 
   @override

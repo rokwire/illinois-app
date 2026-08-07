@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -14,6 +13,7 @@ import 'package:illinois/ui/wallet/WalletPhotoWrapper.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Analytics.dart';
 
@@ -159,7 +159,12 @@ class _WalletLibraryCardPageState extends State<WalletLibraryCardPage> with Noti
   }
 
   String get _displayRole => (Auth2().iCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your Illini ID") : (Auth2().iCard?.role ?? "");
-  String? get _displayAccessTime => AppDateTime().formatDateTime(_accessTime, format: 'MMM dd, yyyy HH:mm a');
+
+  String? get _displayAccessTime {
+    DateTime? zonedAccessTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: _accessTime.toUtc());
+    return DateTimeUtils.dateTimeToString(zonedAccessTime, format: 'MMM dd, yyyy HH:mm a');
+  }
+
   double get _barcodeWidth => MediaQuery.of(context).size.width / 1.25;
   double get _barcodeHeight => _barcodeWidth / 4;
   bool get _photoBorderDay => ((_accessTime.difference(DateTime(1970)).inDays % 2) == 0); // Used to alternate the photo border color scheme daily
