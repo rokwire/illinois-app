@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/ext/CustomCourses.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/CustomCourses.dart';
@@ -467,7 +466,8 @@ class _EssentialSkillsCoachDashboardState extends State<EssentialSkillsCoachDash
     if (shouldHighlight) {
       String? unlockTimeText;
       if (isNextWithCurrentComplete && nextCourseDayStart != null) {
-        unlockTimeText = '${AppDateTime().formatDisplayDay(dateTimeUtc: nextCourseDayStart, includeAtSuffix: true)} ${DateTimeUtils.utcTimeToString(nextCourseDayStart, AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix)}';
+        DateTime? nextCourseDayStartZoned = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: nextCourseDayStart);
+        unlockTimeText = '${AppRelativeTime.relativeDaySinceDate(dateTime: nextCourseDayStartZoned, location: AppDateTime().zonedLocation, includeAtSuffix: true)} ${DateTimeUtils.utcTimeToString(nextCourseDayStart, AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix)}';
       }
       contentWidget = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),

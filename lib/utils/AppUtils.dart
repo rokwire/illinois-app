@@ -36,6 +36,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:mime/mime.dart';
+import 'package:timezone/timezone.dart' as timezone;
 import 'package:universal_io/io.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:http/http.dart' as http;
@@ -420,6 +421,35 @@ class AppRelativeTime {
       return Localization().getStringEx('logic.date_time.time_ago.just_now', 'Just now');
     }
   }
+
+  static String? relativeDaySinceDate({DateTime? dateTime, timezone.Location? location, bool allDay = false, bool includeAtSuffix = false}) {
+    String? displayDay = '';
+    if (dateTime != null) {
+
+      if (DateTimeUtils.isToday(dateTime, location: location)) {
+        displayDay = Localization().getStringEx('model.explore.date_time.today', 'Today');
+        if (!allDay && includeAtSuffix) {
+          displayDay += " ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
+        }
+      } else if (DateTimeUtils.isTomorrow(dateTime, location: location)) {
+        displayDay = Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow');
+        if (!allDay && includeAtSuffix) {
+          displayDay += " ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
+        }
+      } else if (DateTimeUtils.isYesterday(dateTime, location: location)) {
+        displayDay = Localization().getStringEx('model.explore.time.yesterday', 'Yesterday');
+        if (!allDay && includeAtSuffix) {
+          displayDay += " ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
+        }
+      } else if (DateTimeUtils.isThisWeek(dateTime, location: location)) {
+        displayDay = DateTimeUtils.dateTimeToString(dateTime, format: "EE");
+      } else {
+        displayDay = DateTimeUtils.dateTimeToString(dateTime, format: "MMM dd");
+      }
+    }
+    return displayDay;
+  }
+
 }
 
 class AppPrivacyPolicy {

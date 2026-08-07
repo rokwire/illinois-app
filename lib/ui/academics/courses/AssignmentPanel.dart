@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart' as html;
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -332,7 +331,8 @@ class _AssignmentPanelState extends State<AssignmentPanel> with NotificationsLis
           )
       );
 
-      String completionResponseDay = AppDateTime().formatDisplayDay(dateTimeUtc: widget.courseDayFinalNotification, includeAtSuffix: true)?.toLowerCase() ?? '';
+      DateTime? courseDayFinalNotificationZoned = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: widget.courseDayFinalNotification);
+      String completionResponseDay = AppRelativeTime.relativeDaySinceDate(dateTime: courseDayFinalNotificationZoned, location: AppDateTime().zonedLocation, includeAtSuffix: true)?.toLowerCase() ?? '';
       String completionResponseTime = DateTimeUtils.utcTimeToString(widget.courseDayFinalNotification, AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix) ?? '';
       String completionResponseDateTime = 'later';
       if (completionResponseDay.isNotEmpty) {
@@ -476,7 +476,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> with NotificationsLis
             child: Text(
               displayTime == null ?
                 Localization().getStringEx("panel.essential_skills_coach.assignment.history.timestamp.now.label", "Now") :
-                '${AppDateTime().formatDisplayDay(dateTimeUtc: displayTime, includeAtSuffix: true)} ${DateTimeUtils.utcTimeToString(displayTime, AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix)}',
+                _formatDisplayTime(displayTime),
               style: Styles().textStyles.getTextStyle(isSelected ? "widget.detail.regular.extra_fat" : "widget.detail.regular"),
             ),
           ),
@@ -566,6 +566,13 @@ class _AssignmentPanelState extends State<AssignmentPanel> with NotificationsLis
         _listening = false;
       }
     });
+  }
+
+  String _formatDisplayTime(DateTime dateTimeUtc) {
+    DateTime? zonedDateTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dateTimeUtc);
+    String prefix = AppRelativeTime.relativeDaySinceDate(dateTime: zonedDateTime, location: AppDateTime().zonedLocation, includeAtSuffix: true) ?? '';
+    String suffix = DateTimeUtils.utcTimeToString(dateTimeUtc, AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix) ?? '';
+    return '$prefix $suffix';
   }
 
   @override
