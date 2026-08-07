@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart' as illinois;
+import 'package:illinois/ui/directory/DirectoryAccountsList.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.directory.dart';
@@ -35,12 +36,18 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
   LinkedHashMap<String, _SectionContent>? _contentMap;
   List<_DisplayListItem>? _displayList;
   ContentActivity? _contentActivity;
+  bool _canExtendFilteredContent = false;
   String? _expandedAccountId;
+
+  bool get _directoryMode => ((widget.searchText?.isNotEmpty != true) && (widget.filterAttributes?.isNotEmpty != true));
+  bool get _filterMode => !_directoryMode;
+  bool get _defaultExpnded => (_filterMode == true);
 
   String _directoryPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
   String _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
 
-  static const int _sectionAccountsPageLength = 32;
+  static const int _sectionContentPageLength = 128;
+  static const int _filteredContentPageLength = 128;
 
   @override
   void initState() {
@@ -50,7 +57,12 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
       Auth2.notifyPrivacyChanged,
       Auth2.notifyLoginChanged,
     ]);
-    _initContent();
+    _scrollController.addListener(_scrollListener);
+    if ((widget.searchText?.isNotEmpty == true) || (widget.filterAttributes?.isNotEmpty == true)) {
+      _initFilteredContent();
+    } else {
+      _initDirectoryContent();
+    }
     super.initState();
   }
 
@@ -142,7 +154,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
     } else if (displayListItem is _MessageListItem) {
       return _buildMessageListItem(displayListItem.message);
     } else if (displayListItem is _ExtendDetectorListItem) {
-      return _buildExtendDetectorListItem(displayListItem.section);
+      return _buildSectionExtendDetectorListItem(displayListItem.section);
     } else if (displayListItem is _WidgetListItem) {
       return displayListItem.widget;
     } else if (displayListItem is _AccountListItem) {
@@ -219,11 +231,12 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
 
   // ExtendDetector
 
-  Widget _buildExtendDetectorListItem(String section) =>
+  Widget _buildSectionExtendDetectorListItem(String section) =>
     VisibilityDetector(
-    key: Key('edu.illinois.rokwire.directory.accounts.section.$section'),
-    onVisibilityChanged: (info) => _onSectionExtendDetectorVisibilityChanged(section, info),
-    child: Container(height: 0.1), );
+      key: Key('edu.illinois.rokwire.directory.accounts.section.$section'),
+      onVisibilityChanged: (info) => _onSectionExtendDetectorVisibilityChanged(section, info),
+      child: Container(height: 0.1),
+    );
 
   // Other Content Types
   Widget _buildMessageContent(String message, { String? title }) =>
@@ -253,7 +266,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
 
   // Data
 
-  Future<void> _initContent() async {
+  Future<void> _initDirectoryContent() async {
     if (_contentActivity != ContentActivity.reload) {
       setState(() {
         _contentActivity = ContentActivity.reload;
@@ -266,8 +279,36 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
 
       if (mounted && (_contentActivity == ContentActivity.reload)) {
         setState(() {
-          _contentMap = _SectionContent.buildContentMap(sections);
+          _contentMap = (sections != null) ? _ContentMapImpl.buildFromSections(sections,
+            defaultExpnded: _defaultExpnded
+          ) : null;
           _displayList = _buildDisplayList(_contentMap);
+          _contentActivity = null;
+        });
+      }
+    }
+  }
+
+  Future<void> _initFilteredContent() async {
+    if (_contentActivity != ContentActivity.reload) {
+      setState(() {
+        _contentActivity = ContentActivity.reload;
+      });
+
+      List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+        search: StringUtils.ensureEmpty(widget.searchText),
+        attriutes: widget.filterAttributes,
+        offset: 0, limit: _filteredContentPageLength,
+      );
+
+      if (mounted && (_contentActivity == ContentActivity.reload)) {
+        setState(() {
+          if (accounts != null) {
+            _contentMap = LinkedHashMap<String, _SectionContent>();
+            _contentMap?.fillAccounts(accounts, defaultExpnded: _defaultExpnded);
+            _displayList = _buildDisplayList(_contentMap);
+            _canExtendFilteredContent = (accounts.length >= _filteredContentPageLength);
+          }
           _contentActivity = null;
         });
       }
@@ -287,6 +328,9 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
         if ((sectionContent != null) && sectionContent.expanded) {
           displayList.addAll(_buildDisplaySectionContent(sectionContent, section: section));
         }
+      }
+      if (_filterMode && (_contentActivity?.extending == true)) {
+        displayList.addAll(<_DisplayListItem>[_SplitterListItem(), _ProgressListItem()]);
       }
       if (displayList.isNotEmpty) {
         displayList.add(_SplitterListItem());
@@ -313,12 +357,13 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
         _AccountListItem(account),
         ]);
       }
+
       if (sectionContent.activity?.extending == true) {
         displayList.addAll(<_DisplayListItem>[
           _SplitterListItem(),
           _ProgressListItem(),
         ]);
-      } else if (sectionContent.canExtend && (section != null)) {
+      } else if (_directoryMode && sectionContent.canExtend && (section != null)) {
         displayList.add(_ExtendDetectorListItem(section),);
       }
       return displayList;
@@ -342,13 +387,14 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
           _displayList = _buildDisplayList(_contentMap!);
         });
       }
-      else if (sectionContent.accounts != null) {
+      else if (_filterMode || (sectionContent.accounts != null)) {
         setState(() {
           sectionContent.expanded = true;
           _displayList = _buildDisplayList(_contentMap!);
         });
       }
-      else {
+      else if (_directoryMode) {
+        // Extend directory section content
         if (sectionContent.activity?.loading != true) {
           setState(() {
             sectionContent.expanded = true;
@@ -360,7 +406,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
             section: section,
             search: StringUtils.ensureEmpty(widget.searchText),
             attriutes: widget.filterAttributes,
-            offset: 0, limit: _sectionAccountsPageLength,
+            offset: 0, limit: _sectionContentPageLength,
           );
 
           if (mounted && (sectionContent.activity == ContentActivity.reload)) {
@@ -368,7 +414,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
               sectionContent.activity = null;
               if (accounts != null) {
                 sectionContent.accounts = accounts.toList();
-                sectionContent.canLoadMoreAccounts = (accounts.length == _sectionAccountsPageLength);
+                sectionContent.canLoadMoreAccounts = (accounts.length >= _sectionContentPageLength);
               }
               _displayList = _buildDisplayList(_contentMap!);
             });
@@ -391,7 +437,8 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
         section: section,
         search: StringUtils.ensureEmpty(widget.searchText),
         attriutes: widget.filterAttributes,
-        offset: sectionContent.accounts?.length ?? 0, limit: _sectionAccountsPageLength,
+        offset: sectionContent.accounts?.length ?? 0,
+        limit: _sectionContentPageLength,
       );
 
       if (mounted && (sectionContent.activity == ContentActivity.extend)) {
@@ -399,7 +446,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
           sectionContent.activity = null;
           if (accounts != null) {
             sectionContent.accounts?.addAll(accounts);
-            sectionContent.canLoadMoreAccounts = (accounts.length == _sectionAccountsPageLength);
+            sectionContent.canLoadMoreAccounts = (accounts.length >= _sectionContentPageLength);
           }
           _displayList = _buildDisplayList(_contentMap!);
         });
@@ -407,7 +454,23 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
     }
   }
 
+  void _scrollListener() {
+    if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && _canExtendFilteredContent && (_contentActivity == null)) {
+      _extendFilteredContent();
+    }
+  }
+
   Future<void> _onRefresh() async {
+    if (_contentActivity?.loading != true) {
+      if (_directoryMode) {
+        await _refreshDirectoryContent();
+      } else {
+        await _refreshFilteredContent();
+      }
+    }
+  }
+
+  Future<void> _refreshDirectoryContent() async {
     if (_contentActivity?.loading != true) {
       setState(() {
         _contentActivity = ContentActivity.refresh;
@@ -430,7 +493,8 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
               section: section,
               search: StringUtils.ensureEmpty(widget.searchText),
               attriutes: widget.filterAttributes,
-              offset: 0, limit: max(sectionContent?.accounts?.length ?? 0, _sectionAccountsPageLength),
+              offset: 0,
+              limit: max(sectionContent?.accounts?.length ?? 0, _sectionContentPageLength),
             ));
           }
         }
@@ -438,36 +502,95 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
 
       List<dynamic> futureResponses = await Future.wait(requestFutures);
 
-      if (mounted) {
-        LinkedHashMap<String, _SectionContent>? contentMap;
+      if (mounted && (_contentActivity == ContentActivity.refresh)) {
         List<Auth2PublicAccountSection>? sections = JsonUtils.cast(futureResponses.first);
         if (sections != null) {
-          contentMap = LinkedHashMap<String, _SectionContent>();
-          for (Auth2PublicAccountSection section in sections) {
-            String? sectionName = section.name;
-            if (sectionName != null) {
-              _SectionContent? existingSection = _contentMap?[sectionName];
-              int? futureIndex = sectionToFutureIndex[sectionName];
-              List<Auth2PublicAccount>? futureSectionAccounts = ((futureIndex != null) && (0 <= futureIndex) && (futureIndex < futureResponses.length)) ?
-                JsonUtils.cast(futureResponses[futureIndex]) : null;
-              contentMap[sectionName] = _SectionContent(
-                accounts: futureSectionAccounts,
-                accountsCount: section.accountsCount,
-                canLoadMoreAccounts: (futureSectionAccounts?.length == _sectionAccountsPageLength),
-                expanded: (existingSection?.expanded == true),
-              );
-            }
-          }
+          Map<String, List<Auth2PublicAccount>?> sectionAccountsMap = sectionToFutureIndex.map((String section, int futureIndex) => MapEntry(section, JsonUtils.cast(ListUtils.entry(futureResponses, futureIndex))));
+          LinkedHashMap<String, _SectionContent> contentMap = _ContentMapImpl.buildFromSections(sections,
+            sectionAccountsMap: sectionAccountsMap,
+            sectionContentPageLength: _sectionContentPageLength,
+            sourceContentMap: _contentMap,
+            defaultExpnded: _defaultExpnded
+          );
+          setState(() {
+            _contentMap = contentMap;
+            _displayList = _buildDisplayList(_contentMap);
+            _contentActivity = null;
+          });
+        } else {
+          setState(() {
+            _contentActivity = null;
+          });
         }
-
-        setState(() {
-          _contentMap = contentMap;
-          _displayList = _buildDisplayList(_contentMap);
-          _contentActivity = null;
-        });
       }
+    }
+  }
 
+  Future<void> _refreshFilteredContent() async {
+    if (_contentActivity?.loading != true) {
+      setState(() {
+        _contentActivity = ContentActivity.refresh;
+      });
 
+      int requestLimit = max(_contentMap?.totalAccountsCount ?? 0, _filteredContentPageLength);
+      List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+        search: StringUtils.ensureEmpty(widget.searchText),
+        attriutes: widget.filterAttributes,
+        offset: 0, limit: requestLimit,
+      );
+
+      if (mounted && (_contentActivity == ContentActivity.refresh)) {
+        if (accounts != null) {
+          LinkedHashMap<String, _SectionContent> contentMap = LinkedHashMap<String, _SectionContent>();
+          contentMap.fillAccounts(accounts,
+            sourceContentMap: _contentMap,
+            defaultExpnded: _defaultExpnded
+          );
+          setState(() {
+            _contentMap = contentMap;
+            _displayList = _buildDisplayList(_contentMap);
+            _canExtendFilteredContent = (accounts.length >= _filteredContentPageLength);
+            _contentActivity = null;
+          });
+        } else {
+          setState(() {
+            _contentActivity = null;
+          });
+        }
+      }
+    }
+  }
+
+  Future<void> _extendFilteredContent() async {
+    if (_contentActivity == null) {
+      setState(() {
+        _contentActivity = ContentActivity.extend;
+      });
+
+      List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+        search: StringUtils.ensureEmpty(widget.searchText),
+        attriutes: widget.filterAttributes,
+        offset: _contentMap?.totalAccountsCount ?? 0,
+        limit: _filteredContentPageLength,
+      );
+
+      if (mounted && (_contentActivity == ContentActivity.extend)) {
+        if (accounts != null) {
+          setState(() {
+            _contentMap ??= LinkedHashMap<String, _SectionContent>();
+            _contentMap?.fillAccounts(accounts,
+              defaultExpnded: _defaultExpnded
+            );
+            _displayList = _buildDisplayList(_contentMap);
+            _canExtendFilteredContent = (accounts.length >= _filteredContentPageLength);
+            _contentActivity = null;
+          });
+        } else {
+          setState(() {
+            _contentActivity = null;
+          });
+        }
+      }
     }
   }
 }
@@ -482,20 +605,62 @@ class _SectionContent {
   _SectionContent({this.accounts, this.accountsCount, this.canLoadMoreAccounts = false, this.expanded = false});
 
   bool get canExtend => (accountsCount != null) ? ((accounts?.length ?? 0) < (accountsCount ?? 0)) : canLoadMoreAccounts;
+}
 
-  static LinkedHashMap<String, _SectionContent>? buildContentMap(List<Auth2PublicAccountSection>? sections) {
-    if (sections != null) {
-      LinkedHashMap<String, _SectionContent> sectionsContent = LinkedHashMap<String, _SectionContent>();
-      for (Auth2PublicAccountSection section in sections) {
-        String? sectionName = section.name;
-        if (sectionName != null) {
-          sectionsContent[sectionName] = _SectionContent(accountsCount: section.accountsCount);
+extension _ContentMapImpl on LinkedHashMap<String, _SectionContent> {
+
+  static LinkedHashMap<String, _SectionContent> buildFromSections(List<Auth2PublicAccountSection> sections, {
+    Map<String, List<Auth2PublicAccount>?>? sectionAccountsMap,
+    int? sectionContentPageLength,
+    LinkedHashMap<String, _SectionContent>? sourceContentMap,
+    required bool defaultExpnded,
+  }) {
+    LinkedHashMap<String, _SectionContent> contentMap = LinkedHashMap<String, _SectionContent>();
+    for (Auth2PublicAccountSection section in sections) {
+      String? sectionName = section.name;
+      if (sectionName != null) {
+        List<Auth2PublicAccount>? sectionAccounts = sectionAccountsMap?[sectionName];
+        contentMap[sectionName] = _SectionContent(
+          accounts: sectionAccounts?.toList(),
+          accountsCount: section.accountsCount,
+          canLoadMoreAccounts: (sectionAccounts != null) && (sectionContentPageLength != null) && (sectionAccounts.length >= sectionContentPageLength),
+          expanded: sourceContentMap?[sectionName]?.expanded ?? defaultExpnded,
+        );
+      }
+    }
+    return contentMap;
+  }
+
+  void fillAccounts(List<Auth2PublicAccount> accounts, {
+    LinkedHashMap<String, _SectionContent>? sourceContentMap,
+    required bool defaultExpnded,
+  }) {
+    for (Auth2PublicAccount account in accounts) {
+      String? sectionName = account.directoryKey;
+      if (sectionName != null) {
+        _SectionContent? sectionContent = this[sectionName];
+        if (sectionContent != null) {
+          if (sectionContent.accounts != null) {
+            sectionContent.accounts?.add(account);
+          } else {
+            sectionContent.accounts = <Auth2PublicAccount>[account];
+          }
+        } else {
+          this[sectionName] = _SectionContent(
+            accounts: <Auth2PublicAccount>[account],
+            expanded: sourceContentMap?[sectionName]?.expanded ?? defaultExpnded,
+          );
         }
       }
-      return sectionsContent;
-    } else {
-      return null;
     }
+  }
+
+  int get totalAccountsCount {
+    int totalAccountsCount = 0;
+    for (_SectionContent sectionContent in values) {
+      totalAccountsCount += (sectionContent.accounts?.length ?? 0);
+    }
+    return totalAccountsCount;
   }
 }
 
