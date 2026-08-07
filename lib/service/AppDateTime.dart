@@ -49,15 +49,19 @@ class AppDateTime extends rokwire.AppDateTime {
 
   // Overrides
 
-  @protected
+  @override
   Future<Uint8List?> get timezoneDatabase async {
     ByteData? byteData = await AppBundle.loadBytes('assets/timezone.tzf');
     return byteData?.buffer.asUint8List();
   }
 
-  @protected
+  @override
   String? get universityLocationName => Config().timezoneLocation; //TMP: 'Europe/Sofia';
 
+  @override
+  String? get timeZoneSuffix => (useUniversityTimeZone ? 'CT' : null); //TBD: DD - read from config
+
+  @override
   bool get useUniversityTimeZone => (Storage().useUniversityTimeZone == true);
 
   set useUniversityTimeZone(bool value) {

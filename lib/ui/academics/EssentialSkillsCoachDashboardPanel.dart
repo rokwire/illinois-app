@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/ext/CustomCourses.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/CustomCourses.dart';
@@ -24,6 +25,7 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -465,7 +467,7 @@ class _EssentialSkillsCoachDashboardState extends State<EssentialSkillsCoachDash
     if (shouldHighlight) {
       String? unlockTimeText;
       if (isNextWithCurrentComplete && nextCourseDayStart != null) {
-        unlockTimeText = '${AppDateTime().formatDisplayDay(dateTimeUtc: nextCourseDayStart, includeAtSuffix: true)} ${AppDateTime().formatDisplayTime(dateTimeUtc: nextCourseDayStart)}';
+        unlockTimeText = '${AppDateTime().formatDisplayDay(dateTimeUtc: nextCourseDayStart, includeAtSuffix: true)} ${DateTimeUtils.utcTimeToString(nextCourseDayStart, AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix)}';
       }
       contentWidget = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),

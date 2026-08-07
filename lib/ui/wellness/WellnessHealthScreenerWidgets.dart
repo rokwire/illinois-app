@@ -17,8 +17,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/surveys/SurveyPanel.dart';
@@ -38,6 +40,7 @@ import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/storage.dart';
@@ -273,9 +276,16 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   Widget _buildResponsesSection() {
+    final bool showTimeOnly = (_selectedTimeframe == "Today");
     List<Widget> content = [];
     for(SurveyResponse response in _responses) {
-      Widget widget = SurveyBuilder.surveyResponseCard(context, response, showTimeOnly: _selectedTimeframe == "Today");
+      String? dateTakenFormatted;
+      if (showTimeOnly) {
+        dateTakenFormatted = DateTimeUtils.utcTimeToString(response.dateTaken, AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix);
+      } else {
+        dateTakenFormatted = AppDateTime().formatDisplayDateTime(response.dateTaken);
+      }
+      Widget widget = SurveyBuilder.surveyResponseCard(context, response, dateTakenFormatted: dateTakenFormatted);
       content.add(widget);
       content.add(Container(height: 16.0));
     }

@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart' as html;
+import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/CustomCourses.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -15,6 +16,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -331,7 +333,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> with NotificationsLis
       );
 
       String completionResponseDay = AppDateTime().formatDisplayDay(dateTimeUtc: widget.courseDayFinalNotification, includeAtSuffix: true)?.toLowerCase() ?? '';
-      String completionResponseTime = AppDateTime().formatDisplayTime(dateTimeUtc: widget.courseDayFinalNotification) ?? '';
+      String completionResponseTime = DateTimeUtils.utcTimeToString(widget.courseDayFinalNotification, AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix) ?? '';
       String completionResponseDateTime = 'later';
       if (completionResponseDay.isNotEmpty) {
         completionResponseDateTime = completionResponseDay;
@@ -472,7 +474,9 @@ class _AssignmentPanelState extends State<AssignmentPanel> with NotificationsLis
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              displayTime == null ? Localization().getStringEx("panel.essential_skills_coach.assignment.history.timestamp.now.label", "Now") : '${AppDateTime().formatDisplayDay(dateTimeUtc: displayTime, includeAtSuffix: true)} ${AppDateTime().formatDisplayTime(dateTimeUtc: displayTime)}',
+              displayTime == null ?
+                Localization().getStringEx("panel.essential_skills_coach.assignment.history.timestamp.now.label", "Now") :
+                '${AppDateTime().formatDisplayDay(dateTimeUtc: displayTime, includeAtSuffix: true)} ${DateTimeUtils.utcTimeToString(displayTime, AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix)}',
               style: Styles().textStyles.getTextStyle(isSelected ? "widget.detail.regular.extra_fat" : "widget.detail.regular"),
             ),
           ),

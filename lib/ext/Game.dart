@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
