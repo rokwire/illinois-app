@@ -409,7 +409,9 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
           onTap: _onTapMarkAllAsRead,
         ),
         (_loadingMarkAllAsRead)
-          ? CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))
+          ? SizedBox.square(dimension: 16, child:
+            CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))
+          )
           : Container()
       ])
     );
