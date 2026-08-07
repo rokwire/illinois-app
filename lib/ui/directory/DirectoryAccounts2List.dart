@@ -13,6 +13,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class DirectoryAccounts2List extends StatefulWidget {
   final Widget? listHeader;
@@ -37,6 +38,8 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
 
   String _directoryPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
   String _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
+
+  static const int _sectionAccountsPageLength = 32;
 
   @override
   void initState() {
@@ -137,7 +140,11 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
       return _progressListItem;
     } else if (displayListItem is _MessageListItem) {
       return _buildMessageListItem(displayListItem.message);
-    } else if (displayListItem is _AccoiuntListItem) {
+    } else if (displayListItem is _ExtendDetectorListItem) {
+      return _buildExtendDetectorListItem(displayListItem.section);
+    } else if (displayListItem is _WidgetListItem) {
+      return displayListItem.widget;
+    } else if (displayListItem is _AccountListItem) {
       return Padding(padding: _accountCardPadding, child:
         DirectoryAccountListCard(displayListItem.account,
           photoImageToken: (displayListItem.account.id == Auth2().accountId) ? _userPhotoImageToken : _directoryPhotoImageToken,
@@ -150,20 +157,19 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
     }
   }
 
-  Widget _buildSection(String name, { bool expanded = false}) {
-    return Row(children: [
-      InkWell(onTap: () => _onToggleSection(name), child:
+  Widget _buildSection(String name, { bool expanded = false}) =>
+    InkWell(onTap: () => _onToggleSection(name), child:
+      Row(children: [
         Padding(padding: _sectionIconPadding, child:
           Styles().images.getImage((expanded == true) ? 'chevron2-up' : 'chevron2-down', color: Styles().colors.fillColorSecondary, size: _sectionIconSize, excludeFromSemantics: true)
+        ),
+        Expanded(child:
+          Padding(padding: _sectionTextPadding, child:
+            Text(name, style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
+          )
         )
-      ),
-      Expanded(child:
-        Padding(padding: _sectionTextPadding, child:
-          Text(name, style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
-        )
-      )
-    ],);
-  }
+      ],),
+    );
 
   static const EdgeInsetsGeometry _sectionIconPadding = const EdgeInsetsGeometry.all(
     _sectionIconPaddingSize
@@ -193,9 +199,9 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
   // Progress
 
   Widget get _progressListItem =>
-    Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 32, vertical: 32), child:
+    Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 16, vertical: 48), child:
       Center(child:
-        SizedBox.square(dimension: 24, child:
+        SizedBox.square(dimension: 16, child:
           CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
         )
       )
@@ -209,6 +215,14 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
         Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.regular.thin'),),
       )
     );
+
+  // ExtendDetector
+
+  Widget _buildExtendDetectorListItem(String section) =>
+    VisibilityDetector(
+    key: Key('edu.illinois.rokwire.directory.accounts.section.$section'),
+    onVisibilityChanged: (info) => _onSectionExtendDetectorVisibilityChanged(section, info),
+    child: Container(height: 1, color: Colors.red,), );
 
   // Other Content Types
   Widget _buildMessageContent(String message, { String? title }) =>
@@ -270,7 +284,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
         displayList.add(_SplitterListItem());
         displayList.add(_SectionHeadingListItem(section));
         if ((sectionContent != null) && sectionContent.expanded) {
-          displayList.addAll(_buildDisplaySectionList(sectionContent));
+          displayList.addAll(_buildDisplaySectionContent(sectionContent, section: section));
         }
       }
       if (displayList.isNotEmpty) {
@@ -282,19 +296,29 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
     }
   }
 
-  List<_DisplayListItem> _buildDisplaySectionList(_SectionContent sectionContent) {
+  List<_DisplayListItem> _buildDisplaySectionContent(_SectionContent sectionContent, { String? section }) {
     List<Auth2PublicAccount>? sectionAccounts = sectionContent.accounts;
     if (sectionContent.activity?.loading == true) {
-      return <_DisplayListItem>[_ProgressListItem()];
+      return <_DisplayListItem>[_SplitterListItem(), _ProgressListItem()];
     } else if (sectionAccounts == null) {
-      return <_DisplayListItem>[_MessageListItem(Localization().getStringEx('', 'Failed to load accounts in this section.'))];
+      return <_DisplayListItem>[_SplitterListItem(), _MessageListItem(Localization().getStringEx('', 'Failed to load accounts in this section.'))];
     } else if (sectionAccounts.isEmpty) {
-      return <_DisplayListItem>[_MessageListItem(Localization().getStringEx('', 'No accounts in this section.'))];
+      return <_DisplayListItem>[_SplitterListItem(), _MessageListItem(Localization().getStringEx('', 'No accounts in this section.'))];
     } else {
       List<_DisplayListItem> displayList = <_DisplayListItem>[];
       for (Auth2PublicAccount account in sectionAccounts) {
-        displayList.add(_SplitterListItem());
-        displayList.add(_AccoiuntListItem(account));
+        displayList.addAll(<_DisplayListItem>[
+        _SplitterListItem(),
+        _AccountListItem(account),
+        ]);
+      }
+      if (sectionContent.activity?.extending == true) {
+        displayList.addAll(<_DisplayListItem>[
+          _SplitterListItem(),
+          _ProgressListItem(),
+        ]);
+      } else if (sectionContent.canExtend && (section != null)) {
+        displayList.add(_ExtendDetectorListItem(section),);
       }
       return displayList;
     }
@@ -307,18 +331,76 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
     });
   }
 
-  void _onToggleSection(String section) {
+  Future<void> _onToggleSection(String section) async {
     Analytics().logSelect(target: section);
-    if (_contentMap != null) {
-      /*setState(() {
-        if (_collapsedSections.contains(section)) {
-          _collapsedSections.remove(section);
-        } else {
-          _collapsedSections.add(section);
+    _SectionContent? sectionContent = _contentMap?[section];
+    if (sectionContent != null) {
+      if (sectionContent.expanded) {
+        setState(() {
+          sectionContent.expanded = false;
+          _displayList = _buildDisplayList(_contentMap!);
+        });
+      }
+      else if (sectionContent.accounts != null) {
+        setState(() {
+          sectionContent.expanded = true;
+          _displayList = _buildDisplayList(_contentMap!);
+        });
+      }
+      else {
+        if (sectionContent.activity?.loading != true) {
+          setState(() {
+            sectionContent.expanded = true;
+            sectionContent.activity = ContentActivity.reload;
+            _displayList = _buildDisplayList(_contentMap!);
+          });
+
+          List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+            section: section,
+            search: StringUtils.ensureEmpty(widget.searchText),
+            attriutes: widget.filterAttributes,
+            offset: 0, limit: _sectionAccountsPageLength,
+          );
+
+          if (mounted && (sectionContent.activity == ContentActivity.reload)) {
+            setState(() {
+              sectionContent.activity = null;
+              sectionContent.accounts = accounts?.toList();
+              sectionContent.canLoadMoreAccounts = ((accounts?.length ?? 0) == _sectionAccountsPageLength);
+              _displayList = _buildDisplayList(_contentMap!);
+            });
+          }
         }
-        _storedSections = _collapsedSections;
-        _displayList = _buildDisplayList(_contentMap ?? LinkedHashMap(), collapsedSections: _collapsedSections);
-      });*/
+      }
+    }
+  }
+
+  Future<void> _onSectionExtendDetectorVisibilityChanged(String section, VisibilityInfo info ) async {
+    bool isVisible = !info.visibleBounds.isEmpty;
+    _SectionContent? sectionContent = _contentMap?[section];
+    if (isVisible && (sectionContent != null) && (sectionContent.activity == null)) {
+      setState(() {
+        sectionContent.activity = ContentActivity.extend;
+        _displayList = _buildDisplayList(_contentMap!);
+      });
+
+      List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
+        section: section,
+        search: StringUtils.ensureEmpty(widget.searchText),
+        attriutes: widget.filterAttributes,
+        offset: sectionContent.accounts?.length ?? 0, limit: _sectionAccountsPageLength,
+      );
+
+      if (mounted && (sectionContent.activity == ContentActivity.extend)) {
+        setState(() {
+          sectionContent.activity = null;
+          if (accounts != null) {
+            sectionContent.accounts?.addAll(accounts);
+          }
+          sectionContent.canLoadMoreAccounts = ((accounts?.length ?? 0) == _sectionAccountsPageLength);
+          _displayList = _buildDisplayList(_contentMap!);
+        });
+      }
     }
   }
 
@@ -330,14 +412,11 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
 class _SectionContent {
   List<Auth2PublicAccount>? accounts;
   final int? accountsCount;
-  bool canLoadMoreAccounts;
-  bool expanded;
+  bool canLoadMoreAccounts = false;
+  bool expanded = false;
   ContentActivity? activity;
 
-  _SectionContent({
-    this.accounts, this.accountsCount, this.canLoadMoreAccounts = false,
-    this.expanded = false, this.activity
-  });
+  _SectionContent({this.accountsCount});
 
   bool get canExtend => (accountsCount != null) ? ((accounts?.length ?? 0) < (accountsCount ?? 0)) : canLoadMoreAccounts;
 
@@ -364,11 +443,6 @@ class _SectionHeadingListItem extends _DisplayListItem {
   _SectionHeadingListItem(this.section);
 }
 
-class _WidgetListItem extends _DisplayListItem {
-  final Widget widget;
-  _WidgetListItem(this.widget);
-}
-
 class _SplitterListItem extends _DisplayListItem {
   _SplitterListItem();
 }
@@ -378,9 +452,9 @@ class _SplitterListItem extends _DisplayListItem {
   _SpacerListItem(this.height);
 }*/
 
-class _AccoiuntListItem extends _DisplayListItem {
+class _AccountListItem extends _DisplayListItem {
   final Auth2PublicAccount account;
-  _AccoiuntListItem(this.account);
+  _AccountListItem(this.account);
 }
 
 class _ProgressListItem extends _DisplayListItem {
@@ -391,3 +465,16 @@ class _MessageListItem extends _DisplayListItem {
   final String message;
   _MessageListItem(this.message);
 }
+
+class _ExtendDetectorListItem extends _DisplayListItem {
+  final String section;
+  _ExtendDetectorListItem(this.section);
+
+  //Key get key => Key();
+}
+
+class _WidgetListItem extends _DisplayListItem {
+  final Widget widget;
+  _WidgetListItem(this.widget);
+}
+

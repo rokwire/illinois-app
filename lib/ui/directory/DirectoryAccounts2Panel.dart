@@ -71,7 +71,7 @@ class _DirectoryAccounts2PanelState extends State<DirectoryAccounts2Panel> with 
 
   Widget get _listHeader =>
     Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
-      Column(mainAxisSize: MainAxisSize.min, children: [
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
         DirectoryAccountsEditOrShareDescription(onEditProfile: _onEditProfile, onShareProfile: _onShareProfile,),
         DirectoryFilterBar(
           key: ValueKey(DirectoryFilter(searchText: _searchText, attributes: _filterAttributes)),

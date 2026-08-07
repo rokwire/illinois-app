@@ -24,6 +24,7 @@ import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/career/CareerPlanningLinks.dart';
+import 'package:illinois/ui/directory/DirectoryAccounts2Panel.dart';
 import 'package:illinois/ui/groups/GroupHome2Panel.dart';
 import 'package:illinois/ui/illini/WordlePanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
@@ -704,7 +705,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapUserDirectory(BuildContext context) {
     Analytics().logSelect(target: "Directory of Users");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return DirectoryAccountsPanel(); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return DirectoryAccounts2Panel(); } ));
   }
 
   static void _onTapLaundry(BuildContext context) {
