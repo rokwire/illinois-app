@@ -5,6 +5,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 extension GameExt on Game {
@@ -58,7 +59,7 @@ extension GameExt on Game {
       String? endDateFormatted = AppDateTime().formatDateTime(endDisplayDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
       return '$startDateFormatted - $endDateFormatted';
     } else if (useStringDateTimes) {
-      String dateFormatted = AppDateTime().formatDateTime(date, format: displayDateFormat, ignoreTimeZone: true, showTzSuffix: false)!; //another workaround
+      String dateFormatted = DateTimeUtils.dateTimeToString(date, format: displayDateFormat)!; //another workaround
       dateFormatted += ' ${StringUtils.ensureNotEmpty(timeToString)}';
       return dateFormatted;
     } else {

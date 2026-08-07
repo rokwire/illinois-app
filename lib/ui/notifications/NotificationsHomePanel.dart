@@ -17,7 +17,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -37,6 +36,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart';
@@ -540,11 +540,11 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
       _DateInterval? interval = intervals[timeEntry.value];
       if (interval != null) {
         DateTime startDate = interval.startDate!;
-        String? startStr = AppDateTime().formatDateTime(interval.startDate, format: 'MM/dd', ignoreTimeZone: true);
+        String? startStr = DateTimeUtils.dateTimeToString(interval.startDate, format: 'MM/dd');
 
         DateTime endDate = interval.endDate ?? today;
         if (1 < endDate.difference(startDate).inDays) {
-          String? endStr = AppDateTime().formatDateTime(endDate, format: 'MM/dd', ignoreTimeZone: true);
+          String? endStr = DateTimeUtils.dateTimeToString(endDate, format: 'MM/dd');
           timeDate = "$startStr - $endStr";
         } else {
           timeDate = startStr;

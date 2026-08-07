@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -107,7 +106,7 @@ class WellnessToDoItem {
     if (dueDateTime == null) {
       return null;
     }
-    return AppDateTime().formatDateTime(dueDateTime, format: 'EEEE, MM/dd', ignoreTimeZone: true);
+    return DateTimeUtils.dateTimeToString(dueDateTime, format: 'EEEE, MM/dd');
   }
 
   DateTime? get reminderDateTime {

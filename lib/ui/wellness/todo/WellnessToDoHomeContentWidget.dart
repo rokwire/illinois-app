@@ -18,7 +18,6 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -33,6 +32,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessToDoHomeContentWidget extends StatefulWidget with AnalyticsInfo {
@@ -269,7 +269,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     List<Widget> dateWidgetList = <Widget>[];
     DateTime currentDate = DateTime.fromMillisecondsSinceEpoch(_calendarStartDate.millisecondsSinceEpoch);
     while (currentDate.isBefore(_calendarEndDate)) {
-      String dateFormatted = AppDateTime().formatDateTime(currentDate, format: 'dd', ignoreTimeZone: true)!;
+      String dateFormatted = DateTimeUtils.dateTimeToString(currentDate, format: 'dd')!;
       Text dateWidget = Text(dateFormatted,
           style: Styles().textStyles.getTextStyle("widget.title.regular.fat"));
       dateWidgetList.add(dateWidget);
@@ -644,11 +644,11 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   String get _formattedCalendarMonthLabel {
     if (_calendarStartDate.month != _calendarEndDate.month) {
-      return AppDateTime().formatDateTime(_calendarStartDate, format: 'MMM', ignoreTimeZone: true)! +
+      return DateTimeUtils.dateTimeToString(_calendarStartDate, format: 'MMM')! +
           ' / ' +
-          AppDateTime().formatDateTime(_calendarEndDate, format: 'MMM yyyy', ignoreTimeZone: true)!;
+          DateTimeUtils.dateTimeToString(_calendarEndDate, format: 'MMM yyyy')!;
     } else {
-      return AppDateTime().formatDateTime(_calendarStartDate, format: 'MMMM yyyy', ignoreTimeZone: true)!;
+      return DateTimeUtils.dateTimeToString(_calendarStartDate, format: 'MMMM yyyy')!;
     }
   }
 
@@ -1131,11 +1131,11 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
   }
 
   String get _formattedDate {
-    return AppDateTime().formatDateTime(_reminderDateTime, format: 'EEEE, MM/dd', ignoreTimeZone: true)!;
+    return DateTimeUtils.dateTimeToString(_reminderDateTime, format: 'EEEE, MM/dd')!;
   }
 
   String get _formattedTime {
-    return AppDateTime().formatDateTime(_reminderDateTime, format: 'hh : mm a', ignoreTimeZone: true)!;
+    return DateTimeUtils.dateTimeToString(_reminderDateTime, format: 'hh : mm a')!;
   }
 
 

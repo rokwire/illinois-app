@@ -88,9 +88,9 @@ extension AppDateTimeExt on AppDateTime {
           displayDay += " ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
         }
       } else if (DateTimeUtils.isThisWeek(zonedDateTime, location: location)) {
-        displayDay = formatDateTime(zonedDateTime, format: "EE", ignoreTimeZone: true, showTzSuffix: false);
+        displayDay = DateTimeUtils.dateTimeToString(zonedDateTime, format: "EE");
       } else {
-        displayDay = formatDateTime(zonedDateTime, format: "MMM dd", ignoreTimeZone: true, showTzSuffix: false);
+        displayDay = DateTimeUtils.dateTimeToString(zonedDateTime, format: "MMM dd");
       }
     }
     return displayDay;

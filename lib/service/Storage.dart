@@ -15,9 +15,7 @@
  */
 
 import 'package:flutter/foundation.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/model/Assistant.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -182,7 +180,7 @@ class Storage extends rokwire.Storage with NotificationsListener {
   }
 
   set offsetDate(DateTime? value) {
-    setStringWithName(offsetDateKey, AppDateTime().formatDateTime(value, ignoreTimeZone: true));
+    setStringWithName(offsetDateKey, DateTimeUtils.dateTimeToString(value));
   }
 
   // University Time Zone

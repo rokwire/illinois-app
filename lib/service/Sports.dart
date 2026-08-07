@@ -25,7 +25,6 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/model/sport/Coach.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -596,12 +595,12 @@ class Sports with Service, NotificationsListener {
     }
 
     if (startDate != null) {
-      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: 'MM/dd/yyyy', ignoreTimeZone: true);
+      String? startDateFormatted = DateTimeUtils.dateTimeToString(startDate, format: 'MM/dd/yyyy');
       queryParams += '&start=$startDateFormatted';
     }
 
     if (endDate != null) {
-      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: 'MM/dd/yyyy', ignoreTimeZone: true);
+      String? endDateFormatted = DateTimeUtils.dateTimeToString(endDate, format: 'MM/dd/yyyy');
       queryParams += '&end=$endDateFormatted';
     }
 

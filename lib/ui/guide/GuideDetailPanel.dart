@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:illinois/ext/AppDateTime.dart';
 import 'package:illinois/model/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/DeepLink.dart';
@@ -22,6 +20,7 @@ import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -205,7 +204,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> with Notification
     
     DateTime? date = Guide().isEntryReminder(_guideEntry) ? Guide().reminderDate(_guideEntry) : null;
     if (date != null) {
-      String? dateString = AppDateTime().formatDateTime(Guide().reminderDate(_guideEntry), format: 'MMM dd', ignoreTimeZone: true);
+      String? dateString = DateTimeUtils.dateTimeToString(Guide().reminderDate(_guideEntry), format: 'MMM dd');
       contentList.add(
         Padding(padding: EdgeInsets.zero, child:
           Text(dateString ?? '',
