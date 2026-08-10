@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -54,6 +55,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     _article = widget.article;
     _articleUri = (widget.article?.link != null) ? Uri.tryParse(widget.article?.link ?? '') : null;
@@ -80,6 +82,11 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
       }
     }
     else if (name == FlexUI.notifyChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
       if (mounted) {
         setState(() {});
       }

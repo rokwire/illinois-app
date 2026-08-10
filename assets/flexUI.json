@@ -25,7 +25,7 @@
 			"browse.laundry": ["laundry"],
 			"browse.campus_guide": ["campus_highlights", "campus_guide", "my_campus_guide"],
 			"browse.career_exploration": ["career_planing_links", "interest_explorer", "business_card", "job_board"],
-			"browse.dining": ["dining"],
+			"browse.dining": ["dining", "dining_links"],
 			"browse.directory": ["user_directory"],
 			"browse.events": ["events"],
 			"browse.groups": ["groups"],
@@ -75,7 +75,7 @@
 			"appointment.providers.monitored": ["grainger"],
 			"appointment.providers.enabled": ["grainger"],
 
-			"settings": ["food_filters", "sports", "favorites", "assessments", "appointments_and_events", "language", "about", "research", "privacy", "notifications", "accessibility"],
+			"settings": ["food_filters", "sports", "favorites", "assessments", "appointments_and_events", "language_and_time", "about", "research", "privacy", "notifications", "accessibility"],
 			"settings.assessments": ["health_screener"],
 			"settings.assessments.skills_self_evaluation": ["save"],
 			"settings.assessments.health_screener": ["save"],

@@ -20,6 +20,7 @@ import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/appointments/AppointmentCard.dart';
@@ -74,7 +75,8 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
   void initState() {
     NotificationService().subscribe(this, [
       Appointments.notifyAppointmentsChanged,
-      Storage.notifySettingChanged
+      Storage.notifySettingChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     _initProviders();
     super.initState();
@@ -96,6 +98,9 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
       if (param == Storage.debugUseSampleAppointmentsKey) {
         _initProviders();
       }
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {});
     }
   }
 

@@ -146,7 +146,7 @@ class WordleDailyWord {
 
   static DateTime? dateUniFromString(String? value) {
     DateTime? dateTimeUtc = (value != null) ? DateFormat(_dateFormat).tryParse(value, true) : null;
-    return (dateTimeUtc != null) ? TZDateTime(DateTimeUni.timezoneUniOrLocal, dateTimeUtc.year, dateTimeUtc.month, dateTimeUtc.day) : null;
+    return (dateTimeUtc != null) ? TZDateTime(AppDateTime().universityOrDeviceLocation, dateTimeUtc.year, dateTimeUtc.month, dateTimeUtc.day) : null;
   }
 
   String? get dateUniAsString => (dateUni != null) ?

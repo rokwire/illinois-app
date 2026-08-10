@@ -254,7 +254,7 @@
 	"panel.browse.section.career_exploration.title": "Career Exploration & Preparation",
 	"panel.browse.section.career_exploration.description": "Discover career pathways and opportunities.",
 	"panel.browse.section.dining.title": "校园餐饮",
-	"panel.browse.section.dining.description": "学生、教职员、访客可以到任何宿舍餐厅用餐。",
+	"panel.browse.section.dining.description": "探索校园各处的餐饮选择。",
 	"panel.browse.section.directory.title": "Directory of Users",
 	"panel.browse.section.directory.description": "Find contact information for other {{university_name}} app users.",
 	"panel.browse.section.events.title": "活動",
@@ -313,6 +313,7 @@
 	"panel.browse.entry.career_exploration.job_board.title": "Virtual Job Board",
 
 	"panel.browse.entry.dining.dining.title": "校园餐饮",
+	"panel.browse.entry.dining.dining_links.title": "Campus Dining",
 
 	"panel.browse.entry.directory.user_directory.title": "Directory of Users",
 
@@ -1271,9 +1272,9 @@
 	"panel.search_building.result.empty.label": "No buildings found.",
 
 	"panel.dining2.header.title": "校园餐饮",
-	"panel.dining2.status.failed.title": "Failed to load Residence Hall dining locations",
-	"panel.dining2.status.empty.title": "There are no Residence Hall dining locations available right now",
-	"panel.dining2.status.filter.empty.title": "There are no Residence Hall dining locations matching selected criteria",
+	"panel.dining2.status.failed.title": "Failed to load University Housing dining locations",
+	"panel.dining2.status.empty.title": "There are no University Housing dining locations available right now",
+	"panel.dining2.status.filter.empty.title": "There are no University Housing dining locations matching selected criteria",
 	"panel.dining2.filter.button.search.title": "Search",
 	"panel.dining2.filter.button.search.hint": "Tap to search dining locations",
 	"panel.dining2.filter.button.sort.title": "Sort",
@@ -1975,7 +1976,7 @@
 	"panel.settings.home.settings.sections.appointments_and_events.label": "My Appointments & Events",
 	"panel.settings.home.settings.sections.favorites.label": "自定義收藏夾",
 	"panel.settings.home.settings.sections.assessments.label": "我的評估",
-	"panel.settings.home.settings.sections.language.label": "我的語言",
+	"panel.settings.home.settings.sections.language_and_time.label": "我的語言與時間",
 	"panel.settings.home.settings.sections.about.label": "About the App",
 	"panel.settings.home.settings.sections.maps.label": "Maps & Wayfinding",
 	"panel.settings.home.settings.sections.research.label": "My Participation in Research",
@@ -2053,6 +2054,9 @@
 	"panel.settings.home.language.en.title": "英語",
 	"panel.settings.home.language.es.title": "西班牙語",
 	"panel.settings.home.language.zh.title": "Chinese",
+
+	"panel.settings.home.time_zone.system.title": "使用系統時間",
+	"panel.settings.home.time_zone.central.title": "中部時間 (CT)",
 
 	"panel.settings.home.accessibility.favorites.label": "Favorites",
 	"panel.settings.home.accessibility.reduce_motion.label": "Reduce motion",
@@ -3480,6 +3484,8 @@
 	"panel.student_courses.header.title": "我的課程",
 	"panel.student_courses.term_dropdown.hint": "雙擊選擇學期",
 	"panel.student_courses.view_type_dropdown.hint": "雙擊選擇檢視",
+	"panel.student_courses.time_zone.button.title": "時區",
+	"panel.student_courses.time_zone.button.hint": "雙擊開啟時區設定",
 	"panel.student_courses.instructor.title": "Instructor: %s",
 	"panel.student_courses.room.title": "Room",
 	"panel.student_courses.map.button.title": "View In-Person Courses on Map",

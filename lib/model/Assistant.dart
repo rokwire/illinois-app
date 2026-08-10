@@ -1,5 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 ///
@@ -10,7 +11,7 @@ Map<String, String> deeplinkNameMap = {
   'browse': 'Browse',
   'map': 'Map',
   'map.events': 'Events',
-  'map.dining': 'Residence Hall Dining',
+  'map.dining': 'University Housing Dining',
   'map.buildings': 'Campus Buildings',
   'map.student_courses': 'My Courses',
   'map.appointments': 'MyMcKinley In-Person Appointments',

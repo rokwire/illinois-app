@@ -8,11 +8,11 @@ import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/service/config.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -29,6 +29,7 @@ import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
@@ -203,12 +204,12 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     //Newly created groups pass time in the string
     if(StringUtils.isEmpty(displayTime?.trim())){
       if(_event?.startTimeUtc !=null || _event?.endTimeUtc != null){
-        DateTime? startDate = _event?.startTimeUtc?.toLocal();
-        DateTime? endDate = _event?.endTimeUtc?.toLocal() ;
+        DateTime? startDate = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: _event?.startTimeUtc);
+        DateTime? endDate = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: _event?.endTimeUtc);
         if(startDate !=null){
-          displayTime = AppDateTime().formatDateTime(startDate, format: "MMM dd, yyyy");
+          displayTime = DateTimeUtils.dateTimeToString(startDate, format: "MMM dd, yyyy");
         } else if(endDate != null){
-          displayTime = AppDateTime().formatDateTime(endDate, format: "MMM dd, yyyy");
+          displayTime = DateTimeUtils.dateTimeToString(endDate, format: "MMM dd, yyyy");
         }
       }
     }

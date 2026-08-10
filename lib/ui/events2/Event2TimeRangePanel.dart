@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:timezone/timezone.dart';
 
 class Event2TimeRangePanel extends StatefulWidget {
@@ -49,7 +49,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   @override
   void initState() {
-    _timeZone = widget.startTime?.location ?? widget.endTime?.location ?? DateTimeLocal.timezoneLocal;
+    _timeZone = widget.startTime?.location ?? widget.endTime?.location ?? AppDateTime().deviceLocation;
     
     DateTime? startDateTime = widget.startTime;
     if (startDateTime != null) {

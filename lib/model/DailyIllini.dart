@@ -20,6 +20,7 @@ import 'package:html/parser.dart' as htmlParser;
 import 'package:html/dom.dart' as dom;
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:xml/xml.dart';
 
@@ -34,8 +35,8 @@ class DailyIlliniItem {
   DailyIlliniItem({this.title, this.link, this.description, this.thumbImageUrl, this.pubDateTimeUtc, this.category});
 
   String? get displayPubDate {
-    DateTime? localDateTime = AppDateTime().getDeviceTimeFromUtcTime(pubDateTimeUtc);
-    return AppDateTime().formatDateTime(localDateTime, format: 'LLLL d, yyyy', ignoreTimeZone: true);
+    DateTime? displayDateTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: pubDateTimeUtc);
+    return DateTimeUtils.dateTimeToString(displayDateTime, format: 'LLLL d, yyyy');
   }
 
   static DailyIlliniItem? fromXml(XmlElement? xml) {
