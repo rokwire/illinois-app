@@ -1079,7 +1079,9 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
 
   void _onDismissPopup() {
     Analytics().logSelect(target: 'OK');
-    Navigator.of(context).pop();
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
   }
 
   String get _timeUpdatedText => widget.group.displayUpdateTime ?? '';
