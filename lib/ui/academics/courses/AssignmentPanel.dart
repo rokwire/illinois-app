@@ -15,6 +15,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -330,8 +331,9 @@ class _AssignmentPanelState extends State<AssignmentPanel> with NotificationsLis
           )
       );
 
-      String completionResponseDay = AppDateTime().getDisplayDay(dateTimeUtc: widget.courseDayFinalNotification, includeAtSuffix: true)?.toLowerCase() ?? '';
-      String completionResponseTime = AppDateTime().getDisplayTime(dateTimeUtc: widget.courseDayFinalNotification) ?? '';
+      DateTime? courseDayFinalNotificationZoned = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: widget.courseDayFinalNotification);
+      String completionResponseDay = AppRelativeTime.relativeDaySinceDate(dateTime: courseDayFinalNotificationZoned, location: AppDateTime().zonedLocation, includeAtSuffix: true)?.toLowerCase() ?? '';
+      String completionResponseTime = DateTimeUtils.timeToString(courseDayFinalNotificationZoned, timeZoneSuffix: AppDateTime().timeZoneSuffix) ?? '';
       String completionResponseDateTime = 'later';
       if (completionResponseDay.isNotEmpty) {
         completionResponseDateTime = completionResponseDay;
@@ -472,7 +474,9 @@ class _AssignmentPanelState extends State<AssignmentPanel> with NotificationsLis
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              displayTime == null ? Localization().getStringEx("panel.essential_skills_coach.assignment.history.timestamp.now.label", "Now") : '${AppDateTime().getDisplayDay(dateTimeUtc: displayTime, includeAtSuffix: true)} ${AppDateTime().getDisplayTime(dateTimeUtc: displayTime)}',
+              displayTime == null ?
+                Localization().getStringEx("panel.essential_skills_coach.assignment.history.timestamp.now.label", "Now") :
+                _formatDisplayTime(displayTime),
               style: Styles().textStyles.getTextStyle(isSelected ? "widget.detail.regular.extra_fat" : "widget.detail.regular"),
             ),
           ),
@@ -562,6 +566,13 @@ class _AssignmentPanelState extends State<AssignmentPanel> with NotificationsLis
         _listening = false;
       }
     });
+  }
+
+  String _formatDisplayTime(DateTime dateTimeUtc) {
+    DateTime? zonedDateTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dateTimeUtc);
+    String prefix = AppRelativeTime.relativeDaySinceDate(dateTime: zonedDateTime, location: AppDateTime().zonedLocation, includeAtSuffix: true) ?? '';
+    String suffix = DateTimeUtils.timeToString(zonedDateTime, timeZoneSuffix: AppDateTime().timeZoneSuffix) ?? '';
+    return '$prefix $suffix';
   }
 
   @override

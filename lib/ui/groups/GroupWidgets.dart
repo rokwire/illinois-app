@@ -28,6 +28,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/directory/DirectoryWidgets.dart';
@@ -47,7 +48,6 @@ import 'package:illinois/ext/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/model/social.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -65,8 +65,10 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/image_error_builder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:illinois/service/Polls.dart' as illinois;
@@ -719,6 +721,7 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   void initState() {
     NotificationService().subscribe(this, [
       Groups.notifyGroupStatsUpdated,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     _loadGroupStats();
     super.initState();
@@ -734,6 +737,8 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
   void onNotification(String name, dynamic param) {
     if ((name == Groups.notifyGroupStatsUpdated) && (widget.group.id == param)) {
       _updateGroupStats();
+    } else if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {});
     }
   }
 
@@ -940,12 +945,14 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     ],);
   }
 
+  Widget get _defaultImageWidget => Styles().images.getImage('group-detail-default', fit: BoxFit.cover, excludeFromSemantics: true, height: _imageHeadingWebSize.height, width: _imageHeadingWebSize.width,) ?? Container();
+
   Widget get _imageHeadingWidget => Visibility(
       visible: _imageHeadingVisible,
       child: Container(child: AccessibleImageHolder(
             child: _hasImage ?
-              WebNetworkImage(imageUrl: _imageUrl ?? '', fit: BoxFit.cover, excludeFromSemantics: true, height: _imageHeadingWebSize.height, width: _imageHeadingWebSize.width,) :
-              Styles().images.getImage('group-detail-default', fit: BoxFit.cover, excludeFromSemantics: true, height: _imageHeadingWebSize.height, width: _imageHeadingWebSize.width,),
+              WebNetworkImage(imageUrl: _imageUrl ?? '', fit: BoxFit.cover, excludeFromSemantics: true, height: _imageHeadingWebSize.height, width: _imageHeadingWebSize.width, errorBuilder: (context, error, stackTrace) => _defaultImageWidget) :
+              _defaultImageWidget,
           ),
       ));
 
@@ -1065,7 +1072,9 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
 
   void _onDismissPopup() {
     Analytics().logSelect(target: 'OK');
-    Navigator.of(context).pop();
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
   }
 
   String get _timeUpdatedText => widget.group.displayUpdateTime ?? '';
@@ -1116,8 +1125,31 @@ class GroupPostCard extends StatefulWidget {
   _GroupPostCardState createState() => _GroupPostCardState();
 }
 
-class _GroupPostCardState extends State<GroupPostCard> {
+class _GroupPostCardState extends State<GroupPostCard> with NotificationsListener {
   // static const double _smallImageSize = 64;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, [
+      AppDateTime.notifyTimeZoneChanged,
+    ]);
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1240,7 +1272,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
   Widget get _imageWidget => (widget.isClickable != true) ? AccessibleImageHolder(child: ModalImageHolder(child: _rawImageWidget)) : AccessibleImageHolder(child: _rawImageWidget);
-  Widget get _rawImageWidget => WebNetworkImage(imageUrl: widget.post?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, excludeFromSemantics: true);
+  Widget get _rawImageWidget => WebNetworkImage(imageUrl: widget.post?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, excludeFromSemantics: true, errorBuilder: (context, error, stackTrace) => SizedBox.shrink());
 
   //ReactionWidget //TBD move to GroupReaction when ready to hook BB
 
@@ -1453,7 +1485,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Visibility(visible: StringUtils.isNotEmpty(widget.reply?.imageUrl),
                 child: Container(
                       padding: EdgeInsets.only(top: 14),
-                      child: AccessibleImageHolder(child: WebNetworkImage(imageUrl: widget.reply?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, excludeFromSemantics: true))
+                      child: AccessibleImageHolder(child: WebNetworkImage(imageUrl: widget.reply?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, excludeFromSemantics: true, errorBuilder: (context, error, stackTrace) => SizedBox.shrink()))
               )),
 
               WebEmbed(bodyText),
@@ -2415,7 +2447,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
           StringUtils.isNotEmpty(imageUrl)
               ? Positioned.fill(child: AccessibleImageHolder(child:
                   ModalImageHolder(child:
-                    WebNetworkImage(imageUrl: imageUrl!,  fit: BoxFit.cover))))
+                    WebNetworkImage(imageUrl: imageUrl!,  fit: BoxFit.cover, errorBuilder: ImageErrorBuilder.defaultBuilder))))
               : Container(),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),
@@ -3675,7 +3707,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
 
   @override
   void initState() {
-    _timeZone = timeZoneDatabase.locations[widget.timeZone] ?? DateTimeLocal.timezoneLocal;
+    _timeZone = timeZoneDatabase.locations[widget.timeZone] ?? AppDateTime().deviceLocation;
     DateTime? dateTimeUtc = widget.scheduleTime;
     if (dateTimeUtc != null) {
       TZDateTime scheduleTime = TZDateTime.from(dateTimeUtc, _timeZone);

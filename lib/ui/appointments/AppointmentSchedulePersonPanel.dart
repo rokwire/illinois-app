@@ -252,8 +252,9 @@ class _AppointmentPersonCard extends StatelessWidget {
                     Semantics(button: true, label: "advisor image", hint: "Double tap to expand image", child:
                       SizedBox(width: 72, height: 72, child:
                         StringUtils.isNotEmpty(person.imageUrl) ?
-                          WebNetworkImage(imageUrl: person.imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,) :
-                          Styles().images.getImage('profile-placeholder', excludeFromSemantics: true)
+                          WebNetworkImage(imageUrl: person.imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => _defaultImageWidget) :
+                          _defaultImageWidget
                       ),
                     ),
                   ),
@@ -275,4 +276,6 @@ class _AppointmentPersonCard extends StatelessWidget {
       )
     );
   }
+
+  Widget get _defaultImageWidget => Styles().images.getImage('profile-placeholder', excludeFromSemantics: true) ?? Container();
 }

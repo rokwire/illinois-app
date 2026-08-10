@@ -204,45 +204,47 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
 
   Widget get _laundryContentWidget {
       Widget? contentWidget;
+
       List<LaundryRoom>? displayLaundryRooms = _buildDisplayLaundryRooms();
-      int visibleCount = displayLaundryRooms?.length ?? 0;
+      if (displayLaundryRooms != null) {
 
-      if (1 < visibleCount) {
+        if (1 < displayLaundryRooms.length) {
 
-        List<Widget> pages = <Widget>[];
-        for (LaundryRoom room in displayLaundryRooms!) {
-          pages.add(Padding(
-              key: _contentKeys[room.id ?? ''] ??= GlobalKey(),
-              padding: HomeCard.defaultPageMargin,
-              child: LaundryRoomCard(room: room, displayMode: CardDisplayMode.home, onTap: () => _onTapRoom(room))
-          ));
+          List<Widget> pages = <Widget>[];
+          for (LaundryRoom room in displayLaundryRooms) {
+            pages.add(Padding(
+                key: _contentKeys[room.id ?? ''] ??= GlobalKey(),
+                padding: HomeCard.defaultPageMargin,
+                child: LaundryRoomCard(room: room, displayMode: CardDisplayMode.home, onTap: () => _onTapRoom(room))
+            ));
+          }
+
+          if (_pageController == null) {
+            double screenWidth = MediaQuery.of(context).size.width;
+            double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
+            _pageController = PageController(viewportFraction: pageViewport);
+          }
+
+          contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+          AccessiblePageView(
+            key: _pageViewKey,
+            controller: _pageController,
+            estimatedPageSize: _pageHeight,
+            allowImplicitScrolling: true,
+            children: pages,
+          ),
+          );
         }
-
-        if (_pageController == null) {
-          double screenWidth = MediaQuery.of(context).size.width;
-          double pageViewport = (screenWidth - 2 * HomeCard.pageSpacing) / screenWidth;
-          _pageController = PageController(viewportFraction: pageViewport);
+        else if (displayLaundryRooms.length == 1) {
+          contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
+            LaundryRoomCard(room: displayLaundryRooms.first, onTap: () => _onTapRoom(displayLaundryRooms.first))
+          );
         }
-
-        contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        AccessiblePageView(
-          key: _pageViewKey,
-          controller: _pageController,
-          estimatedPageSize: _pageHeight,
-          allowImplicitScrolling: true,
-          children: pages,
-        ),
-        );
-      }
-      else if (visibleCount == 1) {
-        contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
-        LaundryRoomCard(room: displayLaundryRooms!.first, onTap: () => _onTapRoom(_laundrySchool!.rooms!.single))
-        );
       }
 
       return (contentWidget != null) ? Column(children: <Widget>[
         contentWidget,
-        AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
+        AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => displayLaundryRooms?.length ?? 0, centerWidget:
         HomeBrowseLinkButton(
           title: Localization().getStringEx('widget.home.laundry.button.all.title', 'View All'),
           hint: Localization().getStringEx('widget.home.laundry.button.all.hint', 'Tap to view all laundries'),

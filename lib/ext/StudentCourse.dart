@@ -1,8 +1,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:timezone/timezone.dart';
 
 extension StudentCourseExt on StudentCourse {
 
@@ -127,28 +129,27 @@ extension StudentCourseSectionExt on StudentCourseSection {
   }
 
   static String? _convertTime(String? time, { bool addIndicator = true}) {
-    if ((time != null) && (2 <= time.length)) {
-      int? hours = int.tryParse(time.substring(0, 2))?.abs();
-      if (hours != null) {
-        String indicator;
-        if ((0 <= hours) && (hours < 12)) {
-          if (hours < 1) {
-            hours += 12;
-          }
-          indicator = addIndicator ? 'am' : '';
+    DateTime? displayTime = _displayTime(time);
+    if (displayTime != null) {
+      int hours = displayTime.hour;
+      String indicator;
+      if ((0 <= hours) && (hours < 12)) {
+        if (hours < 1) {
+          hours += 12;
         }
-        else if ((12 <= hours) && (hours < 24)) {
-          if (12 < hours) {
-            hours -= 12;
-          }
-          indicator = addIndicator ? 'pm' : '';
-        }
-        else {
-          indicator = '';
-        }
-        String minutes = time.substring(2);
-        return "$hours:$minutes$indicator";
+        indicator = addIndicator ? 'am' : '';
       }
+      else if ((12 <= hours) && (hours < 24)) {
+        if (12 < hours) {
+          hours -= 12;
+        }
+        indicator = addIndicator ? 'pm' : '';
+      }
+      else {
+        indicator = '';
+      }
+      String minutes = displayTime.minute.toString().padLeft(2, '0');
+      return "$hours:$minutes$indicator";
     }
     return time;
   }
@@ -192,14 +193,37 @@ extension StudentCourseSectionExt on StudentCourseSection {
   int? get endTimeMinutes => _parseTimeMinutes(endTime);
 
   static int? _parseTimeMinutes(String? time) {
-    if ((time != null) && (4 <= time.length)) {
-      int? hours = int.tryParse(time.substring(0, 2));
-      int? minutes = int.tryParse(time.substring(2, 4));
-      if ((hours != null) && (minutes != null)) {
-        return (hours * 60) + minutes;
-      }
+    DateTime? displayTime = _displayTime(time);
+    if (displayTime != null) {
+      return (displayTime.hour * 60) + displayTime.minute;
     }
     return null;
+  }
+
+  ///
+  /// The backend sends section start/end times as a raw "HHMM" string, always
+  /// expressed in the university's own local time (there is no timezone tag on this
+  /// field - it is course schedule data, not a UTC instant). This treats that string as
+  /// a university-zone time on a current reference day, then converts it
+  /// through AppDateTime().getZonedTimeFromUtc(...) so the result follows the
+  /// useUniversityTimeZone setting.
+  ///
+  static DateTime? _displayTime(String? time) {
+    if ((time == null) || (time.length < 4)) {
+      return null;
+    }
+    int? hours = int.tryParse(time.substring(0, 2));
+    int? minutes = int.tryParse(time.substring(2, 4));
+    if ((hours == null) || (minutes == null)) {
+      return null;
+    }
+    Location? uniLocation = AppDateTime().universityLocation;
+    if (uniLocation == null) {
+      return DateTime(0, 1, 1, hours, minutes);
+    }
+    TZDateTime referenceDay = TZDateTime.now(uniLocation);
+    TZDateTime uniWallClock = TZDateTime(uniLocation, referenceDay.year, referenceDay.month, referenceDay.day, hours, minutes);
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: uniWallClock.toUtc()) ?? uniWallClock;
   }
 
   ///

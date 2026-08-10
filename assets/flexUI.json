@@ -75,7 +75,7 @@
 			"appointment.providers.monitored": ["grainger"],
 			"appointment.providers.enabled": ["grainger"],
 
-			"settings": ["food_filters", "sports", "favorites", "assessments", "appointments_and_events", "language", "about", "research", "privacy", "notifications", "accessibility"],
+			"settings": ["food_filters", "sports", "favorites", "assessments", "appointments_and_events", "language_and_time", "about", "research", "privacy", "notifications", "accessibility"],
 			"settings.assessments": ["health_screener"],
 			"settings.assessments.skills_self_evaluation": ["save"],
 			"settings.assessments.health_screener": ["save"],
@@ -259,8 +259,8 @@
 				"perplexity_assistant"                    : "${config.settings.assistant.enable.perplexity}",
 				"all_assistants"                          : "${config.settings.assistant.enable.all}",
 				"assistant_faqs"                          : "${config.settings.assistant.enable.faqs}",
-				"assistant_promo"                         : false,
-				"laundry"								  : false
+				"assistant_promo"                         : "${config.settings.assistant.enable.promo}",
+				"laundry"								                  : "${config.settings.laundryEnabled}"
 			}
 		}
 	},

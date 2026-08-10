@@ -23,6 +23,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Appointment.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -77,6 +78,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> with No
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
 
     if (widget.appointment != null) {
@@ -687,6 +689,8 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> with No
     } else if (name == FlexUI.notifyChanged) {
       setStateIfMounted(() {});
       _updateCurrentLocation();
+    } else if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {});
     }
   }
 }

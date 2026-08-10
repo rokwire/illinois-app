@@ -268,6 +268,14 @@ enum ContentActivity { reload, refresh, extend }
 extension ContentActivityImpl on ContentActivity {
   bool get loading => (this == ContentActivity.reload) || (this == ContentActivity.refresh);
   bool get extending => (this == ContentActivity.extend);
+
+  bool canOverride(ContentActivity? activity) {
+    switch (this) {
+      case ContentActivity.reload: return (activity != ContentActivity.reload);
+      case ContentActivity.refresh: return ((activity != ContentActivity.reload) && (activity != ContentActivity.refresh));
+      case ContentActivity.extend: return ((activity != ContentActivity.reload) && (activity != ContentActivity.refresh) && (activity != ContentActivity.extend));
+    }
+  }
 }
 
 enum ListPosition { only, first, middle, last }

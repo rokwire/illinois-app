@@ -30,7 +30,7 @@ import 'package:illinois/ui/settings/SettingsAppointmentsAndEventsPage.dart';
 import 'package:illinois/ui/settings/SettingsAssessmentsPage.dart';
 import 'package:illinois/ui/settings/SettingsAboutPage.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersPage.dart';
-import 'package:illinois/ui/settings/SettingsLanguagePage.dart';
+import 'package:illinois/ui/settings/SettingsLanguageAndTimePage.dart';
 import 'package:illinois/ui/settings/SettingsNotificationPreferencesPage.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPage.dart';
 import 'package:illinois/ui/settings/SettingsResearchPage.dart';
@@ -46,7 +46,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/web_semantics.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-enum SettingsContentType { food_filters, sports, favorites, assessments, appointments_and_events, language, about, research, privacy, notifications, accessibility }
+enum SettingsContentType { food_filters, sports, favorites, assessments, appointments_and_events, language_and_time, about, research, privacy, notifications, accessibility }
 
 class SettingsHomePanel extends StatefulWidget with AnalyticsInfo {
   static final String routeName = 'settings_home_content_panel';
@@ -318,7 +318,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> with Notification
       case SettingsContentType.appointments_and_events: return SettingsAppointmentsAndEventsPage();
       case SettingsContentType.favorites: return null;
       case SettingsContentType.assessments: return SettingsAssessmentsPage();
-      case SettingsContentType.language: return SettingsLanguagePage();
+      case SettingsContentType.language_and_time: return SettingsLanguageAndTimePage();
       case SettingsContentType.about: return SettingsAboutPage();
       case SettingsContentType.research: return SettingsResearchPage(parentRouteName: SettingsHomePanel.routeName);
       case SettingsContentType.privacy: return SettingsPrivacyCenterPage();
@@ -402,7 +402,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case SettingsContentType.appointments_and_events: return Localization().getStringEx('panel.settings.home.settings.sections.appointments_and_events.label', 'My Appointments & Events', language: language);
       case SettingsContentType.favorites: return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'Customize Favorites', language: language);
       case SettingsContentType.assessments: return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments', language: language);
-      case SettingsContentType.language: return Localization().getStringEx('panel.settings.home.settings.sections.language.label', 'My Language', language: language);
+      case SettingsContentType.language_and_time: return Localization().getStringEx('panel.settings.home.settings.sections.language_and_time.label', 'My Language & Time', language: language);
       case SettingsContentType.about: return Localization().getStringEx('panel.settings.home.settings.sections.about.label', 'About the App', language: language);
       case SettingsContentType.research: return Localization().getStringEx('panel.settings.home.settings.sections.research.label', 'My Participation in Research', language: language);
       case SettingsContentType.privacy: return Localization().getStringEx('panel.settings.home.settings.sections.privacy.label', 'My App Privacy Settings', language: language);
@@ -418,7 +418,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case SettingsContentType.appointments_and_events: return 'appointments_and_events';
       case SettingsContentType.favorites: return 'favorites';
       case SettingsContentType.assessments: return 'assessments';
-      case SettingsContentType.language: return 'language';
+      case SettingsContentType.language_and_time: return 'language_and_time';
       case SettingsContentType.about: return 'about';
       case SettingsContentType.research: return 'research';
       case SettingsContentType.privacy: return 'privacy';
@@ -434,7 +434,7 @@ extension SettingsContentTypeImpl on SettingsContentType {
       case 'appointments_and_events': return SettingsContentType.appointments_and_events;
       case 'favorites': return SettingsContentType.favorites;
       case 'assessments': return SettingsContentType.assessments;
-      case 'language': return SettingsContentType.language;
+      case 'language_and_time': return SettingsContentType.language_and_time;
       case 'about': return SettingsContentType.about;
       case 'research': return SettingsContentType.research;
       case 'privacy': return SettingsContentType.privacy;

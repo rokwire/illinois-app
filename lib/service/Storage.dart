@@ -21,9 +21,9 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/storage.dart' as rokwire;
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Storage extends rokwire.Storage with NotificationsListener {
@@ -180,13 +180,13 @@ class Storage extends rokwire.Storage with NotificationsListener {
   }
 
   set offsetDate(DateTime? value) {
-    setStringWithName(offsetDateKey, AppDateTime().formatDateTime(value, ignoreTimeZone: true));
+    setStringWithName(offsetDateKey, DateTimeUtils.dateTimeToString(value));
   }
 
-  // Local Date/Time
-  static const String useDeviceLocalTimeZoneKey  = 'use_device_local_time_zone';
-  bool? get useDeviceLocalTimeZone => getBoolWithName(useDeviceLocalTimeZoneKey, defaultValue: true);
-  set useDeviceLocalTimeZone(bool? value) => setBoolWithName(useDeviceLocalTimeZoneKey, value);
+  // University Time Zone
+  static const String useUniversityTimeZoneKey  = 'use_university_time_zone';
+  bool? get useUniversityTimeZone => getBoolWithName(useUniversityTimeZoneKey, defaultValue: false);
+  set useUniversityTimeZone(bool? value) => setBoolWithName(useUniversityTimeZoneKey, value);
 
   // Debug
   @override String get debugGeoFenceRegionRadiusKey  => 'debug_geo_fence_region_radius';
@@ -327,6 +327,14 @@ class Storage extends rokwire.Storage with NotificationsListener {
   setChecklistNotes(String contentKey, String? value) => setStringWithName("${contentKey}_$_giesNotesKey", value);
 
   //Groups
+  static const String groupsHome2FilterKey = 'edu.illinois.rokwire.groups.home2.filter';
+  GroupsFilter? get groupsHome2Filter => GroupsFilter.fromJson(JsonUtils.decodeMap(getStringWithName(groupsHome2FilterKey))) ;
+  set groupsHome2Filter(GroupsFilter? value) => setStringWithName(groupsHome2FilterKey, JsonUtils.encode(value?.toJson()) );
+
+  static const String groupsHome2SectionsKey = 'edu.illinois.rokwire.groups.home2.sections';
+  Set<String>? get groupsHome2Sections => JsonUtils.stringSetValue(JsonUtils.decodeList(getStringWithName(groupsHome2SectionsKey))) ;
+  set groupsHome2Sections(Set<String>? value) => setStringWithName(groupsHome2SectionsKey, JsonUtils.encode(value?.toList()));
+
   static const String _groupMemberSelectionTableKey = 'group_members_selection';
 
   Map<String, List<List<Member>>>? get groupMembersSelection {

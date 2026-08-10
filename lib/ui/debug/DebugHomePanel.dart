@@ -35,7 +35,6 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/model/survey.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
@@ -55,6 +54,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/panels/survey_creation_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -154,8 +154,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
       Container(height: 1, color: Styles().colors.surfaceAccent),
 
       ToggleRibbonButton(title: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck ?? false, onTap: _onDisableLiveGameCheckToggled),
-      Container(height: 1, color: Styles().colors.surfaceAccent ,),
-      ToggleRibbonButton(title: 'Display all times in Central Time', toggled: !Storage().useDeviceLocalTimeZone!, onTap: _onUseDeviceLocalTimeZoneToggled),
       Container(height: 1, color: Styles().colors.surfaceAccent ,),
       ToggleRibbonButton(title: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
       Container(height: 1, color: Styles().colors.surfaceAccent ,),
@@ -352,7 +350,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
       RoundedButton(label: "Clear", fontSize: 16, padding: _smallButtonPadding, contentWeight: 0.0, onTap: _clearDateOffset,),
     ],);
 
-  String get _sportOffsetText => (_offsetDate != null) ? AppDateTime().formatDateTime(_offsetDate, format: 'MM/dd/yyyy HH:mm a')! : "None";
+  String get _sportOffsetText => (_offsetDate != null) ? DateTimeUtils.dateTimeToString(_offsetDate, format: 'MM/dd/yyyy HH:mm a')! : "None";
 
   Widget _buildAppReview() =>
       Row(children: [
@@ -580,12 +578,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> with NotificationsListe
   void _onUseTestWalletService() {
     setState(() {
       Storage().debugUseIlliniCashTestUrl = (Storage().debugUseIlliniCashTestUrl != true);
-    });
-  }
-
-  void _onUseDeviceLocalTimeZoneToggled() {
-    setState(() {
-      Storage().useDeviceLocalTimeZone = !Storage().useDeviceLocalTimeZone!;
     });
   }
 

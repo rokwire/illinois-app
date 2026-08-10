@@ -1994,7 +1994,7 @@
 	"panel.settings.home.settings.sections.appointments_and_events.label": "My Appointments & Events",
 	"panel.settings.home.settings.sections.favorites.label": "自定義收藏夾",
 	"panel.settings.home.settings.sections.assessments.label": "我的評估",
-	"panel.settings.home.settings.sections.language.label": "我的語言",
+	"panel.settings.home.settings.sections.language_and_time.label": "我的語言與時間",
 	"panel.settings.home.settings.sections.about.label": "About the App",
 	"panel.settings.home.settings.sections.maps.label": "Maps & Wayfinding",
 	"panel.settings.home.settings.sections.research.label": "My Participation in Research",
@@ -2072,6 +2072,9 @@
 	"panel.settings.home.language.en.title": "英語",
 	"panel.settings.home.language.es.title": "西班牙語",
 	"panel.settings.home.language.zh.title": "Chinese",
+
+	"panel.settings.home.time_zone.system.title": "使用系統時間",
+	"panel.settings.home.time_zone.central.title": "中部時間 (CT)",
 
 	"panel.settings.home.accessibility.favorites.label": "Favorites",
 	"panel.settings.home.accessibility.reduce_motion.label": "Reduce motion",
@@ -3145,6 +3148,7 @@
 	"panel.groups_home.groups.count.single.label": "群组",
 	"panel.groups_home.groups.count.plural.label": "群组",
 
+	"panel.group.home2.label.heading": "Groups",
 	"panel.group.home2.failed.text": "Failed to load groups",
 	"panel.group.home2.empty.text": "There are no groups matching the selected filters",
 	"panel.group.home2.bar.button.filter.title": "Filter",
@@ -3159,9 +3163,11 @@
 	"panel.group.home2.bar.button.share.hint": "Tap to share current groups ",
 	"panel.group.home2.bar.button.clear.title": "Clear",
 	"panel.group.home2.bar.button.clear.hint": "Tap to clear current filter ",
+	"panel.group.home2.bar.description.search.title": "Search",
 	"panel.group.home2.bar.description.filters.title": "Filter",
 	"panel.group.home2.bar.description.groups.title": "Groups",
 	"panel.group.home2.bar.description.filters.empty.title": "None",
+	"panel.group.search.label.heading": "Search",
 
 	"panel.groups_settings.label.heading": "群组设定",
 	"panel.groups_settings.label.project.heading": "计划设定",
@@ -3496,6 +3502,8 @@
 	"panel.student_courses.header.title": "我的課程",
 	"panel.student_courses.term_dropdown.hint": "雙擊選擇學期",
 	"panel.student_courses.view_type_dropdown.hint": "雙擊選擇檢視",
+	"panel.student_courses.time_zone.button.title": "時區",
+	"panel.student_courses.time_zone.button.hint": "雙擊開啟時區設定",
 	"panel.student_courses.instructor.title": "Instructor: %s",
 	"panel.student_courses.room.title": "Room",
 	"panel.student_courses.map.button.title": "View In-Person Courses on Map",

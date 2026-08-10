@@ -32,6 +32,7 @@ import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:share_plus/share_plus.dart';
 

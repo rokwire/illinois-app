@@ -9,7 +9,6 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -19,9 +18,11 @@ import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/image_error_builder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -205,7 +206,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> with Notification
     
     DateTime? date = Guide().isEntryReminder(_guideEntry) ? Guide().reminderDate(_guideEntry) : null;
     if (date != null) {
-      String? dateString = AppDateTime().formatDateTime(Guide().reminderDate(_guideEntry), format: 'MMM dd', ignoreTimeZone: true);
+      String? dateString = DateTimeUtils.dateTimeToString(Guide().reminderDate(_guideEntry), format: 'MMM dd');
       contentList.add(
         Padding(padding: EdgeInsets.zero, child:
           Text(dateString ?? '',
@@ -228,6 +229,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> with Notification
 
     List<dynamic>? links = JsonUtils.listValue(Guide().entryValue(_guideEntry, 'links'));
     if (links != null) {
+      final double imageSize = 20;
       for (dynamic link in links) {
         if (link is Map) {
           String? text = JsonUtils.stringValue(link['text']);
@@ -250,7 +252,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> with Notification
               GestureDetector(onTap: () => (locationGps != null) ? _onTapLocation(locationGps) : (hasUri ? _onTapLink(url, useInternalBrowser: useInternalBrowser) : _nop()), child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: WebNetworkImage(imageUrl: icon, width: 20, height: 20, excludeFromSemantics: true,),) : Container(width: 24, height: 24),
+                    (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: WebNetworkImage(imageUrl: icon, width: imageSize, height: imageSize, excludeFromSemantics: true, errorBuilder: (context, error, stackTrace) => Container(width: imageSize, height: imageSize)),) : Container(width: 24, height: 24),
                     Expanded(child:
                       Padding(padding: EdgeInsets.only(left: 8), child:
                         Text(text, style: underline ? Styles().textStyles.getTextStyle("widget.button.title.regular.thin.underline") :  Styles().textStyles.getTextStyle("widget.button.title.regular.thin"))
@@ -286,7 +288,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> with Notification
               Row(children: [
                 Expanded(child:
                   Column(children: [
-                      WebNetworkImage(imageUrl: imageUrl, excludeFromSemantics: true,),
+                      WebNetworkImage(imageUrl: imageUrl, excludeFromSemantics: true, errorBuilder: ImageErrorBuilder.defaultBuilder),
                   ]),
                 ),
               ],)
@@ -296,7 +298,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> with Notification
               Row(children: [
                 Expanded(child:
                   Column(children: [
-                    AccessibleImageHolder(child: ModalImageHolder(child: WebNetworkImage(imageUrl: imageUrl, excludeFromSemantics: true,))),
+                    AccessibleImageHolder(child: ModalImageHolder(child: WebNetworkImage(imageUrl: imageUrl, excludeFromSemantics: true, errorBuilder: ImageErrorBuilder.defaultBuilder))),
                   ]),
                 ),
               ],)

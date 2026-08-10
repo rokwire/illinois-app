@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -47,6 +48,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> with Notification
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     super.initState();
   }
@@ -65,6 +67,9 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> with Notification
       setStateIfMounted(() {});
     }
     else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
       setStateIfMounted(() {});
     }
   }

@@ -17,10 +17,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
 import 'package:illinois/ui/wallet/WalletPhotoWrapper.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
@@ -28,6 +28,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Transportation.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -280,7 +281,8 @@ class _BusClockState extends State<_BusClock> {
   }
 
   String? get _timeString {
-    return AppDateTime().formatUniLocalTimeFromUtcTime(DateTime.now(), "hh:mm:ss");
+    DateTime? uniTime = AppDateTime().getUniversityTimeFromUtc(DateTime.now().toUtc());
+    return DateTimeUtils.dateTimeToString(uniTime, format: "hh:mm:ss");
   }
 
 }

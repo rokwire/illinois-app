@@ -30,6 +30,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:sprintf/sprintf.dart';
@@ -65,15 +66,17 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   void initState() {
     super.initState();
 
-    TZDateTime nowUni = DateTimeUni.nowUniOrLocal();
-    TZDateTime? nextAvailUni = widget.scheduleParam.person?.nextAvailableTimeUtc?.toUniOrLocal() ??
-      widget.scheduleParam.unit?.nextAvailableTimeUtc?.toUniOrLocal();
-    
-    _minDate = TZDateTimeUtils.dateOnly((nextAvailUni != null) ?
-      TZDateTimeUtils.max(nextAvailUni, nowUni) : nowUni);
+    TZDateTime nowDisplay = AppDateTime().getZonedNowTZTime();
+    TZDateTime? nextAvailDisplay = (widget.scheduleParam.person?.nextAvailableTimeUtc != null) ?
+      AppDateTime().getZonedTZTimeFromUtc(widget.scheduleParam.person!.nextAvailableTimeUtc!) :
+      ((widget.scheduleParam.unit?.nextAvailableTimeUtc != null) ?
+        AppDateTime().getZonedTZTimeFromUtc(widget.scheduleParam.unit!.nextAvailableTimeUtc!) : null);
 
-    _maxDate = TZDateTimeUtils.dateOnly((nextAvailUni != null) ?
-      TZDateTimeUtils.max(nextAvailUni.add(Duration(days: 14)), nowUni.add(Duration(days: 90))) : nowUni.add(Duration(days: 180)));
+    _minDate = TZDateTimeUtils.dateOnly((nextAvailDisplay != null) ?
+      TZDateTimeUtils.max(nextAvailDisplay, nowDisplay) : nowDisplay);
+
+    _maxDate = TZDateTimeUtils.dateOnly((nextAvailDisplay != null) ?
+      TZDateTimeUtils.max(nextAvailDisplay.add(Duration(days: 14)), nowDisplay.add(Duration(days: 90))) : nowDisplay.add(Duration(days: 180)));
 
     _loadTimeSlots();
   }
@@ -299,16 +302,16 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
         initialDate: _selectedDate!,
         firstDate: _minDate,
         lastDate: _maxDate,
-        currentDate: DateTimeUni.nowUniOrLocal(),
+        currentDate: AppDateTime().getZonedNowTZTime(),
         selectableDayPredicate: _canSelectDate,
       ).then((DateTime? result) {
         if ((result != null) && mounted) {
           setState(() {
 
-            _selectedDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, DateTimeUni.timezoneUniOrLocal)!);
+            _selectedDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, AppDateTime().zonedLocation)!);
 
             _buildDaySlots(_timeSlots,
-              _selectedDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, DateTimeUni.timezoneUniOrLocal)!)
+              _selectedDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, AppDateTime().zonedLocation)!)
             );
 
             _selectedSlot = _findSelectedTimeSlot(
@@ -441,7 +444,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     if (timeSlots != null) {
       for (AppointmentTimeSlot timeSlot in timeSlots) {
         if ((timeSlot.startTimeUtc != null) && (minTimestamp <= timeSlot.startTimeUtc!.microsecondsSinceEpoch)) {
-          return TZDateTimeUtils.dateOnly(timeSlot.startTimeUtc!.toUniOrLocal());
+          return TZDateTimeUtils.dateOnly(AppDateTime().getZonedTZTimeFromUtc(timeSlot.startTimeUtc!));
         }
       }
     }
@@ -449,7 +452,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   }
 
   bool _canSelectDate(DateTime dateTime) {
-    int dateStartTimestamp = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(dateTime, DateTimeUni.timezoneUniOrLocal)!).millisecondsSinceEpoch;
+    int dateStartTimestamp = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(dateTime, AppDateTime().zonedLocation)!).millisecondsSinceEpoch;
     int dateEndTimestamp = dateStartTimestamp + 86400000; // 1 day in milliseconds = 24 * 60 * 60 * 1000
     if (_timeSlots != null) {
       for (AppointmentTimeSlot timeSlot in _timeSlots!) {

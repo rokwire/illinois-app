@@ -31,14 +31,17 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/tracking_services.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:mime/mime.dart';
+import 'package:timezone/timezone.dart' as timezone;
+import 'package:universal_io/io.dart';
+import 'package:universal_html/html.dart' as html;
 import 'package:http/http.dart' as http;
 
 class AppAlert {
@@ -378,70 +381,7 @@ class AppSemantics {
     // }
 }
 
-class AppDateTimeUtils {
-
-
-  static String getDisplayDateTime(DateTime? dateTimeUtc, {bool? allDay = false, bool considerSettingsDisplayTime = true}) {
-    String? timePrefix = getDisplayDay(dateTimeUtc: dateTimeUtc, allDay: allDay, considerSettingsDisplayTime: considerSettingsDisplayTime, includeAtSuffix: true);
-    String? timeSuffix = getDisplayTime(dateTimeUtc: dateTimeUtc, allDay: allDay, considerSettingsDisplayTime: considerSettingsDisplayTime);
-    return '$timePrefix $timeSuffix';
-  }
-
-  static String? getDisplayDay({DateTime? dateTimeUtc, bool? allDay = false, bool considerSettingsDisplayTime = true, bool includeAtSuffix = false}) {
-    String? displayDay = '';
-    if(dateTimeUtc != null) {
-      DateTime dateTimeToCompare = _getDateTimeToCompare(dateTimeUtc: dateTimeUtc, considerSettingsDisplayTime: considerSettingsDisplayTime)!;
-      DateTime nowDevice = DateTime.now();
-      DateTime nowUtc = nowDevice.toUtc();
-      DateTime? nowUniLocal = AppDateTime().getUniLocalTimeFromUtcTime(nowUtc);
-      DateTime nowToCompare = AppDateTime().useDeviceLocalTimeZone ? nowDevice : nowUniLocal!;
-      int calendarDaysDiff = dateTimeToCompare.day - nowToCompare.day;
-      int timeDaysDiff = dateTimeToCompare.difference(nowToCompare).inDays;
-      if ((calendarDaysDiff != 0) && (calendarDaysDiff > timeDaysDiff)) {
-        timeDaysDiff += 1;
-      }
-      if (timeDaysDiff == 0) {
-        displayDay = Localization().getStringEx('model.explore.date_time.today', 'Today');
-        if (!allDay! && includeAtSuffix) {
-          displayDay = "$displayDay ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
-        }
-      }
-      else if (timeDaysDiff == 1) {
-        displayDay = Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow');
-        if (!allDay! && includeAtSuffix) {
-          displayDay = "$displayDay ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
-        }
-      }
-      else {
-        displayDay = AppDateTime().formatDateTime(dateTimeToCompare, format: "MMM dd", ignoreTimeZone: true, showTzSuffix: false);
-      }
-    }
-    return displayDay;
-  }
-
-  static String? getDisplayTime({DateTime? dateTimeUtc, bool? allDay = false, bool considerSettingsDisplayTime = true}) {
-    String? timeToString = '';
-    if (dateTimeUtc != null && !allDay!) {
-      DateTime dateTimeToCompare = _getDateTimeToCompare(dateTimeUtc: dateTimeUtc, considerSettingsDisplayTime: considerSettingsDisplayTime)!;
-      String format = (dateTimeToCompare.minute == 0) ? 'ha' : 'h:mma';
-      timeToString = AppDateTime().formatDateTime(dateTimeToCompare, format: format, ignoreTimeZone: true, showTzSuffix: !AppDateTime().useDeviceLocalTimeZone)?.toLowerCase();
-    }
-    return timeToString;
-  }
-
-  static DateTime? _getDateTimeToCompare({DateTime? dateTimeUtc, bool considerSettingsDisplayTime = true}) {
-    if (dateTimeUtc == null) {
-      return null;
-    }
-    DateTime? dateTimeToCompare;
-    //workaround for receiving incorrect date times from server for games: http://fightingillini.com/services/schedule_xml_2.aspx
-    if (AppDateTime().useDeviceLocalTimeZone && considerSettingsDisplayTime) {
-      dateTimeToCompare = AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc);
-    } else {
-      dateTimeToCompare = AppDateTime().getUniLocalTimeFromUtcTime(dateTimeUtc);
-    }
-    return dateTimeToCompare;
-  }
+class AppRelativeTime {
 
   static String getDayPartGreeting({DayPart? dayPart}) {
     dayPart ??= DateTimeUtils.getDayPart();
@@ -453,7 +393,10 @@ class AppDateTimeUtils {
     }
   }
 
-  static String timeAgoSinceDate(DateTime date, {bool numericDates = true}) {
+  static String? timeAgoSinceDate(DateTime? date, {bool numericDates = true}) {
+    if (date == null) {
+      return null;
+    }
     final date2 = DateTime.now();
     final difference = date2.difference(date);
 
@@ -480,6 +423,40 @@ class AppDateTimeUtils {
     } else {
       return Localization().getStringEx('logic.date_time.time_ago.just_now', 'Just now');
     }
+  }
+
+  static String? relativeDaySinceDate({DateTime? dateTime, timezone.Location? location, bool allDay = false, bool includeAtSuffix = false}) {
+    String? displayDay = '';
+    if (dateTime != null) {
+
+      if (DateTimeUtils.isToday(dateTime, location: location)) {
+        displayDay = Localization().getStringEx('model.explore.date_time.today', 'Today');
+        if (!allDay && includeAtSuffix) {
+          displayDay += " ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
+        }
+      } else if (DateTimeUtils.isTomorrow(dateTime, location: location)) {
+        displayDay = Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow');
+        if (!allDay && includeAtSuffix) {
+          displayDay += " ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
+        }
+      } else if (DateTimeUtils.isYesterday(dateTime, location: location)) {
+        displayDay = Localization().getStringEx('model.explore.time.yesterday', 'Yesterday');
+        if (!allDay && includeAtSuffix) {
+          displayDay += " ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
+        }
+      } else if (DateTimeUtils.isThisWeek(dateTime, location: location)) {
+        displayDay = DateTimeUtils.dateTimeToString(dateTime, format: "EE");
+      } else {
+        displayDay = DateTimeUtils.dateTimeToString(dateTime, format: "MMM dd");
+      }
+    }
+    return displayDay;
+  }
+
+  static String relativeDateTimeSinceDate({DateTime? dateTime, timezone.Location? location, String? timeZoneSuffix, bool allDay = false, bool includeAtSuffix = false}) {
+    String? dayPart = relativeDaySinceDate(dateTime: dateTime, location: location, allDay: allDay, includeAtSuffix: includeAtSuffix);
+    String? timePart = allDay ? '' : DateTimeUtils.timeToString(dateTime, timeZoneSuffix: timeZoneSuffix);
+    return '$dayPart $timePart';
   }
 }
 

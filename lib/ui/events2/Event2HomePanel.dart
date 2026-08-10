@@ -12,6 +12,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -43,6 +44,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 
@@ -496,6 +498,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       Events2.notifyChanged,
       Events2.notifyUpdated,
       Assistant.notifyPromoContentChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
 
     _scrollController.addListener(_scrollListener);
@@ -558,6 +561,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     }
     else if (name == Assistant.notifyPromoContentChanged) {
       _updateAssistantPromo();
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      _reload();
     }
   }
 

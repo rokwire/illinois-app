@@ -2009,7 +2009,7 @@
     "panel.settings.home.settings.sections.appointments_and_events.label": "My Appointments & Events",
     "panel.settings.home.settings.sections.favorites.label": "Personalizar Mis Favoritos",
     "panel.settings.home.settings.sections.assessments.label": "Mis Evaluaciones",
-    "panel.settings.home.settings.sections.language.label": "Mi Idioma",
+    "panel.settings.home.settings.sections.language_and_time.label": "Mi Idioma y Hora",
     "panel.settings.home.settings.sections.about.label": "About the App",
     "panel.settings.home.settings.sections.maps.label": "Maps & Wayfinding",
     "panel.settings.home.settings.sections.research.label": "My Participation in Research",
@@ -2088,6 +2088,9 @@
     "panel.settings.home.language.en.title": "Inglés",
     "panel.settings.home.language.es.title": "Español",
     "panel.settings.home.language.zh.title": "Chino",
+
+    "panel.settings.home.time_zone.system.title": "Usar la hora del sistema",
+    "panel.settings.home.time_zone.central.title": "Hora Central (CT)",
 
     "panel.settings.home.accessibility.favorites.label": "Favorites",
     "panel.settings.home.accessibility.reduce_motion.label": "Reduce motion",
@@ -3169,6 +3172,7 @@
     "panel.groups_home.groups.count.single.label": "grupo",
     "panel.groups_home.groups.count.plural.label": "grupos",
 
+    "panel.group.home2.label.heading": "Groups",
     "panel.group.home2.failed.text": "Failed to load groups",
     "panel.group.home2.empty.text": "There are no groups matching the selected filters",
     "panel.group.home2.bar.button.filter.title": "Filter",
@@ -3183,9 +3187,11 @@
     "panel.group.home2.bar.button.share.hint": "Tap to share current groups ",
     "panel.group.home2.bar.button.clear.title": "Clear",
    	"panel.group.home2.bar.button.clear.hint": "Tap to clear current filter ",
+    "panel.group.home2.bar.description.search.title": "Search",
     "panel.group.home2.bar.description.filters.title": "Filter",
     "panel.group.home2.bar.description.groups.title": "Groups",
    	"panel.group.home2.bar.description.filters.empty.title": "None",
+    "panel.group.search.label.heading": "Search",
 
     "panel.groups_settings.label.heading": "Configuración del Grupo",
     "panel.groups_settings.label.project.heading": "Configuración del Proyecto",
@@ -3521,6 +3527,8 @@
     "panel.student_courses.header.title": "Mis cursos",
     "panel.student_courses.term_dropdown.hint": "Doble toque para seleccionar el término",
     "panel.student_courses.view_type_dropdown.hint": "Doble toque para seleccionar la vista",
+    "panel.student_courses.time_zone.button.title": "Zona Horaria",
+    "panel.student_courses.time_zone.button.hint": "Doble toque para abrir la configuración de zona horaria",
     "panel.student_courses.instructor.title": "Instructor: %s",
     "panel.student_courses.room.title": "Room",
     "panel.student_courses.map.button.title": "View In-Person Courses on Map",

@@ -478,7 +478,8 @@ class _VideoTutorialThumbState extends State<VideoTutorialThumbButton>{
             ),
             if (_video?.thumbUrl != null)
               AspectRatio(aspectRatio: _videoAspect, child:
-                Image.network(_video?.thumbUrl ?? "", fit: BoxFit.cover,)
+                Image.network(_video?.thumbUrl ?? "", fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(color: Styles().colors.fillColorPrimary,))
               ),
             _loadingVideoTutorials ? _loadingProgress : VideoPlayButton()
           ])
