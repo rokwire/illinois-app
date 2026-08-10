@@ -59,7 +59,7 @@ class AppDateTime extends rokwire.AppDateTime {
   String? get universityLocationName => Config().timezoneLocation; //TMP: 'Europe/Sofia';
 
   @override
-  String? get timeZoneSuffix => (useUniversityTimeZone ? 'CT' : null); //TBD: DD - read from config
+  String? get timeZoneSuffix => (useUniversityTimeZone ? Config().timezoneAbbreviation : null);
 
   @override
   bool get useUniversityTimeZone => (Storage().useUniversityTimeZone == true);
