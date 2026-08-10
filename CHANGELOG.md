@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Read laundry enabled flag from app config, assistant promo as well [#5929](https://github.com/rokwire/illinois-app/issues/5929).
 ### Fixed
 - Fixed crash on opening deep links [#5939](https://github.com/rokwire/illinois-app/issues/5939).
+- Fixed crash in Wallet iCard panel [#5953](https://github.com/rokwire/illinois-app/issues/5953).
+- Fixed crash in Map2 Home panel [#5955](https://github.com/rokwire/illinois-app/issues/5955).
 - Prevent a crash when an image fails to load from the internet [#5951](https://github.com/rokwire/illinois-app/issues/5951).
 
 ## [8.1.9] - 2026-07-31
