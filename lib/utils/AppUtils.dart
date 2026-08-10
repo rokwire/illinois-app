@@ -40,8 +40,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:mime/mime.dart';
 import 'package:timezone/timezone.dart' as timezone;
-import 'package:universal_io/io.dart';
-import 'package:universal_html/html.dart' as html;
 import 'package:http/http.dart' as http;
 
 class AppAlert {

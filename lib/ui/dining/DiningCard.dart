@@ -118,7 +118,7 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
             )
         ),
       )
-    );
+    ));
   }
 
   Decoration get _imageHeadingDecoration => BoxDecoration(

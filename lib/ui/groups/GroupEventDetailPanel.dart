@@ -13,7 +13,6 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:rokwire_plugin/service/config.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
