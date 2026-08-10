@@ -93,11 +93,9 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
 
   @override
   void initState() {
-    setStateIfMounted(() {
-      if (widget.gbvData.directoryCategories.length == 1) {
-        _expandedSections.add(widget.gbvData.directoryCategories.first);
-      }
-    });
+    if (widget.gbvData.directoryCategories.length == 1) {
+      _expandedSections.add(widget.gbvData.directoryCategories.first);
+    }
     super.initState();
   }
 
