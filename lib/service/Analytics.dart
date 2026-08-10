@@ -50,6 +50,7 @@ import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/service/Auth2.dart';
 
 import 'package:illinois/ui/RootPanel.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'package:uuid/uuid.dart';

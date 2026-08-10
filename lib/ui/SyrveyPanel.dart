@@ -7,7 +7,7 @@ class SurveyPanel extends rokwire.SurveyPanel with AnalyticsInfo {
   final AnalyticsFeature? analyticsFeature; //This overrides AnalyticsInfo.analyticsFeature getter
 
   SurveyPanel({required super.survey, super.surveyDataKey, super.inputEnabled,
-    super.dateTaken, super.showResult, super.onComplete, super.initPanelDepth, super.defaultResponses,
+    super.dateTakenFormatted, super.showResult, super.onComplete, super.initPanelDepth, super.defaultResponses,
     super.summarizeResultRules, super.summarizeResultRulesWidget, super.headerBar, super.tabBar, super.offlineWidget,
     this.analyticsFeature});
 

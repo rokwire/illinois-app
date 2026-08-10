@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 extension GameExt on Game {
@@ -54,15 +55,23 @@ extension GameExt on Game {
       }
       DateTime? startDisplayDate = useStringDateTimes ? date : dateTimeUtc;
       DateTime? endDisplayDate = useStringDateTimes ? (endDate ?? endDateTimeUtc) : endDateTimeUtc;
-      String? startDateFormatted = AppDateTime().formatDateTime(startDisplayDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
-      String? endDateFormatted = AppDateTime().formatDateTime(endDisplayDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
+      String? startDateFormatted;
+      String? endDateFormatted;
+      if (useStringDateTimes) {
+        startDateFormatted = DateTimeUtils.dateTimeToString(startDisplayDate, format: displayDateFormat);
+        endDateFormatted = DateTimeUtils.dateTimeToString(endDisplayDate, format: displayDateFormat);
+      } else {
+        startDateFormatted = DateTimeUtils.dateTimeToString(AppDateTime().getZonedTimeFromUtc(dateTimeUtc: startDisplayDate), format: displayDateFormat);
+        endDateFormatted = DateTimeUtils.dateTimeToString(AppDateTime().getZonedTimeFromUtc(dateTimeUtc: endDisplayDate), format: displayDateFormat);
+      }
       return '$startDateFormatted - $endDateFormatted';
     } else if (useStringDateTimes) {
-      String dateFormatted = AppDateTime().formatDateTime(date, format: displayDateFormat, ignoreTimeZone: true, showTzSuffix: false)!; //another workaround
+      String dateFormatted = DateTimeUtils.dateTimeToString(date, format: displayDateFormat)!; //another workaround
       dateFormatted += ' ${StringUtils.ensureNotEmpty(timeToString)}';
       return dateFormatted;
     } else {
-      return AppDateTimeUtils.getDisplayDateTime(dateTimeUtc, allDay: allDay ?? false);
+      DateTime? dateTimeZoned = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dateTimeUtc);
+      return AppRelativeTime.relativeDateTimeSinceDate(dateTime: dateTimeZoned, location: AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix, allDay: allDay ?? false);
     }
   }
 

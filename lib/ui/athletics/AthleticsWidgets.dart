@@ -21,6 +21,7 @@ import 'package:illinois/ext/Game.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Sports.dart';
@@ -73,6 +74,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> with Notificati
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     super.initState();
   }
@@ -90,6 +92,8 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> with Notificati
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() {});
     } else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
+    } else if (name == AppDateTime.notifyTimeZoneChanged) {
       setStateIfMounted(() {});
     }
   }

@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/wellness/WellnessToDo.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -29,6 +28,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:weekday_selector/weekday_selector.dart';
 
@@ -498,7 +498,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
               Padding(
                   padding: EdgeInsets.only(left: 10),
-                  child: Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(date, format: 'EEEE, MM/dd', ignoreTimeZone: true)),
+                  child: Text(StringUtils.ensureNotEmpty(DateTimeUtils.dateTimeToString(date, format: 'EEEE, MM/dd')),
                       style: Styles().textStyles.getTextStyle("panel.wellness.todo.item_detail.work_date"))),
               GestureDetector(
                   onTap: () => _onTapRemoveWorkDay(date),
@@ -1055,17 +1055,17 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   String? _getReminderTypeLabel(WellnessToDoReminderType? type) {
     String? typeLabel = WellnessToDoItem.reminderTypeToDisplayString(type);
     if ((type == WellnessToDoReminderType.specific_time) && (_reminderDateTime != null)) {
-      typeLabel = typeLabel! + ' (${AppDateTime().formatDateTime(_reminderDateTime, format: 'h:mm a', ignoreTimeZone: true)})';
+      typeLabel = typeLabel! + ' (${DateTimeUtils.dateTimeToString(_reminderDateTime, format: 'h:mm a')})';
     }
     return typeLabel;
   }
 
   String? get _formattedDueDate {
-    return AppDateTime().formatDateTime(_dueDate, format: 'MM/dd/yy', ignoreTimeZone: true);
+    return DateTimeUtils.dateTimeToString(_dueDate, format: 'MM/dd/yy');
   }
 
   String? get _formattedEndDate {
-    return AppDateTime().formatDateTime(_endDate, format: 'MM/dd/yy', ignoreTimeZone: true);
+    return DateTimeUtils.dateTimeToString(_endDate, format: 'MM/dd/yy');
   }
 
   String? get _formattedDueTime {
@@ -1073,7 +1073,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       return null;
     }
     DateTime time = DateTime(_dueDate!.year, _dueDate!.month, _dueDate!.day, _dueTime!.hour, _dueTime!.minute);
-    return AppDateTime().formatDateTime(time, format: 'h:mm a', ignoreTimeZone: true);
+    return DateTimeUtils.dateTimeToString(time, format: 'h:mm a');
   }
 
   List<String>? get _formattedWorkDays {
@@ -1082,7 +1082,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     }
     List<String> stringList = <String>[];
     for (DateTime day in _workDays!) {
-      String? formattedWorkDay = AppDateTime().formatDateTime(day, format: _workDayFormat, ignoreTimeZone: true);
+      String? formattedWorkDay = DateTimeUtils.dateTimeToString(day, format: _workDayFormat);
       if (StringUtils.isNotEmpty(formattedWorkDay)) {
         stringList.add(formattedWorkDay!);
       }

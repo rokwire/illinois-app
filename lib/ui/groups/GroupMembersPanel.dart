@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/ui/groups/GroupMembersSearchPanel.dart';
@@ -86,10 +87,11 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
     super.initState();
     
     NotificationService().subscribe(this, [
-      Groups.notifyGroupMembershipApproved, 
+      Groups.notifyGroupMembershipApproved,
       Groups.notifyGroupMembershipRejected,
       Groups.notifyGroupMembershipRemoved,
       FirebaseMessaging.notifyGroupsNotification,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
 
     _searchFocus = FocusNode();
@@ -133,6 +135,10 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> with Notification
       }
       _loadGroupStats();
       _reloadMembers();
+    }
+
+    if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {});
     }
   }
 

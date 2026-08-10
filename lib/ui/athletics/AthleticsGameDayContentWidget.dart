@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailHeading.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
@@ -42,7 +43,10 @@ class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentW
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Auth2UserPrefs.notifyInterestsChanged]);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyInterestsChanged,
+      AppDateTime.notifyTimeZoneChanged,
+    ]);
     _loadTodayGames();
   }
 
@@ -125,6 +129,9 @@ class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentW
   @override
   void onNotification(String name, param) {
     if (name == Auth2UserPrefs.notifyInterestsChanged) {
+      _loadTodayGames();
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
       _loadTodayGames();
     }
   }

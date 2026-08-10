@@ -17,18 +17,19 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class SettingsLanguagePage extends StatefulWidget {
+class SettingsLanguageAndTimePage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _SettingsLanguagePageState();
+  State<StatefulWidget> createState() => _SettingsLanguageAndTimePageState();
 }
 
-class _SettingsLanguagePageState extends State<SettingsLanguagePage> with NotificationsListener {
+class _SettingsLanguageAndTimePageState extends State<SettingsLanguageAndTimePage> with NotificationsListener {
 
   bool _localeChanged = false;
 
@@ -36,6 +37,7 @@ class _SettingsLanguagePageState extends State<SettingsLanguagePage> with Notifi
   void initState() {
     NotificationService().subscribe(this, [
       Localization.notifyLocaleChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     super.initState();
   }
@@ -54,15 +56,26 @@ class _SettingsLanguagePageState extends State<SettingsLanguagePage> with Notifi
       setStateIfMounted(() { });
       _localeChanged = true;
     }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() { });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(decoration: _contentDecoration, child:
-      Padding(padding: EdgeInsets.zero, child:
-        Column(children: _buildLanguageOptions(),)
-      )
-    );
+    return Column(children: [
+      Container(decoration: _contentDecoration, child:
+        Padding(padding: EdgeInsets.zero, child:
+          Column(children: _buildLanguageOptions(),)
+        )
+      ),
+      SizedBox(height: 16),
+      Container(decoration: _contentDecoration, child:
+        Padding(padding: EdgeInsets.zero, child:
+          Column(children: _buildTimeZoneOptions(),)
+        )
+      ),
+    ],);
   }
 
   static BoxDecoration get _contentDecoration => BoxDecoration(
@@ -96,7 +109,7 @@ class _SettingsLanguagePageState extends State<SettingsLanguagePage> with Notifi
       ),
       InkWell(onTap: () => _onLanguageOption(name, code), child:
         Padding(padding: EdgeInsets.all(16), child:
-          Styles().images.getImage((Localization().selectedLocale?.languageCode == code) ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true)
+          Styles().images.getImage((Localization().selectedLocale?.languageCode == code) ? 'check-circle-filled' : 'check-circle-outline-gray', size: 24, excludeFromSemantics: true)
         )
       ),
     ],));
@@ -108,7 +121,7 @@ class _SettingsLanguagePageState extends State<SettingsLanguagePage> with Notifi
       _localeChanged = false;
       Localization().setSelectedLocaleAsync((code != null) ? Locale(code) : null).then((_) {
         if (_localeChanged) {
-          _launchSettingsLanguagePanel();
+          _launchSettingsLanguageAndTimePanel();
         }
         else {
           setStateIfMounted(() { });
@@ -117,12 +130,47 @@ class _SettingsLanguagePageState extends State<SettingsLanguagePage> with Notifi
     }
   }
 
-  void _launchSettingsLanguagePanel() {
+  List<Widget> _buildTimeZoneOptions() {
+    List<Widget> contentList = <Widget>[];
+    contentList.add(_buildTimeZoneOption(Localization().getStringEx('panel.settings.home.time_zone.system.title', 'Use System Time'), false));
+    contentList.add(Divider(thickness: 0.3, color: Styles().colors.mediumGray2,));
+    contentList.add(_buildTimeZoneOption(Localization().getStringEx('panel.settings.home.time_zone.central.title', 'Central Time (CT)'), true));
+    return contentList;
+  }
+
+  Widget _buildTimeZoneOption(String name, bool useUniversityTimeZone) {
+    bool selected = (AppDateTime().useUniversityTimeZone == useUniversityTimeZone);
+    return
+      Semantics(label: name, checked: selected, inMutuallyExclusiveGroup: true, child:
+      Row(children: [
+      Expanded(child:
+        Padding(padding: EdgeInsets.only(left: 16), child:
+          ExcludeSemantics(child:
+            Text(name, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
+          )
+        )
+      ),
+      InkWell(onTap: () => _onTimeZoneOption(name, useUniversityTimeZone), child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Styles().images.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', size: 24, excludeFromSemantics: true)
+        )
+      ),
+    ],));
+  }
+
+  void _onTimeZoneOption(String name, bool useUniversityTimeZone) {
+    if (useUniversityTimeZone != AppDateTime().useUniversityTimeZone) {
+      Analytics().logSelect(target: name);
+      AppDateTime().useUniversityTimeZone = useUniversityTimeZone;
+    }
+  }
+
+  void _launchSettingsLanguageAndTimePanel() {
     Future.delayed(Duration(milliseconds: 500), (){
       BuildContext? context = App.instance?.currentContext;
       if (context != null) {
         SettingsHomePanel.present(context,
-          content: SettingsContentType.language,
+          content: SettingsContentType.language_and_time,
         );
       }
     });

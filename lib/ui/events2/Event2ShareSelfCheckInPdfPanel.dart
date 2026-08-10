@@ -15,6 +15,7 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Event2ShareSelfCheckInPdfPanel extends StatefulWidget {
