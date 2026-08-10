@@ -75,7 +75,7 @@
 			"appointment.providers.monitored": ["grainger"],
 			"appointment.providers.enabled": ["grainger"],
 
-			"settings": ["food_filters", "sports", "favorites", "assessments", "appointments_and_events", "language", "about", "research", "privacy", "notifications", "accessibility"],
+			"settings": ["food_filters", "sports", "favorites", "assessments", "appointments_and_events", "language_and_time", "about", "research", "privacy", "notifications", "accessibility"],
 			"settings.assessments": ["health_screener"],
 			"settings.assessments.skills_self_evaluation": ["save"],
 			"settings.assessments.health_screener": ["save"],

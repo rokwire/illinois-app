@@ -43,6 +43,7 @@ import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -555,7 +556,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _imageUrl = widget.event?.imageUrl;
     _websiteController.text = widget.event?.eventUrl ?? '';
 
-    _timeZone = timeZoneDatabase.locations[widget.event?.timezone] ?? DateTimeLocal.timezoneLocal;
+    _timeZone = timeZoneDatabase.locations[widget.event?.timezone] ?? AppDateTime().deviceLocation;
     DateTime? startTimeUtc = widget.event?.startTimeUtc;
     if (startTimeUtc != null) {
       TZDateTime startTime = TZDateTime.from(startTimeUtc, _timeZone);

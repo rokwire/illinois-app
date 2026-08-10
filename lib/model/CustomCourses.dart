@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:timezone/timezone.dart' as timezone;
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
@@ -101,9 +102,9 @@ class UserCourse {
       pauses: JsonUtils.intValue(json['pauses']),
       pauseUses: deviceTimeListFromJson(json['pause_uses']),
       course: Course.fromJson(json['course']),
-      dateCreated: AppDateTime().dateTimeLocalFromJson(json['date_created']),
-      dateUpdated: AppDateTime().dateTimeLocalFromJson(json['date_updated']),
-      dateDropped: AppDateTime().dateTimeLocalFromJson(json['date_dropped']),
+      dateCreated: AppDateTime().getDeviceTimeFromJson(json['date_created']),
+      dateUpdated: AppDateTime().getDeviceTimeFromJson(json['date_updated']),
+      dateDropped: AppDateTime().getDeviceTimeFromJson(json['date_dropped']),
     );
   }
 
@@ -117,9 +118,9 @@ class UserCourse {
       'pauses': pauses,
       'pause_uses': deviceTimeListToJson(pauseUses),
       'course': course?.toJson(),
-      'date_created': AppDateTime().dateTimeLocalToJson(dateCreated),
-      'date_updated': AppDateTime().dateTimeLocalToJson(dateUpdated),
-      'date_dropped': AppDateTime().dateTimeLocalToJson(dateDropped),
+      'date_created': DateTimeUtils.utcDateTimeToString(dateCreated),
+      'date_updated': DateTimeUtils.utcDateTimeToString(dateUpdated),
+      'date_dropped': DateTimeUtils.utcDateTimeToString(dateDropped),
     };
     json.removeWhere((key, value) => (value == null));
     return json;
@@ -143,7 +144,7 @@ class UserCourse {
       List<DateTime> times = [];
       for (dynamic timeJson in JsonUtils.listValue(value) ?? []) {
         if (timeJson is String) {
-          DateTime? time = AppDateTime().getDeviceTimeFromUtcTime(DateTimeUtils.dateTimeFromString(timeJson));
+          DateTime? time = AppDateTime().getDeviceTimeFromUtc(DateTimeUtils.dateTimeFromString(timeJson));
           if (time != null) {
             times.add(time);
           }
@@ -158,7 +159,7 @@ class UserCourse {
     if (times != null) {
       List<String> timesJson = [];
       for (DateTime time in times) {
-        String? timeJson = AppDateTime().dateTimeLocalToJson(time);
+        String? timeJson = DateTimeUtils.utcDateTimeToString(time);
         if (timeJson != null) {
           timesJson.add(timeJson);
         }
@@ -442,8 +443,8 @@ class UserUnit {
       completed: JsonUtils.intValue(json['completed']) ?? 0,
       current: JsonUtils.boolValue(json['current']) ?? false,
       unit: Unit.fromJson(json['unit']),
-      dateCreated: AppDateTime().dateTimeLocalFromJson(json['date_created']),
-      dateUpdated: AppDateTime().dateTimeLocalFromJson(json['date_updated']),
+      dateCreated: AppDateTime().getDeviceTimeFromJson(json['date_created']),
+      dateUpdated: AppDateTime().getDeviceTimeFromJson(json['date_updated']),
       userSchedule: UserScheduleItem.listFromJson(JsonUtils.listValue(json['user_schedule']))
     );
   }
@@ -455,8 +456,8 @@ class UserUnit {
       'completed': completed,
       'current': current,
       'unit': unit?.toJson(),
-      'date_created': AppDateTime().dateTimeLocalToJson(dateCreated),
-      'date_updated': AppDateTime().dateTimeLocalToJson(dateUpdated),
+      'date_created': DateTimeUtils.utcDateTimeToString(dateCreated),
+      'date_updated': DateTimeUtils.utcDateTimeToString(dateUpdated),
     };
     json.removeWhere((key, value) => (value == null));
     return json;
@@ -509,8 +510,8 @@ class UserScheduleItem{
     }
     return UserScheduleItem(
       userContent: UserContentReference.listFromJson(JsonUtils.listValue(json['user_content'])),
-      dateStarted: AppDateTime().dateTimeLocalFromJson(json['date_started']),
-      dateCompleted: AppDateTime().dateTimeLocalFromJson(json['date_completed']),
+      dateStarted: AppDateTime().getDeviceTimeFromJson(json['date_started']),
+      dateCompleted: AppDateTime().getDeviceTimeFromJson(json['date_completed']),
     );
   }
 
@@ -655,8 +656,8 @@ class UserContent{
       unitKey: JsonUtils.stringValue(json['unit_key']),
       content: Content.fromJson(json['content']),
       response: JsonUtils.mapValue(json['response']),
-      dateCreated: AppDateTime().dateTimeLocalFromJson(json['date_created']),
-      dateUpdated: AppDateTime().dateTimeLocalFromJson(json['date_updated']),
+      dateCreated: AppDateTime().getDeviceTimeFromJson(json['date_created']),
+      dateUpdated: AppDateTime().getDeviceTimeFromJson(json['date_updated']),
     );
   }
 
@@ -667,8 +668,8 @@ class UserContent{
       'unit_key': unitKey,
       'response': response,
       'content': content?.toJson(),
-      'date_created': AppDateTime().dateTimeLocalToJson(dateCreated),
-      'date_updated': AppDateTime().dateTimeLocalToJson(dateUpdated),
+      'date_created': DateTimeUtils.utcDateTimeToString(dateCreated),
+      'date_updated': DateTimeUtils.utcDateTimeToString(dateUpdated),
     };
     json.removeWhere((key, value) => (value == null));
     return json;
@@ -888,7 +889,7 @@ class CourseConfig {
   DateTime? nextFinalNotificationTime({bool inUtc = false}) => finalNotificationTime != null ? _nextTime(finalNotificationTime!, inUtc: inUtc) : null;
 
   DateTime? _nextTime(int timeInSeconds, {bool inUtc = false}) {
-    timezone.Location location = DateTimeLocal.timezoneLocal;
+    timezone.Location location = AppDateTime().deviceLocation;
     DateTime now = DateTime.now();
     if (!usesUserTimezone) {
       if (StringUtils.isNotEmpty(timezoneName)) {

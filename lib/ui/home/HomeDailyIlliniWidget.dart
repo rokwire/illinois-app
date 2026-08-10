@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/DailyIllini.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/DailyIllini.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -61,7 +62,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [AppLivecycle.notifyStateChanged]);
+    NotificationService().subscribe(this, [AppLivecycle.notifyStateChanged, AppDateTime.notifyTimeZoneChanged]);
 
     _updateSubscription = widget.updateController?.stream.listen((String command) {
       if (command == HomePanel.notifyRefresh) {
@@ -90,6 +91,10 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> with Noti
   void onNotification(String name, dynamic param) {
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
+    } else if (name == AppDateTime.notifyTimeZoneChanged) {
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 

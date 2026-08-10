@@ -20,13 +20,14 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
@@ -107,7 +108,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                   Text(widget.member?.displayShortName ?? "",
                     style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")
                   ),
-                  Text( Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ")+(AppDateTime().formatDateTime(widget.member?.dateCreatedUtc?.toLocal(), format: "MMM dd, yyyy")??""),
+                  Text( Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ")+(DateTimeUtils.dateTimeToString(AppDateTime().getZonedTimeFromUtc(dateTimeUtc: widget.member?.dateCreatedUtc), format: "MMM dd, yyyy")??""),
                     style: Styles().textStyles.getTextStyle("widget.info.small")
                   ),
                 ],

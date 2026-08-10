@@ -8,7 +8,6 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -21,6 +20,7 @@ import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -204,7 +204,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> with Notification
     
     DateTime? date = Guide().isEntryReminder(_guideEntry) ? Guide().reminderDate(_guideEntry) : null;
     if (date != null) {
-      String? dateString = AppDateTime().formatDateTime(Guide().reminderDate(_guideEntry), format: 'MMM dd', ignoreTimeZone: true);
+      String? dateString = DateTimeUtils.dateTimeToString(Guide().reminderDate(_guideEntry), format: 'MMM dd');
       contentList.add(
         Padding(padding: EdgeInsets.zero, child:
           Text(dateString ?? '',

@@ -21,7 +21,7 @@ import 'package:illinois/ui/groups/GroupHome2Panel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -30,6 +30,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class GroupMemberPanel extends StatefulWidget with AnalyticsInfo {
@@ -176,7 +177,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
   Widget _buildHeading() {
     bool showAttendance = (_group?.attendanceGroup ?? false) && (_member?.dateAttendedUtc != null);
     DateTime? dateTimeUtc = showAttendance ? _member?.dateAttendedUtc : _member?.dateCreatedUtc;
-    String? formattedDate = (dateTimeUtc != null) ? AppDateTime().formatDateTime(dateTimeUtc.toLocal(), format: "MMMM dd") : null;
+    DateTime? dateTimeZoned = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dateTimeUtc);
+    String? formattedDate = (dateTimeZoned != null) ? DateTimeUtils.dateTimeToString(dateTimeZoned, format: "MMMM dd") : null;
     String datePrefixLabelFormat = showAttendance ? Localization().getStringEx("panel.member_detail.label.attended_on", "Attended on %s") : Localization().getStringEx("panel.member_detail.label.member_since", "Member since %s");
     String dateDescriptionMsg = (formattedDate != null) ? sprintf(datePrefixLabelFormat, [formattedDate]) : '';
 

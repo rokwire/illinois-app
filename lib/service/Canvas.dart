@@ -35,6 +35,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -481,7 +482,7 @@ class Canvas with Service, NotificationsListener {
     String? responseString = response?.body;
     if (responseCode == 200) {
       List<CanvasCalendarEvent>? calendarEvents = CanvasCalendarEvent.listFromJson(JsonUtils.decodeList(responseString));
-      return calendarEvents?.where((element) => ((element.hidden == false) || (element.hidden == null))).toList();
+      return CollectionUtils.isEmpty(calendarEvents) ? calendarEvents : calendarEvents?.where((element) => ((element.hidden == false) || (element.hidden == null))).toList();
     } else {
       Log.w('Failed to load canvas calendar events for course {$courseId} ($url). Response:\n$responseCode: $responseString');
       return null;

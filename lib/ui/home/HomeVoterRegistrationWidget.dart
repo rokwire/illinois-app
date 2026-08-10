@@ -373,7 +373,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     }
   }
 
-  DateTime? get _uniLocalTime => AppDateTime().getUniLocalTimeFromUtcTime(AppDateTime().now.toUtc());
+  DateTime? get _uniLocalTime => AppDateTime().getUniversityTimeFromUtc(AppDateTime().now.toUtc());
 
   // NotificationsListener
 

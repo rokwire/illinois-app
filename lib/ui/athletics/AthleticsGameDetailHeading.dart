@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -59,6 +60,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
       LiveStats.notifyLiveGamesLoaded,
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     super.initState();
   }
@@ -78,6 +80,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     } else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() {});
     } else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
+    } else if (name == AppDateTime.notifyTimeZoneChanged) {
       setStateIfMounted(() {});
     }
   }

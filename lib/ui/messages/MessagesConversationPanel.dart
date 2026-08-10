@@ -33,6 +33,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/social.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:universal_io/io.dart';
@@ -104,6 +105,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
       Styles.notifyChanged,
       SpeechToText.notifyError,
       FirebaseMessaging.notifyForegroundMessage,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     WidgetsBinding.instance.addObserver(this);
 
@@ -145,7 +147,8 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
     }
     if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
         (name == Localization.notifyStringsUpdated) ||
-        (name == Styles.notifyChanged)) {
+        (name == Styles.notifyChanged) ||
+        (name == AppDateTime.notifyTimeZoneChanged)) {
       setStateIfMounted((){});
     } else if (name == SpeechToText.notifyError) {
       setState(() {
@@ -316,7 +319,7 @@ class _MessagesConversationPanelState extends State<MessagesConversationPanel>
                   ),
                   ),
                   if (message.dateSentUtc != null)
-                    Text(AppDateTime().formatDateTime(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
+                    Text(DateTimeUtils.dateTimeToString(message.dateSentUtc, format: 'h:mm a') ?? '', style: Styles().textStyles.getTextStyle('widget.description.small'),),
                 ]),
                 SizedBox(height: 8),
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
