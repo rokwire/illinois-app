@@ -651,11 +651,14 @@ class _RosterItem extends StatelessWidget {
     double height = 144;
     if (StringUtils.isNotEmpty(imageUrl)) {
       return Image.network(imageUrl!, headers: Auth2().networkAuthHeaders,
-          excludeFromSemantics: true, width: width, height: height, fit: BoxFit.cover, alignment: Alignment.topCenter);
+          excludeFromSemantics: true, width: width, height: height, fit: BoxFit.cover, alignment: Alignment.topCenter,
+          errorBuilder: (context, error, stackTrace) => _defaultImageContainer(width: width, height: height));
     } else {
-      return Container(width: width, height: height, color: Styles().colors.background);
+      return _defaultImageContainer(width: width, height: height);
     }
   }
+
+  Widget _defaultImageContainer({double? width, double? height}) => Container(width: width, height: height, color: Styles().colors.background);
 }
 
 class _TeamSocialCell extends StatelessWidget {

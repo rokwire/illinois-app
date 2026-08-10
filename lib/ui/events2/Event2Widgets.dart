@@ -396,7 +396,8 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
     Container(decoration: _imageHeadingDecoration, child:
       AspectRatio(aspectRatio: 2.5, child:
         AccessibleImageHolder(child:
-          Image.network(_imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+          Image.network(_imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true,
+            errorBuilder: (context, error, stackTrace) => Container(decoration: _imageHeadingDecoration))
         )
       ),
     )
