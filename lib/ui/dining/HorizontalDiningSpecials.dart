@@ -22,6 +22,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/dining/LocationsWithDiningSpecialPanel.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/image_error_builder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -114,7 +115,8 @@ class _SpecialOfferState extends State<_SpecialOffer> {
         Container(width: width, color: Styles().colors.white, child:
           Row(/*crossAxisAlignment: CrossAxisAlignment.stretch,*/ children: <Widget>[
             _hasImage ? ModalImageHolder(child:
-              Image.network(widget.special!.imageUrl!, excludeFromSemantics: true, width: imageWidth, height: _imageHeight, fit: BoxFit.cover,)
+              Image.network(widget.special!.imageUrl!, excludeFromSemantics: true, width: imageWidth, height: _imageHeight, fit: BoxFit.cover,
+                errorBuilder: ImageErrorBuilder.defaultBuilder)
             ) : Container(),
             Expanded(child:
               GestureDetector(onTap: _onOfferTap, child:

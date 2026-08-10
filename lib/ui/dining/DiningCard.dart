@@ -114,7 +114,8 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
       Container(decoration: _imageHeadingDecoration, child:
         AspectRatio(aspectRatio: 2.5, child:
             AccessibleImageHolder(child:
-              Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+              Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true,
+                errorBuilder: (context, error, stackTrace) => Container(decoration: _imageHeadingDecoration))
             )
         ),
       )
