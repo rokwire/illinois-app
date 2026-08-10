@@ -223,8 +223,9 @@ class _CoachItem extends StatelessWidget{
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                     child: (StringUtils.isNotEmpty(coach.thumbPhotoUrl) ?
-                      AccessibleImageHolder(child: ModalImageHolder(imageUrl: coach.fullSizePhotoUrl, headers: Auth2().networkAuthHeaders, child: Image.network(coach.thumbPhotoUrl!, headers: Auth2().networkAuthHeaders, semanticLabel: "coach", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,))):
-                      Container(height: 96, width: 80, color: Colors.white,)),
+                      AccessibleImageHolder(child: ModalImageHolder(imageUrl: coach.fullSizePhotoUrl, headers: Auth2().networkAuthHeaders, child: Image.network(coach.thumbPhotoUrl!, headers: Auth2().networkAuthHeaders, semanticLabel: "coach", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,
+                        errorBuilder: (context, error, stackTrace) => _defaultPhotoWidget))):
+                      _defaultPhotoWidget),
                   ),
                 ),
               ],
@@ -234,4 +235,6 @@ class _CoachItem extends StatelessWidget{
       ),
     );
   }
+
+  Widget get _defaultPhotoWidget => Container(height: 96, width: 80, color: Colors.white,);
 }

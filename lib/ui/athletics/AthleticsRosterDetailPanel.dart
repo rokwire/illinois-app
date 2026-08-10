@@ -225,8 +225,9 @@ class _RosterDetailHeading extends StatelessWidget{
                       margin: EdgeInsets.only(right: horizontalMargin + photoMargin, top: photoMargin),
                       decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                       child: (StringUtils.isNotEmpty(roster?.thumbPhotoUrl) ?
-                      Image.network(roster!.thumbPhotoUrl!, semanticLabel: "roster", width: photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter):
-                      Container(height: 112, width: photoWidth, color: Colors.white,)
+                      Image.network(roster!.thumbPhotoUrl!, semanticLabel: "roster", width: photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,
+                        errorBuilder: (context, error, stackTrace) => _defaultPhotoWidget):
+                      _defaultPhotoWidget
                       ),
                     ),
                   )
@@ -238,6 +239,8 @@ class _RosterDetailHeading extends StatelessWidget{
       ],
     );
   }
+
+  Widget get _defaultPhotoWidget => Container(height: 112, width: photoWidth, color: Colors.white,);
 }
 
 class _LineEntryWidget extends StatelessWidget{
