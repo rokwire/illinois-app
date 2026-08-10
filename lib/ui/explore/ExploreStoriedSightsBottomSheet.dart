@@ -344,11 +344,14 @@ class ExploreStoriedSightsBottomSheetState extends State<ExploreStoriedSightsBot
           ? Image.network(
         place.images!.first.imageUrl,
         fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => _defaultDestinationThumbnail,
       )
-          : Styles().images.getImage('missing-building-photo', fit: BoxFit.cover) ??
-          SizedBox(width: 75, height: 75),
+          : _defaultDestinationThumbnail,
     );
   }
+
+  Widget get _defaultDestinationThumbnail => Styles().images.getImage('missing-building-photo', fit: BoxFit.cover) ??
+      SizedBox(width: 75, height: 75);
 
   Widget _buildFilterButtons() {
     List<Widget> filterButtons = [];
@@ -989,10 +992,13 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
           ? Image.network(
         widget.place.images!.first.imageUrl,
         fit: BoxFit.cover,
-      ) : Styles().images.getImage('missing-building-photo', fit: BoxFit.cover) ??
-          SizedBox(width: 75, height: 75),
+        errorBuilder: (context, error, stackTrace) => _defaultDestinationImage,
+      ) : _defaultDestinationImage,
     );
   }
+
+  Widget get _defaultDestinationImage => Styles().images.getImage('missing-building-photo', fit: BoxFit.cover) ??
+      SizedBox(width: 75, height: 75);
 
   Widget _buildImageGallery() {
     if ((widget.place.images?.length ?? 0) == 1) {
@@ -1010,8 +1016,9 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
         ),
       );
     }
+    final double defaultSize = 140;
     return SizedBox(
-      height: 140,
+      height: defaultSize,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: widget.place.images?.length ?? 0,
@@ -1021,9 +1028,11 @@ class _ExploreStoriedSightWidgetState extends State<ExploreStoriedSightWidget> {
             child: ModalImageHolder(
               child: Image.network(
                 widget.place.images![index].imageUrl,
-                width: 140,
-                height: 140,
+                width: defaultSize,
+                height: defaultSize,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Styles().images.getImage('missing-building-photo', fit: BoxFit.cover, width: 140, height: 140) ??
+                    SizedBox(width: defaultSize, height: defaultSize),
               ),
             ),
           );
