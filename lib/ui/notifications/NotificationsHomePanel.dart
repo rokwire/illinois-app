@@ -406,21 +406,21 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
   }
 
   Widget _buildReadAllButton() {
-    return Container(child:
-      Stack(alignment: Alignment.center, children: [
-        LinkButton(
-          title: Localization().getStringEx('panel.inbox.mark_all_read.label', 'Mark all as read'),
-          textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.medium.underline'),
-          padding: EdgeInsets.symmetric(vertical: 12),
-          onTap: _onTapMarkAllAsRead,
-        ),
-        (_loadingMarkAllAsRead)
-          ? SizedBox.square(dimension: 16, child:
-            CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary))
+    return Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
+      Visibility(visible: _loadingMarkAllAsRead, child:
+        Padding(padding: EdgeInsetsGeometry.only(right: 6), child:
+          SizedBox.square(dimension: 14, child:
+            CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary),
           )
-          : Container()
-      ])
-    );
+        )
+      ),
+      LinkButton(
+        title: Localization().getStringEx('panel.inbox.mark_all_read.label', 'Mark all as read'),
+        textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.medium.underline'),
+        padding: EdgeInsets.symmetric(vertical: 12),
+        onTap: _onTapMarkAllAsRead,
+      ),
+    ],);
   }
 
   // Filter Widgets
@@ -632,16 +632,20 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
 
   void _onTapMarkAllAsRead() {
     Analytics().logSelect(target: 'Mark All As Read');
-    _setMarkAllAsReadLoading(true);
-    Inbox().markAllMessagesAsRead().then((succeeded) {
-      if (succeeded) {
-        _loadMessages();
-      } else {
-        AppAlert.showTextMessage(
-            context, Localization().getStringEx('panel.inbox.mark_as_read.failed.msg', 'Failed to mark all messages as read'));
-      }
-      _setMarkAllAsReadLoading(false);
-    });
+    if (_loadingMarkAllAsRead != true) {
+      _setMarkAllAsReadLoading(true);
+      Inbox().markAllMessagesAsRead().then((succeeded) {
+        if (mounted) {
+          if (succeeded) {
+            _loadMessages();
+          } else {
+            AppAlert.showTextMessage(
+                context, Localization().getStringEx('panel.inbox.mark_as_read.failed.msg', 'Failed to mark all messages as read'));
+          }
+          _setMarkAllAsReadLoading(false);
+        }
+      });
+    }
   }
 
   void _onTapFilter() {
