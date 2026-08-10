@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed crash on opening deep links [#5939](https://github.com/rokwire/illinois-app/issues/5939).
 - Fixed crash in Wallet iCard panel [#5953](https://github.com/rokwire/illinois-app/issues/5953).
+- Fixed crash in Map2 Home panel [#5955](https://github.com/rokwire/illinois-app/issues/5955).
 
 ## [8.1.9] - 2026-07-31
 ### Changed

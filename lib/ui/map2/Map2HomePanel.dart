@@ -819,7 +819,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     switch (_selectedContentType) {
       case Map2ContentType.Therapists:
       case Map2ContentType.CampusBuildings: return JsonUtils.encode(_mapStyles?[_mapStylesBuildingsKey]);
-      case Map2ContentType.BusStops: return JsonUtils.encode(_mapStyles![_mapStylesBusStopsKey]);
+      case Map2ContentType.BusStops: return JsonUtils.encode(_mapStyles?[_mapStylesBusStopsKey]);
       default: return null;
     }
   }
