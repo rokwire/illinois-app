@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed group search behavior [#5711](https://github.com/rokwire/illinois-app/issues/5711).
 - A-Z headings for groups cleanup [#5711](https://github.com/rokwire/illinois-app/issues/5711).
 - Preserve current filter and A-Z section states accross Groups Home panel launches [#5711](https://github.com/rokwire/illinois-app/issues/5711).
+- Read laundry enabled flag from app config, assistant promo as well [#5929](https://github.com/rokwire/illinois-app/issues/5929).
 ### Fixed
 - Fixed crash on opening deep links [#5939](https://github.com/rokwire/illinois-app/issues/5939).
 
