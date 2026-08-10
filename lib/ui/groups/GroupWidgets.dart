@@ -62,6 +62,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/image_error_builder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/datetime_utils.dart';
@@ -946,6 +947,8 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
     ],);
   }
 
+  Widget get _defaultImageWidget => Styles().images.getImage('group-detail-default', fit: BoxFit.cover, excludeFromSemantics: true) ?? Container();
+
   Widget get _imageHeadingWidget => Visibility(
       visible: _imageHeadingVisible,
       child: Container(
@@ -953,8 +956,9 @@ class _GroupCardState extends State<GroupCard> with NotificationsListener {
           AspectRatio(aspectRatio: _contentAspectRatio,
           child: AccessibleImageHolder(
             child: _hasImage ?
-              Image.network(_imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true) :
-              Styles().images.getImage('group-detail-default', fit: BoxFit.cover, excludeFromSemantics: true),
+              Image.network(_imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true,
+                errorBuilder: (context, error, stackTrace) => _defaultImageWidget) :
+              _defaultImageWidget,
           ),
         ),
       ));
@@ -1262,7 +1266,8 @@ class _GroupPostCardState extends State<GroupPostCard> with NotificationsListene
   }
 
   Widget get _imageWidget => (widget.isClickable != true) ? AccessibleImageHolder(child: ModalImageHolder(child: _rawImageWidget)) : AccessibleImageHolder(child: _rawImageWidget);
-  Widget get _rawImageWidget => Image.network(widget.post?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true);
+  Widget get _rawImageWidget => Image.network(widget.post?.imageUrl ?? '', alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true,
+    errorBuilder: (context, error, stackTrace) => SizedBox.shrink());
 
   //ReactionWidget //TBD move to GroupReaction when ready to hook BB
 
@@ -1475,7 +1480,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Visibility(visible: StringUtils.isNotEmpty(widget.reply?.imageUrl),
                 child: Container(
                       padding: EdgeInsets.only(top: 14),
-                      child: AccessibleImageHolder(child: Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true))
+                      child: AccessibleImageHolder(child: Image.network(widget.reply!.imageUrl!, alignment: Alignment.center, fit: BoxFit.fitWidth, headers: Config().networkAuthHeaders, excludeFromSemantics: true,
+                        errorBuilder: (context, error, stackTrace) => SizedBox.shrink()))
               )),
 
               WebEmbed(bodyText),
@@ -2437,7 +2443,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
           StringUtils.isNotEmpty(imageUrl)
               ? Positioned.fill(child: AccessibleImageHolder(child:
                   ModalImageHolder(child:
-                    Image.network(imageUrl!,  fit: BoxFit.cover))))
+                    Image.network(imageUrl!,  fit: BoxFit.cover, errorBuilder: ImageErrorBuilder.defaultBuilder))))
               : Container(),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),
