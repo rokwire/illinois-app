@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed crash in Map2 Home panel [#5955](https://github.com/rokwire/illinois-app/issues/5955).
 - Fixed crash in Appointments Home panel [#5958](https://github.com/rokwire/illinois-app/issues/5958).
 - Fixed crash in Laundry Favorite widget [#5960](https://github.com/rokwire/illinois-app/issues/5960).
+- Fixed crash in Group Card widget [#5962](https://github.com/rokwire/illinois-app/issues/5962).
 - Prevent a crash when an image fails to load from the internet [#5951](https://github.com/rokwire/illinois-app/issues/5951).
 
 ## [8.1.9] - 2026-07-31
