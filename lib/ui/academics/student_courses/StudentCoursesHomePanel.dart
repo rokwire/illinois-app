@@ -30,7 +30,6 @@ import 'package:illinois/ui/academics/student_courses/StudentCoursesCalendarCont
 import 'package:illinois/ui/academics/student_courses/StudentCoursesListContentWidget.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesMapContentWidget.dart';
 import 'package:illinois/ui/widgets/FilterTextButton.dart';
-import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;

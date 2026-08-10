@@ -27,7 +27,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/FilterTextButton.dart';
 import 'package:illinois/ui/widgets/SignInInfoPopup.dart';
-import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/ext/InboxMessage.dart';
