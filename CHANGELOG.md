@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Time zone setting and date display based on the selected time zone [#5859](https://github.com/rokwire/illinois-app/issues/5859).
 - Added Campus Dining subsection to Dining [#5872](https://github.com/rokwire/illinois-app/issues/5872).
+### Changed
+- Match Notifications buttons to match app style [#5868](https://github.com/rokwire/illinois-app/issues/5868).
 
 ## [8.2.1] - 2026-08-05
 ### Fixed

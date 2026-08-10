@@ -47,6 +47,8 @@ import 'package:illinois/ui/map2/Map2TraySheet.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
+import 'package:illinois/ui/widgets/FilterTextButton.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -62,8 +64,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/places.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-
-import '../widgets/HeaderBar.dart';
 
 enum Map2ContentType { CampusBuildings, StudentCourses, DiningLocations, Events2, LaundryRooms, BusStops, Therapists, StoriedSites, MyLocations, }
 enum Map2SortType { dateTime, alphabetical, proximity }
@@ -1492,7 +1492,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   // Starred Filter Button
 
   Widget get _starredFilterButton =>
-    Map2FilterTextButton(
+    FilterTextButton(
       key: _starredButtonKey,
       title: Localization().getStringEx('panel.map2.button.starred.title', 'Starred'),
       hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations') + " $_filterButtonHint",
@@ -1513,7 +1513,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
 
   Widget get _amenitiesBuildingsFilterButton =>
     MergeSemantics(key: _amenitiesButtonKey, child: Semantics(label: _amenitiesSemanticsValue, child:
-      Map2FilterTextButton(
+      FilterTextButton(
         title: Localization().getStringEx('panel.map2.button.amenities.title', 'Amenities'),
         hint: Localization().getStringEx('panel.map2.button.amenities.hint', 'Tap to edit amenities for visible location') + " $_filterButtonHint",
         leftIcon: Styles().images.getImage('toilet', size: 16),
@@ -1552,7 +1552,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
               width:  _termsDropdownWidth ??= _evaluateTermsDropdownWidth(),
               padding: EdgeInsets.zero
             ),
-        customButton: Map2FilterTextButton(
+        customButton: FilterTextButton(
           title: _studentCoursesFilterIfExists?.termName ?? Localization().getStringEx('panel.map2.button.terms.title', 'Terms'),
           hint: Localization().getStringEx('panel.map2.button.terms.hint', 'Tap to choose term') + " $_filterButtonHint",
           rightIcon: Styles().images.getImage('chevron-down'),
@@ -1622,7 +1622,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   // Open Now Dining Locations Filter Button
 
   Widget get _openNowDiningLocationsFilterButton =>
-    Map2FilterTextButton(
+    FilterTextButton(
       key: _openNowButtonKey,
       title: Localization().getStringEx('panel.map2.button.open_now.title', 'Open Now'),
       hint: Localization().getStringEx('panel.map2.button.open_now.hint', 'Tap to show only currently opened locations') + " $_filterButtonHint",
@@ -1649,7 +1649,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
               width:  _paymentTypesDropdownWidth ??= _evaluatePaymentTypesDropdownWidth(),
               padding: EdgeInsets.zero
             ),
-        customButton: Map2FilterTextButton(
+        customButton: FilterTextButton(
           title: _selectedPaymentType?.displayTitle ?? PaymentTypeUtils.displayTitleAll,
           hint: Localization().getStringEx('panel.map2.button.payment_type.hint', 'Tap to select a payment type') + " $_filterButtonHint",
           rightIcon: Styles().images.getImage('chevron-down'),
@@ -1722,7 +1722,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   // Filters Filter Button
 
   Widget get _filtersFilterButton =>
-    Map2FilterTextButton(
+    FilterTextButton(
       key: _filterButtonKey,
       title: Localization().getStringEx('panel.map2.button.filters.title', 'Filters'),
       hint: Localization().getStringEx('panel.map2.button.filters.hint', 'Tap to edit filters') + " $_filterButtonHint",
@@ -1749,7 +1749,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   // Visited Storied Sites Filter Button
 
   Widget get _visitedStoriedSitesFilterButton =>
-    Map2FilterTextButton(
+    FilterTextButton(
       title: Localization().getStringEx('panel.map2.button.visited.title', 'Visited'),
       hint: Localization().getStringEx('panel.map2.button.visited.hint', 'Tap to show only visited') + " $_filterButtonHint",
       toggled: _storiedSitesFilterIfExists?.onlyVisited == true,
@@ -1767,7 +1767,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   // Storied Sites Tag Buttons
 
   Widget _storiedSiteSimpleTagButton(String tag , { String? title }) =>
-    Map2FilterTextButton(
+    FilterTextButton(
       title: title ?? tag,
       hint: Localization().getStringEx('panel.map2.button.starred.hint', 'Tap to show only starred locations'),
       toggled: _storiedSitesFilterIfExists?.tags.contains(tag) == true,
@@ -1789,7 +1789,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
   }
 
   Widget _storiedSiteCompoundTagButton(String tag, { String? title }) =>
-    Map2FilterTextButton(
+    FilterTextButton(
       title: title ?? tag,
       hint: Localization().getStringEx('panel.map2.button.tags.hint', 'Tap to filter by tag'),
       rightIcon: (_expandedStoriedSitesTag?.startsWith(tag) == true) ? Styles().images.getImage('chevron-up') : Styles().images.getImage('chevron-down'),
@@ -1817,7 +1817,7 @@ extension _Map2HomePanelFilters on _Map2HomePanelState {
               width:  _sortDropdownWidth ??= _evaluateSortDropdownWidth(),
               padding: EdgeInsets.zero
             ),
-        customButton: Map2FilterTextButton(
+        customButton: FilterTextButton(
           title: Localization().getStringEx('panel.map2.button.sort.title', 'Sort'),
           hint: Localization().getStringEx('panel.map2.button.sort.hint', 'Tap to sort locations') + " ${_filterButtonHint}",
           leftIcon: Styles().images.getImage('sort', size: 16),
