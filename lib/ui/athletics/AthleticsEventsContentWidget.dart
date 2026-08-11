@@ -355,7 +355,8 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   String? _getSportFilterKey(SportDefinition? sport) {
     // "Manually" select different property name for these sports because they do not match with labels in Calendar and Sports BB
-    if ((sport?.shortName == 'wrestling') || (sport?.shortName == 'wswim') || (sport?.shortName == 'wvball')) {
+    if ((sport?.shortName == 'wrestling') || (sport?.shortName == 'wswim') ||
+        (sport?.shortName == 'wvball') || (sport?.shortName == 'wsoc')) {
       return sport?.customName;
     } else {
       return sport?.name;
