@@ -206,7 +206,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
 
   String get _emptyMessageHtml {
     return (_starred == true) ?
-      Localization().getStringEx('panel.athletics.content.news.my.empty.message', "There is no starred news for the selected teams. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)").replaceAll(_privacyUrlMacro, _privacyUrl) :
+      Localization().getStringEx('panel.athletics.content.news.my.empty.message', "There is no starred news for the selected teams. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 3.)").replaceAll(_privacyUrlMacro, _privacyUrl) :
       Localization().getStringEx('panel.athletics.content.news.empty.message', 'There is no news for the selected teams.');
   }
 

@@ -325,7 +325,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> with Notification
   String get _emptyDisplayStatusHtml {
     switch(_selectedScope) {
       case MTDStopsScope.all: return Localization().getStringEx('panel.mtd_stops.home.status.empty.all.text', 'There are no bus stops available.');
-      case MTDStopsScope.my: return Localization().getStringEx('panel.mtd_stops.home.status.empty.my.text', "Tap the \u2606 on <a href='$_localUrlMacro'><b>bus stops</b></a> for quick access here. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
+      case MTDStopsScope.my: return Localization().getStringEx('panel.mtd_stops.home.status.empty.my.text', "Tap the \u2606 on <a href='$_localUrlMacro'><b>bus stops</b></a> for quick access here. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 3.)")
         .replaceAll(_localUrlMacro, _localUrl)
         .replaceAll(_privacyUrlMacro, _privacyUrl);
       default: return '';

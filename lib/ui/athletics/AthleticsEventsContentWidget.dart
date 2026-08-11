@@ -366,7 +366,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   String get _emptyMessageHtml {
     return _favoritesMode ?
-      Localization().getStringEx('panel.athletics.content.events.my.empty.message', "There are no starred events for the selected teams. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)").replaceAll(_privacyUrlMacro, _privacyUrl) :
+      Localization().getStringEx('panel.athletics.content.events.my.empty.message', "There are no starred events for the selected teams. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 3.)").replaceAll(_privacyUrlMacro, _privacyUrl) :
       Localization().getStringEx('panel.athletics.content.events.empty.message', 'There are no events for the selected teams.');
   }
 

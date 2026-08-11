@@ -125,7 +125,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> {
   static const String privacyUrlMacro = '{{privacy_url}}';
 
   Widget _myEmptyContentBuilder(BuildContext context) => HomeMessageHtmlCard(
-    message: Localization().getStringEx("widget.home.athletics_events.my.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Big 10 Events</b></a> for quick access here.  (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
+    message: Localization().getStringEx("widget.home.athletics_events.my.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Big 10 Events</b></a> for quick access here.  (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 3.)")
       .replaceAll(localUrlMacro, '$localScheme://$localAthleticsEventHost')
       .replaceAll(privacyUrlMacro, '$privacyScheme://$privacyLevelHost'),
     linkColor: Styles().colors.eventColor,
