@@ -39,16 +39,16 @@ class DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
   factory DeviceCalendarEvent.fromEvent2(Event2 event) => DeviceCalendarEvent(
     title: event.exploreTitle,
     internalEventId: event.id,
-    startDate: AppDateTime().getUniLocalTimeFromUtcTime(event.startTimeUtc),
-    endDate: AppDateTime().getUniLocalTimeFromUtcTime(event.endTimeUtc),
+    startDate: AppDateTime().getDeviceTimeFromUtc(event.startTimeUtc),
+    endDate: AppDateTime().getDeviceTimeFromUtc(event.endTimeUtc),
     deepLinkUrl: (event.id != null) ? Events2.eventDetailUrl(event.id ?? '') : null,
   );
 
   factory DeviceCalendarEvent.fromGame(Game game) => DeviceCalendarEvent(
     title: game.title,
     internalEventId: game.id,
-    startDate: game.dateTimeUniLocal,
-    endDate:  AppDateTime().getUniLocalTimeFromUtcTime(game.endDateTimeUtc),
+    startDate: AppDateTime().getDeviceTimeFromUtc(game.dateTimeUtc),
+    endDate:  AppDateTime().getDeviceTimeFromUtc(game.endDateTimeUtc),
     deepLinkUrl: "${Sports().gameDetailUrl}?game_id=${game.id}%26sport=${game.sport?.shortName}"
   );
 
@@ -64,7 +64,7 @@ class DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
   }
 
   factory DeviceCalendarEvent.fromAppointment(Appointment appointment) {
-    DateTime? calendarEventStartDateTime = AppDateTime().getUniLocalTimeFromUtcTime(appointment.startTimeUtc);
+    DateTime? calendarEventStartDateTime = AppDateTime().getDeviceTimeFromUtc(appointment.startTimeUtc);
     DateTime? calendarEventEndDateTime = calendarEventStartDateTime?.add(Duration(hours: 1));
     return DeviceCalendarEvent(
       title: appointment.title,
@@ -78,8 +78,8 @@ class DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
   factory DeviceCalendarEvent.fromCanvasCalendarEvent(CanvasCalendarEvent event) => DeviceCalendarEvent(
     title: event.title,
     internalEventId: event.id?.toString(),
-    startDate: event.startAtLocal,
-    endDate: event.endAtLocal,
+    startDate: AppDateTime().getDeviceTimeFromUtc(event.startAt),
+    endDate: AppDateTime().getDeviceTimeFromUtc(event.endAt),
     deepLinkUrl: "${Canvas().canvasEventDetailUrl}?event_id=${event.id}"
   );
 }

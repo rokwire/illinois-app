@@ -20,12 +20,12 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/sport/Team.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/News.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/model/sport/Coach.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -34,6 +34,7 @@ import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'package:rokwire_plugin/service/network.dart';
@@ -590,16 +591,16 @@ class Sports with Service, NotificationsListener {
     if (StringUtils.isNotEmpty(id)) {
       queryParams += '?id=$id';
     } else if (startDate == null) {
-      startDate = AppDateTime().now;
+      startDate = AppDateTime().getZonedNowTZTime();
     }
 
     if (startDate != null) {
-      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: 'MM/dd/yyyy', ignoreTimeZone: true);
+      String? startDateFormatted = DateTimeUtils.dateTimeToString(startDate, format: 'MM/dd/yyyy');
       queryParams += '&start=$startDateFormatted';
     }
 
     if (endDate != null) {
-      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: 'MM/dd/yyyy', ignoreTimeZone: true);
+      String? endDateFormatted = DateTimeUtils.dateTimeToString(endDate, format: 'MM/dd/yyyy');
       queryParams += '&end=$endDateFormatted';
     }
 

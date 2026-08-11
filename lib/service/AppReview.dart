@@ -12,7 +12,7 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/app_notification.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 
 class AppReview with Service, NotificationsListener {
 

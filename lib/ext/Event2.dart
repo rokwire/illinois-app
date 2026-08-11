@@ -16,6 +16,7 @@ import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 
@@ -98,14 +99,14 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayDateAndTime({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime nowLocal = DateTimeLocal.nowLocalTZ();
+      TZDateTime nowLocal = AppDateTime().getZonedNowTZTime();
       TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
 
-      TZDateTime startDateTimeLocal = startTimeUtc!.toLocalTZ();
+      TZDateTime startDateTimeLocal = AppDateTime().getZonedTZTimeFromUtc(startTimeUtc!);
       TZDateTime startDateTimeMidnightLocal = TZDateTimeUtils.dateOnly(startDateTimeLocal);
       int statDaysDiff = startDateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
 
-      TZDateTime? endDateTimeLocal = endTimeUtc?.toLocalTZ();
+      TZDateTime? endDateTimeLocal = (endTimeUtc != null) ? AppDateTime().getZonedTZTimeFromUtc(endTimeUtc!) : null;
       TZDateTime? endDateTimeMidnightLocal = (endDateTimeLocal != null) ? TZDateTimeUtils.dateOnly(endDateTimeLocal) : null;
       int? endDaysDiff = (endDateTimeMidnightLocal != null) ? endDateTimeMidnightLocal.difference(nowMidnightLocal).inDays : null;
 
@@ -175,7 +176,7 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayStartDateTime({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime startDateTimeLocal = startTimeUtc!.toLocalTZ();
+      TZDateTime startDateTimeLocal = AppDateTime().getZonedTZTimeFromUtc(startTimeUtc!);
       String startDateFormat = (longFormat ? 'EEEE, MMMM d, yyyy' : 'MMM d, yyyy');
       String displayStartDate = DateFormat(startDateFormat).format(startDateTimeLocal);
       String startTimeFormat = 'h:mma';
@@ -194,14 +195,14 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayDate({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime nowLocal = DateTimeLocal.nowLocalTZ();
+      TZDateTime nowLocal = AppDateTime().getZonedNowTZTime();
       TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
 
-      TZDateTime startDateTimeLocal = startTimeUtc!.toLocalTZ();
+      TZDateTime startDateTimeLocal = AppDateTime().getZonedTZTimeFromUtc(startTimeUtc!);
       TZDateTime startDateTimeMidnightLocal = TZDateTimeUtils.dateOnly(startDateTimeLocal);
       int statDaysDiff = startDateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
 
-      TZDateTime? endDateTimeLocal = endTimeUtc?.toLocalTZ();
+      TZDateTime? endDateTimeLocal = (endTimeUtc != null) ? AppDateTime().getZonedTZTimeFromUtc(endTimeUtc!) : null;
       TZDateTime? endDateTimeMidnightLocal = (endDateTimeLocal != null) ? TZDateTimeUtils.dateOnly(endDateTimeLocal) : null;
       int? endDaysDiff = (endDateTimeMidnightLocal != null) ? endDateTimeMidnightLocal.difference(nowMidnightLocal).inDays : null;
 
@@ -245,14 +246,14 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayTime({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime nowLocal = DateTimeLocal.nowLocalTZ();
+      TZDateTime nowLocal = AppDateTime().getZonedNowTZTime();
       TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
 
-      TZDateTime startDateTimeLocal = startTimeUtc!.toLocalTZ();
+      TZDateTime startDateTimeLocal = AppDateTime().getZonedTZTimeFromUtc(startTimeUtc!);
       TZDateTime startDateTimeMidnightLocal = TZDateTimeUtils.dateOnly(startDateTimeLocal);
       int statDaysDiff = startDateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
 
-      TZDateTime? endDateTimeLocal =  endTimeUtc?.toLocalTZ();
+      TZDateTime? endDateTimeLocal = (endTimeUtc != null) ? AppDateTime().getZonedTZTimeFromUtc(endTimeUtc!) : null;
       TZDateTime? endDateTimeMidnightLocal = (endDateTimeLocal != null) ? TZDateTimeUtils.dateOnly(endDateTimeLocal) : null;
       int? endDaysDiff = (endDateTimeMidnightLocal != null) ? endDateTimeMidnightLocal.difference(nowMidnightLocal).inDays : null;
 
@@ -606,10 +607,10 @@ String? event2TimeFilterDisplayInfo(Event2TimeFilter? value, { TZDateTime? custo
   Events2Query.buildTimeLoadOptions(options, value, customStartTimeUtc: customStartTime?.toUtc(), customEndTimeUtc: customEndTime?.toUtc());
 
   int? startTimeEpoch = JsonUtils.intValue(options['end_time_after']);
-  TZDateTime? startTimeLocal = (startTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customStartTime?.location ?? DateTimeLocal.timezoneLocal, startTimeEpoch * 1000) : null;
+  TZDateTime? startTimeLocal = (startTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customStartTime?.location ?? AppDateTime().zonedLocation, startTimeEpoch * 1000) : null;
 
   int? endTimeEpoch = JsonUtils.intValue(options['start_time_before']);
-  TZDateTime? endTimeLocal = (endTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customEndTime?.location ?? DateTimeLocal.timezoneLocal, endTimeEpoch * 1000) : null;
+  TZDateTime? endTimeLocal = (endTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customEndTime?.location ?? AppDateTime().zonedLocation, endTimeEpoch * 1000) : null;
 
   if (value == Event2TimeFilter.upcoming) {
     return null;

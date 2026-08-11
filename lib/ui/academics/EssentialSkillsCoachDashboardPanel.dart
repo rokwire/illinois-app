@@ -24,6 +24,7 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -465,7 +466,8 @@ class _EssentialSkillsCoachDashboardState extends State<EssentialSkillsCoachDash
     if (shouldHighlight) {
       String? unlockTimeText;
       if (isNextWithCurrentComplete && nextCourseDayStart != null) {
-        unlockTimeText = '${AppDateTime().getDisplayDay(dateTimeUtc: nextCourseDayStart, includeAtSuffix: true)} ${AppDateTime().getDisplayTime(dateTimeUtc: nextCourseDayStart)}';
+        DateTime? nextCourseDayStartZoned = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: nextCourseDayStart);
+        unlockTimeText = '${AppRelativeTime.relativeDaySinceDate(dateTime: nextCourseDayStartZoned, location: AppDateTime().zonedLocation, includeAtSuffix: true)} ${DateTimeUtils.timeToString(nextCourseDayStartZoned, timeZoneSuffix: AppDateTime().timeZoneSuffix)}';
       }
       contentWidget = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),

@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupConversationPanel.dart';
 import 'package:illinois/ui/groups/GroupConversationWidgets.dart';
@@ -48,6 +49,7 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
       Social.notifyConversationsUpdated,
       Social.notifyMessageSent,
       Social.notifyMessageEdited,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     _updateSubscription = widget.updateController?.stream.listen(_onUpdate);
     _initConversations();
@@ -77,6 +79,8 @@ class _GroupConversationsTabState extends State<GroupConversationsTab> with Noti
       if (mounted) {
         _refreshConversations();
       }
+    } else if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {});
     }
   }
 

@@ -11,6 +11,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import '../../../service/Content.dart';
@@ -639,7 +640,7 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
       }
     }
 
-    DateTime? date = DateTimeUtils.parseDateTime(widget.date ??"");
+    DateTime? date = DateTimeUtils.dateTimeFromString(widget.date ??"");
     String weekday = date!=null? DateFormat('EEE').format(date) : "";
     String day = date!=null? DateFormat('d').format(date) : "";
     String month = date!=null? DateFormat('MMM').format(date) : "";

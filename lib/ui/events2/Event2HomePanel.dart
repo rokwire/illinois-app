@@ -12,6 +12,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -25,7 +26,7 @@ import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/map2/Map2HomeExts.dart';
-import 'package:illinois/ui/map2/Map2Widgets.dart';
+import 'package:illinois/ui/widgets/FilterTextButton.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/events2/Event2SearchPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
@@ -43,6 +44,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 
@@ -496,6 +498,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       Events2.notifyChanged,
       Events2.notifyUpdated,
       Assistant.notifyPromoContentChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
 
     _scrollController.addListener(_scrollListener);
@@ -559,6 +562,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
     else if (name == Assistant.notifyPromoContentChanged) {
       _updateAssistantPromo();
     }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      _reload();
+    }
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
@@ -619,7 +625,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
       Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         MergeSemantics(key: _filtersButtonKey ??= GlobalKey(), child:
           Semantics(value: _currentFilterParam.descriptionText, hint: _filtersButtonHint, child:
-            Map2FilterTextButton(
+            FilterTextButton(
               title: Localization().getStringEx('panel.events2.home.bar.button.filter.title', 'Filter'),
               leftIcon: Styles().images.getImage('filters', size: 16),
               rightIcon: Styles().images.getImage('chevron-right'),
@@ -664,7 +670,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> with NotificationsLis
         DropdownButtonHideUnderline(child:
           DropdownButton2<Event2SortType>(
             dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth, padding: EdgeInsets.zero),
-            customButton: Map2FilterTextButton(
+            customButton: FilterTextButton(
               title: Localization().getStringEx('panel.events2.home.bar.button.sort.title', 'Sort'),
               leftIcon: Styles().images.getImage('sort', size: 16),
               rightIcon: Styles().images.getImage('chevron-down'),

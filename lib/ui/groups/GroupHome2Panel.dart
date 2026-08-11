@@ -13,9 +13,9 @@ import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:illinois/ui/widgets/FilterTextButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -284,7 +284,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
       MergeSemantics(key: _filtersButtonKey, child:
         Semantics(/* TBD: value: _currentFilterParam.descriptionText, hint: _filtersButtonHint,*/ child:
-          Map2FilterTextButton(
+          FilterTextButton(
             title: Localization().getStringEx('panel.group.home2.bar.button.filter.title', 'Filter'),
             hint: Localization().getStringEx('panel.group.home2.bar.button.filter.hint', 'Tap to build filter'),
             leftIcon: Styles().images.getImage('filters', size: 16),
@@ -296,7 +296,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       if (Auth2().isLoggedIn)
         MergeSemantics(key: _myGroupsFilterButtonKey, child:
           Semantics(/* TBD: value: _currentFilterParam.descriptionText, hint: _filtersButtonHint,*/ child:
-            Map2FilterTextButton(
+            FilterTextButton(
               title: Localization().getStringEx('panel.group.home2.bar.button.my_groups.title', 'My Groups'),
               hint: Localization().getStringEx('panel.group.home2.bar.button.my_groups.hint', 'Tap to toggle my groups filter'),
               leftIcon: Styles().images.getImage('groups', size: 16),

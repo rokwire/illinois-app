@@ -21,7 +21,6 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -36,6 +35,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:xml/xml.dart';
 
@@ -251,8 +251,8 @@ class IlliniCash with Service, NetworkAuthProvider, NotificationsListener {
   Future<List<IlliniCashTransaction>?> loadTransactionHistory(DateTime? startDate, DateTime? endDate) async {
     if (_enabled && (startDate != null) && (endDate != null) && endDate.isAfter(startDate)) {
       String uin = Auth2().uin ?? "";
-      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+      String? startDateFormatted = DateTimeUtils.dateTimeToString(startDate, format: IlliniCashTransaction.dateFormat);
+      String? endDateFormatted = DateTimeUtils.dateTimeToString(endDate, format: IlliniCashTransaction.dateFormat);
       String transactionHistoryUrl = "${Config().illiniCashUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
       String analyticsUrl = "${Config().illiniCashUrl}/IlliniCashTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
       Response? response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
@@ -268,8 +268,8 @@ class IlliniCash with Service, NetworkAuthProvider, NotificationsListener {
     // TMP: "[{\"Amount\":\"1\",\"Date\":\"2017-01-19 18:24:09 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-19 11:41:07 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 18:42:01 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 11:36:14 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 18:40:11 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 11:27:49 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 18:40:20 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 12:42:43 \",\"Location\":\"IKE\",\"Description\":\"Lunch\"}]";
     if (_enabled && startDate != null && endDate != null && endDate.isAfter(startDate)) {
       String uin = Auth2().uin ?? "";
-      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+      String? startDateFormatted = DateTimeUtils.dateTimeToString(startDate, format: IlliniCashTransaction.dateFormat);
+      String? endDateFormatted = DateTimeUtils.dateTimeToString(endDate, format: IlliniCashTransaction.dateFormat);
       String transactionHistoryUrl = "${Config().illiniCashUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
       String analyticsUrl = "${Config().illiniCashUrl}/MealPlanTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
       Response? response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
@@ -285,8 +285,8 @@ class IlliniCash with Service, NetworkAuthProvider, NotificationsListener {
     // TMP "[{\"Date\":\"1/18/2019 10:55:06 AM\",\"Description\":\"Rollover\",\"Location\":\"OFFICE-CDHAYES1\",\"Amount\":\"100.0\"}]";
     if (_enabled && startDate != null && endDate != null && endDate.isAfter(startDate)) {
       String uin = Auth2().uin ?? "";
-      String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
-      String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
+      String? startDateFormatted = DateTimeUtils.dateTimeToString(startDate, format: IlliniCashTransaction.dateFormat);
+      String? endDateFormatted = DateTimeUtils.dateTimeToString(endDate, format: IlliniCashTransaction.dateFormat);
       String transactionHistoryUrl = "${Config().illiniCashUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
       String analyticsUrl = "${Config().illiniCashUrl}/CafeCreditTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
       Response? response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);

@@ -54,8 +54,12 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/image_error_builder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+import 'dining/DiningLinksPanel.dart';
 
 ///////////////////////////
 // BrowsePanel
@@ -595,6 +599,7 @@ class _BrowseEntry extends StatelessWidget {
       case "career_exploration.job_board":   _onTapJobBoard(context); break;
 
       case "dining.dining":                  _onTapDining(context); break;
+      case "dining.dining_links":            _onTapDiningLinks(context); break;
 
       case "directory.user_directory":       _onTapUserDirectory(context); break;
 
@@ -698,8 +703,13 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   static void _onTapDining(BuildContext context) {
-    Analytics().logSelect(target: "Residence Hall Dining");
+    Analytics().logSelect(target: "University Housing Dining");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Dining2HomePanel()));
+  }
+
+  static void _onTapDiningLinks(BuildContext context) {
+    Analytics().logSelect(target: "Dining Links");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningLinksPanel()));
   }
 
   static void _onTapUserDirectory(BuildContext context) {
@@ -978,7 +988,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> with Notifications
           AspectRatio(aspectRatio: _imageAspectRatio, child:
             Container(color: Styles().colors.fillColorPrimary, child: child)
           );
-      })),
+      }, errorBuilder: ImageErrorBuilder.defaultBuilder)),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
           Column(mainAxisSize: MainAxisSize.min, children: [

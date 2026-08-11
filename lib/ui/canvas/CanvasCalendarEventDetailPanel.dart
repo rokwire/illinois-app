@@ -19,9 +19,11 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -44,7 +46,10 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      AppDateTime.notifyTimeZoneChanged,
+    ]);
     _loadEvent();
     super.initState();
   }
@@ -171,10 +176,9 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
   }
 
   void _setLoading(bool loading) {
-    _loading = loading;
-    if (mounted) {
-      setState(() {});
-    }
+    setStateIfMounted(() {
+      _loading = loading;
+    });
   }
 
   // NotificationsListener
@@ -182,7 +186,10 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {});
+      setStateIfMounted(() {});
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {});
     }
   }
 }

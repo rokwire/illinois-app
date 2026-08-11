@@ -18,6 +18,7 @@ import 'package:collection/collection.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 final String _canvasDisplayDateTimeFormat = 'MM-dd-yyyy h:mm a';
@@ -317,18 +318,18 @@ class CanvasAssignment {
         : null;
   }
 
-  DateTime? get dueAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(dueAt);
+  DateTime? get dueAtDisplay {
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dueAt);
   }
 
   String? get dueDisplayDateTime {
-    if (dueAtLocal == null) {
+    if (dueAtDisplay == null) {
       return null;
     }
     int nowYear = DateTime.now().year;
-    int dueYear = dueAtLocal!.year;
+    int dueYear = dueAtDisplay!.year;
     String dateTimeFormat = (nowYear != dueYear) ? 'yyyy-MM-dd' : 'MMM d, h:mma';
-    String? dueDisplayDate = AppDateTime().formatDateTime(dueAtLocal, format: dateTimeFormat);
+    String? dueDisplayDate = DateTimeUtils.dateTimeToString(dueAtDisplay, format: dateTimeFormat);
     return dueDisplayDate;
   }
 
@@ -384,18 +385,18 @@ class CanvasSubmission {
 
   CanvasSubmission({this.id, this.submittedAt});
 
-  DateTime? get submittedAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(submittedAt);
+  DateTime? get submittedAtDisplay {
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: submittedAt);
   }
 
   String? get submittedDisplayDateTime {
-    if (submittedAtLocal == null) {
+    if (submittedAtDisplay == null) {
       return null;
     }
     int nowYear = DateTime.now().year;
-    int dueYear = submittedAtLocal!.year;
+    int dueYear = submittedAtDisplay!.year;
     String dateTimeFormat = (nowYear != dueYear) ? 'yyyy-MM-dd' : 'MMM d, h:mma';
-    String? dueDisplayDate = AppDateTime().formatDateTime(submittedAtLocal, format: dateTimeFormat);
+    String? dueDisplayDate = DateTimeUtils.dateTimeToString(submittedAtDisplay, format: dateTimeFormat);
     return dueDisplayDate;
   }
 
@@ -437,12 +438,12 @@ class CanvasDiscussionTopic {
         : null;
   }
 
-  DateTime? get postedAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(postedAt);
+  DateTime? get postedAtDisplay {
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: postedAt);
   }
 
   String? get postedAtDisplayDate {
-    return AppDateTime().formatDateTime(postedAtLocal, format: _canvasDisplayDateTimeFormat);
+    return DateTimeUtils.dateTimeToString(postedAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasDiscussionTopic>? listFromJson(List<dynamic>? jsonList) {
@@ -620,12 +621,12 @@ class CanvasCollaboration {
         : null;
   }
 
-  DateTime? get createdAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(createdAt);
+  DateTime? get createdAtDisplay {
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: createdAt);
   }
 
   String? get createdAtDisplayDate {
-    return AppDateTime().formatDateTime(createdAtLocal, format: _canvasDisplayDateTimeFormat);
+    return DateTimeUtils.dateTimeToString(createdAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasCollaboration>? listFromJson(List<dynamic>? jsonList) {
@@ -686,32 +687,32 @@ class CanvasCalendarEvent implements Favorite {
         : null;
   }
 
-  DateTime? get startAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(startAt);
+  DateTime? get startAtDisplay {
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: startAt);
   }
 
-  DateTime? get endAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(endAt);
+  DateTime? get endAtDisplay {
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: endAt);
   }
 
   String? get startAtDisplayDate {
-    return AppDateTime().formatDateTime(startAtLocal, format: _canvasDisplayDateTimeFormat);
+    return DateTimeUtils.dateTimeToString(startAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   String? get endAtDisplayDate {
-    return AppDateTime().formatDateTime(endAtLocal, format: _canvasDisplayDateTimeFormat);
+    return DateTimeUtils.dateTimeToString(endAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   String? get displayDateTime {
     const String emptyTime = 'N/A';
     const dayFormat = 'MMM d';
     const timeFormat = 'h:mma';
-    String? startTime = AppDateTime().formatDateTime(startAtLocal, format: '$dayFormat $timeFormat');
+    String? startTime = DateTimeUtils.dateTimeToString(startAtDisplay, format: '$dayFormat $timeFormat');
     String endTimeFormat = timeFormat;
-    if (startAtLocal?.day != endAtLocal?.day) {
+    if (startAtDisplay?.day != endAtDisplay?.day) {
       endTimeFormat = '$dayFormat ' + endTimeFormat;
     }
-    String? endTime = AppDateTime().formatDateTime(endAtLocal, format: endTimeFormat);
+    String? endTime = DateTimeUtils.dateTimeToString(endAtDisplay, format: endTimeFormat);
     return StringUtils.ensureNotEmpty(startTime, defaultValue: emptyTime) +
         ' - ' +
         StringUtils.ensureNotEmpty(endTime, defaultValue: emptyTime);
@@ -805,16 +806,16 @@ class CanvasAccountNotification {
         : null;
   }
 
-  DateTime? get startAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(startAt);
+  DateTime? get startAtDisplay {
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: startAt);
   }
 
-  DateTime? get endAtLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(endAt);
+  DateTime? get endAtDisplay {
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: endAt);
   }
 
   String? get startAtDisplayDate {
-    return AppDateTime().formatDateTime(startAtLocal, format: _canvasDisplayDateTimeFormat);
+    return DateTimeUtils.dateTimeToString(startAtDisplay, format: _canvasDisplayDateTimeFormat);
   }
 
   static List<CanvasAccountNotification>? listFromJson(List<dynamic>? jsonList) {

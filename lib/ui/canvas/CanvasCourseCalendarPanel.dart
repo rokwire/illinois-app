@@ -32,7 +32,9 @@ import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:timezone/timezone.dart';
 
 class CanvasCourseCalendarPanel extends StatefulWidget with AnalyticsInfo {
   final int courseId;
@@ -56,7 +58,10 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      AppDateTime.notifyTimeZoneChanged,
+    ]);
     _selectedCourseId = widget.courseId;
     _selectedType = CanvasCalendarEventType.event;
     _courses = Canvas().courses;
@@ -281,7 +286,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
     }
     List<CanvasCalendarEvent> visibleEvents = [];
     for (CanvasCalendarEvent event in _events!) {
-      DateTime? eventStartDateLocal = event.startAtLocal;
+      DateTime? eventStartDateLocal = event.startAtDisplay;
       if ((eventStartDateLocal != null) &&
           (eventStartDateLocal.year == _selectedDate.year) &&
           (eventStartDateLocal.month == _selectedDate.month) &&
@@ -474,22 +479,22 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
 
   Widget _buildWeekDaysWidget() {
     int selectedWeekDay = _selectedDate.weekday;
-    DateTime currentWeekDate =
-        DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day).subtract(Duration(days: (selectedWeekDay - 1)));
+    TZDateTime currentWeekDate =
+        TZDateTime(AppDateTime().zonedLocation, _selectedDate.year, _selectedDate.month, _selectedDate.day).subtract(Duration(days: (selectedWeekDay - 1)));
 
     List<Widget> dayWidgetList = [];
     for (int i = 1; i < 8; i++) {
       Widget dayWidget = GestureDetector(
           onTap: () => _onTapWeekDay(i),
           child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'E')),
+            Text(StringUtils.ensureNotEmpty(DateTimeUtils.dateTimeToString(currentWeekDate, format: 'E')),
                 style: Styles().textStyles.getTextStyle("widget.title.small.fat")),
             Padding(
                 padding: EdgeInsets.only(top: 3),
                 child: Container(
                     padding: EdgeInsets.all(10),
                     decoration: _weekDayBoxDecoration(currentWeekDate),
-                    child: Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(currentWeekDate, format: 'd')),
+                    child: Text(StringUtils.ensureNotEmpty(DateTimeUtils.dateTimeToString(currentWeekDate, format: 'd')),
                         style: Styles().textStyles.getTextStyle("widget.title.medium")?.copyWith(color: _weekDayTextColor(currentWeekDate))))),
             Visibility(
                 visible: _hasEvent(currentWeekDate),
@@ -519,7 +524,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
   }
 
   bool _isToday(DateTime currentDate) {
-    DateTime now = DateTime.now();
+    DateTime now = AppDateTime().getZonedNowTZTime();
     return (currentDate.year == now.year) && (currentDate.month == now.month) && (currentDate.day == now.day);
   }
 
@@ -532,7 +537,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
       return false;
     }
     for (CanvasCalendarEvent event in _events!) {
-      DateTime? eventStartDateLocal = event.startAtLocal;
+      DateTime? eventStartDateLocal = event.startAtDisplay;
       if ((eventStartDateLocal != null) &&
           (eventStartDateLocal.year == date.year) &&
           (eventStartDateLocal.month == date.month) &&
@@ -550,17 +555,14 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
   }
 
   void _initCalendarDates() {
-    DateTime now = DateTime.now();
-    _selectedDate = DateTime(now.year, now.month, now.day);
+    _selectedDate = TZDateTimeUtils.dateOnly(AppDateTime().getZonedNowTZTime());
     _initEventsTimeFrame();
   }
 
-  ///
-  /// Calculates month time frame including the whole weeks of the month's first and last day.
-  ///
   void _initEventsTimeFrame() {
-    DateTime monthStartDateTime = DateTime(_selectedDate.year, _selectedDate.month, 1);
-    DateTime monthEndDateTime = DateTime(_selectedDate.year, (_selectedDate.month + 1), 1).subtract(Duration(milliseconds: 1));
+    Location location = AppDateTime().zonedLocation;
+    TZDateTime monthStartDateTime = TZDateTime(location, _selectedDate.year, _selectedDate.month, 1);
+    TZDateTime monthEndDateTime = TZDateTime(location, _selectedDate.year, (_selectedDate.month + 1), 1).subtract(Duration(milliseconds: 1));
     int monthStartDateWeekDay = monthStartDateTime.weekday;
     int monthEndDateWeekDay = monthEndDateTime.weekday;
     _startDateTime = monthStartDateTime.subtract(Duration(days: (monthStartDateWeekDay - 1)));
@@ -571,7 +573,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
     int newYear = (year != null) ? year : _selectedDate.year;
     int newMonth = (month != null) ? month : _selectedDate.month;
     int newDay = (day != null) ? day : _selectedDate.day;
-    _selectedDate = DateTime(newYear, newMonth, newDay);
+    _selectedDate = TZDateTime(AppDateTime().zonedLocation, newYear, newMonth, newDay);
     if (mounted) {
       setState(() {});
     }
@@ -605,11 +607,11 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
     });
     Canvas().loadCalendarEvents(courseId: courseId, type: type, startDate: _startDateTime, endDate: _endDateTime).then((events) {
       setStateIfMounted(() {
-        if (CollectionUtils.isNotEmpty(events)) {
+        if (events != null) {
           if (_events == null) {
             _events = [];
           }
-          _events!.addAll(events!);
+          _events!.addAll(events);
         }
         _loading = false;
       });
@@ -637,6 +639,11 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> w
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      _selectedDate = TZDateTime(AppDateTime().zonedLocation, _selectedDate.year, _selectedDate.month, _selectedDate.day);
+      _initEventsTimeFrame();
+      _loadEvents();
     }
   }
 }

@@ -20,6 +20,7 @@ import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Game with Explore implements Favorite {
@@ -133,15 +134,15 @@ class Game with Explore implements Favorite {
     DateTime universityLocalGameStartDateTime = date!; //dateTimeUtc.add(durationDifferenceUniversityToGmt);
     DateTime? universityLocalGameEndDateTime = endDate; //AppDateTime().getUniLocalTimeFromUtcTime(endDateTimeUtc);
     DateTime nowUtcDateTime = AppDateTime().now.toUtc();
-    DateTime nowUniversityDateTime = AppDateTime().getUniLocalTimeFromUtcTime(nowUtcDateTime)!;
-    bool startDateIsToday = (nowUniversityDateTime.year == universityLocalGameStartDateTime.year) &&
-        (nowUniversityDateTime.month == universityLocalGameStartDateTime.month) &&
-        (nowUniversityDateTime.day == universityLocalGameStartDateTime.day);
-    bool endDateIsToday = (nowUniversityDateTime.year == universityLocalGameEndDateTime?.year) &&
-        (nowUniversityDateTime.month == universityLocalGameEndDateTime?.month) &&
-        (nowUniversityDateTime.day == universityLocalGameEndDateTime?.day);
-    bool nowIsBetweenGameDates = (nowUniversityDateTime.isAfter(universityLocalGameStartDateTime) &&
-        (universityLocalGameEndDateTime != null ? nowUniversityDateTime.isBefore(universityLocalGameEndDateTime) : false));
+    DateTime nowDisplayDateTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: nowUtcDateTime)!;
+    bool startDateIsToday = (nowDisplayDateTime.year == universityLocalGameStartDateTime.year) &&
+        (nowDisplayDateTime.month == universityLocalGameStartDateTime.month) &&
+        (nowDisplayDateTime.day == universityLocalGameStartDateTime.day);
+    bool endDateIsToday = (nowDisplayDateTime.year == universityLocalGameEndDateTime?.year) &&
+        (nowDisplayDateTime.month == universityLocalGameEndDateTime?.month) &&
+        (nowDisplayDateTime.day == universityLocalGameEndDateTime?.day);
+    bool nowIsBetweenGameDates = (nowDisplayDateTime.isAfter(universityLocalGameStartDateTime) &&
+        (universityLocalGameEndDateTime != null ? nowDisplayDateTime.isBefore(universityLocalGameEndDateTime) : false));
     return (startDateIsToday || endDateIsToday) || nowIsBetweenGameDates;
   }
 
@@ -150,7 +151,7 @@ class Game with Explore implements Favorite {
   }
 
   DateTime? get dateTimeUniLocal {
-    return AppDateTime().getUniLocalTimeFromUtcTime(dateTimeUtc);
+    return AppDateTime().getUniversityTimeFromUtc(dateTimeUtc);
   }
 
   DateTime? get date {
