@@ -63,7 +63,7 @@ class HomeSafetyResourcesWidget extends _HomeSafetyResourcesBaseWidget {
   static String get title => Localization().getStringEx('widget.home.safety_resources.label.title', 'Safety Resources');
 
   @override String get _title => title;
-  @override String get _emptyContentDescription => Localization().getStringEx("widget.home.safety_resources.text.empty.description", "Tap the \u2606 on items in <a href='$_localUrlMacro'><b>Safety Resources</b></a> for quick access here. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)");
+  @override String get _emptyContentDescription => Localization().getStringEx("widget.home.safety_resources.text.empty.description", "Tap the \u2606 on items in <a href='$_localUrlMacro'><b>Safety Resources</b></a> for quick access here. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 3.)");
   @override String get _listContentTitle => Localization().getStringEx('panel.guide_list.label.safety_resources.section', 'Safety Resources');
   @override String get _listEmptyContentDescription => Localization().getStringEx("panel.guide_list.label.safety_resources.empty", "There are no active Safety Resources.");
 }
@@ -79,7 +79,7 @@ class HomeCampusSafetyResourcesWidget extends _HomeSafetyResourcesBaseWidget {
   static String get title => Localization().getStringEx('widget.home.campus_safety_resources.label.campus_safety_resources', 'Campus Safety Resources');
 
   @override String get _title => title;
-  @override String get _emptyContentDescription => Localization().getStringEx("widget.home.campus_safety_resources.text.empty.description", "Tap the \u2606 on items in <a href='$_localUrlMacro'><b>Campus Safety Resources</b></a> for quick access here. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.");
+  @override String get _emptyContentDescription => Localization().getStringEx("widget.home.campus_safety_resources.text.empty.description", "Tap the \u2606 on items in <a href='$_localUrlMacro'><b>Campus Safety Resources</b></a> for quick access here. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 3.");
   @override String get _listContentTitle => Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources');
   @override String get _listEmptyContentDescription => Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources.");
 }

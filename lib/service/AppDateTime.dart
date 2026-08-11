@@ -19,17 +19,23 @@ import 'package:flutter/foundation.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart' as rokwire;
 import 'package:illinois/service/Storage.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class AppDateTime extends rokwire.AppDateTime {
 
-  // Singletone Factory
+  // Notifications
+  static const String notifyTimeZoneChanged = "edu.illinois.rokwire.app_datetime.timezone.changed";
+
+  // Singleton Factory
   
   @protected
   AppDateTime.internal() : super.internal();
 
-  factory AppDateTime() => ((rokwire.AppDateTime.instance is AppDateTime) ? (rokwire.AppDateTime.instance as AppDateTime) : (rokwire.AppDateTime.instance = AppDateTime.internal()));
+  factory AppDateTime() => ((rokwire.AppDateTime.instance is AppDateTime) ?
+    (rokwire.AppDateTime.instance as AppDateTime) :
+    (rokwire.AppDateTime.instance = AppDateTime.internal()));
 
   // Service
 
@@ -43,18 +49,28 @@ class AppDateTime extends rokwire.AppDateTime {
 
   // Overrides
 
-  @protected
+  @override
   Future<Uint8List?> get timezoneDatabase async {
     ByteData? byteData = await AppBundle.loadBytes('assets/timezone.tzf');
     return byteData?.buffer.asUint8List();
   }
 
-  @protected
-  String? get universityLocationName  => Config().timezoneLocation; //TMP: 'Europe/Sofia';
-
-  @protected
-  bool get useDeviceLocalTimeZone => (Storage().useDeviceLocalTimeZone == true);
+  @override
+  String? get universityLocationName => Config().timezoneLocation; //TMP: 'Europe/Sofia';
 
   @override
-  DateTime get now  => Storage().offsetDate ?? super.now;
+  String? get timeZoneSuffix => (useUniversityTimeZone ? Config().timezoneAbbreviation : null);
+
+  @override
+  bool get useUniversityTimeZone => (Storage().useUniversityTimeZone == true);
+
+  set useUniversityTimeZone(bool value) {
+    if (Storage().useUniversityTimeZone != value) {
+      Storage().useUniversityTimeZone = value;
+      NotificationService().notify(notifyTimeZoneChanged, null);
+    }
+  }
+
+  @override
+  DateTime get now => Storage().offsetDate ?? super.now;
 }

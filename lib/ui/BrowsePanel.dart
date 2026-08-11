@@ -54,7 +54,9 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/image_error_builder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 ///////////////////////////
@@ -978,7 +980,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> with Notifications
           AspectRatio(aspectRatio: _imageAspectRatio, child:
             Container(color: Styles().colors.fillColorPrimary, child: child)
           );
-      })),
+      }, errorBuilder: ImageErrorBuilder.defaultBuilder)),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
           Column(mainAxisSize: MainAxisSize.min, children: [

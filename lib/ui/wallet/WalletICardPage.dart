@@ -18,17 +18,18 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/wallet/WalletPhotoWrapper.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -112,7 +113,8 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
 
     Widget? buildingAccessIcon;
     String? buildingAccessStatus;
-    String? buildingAccessTime = AppDateTime().formatDateTime(_buildingAccessTime, format: 'MMM dd, yyyy HH:mm a');
+    DateTime? buildingAccessTimeZoned = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: _buildingAccessTime?.toUtc());
+    String? buildingAccessTime = DateTimeUtils.dateTimeToString(buildingAccessTimeZoned, format: 'MMM dd, yyyy HH:mm a');
     double buildingAccessStatusHeight = 24;
     double qrCodeImageSize = _buildingAccessIconSize + buildingAccessStatusHeight - 2;
     bool hasQrCode = (0 < (_userQRCodeContent?.length ?? 0));
@@ -148,10 +150,10 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
       Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
 
         Visibility(visible: hasQrCode, child: Column(children: [
-          //Text(Auth2().iCard!.cardNumber ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
+          //Text(Auth2().iCard?.cardNumber ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
           //Container(height: 8),
           showQRCode ?
-            QrImageView(data: _userQRCodeContent ?? "", size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ) :
+            QrImageView(data: _userQRCodeContent ?? '', size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ) :
             Container(width: qrCodeImageSize, height: qrCodeImageSize, color: Colors.transparent,),
         ],),),
 
@@ -160,7 +162,7 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
         ),
 
         Visibility(visible: hasBuildingAccess, child: Column(children: [
-          Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en')!, style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
+          Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en') ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
           Container(height: 8),
           buildingAccessIcon ?? Container(),
           Text(buildingAccessStatus ?? '', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.large")),
@@ -204,7 +206,7 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
       String url = "${Config().padaapiUrl}/access/${Auth2().iCard?.uin}";
       Map<String, String> headers = {
         HttpHeaders.acceptHeader : 'application/json',
-        'x-api-key': Config().padaapiApiKey!
+        'x-api-key': Config().padaapiApiKey ?? ''
       };
       Response? response = await Network().get(url, headers: headers);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
@@ -263,7 +265,7 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
   }
 
   String? get _userQRCodeContent {
-    String? qrCodeContent = Auth2().iCard!.magTrack2;
+    String? qrCodeContent = Auth2().iCard?.magTrack2;
     return ((qrCodeContent != null) && (0 < qrCodeContent.length)) ? qrCodeContent : Auth2().iCard?.uin;
   }
 

@@ -19,10 +19,13 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -36,7 +39,7 @@ class CanvasCourseCollaborationsPanel extends StatefulWidget with AnalyticsInfo 
   _CanvasCourseCollaborationsPanelState createState() => _CanvasCourseCollaborationsPanelState();
 }
 
-class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborationsPanel> {
+class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborationsPanel> with NotificationsListener {
   Map<int, List<CanvasCollaboration>?>? _courseCollaborationsMap;
   List<CanvasCourse>? _courses;
   int? _selectedCourseId;
@@ -46,9 +49,27 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [
+      AppDateTime.notifyTimeZoneChanged,
+    ]);
     _selectedCourseId = widget.courseId;
     _courses = Canvas().courses;
     _loadCollaborations();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {});
+    }
   }
 
   @override

@@ -368,8 +368,9 @@ class _RosterItem extends StatelessWidget{
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                     child: (StringUtils.isNotEmpty(roster.thumbPhotoUrl) ?
-                      ModalImageHolder(imageUrl: roster.fullSizePhotoUrl, headers: Auth2().networkAuthHeaders, child: Image.network(roster.thumbPhotoUrl!, headers: Auth2().networkAuthHeaders, semanticLabel: "roster", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,)) :
-                      Container(height: 96, width: 80, color: Colors.white,)),
+                      ModalImageHolder(imageUrl: roster.fullSizePhotoUrl, headers: Auth2().networkAuthHeaders, child: Image.network(roster.thumbPhotoUrl!, headers: Auth2().networkAuthHeaders, semanticLabel: "roster", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,
+                        errorBuilder: (context, error, stackTrace) => _defaultPhotoWidget)) :
+                      _defaultPhotoWidget),
                   ),
                 ),
               ],
@@ -379,6 +380,8 @@ class _RosterItem extends StatelessWidget{
       ),
     );
   }
+
+  Widget get _defaultPhotoWidget => Container(height: 96, width: 80, color: Colors.white,);
 
   List<Widget> _buildRosterInfoWidgets(){
     List<Widget> list = [];

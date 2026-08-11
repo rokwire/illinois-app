@@ -282,7 +282,7 @@ class _HomeAthliticsNewsImplWidgetState extends State<_HomeAthliticsNewsImplWidg
       return HomeMessageCard(message: Localization().getStringEx("widget.home.athletics_news.all.empty.description", "Big 10 News is not available right now."),);
     }
     else if (widget.contentType == FavoriteContentType.my) {
-      String message = Localization().getStringEx("widget.home.athletics_news.my.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Big 10 News</b></a> for quick access here.  (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
+      String message = Localization().getStringEx("widget.home.athletics_news.my.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Big 10 News</b></a> for quick access here.  (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 3.)")
         .replaceAll(localUrlMacro, '$localScheme://$localAthleticsNewsHost')
         .replaceAll(privacyUrlMacro, '$privacyScheme://$privacyLevelHost');
 

@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessToDoItem {
@@ -98,18 +99,18 @@ class WellnessToDoItem {
   }
 
   DateTime? get dueDateTime {
-    return AppDateTime().getDeviceTimeFromUtcTime(dueDateTimeUtc);
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dueDateTimeUtc);
   }
 
   String? get displayDueDate {
     if (dueDateTime == null) {
       return null;
     }
-    return AppDateTime().formatDateTime(dueDateTime, format: 'EEEE, MM/dd', ignoreTimeZone: true);
+    return DateTimeUtils.dateTimeToString(dueDateTime, format: 'EEEE, MM/dd');
   }
 
   DateTime? get reminderDateTime {
-    return AppDateTime().getDeviceTimeFromUtcTime(reminderDateTimeUtc);
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: reminderDateTimeUtc);
   }
 
   Color get color {

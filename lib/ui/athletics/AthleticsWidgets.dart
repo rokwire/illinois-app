@@ -21,6 +21,7 @@ import 'package:illinois/ext/Game.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Sports.dart';
@@ -33,6 +34,7 @@ import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/ui/widgets/image_error_builder.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -73,6 +75,7 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> with Notificati
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     super.initState();
   }
@@ -90,6 +93,8 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> with Notificati
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() {});
     } else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
+    } else if (name == AppDateTime.notifyTimeZoneChanged) {
       setStateIfMounted(() {});
     }
   }
@@ -119,7 +124,8 @@ class _AthleticsEventCardState extends State<AthleticsEventCard> with Notificati
                   ? Positioned(
                       child: InkWell(
                           onTap: () => _onTapCardImage(game.imageUrl!),
-                          child: Image.network(game!.imageUrl!, semanticLabel: "Sports")))
+                          child: Image.network(game!.imageUrl!, semanticLabel: "Sports",
+                            errorBuilder: ImageErrorBuilder.defaultBuilder)))
                   : Container(),
               showImage
                   ? Container(

@@ -41,11 +41,11 @@ extension InboxMessageExt on InboxMessage {
   }
 
   String? get displayUserInfo {
-    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateTimeSentUtc);
-    if (deviceDateTime != null) {
+    DateTime? displayDateTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dateTimeSentUtc);
+    if (displayDateTime != null) {
       DateTime now = DateTime.now();
-      if (deviceDateTime.compareTo(now) < 0) {
-        Duration difference = DateTime.now().difference(deviceDateTime);
+      if (displayDateTime.compareTo(now) < 0) {
+        Duration difference = DateTime.now().difference(displayDateTime);
         if (difference.inSeconds < 60) {
           return 'Sent by $displaySender now.';
         } else if (difference.inMinutes < 60) {
@@ -65,7 +65,7 @@ extension InboxMessageExt on InboxMessage {
           }
         }
       }
-      String value = DateFormat("MMM dd, yyyy").format(deviceDateTime);
+      String value = DateFormat("MMM dd, yyyy").format(displayDateTime);
       return sprintf('Sent by %s on %s.', [displaySender, value]);
     } else {
       return "Sent by $displaySender";
@@ -73,11 +73,11 @@ extension InboxMessageExt on InboxMessage {
   }
 
   String? get displaySystemInfo {
-    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateTimeSentUtc);
-    if (deviceDateTime != null) {
+    DateTime? displayDateTime = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dateTimeSentUtc);
+    if (displayDateTime != null) {
       DateTime now = DateTime.now();
-      if (deviceDateTime.compareTo(now) < 0) {
-        Duration difference = DateTime.now().difference(deviceDateTime);
+      if (displayDateTime.compareTo(now) < 0) {
+        Duration difference = DateTime.now().difference(displayDateTime);
         if (difference.inSeconds < 60) {
           return 'Sent now.';
         } else if (difference.inMinutes < 60) {
@@ -93,7 +93,7 @@ extension InboxMessageExt on InboxMessage {
           }
         }
       }
-      String value = DateFormat("MMM dd, yyyy").format(deviceDateTime);
+      String value = DateFormat("MMM dd, yyyy").format(displayDateTime);
       return sprintf('Sent on %s.', [value]);
     } else {
       return "Sent";

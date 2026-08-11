@@ -100,7 +100,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
     if (_news != null) {
       List<News> displayNews = <News>[];
       Set<String>? favoriteSports = Auth2().prefs?.sportsInterests;
-      LinkedHashSet<String>? favoriteIds = Auth2().account?.prefs?.getFavorites(News.favoriteKeyName);
+      LinkedHashSet<String>? favoriteIds = Auth2().prefs?.getFavorites(News.favoriteKeyName);
       for (News article in _news!) {
         if (((favoriteSports?.isNotEmpty != true) || (favoriteSports?.contains(article.sportKey) == true)) &&
             ((_starred == false) || (favoriteIds?.contains(article.id) == true))) {
@@ -206,7 +206,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
 
   String get _emptyMessageHtml {
     return (_starred == true) ?
-      Localization().getStringEx('panel.athletics.content.news.my.empty.message', "There is no starred news for the selected teams. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)").replaceAll(_privacyUrlMacro, _privacyUrl) :
+      Localization().getStringEx('panel.athletics.content.news.my.empty.message', "There is no starred news for the selected teams. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 3.)").replaceAll(_privacyUrlMacro, _privacyUrl) :
       Localization().getStringEx('panel.athletics.content.news.empty.message', 'There is no news for the selected teams.');
   }
 

@@ -18,10 +18,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -35,7 +37,30 @@ class CanvasAccountNotificationDetailPanel extends StatefulWidget with Analytics
   _CanvasAccountNotificationDetailPanelState createState() => _CanvasAccountNotificationDetailPanelState();
 }
 
-class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNotificationDetailPanel> {
+class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNotificationDetailPanel> with NotificationsListener {
+  @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, [
+      AppDateTime.notifyTimeZoneChanged,
+    ]);
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
