@@ -257,8 +257,8 @@
 				"perplexity_assistant"                    : "${config.settings.assistant.enable.perplexity}",
 				"all_assistants"                          : "${config.settings.assistant.enable.all}",
 				"assistant_faqs"                          : "${config.settings.assistant.enable.faqs}",
-				"assistant_promo"                         : false,
-				"laundry"								  : false
+				"assistant_promo"                         : "${config.settings.assistant.enable.promo}",
+				"laundry"								                  : "${config.settings.laundryEnabled}"
 			}
 		}
 	},

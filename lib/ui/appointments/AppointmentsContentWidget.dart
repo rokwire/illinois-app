@@ -53,11 +53,6 @@ class AppointmentsContentWidget extends StatefulWidget with AnalyticsInfo {
 
 class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> with NotificationsListener {
   static const Map<String, String> providerNameOverride = {'McKinley': 'MyMcKinley'};
-  static Map<String,  Widget? Function()> providerLayoutOverride = {
-    'McKinley': () =>
-      Padding(padding: EdgeInsets.symmetric(vertical: 8),
-          child: WellnessAppointmentsContentWidget())
-  };
 
   List<AppointmentProvider>? _providers;
   bool _isLoadingProviders = false;
@@ -126,7 +121,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
           Padding(padding: EdgeInsets.zero, child:
             Text(_getDropDownProviderName(_providers?.first) ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.fat'))
           ),
-          _content,
+          Expanded(child: _appointmentsContent),
         ]));
     }
     else {
@@ -138,7 +133,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
         ),
         Expanded(child:
           Stack(children: [
-              _content,
+              _appointmentsContent,
             _buildProvidersDropdownContainer()
           ],)
           
@@ -462,6 +457,7 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
     });
   }
 
+
   Future<void> _onPullToRefresh() async {
     _initProviders();
   }
@@ -471,10 +467,10 @@ class _AppointmentsContentWidgetState extends State<AppointmentsContentWidget> w
           providerNameOverride[provider.name] ?? provider.name :
           null;
 
-  Widget get _content =>
-      (_selectedProvider?.name != null ?
-        providerLayoutOverride[_selectedProvider?.name]?.call() : null) ??
-      _buildAppointmentsContent();
+  Widget get _appointmentsContent => (_selectedProvider?.name == 'McKinley') ?
+    Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+      WellnessAppointmentsContentWidget()
+    ) : _buildAppointmentsContent();
 
   bool get _canScheduleAppointment {
     return (_selectedProvider != null) ?

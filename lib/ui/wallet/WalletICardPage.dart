@@ -150,10 +150,10 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
       Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
 
         Visibility(visible: hasQrCode, child: Column(children: [
-          //Text(Auth2().iCard!.cardNumber ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
+          //Text(Auth2().iCard?.cardNumber ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
           //Container(height: 8),
           showQRCode ?
-            QrImageView(data: _userQRCodeContent ?? "", size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ) :
+            QrImageView(data: _userQRCodeContent ?? '', size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ) :
             Container(width: qrCodeImageSize, height: qrCodeImageSize, color: Colors.transparent,),
         ],),),
 
@@ -162,7 +162,7 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
         ),
 
         Visibility(visible: hasBuildingAccess, child: Column(children: [
-          Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en')!, style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
+          Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en') ?? '', style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.small")),
           Container(height: 8),
           buildingAccessIcon ?? Container(),
           Text(buildingAccessStatus ?? '', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.id_card.detail.title.large")),
@@ -206,7 +206,7 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
       String url = "${Config().padaapiUrl}/access/${Auth2().iCard?.uin}";
       Map<String, String> headers = {
         HttpHeaders.acceptHeader : 'application/json',
-        'x-api-key': Config().padaapiApiKey!
+        'x-api-key': Config().padaapiApiKey ?? ''
       };
       Response? response = await Network().get(url, headers: headers);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body) : null;
@@ -265,7 +265,7 @@ class _WalletICardPageState extends State<WalletICardPage> with NotificationsLis
   }
 
   String? get _userQRCodeContent {
-    String? qrCodeContent = Auth2().iCard!.magTrack2;
+    String? qrCodeContent = Auth2().iCard?.magTrack2;
     return ((qrCodeContent != null) && (0 < qrCodeContent.length)) ? qrCodeContent : Auth2().iCard?.uin;
   }
 

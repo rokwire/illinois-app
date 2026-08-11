@@ -41,6 +41,7 @@ import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
+import 'package:rokwire_plugin/ui/widgets/image_error_builder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -101,7 +102,8 @@ class _ExploreCardState extends State<ExploreCard> with NotificationsListener {
     Widget? imageWidget = StringUtils.isNotEmpty(imageUrl) ?
       SizedBox(width: _smallImageSize, height: _smallImageSize, child:
         InkWell(onTap: () => _onTapCardImage(imageUrl),
-          child: Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders)),
+          child: Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders,
+            errorBuilder: ImageErrorBuilder.defaultBuilder)),
       ) : null;
     Widget? rightWidget = ((selectWidget != null) || (imageWidget != null)) ?
       Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: _hasPaymentTypes ? 12 : 16, top: (isEvent2 || isGame) ? 12 : 0), child:

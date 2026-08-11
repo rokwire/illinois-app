@@ -34,6 +34,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/image_error_builder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
@@ -425,6 +426,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
         widgets.add(Positioned(
             child: AccessibleImageHolder(child: ModalImageHolder(
                 child: Image.network(widget.game!.imageUrl!, excludeFromSemantics: true,
+                  errorBuilder: ImageErrorBuilder.defaultBuilder,
             )))));
       }
       widgets.add(Semantics(
@@ -737,7 +739,8 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> with Notifications
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
       if(StringUtils.isNotEmpty(opponentUrl)) {
-        return ModalImageHolder(child: Image.network(opponentUrl!, headers: Auth2().networkAuthHeaders, excludeFromSemantics: true));
+        return ModalImageHolder(child: Image.network(opponentUrl!, headers: Auth2().networkAuthHeaders, excludeFromSemantics: true,
+          errorBuilder: ImageErrorBuilder.defaultBuilder));
       } else {
         return Container();
       }
@@ -789,7 +792,8 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> with Notifications
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
       if(StringUtils.isNotEmpty(opponentUrl)) {
-        return ModalImageHolder(child: Image.network(opponentUrl!, headers: Auth2().networkAuthHeaders, excludeFromSemantics: true));
+        return ModalImageHolder(child: Image.network(opponentUrl!, headers: Auth2().networkAuthHeaders, excludeFromSemantics: true,
+          errorBuilder: ImageErrorBuilder.defaultBuilder));
       } else {
         return Container();
       }
@@ -897,7 +901,8 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     } else {
       //return opponent image
       String? opponentUrl = widget._game!.opponent?.logoImage;
-      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: Image.network(opponentUrl!, headers: Auth2().networkAuthHeaders, excludeFromSemantics: true)) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: Image.network(opponentUrl!, headers: Auth2().networkAuthHeaders, excludeFromSemantics: true,
+        errorBuilder: ImageErrorBuilder.defaultBuilder)) : null;
     }
   }
 
@@ -908,7 +913,8 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     } else {
       //return opponent image
       String? opponentUrl = widget._game?.opponent?.logoImage;
-      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: Image.network(opponentUrl!, headers: Auth2().networkAuthHeaders, excludeFromSemantics: true)) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: Image.network(opponentUrl!, headers: Auth2().networkAuthHeaders, excludeFromSemantics: true,
+        errorBuilder: ImageErrorBuilder.defaultBuilder)) : null;
     }
   }
 
