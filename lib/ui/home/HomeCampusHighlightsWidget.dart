@@ -203,7 +203,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   }
 
   Widget _buildEmptyContent() {
-    String message = Localization().getStringEx("widget.home.campus_guide_highlights.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Featured Resources</b></a> for quick access here.(<a href='{{privacy_url}}'>Your privacy level</a> must be at least 2.)")
+    String message = Localization().getStringEx("widget.home.campus_guide_highlights.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Featured Resources</b></a> for quick access here.(<a href='{{privacy_url}}'>Your privacy level</a> must be at least 3.)")
       .replaceAll(localUrlMacro, '$localScheme://${Guide.campusHighlightContentType}')
       .replaceAll(privacyUrlMacro, privacyUrl);
       return HomeMessageHtmlCard(message: message, onTapLink: _onMessageLink,);
