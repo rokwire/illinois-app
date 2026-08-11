@@ -44,7 +44,6 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
   LinkedHashMap<String, _SectionContent>? _contentMap;
   List<_DisplayListItem>? _displayList;
   ContentActivity? _contentActivity;
-  Map<String, GlobalKey> _extendDetectorKeys = <String, GlobalKey>{};
   bool _canExtendFilteredContent = false;
   String? _expandedAccountId;
 
@@ -250,7 +249,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
 
   Widget _buildSectionExtendDetectorListItem(String section) =>
     VisibilityDetector(
-      key: _extendDetectorKeys[section] ??= GlobalKey(),
+      key: Key('edu.illinois.rokwire.directory.accounts.section.$section'),
       onVisibilityChanged: (info) => _onSectionExtendDetectorVisibilityChanged(section, info),
       child: Container(height: 0.1),
     );
@@ -441,12 +440,6 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
     }
   }
 
-  void _checkSectionExtendDetectorsVisibility() {
-    //TBD: Check if section extend detector is visible using global key's rendering boxes.
-    // Extend those that are visible and not currently extending.
-    // Example: _GroupHome2PanelState._isCompletelyVisibleInHeight
-  }
-
   Future<void> _onSectionExtendDetectorVisibilityChanged(String section, VisibilityInfo info ) async {
     bool isVisible = !info.visibleBounds.isEmpty;
     _SectionContent? sectionContent = _contentMap?[section];
@@ -484,12 +477,8 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
   }
 
   void _scrollListener() {
-    if (widget._filterMode) {
-      if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && _canExtendFilteredContent && (_contentActivity == null)) {
-        _extendFilteredContent();
-      }
-    } else if (widget._directoryMode) {
-      _checkSectionExtendDetectorsVisibility();
+    if (widget._filterMode && (_scrollController.offset >= _scrollController.position.maxScrollExtent) && _canExtendFilteredContent && (_contentActivity == null)) {
+      _extendFilteredContent();
     }
   }
 
