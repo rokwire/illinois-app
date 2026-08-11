@@ -302,7 +302,7 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
       return HomeMessageCard(message: Localization().getStringEx("widget.home.dinings.open.empty.description", "No dining locations are currently opened."),);
     }
     else if (widget.contentType == FavoriteDiningContentType.my) {
-      String message = Localization().getStringEx("widget.home.dinings.my.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Dining</b></a> for quick access here. (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
+      String message = Localization().getStringEx("widget.home.dinings.my.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Dining</b></a> for quick access here. (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 3.)")
           .replaceAll(localUrlMacro, '$localScheme://$localDiningHost')
           .replaceAll(privacyUrlMacro, '$privacyScheme://$privacyLevelHost');
 
