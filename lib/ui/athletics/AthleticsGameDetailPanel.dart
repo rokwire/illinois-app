@@ -250,6 +250,7 @@ class _AthleticsGameDetailPanelState extends Event2Selector2State<AthleticsGameD
             ModalImageHolder(child: WebNetworkImage(imageUrl: game!.newsImageUrl!,
               excludeFromSemantics: true,
               fit: BoxFit.fitWidth,
+              errorBuilder: (context, error, stackTrace) => Container(height: 200),
             )),
           )
         ),

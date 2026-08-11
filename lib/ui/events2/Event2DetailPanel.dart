@@ -10,6 +10,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
@@ -115,6 +116,7 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
       Auth2.notifyLoginChanged,
       Events2.notifyUpdated,
       Events2.notifySelfCheckIn,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     _scrollController.addListener(_scrollListener);
     _event = widget.event;
@@ -169,6 +171,9 @@ class Event2DetailPanelState extends Event2Selector2State<Event2DetailPanel> wit
     }
     else if (name == Events2.notifyUpdated) {
       _updateEventIfNeeded(param);
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() { });
     }
   }
 

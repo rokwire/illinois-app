@@ -94,7 +94,7 @@ class _Map2ExploreCardState extends State<Map2ExploreCard> with NotificationsLis
     return ((imageUrl != null) && imageUrl.isNotEmpty) ?
       Container(decoration: _imageHeadingDecoration, child:
         AspectRatio(aspectRatio: 2.5, child:
-          WebNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover, excludeFromSemantics: true)
+          WebNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover, excludeFromSemantics: true, errorBuilder: (context, error, stackTrace) => Container(decoration: _imageHeadingDecoration))
         ),
       ) : null;
   }

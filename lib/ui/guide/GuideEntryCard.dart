@@ -10,13 +10,13 @@ import 'package:illinois/ui/widgets/AccentCard.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class GuideEntryCard extends StatefulWidget {
@@ -80,7 +80,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> with NotificationsListe
     String? titleHtml = Guide().entryListTitle(widget.guideEntry);
     String? descriptionHtml = Guide().entryListDescription(widget.guideEntry);
     bool isReminder = Guide().isEntryReminder(widget.guideEntry);
-    String? reminderDate = isReminder ? AppDateTime().formatDateTime(Guide().reminderDate(widget.guideEntry), format: 'MMM dd', ignoreTimeZone: true) : null;
+    String? reminderDate = isReminder ? DateTimeUtils.dateTimeToString(Guide().reminderDate(widget.guideEntry), format: 'MMM dd') : null;
 
     List<Widget> contentList = Guide().isEntryReminder(widget.guideEntry) ? <Widget>[
       Padding(padding: EdgeInsets.only(right: 17), child:

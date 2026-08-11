@@ -121,7 +121,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
   Widget _buildEmpty() {
     String favoriteKey = WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey);
-    String message = Localization().getStringEx("widget.home.wellness_resources.text.empty.description", "Tap the ☆ on items in <a href='$localUrlMacro'><b>Wellness Resources</b></a> for quick access here. (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
+    String message = Localization().getStringEx("widget.home.wellness_resources.text.empty.description", "Tap the ☆ on items in <a href='$localUrlMacro'><b>Wellness Resources</b></a> for quick access here. (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 3.)")
       .replaceAll(localUrlMacro, '$localScheme://$favoriteKey')
       .replaceAll(privacyUrlMacro, privacyUrl);
 

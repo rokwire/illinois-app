@@ -18,7 +18,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/ui/SyrveyPanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/ui/events2/Event2ManageDataPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -97,7 +99,9 @@ class _SurveyResponsesPanelState extends State<SurveyResponsesPanel>  {
     for(int i = 0; i < _surveyResponses.length; i++) {
       SurveyResponse response = _surveyResponses[i];
       response.survey.replaceKey('event_name', widget.event?.name);
-      Widget responseCard = SurveyBuilder.surveyResponseCard(context, response, title: 'Response ${i+1}', onTap: () => _onTapSurveyResponse(response));
+      DateTime? dateTakenZoned = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: response.dateTaken);
+      String? dateTakenFormatted = AppRelativeTime.relativeDateTimeSinceDate(dateTime: dateTakenZoned, location: AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix);
+      Widget responseCard = SurveyBuilder.surveyResponseCard(context, response, dateTakenFormatted: dateTakenFormatted, title: 'Response ${i+1}', onTap: () => _onTapSurveyResponse(response));
       content.add(responseCard);
       content.add(Container(height: 16.0));
     }
@@ -108,8 +112,11 @@ class _SurveyResponsesPanelState extends State<SurveyResponsesPanel>  {
     return content;
   }
 
-  void _onTapSurveyResponse(SurveyResponse response) =>
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: response.survey, inputEnabled: false, dateTaken: response.dateTaken, showResult: true)));
+  void _onTapSurveyResponse(SurveyResponse response) {
+    DateTime? dateTakenZoned = AppDateTime().getZonedTimeFromUtc(dateTimeUtc: response.dateTaken);
+    String? dateTakenFormatted = AppRelativeTime.relativeDateTimeSinceDate(dateTime: dateTakenZoned, location: AppDateTime().zonedLocation, timeZoneSuffix: AppDateTime().timeZoneSuffix);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: response.survey, inputEnabled: false, dateTakenFormatted: dateTakenFormatted, showResult: true)));
+  }
 
   List<Widget> _buildEmptyResponsesContent() {
     return <Widget>[

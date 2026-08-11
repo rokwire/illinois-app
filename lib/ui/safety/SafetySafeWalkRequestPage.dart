@@ -686,8 +686,8 @@ class _SafetySafeWalkRequestCardState extends State<SafetySafeWalkRequestCard> {
   bool? get _isSafeWalkInWorkHours {
     int? startTimeInterval = Config().safeWalkStartTimeInterval;
     int? endTimeInterval = Config().safeWalkEndTimeInterval;
-    DateTime? currentDateTimeUni = DateTimeUni.nowUni(); // ?? DateTime.now();
-    if ((currentDateTimeUni != null) && (startTimeInterval != null) && (endTimeInterval != null)) {
+    DateTime currentDateTimeUni = AppDateTime().getUniversityOrDeviceNowTZTime();
+    if ((startTimeInterval != null) && (endTimeInterval != null)) {
       int currentTimeInterval = currentDateTimeUni.hour * 60 + currentDateTimeUni.minute;
       return (startTimeInterval <= endTimeInterval) ?
         ((startTimeInterval <= currentTimeInterval) && (currentTimeInterval <= endTimeInterval)) :

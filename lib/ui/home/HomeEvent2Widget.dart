@@ -23,6 +23,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -46,6 +47,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -156,7 +158,7 @@ class _HomeEvents2WidgetState extends State<HomeEvents2Widget> {
   static const String privacyUrlMacro = '{{privacy_url}}';
 
   Widget _myEmptyContentBuilder(BuildContext context) => HomeMessageHtmlCard(
-    message: Localization().getStringEx("widget.home.my_events2.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events Feed</b></a> for quick access here.  (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
+    message: Localization().getStringEx("widget.home.my_events2.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events Feed</b></a> for quick access here.  (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 3.)")
       .replaceAll(localUrlMacro, '$localScheme://$localEventFeedHost')
       .replaceAll(privacyUrlMacro, '$privacyScheme://$privacyLevelHost'),
     linkColor: Styles().colors.eventColor,
@@ -234,6 +236,7 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
       Events2.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
 
     _updateSubscription = widget.updateController?.stream.listen((String command) {
@@ -290,6 +293,9 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
     }
     else if (name == Auth2.notifyLoginChanged) {
       _reloadIfVisible(); // or mark as needs refresh
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      _reloadIfVisible();
     }
   }
 

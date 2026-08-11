@@ -17,6 +17,7 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -425,7 +426,9 @@ class _Event2ManageDataState extends State<Event2ManageDataPanel>{
   bool get _hasSurvey => StringUtils.isNotEmpty(widget.surveyId);
 
   String get _csvFormattedEventName => StringUtils.ensureNotEmpty(widget.event?.name, defaultValue: _csvFileDefaultEmptyValue);
-  String get _csvFormattedEventStartDate => StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(_event?.startTimeUtc?.toLocalTZ(), format: 'yyyy-MM-dd'), defaultValue: _csvFileDefaultEmptyValue);
-  String get _csvFormattedEventStartTime => StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(_event?.startTimeUtc?.toLocalTZ(), format: 'HH:mm'), defaultValue: _csvFileDefaultEmptyValue);
-  String? get _csvFormattedDateExported => AppDateTime().formatDateTime(DateTime.now(), format: _csvFileDateFormat);
+  String get _csvFormattedEventStartDate => StringUtils.ensureNotEmpty(DateTimeUtils.dateTimeToString(_eventStartDate, format: 'yyyy-MM-dd'), defaultValue: _csvFileDefaultEmptyValue);
+  String get _csvFormattedEventStartTime => StringUtils.ensureNotEmpty(DateTimeUtils.dateTimeToString(_eventStartDate, format: 'HH:mm'), defaultValue: _csvFileDefaultEmptyValue);
+  String? get _csvFormattedDateExported => DateTimeUtils.dateTimeToString(DateTime.now(), format: _csvFileDateFormat);
+  DateTime? get _eventStartDate => AppDateTime().getDeviceTimeFromUtc(_event?.startTimeUtc);
+
 }

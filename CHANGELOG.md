@@ -6,18 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [8.2.1] - 2026-08-05
+## [8.1.11] - 2026-08-11
 ### Fixed
-- Fixed crash on opening deep links [#5939](https://github.com/rokwire/illinois-app/issues/5939).
-### Changed
-- A-Z headings for groups cleanup [#5711](https://github.com/rokwire/illinois-app/issues/5711).
-- Preserve current filter and A-Z section states accross Groups Home panel launches [#5711](https://github.com/rokwire/illinois-app/issues/5711).
+- Loading Big 10 Athletics events and News [#5964](https://github.com/rokwire/illinois-app/issues/5964).
 
-## [8.2.0] - 2026-08-04
+## [8.1.10] - 2026-08-10
 ### Added
+- Time zone setting and date display based on the selected time zone [#5859](https://github.com/rokwire/illinois-app/issues/5859).
 - Added A-Z headings for groups [#5711](https://github.com/rokwire/illinois-app/issues/5711).
 ### Changed
 - Changed group search behavior [#5711](https://github.com/rokwire/illinois-app/issues/5711).
+- A-Z headings for groups cleanup [#5711](https://github.com/rokwire/illinois-app/issues/5711).
+- Preserve current filter and A-Z section states accross Groups Home panel launches [#5711](https://github.com/rokwire/illinois-app/issues/5711).
+- Read laundry enabled flag from app config, assistant promo as well [#5929](https://github.com/rokwire/illinois-app/issues/5929).
+### Fixed
+- Fixed crash on opening deep links [#5939](https://github.com/rokwire/illinois-app/issues/5939).
+- Fixed crash in Wallet iCard panel [#5953](https://github.com/rokwire/illinois-app/issues/5953).
+- Fixed crash in Map2 Home panel [#5955](https://github.com/rokwire/illinois-app/issues/5955).
+- Fixed crash in Appointments Home panel [#5958](https://github.com/rokwire/illinois-app/issues/5958).
+- Fixed crash in Laundry Favorite widget [#5960](https://github.com/rokwire/illinois-app/issues/5960).
+- Fixed crash in Group Card widget [#5962](https://github.com/rokwire/illinois-app/issues/5962).
+- Prevent a crash when an image fails to load from the internet [#5951](https://github.com/rokwire/illinois-app/issues/5951).
 
 ## [8.1.9] - 2026-07-31
 ### Changed

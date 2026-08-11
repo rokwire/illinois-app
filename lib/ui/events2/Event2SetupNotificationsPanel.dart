@@ -12,6 +12,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart' as timezone;
 
@@ -655,7 +656,7 @@ class _Event2SetupNotificationsPanelState extends State<Event2SetupNotifications
       String controllerText = StringUtils.ensureNotEmpty(notification?.body);
 
       timezone.Location? _timezone = (notification?.sendTimezone != null) ? timeZoneDatabase.locations[notification!.sendTimezone] : null ;
-      _timezone ??= DateTimeLocal.timezoneLocal;
+      _timezone ??= AppDateTime().deviceLocation;
 
       DateTime? notificationDateTime = notification?.sendDateTimeUtc != null ? TZDateTime.from(notification!.sendDateTimeUtc!, _timezone) : null;
       DateTime? sendDate = (notificationDateTime != null) ? DateUtils.dateOnly(notificationDateTime) : null;

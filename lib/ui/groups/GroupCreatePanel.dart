@@ -44,6 +44,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/accessible_image_holder.dart';
+import 'package:rokwire_plugin/ui/widgets/image_error_builder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -308,7 +309,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           StringUtils.isNotEmpty(url)
               ? Positioned.fill(child: AccessibleImageHolder(child:
                   ModalImageHolder(child:
-                    WebNetworkImage(imageUrl: url, excludeFromSemantics: true, fit: BoxFit.cover))))
+                    WebNetworkImage(imageUrl: url, excludeFromSemantics: true, fit: BoxFit.cover, errorBuilder: ImageErrorBuilder.defaultBuilder))))
               : Container(),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30)),

@@ -15,6 +15,7 @@
  */
 
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class RewardHistoryEntry {
@@ -45,12 +46,12 @@ class RewardHistoryEntry {
         dateUpdated: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_updated']), isUtc: true));
   }
 
-  DateTime? get dateCreatedLocal {
-    return AppDateTime().getDeviceTimeFromUtcTime(dateCreated);
+  DateTime? get displayDateCreated {
+    return AppDateTime().getZonedTimeFromUtc(dateTimeUtc: dateCreated);
   }
 
-  String? get displayDate {
-    return AppDateTime().formatDateTime(dateCreatedLocal, format: 'MM-dd-yy h:mm a');
+  String? get displayDateString {
+    return DateTimeUtils.dateTimeToString(displayDateCreated, format: 'MM-dd-yy h:mm a');
   }
 
   String? get displayDescription {

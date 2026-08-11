@@ -402,7 +402,7 @@ class _Event2CardState extends State<Event2Card>  with NotificationsListener {
         child: Container(
           decoration: _imageHeadingDecoration,
           child: AccessibleImageHolder(child: WebNetworkImage(imageUrl: _imageUrl, width: imageSize.width, height: imageSize.height,
-              fit: BoxFit.cover, excludeFromSemantics: true)),
+              fit: BoxFit.cover, excludeFromSemantics: true, errorBuilder: (context, error, stackTrace) => Container(decoration: _imageHeadingDecoration))),
         ));
   }
 

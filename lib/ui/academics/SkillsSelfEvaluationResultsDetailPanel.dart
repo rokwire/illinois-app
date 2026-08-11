@@ -216,7 +216,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
                                   child: WebNetworkImage(imageUrl: imageUrl,
                                       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                                     return (loadingProgress == null) ? child : emptyImagePlaceholder;
-                                  }))
+                                  }, errorBuilder: (context, error, stackTrace) => emptyImagePlaceholder))
                               : emptyImagePlaceholder,
                           VideoPlayButton()
                         ])

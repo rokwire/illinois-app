@@ -17,6 +17,7 @@
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -69,7 +70,10 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> with Notificati
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyInterestsChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyInterestsChanged,
+      AppDateTime.notifyTimeZoneChanged,
+    ]);
 
     _loadSportPreferences();
     _loadGames();
@@ -586,6 +590,9 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> with Notificati
     if (name == Auth2UserPrefs.notifyInterestsChanged) {
       _loadSportPreferences();
     }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      _loadGames();
+    }
   }
 }
 
@@ -645,11 +652,14 @@ class _RosterItem extends StatelessWidget {
     double height = 144;
     if (StringUtils.isNotEmpty(imageUrl)) {
       return WebNetworkImage(imageUrl: imageUrl, headers: Auth2().networkAuthHeaders,
-          excludeFromSemantics: true, width: width, height: height, fit: BoxFit.cover, alignment: Alignment.topCenter);
+          excludeFromSemantics: true, width: width, height: height, fit: BoxFit.cover, alignment: Alignment.topCenter,
+          errorBuilder: (context, error, stackTrace) => _defaultImageContainer(width: width, height: height));
     } else {
-      return Container(width: width, height: height, color: Styles().colors.background);
+      return _defaultImageContainer(width: width, height: height);
     }
   }
+
+  Widget _defaultImageContainer({double? width, double? height}) => Container(width: width, height: height, color: Styles().colors.background);
 }
 
 class _TeamSocialCell extends StatelessWidget {

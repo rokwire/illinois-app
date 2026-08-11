@@ -247,6 +247,7 @@ class Config extends rokwire.Config {
   int  get appReviewRequestTimeout   => JsonUtils.intValue(settings['appReviewRequestTimeout']) ?? 21;
 
   String? get timezoneLocation       => JsonUtils.stringValue(settings['timezoneLocation']);
+  String? get timezoneAbbreviation   => JsonUtils.stringValue(settings['timezoneAbbreviation']);
 
   String get appPrivacyVersion       => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');
   bool get allowGroupsAuthmanSync    => JsonUtils.boolValue(settings['allowGroupsAuthmanSync']) ?? false;

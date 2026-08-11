@@ -22,6 +22,7 @@ import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
@@ -88,7 +89,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
-      FlexUI.notifyChanged
+      FlexUI.notifyChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     
     _dining = widget.dining;
@@ -130,6 +132,9 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> with Notif
     else if (name == FlexUI.notifyChanged) {
       setStateIfMounted();
       _updateCurrentLocation();
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted();
     }
   }
 
@@ -701,15 +706,12 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFoodChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFoodChanged,
+      AppDateTime.notifyTimeZoneChanged,
+    ]);
 
-    _displayDates = widget.dining.displayScheduleDates;
-    _filterDates = widget.dining.filterScheduleDates;
-    _displayDateScheduleMapping = widget.dining.displayDateScheduleMapping;
-
-    _selectedDateFilterIndex = _getTodayFilterIndex();
-    _schedules = _buildCurrentSchedule();
-    _selectedScheduleIndex = _getCurrentScheduleIndex();
+    _initScheduleData();
 
     _loadProductItems();
     _loadOffers();
@@ -727,10 +729,24 @@ class _DiningDetailState extends State<_DiningDetail> with NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFoodChanged) {
-      if (mounted) {
-        setState(() {});
-      }
+      setStateIfMounted(() {});
     }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
+      setStateIfMounted(() {
+        _initScheduleData();
+      });
+      _loadProductItems();
+    }
+  }
+
+  void _initScheduleData() {
+    _displayDates = widget.dining.displayScheduleDates;
+    _filterDates = widget.dining.filterScheduleDates;
+    _displayDateScheduleMapping = widget.dining.displayDateScheduleMapping;
+
+    _selectedDateFilterIndex = _getTodayFilterIndex();
+    _schedules = _buildCurrentSchedule();
+    _selectedScheduleIndex = _getCurrentScheduleIndex();
   }
 
   @override

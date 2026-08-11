@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/ui/widgets/web_network_image.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -59,6 +60,7 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     super.initState();
   }
@@ -112,11 +114,11 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
       Container(decoration: _imageHeadingDecoration, child:
         AspectRatio(aspectRatio: 2.5, child:
             AccessibleImageHolder(child:
-              WebNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover, excludeFromSemantics: true)
+              WebNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover, excludeFromSemantics: true, errorBuilder: (context, error, stackTrace) => Container(decoration: _imageHeadingDecoration)
             )
         ),
       )
-    );
+    ));
   }
 
   Decoration get _imageHeadingDecoration => BoxDecoration(
@@ -292,6 +294,9 @@ class _DiningCardState extends State<DiningCard> with NotificationsListener {
       setStateIfMounted(() {});
     }
     else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
       setStateIfMounted(() {});
     }
   }

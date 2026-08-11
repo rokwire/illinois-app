@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -49,6 +50,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> with Noti
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
+      AppDateTime.notifyTimeZoneChanged,
     ]);
     super.initState();
   }
@@ -67,6 +69,9 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> with Noti
       setStateIfMounted(() {});
     }
     else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
+    }
+    else if (name == AppDateTime.notifyTimeZoneChanged) {
       setStateIfMounted(() {});
     }
   }

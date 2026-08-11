@@ -819,7 +819,7 @@ class _Map2HomePanelState extends Map2BasePanelState<Map2HomePanel>
     switch (_selectedContentType) {
       case Map2ContentType.Therapists:
       case Map2ContentType.CampusBuildings: return JsonUtils.encode(_mapStyles?[_mapStylesBuildingsKey]);
-      case Map2ContentType.BusStops: return JsonUtils.encode(_mapStyles![_mapStylesBusStopsKey]);
+      case Map2ContentType.BusStops: return JsonUtils.encode(_mapStyles?[_mapStylesBusStopsKey]);
       default: return null;
     }
   }
@@ -2071,7 +2071,7 @@ extension _Map2HomePanelMessages on _Map2HomePanelState {
       }
       else if (explores.length == 0) {
         if (contentType == Map2ContentType.MyLocations) {
-          String messageHtml = Localization().getStringEx('panel.explore.missing.my_locations.msg', "You currently have no saved locations.<br><br>Select a location on the map and tap the \u2606 to save it as a favorite. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)").
+          String messageHtml = Localization().getStringEx('panel.explore.missing.my_locations.msg', "You currently have no saved locations.<br><br>Select a location on the map and tap the \u2606 to save it as a favorite. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 3.)").
             replaceAll(_privacyUrlMacro, _privacyUrl);
           _showMessagePopup(messageHtml);
         }
@@ -2080,12 +2080,12 @@ extension _Map2HomePanelMessages on _Map2HomePanelState {
         }
       }
       else if ((contentType == Map2ContentType.BusStops) && (Storage().showMtdStopsMapInstructions != false)) {
-        String messageHtml = Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Tap a bus stop on the map to get bus schedules.<br><br>Tap the \u2606 to save the bus stop. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)").
+        String messageHtml = Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Tap a bus stop on the map to get bus schedules.<br><br>Tap the \u2606 to save the bus stop. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 3.)").
           replaceAll(_privacyUrlMacro, _privacyUrl);
         _showOptionalMessagePopup(messageHtml, showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,);
       }
       else if ((contentType == Map2ContentType.MyLocations) && (Storage().showMyLocationsMapInstructions != false)) {
-        String messageHtml = Localization().getStringEx("panel.explore.instructions.my_locations.msg", "Select a location on the map and tap the \u2606  to save it as a favorite. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)",).
+        String messageHtml = Localization().getStringEx("panel.explore.instructions.my_locations.msg", "Select a location on the map and tap the \u2606  to save it as a favorite. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 3.)",).
           replaceAll(_privacyUrlMacro, _privacyUrl);
         _showOptionalMessagePopup(messageHtml, showPopupStorageKey: Storage().showMyLocationsMapInstructionsKey);
       }
