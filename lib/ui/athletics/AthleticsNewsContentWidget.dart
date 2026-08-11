@@ -100,7 +100,7 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
     if (_news != null) {
       List<News> displayNews = <News>[];
       Set<String>? favoriteSports = Auth2().prefs?.sportsInterests;
-      LinkedHashSet<String>? favoriteIds = Auth2().account?.prefs?.getFavorites(News.favoriteKeyName);
+      LinkedHashSet<String>? favoriteIds = Auth2().prefs?.getFavorites(News.favoriteKeyName);
       for (News article in _news!) {
         if (((favoriteSports?.isNotEmpty != true) || (favoriteSports?.contains(article.sportKey) == true)) &&
             ((_starred == false) || (favoriteIds?.contains(article.id) == true))) {
