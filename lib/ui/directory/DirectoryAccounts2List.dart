@@ -152,14 +152,6 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
     else if (_contentActivity == ContentActivity.refresh) {
       return Container();
     }
-    else if (_displayList == null) {
-      return _buildMessageContent(Localization().getStringEx('', 'Failed to load directory accounts'),
-        title: Localization().getStringEx('common.label.failed', 'Failed')
-      );
-    }
-    else if (_displayList?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.group.home2.empty.text', 'There are no groups matching the selected filters.'));
-    }
     else {
       return _listContent;
     }
@@ -273,21 +265,6 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
       child: Container(height: 0.1),
     );
 
-  // Other Content Types
-  Widget _buildMessageContent(String message, { String? title }) =>
-    SingleChildScrollView(physics: BouncingScrollPhysics(), child:
-      Center(child:
-        Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
-          Column(children: [
-            (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
-              Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
-            ) : Container(),
-            Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
-          ],),
-        )
-      )
-    );
-
   Widget get _loadingContent =>
     Column(children: [
       Expanded(flex: 1, child: Container()),
@@ -296,8 +273,6 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
       ),
       Expanded(flex: 2, child: Container()),
     ],);
-
-  double get _screenHeight => MediaQuery.of(context).size.height;
 
   // Data
 
@@ -345,21 +320,37 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
             _filterContentMap?.fillAccounts(accounts,
               defaultExpnded: _defaultExtended
             );
-            _displayList = _buildDisplayList(_filterContentMap);
             _canExtendFilteredContent = (accounts.length >= _filteredContentPageLength);
+          } else {
+            _filterContentMap = null;
+            _canExtendFilteredContent = false;
           }
+          _displayList = _buildDisplayList(_filterContentMap);
           _contentActivity = null;
         });
       }
     }
   }
 
-  List<_DisplayListItem>? _buildDisplayList(LinkedHashMap<String, _SectionContent>? contentMap) {
-    if (contentMap != null) {
-      List<_DisplayListItem> displayList = <_DisplayListItem>[];
-      if (widget.listHeader != null) {
-        displayList.add(_WidgetListItem(widget.listHeader ?? Container()));
-      }
+  List<_DisplayListItem> _buildDisplayList(LinkedHashMap<String, _SectionContent>? contentMap) {
+    List<_DisplayListItem> displayList = <_DisplayListItem>[];
+    if (widget.listHeader != null) {
+      displayList.add(_WidgetListItem(widget.listHeader ?? Container()));
+    }
+    if (contentMap == null) {
+      displayList.addAll(<_DisplayListItem>[
+        _SplitterListItem(),
+        _MessageListItem(widget._contentMode.failedErrorMessage)
+      ]);
+    }
+    else if (contentMap.isEmpty) {
+      displayList.addAll(<_DisplayListItem>[
+        _SplitterListItem(),
+        _MessageListItem(widget._contentMode.emptyErrorMessage)
+      ]);
+    }
+    else {
+      int contentStartIndex = displayList.length;
       for (String section in contentMap.keys) {
         _SectionContent? sectionContent = contentMap[section];
         displayList.add(_SplitterListItem());
@@ -371,13 +362,11 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
       if (widget._filterMode && (_contentActivity?.extending == true)) {
         displayList.addAll(<_DisplayListItem>[_SplitterListItem(), _ProgressListItem()]);
       }
-      if (displayList.isNotEmpty) {
+      if (contentStartIndex < displayList.length) {
         displayList.add(_SplitterListItem());
       }
-      return displayList;
-    } else {
-      return null;
     }
+    return displayList;
   }
 
   List<_DisplayListItem> _buildDisplaySectionContent(_SectionContent sectionContent, { String? section }) {
@@ -751,3 +740,19 @@ class _WidgetListItem extends _DisplayListItem {
   _WidgetListItem(this.widget);
 }
 
+extension _ContentModeImpl on _ContentMode {
+
+  String get failedErrorMessage {
+    switch (this) {
+      case _ContentMode.directory: return Localization().getStringEx('', 'Failed to load directory accounts');
+      case _ContentMode.filter: return Localization().getStringEx('', 'Failed to search directory accounts');
+    }
+  }
+
+  String get emptyErrorMessage {
+    switch (this) {
+      case _ContentMode.directory: return Localization().getStringEx('', 'There are no directory accounts available');
+      case _ContentMode.filter: return Localization().getStringEx('', 'There are no directory accounts available matching the search criteria');
+    }
+  }
+}
