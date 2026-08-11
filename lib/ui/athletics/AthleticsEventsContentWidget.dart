@@ -55,6 +55,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   bool _loadingEvents = false;
   bool _refreshingEvents = false;
   bool _extendingEvents = false;
+  bool _pendingReload = false;
   static const int _eventsPageLength = 16;
 
   List<SportDefinition>? _teamsFilter;
@@ -207,24 +208,38 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   Future<void> _reloadEvents({ int limit = _eventsPageLength }) async {
-    if (!_loadingEvents && !_refreshingEvents && mounted) {
-      setStateIfMounted(() {
-        _loadingEvents = true;
-        _extendingEvents = false;
-      });
+    if (!mounted) {
+      return;
+    }
 
-      dynamic result = await Events2().loadEventsEx(_queryParam(limit: limit));
-      Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
-      List<Event2>? events = listResult?.events;
-      String? errorTextResult = (result is String) ? result : null;
+    if (_loadingEvents || _refreshingEvents) {
+      // A load is already in flight (started with a now-stale filter/starred state).
+      // Remember to reload again once it completes so the latest state is not lost.
+      _pendingReload = true;
+      return;
+    }
 
-      setStateIfMounted(() {
-        _events = (events != null) ? List<Event2>.from(events) : null;
-        _totalEventsCount = listResult?.totalCount;
-        _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
-        _eventsErrorText = errorTextResult;
-        _loadingEvents = false;
-      });
+    setStateIfMounted(() {
+      _loadingEvents = true;
+      _extendingEvents = false;
+    });
+
+    dynamic result = await Events2().loadEventsEx(_queryParam(limit: limit));
+    Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+    List<Event2>? events = listResult?.events;
+    String? errorTextResult = (result is String) ? result : null;
+
+    setStateIfMounted(() {
+      _events = (events != null) ? List<Event2>.from(events) : null;
+      _totalEventsCount = listResult?.totalCount;
+      _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
+      _eventsErrorText = errorTextResult;
+      _loadingEvents = false;
+    });
+
+    if (_pendingReload) {
+      _pendingReload = false;
+      _reloadEvents(limit: limit);
     }
   }
 
