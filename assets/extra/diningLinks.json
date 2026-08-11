@@ -1,0 +1,87 @@
+{
+  "directoryCategories" : [
+    "CAMPUS BUILDING RESTAURANTS & CAFES"
+  ],
+  "screens": {},
+  "resources": [
+    {
+      "id": "array_cafe",
+      "type": "external_link",
+      "categories": ["CAMPUS BUILDING RESTAURANTS & CAFES"],
+      "title": "Array Cafe",
+      "directoryContent": [{
+        "type": "external_link",
+        "content": "https://www.igb.illinois.edu/resources/services/operations-facilities"
+      }]
+    },{
+      "id": "bevier_cafe",
+      "type": "external_link",
+      "categories": ["CAMPUS BUILDING RESTAURANTS & CAFES"],
+      "title": "Bevier Cafe",
+      "directoryContent": [{
+        "type": "external_link",
+        "content": "https://beviercafe.illinois.edu/"
+      }]
+    },{
+      "id": "espresso_royale",
+      "type": "external_link",
+      "categories": ["CAMPUS BUILDING RESTAURANTS & CAFES"],
+      "title": "Espresso Royale",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Located inside Grainger Engineering Library, Business Instructional Facility, Campus Instructional Facility, and Siebel Center for Computing & Data Science."
+      },{
+        "type": "external_link",
+        "content": "https://union.illinois.edu/food#campus-dining"
+      }]
+    },{
+      "id": "illini_union_restaurants",
+      "type": "external_link",
+      "categories": ["CAMPUS BUILDING RESTAURANTS & CAFES"],
+      "title": "Illini Union Restaurants",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Seven locally-owned restaurants located inside the Illini Union on the first floor and Underground."
+      },{
+        "type": "external_link",
+        "content": "https://union.illinois.edu/food"
+      }]
+    },{
+      "id": "intermezzo_cafe",
+      "type": "external_link",
+      "categories": ["CAMPUS BUILDING RESTAURANTS & CAFES"],
+      "title": "Intermezzo Cafe at Krannert Center",
+      "directoryContent": [{
+        "type": "external_link",
+        "content": "https://krannertcenter.com/your-visit/food-drink"
+      }]
+    },{
+      "id": "law_cafe",
+      "type": "external_link",
+      "categories": ["CAMPUS BUILDING RESTAURANTS & CAFES"],
+      "title": "Law Cafe",
+      "directoryContent": [{
+        "type": "external_link",
+        "content": "https://law.illinois.edu/about/law-cafe/"
+      }]
+    },{
+      "id": "starbucks",
+      "type": "external_link",
+      "categories": ["CAMPUS BUILDING RESTAURANTS & CAFES"],
+      "title": "Starbucks",
+      "directoryContent": [{
+        "type": "external_link",
+        "content": "https://union.illinois.edu/food#campus-dining"
+      }]
+    },{
+      "id": "teds_cafe",
+      "type": "external_link",
+      "categories": ["CAMPUS BUILDING RESTAURANTS & CAFES"],
+      "title": "Ted's Cafe at Beckman Institute",
+      "directoryContent": [{
+        "type": "external_link",
+        "content": "https://beckman.illinois.edu/teds-cafe/cafe"
+      }]
+    }
+  ]
+}

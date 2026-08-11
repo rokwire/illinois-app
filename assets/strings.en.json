@@ -255,7 +255,7 @@
     "panel.browse.section.career_exploration.title": "Career Exploration & Preparation",
     "panel.browse.section.career_exploration.description": "Discover career pathways and opportunities.",
     "panel.browse.section.dining.title": "Dining",
-    "panel.browse.section.dining.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
+    "panel.browse.section.dining.description": "Explore dining options across campus.",
     "panel.browse.section.directory.title": "Directory of Users",
     "panel.browse.section.directory.description": "Find contact information for other {{university_name}} app users.",
     "panel.browse.section.events.title": "Events",
@@ -313,7 +313,8 @@
     "panel.browse.entry.career_exploration.essential_skills_coach.title": "Essential Skills Coach",
     "panel.browse.entry.career_exploration.job_board.title": "Virtual Job Board",
 
-    "panel.browse.entry.dining.dining.title": "Residence Hall Dining",
+    "panel.browse.entry.dining.dining.title": "University Housing Dining",
+    "panel.browse.entry.dining.dining_links.title": "Campus Dining",
 
     "panel.browse.entry.directory.user_directory.title": "Directory of Users",
 
@@ -1047,7 +1048,7 @@
     "panel.onboarding2.research.questionnaire.error.load": "Failed to load research questionnaire.",
 
     "panel.explore.header.events.title":"Events",
-    "panel.explore.header.dining.title":"Residence Hall Dining",
+    "panel.explore.header.dining.title":"University Housing Dining",
     "panel.explore.header.laundry.title":"Laundry",
     "panel.explore.header.buildings.title":"Campus Buildings",
     "panel.explore.header.mtd_stops.title":"Bus Stops",
@@ -1059,7 +1060,7 @@
     "panel.explore.button.events.hint":"",
     "panel.explore.button.events2.title":"Events",
     "panel.explore.button.events2.hint":"",
-    "panel.explore.button.dining.title":"Residence Hall Dining",
+    "panel.explore.button.dining.title":"University Housing Dining",
     "panel.explore.button.dining.hint":"",
     "panel.explore.button.laundry.title":"Laundry",
     "panel.explore.button.laundry.hint":"",
@@ -1275,10 +1276,10 @@
     "panel.search_building.result.error.label": "Failed to search buildings.",
     "panel.search_building.result.empty.label": "No buildings found.",
 
-    "panel.dining2.header.title": "Residence Hall Dining",
-    "panel.dining2.status.failed.title": "Failed to load Residence Hall dining locations",
-    "panel.dining2.status.empty.title": "There are no Residence Hall dining locations available right now",
-    "panel.dining2.status.filter.empty.title": "There are no Residence Hall dining locations matching selected criteria",
+    "panel.dining2.header.title": "University Housing Dining",
+    "panel.dining2.status.failed.title": "Failed to load University Housing dining locations",
+    "panel.dining2.status.empty.title": "There are no University Housing dining locations available right now",
+    "panel.dining2.status.filter.empty.title": "There are no University Housing dining locations matching selected criteria",
     "panel.dining2.filter.button.search.title": "Search",
     "panel.dining2.filter.button.search.hint": "Tap to search dining locations",
     "panel.dining2.filter.button.sort.title": "Sort",

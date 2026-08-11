@@ -25,8 +25,8 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
+import 'package:illinois/ui/widgets/FilterTextButton.dart';
 import 'package:illinois/ui/widgets/SignInInfoPopup.dart';
-import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/ext/InboxMessage.dart';
@@ -40,6 +40,8 @@ import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart';
+
+import '../widgets/LinkButton.dart';
 
 class NotificationsHomePanel extends StatefulWidget {
   static final String routeName = 'settings_notifications_content_panel';
@@ -377,24 +379,12 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
 
   Widget _buildFilterButton() {
     String title = Localization().getStringEx('panel.inbox.button.filter.title', 'Filter');
-    return Semantics(
-        label: title,
-        button: true,
-        container: true,
-        child: InkWell(
-            onTap: _onTapFilter,
-            child: Container(
-                decoration: BoxDecoration(
-                    color: Styles().colors.white,
-                    border: Border.all(color: Styles().colors.disabledTextColor, width: 1),
-                    borderRadius: BorderRadius.circular(18)),
-                child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 8),
-                    child: Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
-                      Padding(padding: EdgeInsets.only(right: 6), child: Styles().images.getImage('filters')),
-                      Text(title, style: Styles().textStyles.getTextStyle('widget.button.title.regular'), semanticsLabel: ''),
-                      Padding(padding: EdgeInsets.only(left: 3), child: Styles().images.getImage('chevron-right'))
-                    ])))));
+    return FilterTextButton(
+      title: title,
+      leftIcon: Styles().images.getImage('filters', size: 16),
+      rightIcon: Styles().images.getImage('chevron-right'),
+      onTap: _onTapFilter,
+    );
   }
 
   Widget _buildBanner() {
@@ -415,14 +405,21 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
   }
 
   Widget _buildReadAllButton() {
-    return Semantics(
-        container: true,
-        child: Container(
-            child: UnderlinedButton(
-                title: Localization().getStringEx('panel.inbox.mark_all_read.label', 'Mark all as read'),
-                padding: EdgeInsets.symmetric(vertical: 8),
-                progress: _loadingMarkAllAsRead,
-                onTap: _onTapMarkAllAsRead)));
+    return Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
+      Visibility(visible: _loadingMarkAllAsRead, child:
+        Padding(padding: EdgeInsetsGeometry.only(right: 6), child:
+          SizedBox.square(dimension: 14, child:
+            CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary),
+          )
+        )
+      ),
+      LinkButton(
+        title: Localization().getStringEx('panel.inbox.mark_all_read.label', 'Mark all as read'),
+        textStyle: Styles().textStyles.getTextStyle('widget.button.title.small.medium.underline'),
+        padding: EdgeInsets.symmetric(vertical: 12),
+        onTap: _onTapMarkAllAsRead,
+      ),
+    ],);
   }
 
   // Filter Widgets
@@ -634,16 +631,20 @@ class _NotificationsHomePanelState extends State<NotificationsHomePanel> with No
 
   void _onTapMarkAllAsRead() {
     Analytics().logSelect(target: 'Mark All As Read');
-    _setMarkAllAsReadLoading(true);
-    Inbox().markAllMessagesAsRead().then((succeeded) {
-      if (succeeded) {
-        _loadMessages();
-      } else {
-        AppAlert.showTextMessage(
-            context, Localization().getStringEx('panel.inbox.mark_as_read.failed.msg', 'Failed to mark all messages as read'));
-      }
-      _setMarkAllAsReadLoading(false);
-    });
+    if (_loadingMarkAllAsRead != true) {
+      _setMarkAllAsReadLoading(true);
+      Inbox().markAllMessagesAsRead().then((succeeded) {
+        if (mounted) {
+          if (succeeded) {
+            _loadMessages();
+          } else {
+            AppAlert.showTextMessage(
+                context, Localization().getStringEx('panel.inbox.mark_as_read.failed.msg', 'Failed to mark all messages as read'));
+          }
+          _setMarkAllAsReadLoading(false);
+        }
+      });
+    }
   }
 
   void _onTapFilter() {

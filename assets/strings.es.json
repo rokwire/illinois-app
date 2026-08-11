@@ -254,7 +254,7 @@
     "panel.browse.section.career_exploration.title": "Career Exploration & Preparation",
     "panel.browse.section.career_exploration.description": "Discover career pathways and opportunities.",
     "panel.browse.section.dining.title": "Comida",
-    "panel.browse.section.dining.description": "Los estudiantes, profesores, empleados, y visitantes son bienvenidos a comer en cualquier comedor en las residencias.",
+    "panel.browse.section.dining.description": "Explora las opciones gastronómicas en todo el campus.",
     "panel.browse.section.directory.title": "Directory of Users",
     "panel.browse.section.directory.description": "Find contact information for other {{university_name}} app users.",
     "panel.browse.section.events.title": "Eventos",
@@ -313,6 +313,7 @@
     "panel.browse.entry.career_exploration.job_board.title": "Virtual Job Board",
 
     "panel.browse.entry.dining.dining.title": "Comedor de la residencia",
+    "panel.browse.entry.dining.dining_links.title": "Campus Dining",
 
     "panel.browse.entry.directory.user_directory.title": "Directory of Users",
 
@@ -1275,9 +1276,9 @@
     "panel.search_building.result.empty.label": "No buildings found.",
 
     "panel.dining2.header.title": "Comedor de la residencia",
-    "panel.dining2.status.failed.title": "Failed to load Residence Hall dining locations",
-    "panel.dining2.status.empty.title": "There are no Residence Hall dining locations available right now",
-    "panel.dining2.status.filter.empty.title": "There are no Residence Hall dining locations matching selected criteria",
+    "panel.dining2.status.failed.title": "Failed to load University Housing dining locations",
+    "panel.dining2.status.empty.title": "There are no University Housing dining locations available right now",
+    "panel.dining2.status.filter.empty.title": "There are no University Housing dining locations matching selected criteria",
     "panel.dining2.filter.button.search.title": "Search",
     "panel.dining2.filter.button.search.hint": "Tap to search dining locations",
     "panel.dining2.filter.button.sort.title": "Sort",

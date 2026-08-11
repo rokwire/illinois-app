@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Added Campus Dining subsection to Dining [#5872](https://github.com/rokwire/illinois-app/issues/5872).
+### Changed
+- Match Notifications buttons to match app style [#5868](https://github.com/rokwire/illinois-app/issues/5868).
+
+## [8.2.1] - 2026-08-05
+
+## [8.2.0] - 2026-08-04
 
 ## [8.1.11] - 2026-08-11
 ### Fixed

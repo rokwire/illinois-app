@@ -23,6 +23,7 @@ import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/map2/Map2HomeExts.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/map2/Map2Widgets.dart';
+import 'package:illinois/ui/widgets/FilterTextButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
@@ -34,6 +35,7 @@ import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
 
 class Dining2HomePanel extends StatefulWidget with AnalyticsInfo {
   final Dining2Filter? filter;
@@ -112,7 +114,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: HeaderBar(title: Localization().getStringEx('panel.dining2.header.title', 'Residence Hall Dining'),),
+    appBar: HeaderBar(title: Localization().getStringEx('panel.dining2.header.title', 'University Housing Dining'),),
     body: _scaffoldContent,
     backgroundColor: Styles().colors.background,
     bottomNavigationBar: uiuc.TabBar()
@@ -238,7 +240,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
   }
 
   Widget get _starredFilterButton =>
-    Map2FilterTextButton(
+    FilterTextButton(
       title: Localization().getStringEx('panel.dining2.filter.button.starred.title', 'Starred'),
       hint: Localization().getStringEx('panel.dining2.filter.button.starred.hint', 'Tap to show only starred dining locations'),
       leftIcon: Styles().images.getImage('star-filled', size: 16),
@@ -255,7 +257,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
   }
 
   Widget get _openNowFilterButton =>
-    Map2FilterTextButton(
+    FilterTextButton(
       title: Localization().getStringEx('panel.dining2.filter.button.open_now.title', 'Open Now'),
       hint: Localization().getStringEx('panel.dining2.filter.button.open_now.hint', 'Tap to show only currently opened dining locations'),
       toggled: _openNow == true,
@@ -279,7 +281,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
               width:  _sortDropdownWidth ??= _evaluateSortDropdownWidth(),
               padding: EdgeInsets.zero
             ),
-        customButton: Map2FilterTextButton(
+        customButton: FilterTextButton(
           title: Localization().getStringEx('panel.dining2.filter.button.sort.title', 'Sort'),
           hint: Localization().getStringEx('panel.dining2.filter.button.sort.hint', 'Tap to sort dining locations'),
           leftIcon: Styles().images.getImage('sort', size: 16),
@@ -364,7 +366,7 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
               width:  _paymentTypesDropdownWidth ??= _evaluatePaymentTypesDropdownWidth(),
               padding: EdgeInsets.zero
             ),
-        customButton: Map2FilterTextButton(
+        customButton: FilterTextButton(
           title: _paymentType?.displayTitle ?? PaymentTypeUtils.displayTitleAll,
           hint: Localization().getStringEx('panel.dining2.filter.button.payment_type.hint', 'Tap to select a payment type'),
           rightIcon: Styles().images.getImage('chevron-down'),
@@ -612,9 +614,9 @@ class _Dining2HomePanelState extends State<Dining2HomePanel> with NotificationsL
     )
   );
 
-  Widget get _errorContent => _statusContent(Localization().getStringEx('panel.dining2.status.failed.title', 'Failed to load Residence Hall dining locations.'));
-  Widget get _emptyContent => _statusContent(Localization().getStringEx('panel.dining2.status.empty.title', 'There are no Residence Hall dining locations available right now.'));
-  Widget get _emptyFiltersContent => _statusContent(Localization().getStringEx('panel.dining2.status.filter.empty.title', 'There are no Residence Hall dining locations matching selected criteria'));
+  Widget get _errorContent => _statusContent(Localization().getStringEx('panel.dining2.status.failed.title', 'Failed to load University Housing dining locations.'));
+  Widget get _emptyContent => _statusContent(Localization().getStringEx('panel.dining2.status.empty.title', 'There are no University Housing dining locations available right now.'));
+  Widget get _emptyFiltersContent => _statusContent(Localization().getStringEx('panel.dining2.status.filter.empty.title', 'There are no University Housing dining locations matching selected criteria'));
 
   static const double _statusPadding = 48;
   Widget _statusContent(String status, { double hPadding = _statusPadding, double vPadding = 4 * _statusPadding }) =>
