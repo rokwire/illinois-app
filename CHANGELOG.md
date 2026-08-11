@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added Campus Dining subsection to Dining [#5872](https://github.com/rokwire/illinois-app/issues/5872).
+- Added A-Z headings for directory of users [#5701](https://github.com/rokwire/illinois-app/issues/5701).
 - Show icon for online courses [#5931](https://github.com/rokwire/illinois-app/issues/5931).
 ### Changed
 - Match Notifications buttons to match app style [#5868](https://github.com/rokwire/illinois-app/issues/5868).
