@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [8.2.2] - 2026-08-11
 ### Added
 - Added Campus Dining subsection to Dining [#5872](https://github.com/rokwire/illinois-app/issues/5872).
 - Added A-Z headings for directory of users [#5701](https://github.com/rokwire/illinois-app/issues/5701).
