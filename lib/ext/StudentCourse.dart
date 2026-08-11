@@ -175,6 +175,7 @@ extension StudentCourseSectionExt on StudentCourseSection {
   }
 
   bool get isInPerson => (buildingId?.isNotEmpty == true) || (building?.hasValidLocation == true);
+  bool get isOnline => !isInPerson && (instructionType == 'ONL');
 
   List<int> get weekdays {
     List<int> result = <int>[];
