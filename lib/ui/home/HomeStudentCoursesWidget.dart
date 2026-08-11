@@ -611,7 +611,14 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
               color: _courseColors[block.course.shortName] ?? Styles().colors.background,
               borderRadius: BorderRadius.circular(4),
             ),
-            child: _buildCourseBlockText(block),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Visibility(visible: (block.course.section?.isOnline == true), child:
+                Padding(padding: EdgeInsets.only(right: 4), child:
+                  Styles().images.getImage('laptop', excludeFromSemantics: true, size: 12),
+                ),
+              ),
+              Expanded(child: _buildCourseBlockText(block)),
+            ]),
           ),
         ),
       ),

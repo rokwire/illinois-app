@@ -68,9 +68,16 @@ class StudentCourseCard extends StatelessWidget {
          )]),
 
          Padding(padding: EdgeInsets.only(top: 6), child:
-           Row(children: [Expanded(child:
-             Text(course.displayInfo, style: Styles().textStyles.getTextStyle("widget.card.detail.medium")),
-           )]),
+           Row(children: [
+             Visibility(visible: (course.section?.isOnline == true), child:
+               Padding(padding: EdgeInsets.only(right: 6), child:
+                 Styles().images.getImage('laptop', excludeFromSemantics: true),
+               ),
+             ),
+             Expanded(child:
+               Text(course.displayInfo, style: Styles().textStyles.getTextStyle("widget.card.detail.medium")),
+             ),
+           ]),
          ),
 
          Padding(padding: EdgeInsets.zero, child:
