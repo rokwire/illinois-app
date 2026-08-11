@@ -41,7 +41,8 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
   GlobalKey _listViewKey = GlobalKey();
   ScrollController _scrollController = ScrollController();
 
-  LinkedHashMap<String, _SectionContent>? _contentMap;
+  LinkedHashMap<String, _SectionContent>? _directoryContentMap;
+  LinkedHashMap<String, _SectionContent>? _filterContentMap;
   List<_DisplayListItem>? _displayList;
   ContentActivity? _contentActivity;
   bool _canExtendFilteredContent = false;
@@ -49,11 +50,18 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
 
   bool get _defaultExtended => widget._filterMode;
 
+  LinkedHashMap<String, _SectionContent>? get _contentMap {
+    switch (widget._contentMode) {
+      case _ContentMode.directory: return _directoryContentMap;
+      case _ContentMode.filter: return _filterContentMap;
+    }
+  }
+
   String _directoryPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
   String _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
 
-  static const int _sectionContentPageLength = 128;
-  static const int _filteredContentPageLength = 128;
+  static const int _sectionContentPageLength = 32;
+  static const int _filteredContentPageLength = 32;
 
   @override
   void initState() {
@@ -83,16 +91,27 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
 
   @override
   void didUpdateWidget(DirectoryAccounts2List oldWidget) {
-    if ((widget._contentMode != oldWidget._contentMode) ||
-        (widget._filterMode && ((widget.searchText != oldWidget.searchText) || !DeepCollectionEquality().equals(widget.filterAttributes, oldWidget.filterAttributes)) ))
-    {
-      if (widget._directoryMode) {
-        _initDirectoryContent();
-      }
-      else if (widget._filterMode) {
-        _initFilteredContent();
-      }
+    if (widget._filterMode && oldWidget._directoryMode) {
+      // directory => search : always reinit
+      _initFilteredContent();
     }
+    else if (widget._directoryMode && oldWidget._filterMode) {
+      // search => directory : preserve what we had before
+      if (_directoryContentMap?.isNotEmpty != true)  {
+        _initDirectoryContent();
+      } else {
+        setState(() {
+          _filterContentMap = null; // clear filtered content when we initialize directory content
+          _displayList = _buildDisplayList(_directoryContentMap);
+        });
+      }
+    } else if ((widget._filterMode && ((widget.searchText != oldWidget.searchText) || !DeepCollectionEquality().equals(widget.filterAttributes, oldWidget.filterAttributes)) )) {
+      // search => search & filters changed : always reinit
+      _initFilteredContent();
+    } else if (widget._directoryMode) {
+      // directory => directory : seems nothing to do
+    }
+
     super.didUpdateWidget(oldWidget);
   }
 
@@ -295,10 +314,12 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
 
       if (mounted && (_contentActivity == ContentActivity.reload)) {
         setState(() {
-          _contentMap = (sections != null) ? _ContentMapImpl.buildFromSections(sections,
+          _filterContentMap = null; // clear filtered content when we initialize directory content
+          _directoryContentMap = (sections != null) ? _ContentMapImpl.buildFromSections(sections,
+            sourceContentMap: _directoryContentMap,
             defaultExpnded: _defaultExtended
           ) : null;
-          _displayList = _buildDisplayList(_contentMap);
+          _displayList = _buildDisplayList(_directoryContentMap);
           _contentActivity = null;
         });
       }
@@ -320,9 +341,11 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
       if (mounted && (_contentActivity == ContentActivity.reload)) {
         setState(() {
           if (accounts != null) {
-            _contentMap = LinkedHashMap<String, _SectionContent>();
-            _contentMap?.fillAccounts(accounts, defaultExpnded: _defaultExtended);
-            _displayList = _buildDisplayList(_contentMap);
+            _filterContentMap = LinkedHashMap<String, _SectionContent>();
+            _filterContentMap?.fillAccounts(accounts,
+              defaultExpnded: _defaultExtended
+            );
+            _displayList = _buildDisplayList(_filterContentMap);
             _canExtendFilteredContent = (accounts.length >= _filteredContentPageLength);
           }
           _contentActivity = null;
@@ -506,9 +529,9 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
       ];
 
       Map<String, int> sectionToFutureIndex = <String, int>{};
-      if (_contentMap != null) {
-        for (String section in _contentMap?.keys ?? []) {
-          _SectionContent? sectionContent = _contentMap?[section];
+      if (_directoryContentMap != null) {
+        for (String section in _directoryContentMap?.keys ?? []) {
+          _SectionContent? sectionContent = _directoryContentMap?[section];
           if ((sectionContent?.expanded == true) || (sectionContent?.accounts != null)) {
             sectionToFutureIndex[section] = requestFutures.length;
             requestFutures.add(Auth2().loadDirectoryAccounts(
@@ -528,15 +551,15 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
         List<Auth2PublicAccountSection>? sections = JsonUtils.cast(futureResponses.first);
         if (sections != null) {
           Map<String, List<Auth2PublicAccount>?> sectionAccountsMap = sectionToFutureIndex.map((String section, int futureIndex) => MapEntry(section, JsonUtils.cast(ListUtils.entry(futureResponses, futureIndex))));
-          LinkedHashMap<String, _SectionContent> contentMap = _ContentMapImpl.buildFromSections(sections,
+          LinkedHashMap<String, _SectionContent> directoryContentMap = _ContentMapImpl.buildFromSections(sections,
             sectionAccountsMap: sectionAccountsMap,
             sectionContentPageLength: _sectionContentPageLength,
-            sourceContentMap: _contentMap,
+            sourceContentMap: _directoryContentMap,
             defaultExpnded: _defaultExtended
           );
           setState(() {
-            _contentMap = contentMap;
-            _displayList = _buildDisplayList(_contentMap);
+            _directoryContentMap = directoryContentMap;
+            _displayList = _buildDisplayList(_directoryContentMap);
             _contentActivity = null;
           });
         } else {
@@ -554,7 +577,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
         _contentActivity = ContentActivity.refresh;
       });
 
-      int requestLimit = max(_contentMap?.totalAccountsCount ?? 0, _filteredContentPageLength);
+      int requestLimit = max(_filterContentMap?.totalAccountsCount ?? 0, _filteredContentPageLength);
       List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
         search: StringUtils.ensureEmpty(widget.searchText),
         attriutes: widget.filterAttributes,
@@ -563,14 +586,14 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
 
       if (mounted && (_contentActivity == ContentActivity.refresh)) {
         if (accounts != null) {
-          LinkedHashMap<String, _SectionContent> contentMap = LinkedHashMap<String, _SectionContent>();
-          contentMap.fillAccounts(accounts,
-            sourceContentMap: _contentMap,
+          LinkedHashMap<String, _SectionContent> filterContentMap = LinkedHashMap<String, _SectionContent>();
+          filterContentMap.fillAccounts(accounts,
+            sourceContentMap: _filterContentMap,
             defaultExpnded: _defaultExtended
           );
           setState(() {
-            _contentMap = contentMap;
-            _displayList = _buildDisplayList(_contentMap);
+            _filterContentMap = filterContentMap;
+            _displayList = _buildDisplayList(_filterContentMap);
             _canExtendFilteredContent = (accounts.length >= _filteredContentPageLength);
             _contentActivity = null;
           });
@@ -592,18 +615,18 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
       List<Auth2PublicAccount>? accounts = await Auth2().loadDirectoryAccounts(
         search: StringUtils.ensureEmpty(widget.searchText),
         attriutes: widget.filterAttributes,
-        offset: _contentMap?.totalAccountsCount ?? 0,
+        offset: _filterContentMap?.totalAccountsCount ?? 0,
         limit: _filteredContentPageLength,
       );
 
       if (mounted && (_contentActivity == ContentActivity.extend)) {
         if (accounts != null) {
           setState(() {
-            _contentMap ??= LinkedHashMap<String, _SectionContent>();
-            _contentMap?.fillAccounts(accounts,
+            _filterContentMap ??= LinkedHashMap<String, _SectionContent>();
+            _filterContentMap?.fillAccounts(accounts,
               defaultExpnded: _defaultExtended
             );
-            _displayList = _buildDisplayList(_contentMap);
+            _displayList = _buildDisplayList(_filterContentMap);
             _canExtendFilteredContent = (accounts.length >= _filteredContentPageLength);
             _contentActivity = null;
           });
