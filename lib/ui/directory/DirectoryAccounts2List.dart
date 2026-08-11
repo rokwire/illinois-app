@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:core';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart' as illinois;
@@ -17,10 +18,17 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+enum _ContentMode { directory, filter, }
+
 class DirectoryAccounts2List extends StatefulWidget {
   final Widget? listHeader;
   final String? searchText;
   final Map<String, dynamic>? filterAttributes;
+
+  _ContentMode get _contentMode => ((searchText?.isNotEmpty != true) && (filterAttributes?.isNotEmpty != true)) ?
+    _ContentMode.directory : _ContentMode.filter;
+  bool get _directoryMode => (_contentMode == _ContentMode.directory);
+  bool get _filterMode => (_contentMode == _ContentMode.filter);
 
   DirectoryAccounts2List({ super.key, this.listHeader, this.searchText, this.filterAttributes, });
 
@@ -36,12 +44,11 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
   LinkedHashMap<String, _SectionContent>? _contentMap;
   List<_DisplayListItem>? _displayList;
   ContentActivity? _contentActivity;
+  Map<String, GlobalKey> _extendDetectorKeys = <String, GlobalKey>{};
   bool _canExtendFilteredContent = false;
   String? _expandedAccountId;
 
-  bool get _directoryMode => ((widget.searchText?.isNotEmpty != true) && (widget.filterAttributes?.isNotEmpty != true));
-  bool get _filterMode => !_directoryMode;
-  bool get _defaultExpnded => (_filterMode == true);
+  bool get _defaultExtended => widget._filterMode;
 
   String _directoryPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
   String _userPhotoImageToken = DirectoryProfilePhotoUtils.newToken;
@@ -58,10 +65,11 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
       Auth2.notifyLoginChanged,
     ]);
     _scrollController.addListener(_scrollListener);
-    if ((widget.searchText?.isNotEmpty == true) || (widget.filterAttributes?.isNotEmpty == true)) {
-      _initFilteredContent();
-    } else {
+    if (widget._directoryMode) {
       _initDirectoryContent();
+    }
+    else if (widget._filterMode) {
+      _initFilteredContent();
     }
     super.initState();
   }
@@ -76,7 +84,16 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
 
   @override
   void didUpdateWidget(DirectoryAccounts2List oldWidget) {
-    //TBD:
+    if ((widget._contentMode != oldWidget._contentMode) ||
+        (widget._filterMode && ((widget.searchText != oldWidget.searchText) || !DeepCollectionEquality().equals(widget.filterAttributes, oldWidget.filterAttributes)) ))
+    {
+      if (widget._directoryMode) {
+        _initDirectoryContent();
+      }
+      else if (widget._filterMode) {
+        _initFilteredContent();
+      }
+    }
     super.didUpdateWidget(oldWidget);
   }
 
@@ -233,7 +250,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
 
   Widget _buildSectionExtendDetectorListItem(String section) =>
     VisibilityDetector(
-      key: Key('edu.illinois.rokwire.directory.accounts.section.$section'),
+      key: _extendDetectorKeys[section] ??= GlobalKey(),
       onVisibilityChanged: (info) => _onSectionExtendDetectorVisibilityChanged(section, info),
       child: Container(height: 0.1),
     );
@@ -280,7 +297,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
       if (mounted && (_contentActivity == ContentActivity.reload)) {
         setState(() {
           _contentMap = (sections != null) ? _ContentMapImpl.buildFromSections(sections,
-            defaultExpnded: _defaultExpnded
+            defaultExpnded: _defaultExtended
           ) : null;
           _displayList = _buildDisplayList(_contentMap);
           _contentActivity = null;
@@ -305,7 +322,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
         setState(() {
           if (accounts != null) {
             _contentMap = LinkedHashMap<String, _SectionContent>();
-            _contentMap?.fillAccounts(accounts, defaultExpnded: _defaultExpnded);
+            _contentMap?.fillAccounts(accounts, defaultExpnded: _defaultExtended);
             _displayList = _buildDisplayList(_contentMap);
             _canExtendFilteredContent = (accounts.length >= _filteredContentPageLength);
           }
@@ -329,7 +346,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
           displayList.addAll(_buildDisplaySectionContent(sectionContent, section: section));
         }
       }
-      if (_filterMode && (_contentActivity?.extending == true)) {
+      if (widget._filterMode && (_contentActivity?.extending == true)) {
         displayList.addAll(<_DisplayListItem>[_SplitterListItem(), _ProgressListItem()]);
       }
       if (displayList.isNotEmpty) {
@@ -363,7 +380,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
           _SplitterListItem(),
           _ProgressListItem(),
         ]);
-      } else if (_directoryMode && sectionContent.canExtend && (section != null)) {
+      } else if (widget._directoryMode && sectionContent.canExtend && (section != null)) {
         displayList.add(_ExtendDetectorListItem(section),);
       }
       return displayList;
@@ -387,13 +404,13 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
           _displayList = _buildDisplayList(_contentMap!);
         });
       }
-      else if (_filterMode || (sectionContent.accounts != null)) {
+      else if (widget._filterMode || (sectionContent.accounts != null)) {
         setState(() {
           sectionContent.expanded = true;
           _displayList = _buildDisplayList(_contentMap!);
         });
       }
-      else if (_directoryMode) {
+      else if (widget._directoryMode) {
         // Extend directory section content
         if (sectionContent.activity?.loading != true) {
           setState(() {
@@ -424,10 +441,22 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
     }
   }
 
+  void _checkSectionExtendDetectorsVisibility() {
+    //TBD: Check if section extend detector is visible using global key's rendering boxes.
+    // Extend those that are visible and not currently extending.
+    // Example: _GroupHome2PanelState._isCompletelyVisibleInHeight
+  }
+
   Future<void> _onSectionExtendDetectorVisibilityChanged(String section, VisibilityInfo info ) async {
     bool isVisible = !info.visibleBounds.isEmpty;
     _SectionContent? sectionContent = _contentMap?[section];
-    if (isVisible && (sectionContent != null) && (sectionContent.activity == null)) {
+    if (isVisible && (sectionContent != null)) {
+      await _extendSection(section, sectionContent);
+    }
+  }
+
+  Future<void> _extendSection(String section, _SectionContent sectionContent) async {
+    if (sectionContent.activity == null) {
       setState(() {
         sectionContent.activity = ContentActivity.extend;
         _displayList = _buildDisplayList(_contentMap!);
@@ -455,14 +484,18 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
   }
 
   void _scrollListener() {
-    if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && _canExtendFilteredContent && (_contentActivity == null)) {
-      _extendFilteredContent();
+    if (widget._filterMode) {
+      if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && _canExtendFilteredContent && (_contentActivity == null)) {
+        _extendFilteredContent();
+      }
+    } else if (widget._directoryMode) {
+      _checkSectionExtendDetectorsVisibility();
     }
   }
 
   Future<void> _onRefresh() async {
     if (_contentActivity?.loading != true) {
-      if (_directoryMode) {
+      if (widget._directoryMode) {
         await _refreshDirectoryContent();
       } else {
         await _refreshFilteredContent();
@@ -510,7 +543,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
             sectionAccountsMap: sectionAccountsMap,
             sectionContentPageLength: _sectionContentPageLength,
             sourceContentMap: _contentMap,
-            defaultExpnded: _defaultExpnded
+            defaultExpnded: _defaultExtended
           );
           setState(() {
             _contentMap = contentMap;
@@ -544,7 +577,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
           LinkedHashMap<String, _SectionContent> contentMap = LinkedHashMap<String, _SectionContent>();
           contentMap.fillAccounts(accounts,
             sourceContentMap: _contentMap,
-            defaultExpnded: _defaultExpnded
+            defaultExpnded: _defaultExtended
           );
           setState(() {
             _contentMap = contentMap;
@@ -579,7 +612,7 @@ class _DirectoryAccounts2ListState extends State<DirectoryAccounts2List> with No
           setState(() {
             _contentMap ??= LinkedHashMap<String, _SectionContent>();
             _contentMap?.fillAccounts(accounts,
-              defaultExpnded: _defaultExpnded
+              defaultExpnded: _defaultExtended
             );
             _displayList = _buildDisplayList(_contentMap);
             _canExtendFilteredContent = (accounts.length >= _filteredContentPageLength);
