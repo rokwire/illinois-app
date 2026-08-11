@@ -55,6 +55,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   bool _loadingEvents = false;
   bool _refreshingEvents = false;
   bool _extendingEvents = false;
+  bool _pendingReload = false;
   static const int _eventsPageLength = 16;
 
   List<SportDefinition>? _teamsFilter;
@@ -76,7 +77,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     ]);
     _scrollController.addListener(_scrollListener);
     _starred = (widget.starred == true);
-    _buildTeamsFilter();
+    _teamsFilter = _buildTeamsFilter();
     _reloadEvents();
   }
 
@@ -207,24 +208,38 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   Future<void> _reloadEvents({ int limit = _eventsPageLength }) async {
-    if (!_loadingEvents && !_refreshingEvents && mounted) {
-      setStateIfMounted(() {
-        _loadingEvents = true;
-        _extendingEvents = false;
-      });
+    if (!mounted) {
+      return;
+    }
 
-      dynamic result = await Events2().loadEventsEx(_queryParam(limit: limit));
-      Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
-      List<Event2>? events = listResult?.events;
-      String? errorTextResult = (result is String) ? result : null;
+    if (_loadingEvents || _refreshingEvents) {
+      // A load is already in flight (started with a now-stale filter/starred state).
+      // Remember to reload again once it completes so the latest state is not lost.
+      _pendingReload = true;
+      return;
+    }
 
-      setStateIfMounted(() {
-        _events = (events != null) ? List<Event2>.from(events) : null;
-        _totalEventsCount = listResult?.totalCount;
-        _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
-        _eventsErrorText = errorTextResult;
-        _loadingEvents = false;
-      });
+    setStateIfMounted(() {
+      _loadingEvents = true;
+      _extendingEvents = false;
+    });
+
+    dynamic result = await Events2().loadEventsEx(_queryParam(limit: limit));
+    Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+    List<Event2>? events = listResult?.events;
+    String? errorTextResult = (result is String) ? result : null;
+
+    setStateIfMounted(() {
+      _events = (events != null) ? List<Event2>.from(events) : null;
+      _totalEventsCount = listResult?.totalCount;
+      _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
+      _eventsErrorText = errorTextResult;
+      _loadingEvents = false;
+    });
+
+    if (_pendingReload) {
+      _pendingReload = false;
+      _reloadEvents(limit: limit);
     }
   }
 
@@ -340,7 +355,8 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   String? _getSportFilterKey(SportDefinition? sport) {
     // "Manually" select different property name for these sports because they do not match with labels in Calendar and Sports BB
-    if ((sport?.shortName == 'wrestling') || (sport?.shortName == 'wswim') || (sport?.shortName == 'wvball')) {
+    if ((sport?.shortName == 'wrestling') || (sport?.shortName == 'wswim') ||
+        (sport?.shortName == 'wvball') || (sport?.shortName == 'wsoc')) {
       return sport?.customName;
     } else {
       return sport?.name;
@@ -351,7 +367,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   String get _emptyMessageHtml {
     return _favoritesMode ?
-      Localization().getStringEx('panel.athletics.content.events.my.empty.message', "There are no starred events for the selected teams. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 2.)").replaceAll(_privacyUrlMacro, _privacyUrl) :
+      Localization().getStringEx('panel.athletics.content.events.my.empty.message', "There are no starred events for the selected teams. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 3.)").replaceAll(_privacyUrlMacro, _privacyUrl) :
       Localization().getStringEx('panel.athletics.content.events.empty.message', 'There are no events for the selected teams.');
   }
 
