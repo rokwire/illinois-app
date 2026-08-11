@@ -279,7 +279,7 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
       return HomeMessageCard(message: Localization().getStringEx("widget.home.laundry.all.text.empty.description", "No Laundries are available right now."),);
     }
     else if (widget.contentType == FavoriteContentType.my) {
-      String message = Localization().getStringEx("widget.home.laundry.my.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Laundry</b></a> for quick access here.  (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 2.)")
+      String message = Localization().getStringEx("widget.home.laundry.my.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Laundry</b></a> for quick access here.  (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 3.)")
           .replaceAll(localUrlMacro, '$localScheme://$localLaundryHost')
           .replaceAll(privacyUrlMacro, '$privacyScheme://$privacyLevelHost');
 
