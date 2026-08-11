@@ -76,7 +76,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     ]);
     _scrollController.addListener(_scrollListener);
     _starred = (widget.starred == true);
-    _buildTeamsFilter();
+    _teamsFilter = _buildTeamsFilter();
     _reloadEvents();
   }
 
