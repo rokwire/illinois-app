@@ -355,9 +355,9 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
   Widget get _rawViewTypeContentWidget {
     switch (_selectedViewType) {
       case StudentCoursesViewType.calendar:
-        return StudentCoursesCalendarContentWidget(courses: _courses, analyticsFeature: widget.analyticsFeature);
+        return StudentCoursesCalendarContentWidget(courses: _scheduledCourses, analyticsFeature: widget.analyticsFeature);
       case StudentCoursesViewType.list:
-        return StudentCoursesListContentWidget(courses: _courses, analyticsFeature: widget.analyticsFeature);
+        return StudentCoursesListContentWidget(courses: _scheduledCourses, analyticsFeature: widget.analyticsFeature);
       case StudentCoursesViewType.map:
         return StudentCoursesMapContentWidget(courses: _courses, analyticsFeature: widget.analyticsFeature);
     }
@@ -366,6 +366,8 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
   bool get _canLoadCourses => (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn);
 
   bool get _showNavigationBars => (widget.showNavigationBars == true);
+
+  List<StudentCourse>? get _scheduledCourses => _courses?.withScheduledMeeting;
 }
 
 enum StudentCoursesViewType { calendar, list, map }
