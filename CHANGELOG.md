@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Hide courses without days and start time in Calendar and List views [#5930](https://github.com/rokwire/illinois-app/issues/5930).
 - Increased minimum deployment target of the iOS app to 15.0 [#5972](https://github.com/rokwire/illinois-app/issues/5972).
+### Fixed
+- Course markers not showing on the map [#5925](https://github.com/rokwire/illinois-app/issues/5925).
 
 ## [8.2.2] - 2026-08-11
 ### Added
