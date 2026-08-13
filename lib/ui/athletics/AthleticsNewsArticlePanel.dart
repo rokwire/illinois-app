@@ -137,17 +137,15 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> w
               Container(color: Colors.white, child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Padding(padding: EdgeInsets.only(top: 8, bottom: 8, left: 24, right: 8), child:
-                    Row(children: <Widget>[
-                      Container(
-                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 86),
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                      Flexible(child: Container(
                         color: Styles().colors.fillColorPrimary,
                         child: Padding(padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                           child: Text(_article?.category?.toUpperCase() ?? '',
                             style: Styles().textStyles.getTextStyle("widget.title.light.small.fat.spaced"),
                           ),
                         ),
-                      ),
-                      Expanded(child: Container(),),
+                      ),),
                       Visibility(visible: Auth2().canFavorite, child:
                         Semantics(button: true, checked: isNewsFavorite,
                           label: Localization().getStringEx("panel.athletics_news_article.button.save_game.title", "Save Article"),
