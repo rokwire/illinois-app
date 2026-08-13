@@ -99,6 +99,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 
     Widget? flexWidget,
     String? flexImageUrl,
+    Map<String, String>? flexImageAuthHeaders,
     String? flexImageKey,
     Color?  flexBackColor,
     Color?  flexRightToLeftTriangleColor,
@@ -135,6 +136,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     flexWidget: flexWidget,
     flexImageKey: flexImageKey,
     flexImageUrl: flexImageUrl,
+    flexImageAuthHeaders: flexImageAuthHeaders,
     flexBackColor: flexBackColor ?? Styles().colors.background,
     flexRightToLeftTriangleColor: flexRightToLeftTriangleColor ?? Styles().colors.background,
     flexRightToLeftTriangleHeight: flexRightToLeftTriangleHeight,
