@@ -3950,7 +3950,7 @@
     "widget.public_survey.label.detail.ends": "Ends: {{end_date}}",
 
     "widget.home.campus_reminders.label.title": "Recordatorios de Campus",
-    "widget.home.campus_reminders.text.empty.description": "No hay recordatorios de campus activos.",
+    "widget.home.campus_reminders.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Reminders</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 3.)",
     "widget.home.campus_reminders.button.all.title": "Ver todo",
     "widget.home.campus_reminders.button.all.hint": "Toca para ver todos los recordatorios",
 

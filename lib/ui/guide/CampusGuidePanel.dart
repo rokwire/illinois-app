@@ -37,6 +37,7 @@ class CampusRemindersPanel extends GuideListPanel {
     contentList: contentList ?? Guide().remindersList,
     contentTitle: contentTitle ?? Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'),
     contentEmptyMessage: contentEmptyMessage ?? Localization().getStringEx("panel.guide_list.label.campus_reminders.empty", "There are no active Campus Reminders."),
+    favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusReminderContentType),
     analyticsFeature: AnalyticsFeature.AcademicsCampusReminders,
   );
 }
