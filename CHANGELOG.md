@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Loading header images for Big 10 Athletics News [#5863](https://github.com/rokwire/illinois-app/issues/5863).
 - Fix incorrect wellness links analytics label [#5860](https://github.com/rokwire/illinois-app/issues/5860).
+- Crash on closing link dialog in Group Conversation panel.
+### Changed
+- Set URL keyboard type in URL text field of link dialog in Group Conversation panel.
+- Show text cursor in Quill Editor in Group Conversation panel.
 
 ## [8.2.3] - 2026-08-12
 ### Changed

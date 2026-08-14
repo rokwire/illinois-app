@@ -929,6 +929,7 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
                   placeholder: widget.hint,
                   expands: false,
                   scrollable: true,
+                  showCursor: true,
                   minHeight: _textMinHeight,
                   maxHeight: _textMaxHeight,
                   padding: EdgeInsets.zero,
@@ -1097,25 +1098,20 @@ class _GroupConversationMessageEditBarState extends State<GroupConversationMessa
     quill.Style selectedStyle = _quillController.document.collectStyle(selection.start, selection.end - selection.start);
     quill.Attribute? selectedLink = selectedStyle.attributes['link'];
 
-    TextEditingController linkTextCtrl = TextEditingController(text: selectedText);
-    TextEditingController linkUrlCtrl = TextEditingController(text: selectedLink?.value);
+    GroupConversationLinkContent? linkContent = await GroupConversationLinkDialog.show(context, content: GroupConversationLinkContent(
+      text: selectedText,
+      url: selectedLink?.value
+    ));
 
-    bool? linkConfirmed = await GroupConversationLinkDialog.show(context, linkTextController: linkTextCtrl, linkUrlController: linkUrlCtrl);
-
-    final linkText = linkTextCtrl.text;
-    String linkSourceUrl = linkUrlCtrl.text.trim();
-    if ((linkConfirmed == true) && linkText.isNotEmpty && linkSourceUrl.isNotEmpty)  {
+    final String? linkText = linkContent?.text;
+    final String? linkSourceUrl = linkContent?.url?.trim();
+    if ((linkText != null) && linkText.isNotEmpty && (linkSourceUrl != null) && linkSourceUrl.isNotEmpty)  {
       String linkUrl = UrlUtils.fixUrl(linkSourceUrl, scheme: 'https') ?? linkSourceUrl;
       if (selectedText != linkText) {
         _quillController.replaceText(selection.start, selection.end - selection.start, linkText, TextSelection(baseOffset: selection.start, extentOffset: selection.start + linkText.length));
       }
       _quillController.formatText(selection.start, linkText.length, quill.LinkAttribute(linkUrl),);
     }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      linkTextCtrl.dispose();
-      linkUrlCtrl.dispose();
-    });
   }
 
   void _onPicture() async {
@@ -1332,17 +1328,38 @@ extension _EditBarCommandImpl on _EditBarCommand {
   }
 }
 
-class GroupConversationLinkDialog extends StatelessWidget {
-  final TextEditingController? linkTextController;
-  final TextEditingController? linkUrlController;
+class GroupConversationLinkDialog extends StatefulWidget {
+  final GroupConversationLinkContent? content;
 
-  GroupConversationLinkDialog({this.linkTextController, this.linkUrlController});
+  GroupConversationLinkDialog({super.key, this.content});
 
-  static Future<bool?>show(BuildContext context, {TextEditingController? linkTextController, final TextEditingController? linkUrlController}) =>
+  static Future<GroupConversationLinkContent?>show(BuildContext context, { GroupConversationLinkContent? content }) =>
     showDialog(context: context, builder: (_) => AlertDialog(
       contentPadding: const EdgeInsets.all(24),
-      content: GroupConversationLinkDialog(linkTextController: linkTextController, linkUrlController: linkUrlController),
+      content: GroupConversationLinkDialog(content: content),
     ));
+
+  @override
+  State<StatefulWidget> createState() => _GroupConversationLinkDialogState();
+}
+
+class _GroupConversationLinkDialogState extends State<GroupConversationLinkDialog> {
+  late TextEditingController _linkTextController;
+  late TextEditingController _linkUrlController;
+
+  @override
+  void initState() {
+    _linkTextController = TextEditingController(text: widget.content?.text);
+    _linkUrlController = TextEditingController(text: widget.content?.url);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _linkTextController.dispose();
+    _linkUrlController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) =>
@@ -1356,7 +1373,7 @@ class GroupConversationLinkDialog extends StatelessWidget {
         ),
       ),
       Padding(padding: const EdgeInsets.only(top: 6), child:
-        TextField(controller: linkTextController, maxLines: 1, decoration: _textInputDecoration,
+        TextField(controller: _linkTextController, maxLines: 1, decoration: _textInputDecoration, keyboardType: TextInputType.text,
           style: Styles().textStyles.getTextStyle('widget.input_field.text.regular'),
         ),
       ),
@@ -1366,7 +1383,7 @@ class GroupConversationLinkDialog extends StatelessWidget {
         ),
       ),
       Padding(padding: const EdgeInsets.only(top: 6), child:
-        TextField(controller: linkUrlController, maxLines: 1, decoration: _textInputDecoration,
+        TextField(controller: _linkUrlController, maxLines: 1, decoration: _textInputDecoration, keyboardType: TextInputType.url,
           style: Styles().textStyles.getTextStyle('widget.input_field.text.regular'),
         ),
       ),
@@ -1375,15 +1392,18 @@ class GroupConversationLinkDialog extends StatelessWidget {
           Expanded(flex: 1, child: Container()),
           Expanded(flex: 10, child:
             CompactRoundedButton(label: Localization().getStringEx('dialog.cancel.title', 'Cancel'), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4), onTap: () {
-              Analytics().logSelect(target: 'Cancel');
-              Navigator.of(context).pop(false);
+              debugPrint('Link: Cancel');
+              Navigator.of(context).pop(null);
             },),
           ),
           Expanded(flex: 2, child: Container()),
           Expanded(flex: 10, child:
             CompactRoundedButton(label: Localization().getStringEx('dialog.ok.title', 'OK'), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4), onTap: () {
               Analytics().logSelect(target: 'Set Link Url');
-              Navigator.of(context).pop(true);
+              Navigator.of(context).pop(GroupConversationLinkContent(
+                text: _linkTextController.text,
+                url: _linkUrlController.text
+              ));
             },),
           ),
           Expanded(flex: 1, child: Container()),
@@ -1396,6 +1416,12 @@ class GroupConversationLinkDialog extends StatelessWidget {
         borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0,),
       ),
   );
+}
+
+class GroupConversationLinkContent {
+  final String? text;
+  final String? url;
+  GroupConversationLinkContent({this.text, this.url});
 }
 
 class _GroupConversationAttachmentCard extends StatelessWidget {
