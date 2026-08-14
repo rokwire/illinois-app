@@ -420,7 +420,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> w
     if (CollectionUtils.isNotEmpty(_researchProjects)) {
       for (Group researchProject in _researchProjects!) {
         widgets.add(Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: GroupCard(researchProject,
             displayType: cardDisplayType,
             onImageTap: () => _onTapImage(researchProject)
