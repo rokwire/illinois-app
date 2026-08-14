@@ -88,7 +88,7 @@ class AnalyticsFeature {
   static const AnalyticsFeature   WellnessMentalHealth           = AnalyticsFeature("Wellness: Mental Health", key: {"WellnessMentalHealth"}, priority: 1);
   static const AnalyticsFeature   WellnessSuccessTeam            = AnalyticsFeature("Wellness: Primary Care Provider", key: {"WellnessSuccessTeam"}, priority: 1);
   static const AnalyticsFeature   WellnessRecreation             = AnalyticsFeature("Wellness: Recreation", priority: -1);
-  static const AnalyticsFeature   WellnessLinks                  = AnalyticsFeature("Academics: Wellness Links", key: {"WellnessLinks"}, priority: 1);
+  static const AnalyticsFeature   WellnessLinks                  = AnalyticsFeature("Wellness: Wellness Links", key: {"WellnessLinks"}, priority: 1);
 
   static const AnalyticsFeature   AppHelp                        = AnalyticsFeature("App Help");
   static const AnalyticsFeature   Athletics                      = AnalyticsFeature("Athletics", key: {"Athletic", "Sport"});

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Loading header images for Big 10 Athletics News [#5863](https://github.com/rokwire/illinois-app/issues/5863).
+- Fix incorrect wellness links analytics label [#5860](https://github.com/rokwire/illinois-app/issues/5860).
 
 ## [8.2.3] - 2026-08-12
 ### Changed
