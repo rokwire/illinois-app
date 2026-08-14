@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Set URL keyboard type in URL text field of link dialog in Group Conversation panel.
 - Show text cursor in Quill Editor in Group Conversation panel.
+- Implemented new Home / Sections UI [#5944](https://github.com/rokwire/illinois-app/issues/5944).
 
 ## [8.2.3] - 2026-08-12
 ### Changed
