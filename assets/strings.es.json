@@ -4379,10 +4379,10 @@
     "widget.checklist.gies.logged_out": "Debe iniciar sesión con su NetID para acceder a la lista de verificación de nuevos estudiantes de iDegrees. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
     "widget.checklist.uiuc.logged_out": "Debe iniciar sesión con su NetID para acceder a la lista de verificación de nuevos estudiantes. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
 
-    "widget.home.dinings.header.title": "Comida",
+    "widget.home.dinings.header.title": "University Housing Dining",
     "widget.home.dinings.text.offline.description": "No dining locations available while offline.",
     "widget.home.dinings.my.button.title": "My Locations",
-    "widget.home.dinings.my.empty.description": "Tap the \u2606  on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 3.)",
+    "widget.home.dinings.my.empty.description": "Tap the \u2606  on items in <a href='{{local_url}}'><b>University Housing Dining</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 3.)",
     "widget.home.dinings.all.button.title": "All Locations",
     "widget.home.dinings.all.empty.description": "No dining locations are available right now.",
     "widget.home.dinings.open.button.title": "Open Now",
