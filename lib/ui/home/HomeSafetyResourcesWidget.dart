@@ -198,7 +198,10 @@ class _HomeSafetyResourcesBaseWidgetState extends State<_HomeSafetyResourcesBase
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        GuideEntryCard(_resourceItems?.first, favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType), displayMode: CardDisplayMode.home)
+        GuideEntryCard(_resourceItems?.first,
+          favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
+          displayMode: CardDisplayMode.home
+        )
       );
     }
     return Column(children: <Widget>[

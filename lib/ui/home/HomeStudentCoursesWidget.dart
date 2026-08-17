@@ -243,7 +243,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
     int initialPageIndex = _calendarPageIndex ?? ((0 <= todayIndex) ? todayIndex : 0);
 
     return _HomeStudentCoursesCalendarPager(
-      courses: _courses,
+      courses: _scheduledCourses,
       initialPageIndex: initialPageIndex,
       onPageIndexChanged: (int index) => _calendarPageIndex = index,
       onViewAll: _onViewAll,
@@ -251,13 +251,14 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
   }
 
   Widget _buildCoursesContent() {
+    List<StudentCourse> visibleCourses = _scheduledCourses ?? <StudentCourse>[];
 
     Widget contentWidget;
-    int visibleCount = _courses?.length ?? 0; // Config().homeCampusHighlightsCount
+    int visibleCount = visibleCourses.length; // Config().homeCampusHighlightsCount
 
     if (1 < visibleCount) {
       List<Widget> coursePages = <Widget>[];
-      for (StudentCourse course in _courses!) {
+      for (StudentCourse course in visibleCourses) {
         coursePages.add(Padding(padding: HomeCard.defaultPageMargin, child:
           StudentCourseCard(course: course, displayMode: CardDisplayMode.home,),
         ),);
@@ -281,10 +282,13 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
         ),
       );
     }
-    else {
+    else if (1 == visibleCount) {
       contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
-        StudentCourseCard(course: _courses!.first, displayMode: CardDisplayMode.home),
+        StudentCourseCard(course: visibleCourses.first, displayMode: CardDisplayMode.home),
       );
+    }
+    else {
+      contentWidget = SizedBox.shrink();
     }
 
     return Column(children: [
@@ -334,6 +338,8 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCoursesHomePanel(initialViewType: _viewType)));
   }
+
+  List<StudentCourse>? get _scheduledCourses => _courses?.withScheduledMeeting;
 }
 
 ///////////////////////////////
@@ -611,7 +617,14 @@ class _HomeStudentCoursesCalendarContentWidgetState extends State<_HomeStudentCo
               color: _courseColors[block.course.shortName] ?? Styles().colors.background,
               borderRadius: BorderRadius.circular(4),
             ),
-            child: _buildCourseBlockText(block),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Visibility(visible: (block.course.section?.isOnline == true), child:
+                Padding(padding: EdgeInsets.only(right: 4), child:
+                  Styles().images.getImage('laptop', excludeFromSemantics: true, size: 12),
+                ),
+              ),
+              Expanded(child: _buildCourseBlockText(block)),
+            ]),
           ),
         ),
       ),

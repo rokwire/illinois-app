@@ -5,7 +5,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Update University Housing Dining section name references in favorites [#5872](https://github.com/rokwire/illinois-app/issues/5872).
+- Updated MTD Bus Stops home panel [#5880](https://github.com/rokwire/illinois-app/issues/5880).
+
+## [8.2.4] - 2026-08-14
+### Fixed
+- Loading header images for Big 10 Athletics News [#5863](https://github.com/rokwire/illinois-app/issues/5863).
+- Fix incorrect wellness links analytics label [#5860](https://github.com/rokwire/illinois-app/issues/5860).
+- Fixed crash on closing link dialog in Group Conversation panel.
+- Fixed card paddings in Research Projects Home panel [#5946](https://github.com/rokwire/illinois-app/issues/5946).
+### Changed
+- Set URL keyboard type in URL text field of link dialog in Group Conversation panel.
+- Show text cursor in Quill Editor in Group Conversation panel.
+- Implemented new Home / Sections UI [#5944](https://github.com/rokwire/illinois-app/issues/5944).
+- Display only favorite content in Campus Reminders home widget [#5906](https://github.com/rokwire/illinois-app/issues/5906).
+
+## [8.2.3] - 2026-08-12
+### Changed
+- Hide courses without days and start time in Calendar and List views [#5930](https://github.com/rokwire/illinois-app/issues/5930).
+- Increased minimum deployment target of the iOS app to 15.0 [#5972](https://github.com/rokwire/illinois-app/issues/5972).
+### Fixed
+- Course markers not showing on the map [#5925](https://github.com/rokwire/illinois-app/issues/5925).
+
+## [8.2.2] - 2026-08-11
+### Added
 - Added Campus Dining subsection to Dining [#5872](https://github.com/rokwire/illinois-app/issues/5872).
+- Added A-Z headings for directory of users [#5701](https://github.com/rokwire/illinois-app/issues/5701).
+- Show icon for online courses [#5931](https://github.com/rokwire/illinois-app/issues/5931).
 ### Changed
 - Match Notifications buttons to match app style [#5868](https://github.com/rokwire/illinois-app/issues/5868).
 

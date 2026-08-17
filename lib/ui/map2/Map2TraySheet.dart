@@ -247,7 +247,7 @@ class _Map2TraySheetState extends State<Map2TraySheet> with NotificationsListene
     else if (explore is MTDStop) {
       return MTDStopCard(
         stop: explore,
-        expanded: _expandedBusStops,
+        expanded: _expandedBusStops.contains(explore.id),
         onDetail: (_) => _onTapListCard(explore),
         onExpand: _onExpandMTDStop,
         currentPosition: widget.currentLocation,

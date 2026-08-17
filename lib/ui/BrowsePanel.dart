@@ -24,10 +24,10 @@ import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/career/CareerPlanningLinks.dart';
+import 'package:illinois/ui/directory/DirectoryAccounts2Panel.dart';
 import 'package:illinois/ui/groups/GroupHome2Panel.dart';
 import 'package:illinois/ui/illini/WordlePanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
-import 'package:illinois/ui/directory/DirectoryAccountsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
@@ -189,11 +189,11 @@ class _BrowseContentWidgetState extends State<BrowseContentWidget> with Notifica
         List<String>? entryCodes = _BrowseSection.buildBrowseEntryCodes(sectionId: code);
         if ((entryCodes != null) && entryCodes.isNotEmpty) {
           focusOrderNumber++;
-          sectionsList.add(FocusTraversalOrder(order: NumericFocusOrder(focusOrderNumber.toDouble()), child: _BrowseSection(
-            sectionId: code,
-            entryCodes: entryCodes,
-            expanded: _isExpanded(code),
-            onExpand: () => _toggleExpanded(code),))
+          sectionsList.add(FocusTraversalOrder(order: NumericFocusOrder(focusOrderNumber.toDouble()), child: Padding(padding: EdgeInsetsGeometry.only(bottom: 4), child:
+            _BrowseSection(sectionId: code,
+              entryCodes: entryCodes,
+              expanded: _isExpanded(code),
+              onExpand: () => _toggleExpanded(code),)))
           );
         }
       }
@@ -284,56 +284,60 @@ class _BrowseSection extends StatelessWidget {
     }
   }
 
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+    Container(decoration: _sectionDecoration, child:
+      Column(mainAxisSize: MainAxisSize.min, children: [
+        _buildHeading(context),
+        ..._buildEntries(context),
+      ],)
+    );
+  /*{
     List<Widget> contentList = <Widget>[];
     contentList.add(_buildHeading(context));
     contentList.add(_buildEntries(context));
     return Column(children: contentList,);
-  }
+  }*/
 
-  Widget _buildHeading(BuildContext context) {
-    return Padding(padding: EdgeInsets.only(bottom: (expanded ? 0 : 4)), child:
-      InkWell(onTap: () => _onTapHeading(context), child:
-        Container(
-          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
-          padding: EdgeInsets.only(left: 16),
-          child: Column(children: [
-            Row(children: [
-              Expanded(child:
-                Padding(padding: EdgeInsets.only(top: 16), child:
-                  Text(_title, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))
-                )
-              ),
-              Opacity(opacity: _hasFavoriteContent ? 1 : 0, child:
-                Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-                  InkWell(onTap: () => _onTapSectionFavorite(context), child:
-                    FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,)
-                  ),
+  Widget _buildHeading(BuildContext context) =>
+    InkWell(onTap: () => _onTapHeading(context), child:
+      Padding(padding: EdgeInsets.only(left: 16), child:
+        Column(mainAxisSize: MainAxisSize.min, children: [
+          Row(children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(top: 16), child:
+                Text(_titleText, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"))
+              )
+            ),
+            Opacity(opacity: _hasFavoriteContent ? 1 : 0, child:
+              Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
+                InkWell(onTap: () => _onTapSectionFavorite(context), child:
+                  FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,)
                 ),
               ),
-            ],),
-            Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Expanded(child:
-                Padding(padding: EdgeInsets.only(bottom: 16), child:
-                  Text(_description, style: Styles().textStyles.getTextStyle("widget.info.regular.thin"))
-                )
-              ),
-              Semantics(
-                label: expanded ? Localization().getStringEx('panel.browse.section.status.colapse.title', 'Colapse') : Localization().getStringEx('panel.browse.section.status.expand.title', 'Expand'),
-                hint: expanded ? Localization().getStringEx('panel.browse.section.status.colapse.hint', 'Tap to colapse section content') : Localization().getStringEx('panel.browse.section.status.expand.hint', 'Tap to expand section content'),
-                button: true, child:
-                  Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-                    SizedBox(width: 18, height: 18, child:
-                      Center(child:
-                        _headingIcon
-                      ),
-                    )
-                  ),
-              ),
-            ],)
+            ),
+          ],),
+          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(bottom: 16), child:
+                Text(_descriptionText, style: Styles().textStyles.getTextStyle("widget.info.regular.thin"))
+              )
+            ),
+            Semantics(
+              label: expanded ? Localization().getStringEx('panel.browse.section.status.colapse.title', 'Colapse') : Localization().getStringEx('panel.browse.section.status.expand.title', 'Expand'),
+              hint: expanded ? Localization().getStringEx('panel.browse.section.status.colapse.hint', 'Tap to colapse section content') : Localization().getStringEx('panel.browse.section.status.expand.hint', 'Tap to expand section content'),
+              button: true, child:
+                Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+                  SizedBox(width: 18, height: 18, child:
+                    Center(child:
+                      _headingIcon
+                    ),
+                  )
+                ),
+            ),
           ],)
-        ),
+        ],)
       ),
     );
 
@@ -395,25 +399,43 @@ class _BrowseSection extends StatelessWidget {
     }
   }
 
-  Widget _buildEntries(BuildContext context) {
+  List<Widget> _buildEntries(BuildContext context) {
       List<Widget> entriesList = <Widget>[];
       int browseEntriesCount = expanded ? (_browseEntriesCodes?.length ?? 0) : 0;
       if (1 < browseEntriesCount) {
         for (String code in _browseEntriesCodes!) {
-          entriesList.add(_BrowseEntry(
-            sectionId: sectionId,
-            entryId: code,
-            favorite: _favorite(code),
-          ));
+          entriesList.addAll(<Widget>[
+            _browseEntrySplitter,
+            _BrowseEntry(
+              sectionId: sectionId,
+              entryId: code,
+              favorite: _favorite(code),
+            ),
+          ]);
         }
       }
-      return entriesList.isNotEmpty ? FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Padding(padding: EdgeInsets.only(left: 24), child:
-        Padding(padding: EdgeInsets.only(bottom: 4), child: Column(children: entriesList)))
-      ) : Container();
+      return entriesList;
   }
 
-  String get _title => title(sectionId: sectionId);
-  String get _description => description(sectionId: sectionId);
+  Widget get _browseEntrySplitter => Divider(height: _sectionBorderWidth, color: _sectionBorderColor,);
+
+  BoxDecoration get _sectionDecoration => BoxDecoration(
+    color: _sectionBackColor,
+    border: _sectionBorder,
+    borderRadius: _sectionBorderRadiusGeometry,
+  );
+
+  Color get _sectionBackColor => Styles().colors.surface;
+
+  BoxBorder get _sectionBorder => Border.all(color: _sectionBorderColor, width: _sectionBorderWidth);
+  Color get _sectionBorderColor => Styles().colors.surfaceAccent;
+  double get _sectionBorderWidth => 1;
+
+  BorderRadius get _sectionBorderRadiusGeometry => BorderRadius.all(Radius.circular(_sectionBorderRadius));
+  double get _sectionBorderRadius => 12;
+
+  String get _titleText => title(sectionId: sectionId);
+  String get _descriptionText => description(sectionId: sectionId);
 
   static String title({required String sectionId}) =>
     AppTextUtils.appBrandString('panel.browse.section.$sectionId.title', defaultTitle(sectionId: sectionId));
@@ -588,7 +610,7 @@ class _BrowseEntry extends StatelessWidget {
 
   Widget get _favoriteSpacingWidget => Padding(padding: FavoriteStarIcon.defaultPadding, child: SizedBox(width: FavoriteStarIcon.defaultSize,),);
 
-  String get _title => title(sectionId: sectionId, entryId: entryId);
+  String get _titleText => title(sectionId: sectionId, entryId: entryId);
 
   static String title({required String sectionId, required String entryId}) {
     return Localization().getString('panel.browse.entry.$sectionId.$entryId.title') ?? StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
@@ -763,7 +785,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapUserDirectory(BuildContext context) {
     Analytics().logSelect(target: "Directory of Users");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return DirectoryAccountsPanel(); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return DirectoryAccounts2Panel(); } ));
   }
 
   static void _onTapLaundry(BuildContext context) {

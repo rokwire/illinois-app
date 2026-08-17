@@ -34,6 +34,8 @@ extension StudentCourseExt on StudentCourse {
 
     return result;
   }
+
+  bool get hasScheduledMeeting => section?.hasScheduledMeeting ?? false;
   
   Color? get uiColor => Styles().colors.eventColor;
 }
@@ -175,6 +177,8 @@ extension StudentCourseSectionExt on StudentCourseSection {
   }
 
   bool get isInPerson => (buildingId?.isNotEmpty == true) || (building?.hasValidLocation == true);
+  bool get isOnline => !isInPerson && (instructionType == 'ONL');
+  bool get hasScheduledMeeting => (startTimeMinutes != null) && weekdays.isNotEmpty;
 
   List<int> get weekdays {
     List<int> result = <int>[];
@@ -254,4 +258,8 @@ extension StudentCourseSectionExt on StudentCourseSection {
     }
     return null;
   }
+}
+
+extension StudentCourseListExt on List<StudentCourse> {
+  List<StudentCourse> get withScheduledMeeting => where((StudentCourse course) => course.hasScheduledMeeting).toList();
 }
