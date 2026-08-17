@@ -27,13 +27,13 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class MTDStopCard extends StatelessWidget {
   final MTDStop? stop;
-  final Set<String>? expanded;
+  final bool expanded;
   final void Function(MTDStop? stop)? onDetail;
   final void Function(MTDStop? stop)? onExpand;
   final Position? currentPosition;
   final EdgeInsetsGeometry padding;
 
-  MTDStopCard({Key? key, this.stop, this.expanded,
+  MTDStopCard({Key? key, this.stop, this.expanded = false,
     this.onDetail, this.onExpand,
     this.currentPosition,
     this.padding = const EdgeInsets.only(bottom: 4),
@@ -166,13 +166,13 @@ class MTDStopCard extends StatelessWidget {
     return null;
   }
 
+  bool get _isExpanded => expanded;
+
   bool get _canExpand => StringUtils.isNotEmpty(stop?.id) && CollectionUtils.isNotEmpty(stop?.points);
 
-  bool get _isExpanded => expanded?.contains(stop?.id) ?? false;
-
   void _onTapExpand(MTDStop? stop) {
-    if (_canExpand && (onExpand != null)) {
-      onExpand!(stop);
+    if (_canExpand) {
+      onExpand?.call(stop);
     }
   }
 
@@ -206,9 +206,7 @@ class MTDStopCard extends StatelessWidget {
   }
 
   void _onTapDetail(MTDStop? stop) {
-    if (onDetail != null) {
-      onDetail!(stop);
-    }
+    onDetail?.call(stop);
   }
 }
 
