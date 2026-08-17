@@ -600,10 +600,6 @@ class _BrowseEntry extends StatelessWidget {
 
       case "messages.messages":              _onTapMessages(context); break;
 
-      case "mtd.all_mtd_stops":              _onTapMTDStops(context); break;
-      case "mtd.my_mtd_stops":               _onTapMyMTDStops(context); break;
-      case "mtd.my_locations":               _onTapMyLocations(context); break;
-
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
       case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
@@ -632,10 +628,14 @@ class _BrowseEntry extends StatelessWidget {
 
       case "polls.polls":                    _onTapPolls(context); break;
 
-      case "safety.safewalk_request":        _onTapSafewalkRequest(context); break;
-      case "safety.safety_resources":        _onTapSafetyResources(context); break;
-      case "safety.sexual_misconduct":       _onTapSexualMisconduct(context, analyticsTarget: "Sexual Misconduct Resources"); break;
       case "sexual_misconduct.sexual_misconduct": _onTapSexualMisconduct(context, analyticsTarget: "Concerns about Sexual, Dating, or Harassment Experiences"); break;
+
+      case "transit_and_safety.mtd_stops":            _onTapMTDStops(context); break;
+      case "transit_and_safety.my_locations":         _onTapMyLocations(context); break;
+      case "transit_and_safety.safewalk_request":     _onTapSafewalkRequest(context); break;
+      case "transit_and_safety.safety_resources":     _onTapSafetyResources(context); break;
+      case "transit_and_safety.sexual_misconduct":    _onTapSexualMisconduct(context); break;
+      case "transit_and_safety.transportation_links": _onTapTransportationLinks(context); break;
 
       case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
       case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
@@ -811,11 +811,6 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.game_day)));
   }
 
-  static void _onTapMyMTDStops(BuildContext context) {
-    Analytics().logSelect(target: "My Bus Stops");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(scope: MTDStopsScope.my,)));
-  }
-
   static void _onTapMyLocations(BuildContext context) {
     Analytics().logSelect(target: "My Locations");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [ExplorePOI.favoriteKeyName]); } ));
@@ -892,6 +887,12 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: analyticsTarget ?? "Sexual Misconduct Resources");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVPathwaysPanel()));
   }
+
+  static void _onTapTransportationLinks(BuildContext context) {
+    Analytics().logSelect(target: "Transportation Links");
+    AppAlert.showDialogResult(context, 'TBD');
+  }
+
 
   static void _onTapWellnessRings(BuildContext context) {
     Analytics().logSelect(target: "Wellness Daily Rings");
