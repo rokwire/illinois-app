@@ -576,36 +576,23 @@ class _BrowseEntry extends StatelessWidget {
   _BrowseEntry({required this.sectionId, required this.entryId, this.favorite});
 
   @override
-  Widget build(BuildContext context) {
-    return Semantics(label: _titleText, container: true, explicitChildNodes: true, child:
-        Container(
-          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
-          padding: EdgeInsets.zero,
-          child:
-            Row(children: [
-              Visibility(
-                visible: (favorite != null),
-                maintainSize: true,
-                maintainState: false,
-                child: ExcludeFocus(
-                    excluding: (favorite == null),
-                    child: HomeFavoriteButton(
-                      favorite: favorite,
-                      style: FavoriteIconStyle.Button,
-                      prompt: true,
-                    )),
+  Widget build(BuildContext context) => Row(children: [
+    (favorite != null) ? HomeFavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, prompt: true,) : _favoriteSpacingWidget,
+      Expanded(child:
+        InkWell(onTap: () => _onTap(context), child:
+          Row(children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+                Text(_titleText, style: Styles().textStyles.getTextStyle("widget.title.small.fat"),)
               ),
-              Expanded(child:
-                GestureDetector(onTap: () => _onTap(context), child: Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
-                  Text(_titleText, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
-                )),
-              ),
-              IconButton(tooltip: 'Expand', onPressed: () => _onTap(context), icon: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                  child: _iconWidget), splashColor: Colors.transparent, highlightColor: Colors.transparent, hoverColor: Colors.transparent, focusColor: Colors.transparent,),
-            ],),
-        )
-    );
-  }
+            ),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: _iconWidget
+            ),
+          ]),
+        ),
+      ),
+  ],);
 
   Widget get _favoriteSpacingWidget => Padding(padding: FavoriteStarIcon.defaultPadding, child: SizedBox(width: FavoriteStarIcon.defaultSize,),);
 
