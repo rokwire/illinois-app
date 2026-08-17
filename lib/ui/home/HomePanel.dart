@@ -44,6 +44,7 @@ import 'package:illinois/ui/home/HomeSafeWalkRequestWidget.dart';
 import 'package:illinois/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeRadioWidget.dart';
+import 'package:illinois/ui/home/HomeTransportationLinksWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessMentalHealthWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessToDoWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessRingsWidget.dart';
@@ -268,7 +269,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: Appointment.favoriteKeyName);
       }
     }
-    else if (code == 'my_mtd_stops') {
+    else if (code == 'mtd_stops') {
       if (title) {
         return HomeFavoritesWidget.titleFromKey(favoriteKey: MTDStop.favoriteKeyName);
       } else if (handle) {
@@ -340,6 +341,15 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeSafetyResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeSafetyResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'transportation_links') {
+      if (title) {
+        return HomeTransportationLinksWidget.title;
+      } else if (handle) {
+        return HomeTransportationLinksWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeTransportationLinksWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
 
