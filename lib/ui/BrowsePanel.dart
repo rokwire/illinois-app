@@ -380,7 +380,6 @@ class _BrowseSection extends StatelessWidget {
           ],)
         )),
     );*/
-  }
 
   Widget? get _headingIcon {
     if (_hasBrowseContent) {
@@ -578,7 +577,7 @@ class _BrowseEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(label: _title, container: true, explicitChildNodes: true, child:
+    return Semantics(label: _titleText, container: true, explicitChildNodes: true, child:
         Container(
           decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.zero,
@@ -598,7 +597,7 @@ class _BrowseEntry extends StatelessWidget {
               ),
               Expanded(child:
                 GestureDetector(onTap: () => _onTap(context), child: Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
-                  Text(_title, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
+                  Text(_titleText, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
                 )),
               ),
               IconButton(tooltip: 'Expand', onPressed: () => _onTap(context), icon: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
