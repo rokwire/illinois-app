@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [8.2.5] - 2026-08-18
 ### Changed
 - Update University Housing Dining section name references in favorites [#5872](https://github.com/rokwire/illinois-app/issues/5872).
 - Update MTD Bus Stops home panel [#5880](https://github.com/rokwire/illinois-app/issues/5880).
