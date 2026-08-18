@@ -5,9 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [8.2.5] - 2026-08-18
 ### Changed
 - Update University Housing Dining section name references in favorites [#5872](https://github.com/rokwire/illinois-app/issues/5872).
-- Updated MTD Bus Stops home panel [#5880](https://github.com/rokwire/illinois-app/issues/5880).
+- Update MTD Bus Stops home panel [#5880](https://github.com/rokwire/illinois-app/issues/5880).
+- Merge MTD Buses and Safety sections from Browse panel into new Campus Transit and Safety section [#5881](https://github.com/rokwire/illinois-app/issues/5881).
+### Fixed
+- Allow filtering favorite Big 10 Events for privacy level 3 or above [#5964](https://github.com/rokwire/illinois-app/issues/5964).
 
 ## [8.2.4] - 2026-08-14
 ### Fixed

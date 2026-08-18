@@ -11,14 +11,14 @@
 				"laundry", "dining", "events", "groups", "research_projects",
 				"polls",
 				"daily_illini", "illini_radio", "illordle",
-				"safewalk_request", "safety_resources",
+				"mtd_stops", "my_locations", "safewalk_request", "safety_resources", "transportation_links",
 				"wellness_resources", "wellness_mental_health", "wellness_todo", "wellness_rings", "wellness_tips",
-				"my_appointments", "my_mtd_stops", "my_locations"
+				"my_appointments"
 			],
 			"home.system": ["tout", "welcome_message", "emergency", "voter_registration", "connect"],
 			"home.connect": ["netid", "phone_or_email"],
 
-			"browse": ["academics", "appointments", "athletics", "campus_guide", "career_exploration", "dining", "directory", "events", "laundry", "groups", "messages", "mtd", "my", "polls", "music_and_news", "safety", "sexual_misconduct", "surveys", "research_projects", "wellness"],
+			"browse": ["academics", "appointments", "athletics", "campus_guide", "career_exploration", "dining", "directory", "events", "laundry", "groups", "messages", "mtd", "my", "polls", "music_and_news", "research_projects", "safety", "sexual_misconduct", "surveys", "transit_and_safety", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "campus_reminders", "academic_links", "my_illini"],
 			"browse.appointments": ["appointments"],
 			"browse.athletics": ["sport_events", "sport_news", "sport_teams", "my_game_day"],
@@ -31,11 +31,10 @@
 			"browse.groups": ["groups"],
 			"browse.research_projects": ["research_projects"],
 			"browse.messages": ["messages"],
-			"browse.mtd": ["all_mtd_stops", "my_mtd_stops", "my_locations"],
 			"browse.polls": ["polls"],
 			"browse.music_and_news": ["illini_radio", "daily_illini", "illordle"],
-			"browse.safety": ["safewalk_request", "safety_resources", "sexual_misconduct"],
 			"browse.sexual_misconduct": ["sexual_misconduct"],
+			"browse.transit_and_safety": ["mtd_stops", "my_locations", "safewalk_request", "safety_resources", "sexual_misconduct", "transportation_links"],
 			"browse.wellness": ["wellness_recreation", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener", "wellness_links"],
 
 			"wallet": ["illini_id", "bus_pass", "library_card", "meal_plan", "business_card", "illini_cash", "add_illini_cash"],

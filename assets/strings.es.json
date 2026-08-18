@@ -267,18 +267,16 @@
     "panel.browse.section.laundry.description": "Vea las ubicaciones de lavandería y la disponibilidad de lavadoras/secadoras.",
     "panel.browse.section.messages.title": "Conversaciones",
     "panel.browse.section.messages.description": "Connect and send messages to {{university_long_name}} students and employees.",
-    "panel.browse.section.mtd.title": "Autobuses MTD",
-    "panel.browse.section.mtd.description": "Vea las ubicaciones, las rutas y la disponibilidad de las paradas de autobús de MTD.",
     "panel.browse.section.polls.title": "Encuestas",
     "panel.browse.section.polls.description": "Enter a poll number to vote, or create and share your own poll.",
     "panel.browse.section.music_and_news.title": "Illini Music, News & Games",
     "panel.browse.section.music_and_news.description": "Listen to {{app_title}} Public Media and student-run WPGU or catch the latest from The DI.",
-    "panel.browse.section.safety.title": "Safety",
-    "panel.browse.section.safety.description": "Get home safely, prepare for emergencies, and discover support resources.",
     "panel.browse.section.sexual_misconduct.title": "Concerns about Sexual, Dating, or Harassment Experiences",
     "panel.browse.section.sexual_misconduct.description": "Did a situation seem unsafe or uncomfortable? It can be sexual or not. Resources are available. (Reminder: your personal app activity is not shared with others.)",
     "panel.browse.section.surveys.title": "Surveys",
     "panel.browse.section.surveys.description": "Participate in surveys available to you.",
+    "panel.browse.section.transit_and_safety.title": "Campus Transit & Safety",
+    "panel.browse.section.transit_and_safety.description": "Find MTD bus stops, request a SafeWalk, and access safety, transit, and support resources.",
     "panel.browse.section.wallet.title": "Cartera",
     "panel.browse.section.wallet.description": "Your ID, bus pass, Illini Cash balance, and residence hall meal plan all in one place.",
     "panel.browse.section.wellness.title": "Salud y bienestar",
@@ -333,19 +331,18 @@
 
     "panel.browse.entry.messages.messages.title": "Conversaciones",
 
-    "panel.browse.entry.mtd.all_mtd_stops.title": "Todas las paradas de autobús",
-    "panel.browse.entry.mtd.my_mtd_stops.title": "Mis paradas de autobús",
-    "panel.browse.entry.mtd.my_locations.title": "My Locations",
-
     "panel.browse.entry.polls.polls.title": "Encuestas",
-
-    "panel.browse.entry.safety.safewalk_request.title": "Request a SafeWalk",
-    "panel.browse.entry.safety.safety_resources.title": "Safety Resources",
-    "panel.browse.entry.safety.sexual_misconduct.title": "Sexual Misconduct Resources",
 
     "panel.browse.entry.sexual_misconduct.sexual_misconduct.title": "Sexual Misconduct Resources",
 
     "panel.browse.entry.surveys.public_surveys.title": "Surveys",
+
+    "panel.browse.entry.transit_and_safety.mtd_stops.title": "MTD Bus Stops",
+    "panel.browse.entry.transit_and_safety.my_locations.title": "My Locations",
+    "panel.browse.entry.transit_and_safety.safewalk_request.title": "Request a SafeWalk",
+    "panel.browse.entry.transit_and_safety.safety_resources.title": "Safety Resources",
+    "panel.browse.entry.transit_and_safety.sexual_misconduct.title": "Sexual Misconduct Resources",
+    "panel.browse.entry.transit_and_safety.transportation_links.title": "Transportation Links",
 
     "panel.browse.entry.wallet.illini_cash_card.title": "Illini Cash",
     "panel.browse.entry.wallet.add_illini_cash.title": "Agregar Illini Cash",
@@ -4046,6 +4043,8 @@
 
     "widget.home.safety.safewalk_request.title": "SafeWalks",
     "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
+
+    "widget.home.transportation_links.title": "Transportation Links",
 
     "widget.home.safer.label.title": "Acceso a Edificios",
     "widget.home.safer.text.empty.description": "Toca la \u2606 en los elementos de Acceso a Edificios para encontrarlos rápidamente aquí.",
