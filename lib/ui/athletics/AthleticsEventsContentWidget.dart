@@ -73,6 +73,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       Events2.notifyChanged,
       Auth2UserPrefs.notifyInterestsChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
       AppDateTime.notifyTimeZoneChanged,
     ]);
     _scrollController.addListener(_scrollListener);
@@ -98,7 +99,9 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   Widget _buildContent() {
-    if (_loadingEvents) {
+    if (_favoritesUnavailable) {
+      return _buildEmptyContent();
+    } else if (_loadingEvents) {
       return _buildLoadingContent();
     } else if (_events == null) {
       return _buildErrorContent();
@@ -209,6 +212,10 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   Future<void> _reloadEvents({ int limit = _eventsPageLength }) async {
     if (!mounted) {
+      return;
+    }
+
+    if (_favoritesUnavailable) {
       return;
     }
 
@@ -365,6 +372,8 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   bool get _favoritesMode => (_starred == true);
 
+  bool get _favoritesUnavailable => _favoritesMode && (Auth2().canFavorite != true);
+
   String get _emptyMessageHtml {
     return _favoritesMode ?
       Localization().getStringEx('panel.athletics.content.events.my.empty.message', "There are no starred events for the selected teams. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 3.)").replaceAll(_privacyUrlMacro, _privacyUrl) :
@@ -384,6 +393,9 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       if (_starred) {
         _reloadEvents();
       }
+    } else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
+      setStateIfMounted(() {});
+      _reloadEvents();
     } else if (name == AppDateTime.notifyTimeZoneChanged) {
       _reloadEvents();
     }
