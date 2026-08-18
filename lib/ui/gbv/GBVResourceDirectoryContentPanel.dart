@@ -9,11 +9,13 @@ import 'package:illinois/ui/gbv/GBVResourceDirectoryPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:path/path.dart' as path;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
 class GBVResourceDirectoryContentWidget extends StatefulWidget {
+  final String? favoriteKey;
   final String? contentCategory;
   final String? contentAssetKey;
   final String? contentFailedMessage;
@@ -21,7 +23,7 @@ class GBVResourceDirectoryContentWidget extends StatefulWidget {
   final Widget Function(BuildContext)? suffixWidgetBuilder;
 
   GBVResourceDirectoryContentWidget({
-    this.contentCategory, this.contentAssetKey,
+    this.contentCategory, this.contentAssetKey, this.favoriteKey,
     this.contentFailedMessage,
     this.prefixWidgetBuilder, this.suffixWidgetBuilder,
   });
@@ -67,7 +69,7 @@ class _GBVResourceDirectoryContentWidgetState extends State<GBVResourceDirectory
       SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
           widget.prefixWidgetBuilder?.call(context) ?? Container(),
-          GBVResourceDirectoryWidget(gbvData: _linksData ?? GBVData.empty(),),
+          GBVResourceDirectoryWidget(gbvData: _linksData ?? GBVData.empty(), favoriteKey: widget.favoriteKey, favoriteCategory: _favoriteCategory,),
           widget.suffixWidgetBuilder?.call(context) ?? Container(),
         ],)
       ),
@@ -100,12 +102,25 @@ class _GBVResourceDirectoryContentWidgetState extends State<GBVResourceDirectory
 
   double get _screenHeight => MediaQuery.of(context).size.height;
 
+  String? get _favoriteCategory {
+    if (widget.contentCategory != null) {
+      return widget.contentCategory;
+    }
+    else if (widget.contentAssetKey != null) {
+      List<String> assetItems = path.split(path.withoutExtension(widget.contentAssetKey ?? ''));
+      return assetItems.isNotEmpty ? assetItems.last : null;
+    } else {
+      return null;
+    }
+  }
+
   Future<GBVData?> _loadLinksData() async {
     if (widget.contentCategory != null) {
       dynamic result = await Content().loadContentItem(widget.contentCategory ?? '');
       return GBVData.fromJson(JsonUtils.mapValue(result));
     }
     else if (widget.contentAssetKey != null) {
+
       String? assetString = await AppBundle.loadString(widget.contentAssetKey ?? '');
       return GBVData.fromJson(JsonUtils.decodeMap(assetString));
     }
@@ -130,6 +145,7 @@ class _GBVResourceDirectoryContentWidgetState extends State<GBVResourceDirectory
 }
 
 class GBVResourceDirectoryContentPanel extends StatelessWidget with AnalyticsInfo {
+  final String? favoriteKey;
   final String? contentCategory;
   final String? contentAssetKey;
   final String? headerBarTitle;
@@ -137,7 +153,11 @@ class GBVResourceDirectoryContentPanel extends StatelessWidget with AnalyticsInf
   final Widget Function(BuildContext)? contentWidgetBuilder;
   final AnalyticsFeature? analyticsFeature;
 
-  GBVResourceDirectoryContentPanel({this.contentCategory, this.contentAssetKey, this.headerBarTitle, this.contentFailedMessage, this.contentWidgetBuilder, this.analyticsFeature});
+  GBVResourceDirectoryContentPanel({this.favoriteKey,
+    this.contentCategory, this.contentAssetKey,
+    this.headerBarTitle, this.contentFailedMessage,
+    this.contentWidgetBuilder, this.analyticsFeature
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +166,7 @@ class GBVResourceDirectoryContentPanel extends StatelessWidget with AnalyticsInf
       body: Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
         contentWidgetBuilder?.call(context) ??
         GBVResourceDirectoryContentWidget(
+          favoriteKey: favoriteKey,
           contentCategory: contentCategory,
           contentAssetKey: contentAssetKey,
           contentFailedMessage: contentFailedMessage,

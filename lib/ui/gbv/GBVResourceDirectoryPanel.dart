@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -6,10 +8,13 @@ import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/model/GBV.dart';
 import 'package:illinois/service/Config.dart';
@@ -19,8 +24,10 @@ import 'package:illinois/service/Analytics.dart';
 
 class GBVResourceDirectoryPanel extends StatelessWidget {
   final GBVData gbvData;
+  final String? favoriteKey;
+  final String? favoriteCategory;
 
-  GBVResourceDirectoryPanel({ super.key, required this.gbvData});
+  GBVResourceDirectoryPanel({ super.key, required this.gbvData, this.favoriteKey, this.favoriteCategory});
 
   @override
   Widget build(BuildContext context) =>
@@ -34,7 +41,7 @@ class GBVResourceDirectoryPanel extends StatelessWidget {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GBVQuickExitWidget(),
         Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-          GBVResourceDirectoryWidget(gbvData: gbvData,)
+          GBVResourceDirectoryWidget(gbvData: gbvData, favoriteKey: favoriteKey, favoriteCategory: favoriteCategory,)
         ),
         _buildWeCareUrlWidget(context) ?? Container()
       ])
@@ -79,20 +86,27 @@ class GBVResourceDirectoryPanel extends StatelessWidget {
 
 class GBVResourceDirectoryWidget extends StatefulWidget {
   final GBVData gbvData;
+  final String? favoriteKey;
+  final String? favoriteCategory;
 
-  GBVResourceDirectoryWidget({ super.key, required this.gbvData});
+  GBVResourceDirectoryWidget({ super.key, required this.gbvData, this.favoriteKey, this.favoriteCategory });
 
   @override
   State<StatefulWidget> createState() => _GBVResourceDirectoryWidgetState();
 
 }
 
-class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget> {
+class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget> with NotificationsListener {
 
   List<String> _expandedSections = [];
 
+  bool get _canFavorite => true && (widget.favoriteKey != null);
+
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged
+    ]);
     if (widget.gbvData.directoryCategories.length == 1) {
       _expandedSections.add(widget.gbvData.directoryCategories.first);
     }
@@ -101,7 +115,15 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      setStateIfMounted();
+    }
   }
 
   @override
@@ -146,28 +168,100 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
       );
   }
 
-  Widget _resourceWidget (GBVResource resource) {
-    Widget descriptionWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-      Column(children: (resource.type.isLink)
-        ? List.from(resource.directoryNotLinkContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
-        : List.from(resource.directoryContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
+  Widget _resourceWidget(GBVResource resource) {
+    Iterable<GBVResourceDetail> descriptionDetails = (resource.type.isLink) ? resource.directoryNotLinkContent : resource.directoryContent;
+
+    Widget contentWidget;
+    if (descriptionDetails.isNotEmpty) {
+      TextStyle? titleTextStyle = Styles().textStyles.getTextStyle("widget.button.title.medium.fat");
+      double favTitleOffsetY = max(FavoriteStarIcon.defaultButtonSize - MediaQuery.of(context).textScaler.scale(titleTextStyle?.fontSize ?? 0) * 1.5, 0) / 2;
+      contentWidget = Padding(padding: _canFavorite ? EdgeInsets.zero : EdgeInsets.only(bottom: 4), child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          if (_canFavorite)
+            FavoriteButton(style: FavoriteIconStyle.Button, favorite: GBVResourceFavorite(key: widget.favoriteKey ?? '', category: widget.favoriteCategory, id: resource.id),),
+          Expanded(child:
+            Row(children: [
+              Expanded(child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                  Padding(padding: _canFavorite ? EdgeInsets.only(top: favTitleOffsetY) : EdgeInsets.only(left: 16, top: 16), child:
+                    Text(resource.title, style: titleTextStyle)
+                  ),
+                  Padding(padding: _canFavorite ? EdgeInsets.zero : EdgeInsets.only(left: 16), child:
+                    Column(children:
+                      List.from(descriptionDetails.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
+                    ),
+                  ),
+                ])
+              ),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
+                Styles().images.getImage(resource.chevronIconKey, width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+              )
+            ]),
+          )
+        ]),
+      );
+    } else {
+      contentWidget = Row(children: [
+        if (_canFavorite)
+          FavoriteButton(style: FavoriteIconStyle.Button, favorite: GBVResourceFavorite(key: widget.favoriteKey ?? '', category: widget.favoriteCategory, id: resource.id),),
+        Expanded(child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+            Padding(padding: _canFavorite ? EdgeInsets.zero : EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
+              Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
+            ),
+          ])
+        ),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
+          Styles().images.getImage(resource.chevronIconKey, width: 16, height: 16, fit: BoxFit.contain) ?? Container()
+        )
+      ]);
+    }
+
+    BoxDecoration contentDecoration = BoxDecoration(
+      color: Styles().colors.white,
+      border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
+    );
+
+    return GestureDetector(onTap: () => _onTapResource(resource), child:
+      Container(decoration: contentDecoration, child: contentWidget)
+    );
+  }
+
+  // ignore: unused_element
+  Widget _resourceWidget2(GBVResource resource) {
+    Widget titleTextWidget = Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"));
+    Widget titleWidget = _canFavorite ?
+      Row(children: [
+        FavoriteButton(style: FavoriteIconStyle.Button, favorite: GBVResourceFavorite(key: widget.favoriteKey ?? '', category: widget.favoriteCategory, id: resource.id),),
+        Expanded(child:
+          Padding(padding: EdgeInsetsGeometry.symmetric(vertical: 4), child:
+            titleTextWidget
+          )
+        )
+      ],) :
+      Padding(padding: EdgeInsets.only(left: 16), child:
+        titleTextWidget
+      );
+
+    EdgeInsets descriptionPadding = EdgeInsets.only(left: _canFavorite ? FavoriteStarIcon.defaultButtonSize : 16 /*, right: 16 */);
+    Iterable<GBVResourceDetail> resourceDetails = (resource.type.isLink) ? resource.directoryNotLinkContent : resource.directoryContent;
+    Widget descriptionWidget = Padding(padding: descriptionPadding, child:
+      Column(children:
+        List.from(resourceDetails.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
       )
     );
     return
-      Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
         GestureDetector(onTap: () => _onTapResource(resource), child:
           Container(decoration:
             BoxDecoration(
               color: Styles().colors.white,
               border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
             ), child:
-            Padding(padding: EdgeInsets.only(top: 20), child:
+            Padding(padding: EdgeInsets.only(top: _canFavorite ? 0 : 16, bottom: _canFavorite ? 0 : (resourceDetails.isNotEmpty ? 4 : 16)), child:
               Row(children: [
                 Expanded(child:
                   Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                    Padding(padding: EdgeInsets.only(left: 16), child:
-                      Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
-                    ),
+                    titleWidget,
                     descriptionWidget
                   ])
                 ),
@@ -177,8 +271,7 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
               ])
             )
           )
-        )
-      );
+        );
   }
 
   void _expandSection(String section) {
