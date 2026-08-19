@@ -258,5 +258,5 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
 
 extension Auth2PublicAccountImpl on Auth2PublicAccount {
   String? get directoryKey => (profile?.lastName?.isNotEmpty == true) ?
-    profile?.lastName?.substring(0, 1).toUpperCase() : null;
+    profile?.lastName?.characters.first.toUpperCase() : null;
 }

@@ -5,9 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [8.2.6] - 2026-08-19
 ### Fixed
 - Hopefully fixed a crash reported by Crashlytics for accessing unattached scroll controller in GroupConversationPanel [#5984](https://github.com/rokwire/illinois-app/issues/5984).
 - Fixed crash with ListTile and ExpansionListTile reported in Crashlytics [#5986](https://github.com/rokwire/illinois-app/issues/5986).
+- Fixed crash in Groups and Directory reported in Crashlytics [#5988](https://github.com/rokwire/illinois-app/issues/5988).
 
 ## [8.2.5] - 2026-08-18
 ### Changed
