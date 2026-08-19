@@ -9,7 +9,6 @@ import 'package:illinois/ui/gbv/GBVResourceDirectoryPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:path/path.dart' as path;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -107,8 +106,7 @@ class _GBVResourceDirectoryContentWidgetState extends State<GBVResourceDirectory
       return widget.contentCategory;
     }
     else if (widget.contentAssetKey != null) {
-      List<String> assetItems = path.split(path.withoutExtension(widget.contentAssetKey ?? ''));
-      return assetItems.isNotEmpty ? assetItems.last : null;
+      return widget.contentAssetKey;
     } else {
       return null;
     }

@@ -7,6 +7,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/gbv/GBVResourceDirectoryContentPanel.dart';
+import 'package:illinois/ui/home/HomeSavedResourcesWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessDailyTipsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -31,6 +32,7 @@ class WellnessLinksWidget extends StatelessWidget {
     GBVResourceDirectoryContentWidget(
       contentCategory: 'wellness_links',
       contentAssetKey: 'assets/extra/wellnessLinks.json',
+      favoriteKey: HomeSavedResourcesWidget.favoriteKey,
       contentFailedMessage: Localization().getStringEx('', 'Failed to load wellness links data'),
       prefixWidgetBuilder: (context) => _prefixWidget,
       suffixWidgetBuilder: (context) => _suffixWidget,

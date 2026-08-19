@@ -9,6 +9,8 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class HomeSavedResourcesWidget extends StatelessWidget {
+  static const String favoriteKey = 'savedResourcesKeys';
+
   final String? favoriteId;
   final StreamController<String>? updateController;
 
