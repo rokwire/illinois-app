@@ -8,13 +8,13 @@ import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class HomeSavedResourcesWidget extends StatelessWidget {
-  static const String favoriteKey = 'savedResourcesKeys';
+class HomeSavedGBVResourcesWidget extends StatelessWidget {
+  static const String favoriteKey = 'savedGBVResourcesKeys';
 
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  HomeSavedResourcesWidget({super.key, this.favoriteId, this.updateController});
+  HomeSavedGBVResourcesWidget({super.key, this.favoriteId, this.updateController});
 
   static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
