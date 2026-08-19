@@ -20,6 +20,7 @@ import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/social.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -385,17 +386,17 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   Future<void> _extendContent() async {
     if (_isConversation && (_contentActivity == null) && mounted) {
       double? initialScrollExtent = _maxScrollExtent;
-      double scrollOffset = _scrollController.offset;
+      double? scrollOffset = _scrollOffset;
 
       setState(() {
         _contentActivity = _ContentActivity.extend;
       });
 
-      late double loadingScrollExtent;
+      double? loadingScrollExtent;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        loadingScrollExtent = _maxScrollExtent;
-        if ((initialScrollExtent < loadingScrollExtent)) {
-          _scrollController.jumpTo(loadingScrollExtent - initialScrollExtent + scrollOffset);
+        double? scrollExtent = loadingScrollExtent = _maxScrollExtent;
+        if ((initialScrollExtent != null) && (scrollExtent != null) && (initialScrollExtent < scrollExtent) && (scrollOffset != null)) {
+          _scrollController.jumpTo(scrollExtent - initialScrollExtent + scrollOffset);
         }
       });
 
@@ -419,9 +420,10 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
           _contentActivity = null;
         });
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          double newScrollExtent = _maxScrollExtent;
-          if ((loadingScrollExtent < newScrollExtent)) {
-            _scrollController.jumpTo(newScrollExtent - loadingScrollExtent);
+          double? newScrollExtent = _maxScrollExtent;
+          double? scrollExtent = loadingScrollExtent;
+          if ((scrollExtent != null) && (newScrollExtent != null) && (scrollExtent < newScrollExtent)) {
+            _scrollController.jumpTo(newScrollExtent - scrollExtent);
           }
         });
       }
@@ -455,21 +457,28 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
   }
 
   void _scrollListener() {
-    double scrollOffset = _scrollController.offset;
-    if (_isConversation && (scrollOffset <= 0) && (_hasMoreContent != false) && (_contentActivity == null)) {
+    double? scrollOffset = _scrollOffset;
+    if (_isConversation && (scrollOffset != null) && (scrollOffset <= 0) && (_hasMoreContent != false) && (_contentActivity == null)) {
       _extendContent();
     }
   }
 
-  void _jumpToLast() =>
-    _scrollController.jumpTo(_maxScrollExtent);
+  void _jumpToLast() {
+    double? maxScrollExtent = _maxScrollExtent;
+    if (maxScrollExtent != null) {
+      _scrollController.jumpTo(maxScrollExtent);
+    }
+  }
 
   void _jumpToTargetMessage()  {
     BuildContext? targetMessageContext = _targetMessageKey?.currentContext;
     if ((targetMessageContext != null) && targetMessageContext.mounted) {
       Scrollable.ensureVisible(targetMessageContext, alignment: 0.5, duration: _scrollAnimationDuration, curve: _scrollAnimationCurve);
     } else {
-      _scrollController.animateTo(_maxScrollExtent, duration: _scrollAnimationDuration, curve: _scrollAnimationCurve);
+      double? maxScrollExtent = _maxScrollExtent;
+      if (maxScrollExtent != null) {
+        _scrollController.animateTo(maxScrollExtent, duration: _scrollAnimationDuration, curve: _scrollAnimationCurve);
+      }
     }
   }
 
@@ -487,12 +496,17 @@ class _GroupConversationPanelState extends State<GroupConversationPanel> with No
       if ((editingContext != null) && editingContext.mounted) {
         Scrollable.ensureVisible(editingContext, alignment: 0.5, duration: _scrollAnimationDuration, curve: _scrollAnimationCurve);
       } else {
-        _scrollController.animateTo(_maxScrollExtent, duration: _scrollAnimationDuration, curve: _scrollAnimationCurve);
+        double? maxScrollExtent = _maxScrollExtent;
+        if (maxScrollExtent != null) {
+          _scrollController.animateTo(maxScrollExtent, duration: _scrollAnimationDuration, curve: _scrollAnimationCurve);
+        }
       }
     }
   }
 
-  double get _maxScrollExtent => _scrollController.position.maxScrollExtent;
+  double? get _maxScrollExtent => _scrollController.hasPosition ? _scrollController.position.maxScrollExtent : null;
+  double? get _scrollOffset => _scrollController.hasPosition ? _scrollController.offset : null;
+
   static const Duration _scrollAnimationDuration = const Duration(milliseconds: 300);
   static const Curve _scrollAnimationCurve = Curves.easeInOut;
 
