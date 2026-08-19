@@ -93,14 +93,11 @@ class GBVResourceDirectoryWidget extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _GBVResourceDirectoryWidgetState();
-
 }
 
 class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget> with NotificationsListener {
 
   List<String> _expandedSections = [];
-
-  bool get _canFavorite => true && (widget.favoriteKey != null);
 
   @override
   void initState() {
@@ -159,7 +156,11 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
             Visibility(visible: _expandedSections.contains(category), child:
               Padding(padding: EdgeInsets.only(bottom: 8), child:
                 Column(children:
-                 List.from(resources.map((resource) => _resourceWidget(resource)))
+                  List.from(resources.map((resource) => GBVResourceWidget(resource,
+                    gbvData: widget.gbvData,
+                    favoriteKey: widget.favoriteCategory,
+                    favoriteCategory: widget.favoriteCategory,
+                  )))
                 )
               )
             ),
@@ -168,7 +169,30 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
       );
   }
 
-  Widget _resourceWidget(GBVResource resource) {
+
+
+  void _expandSection(String section) {
+    setState(() {
+      if (_expandedSections.contains(section)) this._expandedSections.remove(section);
+      else this._expandedSections.add(section);
+    });
+  }
+
+}
+
+class GBVResourceWidget extends StatelessWidget {
+  final GBVData? gbvData;
+  final GBVResource resource;
+
+  final String? favoriteKey;
+  final String? favoriteCategory;
+
+  GBVResourceWidget(this.resource, { super.key, this.gbvData, this.favoriteKey, this.favoriteCategory });
+
+  bool get _canFavorite => true && (favoriteKey != null);
+
+  @override
+  Widget build(BuildContext context) {
     Iterable<GBVResourceDetail> descriptionDetails = (resource.type.isLink) ? resource.directoryNotLinkContent : resource.directoryContent;
 
     Widget contentWidget;
@@ -178,7 +202,7 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
       contentWidget = Padding(padding: _canFavorite ? EdgeInsets.zero : EdgeInsets.only(bottom: 4), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           if (_canFavorite)
-            FavoriteButton(style: FavoriteIconStyle.Button, favorite: GBVResourceFavorite(key: widget.favoriteKey ?? '', category: widget.favoriteCategory, id: resource.id),),
+            FavoriteButton(style: FavoriteIconStyle.Button, favorite: GBVResourceFavorite(key: favoriteKey ?? '', category: favoriteCategory, id: resource.id),),
           Expanded(child:
             Row(children: [
               Expanded(child:
@@ -203,7 +227,7 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
     } else {
       contentWidget = Row(children: [
         if (_canFavorite)
-          FavoriteButton(style: FavoriteIconStyle.Button, favorite: GBVResourceFavorite(key: widget.favoriteKey ?? '', category: widget.favoriteCategory, id: resource.id),),
+          FavoriteButton(style: FavoriteIconStyle.Button, favorite: GBVResourceFavorite(key: favoriteKey ?? '', category: favoriteCategory, id: resource.id),),
         Expanded(child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
             Padding(padding: _canFavorite ? EdgeInsets.zero : EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
@@ -222,17 +246,16 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
       border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
     );
 
-    return GestureDetector(onTap: () => _onTapResource(resource), child:
+    return GestureDetector(onTap: () => _onTapResource(context), child:
       Container(decoration: contentDecoration, child: contentWidget)
     );
   }
 
-  // ignore: unused_element
-  Widget _resourceWidget2(GBVResource resource) {
+  /*Widget build(BuildContext context) {
     Widget titleTextWidget = Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"));
     Widget titleWidget = _canFavorite ?
       Row(children: [
-        FavoriteButton(style: FavoriteIconStyle.Button, favorite: GBVResourceFavorite(key: widget.favoriteKey ?? '', category: widget.favoriteCategory, id: resource.id),),
+        FavoriteButton(style: FavoriteIconStyle.Button, favorite: GBVResourceFavorite(key: favoriteKey ?? '', category: favoriteCategory, id: resource.id),),
         Expanded(child:
           Padding(padding: EdgeInsetsGeometry.symmetric(vertical: 4), child:
             titleTextWidget
@@ -251,7 +274,7 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
       )
     );
     return
-        GestureDetector(onTap: () => _onTapResource(resource), child:
+        GestureDetector(onTap: () => _onTapResource(context), child:
           Container(decoration:
             BoxDecoration(
               color: Styles().colors.white,
@@ -272,16 +295,9 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
             )
           )
         );
-  }
+  }*/
 
-  void _expandSection(String section) {
-    setState(() {
-      if (_expandedSections.contains(section)) this._expandedSections.remove(section);
-      else this._expandedSections.add(section);
-    });
-  }
-
-  void _onTapResource(GBVResource resource) {
+  void _onTapResource(BuildContext context) {
     Analytics().logSelect(target: 'Resource - ${resource.title}');
     switch (resource.type) {
       case GBVResourceType.external_link: {
@@ -300,9 +316,9 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
       case GBVResourceType.directory: break;
       case GBVResourceType.resource_list: {
         GBVResourceListScreen? targetScreen = (resource.resourceScreenId == "supporting_a_friend") ?
-        widget.gbvData.resourceListScreens?.supportingAFriend : null;
-        if (targetScreen != null){
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(gbvData: widget.gbvData, resourceListScreen: targetScreen)));
+          gbvData?.resourceListScreens?.supportingAFriend : null;
+        if ((gbvData != null) && (targetScreen != null)) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(gbvData: gbvData ?? GBVData.empty(), resourceListScreen: targetScreen)));
         } else break;
       }
       }
