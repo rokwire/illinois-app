@@ -5,10 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeSavedResourcesWidget extends StatelessWidget {
   final String? favoriteId;
@@ -49,7 +47,7 @@ class HomeSavedResourcesWidget extends StatelessWidget {
 }
 
 class _HomeSavedResourcesFavoriteButton extends HomeFavoriteButton {
-  _HomeSavedResourcesFavoriteButton({super.key, super.favorite, required super.style, super.padding = FavoriteStarIcon.defaultPadding, super.prompt = false});
+  _HomeSavedResourcesFavoriteButton({ super.favorite, required super.style, super.padding = FavoriteStarIcon.defaultPadding, super.prompt = false});
 
   @override
   bool? get isFavorite => (super.isFavorite != false);
