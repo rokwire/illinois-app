@@ -193,9 +193,12 @@ class _AssignmentPanelState extends State<AssignmentPanel> with NotificationsLis
                     backgroundColor: _colorAccent,
                     isExpanded: _helpContentOpen,
                     headerBuilder: (BuildContext context, bool isExpanded) {
-                      return ListTile(
-                        iconColor: Styles().colors.surface,
-                        title: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.help.header.title', "Helpful Information"), style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat"))
+                      return Material(
+                        type: MaterialType.transparency,
+                        child: ListTile(
+                          iconColor: Styles().colors.surface,
+                          title: Text(Localization().getStringEx('panel.essential_skills_coach.assignment.help.header.title', "Helpful Information"), style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat"))
+                        ),
                       );
                     },
                     body: Padding(

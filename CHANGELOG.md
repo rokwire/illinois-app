@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Fixed
-- Hopefully fixed a crash reported by Crashlytics for accessing unattached scroll controller in GroupConverdationPanel [#5984](https://github.com/rokwire/illinois-app/issues/5984).
+- Hopefully fixed a crash reported by Crashlytics for accessing unattached scroll controller in GroupConversationPanel [#5984](https://github.com/rokwire/illinois-app/issues/5984).
+- Fixed crash with ListTile and ExpansionListTile reported in Crashlytics [#5986](https://github.com/rokwire/illinois-app/issues/5986).
 
 ## [8.2.5] - 2026-08-18
 ### Changed
