@@ -1126,7 +1126,7 @@ extension _GroupsSectionsImpl on Group {
   String? get section {
     if (title != null) {
       if (title?.isNotEmpty == true) {
-        return title?[0].toUpperCase();
+        return title?.characters.first.toUpperCase();
       } else {
         return '';
       }
