@@ -621,38 +621,42 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
     return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Container(
         decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
+        clipBehavior: Clip.antiAlias,
         padding: EdgeInsets.symmetric(horizontal: 0),
-        child: Theme(
-          data: ThemeData(/*accentColor: Styles().colors.white, backgroundColor: Styles().colors.white,*/ dividerColor: Colors.white,),
-          child: ExpansionTile(
-            key: expansionTileKey,
-            initiallyExpanded: expanded,
-            backgroundColor: Styles().colors.fillColorPrimary,
-            trailing: RotationTransition(turns: _iconTurns, child:
-              Icon(Icons.arrow_drop_down, color: Styles().colors.white,)
-            ),
-            title: Semantics(
-              label: Localization().getString(category.titleKey, defaults: category.title),
-              hint: Localization().getStringEx("panel.settings.privacy.label.hint","Double tap to ") + (expanded ? "Hide" : "Show") + " information",
-              value: expanded ? Localization().getStringEx("model.accessability.expandable.expanded.value", "Expanded")  : Localization().getStringEx("model.accessability.expandable.collapsed.value", "Collapsed"),
-              //UPD: excludeSemantics: true,
-              excludeSemantics: true,
-              child: Container(child:
-                Text(Localization().getString(category.titleKey, defaults:category.title) ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.fat"))
-              )
-            ),
-            onExpansionChanged: (bool expand) {
-              if (expand) {
-                _controller.forward();
-              } else {
-                _controller.reverse();
-              }
-              if (category.title != null) {
-                expansionState[category.title!] = expand;
-              }
-              setState(() {});
-            },
-            children: _buildCategoryEntries(category),
+        child: Material(
+          type: MaterialType.transparency,
+          child: Theme(
+            data: ThemeData(/*accentColor: Styles().colors.white, backgroundColor: Styles().colors.white,*/ dividerColor: Colors.white,),
+            child: ExpansionTile(
+              key: expansionTileKey,
+              initiallyExpanded: expanded,
+              backgroundColor: Styles().colors.fillColorPrimary,
+              trailing: RotationTransition(turns: _iconTurns, child:
+                Icon(Icons.arrow_drop_down, color: Styles().colors.white,)
+              ),
+              title: Semantics(
+                label: Localization().getString(category.titleKey, defaults: category.title),
+                hint: Localization().getStringEx("panel.settings.privacy.label.hint","Double tap to ") + (expanded ? "Hide" : "Show") + " information",
+                value: expanded ? Localization().getStringEx("model.accessability.expandable.expanded.value", "Expanded")  : Localization().getStringEx("model.accessability.expandable.collapsed.value", "Collapsed"),
+                //UPD: excludeSemantics: true,
+                excludeSemantics: true,
+                child: Container(child:
+                  Text(Localization().getString(category.titleKey, defaults:category.title) ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.fat"))
+                )
+              ),
+              onExpansionChanged: (bool expand) {
+                if (expand) {
+                  _controller.forward();
+                } else {
+                  _controller.reverse();
+                }
+                if (category.title != null) {
+                  expansionState[category.title!] = expand;
+                }
+                setState(() {});
+              },
+              children: _buildCategoryEntries(category),
+            )
           )
         )
       )
