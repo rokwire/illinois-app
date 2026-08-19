@@ -267,8 +267,13 @@ class HomeFavoriteWidget extends StatefulWidget {
   final String? favoriteId;
   final List<Widget>? actions;
   final HomeFavoriteTitleBuilder? titleBuilder;
+  final HomeFavoriteButtonBuilder? buttonBuilder;
   final StreamController<String>? updateController;
 
+  static const EdgeInsets favoriteButtonPadding = const EdgeInsets.symmetric(
+    horizontal: FavoriteStarIcon.defaultSpacing,
+    vertical: FavoriteStarIcon.defaultSpacing - HomeCard.shadowMargin, // Preserve card shadow & keep small vertical offset #5289 & #5331
+  );
 
   const HomeFavoriteWidget({Key? key,
     this.title,
@@ -276,6 +281,7 @@ class HomeFavoriteWidget extends StatefulWidget {
     this.favoriteId,
     this.actions,
     this.titleBuilder,
+    this.buttonBuilder,
     this.updateController,
   }) : super(key: key);
 
@@ -289,10 +295,6 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
   late bool _expanded;
   StreamSubscription<String>? _updateSubscription;
 
-  static const EdgeInsets favoriteButtonPadding = const EdgeInsets.symmetric(
-    horizontal: FavoriteStarIcon.defaultSpacing,
-    vertical: FavoriteStarIcon.defaultSpacing - HomeCard.shadowMargin, // Preserve card shadow & keep small vertical offset #5289 & #5331
-  );
 
   @override
   void initState() {
@@ -355,10 +357,10 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
         ),
 
         if (favoriteId != null)
-          HomeFavoriteButton(
+          widget.buttonBuilder?.call() ?? HomeFavoriteButton(
             favorite: HomeFavorite(favoriteId),
             style: FavoriteIconStyle.Button,
-            padding: favoriteButtonPadding,
+            padding: HomeFavoriteWidget.favoriteButtonPadding,
             prompt: true
           ),
       ],),
@@ -430,6 +432,7 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
 }
 
 typedef HomeFavoriteTitleBuilder = Widget Function(Widget defaultContent);
+typedef HomeFavoriteButtonBuilder = Widget Function();
 
 ////////////////////////////
 // HomeCardWidget

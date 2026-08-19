@@ -4,8 +4,11 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeSavedResourcesWidget extends StatelessWidget {
   final String? favoriteId;
@@ -24,6 +27,7 @@ class HomeSavedResourcesWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return HomeFavoriteWidget(favoriteId: favoriteId, updateController: updateController,
       title: title,
+      buttonBuilder: _favoriteButton,
       child: _contentWidget(context),
     );
   }
@@ -35,9 +39,21 @@ class HomeSavedResourcesWidget extends StatelessWidget {
       )
     );
 
+  // TBD
+  Widget _favoriteButton() => _HomeSavedResourcesFavoriteButton(
+    favorite: HomeFavorite(favoriteId),
+    style: FavoriteIconStyle.Button,
+    padding: HomeFavoriteWidget.favoriteButtonPadding,
+    prompt: true
+  );
 }
 
+class _HomeSavedResourcesFavoriteButton extends HomeFavoriteButton {
+  _HomeSavedResourcesFavoriteButton({super.key, super.favorite, required super.style, super.padding = FavoriteStarIcon.defaultPadding, super.prompt = false});
 
+  @override
+  bool? get isFavorite => (super.isFavorite != false);
+}
 
 
 
