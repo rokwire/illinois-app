@@ -301,3 +301,7 @@ extension ListPositionImpl on ListPosition {
   bool get middleOrLast => ((this == ListPosition.middle) || (this == ListPosition.last));
   bool get middleOrFirst => ((this == ListPosition.middle) || (this == ListPosition.first));
 }
+
+extension ScrollControllerEx on ScrollController {
+  bool get hasPosition => (positions.length == 1);
+}
