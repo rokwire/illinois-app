@@ -256,7 +256,7 @@ class GBVResourceFavorite extends Favorite {
   GBVResourceFavorite({ required this.key, this.category, this.id });
 
   factory GBVResourceFavorite.fromString(String value, { required String key}) {
-    List<String> items = value.split(_separator);
+    List<String> items = value.split(_favoriteSeparator);
     if (items.length > 1) {
       return GBVResourceFavorite(key: key, category: items.first, id: items.second);
     } else if (items.length == 1) {
@@ -266,11 +266,25 @@ class GBVResourceFavorite extends Favorite {
     }
   }
 
+  bool get isContentAsset {
+    List<String>? pathItems = category?.split(_directorySeparator);
+    if ((pathItems != null) && (pathItems.length > 1)) { // has directory & base name
+      List<String> basenameItems = pathItems.last.split(_extensionSeparator);
+      return (basenameItems.length > 1); // has file name & extension
+    } else {
+      return false;
+    }
+  }
+
+  bool get isContentCategory => (category != null) && (category?.isNotEmpty == true) && (isContentAsset == false);
+
   bool operator == (o) => o is GBVResourceFavorite && o.id == id && o.category == category && o.key == key;
   int get hashCode => (id?.hashCode ?? 0) ^ (category?.hashCode ?? 0) ^ (key.hashCode);
 
   @override String get favoriteKey => key;
-  @override String? get favoriteId => ((category != null) && (id != null)) ? '$category$_separator$id' : id;
+  @override String? get favoriteId => ((category != null) && (id != null)) ? '$category$_favoriteSeparator$id' : id;
 
-  static const String _separator = ':';
+  static const String _favoriteSeparator = ':';
+  static const String _directorySeparator = '/';
+  static const String _extensionSeparator = '/';
 }

@@ -8,6 +8,7 @@ import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -158,7 +159,7 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
                 Column(children:
                   List.from(resources.map((resource) => GBVResourceWidget(resource,
                     gbvData: widget.gbvData,
-                    favoriteKey: widget.favoriteCategory,
+                    favoriteKey: widget.favoriteKey,
                     favoriteCategory: widget.favoriteCategory,
                   )))
                 )
@@ -187,18 +188,28 @@ class GBVResourceWidget extends StatelessWidget {
   final String? favoriteKey;
   final String? favoriteCategory;
 
-  GBVResourceWidget(this.resource, { super.key, this.gbvData, this.favoriteKey, this.favoriteCategory });
+  final CardDisplayMode displayMode;
+
+  GBVResourceWidget(this.resource, { super.key, this.gbvData, this.favoriteKey, this.favoriteCategory, this.displayMode = CardDisplayMode.browse });
 
   bool get _canFavorite => true && (favoriteKey != null);
 
   @override
   Widget build(BuildContext context) {
-    Iterable<GBVResourceDetail> descriptionDetails = (resource.type.isLink) ? resource.directoryNotLinkContent : resource.directoryContent;
+    Iterable<GBVResourceDetail> descriptionSource = (resource.type.isLink) ? resource.directoryNotLinkContent : resource.directoryContent;
+    Iterable<GBVResourceDetail> descriptionDetails = ((displayMode == CardDisplayMode.home) && (1 < descriptionSource.length)) ? <GBVResourceDetail>[descriptionSource.first] : descriptionSource;
+
+    TextStyle? titleTextStyle = Styles().textStyles.getTextStyle("widget.button.title.medium.fat");
+    Widget titleWidget = Text(resource.title,
+      style: titleTextStyle,
+      maxLines: (displayMode == CardDisplayMode.home) ? 1 : null,
+      overflow: TextOverflow.ellipsis,
+    );
 
     Widget contentWidget;
     if (descriptionDetails.isNotEmpty) {
-      TextStyle? titleTextStyle = Styles().textStyles.getTextStyle("widget.button.title.medium.fat");
       double favTitleOffsetY = max(FavoriteStarIcon.defaultButtonSize - MediaQuery.of(context).textScaler.scale(titleTextStyle?.fontSize ?? 0) * 1.5, 0) / 2;
+
       contentWidget = Padding(padding: _canFavorite ? EdgeInsets.zero : EdgeInsets.only(bottom: 4), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           if (_canFavorite)
@@ -208,11 +219,11 @@ class GBVResourceWidget extends StatelessWidget {
               Expanded(child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                   Padding(padding: _canFavorite ? EdgeInsets.only(top: favTitleOffsetY) : EdgeInsets.only(left: 16, top: 16), child:
-                    Text(resource.title, style: titleTextStyle)
+                    titleWidget
                   ),
                   Padding(padding: _canFavorite ? EdgeInsets.zero : EdgeInsets.only(left: 16), child:
                     Column(children:
-                      List.from(descriptionDetails.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
+                      List.from(descriptionDetails.map((detail) => GBVDetailContentWidget(detail, isTextSelectable: false, displayMode: displayMode,)))
                     ),
                   ),
                 ])
@@ -231,7 +242,7 @@ class GBVResourceWidget extends StatelessWidget {
         Expanded(child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
             Padding(padding: _canFavorite ? EdgeInsets.zero : EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
-              Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"))
+              titleWidget
             ),
           ])
         ),

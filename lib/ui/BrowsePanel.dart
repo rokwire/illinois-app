@@ -24,6 +24,7 @@ import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/career/CareerPlanningLinks.dart';
+import 'package:illinois/ui/dining/DiningLinksPanel.dart';
 import 'package:illinois/ui/directory/DirectoryAccounts2Panel.dart';
 import 'package:illinois/ui/groups/GroupHome2Panel.dart';
 import 'package:illinois/ui/illini/WordlePanel.dart';
@@ -59,7 +60,6 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-import 'dining/DiningLinksPanel.dart';
 
 ///////////////////////////
 // BrowsePanel
