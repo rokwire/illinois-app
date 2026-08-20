@@ -76,6 +76,7 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
       Connectivity.notifyStatusChanged,
       AppLivecycle.notifyStateChanged,
       Auth2.notifyLoginChanged,
+      Auth2.notifyPrefsChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
     ]);
 
@@ -112,6 +113,9 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
       _updateIfVisible();
     }
     else if (name == Auth2.notifyLoginChanged) {
+      _reloadIfVisible(); // or mark as needs refresh
+    }
+    else if (name == Auth2.notifyPrefsChanged) {
       _reloadIfVisible(); // or mark as needs refresh
     }
   }
@@ -263,11 +267,6 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
   // Data
 
   Future<_GBVResourcesContent> _loadContent(FavoriteContentActivity contentActivity) async {
-
-    if (contentActivity == FavoriteContentActivity.refresh) {
-      await Auth2().refreshAccount();
-    }
-
     final Map<String, GBVData> gbvDataMap = <String, GBVData>{};
     final LinkedHashMap<GBVResourceFavorite, GBVResource> resources = LinkedHashMap<GBVResourceFavorite, GBVResource>();
     final LinkedHashSet<String>? favoriteIds = Auth2().prefs?.getFavorites(HomeSavedGBVResourcesWidget.favoriteKey);
