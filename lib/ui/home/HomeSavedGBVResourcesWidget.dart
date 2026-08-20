@@ -186,6 +186,7 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
             gbvData: _gbvDataMap[favorite.category],
             favoriteKey: HomeSavedGBVResourcesWidget.favoriteKey,
             favoriteCategory: favorite.category,
+            displayMode: CardDisplayMode.home,
           )
         ));
       });
@@ -213,6 +214,7 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
           gbvData: _gbvDataMap[favorite.category],
           favoriteKey: HomeSavedGBVResourcesWidget.favoriteKey,
           favoriteCategory: favorite.category,
+          displayMode: CardDisplayMode.home,
         )
       ) : null;
     }

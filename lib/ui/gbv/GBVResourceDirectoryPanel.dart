@@ -252,15 +252,22 @@ class GBVResourceWidget extends StatelessWidget {
       ]);
     }
 
-    BoxDecoration contentDecoration = BoxDecoration(
-      color: Styles().colors.white,
-      border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
-    );
+    BoxDecoration contentDecoration = (displayMode == CardDisplayMode.home) ? HomeCard.boxDecoration : _browseContentDecoraton;
+    BorderRadius clipBorderRadius = (displayMode == CardDisplayMode.home) ? BorderRadius.all(HomeCard.radius) : BorderRadius.zero;
 
     return GestureDetector(onTap: () => _onTapResource(context), child:
-      Container(decoration: contentDecoration, child: contentWidget)
+      Container(decoration: contentDecoration, child:
+        ClipRRect(borderRadius: clipBorderRadius, child:
+          contentWidget
+        )
+      )
     );
   }
+
+  BoxDecoration get _browseContentDecoraton => BoxDecoration(
+    color: Styles().colors.white,
+    border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
+  );
 
   /*Widget build(BuildContext context) {
     Widget titleTextWidget = Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"));
