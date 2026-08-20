@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Add Private Certified Housing links to Campus Dining [#5872](https://github.com/rokwire/illinois-app/issues/5872).
+- Created Saved GBV Resources home widget and related functionality [#5873](https://github.com/rokwire/illinois-app/issues/5873).
 ### Fixed
 - Do not report image exceptions as fatal errors [#5991](https://github.com/rokwire/illinois-app/issues/5991).
 
