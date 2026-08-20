@@ -326,5 +326,5 @@ class GBVResourceFavorite extends Favorite {
 
   static const String _favoriteSeparator = ':';
   static const String _directorySeparator = '/';
-  static const String _extensionSeparator = '/';
+  static const String _extensionSeparator = '.';
 }

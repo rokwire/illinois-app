@@ -19,6 +19,7 @@ import 'package:illinois/ui/dining/DiningLinksPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceDirectoryPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/mtd/TransportationLinks.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/wellness/WellnessLinksPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
@@ -472,7 +473,7 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
         Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningLinksPanel()));
       } else if (uri?.host == localTransportationLinksHost) {
         Analytics().logSelect(target: 'Transportation Links', source: runtimeType.toString());
-        //TBD: Navigator.push(context, CupertinoPageRoute(builder: (context) => TransportationLinksPanel()));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => TransportationLinksPanel()));
       } else if (uri?.host == localWellnessLinksHost) {
         Analytics().logSelect(target: '24/7 Hotlines & Links', source: runtimeType.toString());
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessLinksPanel()));
@@ -484,31 +485,6 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
       }
     }
   }
-}
-
-class _HomeSavedResourcesFavoriteButton extends HomeFavoriteButton {
-  _HomeSavedResourcesFavoriteButton({ super.favorite, required super.style, super.padding = FavoriteStarIcon.defaultPadding, super.prompt = false});
-
-  @override
-  bool? get isFavorite => (super.isFavorite != false);
-}
-
-class _GBVResourcesContent {
-  final LinkedHashMap<GBVResourceFavorite, GBVResource> resources;
-  final Map<String, GBVData> gbvDataMap;
-
-  _GBVResourcesContent({required this.resources, required this.gbvDataMap });
-
-  // ignore: unused_element
-  factory _GBVResourcesContent.empty() => _GBVResourcesContent(
-    resources:  LinkedHashMap<GBVResourceFavorite, GBVResource>(),
-    gbvDataMap: <String, GBVData>{},
-  );
-}
-
-extension _AppBundleUtils on AppBundle {
-  static Future<dynamic> loadJson(String key, {bool cache = true}) async =>
-    JsonUtils.decode(await AppBundle.loadString(key, cache: cache));
 }
 
 class _HomeSavedResourcesFavoriteAlertDialog extends StatefulWidget {
@@ -597,6 +573,29 @@ class _HomeSavedResourcesFavoriteAlertDialogState extends State<_HomeSavedResour
 
   BorderRadius get _contentBorderRadius =>
     BorderRadius.all(Radius.circular(12));
+}
 
+class _HomeSavedResourcesFavoriteButton extends HomeFavoriteButton {
+  _HomeSavedResourcesFavoriteButton({ super.favorite, required super.style, super.padding = FavoriteStarIcon.defaultPadding, super.prompt = false});
 
+  @override
+  bool? get isFavorite => (super.isFavorite != false);
+}
+
+class _GBVResourcesContent {
+  final LinkedHashMap<GBVResourceFavorite, GBVResource> resources;
+  final Map<String, GBVData> gbvDataMap;
+
+  _GBVResourcesContent({required this.resources, required this.gbvDataMap });
+
+  // ignore: unused_element
+  factory _GBVResourcesContent.empty() => _GBVResourcesContent(
+    resources:  LinkedHashMap<GBVResourceFavorite, GBVResource>(),
+    gbvDataMap: <String, GBVData>{},
+  );
+}
+
+extension _AppBundleUtils on AppBundle {
+  static Future<dynamic> loadJson(String key, {bool cache = true}) async =>
+    JsonUtils.decode(await AppBundle.loadString(key, cache: cache));
 }

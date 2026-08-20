@@ -38,6 +38,7 @@ import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
+import 'package:illinois/ui/mtd/TransportationLinks.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
@@ -920,9 +921,8 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapTransportationLinks(BuildContext context) {
     Analytics().logSelect(target: "Transportation Links");
-    AppAlert.showDialogResult(context, 'TBD');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => TransportationLinksPanel()));
   }
-
 
   static void _onTapWellnessRings(BuildContext context) {
     Analytics().logSelect(target: "Wellness Daily Rings");

@@ -1,0 +1,334 @@
+{
+  "directoryCategories" : [
+    "LOREM IPSUM DOLOR SIT",
+    "CONSECTETUR ADIPISCING ELIT",
+    "SED DO EIUSMOD TEMPOR",
+    "INCIDIDUNT UT LABORE",
+    "DOLORE MAGNA ALIQUA"
+  ],
+  "screens": {},
+  "resources": [
+    {
+			"id": "lorem_ipsum_dolor",
+			"type": "external_link",
+			"categories": ["LOREM IPSUM DOLOR SIT"],
+			"title": "Lorem Ipsum Dolor",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/lorem-ipsum-dolor"
+			}]
+		},{
+			"id": "sit_amet_consectetur",
+			"type": "external_link",
+			"categories": ["LOREM IPSUM DOLOR SIT"],
+			"title": "Sit Amet Consectetur",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/sit-amet-consectetur"
+			}]
+		},{
+			"id": "adipiscing_elit_sed",
+			"type": "external_link",
+			"categories": ["LOREM IPSUM DOLOR SIT"],
+			"title": "Adipiscing Elit & Sed Do",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/adipiscing-elit-sed"
+			}]
+		},{
+			"id": "eiusmod_tempor_incididunt",
+			"type": "external_link",
+			"categories": ["LOREM IPSUM DOLOR SIT"],
+			"title": "Eiusmod Tempor Incididunt",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/eiusmod-tempor-incididunt"
+			}]
+		},{
+			"id": "ullamco_laboris_nisi",
+			"type": "external_link",
+			"categories": ["LOREM IPSUM DOLOR SIT"],
+			"title": "Ullamco Laboris Nisi",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/ullamco-laboris-nisi"
+			}]
+		},{
+			"id": "in_reprehenderit_voluptate",
+			"type": "external_link",
+			"categories": ["LOREM IPSUM DOLOR SIT"],
+			"title": "In Reprehenderit Voluptate",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/in-reprehenderit-voluptate"
+			}]
+		},{
+			"id": "non_proident_sunt",
+			"type": "external_link",
+			"categories": ["LOREM IPSUM DOLOR SIT"],
+			"title": "Non Proident Sunt",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Non proident sunt in culpa qui officia deserunt mollit anim id est laborum."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/non-proident-sunt"
+			}]
+		},{
+			"id": "culpa_qui_officia",
+			"type": "external_link",
+			"categories": ["LOREM IPSUM DOLOR SIT"],
+			"title": "Culpa Qui Officia Deserunt",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Mollit anim id est laborum sed ut perspiciatis unde omnis iste natus error."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/culpa-qui-officia"
+			}]
+		},{
+			"id": "perspiciatis_unde_omnis",
+			"type": "external_link",
+			"categories": ["LOREM IPSUM DOLOR SIT"],
+			"title": "Perspiciatis Unde Omnis (nemo)",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/perspiciatis-unde-omnis"
+			}]
+		},{
+			"id": "sed_quia_consequuntur",
+			"type": "external_link",
+			"categories": ["LOREM IPSUM DOLOR SIT"],
+			"title": "Sed Quia Consequuntur",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Magni dolores eos qui ratione voluptatem sequi nesciunt neque porro quisquam est."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/sed-quia-consequuntur"
+			}]
+		},{
+			"id": "dolorem_ipsum_quia",
+			"type": "external_link",
+			"categories": ["LOREM IPSUM DOLOR SIT"],
+			"title": "Dolorem Ipsum Quia Dolor",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/dolorem-ipsum-quia"
+			}]
+		},{
+			"id": "ut_labore_et_dolore",
+			"type": "external_link",
+			"categories": ["LOREM IPSUM DOLOR SIT"],
+			"title": "Ut Labore et Dolore",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/ut-labore-et-dolore"
+			}]
+		},{
+			"id": "quis_nostrud_exercitation",
+			"type": "external_link",
+			"categories": ["LOREM IPSUM DOLOR SIT"],
+			"title": "Quis Nostrud Exercitation (autem)",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/quis-nostrud-exercitation"
+			}]
+		},{
+			"id": "at_vero_eos",
+			"type": "external_link",
+			"categories": ["CONSECTETUR ADIPISCING ELIT"],
+			"title": "At Vero Eos et Accusamus",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/at-vero-eos"
+			}]
+		},{
+			"id": "corrupti_quos_dolores",
+			"type": "external_link",
+			"categories": ["CONSECTETUR ADIPISCING ELIT"],
+			"title": "Corrupti Quos Dolores",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Et quas molestias excepturi sint occaecati cupiditate non provident similique sunt."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/corrupti-quos-dolores"
+			}]
+		},{
+			"id": "temporibus_autem_quibusdam",
+			"type": "external_link",
+			"categories": ["CONSECTETUR ADIPISCING ELIT"],
+			"title": "Temporibus Autem (DARS)",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/temporibus-autem-quibusdam"
+			}]
+		},{
+			"id": "itaque_earum_rerum",
+			"type": "external_link",
+			"categories": ["CONSECTETUR ADIPISCING ELIT"],
+			"title": "Itaque Earum Rerum",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Hic tenetur a sapiente delectus ut aut reiciendis voluptatibus maiores alias consequatur."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/itaque-earum-rerum"
+			}]
+		},{
+			"id": "nam_libero_tempore",
+			"type": "external_link",
+			"categories": ["CONSECTETUR ADIPISCING ELIT"],
+			"title": "Nam Libero Tempore",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/nam-libero-tempore"
+			}]
+		},{
+			"id": "temporibus_id_quod",
+			"type": "external_link",
+			"categories": ["CONSECTETUR ADIPISCING ELIT"],
+			"title": "Temporibus Id Quod Maxime",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Placeat facere possimus omnis voluptas assumenda est omnis dolor repellendus temporibus."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/temporibus-id-quod"
+			}]
+		},{
+			"id": "autem_quia_officiis",
+			"type": "external_link",
+			"categories": ["CONSECTETUR ADIPISCING ELIT"],
+			"title": "Autem Quia & Officiis Debitis",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/autem-quia-officiis"
+			}]
+		},{
+			"id": "quos_aut_eos",
+			"type": "external_link",
+			"categories": ["CONSECTETUR ADIPISCING ELIT"],
+			"title": "Quos Aut Eos qui Ratione",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Voluptatem sequi nesciunt neque porro quisquam est qui dolorem ipsum quia dolor."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/quos-aut-eos"
+			}]
+		},{
+			"id": "inventore_veritatis_et",
+			"type": "external_link",
+			"categories": ["SED DO EIUSMOD TEMPOR"],
+			"title": "Inventore Veritatis & Quasi",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Architecto beatae vitae dicta sunt explicabo nemo enim ipsam voluptatem quia voluptas."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/inventore-veritatis-et"
+			}]
+		},{
+			"id": "aspernatur_aut_odit",
+			"type": "external_link",
+			"categories": ["SED DO EIUSMOD TEMPOR"],
+			"title": "Aspernatur Aut Odit",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/aspernatur-aut-odit"
+			}]
+		},{
+			"id": "quidem_rerum_facilis",
+			"type": "external_link",
+			"categories": ["INCIDIDUNT UT LABORE"],
+			"title": "Quidem Rerum Facilis",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Est et expedita distinctio nam libero tempore cum soluta nobis est eligendi optio."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/quidem-rerum-facilis"
+			}]
+		},{
+			"id": "cumque_nihil_impedit",
+			"type": "external_link",
+			"categories": ["INCIDIDUNT UT LABORE"],
+			"title": "Cumque Nihil Impedit",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/cumque-nihil-impedit"
+			}]
+		},{
+			"id": "voluptatem_aut_fugit",
+			"type": "external_link",
+			"categories": ["DOLORE MAGNA ALIQUA"],
+			"title": "Voluptatem Aut Fugit",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Nisi ut aliquid ex ea commodi consequatur quis autem vel eum iure reprehenderit."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/voluptatem-aut-fugit"
+			}]
+		},{
+			"id": "ratione_voluptatem_sequi",
+			"type": "external_link",
+			"categories": ["DOLORE MAGNA ALIQUA"],
+			"title": "Ratione Voluptatem Sequi",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Nesciunt neque porro quisquam est qui dolorem ipsum quia dolor sit amet consectetur."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/ratione-voluptatem-sequi"
+			}]
+		},{
+			"id": "eius_modi_tempora",
+			"type": "external_link",
+			"categories": ["DOLORE MAGNA ALIQUA"],
+			"title": "Eius Modi Tempora",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Incidunt ut labore et dolore magnam aliquam quaerat voluptatem ut enim ad minima."
+			},{
+				"type": "external_link",
+				"content": "https://example.illinois.edu/eius-modi-tempora"
+			}]
+		}
+  ]
+}
