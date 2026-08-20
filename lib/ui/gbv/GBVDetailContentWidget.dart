@@ -16,14 +16,14 @@ class GBVDetailContentWidget extends StatelessWidget {
   final bool isTextSelectable;
 
   final CardDisplayMode displayMode;
+  bool get _homeDisplayMode => (displayMode == CardDisplayMode.home);
 
   GBVDetailContentWidget(this.resourceDetail, {super.key, this.isTextSelectable = true, this.displayMode = CardDisplayMode.browse });
 
   @override
-  Widget build(BuildContext context) {
-    return
-      Row(children: _buildDetailContent(context, resourceDetail));
-  }
+  Widget build(BuildContext context) => Row(children:
+    _buildDetailContent(context, resourceDetail)
+  );
 
   List<Widget> _buildDetailContent(BuildContext context, GBVResourceDetail detail) {
     switch (detail.type) {
@@ -41,7 +41,7 @@ class GBVDetailContentWidget extends StatelessWidget {
               behavior: HitTestBehavior.translucent,
               child:
                 Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-                  Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: (displayMode == CardDisplayMode.home) ? 1 : null, overflow: TextOverflow.ellipsis,))
+                  Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: _homeDisplayMode ? 1 : null, overflow: TextOverflow.ellipsis,))
             )
           )
         ];
@@ -60,7 +60,7 @@ class GBVDetailContentWidget extends StatelessWidget {
               behavior: HitTestBehavior.translucent,
               child:
                 Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-                  Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: (displayMode == CardDisplayMode.home) ? 1 : null, overflow: TextOverflow.ellipsis,))
+                  Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: _homeDisplayMode ? 1 : null, overflow: TextOverflow.ellipsis,))
             )
           )
         ];
@@ -79,7 +79,7 @@ class GBVDetailContentWidget extends StatelessWidget {
               behavior: HitTestBehavior.translucent,
               child:
               Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-                Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: (displayMode == CardDisplayMode.home) ? 3 : null, overflow: TextOverflow.ellipsis,))
+                Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: _homeDisplayMode ? 3 : null, overflow: TextOverflow.ellipsis,))
             )
           )
         ];
@@ -113,21 +113,32 @@ class GBVDetailContentWidget extends StatelessWidget {
             behavior: HitTestBehavior.translucent,
             child:
             Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-              Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: (displayMode == CardDisplayMode.home) ? 1 : null, overflow: TextOverflow.ellipsis,))
+              Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: _homeDisplayMode ? 1 : null, overflow: TextOverflow.ellipsis,))
           )
         ];
 
       case GBVResourceDetailType.text:
-        Widget htmlWidget = HtmlWidget(detail.content ?? '',
-          textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
+        String textContent = detail.content ?? '';
+        TextStyle? textStyle = Styles().textStyles.getTextStyle("widget.detail.small");
+        bool isHtml = StringUtils.containsHtmlTags(textContent);
+        Widget contentWidget = isHtml ? HtmlWidget('<div>$textContent</div>',
+          textStyle: textStyle,
           customStylesBuilder: (element) => _htmlContentStyles[element.localName],
           onTapUrl: (String url) => _onTapHtmlLink(context, url),
+        ) : Text(textContent,
+          style: textStyle,
+          maxLines: _homeDisplayMode ? 3 : null,
+          overflow: _homeDisplayMode ? TextOverflow.ellipsis : null,
         );
+
+        double verticalPadding = 12;
+        BoxConstraints? htmlConstraints = (_homeDisplayMode && isHtml) ?
+          BoxConstraints(maxHeight: MediaQuery.of(context).textScaler.scale(textStyle?.fontSize ?? 0) * 1.5 * 3 + 2 * verticalPadding) : null;
 
         return [
           Expanded(child:
-            Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-              isTextSelectable ? SelectionArea(child: htmlWidget) : htmlWidget,
+            Container(padding: EdgeInsets.symmetric(vertical: verticalPadding), constraints: htmlConstraints, child:
+              isTextSelectable ? SelectionArea(child: contentWidget) : contentWidget,
             )
           )
         ];
@@ -161,6 +172,13 @@ class GBVDetailContentWidget extends StatelessWidget {
 
   Map<String, Map<String, String>> get _htmlContentStyles => {
     'a' : _htmlLinkStyle,
+    if (_homeDisplayMode)
+      'div' : _htmlLimitTextStyle,
+  };
+
+  Map<String, String> get _htmlLimitTextStyle => <String, String>{
+    'line-clamp': '3',
+    //'text-overflow': 'ellipsis',
   };
 
   Map<String, String> get _htmlLinkStyle => <String, String>{
