@@ -27,8 +27,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum CardDisplayMode { home, browse, }
 enum FavoriteContentType { my, all }
-enum FavoriteContentStatus { none, refresh, reload }
-enum FavoriteContentActivity { none, extend, refresh, reload, }
+enum FavoriteContentStatus { none, update, refresh, reload }
+enum FavoriteContentActivity { none, extend, update, refresh, reload, }
 
 ////////////////////////////
 // HomeHandleWidget
@@ -1283,11 +1283,13 @@ extension FavoritesContentTypeImpl on FavoriteContentType {
 extension FavoriteContentStatusimpl on FavoriteContentStatus {
   bool get canReload => (this.index < FavoriteContentStatus.reload.index);
   bool get canRefresh => (this.index < FavoriteContentStatus.refresh.index);
+  bool get canUpdate => (this.index < FavoriteContentStatus.update.index);
 }
 
 extension FavoriteContentActivityimpl on FavoriteContentActivity {
   bool get canReload => (this.index < FavoriteContentActivity.reload.index);
   bool get canRefresh => (this.index < FavoriteContentActivity.refresh.index);
+  bool get canUpdate => (this.index < FavoriteContentActivity.update.index);
   bool get canExtend => (this.index < FavoriteContentActivity.extend.index);
   bool get canReloadOrRefresh => canRefresh;
 

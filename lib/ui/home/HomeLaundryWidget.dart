@@ -321,6 +321,7 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
     if (_visible) {
       switch(_contentStatus) {
         case FavoriteContentStatus.none: break;
+        case FavoriteContentStatus.update: break;
         case FavoriteContentStatus.refresh: _refreshLaundry(); break;
         case FavoriteContentStatus.reload: _loadLaundry(); break;
       }

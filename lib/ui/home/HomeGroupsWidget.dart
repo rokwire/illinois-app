@@ -293,6 +293,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
     if (_visible) {
       switch(_contentStatus) {
         case FavoriteContentStatus.none: break;
+        case FavoriteContentStatus.update:
         case FavoriteContentStatus.refresh: _updateGroups(); break;
         case FavoriteContentStatus.reload: _loadGroups(); break;
       }

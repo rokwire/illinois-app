@@ -21,6 +21,7 @@ import 'package:illinois/ui/wellness/WellnessLinksPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -53,7 +54,7 @@ class HomeSavedGBVResourcesWidget extends StatefulWidget {
 
 class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidget> with NotificationsListener {
 
-  LinkedHashMap<GBVResourceFavorite, GBVResource>? _resources;
+  LinkedHashMap<GBVResourceFavorite, GBVResource> _resources = LinkedHashMap<GBVResourceFavorite, GBVResource>();
   Map<String, GBVData> _gbvDataMap = <String, GBVData>{};
   FavoriteContentActivity _contentActivity = FavoriteContentActivity.none;
 
@@ -80,7 +81,7 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
 
     _updateSubscription = widget.updateController?.stream.listen((String command) {
       if (command == HomePanel.notifyRefresh) {
-        _reloadIfVisible();
+        _refreshIfVisible();
       }
     });
 
@@ -108,7 +109,7 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
       _reloadIfVisible(); // or mark as needs refresh
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _reloadIfVisible();
+      _updateIfVisible();
     }
     else if (name == Auth2.notifyLoginChanged) {
       _reloadIfVisible(); // or mark as needs refresh
@@ -123,7 +124,7 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _refreshIfVisible();
+          _reloadIfVisible();
         }
       }
     }
@@ -161,13 +162,7 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
     else if (_contentActivity.showsProgress) {
       return HomeProgressWidget();
     }
-    else if (_resources == null) {
-      return HomeMessageCard(
-        title: Localization().getStringEx('common.label.failed', 'Failed'),
-        message: Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred')
-      );
-    }
-    else if (_resources?.length == 0) {
+    else if (_resources.length == 0) {
       return HomeMessageHtmlCard(
         message: _emptyContentMessageHtml,
         onTapLink : _onTapEmptyContentMessageLink,
@@ -180,10 +175,9 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
 
   Widget get _resourceContent {
     Widget? contentWidget;
-    int resourcesCount = _resources?.length ?? 0;
-    if (1 < resourcesCount) {
+    if (1 < _resources.length) {
       List<Widget> pages = <Widget>[];
-      _resources?.forEach((GBVResourceFavorite favorite, GBVResource resource) {
+      _resources.forEach((GBVResourceFavorite favorite, GBVResource resource) {
         String contentKey = "${favorite.category}-${favorite.id}";
         pages.add(Padding(
           key: _contentKeys[contentKey] ??= GlobalKey(),
@@ -211,21 +205,21 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
           children: pages,
         ),
       );
-    } else if (resourcesCount == 1) {
-      GBVResourceFavorite? favorite = _resources?.keys.first;
-      GBVResource? resource = _resources?[favorite];
+    } else if (_resources.length == 1) {
+      GBVResourceFavorite favorite = _resources.keys.first;
+      GBVResource? resource = _resources[favorite];
       contentWidget = (resource != null) ? Padding(padding: HomeCard.defaultSingleCardMargin, child:
         GBVResourceWidget(resource,
-          gbvData: _gbvDataMap[favorite?.category],
+          gbvData: _gbvDataMap[favorite.category],
           favoriteKey: HomeSavedGBVResourcesWidget.favoriteKey,
-          favoriteCategory: favorite?.category,
+          favoriteCategory: favorite.category,
         )
       ) : null;
     }
 
     return (contentWidget != null) ? Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => resourcesCount,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => _resources.length,),
     ]) : Container();
   }
 
@@ -257,6 +251,7 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
     if (_visible) {
       switch(_contentStatus) {
         case FavoriteContentStatus.none: break;
+        case FavoriteContentStatus.update: _update(); break;
         case FavoriteContentStatus.refresh: _refresh(); break;
         case FavoriteContentStatus.reload: _reload(); break;
       }
@@ -265,23 +260,28 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
 
   // Data
 
-  Future<Pair<LinkedHashMap<GBVResourceFavorite, GBVResource>, Map<String, GBVData>>> _loadContent() async {
-    Map<String, GBVData> gbvDataMap = <String, GBVData>{};
-    LinkedHashMap<GBVResourceFavorite, GBVResource> resources = LinkedHashMap<GBVResourceFavorite, GBVResource>();
-    LinkedHashSet<String>? favoriteIds = Auth2().prefs?.getFavorites(HomeSavedGBVResourcesWidget.favoriteKey);
+  Future<_GBVResourcesContent> _loadContent(FavoriteContentActivity contentActivity) async {
+
+    if (contentActivity == FavoriteContentActivity.refresh) {
+      await Auth2().refreshAccount();
+    }
+
+    final Map<String, GBVData> gbvDataMap = <String, GBVData>{};
+    final LinkedHashMap<GBVResourceFavorite, GBVResource> resources = LinkedHashMap<GBVResourceFavorite, GBVResource>();
+    final LinkedHashSet<String>? favoriteIds = Auth2().prefs?.getFavorites(HomeSavedGBVResourcesWidget.favoriteKey);
     if (favoriteIds != null) {
       List<GBVResourceFavorite> favorites = <GBVResourceFavorite>[];
       List<Future<dynamic>> futures = <Future<dynamic>>[];
       Map<String, int> futuresMap = <String, int>{};
 
       // 1. Build favorites list and load GBV data futures
-      for (String favoriteId in favoriteIds) {
+      for (String favoriteId in favoriteIds.toList().reversed) {
         GBVResourceFavorite favorite = GBVResourceFavorite.fromString(favoriteId, key: HomeSavedGBVResourcesWidget.favoriteKey);
         String? category = favorite.category;
         if (category != null) {
           favorites.add(favorite);
           int? futureIndex = futuresMap[category];
-          if (futureIndex == null) {
+          if ((futureIndex == null) && ((FavoriteContentActivity.update.index < contentActivity.index) || (_gbvDataMap.containsKey(category) != true))) {
             futuresMap[category] = futures.length;
             futures.add(favorite.isContentCategory ? Content().loadContentItem(category) : _AppBundleUtils.loadJson(category));
           }
@@ -303,14 +303,60 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
 
       // 4. Fill resources
       for (GBVResourceFavorite favorite in favorites) {
-        GBVResource? gbvResource = gbvDataMap[favorite.category]?.resources.firstWhereOrNull((resource) => (resource.id == favorite.id));
+        String? category = favorite.category;
+        GBVData? categoryData = gbvDataMap[category] ?? _gbvDataMap[category];
+        GBVResource? gbvResource = categoryData?.resources.firstWhereOrNull((resource) => (resource.id == favorite.id));
         if (gbvResource != null) {
           resources[favorite] = gbvResource;
         }
       }
     }
-    return Pair(resources, gbvDataMap);
+    return _GBVResourcesContent(resources: resources, gbvDataMap: gbvDataMap);
   }
+
+  Future<void> _load(FavoriteContentActivity contentActivity) async {
+    if ((_contentActivity.index < contentActivity.index) && Connectivity().isNotOffline && mounted) {
+
+      int currentPage = _getCurrentPage() ?? -1;
+      GBVResourceFavorite? currentFavorite = ((0 <= currentPage) && (currentPage < _resources.length)) ? _resources.keys.toList()[currentPage] : null;
+
+      setStateIfMounted(() {
+        _contentActivity = contentActivity;
+      });
+
+      _GBVResourcesContent result = await _loadContent(_contentActivity);
+
+      if (mounted) {
+        bool resourcesUpdated = (DeepCollectionEquality().equals(_resources, result.resources) != true);
+
+        setState(() {
+          if (resourcesUpdated) {
+            _resources = result.resources;
+            if (contentActivity == FavoriteContentActivity.update) {
+              _gbvDataMap.addAll(result.gbvDataMap);
+            } else {
+              _gbvDataMap = result.gbvDataMap;
+            }
+          }
+          _contentActivity = FavoriteContentActivity.none;
+          _contentStatus = FavoriteContentStatus.none;
+          //_pageViewKey = UniqueKey();
+          //_contentKeys.clear();
+        });
+
+        int favoriteIndex = (resourcesUpdated && (currentFavorite != null) && result.resources.containsKey(currentFavorite)) ? result.resources.keys.toList().indexOf(currentFavorite) : -1;
+        int newPage = (favoriteIndex >= 0) ? favoriteIndex : currentPage;
+        if (newPage >= 0) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_pageController?.hasClients == true) {
+              _pageController?.jumpToPage(newPage);
+            }
+          });
+        }
+      }
+    }
+  }
+
 
   Future<void> _reloadIfVisible() async {
     if (_visible) {
@@ -321,24 +367,7 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
     }
   }
 
-  Future<void> _reload() async {
-    if (_contentActivity.canReloadOrRefresh && mounted) {
-      setState(() {
-        _contentActivity = FavoriteContentActivity.reload;
-      });
-
-      Pair<LinkedHashMap<GBVResourceFavorite, GBVResource>, Map<String, GBVData>> result = await _loadContent();
-
-      setStateIfMounted(() {
-        _resources = result.left;
-        _gbvDataMap = result.right;
-        _contentActivity = FavoriteContentActivity.none;
-        _contentStatus = FavoriteContentStatus.none;
-        _pageViewKey = UniqueKey();
-        _contentKeys.clear();
-      });
-    }
-  }
+  Future<void> _reload() => _load(FavoriteContentActivity.reload);
 
   Future<void> _refreshIfVisible() async {
     if (_visible) {
@@ -349,23 +378,24 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
     }
   }
 
-  Future<void> _refresh() async {
+  Future<void> _refresh() => _load(FavoriteContentActivity.refresh);
 
-    if (_contentActivity.canReloadOrRefresh && mounted) {
-      setStateIfMounted(() {
-        _contentActivity = FavoriteContentActivity.refresh;
-      });
+  Future<void> _updateIfVisible() async {
+    if (_visible) {
+      return _update();
+    }
+    else if (_contentStatus.canUpdate) {
+      _contentStatus = FavoriteContentStatus.update;
+    }
+  }
 
-      Pair<LinkedHashMap<GBVResourceFavorite, GBVResource>, Map<String, GBVData>> result = await _loadContent();
+  Future<void> _update() => _load(FavoriteContentActivity.update);
 
-      setStateIfMounted(() {
-        _resources = result.left;
-        _gbvDataMap = result.right;
-        _contentActivity = FavoriteContentActivity.none;
-        _contentStatus = FavoriteContentStatus.none;
-        _pageViewKey = UniqueKey();
-        _contentKeys.clear();
-      });
+  int? _getCurrentPage() {
+    if (_resources.length > 1) {
+      return ((_pageController?.hasPosition == true)) ? _pageController?.page?.toInt() : null;
+    } else {
+      return (_resources.length == 1) ? 0 : null;
     }
   }
 
@@ -430,7 +460,18 @@ class _HomeSavedResourcesFavoriteButton extends HomeFavoriteButton {
   bool? get isFavorite => (super.isFavorite != false);
 }
 
+class _GBVResourcesContent {
+  final LinkedHashMap<GBVResourceFavorite, GBVResource> resources;
+  final Map<String, GBVData> gbvDataMap;
 
+  _GBVResourcesContent({required this.resources, required this.gbvDataMap });
+
+  // ignore: unused_element
+  factory _GBVResourcesContent.empty() => _GBVResourcesContent(
+    resources:  LinkedHashMap<GBVResourceFavorite, GBVResource>(),
+    gbvDataMap: <String, GBVData>{},
+  );
+}
 
 extension _AppBundleUtils on AppBundle {
   static Future<dynamic> loadJson(String key, {bool cache = true}) async =>

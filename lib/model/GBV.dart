@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -26,7 +27,11 @@ class GBVData {
       resourceListScreens: GBVResourceListScreens.fromJson(JsonUtils.mapValue(json['screens'])),
     ) : null;
   }
+
+  bool operator == (o) => (o is GBVData) && o.resourceListScreens == resourceListScreens && DeepCollectionEquality().equals(o.directoryCategories, directoryCategories) && DeepCollectionEquality().equals(o.resourceListScreens, resourceListScreens);
+  int get hashCode => resourceListScreens.hashCode ^ DeepCollectionEquality().hash(directoryCategories) ^ DeepCollectionEquality().hash(resourceListScreens);
 }
+
 class GBVResourceListScreens {
   final GBVResourceListScreen? confidentialResources;
   final GBVResourceListScreen? supportingAFriend;
@@ -42,6 +47,9 @@ class GBVResourceListScreens {
       supportingAFriend: GBVResourceListScreen.fromJson(JsonUtils.mapValue(json['supporting_a_friend'])),
     ) : null;
   }
+
+  bool operator == (o) => (o is GBVResourceListScreens) && o.confidentialResources == confidentialResources && o.supportingAFriend == supportingAFriend;
+  int get hashCode => confidentialResources.hashCode ^ supportingAFriend.hashCode;
 }
 
 class GBVResourceList {
@@ -69,6 +77,9 @@ class GBVResourceList {
     }
     return values;
   }
+
+  bool operator == (o) => (o is GBVResourceList) && o.title == title && DeepCollectionEquality().equals(o.resourceIds, resourceIds);
+  int get hashCode => title.hashCode ^ DeepCollectionEquality().hash(resourceIds);
 }
 
 class GBVDetailListSection {
@@ -99,6 +110,9 @@ class GBVDetailListSection {
       label: JsonUtils.stringValue(json['label']),
     ) : null;
   }
+
+  bool operator == (o) => (o is GBVDetailListSection) && o.title == title && o.label == label && DeepCollectionEquality().equals(o.content, content);
+  int get hashCode => title.hashCode ^ label.hashCode ^ DeepCollectionEquality().hash(content);
 }
 
 class GBVResource {
@@ -144,6 +158,26 @@ class GBVResource {
     }
     return values;
   }
+
+  bool operator == (o) => (o is GBVResource) &&
+    (o.id == id) &&
+    (o.type == type) &&
+    (o.title == title) &&
+    (o.description == description) &&
+    (o.resourceScreenId == resourceScreenId) &&
+    (DeepCollectionEquality().equals(o.categories, categories)) &&
+    (DeepCollectionEquality().equals(o.directoryContent, directoryContent)) &&
+    (DeepCollectionEquality().equals(o.detailsList, detailsList));
+
+  int get hashCode =>
+    id.hashCode ^
+    type.hashCode ^
+    title.hashCode ^
+    description.hashCode ^
+    resourceScreenId.hashCode ^
+    DeepCollectionEquality().hash(categories) ^
+    DeepCollectionEquality().hash(directoryContent) ^
+    DeepCollectionEquality().hash(detailsList);
 }
 
 class GBVResourceDetail {
@@ -177,6 +211,9 @@ class GBVResourceDetail {
       contentPrefix: JsonUtils.stringValue(json['contentPrefix'])
     ) : null;
   }
+
+  bool operator == (o) => (o is GBVResourceDetail) && o.type == type && o.title == title && o.content == content && o.contentPrefix == contentPrefix;
+  int get hashCode => type.hashCode ^ title.hashCode ^ content.hashCode ^ contentPrefix.hashCode;
 }
 
 class GBVResourceListScreen {
@@ -208,6 +245,9 @@ class GBVResourceListScreen {
     }
     return resourceIds;
   }
+
+  bool operator == (o) => (o is GBVResourceListScreen) && o.type == type && o.title == title && o.description == description && DeepCollectionEquality().equals(content, content);
+  int get hashCode => type.hashCode ^ title.hashCode ^ description.hashCode ^ DeepCollectionEquality().hash(content);
 }
 
 extension GBVResourceTypeImpl on GBVResourceType {
