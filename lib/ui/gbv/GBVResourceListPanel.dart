@@ -74,8 +74,8 @@ class GBVResourceListPanel extends StatelessWidget {
   Widget _resourceWidget (BuildContext context, GBVResource resource) {
     Widget descriptionWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(children: (resource.type.isLink)
-        ? List.from(resource.directoryNotLinkContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
-        : List.from(resource.directoryContent.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
+        ? List.from(resource.directoryNotLinkContent.map((detail) => GBVDetailContentWidget(detail, isTextSelectable: false)))
+        : List.from(resource.directoryContent.map((detail) => GBVDetailContentWidget(detail, isTextSelectable: false)))
       )
     );
     return

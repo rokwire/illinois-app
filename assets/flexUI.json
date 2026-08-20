@@ -11,12 +11,13 @@
 				"laundry", "dining", "events", "groups", "research_projects",
 				"polls",
 				"daily_illini", "illini_radio", "illordle",
-				"mtd_stops", "my_locations", "safewalk_request", "safety_resources", "transportation_links",
+				"mtd_stops", "my_locations", "safewalk_request", "safety_resources",
 				"wellness_resources", "wellness_mental_health", "wellness_todo", "wellness_rings", "wellness_tips",
-				"my_appointments"
+				"my_appointments", "saved_resources"
 			],
 			"home.system": ["tout", "welcome_message", "emergency", "voter_registration", "connect"],
 			"home.connect": ["netid", "phone_or_email"],
+			"home.saved_resources": ["academic_links", "career_planing_links", "dining_links", "transportation_links", "wellness_links"],
 
 			"browse": ["academics", "appointments", "athletics", "campus_guide", "career_exploration", "dining", "directory", "events", "laundry", "groups", "messages", "mtd", "my", "polls", "music_and_news", "research_projects", "safety", "sexual_misconduct", "surveys", "transit_and_safety", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "campus_reminders", "academic_links", "my_illini"],

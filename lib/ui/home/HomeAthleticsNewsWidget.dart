@@ -324,6 +324,7 @@ class _HomeAthliticsNewsImplWidgetState extends State<_HomeAthliticsNewsImplWidg
     if (_visible) {
       switch(_contentStatus) {
         case FavoriteContentStatus.none: break;
+        case FavoriteContentStatus.update: break;
         case FavoriteContentStatus.refresh: _refreshNews(); break;
         case FavoriteContentStatus.reload: _loadNews(); break;
       }

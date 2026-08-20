@@ -3995,7 +3995,8 @@
 	"widget.home.safety.safewalk_request.title": "SafeWalks",
 	"widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
 
-	"widget.home.transportation_links.title": "Transportation Links",
+	"widget.home.saved_gbv_resources.title": "Saved Resources2",
+	"widget.home.saved_gbv_resources.text.offline.description": "Saved resources are not available while offline.",
 
 	"widget.home.safer.label.title": "Building Access",
 	"widget.home.safer.text.empty.description": "Tap the \u2606 on items in Building Access so you can quickly find them here.",
