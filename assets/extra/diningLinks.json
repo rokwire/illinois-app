@@ -1,6 +1,7 @@
 {
   "directoryCategories" : [
-    "CAMPUS BUILDING RESTAURANTS & CAFES"
+    "CAMPUS BUILDING RESTAURANTS & CAFES",
+    "PRIVATE CERTIFIED HOUSING DINING"
   ],
   "screens": {},
   "resources": [
@@ -81,6 +82,162 @@
       "directoryContent": [{
         "type": "external_link",
         "content": "https://beckman.illinois.edu/teds-cafe/cafe"
+      }]
+    },{
+      "id": "armory_house",
+      "type": "external_link",
+      "categories": ["PRIVATE CERTIFIED HOUSING DINING"],
+      "title": "Armory House",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Dining for residents only. To-go and late-plate options."
+      },{
+        "type": "external_link",
+        "content": "armoryhouse.com/dining"
+      }]
+    },{
+      "id": "bromley_hall",
+      "type": "external_link",
+      "categories": ["PRIVATE CERTIFIED HOUSING DINING"],
+      "title": "Bromley Hall",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Open to Bromley Hall meal plan holders. Guest meal tickets are available."
+      },{
+        "type": "external_link",
+        "content": "www.bromleyhall.com"
+      }]
+    },{
+      "id": "brown_house_on_coler",
+      "type": "external_link",
+      "categories": ["PRIVATE CERTIFIED HOUSING DINING"],
+      "title": "Brown House on Coler",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Cooperative dining for residents only."
+      },{
+        "type": "external_link",
+        "content": "https://certified.housing.illinois.edu/property/brown-house/"
+      }]
+    },{
+      "id": "evans_scholars_annex_and_house",
+      "type": "external_link",
+      "categories": ["PRIVATE CERTIFIED HOUSING DINING"],
+      "title": "Evans Scholars Annex and House",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Dining for residents only."
+      },{
+        "type": "external_link",
+        "content": "https://www.campusculinarysolutions.com/"
+      }]
+    },{
+      "id": "hendrick_house",
+      "type": "external_link",
+      "categories": ["PRIVATE CERTIFIED HOUSING DINING"],
+      "title": "Hendrick House",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Open to Hendrick House residents and the public. Purchase a meal for breakfast, lunch, or dinner."
+      },{
+        "type": "external_link",
+        "content": "www.hendrickhouse.com"
+      }]
+    },{
+      "id": "illini_chabad",
+      "type": "external_link",
+      "categories": ["PRIVATE CERTIFIED HOUSING DINING"],
+      "title": "Illini Chabad",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Open to Illini Chabad meal plan holders and the public. Fully kosher kitchen."
+      },{
+        "type": "external_link",
+        "content": "https://www.jewishillini.org/templates/articlecco_cdo/aid/6055529/jewish/Kosher-Meal-Plan.htm"
+      }]
+    },{
+      "id": "illini_tower",
+      "type": "external_link",
+      "categories": ["PRIVATE CERTIFIED HOUSING DINING"],
+      "title": "Illini Tower",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Open to Illini Tower meal plan holders and the public. Nut-free dining hall with vegetarian and halal options."
+      },{
+        "type": "external_link",
+        "content": "http://illinitower.mydininghub.com/"
+      }]
+    },{
+      "id": "koinonia",
+      "type": "external_link",
+      "categories": ["PRIVATE CERTIFIED HOUSING DINING"],
+      "title": "Koinonia",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Cooperative dining for residents only."
+      },{
+        "type": "external_link",
+        "content": "https://certified.housing.illinois.edu/property/koinonia/"
+      }]
+    },{
+      "id": "nabor_house",
+      "type": "external_link",
+      "categories": ["PRIVATE CERTIFIED HOUSING DINING"],
+      "title": "Nabor House",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Dining for residents only."
+      },{
+        "type": "external_link",
+        "content": "https://certified.housing.illinois.edu/property/nabor-house/"
+      }]
+    },{
+      "id": "newman_hall",
+      "type": "external_link",
+      "categories": ["PRIVATE CERTIFIED HOUSING DINING"],
+      "title": "Newman Hall",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Open to Newman Hall residents and the public. Non-resident meal plans available. Nut-free facility with gluten-free, vegetarian, and dairy-free options."
+      },{
+        "type": "external_link",
+        "content": "https://www.sjcnc.org/live/life-at-newman-hall/dining"
+      }]
+    },{
+      "id": "presby_hall",
+      "type": "external_link",
+      "categories": ["PRIVATE CERTIFIED HOUSING DINING"],
+      "title": "Presby Hall",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Open to Presby Hall residents and the public."
+      },{
+        "type": "external_link",
+        "content": "www.presbyhall.com"
+      }]
+    },{
+      "id": "stratford_house",
+      "type": "external_link",
+      "categories": ["PRIVATE CERTIFIED HOUSING DINING"],
+      "title": "Stratford House",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Cooperative dining for residents only."
+      },{
+        "type": "external_link",
+        "content": "https://certified.housing.illinois.edu/property/stratford-house/"
+      }]
+    },{
+      "id": "sutton_house",
+      "type": "external_link",
+      "categories": ["PRIVATE CERTIFIED HOUSING DINING"],
+      "title": "Sutton House",
+      "directoryContent": [{
+        "type": "text",
+        "content": "Cooperative dining for residents only."
+      },{
+        "type": "external_link",
+        "content": "https://certified.housing.illinois.edu/property/sutton-house/"
       }]
     }
   ]
