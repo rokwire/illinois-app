@@ -9,6 +9,7 @@ class CareerPlanningLinksPanel extends GBVResourceDirectoryContentPanel {
     contentCategory: 'career_planning_links',
     contentAssetKey: 'assets/extra/careerPlanningLinks.json',
     favoriteKey: HomeSavedGBVResourcesWidget.favoriteKey,
+    favoriteListner: HomeSavedGBVResourcesWidget.favoriteListener,
     headerBarTitle: Localization().getStringEx('panel.browse.entry.career_exploration.career_planing_links.title', 'Career Planning Links'),
     contentFailedMessage: Localization().getStringEx('', 'Failed to load career planing links data'),
     analyticsFeature: AnalyticsFeature.CareerExplorationSkillsSelfEvaluation,

@@ -343,7 +343,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeSafetyResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == 'saved_resources') {
+    else if (code == HomeSavedGBVResourcesWidget.homeCode) {
       if (title) {
         return HomeSavedGBVResourcesWidget.title;
       } else if (handle) {

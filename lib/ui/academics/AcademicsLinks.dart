@@ -17,6 +17,7 @@ class AcademicLinksWidget extends GBVResourceDirectoryContentWidget {
     contentCategory: 'academic_links',
     contentAssetKey: 'assets/extra/academicLinks.json',
     favoriteKey: HomeSavedGBVResourcesWidget.favoriteKey,
+    favoriteListner: HomeSavedGBVResourcesWidget.favoriteListener,
     contentFailedMessage: Localization().getStringEx('', 'Failed to load academic links data'),
   );
 }

@@ -28,7 +28,10 @@ class GBVResourceDirectoryPanel extends StatelessWidget {
   final String? favoriteKey;
   final String? favoriteCategory;
 
-  GBVResourceDirectoryPanel({ super.key, required this.gbvData, this.favoriteKey, this.favoriteCategory});
+  GBVResourceDirectoryPanel({ super.key,
+    required this.gbvData,
+    this.favoriteKey, this.favoriteCategory,
+  });
 
   @override
   Widget build(BuildContext context) =>
@@ -90,7 +93,10 @@ class GBVResourceDirectoryWidget extends StatefulWidget {
   final String? favoriteKey;
   final String? favoriteCategory;
 
-  GBVResourceDirectoryWidget({ super.key, required this.gbvData, this.favoriteKey, this.favoriteCategory });
+  GBVResourceDirectoryWidget({ super.key,
+    required this.gbvData,
+    this.favoriteKey, this.favoriteCategory,
+  });
 
   @override
   State<StatefulWidget> createState() => _GBVResourceDirectoryWidgetState();
@@ -190,7 +196,11 @@ class GBVResourceWidget extends StatelessWidget {
 
   final CardDisplayMode displayMode;
 
-  GBVResourceWidget(this.resource, { super.key, this.gbvData, this.favoriteKey, this.favoriteCategory, this.displayMode = CardDisplayMode.browse });
+  GBVResourceWidget(this.resource, { super.key,
+    this.gbvData,
+    this.favoriteKey, this.favoriteCategory,
+    this.displayMode = CardDisplayMode.browse
+  });
 
   bool get _canFavorite => true && (favoriteKey != null);
 

@@ -9,20 +9,27 @@ import 'package:illinois/ui/gbv/GBVResourceDirectoryPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+typedef GBVResourceFavoriteListener = void Function(BuildContext context, GBVResourceFavorite favorite);
 
 class GBVResourceDirectoryContentWidget extends StatefulWidget {
-  final String? favoriteKey;
   final String? contentCategory;
   final String? contentAssetKey;
+
+  final String? favoriteKey;
+  final GBVResourceFavoriteListener? favoriteListner;
+
   final String? contentFailedMessage;
   final Widget Function(BuildContext)? prefixWidgetBuilder;
   final Widget Function(BuildContext)? suffixWidgetBuilder;
 
   GBVResourceDirectoryContentWidget({
-    this.contentCategory, this.contentAssetKey, this.favoriteKey,
+    this.contentCategory, this.contentAssetKey,
+    this.favoriteKey, this.favoriteListner,
     this.contentFailedMessage,
     this.prefixWidgetBuilder, this.suffixWidgetBuilder,
   });
@@ -31,12 +38,16 @@ class GBVResourceDirectoryContentWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _GBVResourceDirectoryContentWidgetState();
 }
 
-class _GBVResourceDirectoryContentWidgetState extends State<GBVResourceDirectoryContentWidget> {
+class _GBVResourceDirectoryContentWidgetState extends State<GBVResourceDirectoryContentWidget> with NotificationsListener {
   GBVData? _linksData;
   bool _loadingLinksData = false;
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoriteChanged,
+    ]);
+
     _loadingLinksData = true;
     _loadLinksData().then((GBVData? linksData) {
       setStateIfMounted(() {
@@ -49,9 +60,18 @@ class _GBVResourceDirectoryContentWidgetState extends State<GBVResourceDirectory
 
   @override
   void deactivate() {
+    NotificationService().unsubscribe(this);
     super.deactivate();
   }
 
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyFavoriteChanged) {
+      if (mounted && (param is GBVResourceFavorite) && (param.key == widget.favoriteKey) && (param.category == _favoriteCategory)) {
+        widget.favoriteListner?.call(context, param);
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     if (_loadingLinksData) {
@@ -143,16 +163,21 @@ class _GBVResourceDirectoryContentWidgetState extends State<GBVResourceDirectory
 }
 
 class GBVResourceDirectoryContentPanel extends StatelessWidget with AnalyticsInfo {
-  final String? favoriteKey;
   final String? contentCategory;
   final String? contentAssetKey;
+
+  final String? favoriteKey;
+  final GBVResourceFavoriteListener? favoriteListner;
+
   final String? headerBarTitle;
   final String? contentFailedMessage;
+
   final Widget Function(BuildContext)? contentWidgetBuilder;
   final AnalyticsFeature? analyticsFeature;
 
-  GBVResourceDirectoryContentPanel({this.favoriteKey,
+  GBVResourceDirectoryContentPanel({
     this.contentCategory, this.contentAssetKey,
+    this.favoriteKey, this.favoriteListner,
     this.headerBarTitle, this.contentFailedMessage,
     this.contentWidgetBuilder, this.analyticsFeature
   });
@@ -164,9 +189,10 @@ class GBVResourceDirectoryContentPanel extends StatelessWidget with AnalyticsInf
       body: Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
         contentWidgetBuilder?.call(context) ??
         GBVResourceDirectoryContentWidget(
-          favoriteKey: favoriteKey,
           contentCategory: contentCategory,
           contentAssetKey: contentAssetKey,
+          favoriteKey: favoriteKey,
+          favoriteListner: favoriteListner,
           contentFailedMessage: contentFailedMessage,
         )
       ),
@@ -176,3 +202,4 @@ class GBVResourceDirectoryContentPanel extends StatelessWidget with AnalyticsInf
   }
 
 }
+

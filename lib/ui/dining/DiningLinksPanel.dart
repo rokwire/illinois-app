@@ -17,6 +17,7 @@ class DiningLinksWidget extends GBVResourceDirectoryContentWidget {
     contentCategory: 'dining_links',
     contentAssetKey: 'assets/extra/diningLinks.json',
     favoriteKey: HomeSavedGBVResourcesWidget.favoriteKey,
+    favoriteListner: HomeSavedGBVResourcesWidget.favoriteListener,
     contentFailedMessage: Localization().getStringEx('', 'Failed to load dining links data'),
   );
 }

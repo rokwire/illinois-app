@@ -4,11 +4,14 @@ import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:illinois/model/GBV.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Content.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/academics/AcademicsLinks.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/career/CareerPlanningLinks.dart';
@@ -27,6 +30,8 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -36,7 +41,9 @@ class HomeSavedGBVResourcesWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
 
+  static const String homeCode = 'saved_resources';
   static const String favoriteKey = 'savedGBVResourcesKeys';
+
 
   HomeSavedGBVResourcesWidget({super.key, this.favoriteId, this.updateController});
 
@@ -50,6 +57,31 @@ class HomeSavedGBVResourcesWidget extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _HomeSavedGBVResourcesWidgetState();
+
+  static void favoriteListener(BuildContext context, GBVResourceFavorite favorite) {
+    if ((favorite.key == favoriteKey) && (Auth2().prefs?.isFavorite(favorite) == true) && _isWidgetAvailable && !_isWidgetFavorite && (Storage().askForSavedResourcesHomeFavorite != false)) {
+      _HomeSavedResourcesFavoriteAlertDialog.show(context).then((bool? result){
+        if (result == true) {
+          _setFavoriteWidget();
+        }
+      });
+    }
+  }
+
+  static void _setFavoriteWidget() {
+    List<Favorite> favorites = <Favorite>[];
+    List<String>? items = JsonUtils.listStringsValue(FlexUI()['home.$homeCode']);
+    if (items != null) {
+      for (String item in items) {
+        favorites.add(HomeFavorite(item, category: homeCode));
+      }
+    }
+    favorites.add(HomeFavorite(homeCode));
+    Auth2().prefs?.setListFavorite(favorites, true);
+  }
+
+  static bool get _isWidgetAvailable => (JsonUtils.setStringsValue(FlexUI()['home'])?.contains(homeCode) == true);
+  static bool get _isWidgetFavorite => (Auth2().prefs?.isFavorite(HomeFavorite(homeCode)) == true);
 }
 
 class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidget> with NotificationsListener {
@@ -477,4 +509,94 @@ class _GBVResourcesContent {
 extension _AppBundleUtils on AppBundle {
   static Future<dynamic> loadJson(String key, {bool cache = true}) async =>
     JsonUtils.decode(await AppBundle.loadString(key, cache: cache));
+}
+
+class _HomeSavedResourcesFavoriteAlertDialog extends StatefulWidget {
+
+  @override
+  State<StatefulWidget> createState() => _HomeSavedResourcesFavoriteAlertDialogState();
+
+  static Future<bool?>show(BuildContext context) =>
+    showDialog(context: context, builder: (_) => AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      content: _HomeSavedResourcesFavoriteAlertDialog(),
+    ));
+}
+
+class _HomeSavedResourcesFavoriteAlertDialogState extends State<_HomeSavedResourcesFavoriteAlertDialog> {
+  @override
+  Widget build(BuildContext context) =>
+    Container(decoration: _contentDecoration, child:
+      ClipRRect(borderRadius: _contentBorderRadius, child:
+          Column(mainAxisSize: MainAxisSize.min, children: [
+            Padding(padding: EdgeInsetsGeometry.only(left: 24, right: 24, top: 24, bottom: 16), child:
+              Column(mainAxisSize: MainAxisSize.min, children: [
+                Text(_promptText, style: _textStyle, textAlign: TextAlign.center,),
+                Padding(padding: EdgeInsetsGeometry.only(top: 16), child:
+                  Row(children: [
+                    Expanded(child:
+                      CompactRoundedButton(
+                        label: Localization().getStringEx('dialog.no.title', 'No'),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        borderColor: Styles().colors.fillColorPrimary,
+                        onTap: () => _onConfirm(false),
+                      ),
+                    ),
+                    SizedBox(width: 16,),
+                    Expanded(child:
+                      CompactRoundedButton(
+                        label: Localization().getStringEx('dialog.Yes.title', 'Yes'),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        onTap: () => _onConfirm(true),),
+                    ),
+                  ],)
+                )
+              ]),
+            ),
+            Divider(color: _contentBorderColor, height: _contentBorderSize,),
+            Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 24), child:
+              Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
+                InkWell(onTap: _onDontShow, child:
+                  Padding(padding: EdgeInsets.all(16), child:
+                    Styles().images.getImage(_dontShow ? "check-circle-filled" : "check-circle-outline-gray"),
+                  ),
+                ),
+                Text(_dontShowText, style: _textStyle, textAlign: TextAlign.left, )
+              ]),
+            )
+          ],)
+      )
+    );
+
+  bool get _dontShow => (Storage().askForSavedResourcesHomeFavorite == false);
+
+  void _onDontShow() {
+    setState(() {
+      Storage().askForSavedResourcesHomeFavorite = !_dontShow;
+    });
+  }
+
+  void _onConfirm(bool selection) {
+    Analytics().logSelect(target: selection ? 'Yes' : 'No');
+    Navigator.of(context).pop(selection);
+  }
+
+  String get _promptText => Localization().getStringEx('', 'Item saved. Add your Saved Resources to your Home Favorites?');
+  String get _dontShowText => Localization().getStringEx('', "Don't show me this again.");
+
+  TextStyle? get _textStyle => Styles().textStyles.getTextStyle('widget.detail.regular');
+
+  BoxDecoration get _contentDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border.all(color: _contentBorderColor, width: _contentBorderSize),
+    borderRadius: _contentBorderRadius,
+  );
+
+  Color get _contentBorderColor => Styles().colors.surfaceAccent;
+  double get _contentBorderSize => 1;
+
+  BorderRadius get _contentBorderRadius =>
+    BorderRadius.all(Radius.circular(12));
+
+
 }

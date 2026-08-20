@@ -33,6 +33,7 @@ class WellnessLinksWidget extends StatelessWidget {
       contentCategory: 'wellness_links',
       contentAssetKey: 'assets/extra/wellnessLinks.json',
       favoriteKey: HomeSavedGBVResourcesWidget.favoriteKey,
+      favoriteListner: HomeSavedGBVResourcesWidget.favoriteListener,
       contentFailedMessage: Localization().getStringEx('', 'Failed to load wellness links data'),
       prefixWidgetBuilder: (context) => _prefixWidget,
       suffixWidgetBuilder: (context) => _suffixWidget,
