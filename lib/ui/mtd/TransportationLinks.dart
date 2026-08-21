@@ -1,5 +1,4 @@
 
-import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/gbv/GBVResourceDirectoryContentPanel.dart';
 import 'package:illinois/ui/home/HomeSavedGBVResourcesWidget.dart';
 import 'package:rokwire_plugin/service/localization.dart';
