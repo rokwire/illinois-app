@@ -70,7 +70,7 @@
 
 			"map.types":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "my_locations", "storied_sites"],
 
-			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
+			"privacy_center": ["connect", "description", "policy", "manage", "delete"],
 
 			"appointment.providers.monitored": ["grainger"],
 			"appointment.providers.enabled": ["grainger"],
