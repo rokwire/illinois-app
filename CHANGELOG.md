@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Removed
+- Removed favorite button/star from compound MTD bus stop card [#5880](https://github.com/rokwire/illinois-app/issues/5880).
+
 ## [8.2.7] - 2026-08-20
 ### Added
 - Add Private Certified Housing links to Campus Dining [#5872](https://github.com/rokwire/illinois-app/issues/5872).
