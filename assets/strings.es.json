@@ -723,9 +723,11 @@
     "panel.onboarding.location.label.access_granted":"Ya ha otorgado acceso a esta aplicación",
     "panel.onboarding.location.label.access_denied":"Ya ha denegado el acceso a esta aplicación",
 
-    "panel.onboarding.notifications.label.title":"Información del evento cuando lo necesite",
+    "panel.onboarding.notifications.label.title":"Manténgase al día con notificaciones sobre:",
     "panel.onboarding.notifications.label.hint":"Encabezado 1",
-    "panel.onboarding.notifications.label.description":"Reciba notificaciones sobre sus eventos “destacados”",
+    "panel.onboarding.notifications.label.checklist.1":"Actualizaciones de sus grupos",
+    "panel.onboarding.notifications.label.checklist.2":"Recordatorios de sus próximas citas de MyMcKinley",
+    "panel.onboarding.notifications.label.checklist.3":"Sus eventos destacados que están por comenzar",
     "panel.onboarding.notifications.button.allow.title":"Recibir notificaciones",
     "panel.onboarding.notifications.button.allow.hint":"",
     "panel.onboarding.notifications.button.dont_allow.title":"No en este momento",

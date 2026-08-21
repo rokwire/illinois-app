@@ -63,7 +63,7 @@ class _Onboarding2AuthNotificationsPanelState extends State<Onboarding2AuthNotif
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding.notifications.label.title', 'Event info when you need it');
+    String titleText = Localization().getStringEx('panel.onboarding.notifications.label.title', 'Stay up to date with notifications for:');
     String notRightNow = Localization().getStringEx('panel.onboarding.notifications.button.dont_allow.title', 'Not right now');
     return Scaffold(backgroundColor: Styles().colors.background, body:
       SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
@@ -82,11 +82,9 @@ class _Onboarding2AuthNotificationsPanelState extends State<Onboarding2AuthNotif
                     )
                   )
                 ),
-                Container(height: 12,),
-                Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
-                  Align(alignment: Alignment.topCenter, child:
-                    Text(Localization().getStringEx('panel.onboarding.notifications.label.description', 'Get notified about your “starred” events.'), textAlign: TextAlign.center, style:TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary),)
-                  ),
+                Container(height: 24,),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 80), child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: _checklistItems),
                 ),
               ]),
             )
@@ -116,6 +114,27 @@ class _Onboarding2AuthNotificationsPanelState extends State<Onboarding2AuthNotif
       )
     );
   }
+
+  List<Widget> get _checklistItems {
+    List<String> titles = [
+      Localization().getStringEx('panel.onboarding.notifications.label.checklist.1', 'Updates from your groups'),
+      Localization().getStringEx('panel.onboarding.notifications.label.checklist.2', 'Reminders for your upcoming MyMcKinley appointments'),
+      Localization().getStringEx('panel.onboarding.notifications.label.checklist.3', 'Your favorited events starting soon'),
+    ];
+    return titles.map((title) => _buildChecklistItem(title)).toList();
+  }
+
+  Widget _buildChecklistItem(String title) => Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+    Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Padding(padding: EdgeInsets.only(right: 5), child:
+        Styles().images.getImage('check', size: 14, excludeFromSemantics: true, fit: BoxFit.contain) ?? Container(),
+      ),
+      Container(width: 12,),
+      Expanded(child:
+        Text(title, style: Styles().textStyles.getTextStyle("widget.message.regular")),
+      ),
+    ],),
+  );
 
   void _onTapReceiveNotifications() {
     Analytics().logSelect(target: 'Receive Notifications') ;

@@ -721,9 +721,11 @@
 	"panel.onboarding.location.label.access_granted":"您已经授予对此应用程序的访问权限。",
 	"panel.onboarding.location.label.access_denied":"您已经拒绝访问此应用程序。",
 
-	"panel.onboarding.notifications.label.title":"需要时的活动信息",
+	"panel.onboarding.notifications.label.title":"及时了解以下通知：",
 	"panel.onboarding.notifications.label.hint":"标题1",
-	"panel.onboarding.notifications.label.description":"获得有关您的“加注星标”活动的通知。",
+	"panel.onboarding.notifications.label.checklist.1":"来自您的社团的更新",
+	"panel.onboarding.notifications.label.checklist.2":"即将到来的 MyMcKinley 预约提醒",
+	"panel.onboarding.notifications.label.checklist.3":"您收藏的活动即将开始",
 	"panel.onboarding.notifications.button.allow.title":"接收通知",
 	"panel.onboarding.notifications.button.allow.hint":"",
 	"panel.onboarding.notifications.button.dont_allow.title":"暂时不",
