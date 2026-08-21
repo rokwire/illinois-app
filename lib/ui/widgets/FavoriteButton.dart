@@ -16,6 +16,7 @@ class FavoriteStarIcon extends StatelessWidget {
   static const EdgeInsets defaultPadding = const EdgeInsets.all(defaultSpacing);
   static const double defaultSpacing = 16;
   static const double defaultSize = 18;
+  static const double defaultButtonSize = 2 * defaultSpacing + defaultSize;
 
   FavoriteStarIcon({Key? key, this.selected, required this.style, this.padding = defaultPadding }) : super(key: key);
 

@@ -462,6 +462,7 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
     if (_visible) {
       switch(_contentStatus) {
         case FavoriteContentStatus.none: break;
+        case FavoriteContentStatus.update: break;
         case FavoriteContentStatus.refresh: _refresh(); break;
         case FavoriteContentStatus.reload: _reload(); break;
       }

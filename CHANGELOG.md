@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [8.2.7] - 2026-08-20
+### Added
+- Add Private Certified Housing links to Campus Dining [#5872](https://github.com/rokwire/illinois-app/issues/5872).
+- Created Saved GBV Resources home widget and related functionality [#5873](https://github.com/rokwire/illinois-app/issues/5873).
+### Fixed
+- Do not report image exceptions as fatal errors [#5991](https://github.com/rokwire/illinois-app/issues/5991).
 
 ## [8.2.6] - 2026-08-19
 ### Fixed

@@ -24,6 +24,7 @@ import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/career/CareerPlanningLinks.dart';
+import 'package:illinois/ui/dining/DiningLinksPanel.dart';
 import 'package:illinois/ui/directory/DirectoryAccounts2Panel.dart';
 import 'package:illinois/ui/groups/GroupHome2Panel.dart';
 import 'package:illinois/ui/illini/WordlePanel.dart';
@@ -37,6 +38,7 @@ import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
+import 'package:illinois/ui/mtd/TransportationLinks.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
@@ -60,7 +62,6 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-import 'dining/DiningLinksPanel.dart';
 
 ///////////////////////////
 // BrowsePanel
@@ -254,11 +255,13 @@ class _BrowseSection extends StatelessWidget {
   final void Function()? onExpand;
   final List<String>? _browseEntriesCodes;
   final Set<String>? _homeSectionEntriesCodes;
+  final Map<String, Set<String>> _homeSectionsEntriesCodesMap;
   final Set<String>? _homeRootEntriesCodes;
 
   _BrowseSection({Key? key, required this.sectionId, List<String>? entryCodes, this.expanded = false, this.onExpand}) :
     _browseEntriesCodes = entryCodes ?? buildBrowseEntryCodes(sectionId: sectionId),
     _homeSectionEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home.$sectionId']),
+    _homeSectionsEntriesCodesMap = buildSectionsEntriesCodesMap(),
     _homeRootEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home']),
     super(key: key);
 
@@ -272,6 +275,23 @@ class _BrowseSection extends StatelessWidget {
     return codes;
   }
 
+  static Map<String, Set<String>> buildSectionsEntriesCodesMap() {
+    Map<String, Set<String>> sectionsMap = <String, Set<String>>{};
+    Map<String, dynamic>? flexUI = FlexUI().defaultContent;
+    if (flexUI != null) {
+      final String homeSectionPrefix = 'home.';
+      for(String flexKey in flexUI.keys) {
+        String? homeSection = flexKey.startsWith(homeSectionPrefix) ? flexKey.substring(homeSectionPrefix.length) : null;
+        Set<String>? sectionEntriesCodes = JsonUtils.setStringsValue(flexUI[flexKey]);
+        if ((homeSection != null) && (sectionEntriesCodes != null)) {
+          sectionsMap[homeSection] = sectionEntriesCodes;
+        }
+      }
+    }
+    return sectionsMap;
+  }
+
+
   HomeFavorite? _favorite(String code) {
     if (_homeSectionEntriesCodes?.contains(code) ?? false) {
       return HomeFavorite(code, category: sectionId);
@@ -280,8 +300,19 @@ class _BrowseSection extends StatelessWidget {
       return HomeFavorite(code);
     }
     else {
-      return null;
+      String? homeSection = _lookupHomeSectionByEntryCode(code);
+      return (homeSection != null) ? HomeFavorite(code, category: homeSection) : null;
     }
+  }
+
+  String? _lookupHomeSectionByEntryCode(String code) {
+    for (String homeSection in _homeSectionsEntriesCodesMap.keys) {
+      Set<String>? sectionEntriesCodes = _homeSectionsEntriesCodesMap[homeSection];
+      if (sectionEntriesCodes?.contains(code) == true) {
+        return homeSection;
+      }
+    }
+    return null;
   }
 
 
@@ -930,9 +961,8 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapTransportationLinks(BuildContext context) {
     Analytics().logSelect(target: "Transportation Links");
-    AppAlert.showDialogResult(context, 'TBD');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => TransportationLinksPanel()));
   }
-
 
   static void _onTapWellnessRings(BuildContext context) {
     Analytics().logSelect(target: "Wellness Daily Rings");
