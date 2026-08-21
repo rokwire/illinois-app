@@ -92,7 +92,7 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
   Widget get _titleWidget =>
     Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 24, bottom: 16), child:
       Center(child:
-        Text(Localization().getStringEx('panel.onboarding.profile_info.title', 'Directory of Users'),
+        Text(Localization().getStringEx('panel.onboarding.profile_info.title', 'Join the Directory'),
           style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary),
           textAlign: TextAlign.center,
         ),
