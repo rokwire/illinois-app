@@ -22,14 +22,11 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/widgets/PrivacySlider.dart';
+import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-
-import 'Onboarding2Widgets.dart';
 
 class Onboarding2PrivacyLevelPanel extends StatefulWidget with Onboarding2Panel {
   final String onboardingCode;
@@ -54,81 +51,69 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
   @override
   Widget build(BuildContext context) =>
     Scaffold(backgroundColor: Styles().colors.background,
-      appBar: AppBar(backgroundColor: Styles().colors.fillColorPrimary, toolbarHeight: 0,),
       body: SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
         Column(children: [
+          Stack(children: [
+            Styles().images.getImage("header-privacy", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
+            Visibility(visible: Navigator.canPop(context), child:
+              Positioned(top: 0, left: 0, child:
+                SafeArea(child:
+                  OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: _onTapBack),
+                ),
+              ),
+            ),
+          ],),
           Expanded(child:
-            SingleChildScrollView(child:
-              Column(children:[
-                Container(color: Styles().colors.fillColorPrimary, child:
-                  Column(children: <Widget>[
-                    Row(children: [
-                      Onboarding2BackButton(padding: const EdgeInsets.all(16), imageColor: Styles().colors.white, onTap: _onTapBack,),
-                      Expanded(child:
-                        Align(alignment: Alignment.centerRight, child:
-                          Semantics(
-                            label: Localization().getStringEx('panel.onboarding2.privacy.level.button.privacy_policy.title', "Privacy Notice "),
-                            hint: Localization().getStringEx('panel.onboarding2.privacy.level.button.privacy_policy.hint', ''),
-                            button: true,
-                            excludeSemantics: true,
-                            child: _buildPrivacyPolicyButton(context)
-                          ),
-                        )
-                      ),
-                    ],),
-
-                    Container(height: 18,),
-
-                    Semantics(
-                      label: _privacyTitle,
-                      hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
-                      header: true,
-                      excludeSemantics: true,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                        Align(alignment: Alignment.topCenter, child:
-                          Text(_privacyTitle, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.heading.title"),)
-                        ),
-                      )
-                    ),
-                    Container(height: 35,),
-                    Stack(children: [
-                      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background,), child:
-                        Container(height: 90,),
-                      ),
-                      Align(alignment: Alignment.topRight, child:
-                        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                          _privacyBadge,
-                        ),
-                      )
-                    ],)
-                  ])
-                ),
-
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                  Text(_privacyLongDescription ?? '', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.description.regular"),)
-                ),
-
-                Padding(padding: EdgeInsets.symmetric(vertical:24, horizontal: 20), child:
-                  PrivacyLevelSlider(initialValue: _privacyLevel.toDouble(), readOnly: true, color: Styles().colors.background,),
-                ),
-              ]),
-            )
+            SafeArea(top: false, child:
+              SingleChildScrollView(child:
+                Column(children:[
+                  Container(height: 8,),
+                  Text(Localization().getStringEx('panel.onboarding2.privacy.level.label.eyebrow.title', 'PRIVACY LEVEL'), textAlign: TextAlign.center,
+                    style: Styles().textStyles.getTextStyle("widget.button.title.extra_large"),
+                  ),
+                  Container(height: 16,),
+                  _privacyBadge,
+                  Container(height: 20,),
+                  Semantics(
+                    label: _privacyTitle,
+                    hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
+                    header: true,
+                    excludeSemantics: true,
+                    child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                      Text(_privacyTitle, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.title.extra_huge.fat"),)
+                    )
+                  ),
+                  Container(height: 16,),
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 28), child:
+                    Text(_privacyLongDescription ?? '', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.description.regular"),)
+                  ),
+                  Container(height: 24,),
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 28), child:
+                    _privacyNoteText,
+                  ),
+                  Container(height: 24,),
+                ]),
+              ),
+            ),
           ),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8), child:
             Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-              Container(height: 16,),
-              Text(Localization().getStringEx("panel.onboarding2.privacy.level.label.continue.description", "You can adjust what you store and share at any time in the Privacy Center."), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.info.small"),),
-              Padding(padding: EdgeInsets.only(bottom: 48, top: 16), child:
-                RoundedButton(
-                  label: _continueButtonLabel,
-                  hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
-                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  backgroundColor: Styles().colors.white,
-                  borderColor: Styles().colors.fillColorSecondaryVariant,
-                  progress: _onboardingProgress,
-                  onTap: _onTapContinue,
-                ),
+              RoundedButton(
+                label: _continueButtonLabel,
+                hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                backgroundColor: Styles().colors.white,
+                borderColor: Styles().colors.fillColorSecondaryVariant,
+                progress: _onboardingProgress,
+                onTap: _onTapContinue,
+              ),
+              Semantics(
+                label: Localization().getStringEx('panel.onboarding2.privacy.level.button.privacy_policy.title', "Privacy Notice "),
+                hint: Localization().getStringEx('panel.onboarding2.privacy.level.button.privacy_policy.hint', ''),
+                button: true,
+                excludeSemantics: true,
+                child: _buildPrivacyPolicyButton(context)
               ),
             ],),
           ),
@@ -138,14 +123,44 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
 
   Widget get _privacyBadge =>
     Semantics(label: Localization().getStringEx('panel.onboarding2.privacy.level.badge.privacy_level.title', "Privacy Level: ") + _privacyLevel.toString(), excludeSemantics: true, child:
-      Stack(children: [
-        Styles().images.getImage((_privacyLevel == 5) ? "images/privacy_box_selected.png" : "images/privacy_box_deselected.png", size: 50, fit: BoxFit.fitWidth, excludeFromSemantics: true,) ?? Container(),
-        Positioned.fill(child:
-          Center(child:
-            Text(_privacyLevel.toString(), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy.badge"))
-          )
-        )
+      Stack(clipBehavior: Clip.none, alignment: Alignment.center, children: [
+        Styles().images.getImage("lock-illustration", excludeFromSemantics: true, width: 120, fit: BoxFit.fitWidth) ?? Container(),
+        Positioned(right: -20, bottom: 0, child:
+          Container(
+              height: 70,
+              width: 70,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Styles().colors.fillColorPrimary, width: 2),
+                  color: Styles().colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(100))),
+              child: Container(
+                  height: 60,
+                  width: 60,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Styles().colors.fillColorSecondary, width: 2),
+                      color: Styles().colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(100))),
+                  child: Text(_privacyLevel.toString(), textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat")))),
+        ),
       ],)
+    );
+
+  Widget get _privacyNoteText =>
+    RichText(textAlign: TextAlign.center, text:
+      TextSpan(children: [
+        TextSpan(text: Localization().getStringEx('panel.onboarding2.privacy.level.label.note.title', 'NOTE: '),
+          style: Styles().textStyles.getTextStyle("widget.description.regular.fat"),
+        ),
+        if (_privacyLevel < 4)
+          TextSpan(text: Localization().getStringEx('panel.onboarding2.privacy.level.label.netid_required.description', 'To sign in with your NetID, privacy level must be 4 or 5. '),
+            style: Styles().textStyles.getTextStyle("widget.description.regular"),
+          ),
+        TextSpan(text: Localization().getStringEx("panel.onboarding2.privacy.level.label.continue.description", "You can adjust your privacy at any time under Settings."),
+          style: Styles().textStyles.getTextStyle("widget.description.regular"),
+        ),
+      ]),
     );
 
   Widget _buildPrivacyPolicyButton(BuildContext context) =>
@@ -155,7 +170,7 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
           decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)),
           padding: EdgeInsets.only(bottom: 2),
           child: Wrap(children: [
-            Text(Localization().getStringEx('panel.onboarding2.privacy.level.button.privacy_policy.title', "Privacy Notice "), style: Styles().textStyles.getTextStyle("widget.colourful_button.title.regular")),
+            Text(Localization().getStringEx('panel.onboarding2.privacy.level.button.privacy_policy.title', "Privacy Notice "), style: Styles().textStyles.getTextStyle("widget.title.small")),
             Padding(padding: EdgeInsets.only(bottom: 3), child:
               Styles().images.getImage("external-link", excludeFromSemantics: true)
             ),
@@ -207,23 +222,17 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
 
   String? get _privacyLongDescription {
     switch(_privacyLevel) {
-      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.level.description_long.1.title', "Based on your answers, no personal information will be stored or shared. You can only browse information in the app.");
-      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.level.description_long.2.title', "Based on your answers, your location is used to explore campus and find things nearby. Your data will not be stored or shared.");
-      case 3 : return Localization().getStringEx('panel.onboarding2.privacy.level.description_long.3.title', "Based on your answers, your data will be securely stored for you to access.");
-      case 4 : return Localization().getStringEx('panel.onboarding2.privacy.level.description_long.4.title', "Based on your answers, your data will be securely stored for you to access.");
-      case 5 : return Localization().getStringEx('panel.onboarding2.privacy.level.description_long.5.title', "Based on your answers, your data will be securely stored and shared to enable the full smarts of the {{app_title}} app.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
+      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.level.description_long.1.title', "Based on your choices, no personal information will be stored or shared.");
+      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.level.description_long.2.title', "Based on your choices, your data will not be stored or shared.");
+      case 3 : return Localization().getStringEx('panel.onboarding2.privacy.level.description_long.3.title', "Based on your choices, your data will be securely stored for you to access.");
+      case 4 : return Localization().getStringEx('panel.onboarding2.privacy.level.description_long.4.title', "Based on your choices, your data will be securely stored for you to access.");
+      case 5 : return Localization().getStringEx('panel.onboarding2.privacy.level.description_long.5.title', "Based on your choices, your data will be securely stored and shared to enable the full features of the {{app_title}} app.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
       default: return Localization().getStringEx('panel.onboarding2.privacy.level.description_long.unknown.title', "Unknown privacy level");
     }
   }
 
-  String get _continueButtonLabel {
-    switch (_privacyLevel) {
-      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.level.button.start_browsing.title', "Start browsing");
-      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.level.button.start_exploring.title', "Start exploring");
-      default: return Localization().getStringEx('panel.onboarding2.privacy.level.button.save_privacy.title', "Save Privacy Level");
-    }
-
-  }
+  String get _continueButtonLabel =>
+    Localization().getStringEx('panel.onboarding2.privacy.level.button.save_privacy.title', "Save Privacy Level");
 
   void _onTapPrivacyPolicy(BuildContext context) {
     Analytics().logSelect(target: "Privacy Statement");
