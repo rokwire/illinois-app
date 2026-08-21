@@ -9,7 +9,6 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Onboarding2ResearchQuestionnairePromptPanel extends StatefulWidget with Onboarding2Panel {
@@ -40,27 +39,20 @@ class _Onboarding2ResearchQuestionnairePromptPanelState extends State<Onboarding
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles().colors.background,
-      body: Stack(children: [
-        Column(children: [
-          Container(color: Styles().colors.white, height: 90,),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
-            Container(height: 70,),
+      body: Column(children: [
+        Stack(children: [
+          Styles().images.getImage("header-login", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
+          Visibility(visible: Navigator.canPop(context), child:
+            Positioned(top: 0, left: 0, child:
+              SafeArea(child:
+                OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: () => _onBack(context)),
+              ),
+            ),
           ),
         ],),
-        Styles().images.getImage("header-questionnaire", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
-        Padding(padding: EdgeInsets.only(top: 90), child:
-          Align(alignment: Alignment.topCenter, child: 
-            Styles().images.getImage('questionnaire', excludeFromSemantics: true),
-          ),
-        ),
-        Positioned.fill(child:
-          SafeArea(child:
+        Expanded(child:
+          SafeArea(top: false, child:
             _buildContent(context)
-          ),
-        ),
-        Visibility(visible: Navigator.canPop(context), child:
-          SafeArea(child: 
-            OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: () => _onBack(context)),
           ),
         ),
       ]),
@@ -70,47 +62,43 @@ class _Onboarding2ResearchQuestionnairePromptPanelState extends State<Onboarding
   Widget _buildContent(BuildContext context) {
   String notRightNow = Localization().getStringEx('panel.onboarding.base.not_now.title":"Not right now', 'Not right now');
   
-  return Padding(padding: EdgeInsets.symmetric(horizontal: 24), child: 
+  return Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
     Column(children: [
-      Expanded(child: 
-        Padding(padding: EdgeInsets.only(top: 148), child:
-          SingleChildScrollView(child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(height: 32,),
-              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.introduction', 'Illinois is one of the world’s great research universities. As a member of the university, you can help scientists answer questions that lead to new discoveries.'), textAlign: TextAlign.center,
-                style: Styles().textStyles.getTextStyle("widget.message.large"),
+      Expanded(child:
+        SingleChildScrollView(child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Container(height: 24,),
+            Center(child:
+              FittedBox(fit: BoxFit.scaleDown, child:
+                Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.title', 'Participate in Research'), maxLines: 1, textAlign: TextAlign.center,
+                  style: Styles().textStyles.getTextStyle("widget.title.extra_huge.fat"),
+                ),
               ),
-              Container(height: 32,),
-              RichText(text:
-                TextSpan(children: [
-                  TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.question', 'Would you like to get invitations to become a research participant via the Illinois app?'),
-                    style: Styles().textStyles.getTextStyle("widget.message.large.fat"),
-                  ),
-                  TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.explanation', ' Many studies offer incentives.'),
-                    style: Styles().textStyles.getTextStyle("widget.message.large"),
-                  ),
-                ]),
-                textAlign: TextAlign.center,
-              ),
-              Container(height: 32,),
-            ],),
-          ),
+            ),
+            Container(height: 24,),
+            Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.introduction', 'Illinois is one of the world’s great research universities. As a member of the university, you can help scientists answer questions that lead to new discoveries.'), textAlign: TextAlign.center,
+              style: Styles().textStyles.getTextStyle("widget.message.regular"),
+            ),
+            Container(height: 32,),
+            RichText(text:
+              TextSpan(children: [
+                TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.question', 'Would you like to get invitations to become a research participant via the Illinois app?'),
+                  style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),
+                ),
+                TextSpan(text: '\n'),
+                TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.explanation', ' Many studies offer incentives.').trim(),
+                  style: Styles().textStyles.getTextStyle("widget.message.regular"),
+                ),
+              ]),
+              textAlign: TextAlign.center,
+            ),
+            Container(height: 32,),
+          ],),
         ),
       ),
       Padding(padding: EdgeInsets.only(top: 24), child:
         Column(children: [
           Row(children: [
-            Expanded(child:
-              RoundedButton(
-                label: Localization().getStringEx('dialog.yes.title', 'Yes'),
-                textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                backgroundColor: Styles().colors.white,
-                borderColor: Styles().colors.fillColorSecondaryVariant,
-                onTap: () => _onYes(context),
-              ),
-            ),
-            Container(width: 12,),
             Expanded(child:
               RoundedButton(
                 label: Localization().getStringEx('dialog.no.title', 'No'),
@@ -119,6 +107,17 @@ class _Onboarding2ResearchQuestionnairePromptPanelState extends State<Onboarding
                 backgroundColor: Styles().colors.white,
                 borderColor: Styles().colors.fillColorSecondaryVariant,
                 onTap: () => _onNo(context),
+              ),
+            ),
+            Container(width: 12,),
+            Expanded(child:
+              RoundedButton(
+                label: Localization().getStringEx('dialog.yes.title', 'Yes'),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                backgroundColor: Styles().colors.white,
+                borderColor: Styles().colors.fillColorSecondaryVariant,
+                onTap: () => _onYes(context),
               ),
             ),
           ],),
