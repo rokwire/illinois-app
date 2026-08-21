@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [8.2.8] - 2026-08-21
 ### Changed
 - Decreased chevron icon size in Home / Section browse entries [#5944](https://github.com/rokwire/illinois-app/issues/5944).
 - Populate transportationLinks.json with real data and load it from Content BB instead of from app resources [#5881](https://github.com/rokwire/illinois-app/issues/5944).
