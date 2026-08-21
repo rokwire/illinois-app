@@ -98,7 +98,7 @@ class MTDStopCard extends StatelessWidget {
                   Text(stop?.name ?? '', style: titleStyle)
                 )
               ),
-              Opacity(opacity: 1, child:
+              Opacity(opacity: CollectionUtils.isEmpty(stop?.points) ? 1 : 0, child:
                 Semantics(label: 'Favorite', button: true, child:
                   InkWell(onTap: () => _onTapFavorite(context), child:
                     FavoriteStarIcon(selected: _isFavorite, style: FavoriteIconStyle.Button, padding: favoritePadding,)
