@@ -642,7 +642,7 @@ class _BrowseEntry extends StatelessWidget {
   };
 
   Widget? get _iconWidget =>
-    Styles().images.getImage(_iconsMap['$sectionId.$entryId'] ?? 'chevron-right-bold', excludeFromSemantics: true);
+    Styles().images.getImage(_iconsMap['$sectionId.$entryId'] ?? 'chevron-right', excludeFromSemantics: true);
 
   void _onTap(BuildContext context) {
     process(context, sectionId, entryId);
