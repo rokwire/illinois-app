@@ -1,0 +1,314 @@
+{
+  "directoryCategories" : [
+    "Accessible Transportation & Wayfinding",
+    "Bike & Vehicle Resources",
+    "Maps",
+    "MTD Buses",
+    "Parking",
+    "Regional & Intercampus Travel"
+  ],
+  "screens": {},
+  "resources": [
+    {
+			"id": "dres_transportation_services",
+			"type": "external_link",
+			"categories": ["Accessible Transportation & Wayfinding"],
+			"title": "DRES Transportation Services",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Accessible rides for qualified campus transportation needs."
+			},{
+				"type": "external_link",
+				"content": "https://dres.illinois.edu/support-services/transportation/"
+			}]
+		},{
+			"id": "facility_access_maps",
+			"type": "external_link",
+			"categories": ["Accessible Transportation & Wayfinding"],
+			"title": "Facility Access Maps",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Accessible entrances, routes, elevators, and facilities."
+			},{
+				"type": "external_link",
+				"content": "https://facilityaccessmaps.fs.illinois.edu/"
+			}]
+		},{
+			"id": "mtd_accessibility",
+			"type": "external_link",
+			"categories": ["Accessible Transportation & Wayfinding"],
+			"title": "MTD Accessibility",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Accessible transit options and rider assistance."
+			},{
+				"type": "external_link",
+				"content": "https://mtd.org/riding/accessibility/"
+			}]
+		},{
+			"id": "bike_at_illinois",
+			"type": "external_link",
+			"categories": ["Bike & Vehicle Resources"],
+			"title": "Bike at Illinois",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Campus biking, registration, parking, maps, and resources."
+			},{
+				"type": "external_link",
+				"content": "https://bike.illinois.edu/"
+			}]
+		},{
+			"id": "bike_share_veo",
+			"type": "external_link",
+			"categories": ["Bike & Vehicle Resources"],
+			"title": "Bike Share / Veo",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Partner-operated bike share program serving campus and Champaign-Urbana."
+			},{
+				"type": "external_link",
+				"content": "https://www.veoride.com/"
+			}]
+		},{
+			"id": "campus_bike_center",
+			"type": "external_link",
+			"categories": ["Bike & Vehicle Resources"],
+			"title": "Campus Bike Center",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Hands-on bike maintenance education, rentals, registration, and resources."
+			},{
+				"type": "external_link",
+				"content": "https://campusrec.illinois.edu/facilities/campus-bike-center"
+			}]
+		},{
+			"id": "car_share_zipcar",
+			"type": "external_link",
+			"categories": ["Bike & Vehicle Resources"],
+			"title": "Car Share / Zipcar",
+			"directoryContent": [{
+				"type": "text",
+				"content": "On-demand car sharing with discounted rates for Illinois students and employees."
+			},{
+				"type": "external_link",
+				"content": "https://www.zipcar.com/universities/university-of-illinois-champaign-urbana"
+			}]
+		},{
+			"id": "electric_vehicle_charging",
+			"type": "external_link",
+			"categories": ["Bike & Vehicle Resources"],
+			"title": "Electric Vehicle Charging",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Find spaces in campus parking garages with charging receptacles."
+			},{
+				"type": "external_link",
+				"content": "https://parking.illinois.edu/electric-vehicle-charging"
+			}]
+		},{
+			"id": "facilities_and_services_car_pool",
+			"type": "external_link",
+			"categories": ["Bike & Vehicle Resources"],
+			"title": "Facilities & Services Car Pool",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Vehicle rentals and transportation services for official university use."
+			},{
+				"type": "external_link",
+				"content": "https://fs.illinois.edu/car-pool-and-transportation/"
+			}]
+		},{
+			"id": "motorist_assistance",
+			"type": "external_link",
+			"categories": ["Bike & Vehicle Resources"],
+			"title": "Motorist Assistance",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Help with lockouts, jump starts, flat tires, and fuel."
+			},{
+				"type": "external_link",
+				"content": "https://parking.illinois.edu/motorist-assistance"
+			}]
+		},{
+			"id": "campus_maps",
+			"type": "external_link",
+			"categories": ["Maps"],
+			"title": "Campus Maps",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Core and whole-campus maps for buildings and locations."
+			},{
+				"type": "external_link",
+				"content": "https://fs.illinois.edu/campus-maps-and-building-information/"
+			}]
+		},{
+			"id": "campus_parking_map",
+			"type": "external_link",
+			"categories": ["Maps"],
+			"title": "Campus Parking Map",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Parking locations across campus."
+			},{
+				"type": "external_link",
+				"content": "https://parking.illinois.edu/campus-parking-map"
+			}]
+		},{
+			"id": "mtd_campus_service",
+			"type": "external_link",
+			"categories": ["MTD Buses"],
+			"title": "Campus Service",
+			"directoryContent": [{
+				"type": "text",
+				"content": "MTD service, fares, iStops, and campus rider information."
+			},{
+				"type": "external_link",
+				"content": "https://mtd.org/maps-and-schedules/uiuc-learn-to-ride/campus-service/"
+			}]
+		},{
+			"id": "mtd_maps_and_schedules",
+			"type": "external_link",
+			"categories": ["MTD Buses"],
+			"title": "Maps & Schedules",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Routes, schedules, trip planning, maps, and transit apps."
+			},{
+				"type": "external_link",
+				"content": "https://mtd.org/maps-and-schedules"
+			}]
+		},{
+			"id": "saferides",
+			"type": "external_link",
+			"categories": ["MTD Buses"],
+			"title": "SafeRides",
+			"directoryContent": [{
+				"type": "text",
+				"content": "On-demand nighttime rides when standard bus service is unavailable."
+			},{
+				"type": "external_link",
+				"content": "https://mtd.org/maps-and-schedules/uiuc-learn-to-ride/saferides/"
+			}]
+		},{
+			"id": "parking_campus_parking_map",
+			"type": "external_link",
+			"categories": ["Parking"],
+			"title": "Campus Parking Map",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Parking locations across campus."
+			},{
+				"type": "external_link",
+				"content": "https://parking.illinois.edu/campus-parking-map"
+			}]
+		},{
+			"id": "campus_parking_permits",
+			"type": "external_link",
+			"categories": ["Parking"],
+			"title": "Campus Parking Permits",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Parking permits, eligibility, rates, and options."
+			},{
+				"type": "external_link",
+				"content": "https://parking.illinois.edu/permits"
+			}]
+		},{
+			"id": "event_and_bus_parking",
+			"type": "external_link",
+			"categories": ["Parking"],
+			"title": "Event & Bus Parking",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Parking arrangements for events and buses."
+			},{
+				"type": "external_link",
+				"content": "https://parking.illinois.edu/event-parking"
+			}]
+		},{
+			"id": "football_parking_information",
+			"type": "external_link",
+			"categories": ["Parking"],
+			"title": "Football Parking Information",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Game day parking locations, maps, and policies."
+			},{
+				"type": "external_link",
+				"content": "https://fightingillini.com/sports/2023/6/1/football-parking-information"
+			}]
+		},{
+			"id": "metered_parking_information",
+			"type": "external_link",
+			"categories": ["Parking"],
+			"title": "Metered Parking Information",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Metered and Pay By App parking locations and payment options."
+			},{
+				"type": "external_link",
+				"content": "https://parking.illinois.edu/pay-app-info"
+			}]
+		},{
+			"id": "visitor_and_guest_parking",
+			"type": "external_link",
+			"categories": ["Parking"],
+			"title": "Visitor & Guest Parking",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Parking options and information for campus visitors."
+			},{
+				"type": "external_link",
+				"content": "https://parking.illinois.edu/visitors"
+			}]
+		},{
+			"id": "amtrak",
+			"type": "external_link",
+			"categories": ["Regional & Intercampus Travel"],
+			"title": "Amtrak",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Passenger rail service from Champaign-Urbana to Chicago and beyond."
+			},{
+				"type": "external_link",
+				"content": "https://www.amtrak.com/stations/chm"
+			}]
+		},{
+			"id": "peoria_charter",
+			"type": "external_link",
+			"categories": ["Regional & Intercampus Travel"],
+			"title": "Peoria Charter",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Intercity bus service to Chicago, airports, and other destinations."
+			},{
+				"type": "external_link",
+				"content": "https://peoriacharter.com/"
+			}]
+		},{
+			"id": "ui_ride",
+			"type": "external_link",
+			"categories": ["Regional & Intercampus Travel"],
+			"title": "UI Ride",
+			"directoryContent": [{
+				"type": "text",
+				"content": "University of Illinois intercampus shuttle connecting Urbana-Champaign and Chicago."
+			},{
+				"type": "external_link",
+				"content": "https://fs.illinois.edu/ui-ride/"
+			}]
+		},{
+			"id": "willard_airport",
+			"type": "external_link",
+			"categories": ["Regional & Intercampus Travel"],
+			"title": "Willard Airport",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Commercial air travel serving Champaign-Urbana."
+			},{
+				"type": "external_link",
+				"content": "https://iflycu.com/"
+			}]
+		}
+  ]
+}

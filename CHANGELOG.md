@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Decreased chevron icon size in Home / Section browse entries [#5944](https://github.com/rokwire/illinois-app/issues/5944).
+- Populate transportationLinks.json with real data and load it from Content BB instead of from app resources [#5881](https://github.com/rokwire/illinois-app/issues/5944).
 ### Removed
 - Removed favorite button/star from compound MTD bus stop card [#5880](https://github.com/rokwire/illinois-app/issues/5880).
 
