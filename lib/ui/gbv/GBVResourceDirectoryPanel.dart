@@ -8,6 +8,7 @@ import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
+import 'package:illinois/ui/home/HomeSavedResourcesWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -202,7 +203,7 @@ class GBVResourceWidget extends StatelessWidget {
     this.displayMode = CardDisplayMode.browse
   });
 
-  bool get _canFavorite => true && (favoriteKey != null);
+  bool get _canFavorite => (favoriteKey != null);
 
   @override
   Widget build(BuildContext context) {
@@ -223,7 +224,7 @@ class GBVResourceWidget extends StatelessWidget {
       contentWidget = Padding(padding: _canFavorite ? EdgeInsets.zero : EdgeInsets.only(bottom: 4), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           if (_canFavorite)
-            FavoriteButton(style: FavoriteIconStyle.Button, favorite: GBVResourceFavorite(key: favoriteKey ?? '', category: favoriteCategory, id: resource.id),),
+            FavoriteButton(style: FavoriteIconStyle.Button, favorite: ResourceFavorite(key: favoriteKey ?? '', category: favoriteCategory, id: resource.id),),
           Expanded(child:
             Row(children: [
               Expanded(child:
@@ -248,7 +249,7 @@ class GBVResourceWidget extends StatelessWidget {
     } else {
       contentWidget = Row(children: [
         if (_canFavorite)
-          FavoriteButton(style: FavoriteIconStyle.Button, favorite: GBVResourceFavorite(key: favoriteKey ?? '', category: favoriteCategory, id: resource.id),),
+          FavoriteButton(style: FavoriteIconStyle.Button, favorite: ResourceFavorite(key: favoriteKey ?? '', category: favoriteCategory, id: resource.id),),
         Expanded(child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
             Padding(padding: _canFavorite ? EdgeInsets.zero : EdgeInsets.only(left: 16, top: 16, bottom: 16), child:

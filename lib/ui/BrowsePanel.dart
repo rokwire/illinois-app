@@ -848,7 +848,8 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   static void _onTapMyCampusGuide(BuildContext context) {
-    Analytics().logSelect(target: "My Campus Guide");
+    // TBD
+    Analytics().logSelect(target: "Saved Resources");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [GuideFavorite.favoriteKeyName]); } ));
   }
 

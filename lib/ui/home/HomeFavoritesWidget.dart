@@ -427,30 +427,18 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
     CollectionUtils.isNotEmpty(favoriteIds) ? ListUtils.reversed(ExplorePOI.listFromString(favoriteIds)) : null;
 
   Future<List<Favorite>?> _loadFavoriteGuideItems(LinkedHashSet<String>? favoriteIds) async {
-    List<Favorite>? guideItems;
     if ((favoriteIds != null) && (Guide().contentList != null)) {
-      
-      Map<String, Favorite> favorites = <String, Favorite>{};
-      for (dynamic contentEntry in Guide().contentList!) {
-        String? guideEntryId = Guide().entryId(JsonUtils.mapValue(contentEntry));
-        
-        if ((guideEntryId != null) && favoriteIds.contains(guideEntryId)) {
-          favorites[guideEntryId] = GuideFavorite(id: guideEntryId);
+      List<Favorite> result = <Favorite>[];
+      for (String favoriteId in favoriteIds) {
+        GuideFavorite guideEntryFavorite = GuideFavorite.fromString(favoriteId);
+        if (Guide().entryById(guideEntryFavorite.id) != null) {
+          result.add(guideEntryFavorite);
         }
       }
-
-      if (favorites.isNotEmpty) {
-        List<Favorite> result = <Favorite>[];
-        for (String favoriteId in favoriteIds) {
-          Favorite? favorite = favorites[favoriteId];
-          if (favorite != null) {
-            result.add(favorite);
-          }
-        }
-        guideItems = List.from(result.reversed);
-      }
+      return result.reversed.toList();
+    } else {
+      return null;
     }
-    return guideItems;
   }
 
   Future<List<Favorite>?> _loadFavoriteAppointments(LinkedHashSet<String>? favoriteIds) async =>

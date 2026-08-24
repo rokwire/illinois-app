@@ -1,15 +1,19 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/GBV.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Content.dart';
+import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/academics/AcademicsLinks.dart';
@@ -17,6 +21,8 @@ import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/career/CareerPlanningLinks.dart';
 import 'package:illinois/ui/dining/DiningLinksPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceDirectoryPanel.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
+import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/mtd/TransportationLinks.dart';
@@ -37,16 +43,15 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 
-class HomeSavedGBVResourcesWidget extends StatefulWidget {
+class HomeSavedResourcesWidget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<String>? updateController;
 
   static const String homeCode = 'saved_resources';
-  static const String favoriteKey = 'savedGBVResourcesKeys';
+  static const String favoriteKey = GuideFavorite.favoriteKeyName;
 
-
-  HomeSavedGBVResourcesWidget({super.key, this.favoriteId, this.updateController});
+  HomeSavedResourcesWidget({super.key, this.favoriteId, this.updateController});
 
   static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
@@ -54,12 +59,12 @@ class HomeSavedGBVResourcesWidget extends StatefulWidget {
     );
 
   String get _title => title;
-  static String get title => Localization().getStringEx('widget.home.saved_gbv_resources.title', 'Saved Resources2');
+  static String get title => Localization().getStringEx('widget.home.saved_resources.title', 'Saved Resources');
 
   @override
-  State<StatefulWidget> createState() => _HomeSavedGBVResourcesWidgetState();
+  State<StatefulWidget> createState() => _HomeSavedResourcesWidgetState();
 
-  static void favoriteListener(BuildContext context, GBVResourceFavorite favorite) {
+  static void favoriteListener(BuildContext context, ResourceFavorite favorite) {
     if ((favorite.key == favoriteKey) && (Auth2().prefs?.isFavorite(favorite) == true) && _isWidgetAvailable && !_isWidgetFavorite && (Storage().askForSavedResourcesHomeFavorite != false)) {
       _HomeSavedResourcesFavoriteAlertDialog.show(context).then((bool? result){
         if (result == true) {
@@ -85,9 +90,9 @@ class HomeSavedGBVResourcesWidget extends StatefulWidget {
   static bool get _isWidgetFavorite => (Auth2().prefs?.isFavorite(HomeFavorite(homeCode)) == true);
 }
 
-class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidget> with NotificationsListener {
+class _HomeSavedResourcesWidgetState extends State<HomeSavedResourcesWidget> with NotificationsListener {
 
-  LinkedHashMap<GBVResourceFavorite, GBVResource> _resources = LinkedHashMap<GBVResourceFavorite, GBVResource>();
+  List<ResourceFavorite> _resources = <ResourceFavorite>[];
   Map<String, GBVData> _gbvDataMap = <String, GBVData>{};
   FavoriteContentActivity _contentActivity = FavoriteContentActivity.none;
 
@@ -193,7 +198,7 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
     if (Connectivity().isOffline) {
       return HomeMessageCard(
         title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
-        message: Localization().getStringEx("widget.home.saved_gbv_resources.text.offline.description", "Saved resources are not available while offline."),
+        message: Localization().getStringEx("widget.home.saved_resources.text.offline.description", "Saved resources are not available while offline."),
       );
     }
     else if (_contentActivity.showsProgress) {
@@ -214,19 +219,13 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
     Widget? contentWidget;
     if (1 < _resources.length) {
       List<Widget> pages = <Widget>[];
-      _resources.forEach((GBVResourceFavorite favorite, GBVResource resource) {
-        String contentKey = "${favorite.category}-${favorite.id}";
+      for (ResourceFavorite resource in _resources) {
         pages.add(Padding(
-          key: _contentKeys[contentKey] ??= GlobalKey(),
+          key: _contentKeys[resource.favoriteId ?? ''] ??= GlobalKey(),
           padding: HomeCard.defaultPageMargin,
-          child: GBVResourceWidget(resource,
-            gbvData: _gbvDataMap[favorite.category],
-            favoriteKey: HomeSavedGBVResourcesWidget.favoriteKey,
-            favoriteCategory: favorite.category,
-            displayMode: CardDisplayMode.home,
-          )
-        ));
-      });
+          child: _resourceWidget(resource))
+        );
+      }
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
@@ -244,22 +243,35 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
         ),
       );
     } else if (_resources.length == 1) {
-      GBVResourceFavorite favorite = _resources.keys.first;
-      GBVResource? resource = _resources[favorite];
-      contentWidget = (resource != null) ? Padding(padding: HomeCard.defaultSingleCardMargin, child:
-        GBVResourceWidget(resource,
-          gbvData: _gbvDataMap[favorite.category],
-          favoriteKey: HomeSavedGBVResourcesWidget.favoriteKey,
-          favoriteCategory: favorite.category,
-          displayMode: CardDisplayMode.home,
-        )
-      ) : null;
+      contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
+        _resourceWidget(_resources.first)
+      );
     }
 
     return (contentWidget != null) ? Column(children: <Widget>[
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => _resources.length,),
     ]) : Container();
+  }
+
+  Widget? _resourceWidget(ResourceFavorite favorite) {
+    String? category = favorite.category;
+    if (category != null) {
+      final GBVData? gbvData = _gbvDataMap[category];
+      final GBVResource? gbvResource = gbvData?.resources.firstWhereOrNull((resource) => (resource.id == favorite.id));
+      return (gbvResource != null) ? GBVResourceWidget(gbvResource,
+        gbvData: gbvData,
+        favoriteKey: HomeSavedResourcesWidget.favoriteKey,
+        favoriteCategory: favorite.category,
+        displayMode: CardDisplayMode.home,
+      ) : null;
+    } else {
+      return GuideResourceWidget(
+        guideEntryId: favorite.id,
+        favoriteKey: HomeSavedResourcesWidget.favoriteKey,
+        displayMode: CardDisplayMode.home,
+      );
+    }
   }
 
   double get _pageHeight {
@@ -301,33 +313,39 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
 
   Future<_GBVResourcesContent> _loadContent(FavoriteContentActivity contentActivity) async {
     final Map<String, GBVData> gbvDataMap = <String, GBVData>{};
-    final LinkedHashMap<GBVResourceFavorite, GBVResource> resources = LinkedHashMap<GBVResourceFavorite, GBVResource>();
-    final LinkedHashSet<String>? favoriteIds = Auth2().prefs?.getFavorites(HomeSavedGBVResourcesWidget.favoriteKey);
+    final List<ResourceFavorite> resources = <ResourceFavorite>[];
+    final LinkedHashSet<String>? favoriteIds = Auth2().prefs?.getFavorites(HomeSavedResourcesWidget.favoriteKey);
     if (favoriteIds != null) {
-      List<GBVResourceFavorite> favorites = <GBVResourceFavorite>[];
       List<Future<dynamic>> futures = <Future<dynamic>>[];
-      Map<String, int> futuresMap = <String, int>{};
+      Map<String, int> gbvFuturesMap = <String, int>{};
 
       // 1. Build favorites list and load GBV data futures
-      for (String favoriteId in favoriteIds.toList().reversed) {
-        GBVResourceFavorite favorite = GBVResourceFavorite.fromString(favoriteId, key: HomeSavedGBVResourcesWidget.favoriteKey);
+      List<ResourceFavorite> favorites = <ResourceFavorite>[];
+      for (String favoriteId in favoriteIds) {
+        ResourceFavorite favorite = ResourceFavorite.fromString(favoriteId, key: HomeSavedResourcesWidget.favoriteKey);
+        favorites.add(favorite);
+
         String? category = favorite.category;
         if (category != null) {
-          favorites.add(favorite);
-          int? futureIndex = futuresMap[category];
+          int? futureIndex = gbvFuturesMap[category];
           if ((futureIndex == null) && ((FavoriteContentActivity.update.index < contentActivity.index) || (_gbvDataMap.containsKey(category) != true))) {
-            futuresMap[category] = futures.length;
+            gbvFuturesMap[category] = futures.length;
             futures.add(favorite.isContentCategory ? Content().loadContentItem(category) : _AppBundleUtils.loadJson(category));
           }
         }
+      }
+
+      int guideFutureIndex = (contentActivity == FavoriteContentActivity.refresh) ? futures.length : -1;
+      if (guideFutureIndex >= 0) {
+        futures.add(Guide().refresh());
       }
 
       // 2. Load GBV data
       List<dynamic> results = futures.isNotEmpty ? await Future.wait(futures) : <dynamic>[];
 
       // 3. Fill gbvDataMap
-      for (String category in futuresMap.keys) {
-        int? index = futuresMap[category];
+      for (String category in gbvFuturesMap.keys) {
+        int? index = gbvFuturesMap[category];
         dynamic gbvJson = ((index != null) && (0 <= index) && (index < results.length)) ? results[index] : null;
         GBVData? gbvData = GBVData.fromJson(JsonUtils.mapValue(gbvJson));
         if (gbvData != null) {
@@ -336,12 +354,19 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
       }
 
       // 4. Fill resources
-      for (GBVResourceFavorite favorite in favorites) {
+      for (ResourceFavorite favorite in favorites.reversed) {
         String? category = favorite.category;
-        GBVData? categoryData = gbvDataMap[category] ?? _gbvDataMap[category];
-        GBVResource? gbvResource = categoryData?.resources.firstWhereOrNull((resource) => (resource.id == favorite.id));
-        if (gbvResource != null) {
-          resources[favorite] = gbvResource;
+        if (category != null) {
+          final GBVData? categoryData = gbvDataMap[category] ?? _gbvDataMap[category];
+          final GBVResource? gbvResource = categoryData?.resources.firstWhereOrNull((resource) => (resource.id == favorite.id));
+          if (gbvResource != null) {
+            resources.add(favorite);
+          }
+        } else {
+          final Map<String, dynamic>? guideEntry = Guide().entryById(favorite.id);
+          if (guideEntry != null) {
+            resources.add(favorite);
+          }
         }
       }
     }
@@ -352,7 +377,7 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
     if ((_contentActivity.index < contentActivity.index) && Connectivity().isNotOffline && mounted) {
 
       int currentPage = _getCurrentPage() ?? -1;
-      GBVResourceFavorite? currentFavorite = ((0 <= currentPage) && (currentPage < _resources.length)) ? _resources.keys.toList()[currentPage] : null;
+      ResourceFavorite? currentFavorite = ((0 <= currentPage) && (currentPage < _resources.length)) ? _resources[currentPage] : null;
 
       setStateIfMounted(() {
         _contentActivity = contentActivity;
@@ -378,7 +403,7 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
           //_contentKeys.clear();
         });
 
-        int favoriteIndex = (resourcesUpdated && (currentFavorite != null) && result.resources.containsKey(currentFavorite)) ? result.resources.keys.toList().indexOf(currentFavorite) : -1;
+        int favoriteIndex = (resourcesUpdated && (currentFavorite != null)) ? result.resources.indexOf(currentFavorite) : -1;
         int newPage = (favoriteIndex >= 0) ? favoriteIndex : currentPage;
         if (newPage >= 0) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -436,6 +461,8 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
   // Empty Content
 
   static const String localScheme = 'local';
+  static const String localUniversityLivingHost = 'university_living';
+  static const String localUniversityLivingUrlMacro = '{{local_university_living_url}}';
   static const String localAcademicLinksHost = 'academic_links';
   static const String localAcademicLinksUrlMacro = '{{local_academics_links_url}}';
   static const String localCareerLinksHost = 'career_links';
@@ -451,7 +478,8 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
   static const String privacyUrlMacro = '{{privacy_url}}';
 
   String get _emptyContentMessageHtml =>
-    Localization().getStringEx("widget.home.saved_gbv_resources.text.empty.description", "Tap the \u2606 on items in <a href='$localAcademicLinksUrlMacro'><b>Academic Links</b></a>, <a href='$localCareerLinksUrlMacro'><b>Career Planning Links</b></a>, <a href='$localDiningLinksUrlMacro'><b>Campus Dining</b></a>, <a href='$localTransportationLinksUrlMacro'><b>Transportation Dining</b></a> or <a href='localWellnessLinksUrlMacro'><b>24/7 Hotlines & Links</b></a> for quick access here. (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 3.)")
+    Localization().getStringEx("widget.home.saved_resources.text.empty.description", "Tap the \u2606 on items in <a href='$localUniversityLivingUrlMacro'><b>University Living</b></a>, <a href='$localAcademicLinksUrlMacro'><b>Academic Links</b></a>, <a href='$localCareerLinksUrlMacro'><b>Career Planning Links</b></a>, <a href='$localDiningLinksUrlMacro'><b>Campus Dining</b></a>, <a href='$localTransportationLinksUrlMacro'><b>Transportation Dining</b></a> or <a href='localWellnessLinksUrlMacro'><b>24/7 Hotlines & Links</b></a> for quick access here. (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 3.)")
+      .replaceAll(localUniversityLivingUrlMacro, '$localScheme://$localUniversityLivingHost')
       .replaceAll(localAcademicLinksUrlMacro, '$localScheme://$localAcademicLinksHost')
       .replaceAll(localCareerLinksUrlMacro, '$localScheme://$localCareerLinksHost')
       .replaceAll(localDiningLinksUrlMacro, '$localScheme://$localDiningLinksHost')
@@ -462,7 +490,10 @@ class _HomeSavedGBVResourcesWidgetState extends State<HomeSavedGBVResourcesWidge
   void _onTapEmptyContentMessageLink(String? url) {
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;
     if (uri?.scheme == localScheme) {
-      if (uri?.host == localAcademicLinksHost) {
+      if (uri?.host == localUniversityLivingHost) {
+        Analytics().logSelect(target: 'University Living', source: runtimeType.toString());
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
+      } else if (uri?.host == localAcademicLinksHost) {
         Analytics().logSelect(target: 'Academic Links', source: runtimeType.toString());
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicLinksPanel()));
       } else if (uri?.host == localCareerLinksHost) {
@@ -521,7 +552,7 @@ class _HomeSavedResourcesFavoriteAlertDialogState extends State<_HomeSavedResour
                     SizedBox(width: 16,),
                     Expanded(child:
                       CompactRoundedButton(
-                        label: Localization().getStringEx('dialog.Yes.title', 'Yes'),
+                        label: Localization().getStringEx('dialog.yes.title', 'Yes'),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                         onTap: () => _onConfirm(true),),
                     ),
@@ -557,8 +588,8 @@ class _HomeSavedResourcesFavoriteAlertDialogState extends State<_HomeSavedResour
     Navigator.of(context).pop(selection);
   }
 
-  String get _promptText => Localization().getStringEx('', 'Item saved. Add your Saved Resources to your Home Favorites?');
-  String get _dontShowText => Localization().getStringEx('', "Don't show me this again.");
+  String get _promptText => Localization().getStringEx('widget.home.saved_gbv_resources.favorites.prompt', 'Item saved. Add your Saved Resources to your Home Favorites?');
+  String get _dontShowText => Localization().getStringEx('widget.home.saved_gbv_resources.favorites.dont_show_again', "Don't show me this again.");
 
   TextStyle? get _textStyle => Styles().textStyles.getTextStyle('widget.detail.regular');
 
@@ -582,15 +613,187 @@ class _HomeSavedResourcesFavoriteButton extends HomeFavoriteButton {
   bool? get isFavorite => (super.isFavorite != false);
 }
 
+class GuideResourceWidget extends StatelessWidget {
+  final String? favoriteKey;
+  final String? guideEntryId;
+  final CardDisplayMode displayMode;
+
+  GuideResourceWidget({super.key, this.favoriteKey, this.guideEntryId, this.displayMode = CardDisplayMode.browse});
+
+  bool get _canFavorite => (favoriteKey != null);
+
+  @override
+  Widget build(BuildContext context) {
+    final Map<String, dynamic>? guideEntry = Guide().entryById(guideEntryId);
+
+    final int titleMaxLines = 1;
+    String titleHtml = Guide().entryListTitle(guideEntry) ?? '';
+    TextStyle? titleTextStyle = Styles().textStyles.getTextStyle("widget.button.title.medium.fat");
+    double titleMaxTextHeight = MediaQuery.of(context).textScaler.scale(titleTextStyle?.fontSize ?? 0) * 1.5 * titleMaxLines;
+    Widget titleWidget = StringUtils.containsHtmlTags(titleHtml) ?
+      Container(constraints: BoxConstraints(maxHeight: titleMaxTextHeight), child:
+        HtmlWidget('<div>$titleHtml</div>',
+          textStyle: titleTextStyle,
+          customStylesBuilder: (element) => _htmlContentStyles[element.localName],
+          onTapUrl: (String url) => _onTapHtmlLink(context, url),
+        )
+      ) : Text(titleHtml, style: titleTextStyle, maxLines: titleMaxLines, overflow: TextOverflow.ellipsis,);
+
+    Widget contentWidget;
+    String descriptionHtml = Guide().entryListDescription(guideEntry) ?? '';
+    if (descriptionHtml.isNotEmpty) {
+
+      final int descriptionMaxLines = 3;
+      TextStyle? descriptionTextStyle = Styles().textStyles.getTextStyle("widget.detail.small");
+      double descriptionMaxTextHeight = MediaQuery.of(context).textScaler.scale(descriptionTextStyle?.fontSize ?? 0) * 1.5 * descriptionMaxLines;
+      Widget descriptionWidget = StringUtils.containsHtmlTags(descriptionHtml) ?
+        Container(constraints: BoxConstraints(maxHeight: descriptionMaxTextHeight), child:
+          HtmlWidget('<div>$descriptionHtml</div>',
+            textStyle: descriptionTextStyle,
+            customStylesBuilder: (element) => _htmlContentStyles[element.localName],
+            onTapUrl: (String url) => _onTapHtmlLink(context, url),
+          )
+        ) :
+        Text(descriptionHtml, style: descriptionTextStyle, maxLines: descriptionMaxLines, overflow: TextOverflow.ellipsis,);
+
+      double favTitleOffsetY = max(FavoriteStarIcon.defaultButtonSize - MediaQuery.of(context).textScaler.scale(titleTextStyle?.fontSize ?? 0) * 1.5, 0) / 2;
+
+      contentWidget = Padding(padding: _canFavorite ? EdgeInsets.zero : EdgeInsets.only(bottom: 4), child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          if (_canFavorite)
+            FavoriteButton(style: FavoriteIconStyle.Button, favorite: ResourceFavorite(key: favoriteKey ?? '', id: guideEntryId),),
+          Expanded(child:
+            Row(children: [
+              Expanded(child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                  Padding(padding: _canFavorite ? EdgeInsets.only(top: favTitleOffsetY) : EdgeInsets.only(left: 16, top: 16), child:
+                    titleWidget
+                  ),
+                  Padding(padding: EdgeInsets.only(left: _canFavorite ? 0 : 16, top: 12, bottom: 12), child:
+                    descriptionWidget
+                  ),
+                ])
+              ),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
+                Styles().images.getImage('chevron-right', width: 12, height: 12, fit: BoxFit.contain) ?? Container()
+              )
+            ]),
+          )
+        ]),
+      );
+    } else {
+      contentWidget = Row(children: [
+        if (_canFavorite)
+          FavoriteButton(style: FavoriteIconStyle.Button, favorite: ResourceFavorite(key: favoriteKey ?? '', id: guideEntryId),),
+        Expanded(child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+            Padding(padding: _canFavorite ? EdgeInsets.zero : EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
+              titleWidget
+            ),
+          ])
+        ),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
+          Styles().images.getImage('chevron-right', width: 12, height: 12, fit: BoxFit.contain) ?? Container()
+        )
+      ]);
+    }
+
+    return GestureDetector(onTap: () => _onTapGuideEntry(context), child:
+      Container(decoration: HomeCard.boxDecoration, child:
+        ClipRRect(borderRadius: BorderRadius.all(HomeCard.radius), child:
+          contentWidget
+        )
+      )
+    );
+  }
+
+  void _onTapGuideEntry(BuildContext context) {
+    Analytics().logSelect(target: "Guide Entry: $guideEntryId");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(
+      guideEntryId: guideEntryId,
+      favoriteKey: favoriteKey,
+    )));
+  }
+
+  Map<String, Map<String, String>> get _htmlContentStyles => {
+    'a' : _htmlLinkStyle,
+    'div' : _htmlLimitTextStyle,
+  };
+
+  Map<String, String> get _htmlLimitTextStyle => <String, String>{
+    'line-clamp': '3',
+    //'text-overflow': 'ellipsis',
+  };
+
+  Map<String, String> get _htmlLinkStyle => <String, String>{
+    // 'color': _htmlLinkColor,
+    'text-decoration-color': _htmlLinkColor,
+  };
+
+  String get _htmlLinkColor =>
+    ColorUtils.toHex(Styles().colors.fillColorSecondary);
+
+  bool _onTapHtmlLink(BuildContext context, String url)  {
+    Analytics().logSelect(target: 'Link: $url');
+    if (DeepLink().isAppUrl(url)) {
+      DeepLink().launchUrl(url);
+    } else {
+      AppLaunchUrl.launchExternal(url: url);
+    }
+    return true;
+  }
+}
+
+class ResourceFavorite extends Favorite {
+  final String key;
+  final String? category;
+  final String? id;
+
+  ResourceFavorite({ required this.key, this.category, this.id });
+
+  factory ResourceFavorite.fromString(String value, { required String key}) {
+    List<String> items = value.split(_favoriteSeparator);
+    if (items.length > 1) {
+      return ResourceFavorite(key: key, category: items.first, id: items.second);
+    } else if (items.length == 1) {
+      return ResourceFavorite(key: key, id: items.first);
+    } else {
+      return ResourceFavorite(key: key);
+    }
+  }
+
+  bool get isContentAsset {
+    List<String>? pathItems = category?.split(_directorySeparator);
+    if ((pathItems != null) && (pathItems.length > 1)) { // has directory & base name
+      List<String> basenameItems = pathItems.last.split(_extensionSeparator);
+      return (basenameItems.length > 1); // has file name & extension
+    } else {
+      return false;
+    }
+  }
+
+  bool get isContentCategory => (category != null) && (category?.isNotEmpty == true) && (isContentAsset == false);
+
+  bool operator == (o) => o is ResourceFavorite && o.id == id && o.category == category && o.key == key;
+  int get hashCode => (id?.hashCode ?? 0) ^ (category?.hashCode ?? 0) ^ (key.hashCode);
+
+  @override String get favoriteKey => key;
+  @override String? get favoriteId => ((category != null) && (id != null)) ? '$category$_favoriteSeparator$id' : id;
+
+  static const String _favoriteSeparator = ':';
+  static const String _directorySeparator = '/';
+  static const String _extensionSeparator = '.';
+}
+
 class _GBVResourcesContent {
-  final LinkedHashMap<GBVResourceFavorite, GBVResource> resources;
+  final List<ResourceFavorite> resources;
   final Map<String, GBVData> gbvDataMap;
 
   _GBVResourcesContent({required this.resources, required this.gbvDataMap });
 
   // ignore: unused_element
   factory _GBVResourcesContent.empty() => _GBVResourcesContent(
-    resources:  LinkedHashMap<GBVResourceFavorite, GBVResource>(),
+    resources:  <ResourceFavorite>[],
     gbvDataMap: <String, GBVData>{},
   );
 }

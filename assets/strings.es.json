@@ -4021,8 +4021,11 @@
     "widget.home.safety.safewalk_request.title": "SafeWalks",
     "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
 
-    "widget.home.saved_gbv_resources.title": "Saved Resources2",
+    "widget.home.saved_resources.title": "Saved Resources",
     "widget.home.saved_gbv_resources.text.offline.description": "Saved resources are not available while offline.",
+    "widget.home.saved_gbv_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_university_living_url}}'><b>University Living</b></a>, <a href='{{local_academics_links_url}}'><b>Academic Links</b></a>, <a href='{{local_career_links_url}}'><b>Career Planning Links</b></a>, <a href='{{local_dining_links_url}}'><b>Campus Dining</b></a>, <a href='{{local_transportation_links_url}}'><b>Transportation Dining</b></a> or <a href='{{local_wellness_links_url}}'><b>24/7 Hotlines & Links</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 3.)",
+    "widget.home.saved_gbv_resources.favorites.prompt": "Item saved. Add your Saved Resources to your Home Favorites?",
+    "widget.home.saved_gbv_resources.favorites.dont_show_again": "Don't show me this again.",
 
     "widget.home.safer.label.title": "Acceso a Edificios",
     "widget.home.safer.text.empty.description": "Toca la \u2606 en los elementos de Acceso a Edificios para encontrarlos rápidamente aquí.",

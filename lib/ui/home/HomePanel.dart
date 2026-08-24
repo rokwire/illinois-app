@@ -41,7 +41,7 @@ import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeResearchProjectsWidget.dart';
 import 'package:illinois/ui/home/HomeSafeWalkRequestWidget.dart';
-import 'package:illinois/ui/home/HomeSavedGBVResourcesWidget.dart';
+import 'package:illinois/ui/home/HomeSavedResourcesWidget.dart';
 import 'package:illinois/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeRadioWidget.dart';
@@ -315,6 +315,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
       }
     }
 
+    // Served by HomeSavedResourcesWidget
     else if (code == 'my_campus_guide') {
       if (title) {
         return HomeFavoritesWidget.titleFromKey(favoriteKey: GuideFavorite.favoriteKeyName);
@@ -343,13 +344,13 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeSafetyResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == HomeSavedGBVResourcesWidget.homeCode) {
+    else if (code == HomeSavedResourcesWidget.homeCode) {
       if (title) {
-        return HomeSavedGBVResourcesWidget.title;
+        return HomeSavedResourcesWidget.title;
       } else if (handle) {
-        return HomeSavedGBVResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeSavedResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeSavedGBVResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+        return HomeSavedResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
 
