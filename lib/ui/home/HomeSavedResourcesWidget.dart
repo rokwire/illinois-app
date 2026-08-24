@@ -884,8 +884,8 @@ class _HomeSavedResourcesFavoriteAlertDialogState extends State<_HomeSavedResour
             Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 24), child:
               Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
                 InkWell(onTap: _onDontShow, child:
-                  Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images.getImage(_dontShow ? "check-circle-filled" : "check-circle-outline-gray"),
+                  Padding(padding: EdgeInsets.all(_dontShow ? 16 : 18), child:
+                    Styles().images.getImage(_dontShow ? "check-circle-filled" : "check-circle-outline-gray", size: _dontShow ? 24 : 20),
                   ),
                 ),
                 Text(_dontShowText, style: _textStyle, textAlign: TextAlign.left, )
@@ -899,7 +899,7 @@ class _HomeSavedResourcesFavoriteAlertDialogState extends State<_HomeSavedResour
 
   void _onDontShow() {
     setState(() {
-      Storage().askForSavedResourcesHomeFavorite = !_dontShow;
+      Storage().askForSavedResourcesHomeFavorite = _dontShow ? true : false;
     });
   }
 
