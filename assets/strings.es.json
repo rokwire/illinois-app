@@ -944,9 +944,9 @@
     "panel.onboarding2.privacy.level.description_long.5.title": "Según tus elecciones, tus datos se almacenarán de manera segura y se compartirán para activar todas las funciones de la aplicación {{app_title}}.",
     "panel.onboarding2.privacy.level.button.save_privacy.title": "Guardar el Nivel de Privacidad",
 
-    "panel.onboarding2.privacy_statement.label.title": "Controlar tu Privacidad de Datos",
+    "panel.onboarding2.privacy_statement.label.title": "Controla tus Datos y Privacidad",
     "panel.onboarding2.privacy_statement.label.title2": "",
-    "panel.onboarding2.privacy_statement.label.description": "Elige qué información quieres almacenar y compartir para obtener un nivel de privacidad recomendado.",
+    "panel.onboarding2.privacy_statement.label.description": "Configura tu nivel de privacidad eligiendo qué información quieres almacenar y compartir.",
     "panel.onboarding2.privacy_statement.label.description1": "Favor de leer el ",
     "panel.onboarding2.privacy_statement.label.description2": "Aviso de Privacidad ",
     "panel.onboarding2.privacy_statement.label.description3": ". Se supone que tu uso continuo de la aplicación implica que lo has leído y lo has aceptado.",

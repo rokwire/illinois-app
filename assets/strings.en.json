@@ -945,9 +945,9 @@
     "panel.onboarding2.privacy.level.description_long.5.title": "Based on your choices, your data will be securely stored and shared to enable the full features of the {{app_title}} app.",
     "panel.onboarding2.privacy.level.button.save_privacy.title": "Save Privacy Level",
 
-    "panel.onboarding2.privacy_statement.label.title": "Control Your Data Privacy",
+    "panel.onboarding2.privacy_statement.label.title": "Control Your Data & Privacy",
     "panel.onboarding2.privacy_statement.label.title2": "",
-    "panel.onboarding2.privacy_statement.label.description": "Choose what information you want to store and share to get a recommended privacy level.",
+    "panel.onboarding2.privacy_statement.label.description": "Set your privacy level by choosing what information you want to store and share.",
     "panel.onboarding2.privacy_statement.label.description1": "Please read the ",
     "panel.onboarding2.privacy_statement.label.description2": "Privacy Notice ",
     "panel.onboarding2.privacy_statement.label.description3": ". Your continued use of the app assumes that you have read and agree with it.",

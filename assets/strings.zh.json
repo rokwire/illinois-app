@@ -942,9 +942,9 @@
 	"panel.onboarding2.privacy.level.description_long.5.title": "根据您的选择，您的数据将会被安全地储存且分享，以启用{{app_title}}应用程序的全部功能。",
 	"panel.onboarding2.privacy.level.button.save_privacy.title": "储存隐私级别",
 
-	"panel.onboarding2.privacy_statement.label.title": "控制您的数据隐私",
+	"panel.onboarding2.privacy_statement.label.title": "掌控您的数据与隐私",
 	"panel.onboarding2.privacy_statement.label.title2": "",
-	"panel.onboarding2.privacy_statement.label.description": "选择您希望储存与分享的信息来查看适合您的隐私级别。",
+	"panel.onboarding2.privacy_statement.label.description": "选择您希望储存与分享的信息，以设定您的隐私级别。",
 	"panel.onboarding2.privacy_statement.label.description1": "请阅读 ",
 	"panel.onboarding2.privacy_statement.label.description2": "隐私声明 ",
 	"panel.onboarding2.privacy_statement.label.description3": ". 继续使用即表示您已阅读并同意此声明。",
