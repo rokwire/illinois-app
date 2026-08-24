@@ -1862,7 +1862,7 @@
 	"panel.saved.label.laundry": "我的洗衣房",
 	"panel.saved.label.mtd_stops": "我的巴士站",
 	"panel.saved.label.my_locations": "我的位置",
-	"panel.saved.label.campus_guide": "節省的資源",
+	"panel.saved.label.campus_guide": "My University Living",
 	"panel.saved.label.appointments": "我的MyMcKinley預約",
 
 	"panel.saved.button.all.title": "查看全部",
@@ -4140,7 +4140,7 @@
 	"widget.home.favorites.title.laundry": "我的洗衣房",
 	"widget.home.favorites.title.mtd_stops": "我的巴士站",
 	"widget.home.favorites.title.locations": "我的位置",
-	"widget.home.favorites.title.campus_guide": "節省的資源",
+	"widget.home.favorites.title.campus_guide": "My University Living",
 	"widget.home.favorites.title.appointments": "我的MyMcKinley预约",
 
 	"widget.home.favorites.message.offline.events": "此功能离线时无法使用。",
@@ -4151,7 +4151,7 @@
 	"widget.home.favorites.message.offline.laundry": "此功能离线时无法使用。",
 	"widget.home.favorites.message.offline.mtd_stops": "此功能离线时无法使用。",
 	"widget.home.favorites.message.offline.locations": "離線時無法使用「我的位置」功能。",
-	"widget.home.favorites.message.offline.campus_guide": "離線時無法使用已儲存的資源。",
+	"widget.home.favorites.message.offline.campus_guide": "My University Living is not available while offline.",
 	"widget.home.favorites.message.offline.appointments": "此功能离线时无法使用。",
 
 	"widget.home.favorites.message.empty.events": "点击 <a href='{{local_url}}'><b>活动</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 3。）",

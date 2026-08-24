@@ -1877,7 +1877,7 @@
     "panel.saved.label.laundry": "Mi Lavandería",
     "panel.saved.label.mtd_stops": "Mis Paradas de Autobús",
     "panel.saved.label.my_locations": "Mis ubicaciones",
-    "panel.saved.label.campus_guide": "Recursos guardados",
+    "panel.saved.label.campus_guide": "My University Living",
     "panel.saved.label.appointments": "Mis Citas en MyMcKinley",
 
     "panel.saved.button.all.title": "Ver todo",
@@ -4166,7 +4166,7 @@
     "widget.home.favorites.title.laundry": "Mi Colada",
     "widget.home.favorites.title.mtd_stops": "Mis paradas de autobús",
     "widget.home.favorites.title.locations": "Mis ubicaciones",
-    "widget.home.favorites.title.campus_guide": "Recursos guardados",
+    "widget.home.favorites.title.campus_guide": "My University Living",
     "widget.home.favorites.title.appointments": "Mis citas de MyMcKinley",
 
     "widget.home.favorites.message.offline.events": "Mis Eventos no están disponibles sin conexión.",
@@ -4177,7 +4177,7 @@
     "widget.home.favorites.message.offline.laundry": "Mi Lavandería no está disponible sin conexión.",
     "widget.home.favorites.message.offline.mtd_stops": "Mis paradas de autobús no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.locations": "Mis ubicaciones no está disponible sin conexión.",
-    "widget.home.favorites.message.offline.campus_guide": "Los recursos guardados no están disponibles sin conexión",
+    "widget.home.favorites.message.offline.campus_guide": "My University Living is not available while offline",
     "widget.home.favorites.message.offline.appointments": "Mis citas de MyMcKinley no están disponibles sin conexión.",
 
     "widget.home.favorites.message.empty.events": "Toca la \u2606 en los elementos de <a href='{{local_url}}'><b>Eventos</b></a> para acceder rápidamente aquí. (<a href='{{privacy_url}}'>Su nivel de privacidad</a> debe ser al menos 3.)",

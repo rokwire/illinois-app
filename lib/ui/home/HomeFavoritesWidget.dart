@@ -73,7 +73,7 @@ class HomeFavoritesWidget extends StatefulWidget {
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.laundry', 'My Laundry');
       case MTDStop.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.mtd_stops', 'My Bus Stops');
       case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.my_locations', 'My Locations');
-      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.campus_guide', 'Saved Resources');
+      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.campus_guide', 'My University Living');
       case Appointment.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.appointments', 'MyMcKinley Appointments');
     }
     return null;
@@ -501,7 +501,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.laundry', 'My Laundry are not available while offline.');
       case MTDStop.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.mtd_stops', 'My Bus Stops are not available while offline.');
       case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.locations', 'My Locations are not available while offline.');
-      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.campus_guide', 'Saved Resources are not available while offline.');
+      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.campus_guide', 'My University Living are not available while offline.');
       case Appointment.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.appointments', 'MyMcKinley Appointments are not available while offline.');
     }
     return null;

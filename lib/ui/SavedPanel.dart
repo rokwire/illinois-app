@@ -369,7 +369,7 @@ class _SavedPanelState extends State<SavedPanel> with NotificationsListener {
       case LaundryRoom.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
       case MTDStop.favoriteKeyName:       return Localization().getStringEx('panel.saved.label.mtd_stops', 'My Bus Stops');
       case ExplorePOI.favoriteKeyName:    return Localization().getStringEx('panel.saved.label.my_locations', 'My Locations');
-      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'Saved Resources');
+      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My University Living');
       case Appointment.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.appointments', 'MyMcKinley Appointments');
     }
     return null;
