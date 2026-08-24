@@ -919,8 +919,7 @@
     "panel.onboarding2.privacy.store_activity.learn_more.location_services.content3": "Tus datos se almacenan de manera segura en tu dispositivo móvil y en nuestros servidores seguros. Tu información almacenada no se proporciona ni se vende a terceros. La información de actividad de la aplicación se asocia con tu información personal solo cuando estás registrado/a.",
     "panel.onboarding2.privacy.store_activity.learn_more.title4": "Optar por no participar",
     "panel.onboarding2.privacy.store_activity.learn_more.location_services.content4": "El Centro de Privacidad te permite optar por no participar en la recopilación de información en cualquier momento y ofrece la opción de eliminar tus datos.",
-    "panel.onboarding2.privacy.store_activity.label.title": "¿Quieres almacenar la actividad de tu aplicación e información personal?",
-    "panel.onboarding2.privacy.store_activity.label.description": "Esto incluye el contenido que visualizas, los equipos que sigues, y la información de inicio de sesión. ",
+    "panel.onboarding2.privacy.store_activity.label.title": "¿Recordar tu información de inicio de sesión y tus favoritos?",
     "panel.onboarding2.privacy.store_activity.button.toggle.title": "Almacenar mi actividad de la aplicación y mis preferencias.",
     "panel.onboarding2.privacy.store_activity.button.untoggle.title": "No almacenar mi actividad ni mi información en la aplicación.",
 

@@ -917,8 +917,7 @@
 	"panel.onboarding2.privacy.store_activity.learn_more.location_services.content3": "您的数据将被安全地存放在您的行动装置与我们的服务器。您储存的信息不会与任何第三方分享。只有在您登入的时，您的应用程序活动纪录才与您的个人信息链接。",
 	"panel.onboarding2.privacy.store_activity.learn_more.title4": "退出",
 	"panel.onboarding2.privacy.store_activity.learn_more.location_services.content4": "在隐私设定中心，您可以随时取消数据搜集的功能，并提供删除讯息的选项。",
-	"panel.onboarding2.privacy.store_activity.label.title": "要储存您的应用程序活动与个人资料吗？",
-	"panel.onboarding2.privacy.store_activity.label.description": "这包含了你阅览的内容、追踪的体育队伍、与登入信息。",
+	"panel.onboarding2.privacy.store_activity.label.title": "要记住您的登录信息和收藏内容吗？",
 	"panel.onboarding2.privacy.store_activity.button.toggle.title": "储存我的应用程序使用活动与偏好。",
 	"panel.onboarding2.privacy.store_activity.button.untoggle.title": "不要储存我的应用程序使用活动与偏好。",
 
