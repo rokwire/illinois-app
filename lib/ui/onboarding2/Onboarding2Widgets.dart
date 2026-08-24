@@ -1,5 +1,5 @@
 
-import 'dart:math' show pi;
+import 'dart:math' show pi, cos, sin;
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -315,7 +315,7 @@ class Onboarding2PrivacyProgressBadge extends StatelessWidget {
     return SizedBox(height: _size, width: _size, child:
       Stack(alignment: Alignment.center, children: [
         CustomPaint(size: const Size(_size, _size), painter: _Onboarding2PrivacyProgressRingPainter(
-          progress: _progress, strokeWidth: 6, trackColor: _trackColor, gradientColors: _gradientColors,
+          progress: _progress, strokeWidth: 10, trackColor: _trackColor, gradientColors: _gradientColors,
         )),
         Styles().images.getImage('lock-illustration', excludeFromSemantics: true, width: _size * 0.6, fit: BoxFit.fitWidth) ?? Container(),
       ],),
@@ -324,7 +324,7 @@ class Onboarding2PrivacyProgressBadge extends StatelessWidget {
 
   double get _progress => (0 < totalSteps) ? (step / totalSteps).clamp(0.0, 1.0) : 0.0;
 
-  Color? get _trackColor => Styles().colors.backgroundVariant;
+  Color? get _trackColor => Styles().colors.white;
 
   List<Color> get _gradientColors => <Color>[
     Styles().colors.getColor('onboarding2PrivacyProgressGradientStart') ?? const Color(0xFFFFB984),
@@ -346,6 +346,13 @@ class _Onboarding2PrivacyProgressRingPainter extends CustomPainter {
     double radius = (size.shortestSide - strokeWidth) / 2;
     Rect rect = Rect.fromCircle(center: center, radius: radius);
 
+    Paint trackShadowPaint = Paint()
+      ..color = const Color(0x1A000000)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6.5);
+    canvas.drawCircle(center.translate(2, 4), radius, trackShadowPaint);
+
     Paint trackPaint = Paint()
       ..color = trackColor ?? const Color(0x00000000)
       ..style = PaintingStyle.stroke
@@ -353,11 +360,27 @@ class _Onboarding2PrivacyProgressRingPainter extends CustomPainter {
     canvas.drawCircle(center, radius, trackPaint);
 
     if (0 < progress) {
+      double progressStrokeWidth = strokeWidth - 2;
+      double startAngle = -pi / 2;
+      double sweepAngle = 2 * pi * progress;
+
+      Shader gradientShader = LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: gradientColors).createShader(rect);
+
       Paint progressPaint = Paint()
-        ..shader = LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: gradientColors).createShader(rect)
+        ..shader = gradientShader
         ..style = PaintingStyle.stroke
-        ..strokeWidth = strokeWidth;
-      canvas.drawArc(rect, -pi / 2, 2 * pi * progress, false, progressPaint);
+        ..strokeCap = StrokeCap.butt
+        ..strokeWidth = progressStrokeWidth;
+      canvas.drawArc(rect, startAngle, sweepAngle, false, progressPaint);
+
+      if (progress < 1.0) {
+        double endAngle = startAngle + sweepAngle;
+        Offset endPoint = Offset(center.dx + radius * cos(endAngle), center.dy + radius * sin(endAngle));
+        Paint capPaint = Paint()
+          ..shader = gradientShader
+          ..style = PaintingStyle.fill;
+        canvas.drawCircle(endPoint, progressStrokeWidth / 2, capPaint);
+      }
     }
   }
 
