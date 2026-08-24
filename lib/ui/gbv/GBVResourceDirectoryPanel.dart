@@ -8,6 +8,7 @@ import 'package:illinois/ui/gbv/GBVDetailContentWidget.dart';
 import 'package:illinois/ui/gbv/GBVQuickExitWidget.dart';
 import 'package:illinois/ui/gbv/GBVResourceDetailPanel.dart';
 import 'package:illinois/ui/gbv/GBVResourceListPanel.dart';
+import 'package:illinois/ui/home/HomeSavedResourcesWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -187,6 +188,8 @@ class _GBVResourceDirectoryWidgetState extends State<GBVResourceDirectoryWidget>
 
 }
 
+enum GBVResourceDisplayMode { native, home, browse }
+
 class GBVResourceWidget extends StatelessWidget {
   final GBVData? gbvData;
   final GBVResource resource;
@@ -194,25 +197,25 @@ class GBVResourceWidget extends StatelessWidget {
   final String? favoriteKey;
   final String? favoriteCategory;
 
-  final CardDisplayMode displayMode;
+  final GBVResourceDisplayMode displayMode;
 
   GBVResourceWidget(this.resource, { super.key,
     this.gbvData,
     this.favoriteKey, this.favoriteCategory,
-    this.displayMode = CardDisplayMode.browse
+    this.displayMode = GBVResourceDisplayMode.native
   });
 
-  bool get _canFavorite => true && (favoriteKey != null);
+  bool get _canFavorite => (favoriteKey != null);
 
   @override
   Widget build(BuildContext context) {
     Iterable<GBVResourceDetail> descriptionSource = (resource.type.isLink) ? resource.directoryNotLinkContent : resource.directoryContent;
-    Iterable<GBVResourceDetail> descriptionDetails = ((displayMode == CardDisplayMode.home) && (1 < descriptionSource.length)) ? <GBVResourceDetail>[descriptionSource.first] : descriptionSource;
+    Iterable<GBVResourceDetail> descriptionDetails = (displayMode.isNotNative && (1 < descriptionSource.length)) ? <GBVResourceDetail>[descriptionSource.first] : descriptionSource;
 
     TextStyle? titleTextStyle = Styles().textStyles.getTextStyle("widget.button.title.medium.fat");
     Widget titleWidget = Text(resource.title,
       style: titleTextStyle,
-      maxLines: (displayMode == CardDisplayMode.home) ? 1 : null,
+      maxLines: displayMode.isNotNative ? 1 : null,
       overflow: TextOverflow.ellipsis,
     );
 
@@ -223,7 +226,7 @@ class GBVResourceWidget extends StatelessWidget {
       contentWidget = Padding(padding: _canFavorite ? EdgeInsets.zero : EdgeInsets.only(bottom: 4), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           if (_canFavorite)
-            FavoriteButton(style: FavoriteIconStyle.Button, favorite: GBVResourceFavorite(key: favoriteKey ?? '', category: favoriteCategory, id: resource.id),),
+            FavoriteButton(style: FavoriteIconStyle.Button, favorite: ResourceFavorite(key: favoriteKey ?? '', category: favoriteCategory, id: resource.id),),
           Expanded(child:
             Row(children: [
               Expanded(child:
@@ -248,7 +251,7 @@ class GBVResourceWidget extends StatelessWidget {
     } else {
       contentWidget = Row(children: [
         if (_canFavorite)
-          FavoriteButton(style: FavoriteIconStyle.Button, favorite: GBVResourceFavorite(key: favoriteKey ?? '', category: favoriteCategory, id: resource.id),),
+          FavoriteButton(style: FavoriteIconStyle.Button, favorite: ResourceFavorite(key: favoriteKey ?? '', category: favoriteCategory, id: resource.id),),
         Expanded(child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
             Padding(padding: _canFavorite ? EdgeInsets.zero : EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
@@ -262,22 +265,44 @@ class GBVResourceWidget extends StatelessWidget {
       ]);
     }
 
-    BoxDecoration contentDecoration = (displayMode == CardDisplayMode.home) ? HomeCard.boxDecoration : _browseContentDecoraton;
-    BorderRadius clipBorderRadius = (displayMode == CardDisplayMode.home) ? BorderRadius.all(HomeCard.radius) : BorderRadius.zero;
-
     return GestureDetector(onTap: () => _onTapResource(context), child:
-      Container(decoration: contentDecoration, child:
-        ClipRRect(borderRadius: clipBorderRadius, child:
+      Container(decoration: _contentDecoration, child:
+        ClipRRect(borderRadius: _contentBorderRadius, child:
           contentWidget
         )
       )
     );
   }
 
-  BoxDecoration get _browseContentDecoraton => BoxDecoration(
+  BoxDecoration get _contentDecoration {
+    switch (displayMode) {
+      case GBVResourceDisplayMode.native: return _nativeContentDecoraton;
+      case GBVResourceDisplayMode.browse: return browseContentDecoraton;
+      case GBVResourceDisplayMode.home: return HomeCard.boxDecoration;
+    }
+  }
+
+  BorderRadius get _contentBorderRadius {
+    switch (displayMode) {
+      case GBVResourceDisplayMode.native: return BorderRadius.zero;
+      case GBVResourceDisplayMode.browse: return browseBorderRadius;
+      case GBVResourceDisplayMode.home: return HomeCard.borderRadius;
+    }
+  }
+
+  BoxDecoration get _nativeContentDecoraton => BoxDecoration(
     color: Styles().colors.white,
     border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
   );
+
+  static BoxDecoration get browseContentDecoraton => BoxDecoration(
+    color: Styles().colors.surface,
+    borderRadius: browseBorderRadius,
+    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+    boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 1.0, offset: Offset(0, 2))]
+  );
+  static const BorderRadius browseBorderRadius = const BorderRadius.all(browseRadius);
+  static const Radius browseRadius = const Radius.circular(8);
 
   /*Widget build(BuildContext context) {
     Widget titleTextWidget = Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"));
@@ -351,4 +376,11 @@ class GBVResourceWidget extends StatelessWidget {
       }
       }
     }
+}
+
+extension GBVResourceDisplayModeImpl on GBVResourceDisplayMode {
+  bool get isNative => (this == GBVResourceDisplayMode.native);
+  bool get isNotNative => !isNative;
+  //bool get isHome => (this == GBVResourceDisplayMode.home);
+  //bool get isBrowse => (this == GBVResourceDisplayMode.browse);
 }

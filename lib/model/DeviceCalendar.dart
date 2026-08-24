@@ -53,7 +53,7 @@ class DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
   );
 
   static DeviceCalendarEvent? fromGuide(GuideFavorite guide){
-    Map<String, dynamic>? guideEntryData = Guide().entryById(guide.id);
+    Map<String, dynamic>? guideEntryData = guide.isCampusGuide ? Guide().entryById(guide.id) : null;
     //Only reminders are allowed to save
     return (Guide().isEntryReminder(guideEntryData)) ? DeviceCalendarEvent(
         title: Guide().entryListTitle(guideEntryData, stripHtmlTags: true),

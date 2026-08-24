@@ -1,7 +1,7 @@
 
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/gbv/GBVResourceDirectoryContentPanel.dart';
-import 'package:illinois/ui/home/HomeSavedGBVResourcesWidget.dart';
+import 'package:illinois/ui/home/HomeSavedResourcesWidget.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
 class AcademicLinksPanel extends GBVResourceDirectoryContentPanel {
@@ -16,8 +16,8 @@ class AcademicLinksWidget extends GBVResourceDirectoryContentWidget {
   AcademicLinksWidget() : super(
     contentCategory: 'academic_links',
     contentAssetKey: 'assets/extra/academicLinks.json',
-    favoriteKey: HomeSavedGBVResourcesWidget.favoriteKey,
-    favoriteListner: HomeSavedGBVResourcesWidget.favoriteListener,
+    favoriteKey: HomeSavedResourcesWidget.favoriteKey,
+    favoriteListner: HomeSavedResourcesWidget.favoriteListener,
     contentFailedMessage: Localization().getStringEx('', 'Failed to load academic links data'),
   );
 }
