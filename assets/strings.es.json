@@ -855,6 +855,9 @@
 
     "panel.onboarding2.roles.label.title": "¿Quién eres?",
     "panel.onboarding2.roles.label.title.hint": "Cabecera 1",
+    "panel.onboarding2.roles.label.welcome.title": "Bienvenido a la aplicación de Illinois",
+    "panel.onboarding2.roles.label.welcome.description": "Desde el Quad hasta el Gies Memorial Stadium y más allá, la aplicación de Illinois te conecta con el campus.",
+    "panel.onboarding2.roles.label.check_all.title": "Marca todo lo que corresponda.",
     "panel.onboarding2.roles.regular.label": "Check all that apply to personalize your app experience.",
     "panel.onboarding2.roles.button.student.title": "Estudiante universitario/a",
     "panel.onboarding2.roles.button.student.hint": "",

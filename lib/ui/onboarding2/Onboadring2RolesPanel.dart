@@ -61,65 +61,99 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
   @override
   Widget build(BuildContext context) =>
     Scaffold(backgroundColor: Styles().colors.background, body:
-      SafeArea(child:
-        SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
-              Row(children: <Widget>[
-                Visibility(visible: Navigator.canPop(context), maintainSize: true, maintainAnimation: true, maintainState: true, child:
-                  Onboarding2BackButton(padding: const EdgeInsets.all(16), onTap: _onTapBack),
+      SwipeDetector(onSwipeLeft: _onboardingNext, onSwipeRight: _onboardingBack, child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Container(
+            decoration: BoxDecoration(gradient: LinearGradient(
+              begin: const Alignment(-0.2, -1.0), end: const Alignment(0.2, 1.0),
+              colors: [
+                Styles().colors.getColor('onboarding2RolesHeaderGradientStart') ?? const Color(0xFFFF5F05),
+                Styles().colors.getColor('onboarding2RolesHeaderGradientEnd') ?? const Color(0xFFC74300),
+              ],
+              stops: const [0.3901, 0.8467],
+            )),
+            child: SafeArea(bottom: false, child:
+              Column(children: <Widget>[
+                Align(alignment: Alignment.topLeft, child:
+                  Visibility(visible: Navigator.canPop(context), child:
+                    Onboarding2BackButton(padding: const EdgeInsets.all(16), imageColor: Styles().colors.white, onTap: _onTapBack),
+                  ),
                 ),
-                Expanded(child:
-                  Center(child:
-                    Semantics(
-                      label: Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who Are You?').toLowerCase(),
-                      hint: Localization().getStringEx('panel.onboarding2.roles.label.title.hint', 'Header 1').toLowerCase(),
-                      excludeSemantics: true,
-                      child: Text(Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who Are You?'),
-                        style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat"),
-                        textAlign: TextAlign.center,
-                      ),
+                Container(height: 8,),
+                Styles().images.getImage('university-logo-dark', excludeFromSemantics: true) ?? Container(),
+                Container(height: 10,),
+                Semantics(
+                  label: _welcomeTitle,
+                  hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
+                  header: true,
+                  excludeSemantics: true,
+                  child: Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+                    Text(_welcomeTitle, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.heading.extra_large.fat")),
+                  ),
+                ),
+                Container(height: 8,),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+                  Text(_welcomeDescription, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.heading.regular")),
+                ),
+                Container(height: 12,),
+                Text(_checkAllLabel, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.dialog.message.small")),
+                Container(height: 16,),
+              ],),
+            ),
+          ),
+
+          Expanded(child:
+            Column(children: <Widget>[
+              Expanded(child:
+                SafeArea(top: false, bottom: false, child:
+                  SingleChildScrollView(child:
+                    Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 16, bottom: 24), child:
+                      RoleGridButtonGrid.fromFlexUI(
+                        selectedRoles: _selectedRoles,
+                        showLabel: false,
+                        onTap: _onRoleGridButton,
+                      )
                     ),
                   ),
                 ),
-                Padding(padding: EdgeInsets.only(left: 46),),
-              ],),
-            ),
-
-            Expanded(child:
-              SingleChildScrollView(child:
-                Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
-                  RoleGridButtonGrid.fromFlexUI(
-                    selectedRoles: _selectedRoles,
-                    onTap: _onRoleGridButton,
-                  )
-                ),
               ),
-            ),
 
-            Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), child:
-              Column(mainAxisSize: MainAxisSize.min, children: [
-                RoundedButton(
-                  label: Localization().getStringEx('panel.onboarding2.roles.button.continue.title', 'Continue'),
-                  hint: Localization().getStringEx('panel.onboarding2.roles.button.continue.hint', ''),
-                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  backgroundColor: Styles().colors.white,
-                  borderColor: Styles().colors.fillColorSecondary,
-                  progress: _onboardingProgress,
-                  onTap: _onTapContinue,
+              Container(
+                decoration: BoxDecoration(color: Styles().colors.white, boxShadow: const [
+                  BoxShadow(color: Color(0x12000000), offset: Offset(0, -4), blurRadius: 4),
+                ]),
+                child: SafeArea(top: false, child:
+                  Padding(padding: EdgeInsets.only(left: 18, right: 18, top: 24), child:
+                    Column(mainAxisSize: MainAxisSize.min, children: [
+                      RoundedButton(
+                        label: Localization().getStringEx('panel.onboarding2.roles.button.continue.title', 'Continue'),
+                        hint: Localization().getStringEx('panel.onboarding2.roles.button.continue.hint', ''),
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        backgroundColor: Styles().colors.white,
+                        borderColor: Styles().colors.fillColorSecondary,
+                        progress: _onboardingProgress,
+                        onTap: _onTapContinue,
+                      ),
+                      Onboarding2UnderlinedButton(
+                        title: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?"),
+                        hint: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.hint", ""),
+                        padding: const EdgeInsets.only(top: 8),
+                        onTap: _onTapReturningUser,
+                      ),
+                    ],),
+                  ),
                 ),
-                Onboarding2UnderlinedButton(
-                  title: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?"),
-                  hint: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.hint", ""),
-                  onTap: _onTapReturningUser,
-                ),
-              ],),
-            )
-          ],),
-        ),
+              )
+            ],),
+          ),
+        ],),
       ),
     );
+
+  String get _welcomeTitle => Localization().getStringEx('panel.onboarding2.roles.label.welcome.title', 'Welcome to the Illinois App');
+  String get _welcomeDescription => Localization().getStringEx('panel.onboarding2.roles.label.welcome.description', 'From the Quad to Gies Memorial Stadium and beyond, the Illinois app connects you to campus.');
+  String get _checkAllLabel => Localization().getStringEx('panel.onboarding2.roles.label.check_all.title', 'Check all that apply.');
 
   void _onRoleGridButton(UserRole role) {
     Analytics().logSelect(target: "Role: ${role}");

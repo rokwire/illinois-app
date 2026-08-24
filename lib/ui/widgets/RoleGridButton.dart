@@ -111,7 +111,7 @@ class RoleGridButton extends StatelessWidget {
               ),
               Expanded(flex: _flex[2], child: Container()),
               Expanded(flex: _flex[3], child:
-                Text(title ?? '', style: textStyle, textAlign: TextAlign.center,)
+                Text(title ?? '', style: textStyle, textAlign: TextAlign.center, overflow: TextOverflow.visible,)
               ),
               Expanded(flex: _flex[4], child: Container()),
             ],),
@@ -163,6 +163,7 @@ extension RoleGridButtonGrid on RoleGridButton {
   static Widget fromFlexUI({
     Set<UserRole>? selectedRoles,
     double gridSpacing = 5,
+    bool showLabel = true,
     void Function(UserRole)? onTap,
   }) {
     final int numberOfColumns = 2;
@@ -189,7 +190,9 @@ extension RoleGridButtonGrid on RoleGridButton {
 
         if (row.length >= (2 * numberOfColumns - 1)) {
           if (rows.isEmpty) {
-            rows.add(Text(_regularLabel, style: _gridLabelTextStyle,),);
+            if (showLabel) {
+              rows.add(Text(_regularLabel, style: _gridLabelTextStyle,),);
+            }
           }
           else {
             rows.add(vSpacer,);

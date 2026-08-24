@@ -104,7 +104,10 @@
     "studentCourseGreenColor"               :"#E1EED4",
 
     "onboarding2PrivacyProgressGradientStart" :"#FFB984",
-    "onboarding2PrivacyProgressGradientEnd"   :"#FF552E"
+    "onboarding2PrivacyProgressGradientEnd"   :"#FF552E",
+
+    "onboarding2RolesHeaderGradientStart"     :"#FF5F05",
+    "onboarding2RolesHeaderGradientEnd"       :"#C74300"
   },
   "font_family": {
     "black": "ProximaNovaBlack",

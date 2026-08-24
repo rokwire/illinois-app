@@ -853,6 +853,9 @@
 
 	"panel.onboarding2.roles.label.title": "您的身分？",
 	"panel.onboarding2.roles.label.title.hint": "Header 1",
+	"panel.onboarding2.roles.label.welcome.title": "欢迎使用伊利诺伊大学应用程序",
+	"panel.onboarding2.roles.label.welcome.description": "从广场到吉斯纪念体育场及更远的地方，伊利诺伊应用程序将您与校园连接起来。",
+	"panel.onboarding2.roles.label.check_all.title": "请勾选所有符合的项目。",
 	"panel.onboarding2.roles.regular.label": "Check all that apply to personalize your app experience.",
 	"panel.onboarding2.roles.button.student.title": "大学生",
 	"panel.onboarding2.roles.button.student.hint": "",
