@@ -885,7 +885,7 @@
     "panel.onboarding2.privacy.location_services.learn_more.location_services.content1": "Cuando se permiten los Servicios de Ubicación, la aplicación puede encontrar eventos y servicios cerca de ti y proporcionar mapas interactivos. ",
     "panel.onboarding2.privacy.location_services.learn_more.location_services.content2": "Cuando se activa Bluetooth, la aplicación puede intercambiar información con otros dispositivos para el pase MTD. Bluetooth te ayuda a encontrar tu asiento, lugar de estacionamiento, mensajes dentro de los edificios, y servicios al aire libre que puedan estar cerca de ti.",
     "panel.onboarding2.privacy.location_services.label.title": "¿Quieres permitir los servicios de ubicación?",
-    "panel.onboarding2.privacy.location_services.label.description": "Encuentre eventos y paradas de autobús cercanas o solicite un SafeWalk desde su ubicación exacta.",
+    "panel.onboarding2.privacy.location_services.label.description": "Encuentre eventos y paradas de autobús cercanas o solicite un SafeWalk desde sus ubicaciones exactas.",
     "panel.onboarding2.privacy.location_services.button.toggle.title": "Permitir los servicios de ubicación.",
     "panel.onboarding2.privacy.location_services.button.untoggle.title": "No permitir servicios de ubicación.",
 

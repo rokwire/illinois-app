@@ -886,7 +886,7 @@
     "panel.onboarding2.privacy.location_services.learn_more.location_services.content1": "When Location Services is enabled, the app can find events and services near you and provide interactive maps. ",
     "panel.onboarding2.privacy.location_services.learn_more.location_services.content2": "When Bluetooth is enabled, the app can exchange information with other devices for your MTD bus pass. Bluetooth helps you find your seat, parking spot, in-building messaging, and outdoor services that may be near you.",
     "panel.onboarding2.privacy.location_services.label.title": "Enable location-specific services?",
-    "panel.onboarding2.privacy.location_services.label.description": "Find nearby events and bus stops or request a SafeWalk from your exact location.",
+    "panel.onboarding2.privacy.location_services.label.description": "Find nearby events and bus stops or request a SafeWalk from your exact locations.",
     "panel.onboarding2.privacy.location_services.button.toggle.title": "Enable location services",
     "panel.onboarding2.privacy.location_services.button.untoggle.title": "Don't enable location services",
 

@@ -23,7 +23,6 @@ import 'package:illinois/service/Onboarding2.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'Onboarding2Widgets.dart';
@@ -67,61 +66,39 @@ class _Onboarding2PrivacyLocationServicesPanelState extends State<Onboarding2Pri
           Column(children: [
             Expanded(child:
               SingleChildScrollView(child:
-                Container(color: Styles().colors.white, child:
-                  Column(children: <Widget>[
-                    Padding(padding: EdgeInsets.all(Onboarding2PrivacyProgress.defaultSpacing), child:
-                      Onboarding2PrivacyProgress(1)
-                    ),
-
-                    Align(alignment: Alignment.centerLeft, child:
-                      Onboarding2BackButton(padding: const EdgeInsets.all(16), onTap: _onTapBack),
-                    ),
-
-                    Semantics(
-                      label: _title,
-                      hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
-                      header: true,
-                      excludeSemantics: true,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-                        Text(_title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy.location_services.title"))
-                      )
-                    ),
-
-                    Semantics(
-                      label: _description,
-                      excludeSemantics: true,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                        Text(_description, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.detail.regular")),
-                      )
+                Column(children: <Widget>[
+                  Align(alignment: Alignment.centerLeft, child:
+                    Onboarding2BackButton(padding: const EdgeInsets.all(16), onTap: _onTapBack),
                   ),
-
+                  Container(height: 8,),
+                  Onboarding2PrivacyProgressBadge(1),
+                  Container(height: 24,),
+                  Semantics(
+                    label: _title,
+                    hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
+                    header: true,
+                    excludeSemantics: true,
+                    child: Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+                      Text(_title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.button.title.extra_large"))
+                    )
+                  ),
+                  Container(height: 12,),
+                  Semantics(
+                    label: _description,
+                    excludeSemantics: true,
+                    child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                      Text(_description, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.detail.regular")),
+                    )
+                  ),
                   Container(height: 10,),
-
                   Onboarding2UnderlinedButton(
                     title: Localization().getStringEx('panel.onboarding2.privacy.share_activity.button.title.learn_more', 'Learn More'),
                     textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.medium.underline"),
                     onTap: _onTapLearnMore,
                   ),
-
-                  Container(height: 24,),
-
-                  Stack(children: [
-                    Column(children:[
-                      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background,), child:
-                        Container(height: 80,),
-                      ),
-                      Container(height: 20, color: Styles().colors.background,)
-                    ]),
-                    Positioned.fill(child:
-                      Center(child:
-                        Styles().images.getImage('explore-illustration', excludeFromSemantics: true),
-                      )
-                    )
-                  ],),
-                ])
+                ]),
               ),
-            )
-          ),
+            ),
 
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -152,7 +129,7 @@ class _Onboarding2PrivacyLocationServicesPanelState extends State<Onboarding2Pri
   );
 
   String get _title => Localization().getStringEx('panel.onboarding2.privacy.location_services.label.title', 'Enable location specific services?');
-  String get _description => Localization().getStringEx('panel.onboarding2.explore_campus.label.description', 'Find nearby events and bus stops or request a SafeWalk from your exact location.');
+  String get _description => Localization().getStringEx('panel.onboarding2.privacy.location_services.label.description', 'Find nearby events and bus stops or request a SafeWalk from your exact locations.');
   String get _toggledButtonTitle => Localization().getStringEx('panel.onboarding2.privacy.location_services.button.toggle.title', 'Enable location services.');
   String get _unToggledButtonTitle => Localization().getStringEx('panel.onboarding2.privacy.location_services.button.untoggle.title', 'Don\'t enable location services.');
 
