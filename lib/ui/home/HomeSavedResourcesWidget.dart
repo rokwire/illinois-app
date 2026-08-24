@@ -116,6 +116,7 @@ class _HomeSavedResourcesWidgetState extends State<HomeSavedResourcesWidget> wit
       Auth2.notifyLoginChanged,
       Auth2.notifyPrefsChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
+      Guide.notifyChanged,
     ]);
 
     _updateSubscription = widget.updateController?.stream.listen((String command) {
@@ -155,6 +156,9 @@ class _HomeSavedResourcesWidgetState extends State<HomeSavedResourcesWidget> wit
     }
     else if (name == Auth2.notifyPrefsChanged) {
       _reloadIfVisible(); // or mark as needs refresh
+    }
+    else if (name == Guide.notifyChanged) {
+      _updateIfVisible();
     }
   }
 
