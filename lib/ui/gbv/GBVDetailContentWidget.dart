@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/GBV.dart';
 import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/gbv/GBVResourceDirectoryPanel.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -15,10 +15,9 @@ class GBVDetailContentWidget extends StatelessWidget {
   final GBVResourceDetail resourceDetail;
   final bool isTextSelectable;
 
-  final CardDisplayMode displayMode;
-  bool get _homeDisplayMode => (displayMode == CardDisplayMode.home);
+  final GBVResourceDisplayMode displayMode;
 
-  GBVDetailContentWidget(this.resourceDetail, {super.key, this.isTextSelectable = true, this.displayMode = CardDisplayMode.browse });
+  GBVDetailContentWidget(this.resourceDetail, {super.key, this.isTextSelectable = true, this.displayMode = GBVResourceDisplayMode.native });
 
   @override
   Widget build(BuildContext context) => Row(children:
@@ -41,7 +40,7 @@ class GBVDetailContentWidget extends StatelessWidget {
               behavior: HitTestBehavior.translucent,
               child:
                 Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-                  Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: _homeDisplayMode ? 1 : null, overflow: TextOverflow.ellipsis,))
+                  Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: displayMode.isNotNative ? 1 : null, overflow: TextOverflow.ellipsis,))
             )
           )
         ];
@@ -60,7 +59,7 @@ class GBVDetailContentWidget extends StatelessWidget {
               behavior: HitTestBehavior.translucent,
               child:
                 Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-                  Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: _homeDisplayMode ? 1 : null, overflow: TextOverflow.ellipsis,))
+                  Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: displayMode.isNotNative ? 1 : null, overflow: TextOverflow.ellipsis,))
             )
           )
         ];
@@ -79,7 +78,7 @@ class GBVDetailContentWidget extends StatelessWidget {
               behavior: HitTestBehavior.translucent,
               child:
               Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-                Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: _homeDisplayMode ? 3 : null, overflow: TextOverflow.ellipsis,))
+                Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: displayMode.isNotNative ? 3 : null, overflow: TextOverflow.ellipsis,))
             )
           )
         ];
@@ -113,7 +112,7 @@ class GBVDetailContentWidget extends StatelessWidget {
             behavior: HitTestBehavior.translucent,
             child:
             Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-              Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: _homeDisplayMode ? 1 : null, overflow: TextOverflow.ellipsis,))
+              Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: displayMode.isNotNative ? 1 : null, overflow: TextOverflow.ellipsis,))
           )
         ];
 
@@ -127,12 +126,12 @@ class GBVDetailContentWidget extends StatelessWidget {
           onTapUrl: (String url) => _onTapHtmlLink(context, url),
         ) : Text(textContent,
           style: textStyle,
-          maxLines: _homeDisplayMode ? 3 : null,
-          overflow: _homeDisplayMode ? TextOverflow.ellipsis : null,
+          maxLines: displayMode.isNotNative ? 3 : null,
+          overflow: displayMode.isNotNative ? TextOverflow.ellipsis : null,
         );
 
         double verticalPadding = 12;
-        BoxConstraints? htmlConstraints = (_homeDisplayMode && isHtml) ?
+        BoxConstraints? htmlConstraints = (displayMode.isNotNative && isHtml) ?
           BoxConstraints(maxHeight: MediaQuery.of(context).textScaler.scale(textStyle?.fontSize ?? 0) * 1.5 * 3 + 2 * verticalPadding) : null;
 
         return [
@@ -172,7 +171,7 @@ class GBVDetailContentWidget extends StatelessWidget {
 
   Map<String, Map<String, String>> get _htmlContentStyles => {
     'a' : _htmlLinkStyle,
-    if (_homeDisplayMode)
+    if (displayMode.isNotNative)
       'div' : _htmlLimitTextStyle,
   };
 

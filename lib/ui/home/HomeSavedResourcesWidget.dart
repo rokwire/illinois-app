@@ -29,7 +29,9 @@ import 'package:illinois/ui/mtd/TransportationLinks.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/wellness/WellnessLinksPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -41,7 +43,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:visibility_detector/visibility_detector.dart';
-
 
 class HomeSavedResourcesWidget extends StatefulWidget {
 
@@ -90,16 +91,13 @@ class HomeSavedResourcesWidget extends StatefulWidget {
   static bool get _isWidgetFavorite => (Auth2().prefs?.isFavorite(HomeFavorite(homeCode)) == true);
 }
 
-class _HomeSavedResourcesWidgetState extends State<HomeSavedResourcesWidget> with NotificationsListener {
-
-  List<ResourceFavorite> _resources = <ResourceFavorite>[];
-  Map<String, GBVData> _gbvDataMap = <String, GBVData>{};
-  FavoriteContentActivity _contentActivity = FavoriteContentActivity.none;
+class _HomeSavedResourcesWidgetState extends _SavedResourcesImplWidgetState<HomeSavedResourcesWidget> with NotificationsListener {
 
   bool _visible = false;
   Key _visibilityDetectorKey = UniqueKey();
-  DateTime? _pausedDateTime;
   FavoriteContentStatus _contentStatus = FavoriteContentStatus.none;
+
+  DateTime? _pausedDateTime;
 
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
@@ -227,7 +225,7 @@ class _HomeSavedResourcesWidgetState extends State<HomeSavedResourcesWidget> wit
         pages.add(Padding(
           key: _contentKeys[resource.favoriteId ?? ''] ??= GlobalKey(),
           padding: HomeCard.defaultPageMargin,
-          child: _resourceWidget(resource))
+          child: _resourceWidget(resource, displayMode: CardDisplayMode.home))
         );
       }
 
@@ -248,34 +246,25 @@ class _HomeSavedResourcesWidgetState extends State<HomeSavedResourcesWidget> wit
       );
     } else if (_resources.length == 1) {
       contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
-        _resourceWidget(_resources.first)
+        _resourceWidget(_resources.first, displayMode: CardDisplayMode.home)
       );
     }
 
     return (contentWidget != null) ? Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => _resources.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => _resources.length,centerWidget:
+        HomeBrowseLinkButton(
+          title: Localization().getStringEx('widget.home.saved_resources.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.saved_resources.button.all.hint', 'Tap to view all saved resources'),
+          onTap: _onTapViewAll,
+        ),
+      ),
     ]) : Container();
   }
 
-  Widget? _resourceWidget(ResourceFavorite favorite) {
-    String? category = favorite.category;
-    if (category != null) {
-      final GBVData? gbvData = _gbvDataMap[category];
-      final GBVResource? gbvResource = gbvData?.resources.firstWhereOrNull((resource) => (resource.id == favorite.id));
-      return (gbvResource != null) ? GBVResourceWidget(gbvResource,
-        gbvData: gbvData,
-        favoriteKey: HomeSavedResourcesWidget.favoriteKey,
-        favoriteCategory: favorite.category,
-        displayMode: CardDisplayMode.home,
-      ) : null;
-    } else {
-      return GuideResourceWidget(
-        guideEntryId: favorite.id,
-        favoriteKey: HomeSavedResourcesWidget.favoriteKey,
-        displayMode: CardDisplayMode.home,
-      );
-    }
+  void _onTapViewAll() {
+    Analytics().logSelect(target: "View All", source: '${widget.runtimeType}' );
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedResourcesPanel()));
   }
 
   double get _pageHeight {
@@ -310,6 +299,109 @@ class _HomeSavedResourcesWidgetState extends State<HomeSavedResourcesWidget> wit
         case FavoriteContentStatus.refresh: _refresh(); break;
         case FavoriteContentStatus.reload: _reload(); break;
       }
+    }
+  }
+
+  // _SavedResourcesImplWidget
+
+  @override
+  Future<bool?> _load(FavoriteContentActivity contentActivity) async {
+    if ((_contentActivity.index < contentActivity.index) && Connectivity().isNotOffline && mounted) {
+
+      int currentPage = _getCurrentPage() ?? -1;
+      ResourceFavorite? currentFavorite = ((0 <= currentPage) && (currentPage < _resources.length)) ? _resources[currentPage] : null;
+
+      bool? resourcesUpdated = await super._load(contentActivity);
+
+      if (mounted) {
+        setState(() {
+          _contentStatus = FavoriteContentStatus.none;
+          //_pageViewKey = UniqueKey();
+          //_contentKeys.clear();
+        });
+
+        int favoriteIndex = ((resourcesUpdated == true) && (currentFavorite != null)) ? _resources.indexOf(currentFavorite) : -1;
+        int newPage = (favoriteIndex >= 0) ? favoriteIndex : currentPage;
+        if (newPage >= 0) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_pageController?.hasClients == true) {
+              _pageController?.jumpToPage(newPage);
+            }
+          });
+        }
+      }
+      return resourcesUpdated;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> _reloadIfVisible() async {
+    if (_visible) {
+      return _reload();
+    }
+    else if (_contentStatus.canReload) {
+      _contentStatus = FavoriteContentStatus.reload;
+    }
+  }
+
+  Future<void> _refreshIfVisible() async {
+    if (_visible) {
+      return _refresh();
+    }
+    else if (_contentStatus.canRefresh) {
+      _contentStatus = FavoriteContentStatus.refresh;
+    }
+  }
+
+  Future<void> _updateIfVisible() async {
+    if (_visible) {
+      return _update();
+    }
+    else if (_contentStatus.canUpdate) {
+      _contentStatus = FavoriteContentStatus.update;
+    }
+  }
+
+  int? _getCurrentPage() {
+    if (_resources.length > 1) {
+      return ((_pageController?.hasPosition == true)) ? _pageController?.page?.toInt() : null;
+    } else {
+      return (_resources.length == 1) ? 0 : null;
+    }
+  }
+
+}
+
+class _SavedResourcesImplWidgetState<T extends StatefulWidget> extends State<T> {
+
+  List<ResourceFavorite> _resources = <ResourceFavorite>[];
+  Map<String, GBVData> _gbvDataMap = <String, GBVData>{};
+  FavoriteContentActivity _contentActivity = FavoriteContentActivity.none;
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
+
+  Widget? _resourceWidget(ResourceFavorite favorite, { required CardDisplayMode displayMode }) {
+    String? category = favorite.category;
+    if (category != null) {
+      final GBVData? gbvData = _gbvDataMap[category];
+      final GBVResource? gbvResource = gbvData?.resources.firstWhereOrNull((resource) => (resource.id == favorite.id));
+      return (gbvResource != null) ? GBVResourceWidget(gbvResource,
+        gbvData: gbvData,
+        favoriteKey: HomeSavedResourcesWidget.favoriteKey,
+        favoriteCategory: favorite.category,
+        displayMode: displayMode.resourceDisplayMode,
+      ) : null;
+    } else {
+      return GuideResourceWidget(
+        guideEntryId: favorite.id,
+        favoriteKey: HomeSavedResourcesWidget.favoriteKey,
+        displayMode: displayMode,
+      );
     }
   }
 
@@ -377,19 +469,16 @@ class _HomeSavedResourcesWidgetState extends State<HomeSavedResourcesWidget> wit
     return _GBVResourcesContent(resources: resources, gbvDataMap: gbvDataMap);
   }
 
-  Future<void> _load(FavoriteContentActivity contentActivity) async {
-    if ((_contentActivity.index < contentActivity.index) && Connectivity().isNotOffline && mounted) {
+  Future<bool?> _load(FavoriteContentActivity contentActivity) async {
+    if ((_contentActivity.index < contentActivity.index) && Connectivity().isNotOffline && (mounted == true)) {
 
-      int currentPage = _getCurrentPage() ?? -1;
-      ResourceFavorite? currentFavorite = ((0 <= currentPage) && (currentPage < _resources.length)) ? _resources[currentPage] : null;
-
-      setStateIfMounted(() {
+      setState((){
         _contentActivity = contentActivity;
       });
 
       _GBVResourcesContent result = await _loadContent(_contentActivity);
 
-      if (mounted) {
+      if (mounted == true) {
         bool resourcesUpdated = (DeepCollectionEquality().equals(_resources, result.resources) != true);
 
         setState(() {
@@ -402,65 +491,19 @@ class _HomeSavedResourcesWidgetState extends State<HomeSavedResourcesWidget> wit
             }
           }
           _contentActivity = FavoriteContentActivity.none;
-          _contentStatus = FavoriteContentStatus.none;
-          //_pageViewKey = UniqueKey();
-          //_contentKeys.clear();
         });
-
-        int favoriteIndex = (resourcesUpdated && (currentFavorite != null)) ? result.resources.indexOf(currentFavorite) : -1;
-        int newPage = (favoriteIndex >= 0) ? favoriteIndex : currentPage;
-        if (newPage >= 0) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (_pageController?.hasClients == true) {
-              _pageController?.jumpToPage(newPage);
-            }
-          });
-        }
+        return resourcesUpdated;
+      } else {
+        return null;
       }
-    }
-  }
-
-
-  Future<void> _reloadIfVisible() async {
-    if (_visible) {
-      return _reload();
-    }
-    else if (_contentStatus.canReload) {
-      _contentStatus = FavoriteContentStatus.reload;
+    } else {
+      return null;
     }
   }
 
   Future<void> _reload() => _load(FavoriteContentActivity.reload);
-
-  Future<void> _refreshIfVisible() async {
-    if (_visible) {
-      return _refresh();
-    }
-    else if (_contentStatus.canRefresh) {
-      _contentStatus = FavoriteContentStatus.refresh;
-    }
-  }
-
   Future<void> _refresh() => _load(FavoriteContentActivity.refresh);
-
-  Future<void> _updateIfVisible() async {
-    if (_visible) {
-      return _update();
-    }
-    else if (_contentStatus.canUpdate) {
-      _contentStatus = FavoriteContentStatus.update;
-    }
-  }
-
   Future<void> _update() => _load(FavoriteContentActivity.update);
-
-  int? _getCurrentPage() {
-    if (_resources.length > 1) {
-      return ((_pageController?.hasPosition == true)) ? _pageController?.page?.toInt() : null;
-    } else {
-      return (_resources.length == 1) ? 0 : null;
-    }
-  }
 
   // Empty Content
 
@@ -522,99 +565,132 @@ class _HomeSavedResourcesWidgetState extends State<HomeSavedResourcesWidget> wit
   }
 }
 
-class _HomeSavedResourcesFavoriteAlertDialog extends StatefulWidget {
-
+class SavedResourcesPanel extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _HomeSavedResourcesFavoriteAlertDialogState();
-
-  static Future<bool?>show(BuildContext context) =>
-    showDialog(context: context, builder: (_) => AlertDialog(
-      contentPadding: EdgeInsets.zero,
-      content: _HomeSavedResourcesFavoriteAlertDialog(),
-    ));
+  State<StatefulWidget> createState() => _SavedResourcesPanelState();
 }
 
-class _HomeSavedResourcesFavoriteAlertDialogState extends State<_HomeSavedResourcesFavoriteAlertDialog> {
+class _SavedResourcesPanelState extends _SavedResourcesImplWidgetState<SavedResourcesPanel> with NotificationsListener {
+
+  ScrollController _scrollController = ScrollController();
+
   @override
-  Widget build(BuildContext context) =>
-    Container(decoration: _contentDecoration, child:
-      ClipRRect(borderRadius: _contentBorderRadius, child:
-          Column(mainAxisSize: MainAxisSize.min, children: [
-            Padding(padding: EdgeInsetsGeometry.only(left: 24, right: 24, top: 24, bottom: 16), child:
-              Column(mainAxisSize: MainAxisSize.min, children: [
-                Text(_promptText, style: _textStyle, textAlign: TextAlign.center,),
-                Padding(padding: EdgeInsetsGeometry.only(top: 16), child:
-                  Row(children: [
-                    Expanded(child:
-                      CompactRoundedButton(
-                        label: Localization().getStringEx('dialog.no.title', 'No'),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                        borderColor: Styles().colors.fillColorPrimary,
-                        onTap: () => _onConfirm(false),
-                      ),
-                    ),
-                    SizedBox(width: 16,),
-                    Expanded(child:
-                      CompactRoundedButton(
-                        label: Localization().getStringEx('dialog.yes.title', 'Yes'),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                        onTap: () => _onConfirm(true),),
-                    ),
-                  ],)
-                )
-              ]),
-            ),
-            Divider(color: _contentBorderColor, height: _contentBorderSize,),
-            Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 24), child:
-              Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
-                InkWell(onTap: _onDontShow, child:
-                  Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images.getImage(_dontShow ? "check-circle-filled" : "check-circle-outline-gray"),
-                  ),
-                ),
-                Text(_dontShowText, style: _textStyle, textAlign: TextAlign.left, )
-              ]),
-            )
-          ],)
-      )
-    );
+  void initState() {
 
-  bool get _dontShow => (Storage().askForSavedResourcesHomeFavorite == false);
+    NotificationService().subscribe(this, [
+      Connectivity.notifyStatusChanged,
+      AppLivecycle.notifyStateChanged,
+      Auth2.notifyLoginChanged,
+      Auth2.notifyPrefsChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
+      Guide.notifyChanged,
+    ]);
 
-  void _onDontShow() {
-    setState(() {
-      Storage().askForSavedResourcesHomeFavorite = !_dontShow;
-    });
+    _reload();
+
+    super.initState();
   }
 
-  void _onConfirm(bool selection) {
-    Analytics().logSelect(target: selection ? 'Yes' : 'No');
-    Navigator.of(context).pop(selection);
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    _scrollController.dispose();
+    super.dispose();
   }
 
-  String get _promptText => Localization().getStringEx('widget.home.saved_gbv_resources.favorites.prompt', 'Item saved. Add your Saved Resources to your Home Favorites?');
-  String get _dontShowText => Localization().getStringEx('widget.home.saved_gbv_resources.favorites.dont_show_again', "Don't show me this again.");
+  // NotificationsListener
 
-  TextStyle? get _textStyle => Styles().textStyles.getTextStyle('widget.detail.regular');
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Connectivity.notifyStatusChanged) {
+      _reload(); // or mark as needs refresh
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      _update();
+    }
+    else if (name == Auth2.notifyLoginChanged) {
+      _reload(); // or mark as needs refresh
+    }
+    else if (name == Auth2.notifyPrefsChanged) {
+      _reload(); // or mark as needs refresh
+    }
+    else if (name == Guide.notifyChanged) {
+      _update();
+    }
+  }
 
-  BoxDecoration get _contentDecoration => BoxDecoration(
-    color: Styles().colors.surface,
-    border: Border.all(color: _contentBorderColor, width: _contentBorderSize),
-    borderRadius: _contentBorderRadius,
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: HeaderBar(title: HomeSavedResourcesWidget.title,),
+    body: _scaffoldContent,
+    backgroundColor: Styles().colors.background,
+    bottomNavigationBar: uiuc.TabBar(),
   );
 
-  Color get _contentBorderColor => Styles().colors.surfaceAccent;
-  double get _contentBorderSize => 1;
+  Widget get _scaffoldContent =>
+    RefreshIndicator(onRefresh: _onPullToRefresh, child: _panelContent);
 
-  BorderRadius get _contentBorderRadius =>
-    BorderRadius.all(Radius.circular(12));
-}
+  Widget get _panelContent {
+    if (_contentActivity == FavoriteContentActivity.reload) {
+      return _loadingContent;
+    }
+    else if (_contentActivity == FavoriteContentActivity.refresh) {
+      return Container();
+    }
+    else if (Connectivity().isOffline) {
+      return _buildStatus(Localization().getStringEx("widget.home.saved_resources.text.offline.description", "Saved resources are not available while offline."));
+    }
+    else if (_resources.length == 0) {
+      return _buildStatus(_emptyContentMessageHtml);
+    }
+    else {
+      return _resourceContent;
+    }
+  }
 
-class _HomeSavedResourcesFavoriteButton extends HomeFavoriteButton {
-  _HomeSavedResourcesFavoriteButton({ super.favorite, required super.style, super.padding = FavoriteStarIcon.defaultPadding, super.prompt = false});
+  Widget get _resourceContent => ListView.separated(
+    itemCount: _resources.length,
+    itemBuilder: _buildResource,
+    separatorBuilder: (context, index) => SizedBox(height: 8,),
+    controller: _scrollController,
+    physics: AlwaysScrollableScrollPhysics(),
+    scrollDirection: Axis.vertical,
+    padding: EdgeInsets.all(16),
+  );
 
-  @override
-  bool? get isFavorite => (super.isFavorite != false);
+  Widget _buildResource(BuildContext context, int index) {
+    ResourceFavorite? favorite = ListUtils.entry(_resources, index);
+    Widget? resourceWidget = (favorite != null) ? _resourceWidget(favorite, displayMode: CardDisplayMode.browse) : null;
+    return resourceWidget ?? Container();
+  }
+
+  Widget get _loadingContent =>
+    Column(children: [
+      Expanded(flex: 1, child: Container()),
+      SizedBox(width: 32, height: 32, child:
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary,)
+      ),
+      Expanded(flex: 2, child: Container()),
+    ],);
+
+  Widget _buildStatus(String statusHtml) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    return SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
+      Padding(padding: EdgeInsets.only(left: 32, right: 32, top: screenHeight / 5), child:
+        Row(children: [
+          Expanded(child:
+            HtmlWidget("<center>$statusHtml</center>" ,
+              onTapUrl: (url) { _onTapEmptyContentMessageLink(url); return true; },
+              textStyle:  Styles().textStyles.getTextStyle("widget.card.title.regular.fat"),
+              customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null
+            )
+          ),
+        ],)
+      ),
+    );
+  }
+
+  Future<void> _onPullToRefresh() => _refresh();
 }
 
 class GuideResourceWidget extends StatelessWidget {
@@ -703,12 +779,26 @@ class GuideResourceWidget extends StatelessWidget {
     }
 
     return GestureDetector(onTap: () => _onTapGuideEntry(context), child:
-      Container(decoration: HomeCard.boxDecoration, child:
-        ClipRRect(borderRadius: BorderRadius.all(HomeCard.radius), child:
+      Container(decoration: _contentDecoration, child:
+        ClipRRect(borderRadius: _contentBorderRadius, child:
           contentWidget
         )
       )
     );
+  }
+
+  BoxDecoration get _contentDecoration {
+    switch (displayMode) {
+      case CardDisplayMode.browse: return GBVResourceWidget.browseContentDecoraton;
+      case CardDisplayMode.home: return HomeCard.boxDecoration;
+    }
+  }
+
+  BorderRadius get _contentBorderRadius {
+    switch (displayMode) {
+      case CardDisplayMode.browse: return GBVResourceWidget.browseBorderRadius;
+      case CardDisplayMode.home: return HomeCard.borderRadius;
+    }
   }
 
   void _onTapGuideEntry(BuildContext context) {
@@ -746,6 +836,101 @@ class GuideResourceWidget extends StatelessWidget {
     }
     return true;
   }
+}
+
+class _HomeSavedResourcesFavoriteAlertDialog extends StatefulWidget {
+
+  @override
+  State<StatefulWidget> createState() => _HomeSavedResourcesFavoriteAlertDialogState();
+
+  static Future<bool?>show(BuildContext context) =>
+    showDialog(context: context, builder: (_) => AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      content: _HomeSavedResourcesFavoriteAlertDialog(),
+    ));
+}
+
+class _HomeSavedResourcesFavoriteAlertDialogState extends State<_HomeSavedResourcesFavoriteAlertDialog> {
+  @override
+  Widget build(BuildContext context) =>
+    Container(decoration: _contentDecoration, child:
+      ClipRRect(borderRadius: _contentBorderRadius, child:
+          Column(mainAxisSize: MainAxisSize.min, children: [
+            Padding(padding: EdgeInsetsGeometry.only(left: 24, right: 24, top: 24, bottom: 16), child:
+              Column(mainAxisSize: MainAxisSize.min, children: [
+                Text(_promptText, style: _textStyle, textAlign: TextAlign.center,),
+                Padding(padding: EdgeInsetsGeometry.only(top: 16), child:
+                  Row(children: [
+                    Expanded(child:
+                      CompactRoundedButton(
+                        label: Localization().getStringEx('dialog.no.title', 'No'),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        borderColor: Styles().colors.fillColorPrimary,
+                        onTap: () => _onConfirm(false),
+                      ),
+                    ),
+                    SizedBox(width: 16,),
+                    Expanded(child:
+                      CompactRoundedButton(
+                        label: Localization().getStringEx('dialog.yes.title', 'Yes'),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        onTap: () => _onConfirm(true),),
+                    ),
+                  ],)
+                )
+              ]),
+            ),
+            Divider(color: _contentBorderColor, height: _contentBorderSize,),
+            Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 24), child:
+              Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
+                InkWell(onTap: _onDontShow, child:
+                  Padding(padding: EdgeInsets.all(16), child:
+                    Styles().images.getImage(_dontShow ? "check-circle-filled" : "check-circle-outline-gray"),
+                  ),
+                ),
+                Text(_dontShowText, style: _textStyle, textAlign: TextAlign.left, )
+              ]),
+            )
+          ],)
+      )
+    );
+
+  bool get _dontShow => (Storage().askForSavedResourcesHomeFavorite == false);
+
+  void _onDontShow() {
+    setState(() {
+      Storage().askForSavedResourcesHomeFavorite = !_dontShow;
+    });
+  }
+
+  void _onConfirm(bool selection) {
+    Analytics().logSelect(target: selection ? 'Yes' : 'No');
+    Navigator.of(context).pop(selection);
+  }
+
+  String get _promptText => Localization().getStringEx('widget.home.saved_resources.favorites.prompt', 'Item saved. Add your Saved Resources to your Home Favorites?');
+  String get _dontShowText => Localization().getStringEx('widget.home.saved_resources.favorites.dont_show_again', "Don't show me this again.");
+
+  TextStyle? get _textStyle => Styles().textStyles.getTextStyle('widget.detail.regular');
+
+  BoxDecoration get _contentDecoration => BoxDecoration(
+    color: Styles().colors.surface,
+    border: Border.all(color: _contentBorderColor, width: _contentBorderSize),
+    borderRadius: _contentBorderRadius,
+  );
+
+  Color get _contentBorderColor => Styles().colors.surfaceAccent;
+  double get _contentBorderSize => 1;
+
+  BorderRadius get _contentBorderRadius =>
+    BorderRadius.all(Radius.circular(12));
+}
+
+class _HomeSavedResourcesFavoriteButton extends HomeFavoriteButton {
+  _HomeSavedResourcesFavoriteButton({ super.favorite, required super.style, super.padding = FavoriteStarIcon.defaultPadding, super.prompt = false});
+
+  @override
+  bool? get isFavorite => (super.isFavorite != false);
 }
 
 class ResourceFavorite extends Favorite {
@@ -805,4 +990,13 @@ class _GBVResourcesContent {
 extension _AppBundleUtils on AppBundle {
   static Future<dynamic> loadJson(String key, {bool cache = true}) async =>
     JsonUtils.decode(await AppBundle.loadString(key, cache: cache));
+}
+
+extension _CardDisplayModeImpl on CardDisplayMode {
+  GBVResourceDisplayMode get resourceDisplayMode {
+    switch (this) {
+      case CardDisplayMode.home: return GBVResourceDisplayMode.home;
+      case CardDisplayMode.browse: return GBVResourceDisplayMode.browse;
+    }
+  }
 }

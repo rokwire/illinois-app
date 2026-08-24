@@ -27,6 +27,7 @@ import 'package:illinois/ui/career/CareerPlanningLinks.dart';
 import 'package:illinois/ui/dining/DiningLinksPanel.dart';
 import 'package:illinois/ui/directory/DirectoryAccounts2Panel.dart';
 import 'package:illinois/ui/groups/GroupHome2Panel.dart';
+import 'package:illinois/ui/home/HomeSavedResourcesWidget.dart';
 import 'package:illinois/ui/illini/WordlePanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
@@ -848,9 +849,8 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   static void _onTapMyCampusGuide(BuildContext context) {
-    // TBD
     Analytics().logSelect(target: "Saved Resources");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [GuideFavorite.favoriteKeyName]); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedResourcesPanel()));
   }
 
   static void _onTapWellnessResources(BuildContext context) {
