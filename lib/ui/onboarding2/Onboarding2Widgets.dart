@@ -1,4 +1,6 @@
 
+import 'dart:math' show pi;
+
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -297,4 +299,72 @@ class Onboarding2PrivacyProgress extends StatelessWidget {
     }
     return Row(children: steps,);
   }
+}
+
+class Onboarding2PrivacyProgressBadge extends StatelessWidget {
+  static const int _defaultTotalSteps = 2;
+  static const double _size = 164;
+
+  final int step;
+  final int totalSteps;
+
+  Onboarding2PrivacyProgressBadge(this.step, {super.key, this.totalSteps = _defaultTotalSteps});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(height: _size, width: _size, child:
+      Stack(alignment: Alignment.center, children: [
+        CustomPaint(size: const Size(_size, _size), painter: _Onboarding2PrivacyProgressRingPainter(
+          progress: _progress, strokeWidth: 6, trackColor: _trackColor, gradientColors: _gradientColors,
+        )),
+        Styles().images.getImage('lock-illustration', excludeFromSemantics: true, width: _size * 0.6, fit: BoxFit.fitWidth) ?? Container(),
+      ],),
+    );
+  }
+
+  double get _progress => (0 < totalSteps) ? (step / totalSteps).clamp(0.0, 1.0) : 0.0;
+
+  Color? get _trackColor => Styles().colors.backgroundVariant;
+
+  List<Color> get _gradientColors => <Color>[
+    Styles().colors.getColor('onboarding2PrivacyProgressGradientStart') ?? const Color(0xFFFFB984),
+    Styles().colors.getColor('onboarding2PrivacyProgressGradientEnd') ?? const Color(0xFFFF552E),
+  ];
+}
+
+class _Onboarding2PrivacyProgressRingPainter extends CustomPainter {
+  final double progress;
+  final double strokeWidth;
+  final Color? trackColor;
+  final List<Color> gradientColors;
+
+  _Onboarding2PrivacyProgressRingPainter({required this.progress, required this.strokeWidth, required this.trackColor, required this.gradientColors});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Offset center = Offset(size.width / 2, size.height / 2);
+    double radius = (size.shortestSide - strokeWidth) / 2;
+    Rect rect = Rect.fromCircle(center: center, radius: radius);
+
+    Paint trackPaint = Paint()
+      ..color = trackColor ?? const Color(0x00000000)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth;
+    canvas.drawCircle(center, radius, trackPaint);
+
+    if (0 < progress) {
+      Paint progressPaint = Paint()
+        ..shader = LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: gradientColors).createShader(rect)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth;
+      canvas.drawArc(rect, -pi / 2, 2 * pi * progress, false, progressPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _Onboarding2PrivacyProgressRingPainter oldDelegate) =>
+    (oldDelegate.progress != progress) ||
+    (oldDelegate.strokeWidth != strokeWidth) ||
+    (oldDelegate.trackColor != trackColor) ||
+    (oldDelegate.gradientColors != gradientColors);
 }

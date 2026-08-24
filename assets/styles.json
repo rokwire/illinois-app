@@ -101,7 +101,10 @@
     "studentCourseRedColor"                 :"#F6E6E2",
     "studentCoursePurpleColor"              :"#EDE3F4",
     "studentCourseBlueColor"                :"#D2E6EC",
-    "studentCourseGreenColor"               :"#E1EED4"
+    "studentCourseGreenColor"               :"#E1EED4",
+
+    "onboarding2PrivacyProgressGradientStart" :"#FFB984",
+    "onboarding2PrivacyProgressGradientEnd"   :"#FF552E"
   },
   "font_family": {
     "black": "ProximaNovaBlack",
