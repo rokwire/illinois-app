@@ -49,7 +49,6 @@ class Onboarding2RolesPanel extends StatefulWidget with Onboarding2Panel {
 
 class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
   late LinkedHashSet<UserRole> _selectedRoles;
-  bool get _allowNext => _selectedRoles.isNotEmpty;
   bool _onboardingProgress = false;
 
   @override
@@ -67,7 +66,9 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
               Row(children: <Widget>[
-                Onboarding2BackButton(padding: const EdgeInsets.all(16), onTap: _onTapBack),
+                Visibility(visible: Navigator.canPop(context), maintainSize: true, maintainAnimation: true, maintainState: true, child:
+                  Onboarding2BackButton(padding: const EdgeInsets.all(16), onTap: _onTapBack),
+                ),
                 Expanded(child:
                   Center(child:
                     Semantics(
@@ -96,20 +97,25 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
               ),
             ),
 
-            if (_allowNext)
-              Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12), child:
+              Column(mainAxisSize: MainAxisSize.min, children: [
                 RoundedButton(
                   label: Localization().getStringEx('panel.onboarding2.roles.button.continue.title', 'Continue'),
                   hint: Localization().getStringEx('panel.onboarding2.roles.button.continue.hint', ''),
-                  textStyle: _allowNext ? Styles().textStyles.getTextStyle("widget.button.title.medium.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.medium.fat.variant"),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  enabled: _allowNext,
-                  backgroundColor: (Styles().colors.white),
-                  borderColor: (_allowNext ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimaryTransparent03),
+                  backgroundColor: Styles().colors.white,
+                  borderColor: Styles().colors.fillColorSecondary,
                   progress: _onboardingProgress,
                   onTap: _onTapContinue,
                 ),
-              )
+                Onboarding2UnderlinedButton(
+                  title: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?"),
+                  hint: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.hint", ""),
+                  onTap: _onTapReturningUser,
+                ),
+              ],),
+            )
           ],),
         ),
       ),
@@ -136,6 +142,12 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
     _onboardingNext();
   }
 
+  void _onTapReturningUser() {
+    Analytics().logSelect(target: "Returning user?");
+    Onboarding2().privacyReturningUser = true;
+    _onboardingNext();
+  }
+
   // Onboarding
 
   bool get onboardingProgress => _onboardingProgress;
@@ -147,9 +159,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
 
   void _onboardingBack() => Navigator.of(context).pop();
   void _onboardingNext() {
-    if (_selectedRoles.isNotEmpty) {
-      Auth2().prefs?.roles = _selectedRoles;
-      Onboarding2().next(context, widget);
-    }
+    Auth2().prefs?.roles = _selectedRoles;
+    Onboarding2().next(context, widget);
   }
 }
