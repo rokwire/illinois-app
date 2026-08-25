@@ -2073,7 +2073,7 @@
 	"panel.settings.privacy_center.label.title":"隐私中心",
 	"panel.settings.privacy_center.label.description":"个性化您的隐私和数据偏好.",
 	"panel.settings.privacy_center.label.finish_setup":"完成安装",
-	"panel.settings.privacy_center.label.finish_setup_description":"使用您的 NetID 或電話號碼登入以獲得完整的{{app_title}}體驗。",
+	"panel.settings.privacy_center.label.finish_setup_description":"Sign in with your NetID to get the full {{app_title}} experience.",
 	"panel.settings.privacy_center.button.verify_identity.title":"验证你的身份",
 	"panel.settings.privacy_center.button.manage_privacy.title":"管理您的隐私",
 	"panel.settings.privacy_center.button.manage_privacy.hint":"",

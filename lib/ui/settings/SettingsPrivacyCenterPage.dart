@@ -125,7 +125,7 @@ class _SettingsPrivacyCenterPageState extends State<SettingsPrivacyCenterPage> w
               style: Styles().textStyles.getTextStyle("panel.settings.privacy_center.title.medium.fat")
             ),
             SizedBox(height: 8,),
-            Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Sign in with your NetID or Telephone number to get the full  {{app_title}} experience.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+            Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Sign in with your NetID to get the full {{app_title}} experience.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
               style: Styles().textStyles.getTextStyle("panel.settings.privacy_center.title.regular")
             ),
             SizedBox(height: 16,),
