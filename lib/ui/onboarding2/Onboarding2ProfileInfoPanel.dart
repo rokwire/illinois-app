@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/profile/ProfileInfoPage.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -156,8 +155,8 @@ class _Onboarding2ProfileInfoPanelState extends State<Onboarding2ProfileInfoPane
     CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorPrimary,)
   );
 
-  Widget get _backImageButton => OnboardingBackButton(
-    padding: const EdgeInsets.only(top: 30, bottom: 30, left: 10, right: 20),
+  Widget get _backImageButton => Onboarding2BackButton(
+    padding: const EdgeInsets.all(16),
     onTap: _onTapBack
   );
 

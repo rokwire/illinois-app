@@ -19,7 +19,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
@@ -73,7 +73,7 @@ class _Onboarding2AuthNotificationsPanelState extends State<Onboarding2AuthNotif
               Column(children: <Widget>[
                 Stack(children: <Widget>[
                   Styles().images.getImage('header-notifications', fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true,) ?? Container(),
-                  OnboardingBackButton(padding: const EdgeInsets.all(16), onTap:_onTapBack),
+                  SafeArea(child: Onboarding2BackButton(padding: const EdgeInsets.all(16), onTap: _onTapBack)),
                 ]),
                 Semantics(label: titleText, hint: Localization().getStringEx('panel.onboarding.notifications.label.title.hint', 'Header 1'), excludeSemantics: true, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:

@@ -21,7 +21,6 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -71,7 +70,7 @@ class _Onboarding2LoginNetIdPanelState extends State<Onboarding2LoginNetIdPanel>
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Stack(children: <Widget>[
                 Styles().images.getImage("header-login", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true,) ?? Container(),
-                OnboardingBackButton(padding: const EdgeInsets.all(16), onTap: _onTapBack),
+                SafeArea(child: Onboarding2BackButton(padding: const EdgeInsets.all(16), onTap: _onTapBack)),
               ],),
               Container(height: 24,),
               Semantics(label: titleString, hint: Localization().getStringEx('panel.onboarding.login.netid.label.title.hint', ''), excludeSemantics: true, child:

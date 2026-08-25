@@ -22,7 +22,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -58,7 +58,7 @@ class _Onboarding2PrivacyLevelPanelState extends State<Onboarding2PrivacyLevelPa
             Visibility(visible: Navigator.canPop(context), child:
               Positioned(top: 0, left: 0, child:
                 SafeArea(child:
-                  OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: _onTapBack),
+                  Onboarding2BackButton(padding: const EdgeInsets.all(16), onTap: _onTapBack),
                 ),
               ),
             ),
