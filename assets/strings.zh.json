@@ -1881,7 +1881,7 @@
 	"panel.saved.label.laundry": "我的洗衣房",
 	"panel.saved.label.mtd_stops": "我的巴士站",
 	"panel.saved.label.my_locations": "我的位置",
-	"panel.saved.label.campus_guide": "節省的資源",
+	"panel.saved.label.campus_guide": "My University Living",
 	"panel.saved.label.appointments": "我的MyMcKinley預約",
 
 	"panel.saved.button.all.title": "查看全部",
@@ -4018,8 +4018,13 @@
 	"widget.home.safety.safewalk_request.title": "SafeWalks",
 	"widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
 
-	"widget.home.saved_gbv_resources.title": "Saved Resources2",
-	"widget.home.saved_gbv_resources.text.offline.description": "Saved resources are not available while offline.",
+	"widget.home.saved_resources.title": "Saved Resources",
+	"widget.home.saved_resources.text.offline.description": "Saved resources are not available while offline.",
+	"widget.home.saved_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_university_living_url}}'><b>University Living</b></a>, <a href='{{local_academics_links_url}}'><b>Academic Links</b></a>, <a href='{{local_career_links_url}}'><b>Career Planning Links</b></a>, <a href='{{local_dining_links_url}}'><b>Campus Dining</b></a>, <a href='{{local_transportation_links_url}}'><b>Transportation Dining</b></a> or <a href='{{local_wellness_links_url}}'><b>24/7 Hotlines & Links</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 3.)",
+	"widget.home.saved_resources.favorites.prompt": "Item saved. Add your Saved Resources to your Home Favorites?",
+	"widget.home.saved_resources.favorites.dont_show_again": "Don't show me this again.",
+	"widget.home.saved_resources.button.all.title": "View All",
+	"widget.home.saved_resources.button.all.hint": "Tap to view all saved resources",
 
 	"widget.home.safer.label.title": "Building Access",
 	"widget.home.safer.text.empty.description": "Tap the \u2606 on items in Building Access so you can quickly find them here.",
@@ -4160,7 +4165,7 @@
 	"widget.home.favorites.title.laundry": "我的洗衣房",
 	"widget.home.favorites.title.mtd_stops": "我的巴士站",
 	"widget.home.favorites.title.locations": "我的位置",
-	"widget.home.favorites.title.campus_guide": "節省的資源",
+	"widget.home.favorites.title.campus_guide": "My University Living",
 	"widget.home.favorites.title.appointments": "我的MyMcKinley预约",
 
 	"widget.home.favorites.message.offline.events": "此功能离线时无法使用。",
@@ -4171,7 +4176,7 @@
 	"widget.home.favorites.message.offline.laundry": "此功能离线时无法使用。",
 	"widget.home.favorites.message.offline.mtd_stops": "此功能离线时无法使用。",
 	"widget.home.favorites.message.offline.locations": "離線時無法使用「我的位置」功能。",
-	"widget.home.favorites.message.offline.campus_guide": "離線時無法使用已儲存的資源。",
+	"widget.home.favorites.message.offline.campus_guide": "My University Living is not available while offline.",
 	"widget.home.favorites.message.offline.appointments": "此功能离线时无法使用。",
 
 	"widget.home.favorites.message.empty.events": "点击 <a href='{{local_url}}'><b>活动</b></a> 中项目上的 \u2606，可以在这里快速找到它们。（<a href='{{privacy_url}}'>您的隱私等級</a>必須至少為 3。）",

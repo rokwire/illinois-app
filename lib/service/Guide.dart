@@ -812,16 +812,42 @@ class GuideFavorite implements Favorite {
   
   final String? id;
   final String? contentType;
-  GuideFavorite({this.id, this.contentType});
+  final String? contentSource;
 
-  bool operator == (o) => o is GuideFavorite && o.id == id;
+  GuideFavorite({ this.id, this.contentType, this.contentSource });
 
-  int get hashCode => (id?.hashCode ?? 0);
+  factory GuideFavorite.fromString(String value, { String? contentType }) {
+    List<String> items = value.split(':');
+    if (items.length > 1) {
+      return GuideFavorite(id: items.second, contentSource: items.first, contentType: contentType);
+    } else if (items.length == 1) {
+      return GuideFavorite(id: items.first, contentType: contentType);
+    } else {
+      return GuideFavorite(contentType: contentType);
+    }
+  }
 
   static const String favoriteKeyName = "studentGuideIds";
-  static String constructFavoriteKeyName({String? contentType, bool processed = false}) => (contentType != null) ? "${_favoriteContentTypeKey(contentType, processed)}GuideIds" : favoriteKeyName;
+  static String constructFavoriteKeyName({String? contentType, bool processed = false}) => (contentType != null) ?
+    "${_favoriteContentTypeKey(contentType, processed)}GuideIds" : favoriteKeyName;
+  
   @override String get favoriteKey => constructFavoriteKeyName(contentType: contentType);
-  @override String? get favoriteId => id;
+  @override String? get favoriteId => ((contentSource != null) && (id != null)) ? '$contentSource:$id' : id;
+
+  bool get isCampusGuide => (contentSource == null);
+  bool get isGBVResource => (contentSource != null);
+
+  bool get isGBVContentSourceAsset {
+    List<String>? pathItems = contentSource?.split('/');
+    if ((pathItems != null) && (pathItems.length > 1)) { // has directory & base name
+      List<String> basenameItems = pathItems.last.split('.');
+      return (basenameItems.length > 1); // has file name & extension
+    } else {
+      return false;
+    }
+  }
+
+  bool get isGBVContentSourceCategory => (contentSource != null) && (contentSource?.isNotEmpty == true) && (isGBVContentSourceAsset == false);
 
   static String _favoriteContentTypeKey(String contentType, bool processed) {
     String favoriteKey = '';
@@ -839,6 +865,10 @@ class GuideFavorite implements Favorite {
     }
     return favoriteKey;
   }
+
+  bool operator == (o) => o is GuideFavorite && o.id == id && o.contentSource == contentSource && o.contentType == contentType;
+  int get hashCode => (id?.hashCode ?? 0) ^ (contentSource?.hashCode ?? 0) ^ (contentType?.hashCode ?? 0);
+
 }
 
 GuideContentSource? guideContentSourceFromString(String? value) {

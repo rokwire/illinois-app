@@ -1,7 +1,7 @@
 
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/ui/gbv/GBVResourceDirectoryContentPanel.dart';
-import 'package:illinois/ui/home/HomeSavedGBVResourcesWidget.dart';
+import 'package:illinois/ui/home/HomeSavedResourcesWidget.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
 class DiningLinksPanel extends GBVResourceDirectoryContentPanel {
@@ -16,8 +16,8 @@ class DiningLinksWidget extends GBVResourceDirectoryContentWidget {
   DiningLinksWidget() : super(
     contentCategory: 'dining_links',
     contentAssetKey: 'assets/extra/diningLinks.json',
-    favoriteKey: HomeSavedGBVResourcesWidget.favoriteKey,
-    favoriteListner: HomeSavedGBVResourcesWidget.favoriteListener,
+    favoriteKey: HomeSavedResourcesWidget.favoriteKey,
+    favoriteListner: HomeSavedResourcesWidget.favoriteListener,
     contentFailedMessage: Localization().getStringEx('', 'Failed to load dining links data'),
   );
 }

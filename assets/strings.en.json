@@ -1897,7 +1897,7 @@
     "panel.saved.label.laundry": "My Laundry",
     "panel.saved.label.mtd_stops": "My Bus Stops",
     "panel.saved.label.my_locations": "My Locations",
-    "panel.saved.label.campus_guide": "Saved Resources",
+    "panel.saved.label.campus_guide": "My University Living",
     "panel.saved.label.appointments": "MyMcKinley Appointments",
 
     "panel.saved.button.all.title": "View All",
@@ -4045,9 +4045,13 @@
     "widget.home.safety.safewalk_request.title": "SafeWalks",
     "widget.home.safety.safewalk_request.info": "To request a student patrol officer to walk with you between {{safewalk_start_time}} and {{safewalk_end_time}}, call <a href='tel:{{safewalk_phone_number}}'>{{safewalk_phone_number}}</a> or enter your information below.",
 
-    "widget.home.saved_gbv_resources.title": "Saved Resources2",
-    "widget.home.saved_gbv_resources.text.offline.description": "Saved resources are not available while offline.",
-    "widget.home.saved_gbv_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_academics_links_url}}'><b>Academic Links</b></a>, <a href='{{local_career_links_url}}'><b>Career Planning Links</b></a>, <a href='{{local_dining_links_url}}'><b>Campus Dining</b></a>, <a href='{{local_transportation_links_url}}'><b>Transportation Dining</b></a> or <a href='{{local_wellness_links_url}}'><b>24/7 Hotlines & Links</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 3.)",
+    "widget.home.saved_resources.title": "Saved Resources",
+   	"widget.home.saved_resources.text.offline.description": "Saved resources are not available while offline.",
+   	"widget.home.saved_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_university_living_url}}'><b>University Living</b></a>, <a href='{{local_academics_links_url}}'><b>Academic Links</b></a>, <a href='{{local_career_links_url}}'><b>Career Planning Links</b></a>, <a href='{{local_dining_links_url}}'><b>Campus Dining</b></a>, <a href='{{local_transportation_links_url}}'><b>Transportation Dining</b></a> or <a href='{{local_wellness_links_url}}'><b>24/7 Hotlines & Links</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 3.)",
+   	"widget.home.saved_resources.favorites.prompt": "Item saved. Add your Saved Resources to your Home Favorites?",
+   	"widget.home.saved_resources.favorites.dont_show_again": "Don't show me this again.",
+    "widget.home.saved_resources.button.all.title": "View All",
+    "widget.home.saved_resources.button.all.hint": "Tap to view all saved resources",
 
     "widget.home.safer.label.title": "Building Access",
     "widget.home.safer.text.empty.description": "Tap the \u2606 on items in Building Access for quick access here.",
@@ -4188,7 +4192,7 @@
     "widget.home.favorites.title.laundry": "My Laundry",
     "widget.home.favorites.title.mtd_stops": "My Bus Stops",
     "widget.home.favorites.title.locations": "My Locations",
-    "widget.home.favorites.title.campus_guide": "Saved Resources",
+    "widget.home.favorites.title.campus_guide": "My University Living",
     "widget.home.favorites.title.appointments": "MyMcKinley Appointments",
 
     "widget.home.favorites.message.offline.events": "My Events is not available while offline.",
@@ -4199,7 +4203,7 @@
     "widget.home.favorites.message.offline.laundry": "My Laundry is not available while offline.",
     "widget.home.favorites.message.offline.mtd_stops": "My Bus Stops is not available while offline.",
     "widget.home.favorites.message.offline.locations": "My Locations is not available while offline.",
-    "widget.home.favorites.message.offline.campus_guide": "Saved Resources is not available while offline.",
+    "widget.home.favorites.message.offline.campus_guide": "My University Living is not available while offline.",
     "widget.home.favorites.message.offline.appointments": "MyMcKinley Appointments is not available while offline.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 3.)",
