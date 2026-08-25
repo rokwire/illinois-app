@@ -343,6 +343,7 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
     if (_visible) {
       switch(_contentStatus) {
         case FavoriteContentStatus.none: break;
+        case FavoriteContentStatus.update: break;
         case FavoriteContentStatus.refresh: _refreshDinings(); break;
         case FavoriteContentStatus.reload: _loadDinings(); break;
       }

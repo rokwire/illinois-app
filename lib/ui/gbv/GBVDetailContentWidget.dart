@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/GBV.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/ui/gbv/GBVResourceDirectoryPanel.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -14,16 +15,18 @@ class GBVDetailContentWidget extends StatelessWidget {
   final GBVResourceDetail resourceDetail;
   final bool isTextSelectable;
 
-  GBVDetailContentWidget({super.key, required this.resourceDetail, this.isTextSelectable = true});
+  final GBVResourceDisplayMode displayMode;
+
+  GBVDetailContentWidget(this.resourceDetail, {super.key, this.isTextSelectable = true, this.displayMode = GBVResourceDisplayMode.native });
 
   @override
-  Widget build(BuildContext context) {
-    return
-      Row(children: _buildDetailContent(context, resourceDetail));
-  }
+  Widget build(BuildContext context) => Row(children:
+    _buildDetailContent(context, resourceDetail)
+  );
 
   List<Widget> _buildDetailContent(BuildContext context, GBVResourceDetail detail) {
     switch (detail.type) {
+
       case GBVResourceDetailType.address:
         return [
           Container(padding: EdgeInsets.only(right: 8), child:
@@ -37,10 +40,11 @@ class GBVDetailContentWidget extends StatelessWidget {
               behavior: HitTestBehavior.translucent,
               child:
                 Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-                  Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
+                  Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: displayMode.isNotNative ? 1 : null, overflow: TextOverflow.ellipsis,))
             )
           )
         ];
+
       case GBVResourceDetailType.email:
         Uri uri = Uri.parse('mailto:${detail.content}');
         return [
@@ -55,10 +59,11 @@ class GBVDetailContentWidget extends StatelessWidget {
               behavior: HitTestBehavior.translucent,
               child:
                 Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-                  Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
+                  Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: displayMode.isNotNative ? 1 : null, overflow: TextOverflow.ellipsis,))
             )
           )
         ];
+
       case GBVResourceDetailType.external_link:
       case GBVResourceDetailType.internal_link:
         return [
@@ -73,10 +78,11 @@ class GBVDetailContentWidget extends StatelessWidget {
               behavior: HitTestBehavior.translucent,
               child:
               Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-                Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
+                Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: displayMode.isNotNative ? 3 : null, overflow: TextOverflow.ellipsis,))
             )
           )
         ];
+
       case GBVResourceDetailType.button:
         return [
           Expanded(child:
@@ -92,6 +98,7 @@ class GBVDetailContentWidget extends StatelessWidget {
             )
           )
         ];
+
       case GBVResourceDetailType.phone:
         Uri uri = Uri.parse('tel:${detail.content}');
         return [
@@ -105,32 +112,32 @@ class GBVDetailContentWidget extends StatelessWidget {
             behavior: HitTestBehavior.translucent,
             child:
             Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-              Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline")))
+              Text(detail.content ?? '', style: Styles().textStyles.getTextStyle("widget.detail.small.underline"), maxLines: displayMode.isNotNative ? 1 : null, overflow: TextOverflow.ellipsis,))
           )
         ];
+
       case GBVResourceDetailType.text:
-        return (isTextSelectable)
-        ? [
+        String textContent = detail.content ?? '';
+        TextStyle? textStyle = Styles().textStyles.getTextStyle("widget.detail.small");
+        bool isHtml = StringUtils.containsHtmlTags(textContent);
+        Widget contentWidget = isHtml ? HtmlWidget('<div>$textContent</div>',
+          textStyle: textStyle,
+          customStylesBuilder: (element) => _htmlContentStyles[element.localName],
+          onTapUrl: (String url) => _onTapHtmlLink(context, url),
+        ) : Text(textContent,
+          style: textStyle,
+          maxLines: displayMode.isNotNative ? 3 : null,
+          overflow: displayMode.isNotNative ? TextOverflow.ellipsis : null,
+        );
+
+        double verticalPadding = 12;
+        BoxConstraints? htmlConstraints = (displayMode.isNotNative && isHtml) ?
+          BoxConstraints(maxHeight: MediaQuery.of(context).textScaler.scale(textStyle?.fontSize ?? 0) * 1.5 * 3 + 2 * verticalPadding) : null;
+
+        return [
           Expanded(child:
-            Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-              SelectionArea(child:
-                HtmlWidget(detail.content ?? '',
-                  textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
-                  customStylesBuilder: (element) => (element.localName == "a") ? _htmlLinkStyle : null,
-                  onTapUrl: (String url) => _onTapHtmlLink(context, url),
-                )
-              )
-            )
-          )
-        ]
-        : [
-          Expanded(child:
-            Container(padding: EdgeInsets.symmetric(vertical: 12), child:
-              HtmlWidget(detail.content ?? '',
-                textStyle: Styles().textStyles.getTextStyle("widget.detail.small"),
-                customStylesBuilder: (element) => (element.localName == "a") ? _htmlLinkStyle : null,
-                onTapUrl: (String url) => _onTapHtmlLink(context, url),
-              )
+            Container(padding: EdgeInsets.symmetric(vertical: verticalPadding), constraints: htmlConstraints, child:
+              isTextSelectable ? SelectionArea(child: contentWidget) : contentWidget,
             )
           )
         ];
@@ -162,13 +169,24 @@ class GBVDetailContentWidget extends StatelessWidget {
     AppLaunchUrl.launchExternal(url: detail.content);
   }
 
+  Map<String, Map<String, String>> get _htmlContentStyles => {
+    'a' : _htmlLinkStyle,
+    if (displayMode.isNotNative)
+      'div' : _htmlLimitTextStyle,
+  };
+
+  Map<String, String> get _htmlLimitTextStyle => <String, String>{
+    'line-clamp': '3',
+    //'text-overflow': 'ellipsis',
+  };
+
   Map<String, String> get _htmlLinkStyle => <String, String>{
     // 'color': _htmlLinkColor,
     'text-decoration-color': _htmlLinkColor,
   };
 
   String get _htmlLinkColor =>
-      ColorUtils.toHex(Styles().colors.fillColorSecondary);
+    ColorUtils.toHex(Styles().colors.fillColorSecondary);
 
   bool _onTapHtmlLink(BuildContext context, String url)  {
     Analytics().logSelect(target: 'Link: $url');

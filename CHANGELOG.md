@@ -5,6 +5,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [8.2.10] - 2026-08-25
+### Changed
+- Unlink links items in Section from Saved Resources home widget, make it regular widget linked to University Living / Saved Resources [#5873](https://github.com/rokwire/illinois-app/issues/5873).
+- Onboarding and Privacy App updated UI without Share activity panel [#5879](https://github.com/rokwire/illinois-app/issues/5879).
+- "Transportation Links" renamed to "Transportation & Safety Links", panel content was also updated [#6003](https://github.com/rokwire/illinois-app/issues/6003).
+- Updated "Settings / About the App" link entry [#6002](https://github.com/rokwire/illinois-app/issues/6002).
+- Updated wording in "Settings / My App Privacy Settings" [#6004](https://github.com/rokwire/illinois-app/issues/6004).
+### Removed
+- Removed favorite button/star from MTDStopDeparturesPanel's header bar [#5880](https://github.com/rokwire/illinois-app/issues/5880).
+
+## [8.2.9] - 2026-08-24
+### Fixed
+- Fixed crash in SwipeDetector widget [#6006](https://github.com/rokwire/illinois-app/issues/6006).
+### Changed
+- Reworked Saved Resources home widget and related functionality, implemented Saved Resources panel [#5873](https://github.com/rokwire/illinois-app/issues/5873).
+
+## [8.2.8] - 2026-08-21
+### Changed
+- Decreased chevron icon size in Home / Section browse entries [#5944](https://github.com/rokwire/illinois-app/issues/5944).
+- Populate transportationLinks.json with real data and load it from Content BB instead of from app resources [#5881](https://github.com/rokwire/illinois-app/issues/5944).
+### Removed
+- Removed favorite button/star from compound MTD bus stop card [#5880](https://github.com/rokwire/illinois-app/issues/5880).
+
+## [8.2.7] - 2026-08-20
+### Added
+- Add Private Certified Housing links to Campus Dining [#5872](https://github.com/rokwire/illinois-app/issues/5872).
+- Created Saved GBV Resources home widget and related functionality [#5873](https://github.com/rokwire/illinois-app/issues/5873).
 ### Fixed
 - Do not report image exceptions as fatal errors [#5991](https://github.com/rokwire/illinois-app/issues/5991).
 

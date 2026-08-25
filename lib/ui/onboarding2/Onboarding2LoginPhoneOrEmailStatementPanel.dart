@@ -19,7 +19,6 @@ import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -58,7 +57,6 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
   @override
   Widget build(BuildContext context) {
     String titleString = Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.text', 'Login by phone or email');
-    EdgeInsetsGeometry backButtonInsets = EdgeInsets.only(left: 10, top: 20 + MediaQuery.of(context).padding.top, right: 20, bottom: 20);
 
     return Scaffold(backgroundColor: Styles().colors.background, body:
       Stack(children: <Widget>[
@@ -103,7 +101,7 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
             ],),
           )
         ]),
-        OnboardingBackButton(padding: backButtonInsets, onTap: () { Analytics().logSelect(target: "Back"); Navigator.pop(context); }),
+        SafeArea(child: Onboarding2BackButton(padding: const EdgeInsets.all(16), onTap: () { Analytics().logSelect(target: "Back"); Navigator.pop(context); })),
       ],),
     );
   }

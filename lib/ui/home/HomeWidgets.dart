@@ -27,8 +27,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum CardDisplayMode { home, browse, }
 enum FavoriteContentType { my, all }
-enum FavoriteContentStatus { none, refresh, reload }
-enum FavoriteContentActivity { none, extend, refresh, reload, }
+enum FavoriteContentStatus { none, update, refresh, reload }
+enum FavoriteContentActivity { none, extend, update, refresh, reload, }
 
 ////////////////////////////
 // HomeHandleWidget
@@ -267,8 +267,13 @@ class HomeFavoriteWidget extends StatefulWidget {
   final String? favoriteId;
   final List<Widget>? actions;
   final HomeFavoriteTitleBuilder? titleBuilder;
+  final HomeFavoriteButtonBuilder? buttonBuilder;
   final StreamController<String>? updateController;
 
+  static const EdgeInsets favoriteButtonPadding = const EdgeInsets.symmetric(
+    horizontal: FavoriteStarIcon.defaultSpacing,
+    vertical: FavoriteStarIcon.defaultSpacing - HomeCard.shadowMargin, // Preserve card shadow & keep small vertical offset #5289 & #5331
+  );
 
   const HomeFavoriteWidget({Key? key,
     this.title,
@@ -276,6 +281,7 @@ class HomeFavoriteWidget extends StatefulWidget {
     this.favoriteId,
     this.actions,
     this.titleBuilder,
+    this.buttonBuilder,
     this.updateController,
   }) : super(key: key);
 
@@ -289,10 +295,6 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
   late bool _expanded;
   StreamSubscription<String>? _updateSubscription;
 
-  static const EdgeInsets favoriteButtonPadding = const EdgeInsets.symmetric(
-    horizontal: FavoriteStarIcon.defaultSpacing,
-    vertical: FavoriteStarIcon.defaultSpacing - HomeCard.shadowMargin, // Preserve card shadow & keep small vertical offset #5289 & #5331
-  );
 
   @override
   void initState() {
@@ -355,10 +357,10 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
         ),
 
         if (favoriteId != null)
-          HomeFavoriteButton(
+          widget.buttonBuilder?.call() ?? HomeFavoriteButton(
             favorite: HomeFavorite(favoriteId),
             style: FavoriteIconStyle.Button,
-            padding: favoriteButtonPadding,
+            padding: HomeFavoriteWidget.favoriteButtonPadding,
             prompt: true
           ),
       ],),
@@ -430,6 +432,7 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
 }
 
 typedef HomeFavoriteTitleBuilder = Widget Function(Widget defaultContent);
+typedef HomeFavoriteButtonBuilder = Widget Function();
 
 ////////////////////////////
 // HomeCardWidget
@@ -555,7 +558,7 @@ class HomeFavoriteButton extends FavoriteButton {
   void _toggleFavorite({bool? isFavorite}) {
     _setFavorite(isFavorite != true);
   }
-  
+
   void _setFavorite(bool value) {
     if (favorite?.id != null) {
       if (favorite?.category == null) {
@@ -574,7 +577,7 @@ class HomeFavoriteButton extends FavoriteButton {
           HomeFavorite.log(favorite, value);
         }
       }
-      else { 
+      else {
         // process toggle home widget entry
         HomeFavorite sectionFavorite = HomeFavorite(favorite?.category);
         if (value) {
@@ -1280,11 +1283,13 @@ extension FavoritesContentTypeImpl on FavoriteContentType {
 extension FavoriteContentStatusimpl on FavoriteContentStatus {
   bool get canReload => (this.index < FavoriteContentStatus.reload.index);
   bool get canRefresh => (this.index < FavoriteContentStatus.refresh.index);
+  bool get canUpdate => (this.index < FavoriteContentStatus.update.index);
 }
 
 extension FavoriteContentActivityimpl on FavoriteContentActivity {
   bool get canReload => (this.index < FavoriteContentActivity.reload.index);
   bool get canRefresh => (this.index < FavoriteContentActivity.refresh.index);
+  bool get canUpdate => (this.index < FavoriteContentActivity.update.index);
   bool get canExtend => (this.index < FavoriteContentActivity.extend.index);
   bool get canReloadOrRefresh => canRefresh;
 

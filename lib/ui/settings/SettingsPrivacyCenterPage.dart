@@ -125,7 +125,7 @@ class _SettingsPrivacyCenterPageState extends State<SettingsPrivacyCenterPage> w
               style: Styles().textStyles.getTextStyle("panel.settings.privacy_center.title.medium.fat")
             ),
             SizedBox(height: 8,),
-            Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Sign in with your NetID or Telephone number to get the full  {{app_title}} experience.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+            Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Sign in with your NetID to get the full {{app_title}} experience.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
               style: Styles().textStyles.getTextStyle("panel.settings.privacy_center.title.regular")
             ),
             SizedBox(height: 16,),
@@ -167,84 +167,72 @@ class _SettingsPrivacyCenterPageState extends State<SettingsPrivacyCenterPage> w
     if (description == null) {
       return Container();
     }
+    String? levelTitle = _privacyLevelTitle(level);
     return Container(
-        padding: EdgeInsets.only(bottom: 20),
+        padding: EdgeInsets.only(top: 24),
         color: Styles().colors.background,
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Container(
-                  height: 60,
-                  width: 60,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Styles().colors.fillColorPrimary, width: 2),
-                      color: Styles().colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(100))),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+              Stack(clipBehavior: Clip.none, alignment: Alignment.center, children: <Widget>[
+                Styles().images.getImage("lock-illustration", excludeFromSemantics: true, width: 96, fit: BoxFit.fitWidth) ?? Container(),
+                Positioned(
+                  right: -8,
+                  bottom: -8,
                   child: Container(
-                      height: 52,
-                      width: 52,
+                      height: 48,
+                      width: 48,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Styles().colors.fillColorSecondary, width: 2),
+                          border: Border.all(color: Styles().colors.fillColorPrimary, width: 2),
                           color: Styles().colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(100))),
-                      child: Semantics(
-                          label: Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),
-                          child: Text(level.toString(),
-                              style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat"))))),
-              Container(width: 20),
-              Expanded(
-                  child: Text(Localization().getString(description.key, defaults: description.text) ?? '',
-                      style: Styles().textStyles.getTextStyle("panel.settings.privacy_center.title.regular"),
-                      textAlign: TextAlign.left))
+                      child: Container(
+                          height: 40,
+                          width: 40,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Styles().colors.fillColorSecondary, width: 2),
+                              color: Styles().colors.white,
+                              borderRadius: BorderRadius.all(Radius.circular(100))),
+                          child: Semantics(
+                              label: Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),
+                              child: Text(level.toString(),
+                                  style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")))))),
+              ]),
+              Container(height: 16),
+              if (levelTitle != null) Text(levelTitle,
+                  textAlign: TextAlign.center,
+                  style: Styles().textStyles.getTextStyle("widget.title.extra_huge.fat")),
+              Container(height: 12),
+              Text(Localization().getString(description.key, defaults: description.text) ?? '',
+                  style: Styles().textStyles.getTextStyle("widget.description.regular"),
+                  textAlign: TextAlign.center),
             ]));
   }
 
+  String? _privacyLevelTitle(int? level) {
+    switch (level) {
+      case 1: return Localization().getStringEx("panel.settings.privacy_center.privacy_level.title.1", "Browse privately");
+      case 2: return Localization().getStringEx("panel.settings.privacy_center.privacy_level.title.2", "Explore privately");
+      case 3: return Localization().getStringEx("panel.settings.privacy_center.privacy_level.title.3", "Personalized for you");
+      case 4: return Localization().getStringEx("panel.settings.privacy_center.privacy_level.title.4", "Personalized for you");
+      case 5: return Localization().getStringEx("panel.settings.privacy_center.privacy_level.title.5", "Full Access");
+      default: return null;
+    }
+  }
+
   Widget _buildManagePrivacyWidget(){
-    return Row(children: <Widget>[
-        Expanded(
-          child: GestureDetector(
-            onTap: _onTapManagePrivacy,
-            child: Semantics(
-              label: Localization().getStringEx("panel.settings.privacy_center.button.manage_privacy.title", "Manage and Understand Your Privacy"),
-              hint:Localization().getStringEx("panel.settings.privacy_center.button.manage_privacy.hint", ""),
-              button:true,
-              child:Stack(children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(2),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: ( Colors.white),
-                        borderRadius: BorderRadius.circular(4),
-                        boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
-                        border: Border.all(
-                            color:Colors.white,
-                            width: 2)),
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 16, bottom: 19, left:26, right: 24),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          Styles().images.getImage('privacy', excludeFromSemantics: true) ?? Container(),
-                          Container(width: 18,),
-                          Expanded(child:
-                            Semantics(  excludeSemantics: true,
-                            child: Text(
-                              Localization().getStringEx("panel.settings.privacy_center.button.manage_privacy.title", "Manage and Understand Your Privacy"),
-                              textAlign: TextAlign.left,
-                              style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
-                            )),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )),
-          ),
-        )
-      ]);
+    return Padding(
+      padding: EdgeInsets.only(top: 40),
+      child: RoundedButton(
+        backgroundColor: Styles().colors.white,
+        borderColor: Styles().colors.white,
+        label: Localization().getStringEx("panel.settings.privacy_center.button.manage_privacy.title", "Manage Your Privacy"),
+        hint: Localization().getStringEx("panel.settings.privacy_center.button.manage_privacy.hint", ""),
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+        borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+        onTap: _onTapManagePrivacy,
+      ),
+    );
   }
 
   Widget _buildPrivacyPolicyButton() {
@@ -261,7 +249,7 @@ class _SettingsPrivacyCenterPageState extends State<SettingsPrivacyCenterPage> w
 
   Widget _buildDeleteButton(){
     return Padding(
-      padding: EdgeInsets.only(top: 40),
+      padding: EdgeInsets.only(top: 16),
       child: Column(children: <Widget>[
         RoundedButton(
           backgroundColor: Styles().colors.white,

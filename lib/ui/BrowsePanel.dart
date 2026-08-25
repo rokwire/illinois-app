@@ -24,8 +24,10 @@ import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/career/CareerPlanningLinks.dart';
+import 'package:illinois/ui/dining/DiningLinksPanel.dart';
 import 'package:illinois/ui/directory/DirectoryAccounts2Panel.dart';
 import 'package:illinois/ui/groups/GroupHome2Panel.dart';
+import 'package:illinois/ui/home/HomeSavedResourcesWidget.dart';
 import 'package:illinois/ui/illini/WordlePanel.dart';
 import 'package:illinois/ui/messages/MessagesHomePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
@@ -37,6 +39,7 @@ import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
+import 'package:illinois/ui/mtd/TransportationAndSafetyLinks.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
@@ -61,8 +64,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'athletics/AthleticsEventsPanel.dart';
 import 'dining/DiningLinksPanel.dart';
-
-///////////////////////////
 // BrowsePanel
 
 class BrowsePanel extends StatefulWidget {
@@ -255,11 +256,13 @@ class _BrowseSection extends StatelessWidget {
   final void Function()? onExpand;
   final List<String>? _browseEntriesCodes;
   final Set<String>? _homeSectionEntriesCodes;
+  final Map<String, Set<String>> _homeSectionsEntriesCodesMap;
   final Set<String>? _homeRootEntriesCodes;
 
   _BrowseSection({Key? key, required this.sectionId, List<String>? entryCodes, this.expanded = false, this.onExpand}) :
     _browseEntriesCodes = entryCodes ?? buildBrowseEntryCodes(sectionId: sectionId),
     _homeSectionEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home.$sectionId']),
+    _homeSectionsEntriesCodesMap = buildSectionsEntriesCodesMap(),
     _homeRootEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home']),
     super(key: key);
 
@@ -273,6 +276,23 @@ class _BrowseSection extends StatelessWidget {
     return codes;
   }
 
+  static Map<String, Set<String>> buildSectionsEntriesCodesMap() {
+    Map<String, Set<String>> sectionsMap = <String, Set<String>>{};
+    Map<String, dynamic>? flexUI = FlexUI().defaultContent;
+    if (flexUI != null) {
+      final String homeSectionPrefix = 'home.';
+      for(String flexKey in flexUI.keys) {
+        String? homeSection = flexKey.startsWith(homeSectionPrefix) ? flexKey.substring(homeSectionPrefix.length) : null;
+        Set<String>? sectionEntriesCodes = JsonUtils.setStringsValue(flexUI[flexKey]);
+        if ((homeSection != null) && (sectionEntriesCodes != null)) {
+          sectionsMap[homeSection] = sectionEntriesCodes;
+        }
+      }
+    }
+    return sectionsMap;
+  }
+
+
   HomeFavorite? _favorite(String code) {
     if (_homeSectionEntriesCodes?.contains(code) ?? false) {
       return HomeFavorite(code, category: sectionId);
@@ -281,8 +301,19 @@ class _BrowseSection extends StatelessWidget {
       return HomeFavorite(code);
     }
     else {
-      return null;
+      String? homeSection = _lookupHomeSectionByEntryCode(code);
+      return (homeSection != null) ? HomeFavorite(code, category: homeSection) : null;
     }
+  }
+
+  String? _lookupHomeSectionByEntryCode(String code) {
+    for (String homeSection in _homeSectionsEntriesCodesMap.keys) {
+      Set<String>? sectionEntriesCodes = _homeSectionsEntriesCodesMap[homeSection];
+      if (sectionEntriesCodes?.contains(code) == true) {
+        return homeSection;
+      }
+    }
+    return null;
   }
 
 
@@ -572,7 +603,7 @@ class _BrowseEntry extends StatelessWidget {
   };
 
   Widget? get _iconWidget =>
-    Styles().images.getImage(_iconsMap['$sectionId.$entryId'] ?? 'chevron-right-bold', excludeFromSemantics: true);
+    Styles().images.getImage(_iconsMap['$sectionId.$entryId'] ?? 'chevron-right', excludeFromSemantics: true);
 
   void _onTap(BuildContext context) {
     process(context, sectionId, entryId);
@@ -603,7 +634,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
-      case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
+      case "campus_guide.saved_resources":   _onTapSavedResources(context); break;
 
       case "career_exploration.career_planing_links": _onTapCareerPlaningLinks(context); break;
       case "career_exploration.interest_explorer": _onTapInterestExplorer(context); break;
@@ -636,7 +667,7 @@ class _BrowseEntry extends StatelessWidget {
       case "transit_and_safety.safewalk_request":     _onTapSafewalkRequest(context); break;
       case "transit_and_safety.safety_resources":     _onTapSafetyResources(context); break;
       case "transit_and_safety.sexual_misconduct":    _onTapSexualMisconduct(context); break;
-      case "transit_and_safety.transportation_links": _onTapTransportationLinks(context); break;
+      case "transit_and_safety.transportation_and_safety_links": _onTapTransportationAndSafetyLinks(context); break;
 
       case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
       case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
@@ -818,8 +849,13 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   static void _onTapMyCampusGuide(BuildContext context) {
-    Analytics().logSelect(target: "My Campus Guide");
+    Analytics().logSelect(target: "Saved Resources");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [GuideFavorite.favoriteKeyName]); } ));
+  }
+
+  static void _onTapSavedResources(BuildContext context) {
+    Analytics().logSelect(target: "Saved Resources");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedResourcesPanel()));
   }
 
   static void _onTapWellnessResources(BuildContext context) {
@@ -889,11 +925,10 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVPathwaysPanel()));
   }
 
-  static void _onTapTransportationLinks(BuildContext context) {
-    Analytics().logSelect(target: "Transportation Links");
-    AppAlert.showDialogResult(context, 'TBD');
+  static void _onTapTransportationAndSafetyLinks(BuildContext context) {
+    Analytics().logSelect(target: "Transportation & Safety Links");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => TransportationAndSafetyLinksPanel()));
   }
-
 
   static void _onTapWellnessRings(BuildContext context) {
     Analytics().logSelect(target: "Wellness Daily Rings");

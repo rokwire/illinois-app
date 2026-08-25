@@ -310,6 +310,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
     if (_visible) {
       switch(_contentStatus) {
         case FavoriteContentStatus.none: break;
+        case FavoriteContentStatus.update:
         case FavoriteContentStatus.refresh: _updateResearchProjects(); break;
         case FavoriteContentStatus.reload: _loadResearchProjects(); break;
       }

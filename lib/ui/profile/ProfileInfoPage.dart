@@ -229,14 +229,14 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with NotificationsList
 
   Widget get _directoryVisibilityTitle =>
     ExcludeSemantics(child:
-      Text(Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility'),
+      Text(Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title   ', 'App User Directory Visibility'),
         style: _directoryVisibilityEnabled ?
           Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.enabled') :
           Styles().textStyles.getTextStyle('widget.toggle_button.title.regular.disabled')
     ));
 
   String get _directoryVisibilityTitleText =>
-    Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'Directory Visibility');
+    Localization().getStringEx('panel.profile.info.directory_visibility.command.toggle.title', 'App User Directory Visibility');
 
   String get _directoryVisibilityToggleLabel => _directoryVisibilityTitleText;
 
