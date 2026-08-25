@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Unlink links items in Section from Saved Resources home widget, make it regualr widget linked to University Living / Saved Reseources [#5873](https://github.com/rokwire/illinois-app/issues/5873).
+### Removed
+- Removed favorite button/star from MTDStopDeparturesPanel's header bar [#5880](https://github.com/rokwire/illinois-app/issues/5880).
 
 ## [8.2.9] - 2026-08-24
 ### Fixed
