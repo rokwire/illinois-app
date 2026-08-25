@@ -39,7 +39,7 @@ import 'package:illinois/ui/home/HomeRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
-import 'package:illinois/ui/mtd/TransportationLinks.dart';
+import 'package:illinois/ui/mtd/TransportationAndSafetyLinks.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
@@ -667,7 +667,7 @@ class _BrowseEntry extends StatelessWidget {
       case "transit_and_safety.safewalk_request":     _onTapSafewalkRequest(context); break;
       case "transit_and_safety.safety_resources":     _onTapSafetyResources(context); break;
       case "transit_and_safety.sexual_misconduct":    _onTapSexualMisconduct(context); break;
-      case "transit_and_safety.transportation_links": _onTapTransportationLinks(context); break;
+      case "transit_and_safety.transportation_and_safety_links": _onTapTransportationAndSafetyLinks(context); break;
 
       case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
       case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
@@ -925,9 +925,9 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVPathwaysPanel()));
   }
 
-  static void _onTapTransportationLinks(BuildContext context) {
-    Analytics().logSelect(target: "Transportation Links");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => TransportationLinksPanel()));
+  static void _onTapTransportationAndSafetyLinks(BuildContext context) {
+    Analytics().logSelect(target: "Transportation & Safety Links");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => TransportationAndSafetyLinksPanel()));
   }
 
   static void _onTapWellnessRings(BuildContext context) {

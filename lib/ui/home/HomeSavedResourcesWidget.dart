@@ -25,7 +25,7 @@ import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/mtd/TransportationLinks.dart';
+import 'package:illinois/ui/mtd/TransportationAndSafetyLinks.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/wellness/WellnessLinksPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
@@ -516,8 +516,8 @@ class _SavedResourcesImplWidgetState<T extends StatefulWidget> extends State<T> 
   static const String localCareerLinksUrlMacro = '{{local_career_links_url}}';
   static const String localDiningLinksHost = 'dining_links';
   static const String localDiningLinksUrlMacro = '{{local_dining_links_url}}';
-  static const String localTransportationLinksHost = 'transportation_links';
-  static const String localTransportationLinksUrlMacro = '{{local_transportation_links_url}}';
+  static const String localTransportationAndSafetyLinksHost = 'transportation_and_safety_links';
+  static const String localTransportationAndSafetyLinksUrlMacro = '{{local_transportation_and_safety_links_url}}';
   static const String localWellnessLinksHost = 'wellness_links';
   static const String localWellnessLinksUrlMacro = '{{local_wellness_links_url}}';
   static const String privacyScheme = 'privacy';
@@ -525,12 +525,12 @@ class _SavedResourcesImplWidgetState<T extends StatefulWidget> extends State<T> 
   static const String privacyUrlMacro = '{{privacy_url}}';
 
   String get _emptyContentMessageHtml =>
-    Localization().getStringEx("widget.home.saved_resources.text.empty.description", "Tap the \u2606 on items in <a href='$localUniversityLivingUrlMacro'><b>University Living</b></a>, <a href='$localAcademicLinksUrlMacro'><b>Academic Links</b></a>, <a href='$localCareerLinksUrlMacro'><b>Career Planning Links</b></a>, <a href='$localDiningLinksUrlMacro'><b>Campus Dining</b></a>, <a href='$localTransportationLinksUrlMacro'><b>Transportation Dining</b></a> or <a href='localWellnessLinksUrlMacro'><b>24/7 Hotlines & Links</b></a> for quick access here. (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 3.)")
+    Localization().getStringEx("widget.home.saved_resources.text.empty.description", "Tap the \u2606 on items in <a href='$localUniversityLivingUrlMacro'><b>University Living</b></a>, <a href='$localAcademicLinksUrlMacro'><b>Academic Links</b></a>, <a href='$localCareerLinksUrlMacro'><b>Career Planning Links</b></a>, <a href='$localDiningLinksUrlMacro'><b>Campus Dining</b></a>, <a href='$localTransportationAndSafetyLinksUrlMacro'><b>Transportation & Safety Links</b></a> or <a href='localWellnessLinksUrlMacro'><b>24/7 Hotlines & Links</b></a> for quick access here. (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 3.)")
       .replaceAll(localUniversityLivingUrlMacro, '$localScheme://$localUniversityLivingHost')
       .replaceAll(localAcademicLinksUrlMacro, '$localScheme://$localAcademicLinksHost')
       .replaceAll(localCareerLinksUrlMacro, '$localScheme://$localCareerLinksHost')
       .replaceAll(localDiningLinksUrlMacro, '$localScheme://$localDiningLinksHost')
-      .replaceAll(localTransportationLinksUrlMacro, '$localScheme://$localTransportationLinksHost')
+      .replaceAll(localTransportationAndSafetyLinksUrlMacro, '$localScheme://$localTransportationAndSafetyLinksHost')
       .replaceAll(localWellnessLinksUrlMacro, '$localScheme://$localWellnessLinksHost')
       .replaceAll(privacyUrlMacro, '$privacyScheme://$privacyLevelHost');
 
@@ -549,9 +549,9 @@ class _SavedResourcesImplWidgetState<T extends StatefulWidget> extends State<T> 
       } else if (uri?.host == localDiningLinksHost) {
         Analytics().logSelect(target: 'Campus Dining', source: runtimeType.toString());
         Navigator.push(context, CupertinoPageRoute(builder: (context) => DiningLinksPanel()));
-      } else if (uri?.host == localTransportationLinksHost) {
+      } else if (uri?.host == localTransportationAndSafetyLinksHost) {
         Analytics().logSelect(target: 'Transportation Links', source: runtimeType.toString());
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => TransportationLinksPanel()));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => TransportationAndSafetyLinksPanel()));
       } else if (uri?.host == localWellnessLinksHost) {
         Analytics().logSelect(target: '24/7 Hotlines & Links', source: runtimeType.toString());
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessLinksPanel()));
