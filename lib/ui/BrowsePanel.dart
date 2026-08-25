@@ -524,15 +524,7 @@ class _BrowseSection extends StatelessWidget {
       for(String code in _browseEntriesCodes!.reversed) {
         HomeFavorite? entryFavorite = _favorite(code);
         if (entryFavorite != null) {
-          String? entryCategory = entryFavorite.category;
-          Set<String>? entryCategoryItems = ((entryCategory != null) && (entryCategory != sectionId) && (_homeRootEntriesCodes?.contains(entryCategory) == true)) ?
-            _homeSectionsEntriesCodesMap[entryCategory] : null;
-          if (entryCategoryItems != null) {
-            favorites.add(HomeFavorite(entryCategory));
-            favorites.addAll(entryCategoryItems.map((itemId) => HomeFavorite(itemId, category: entryCategory)));
-          } else {
-            favorites.add(entryFavorite);
-          }
+          favorites.add(entryFavorite);
         }
       }
     }
