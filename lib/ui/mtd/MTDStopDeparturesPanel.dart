@@ -124,12 +124,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> with No
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(
-        title: widget.stop.name,
-        actions: [
-          FavoriteButton(favorite: widget.stop, style: FavoriteIconStyle.SlantHeader)
-        ],
-      ),
+      appBar: HeaderBar(title: widget.stop.name,),
       body: _buildBody(),
       backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar(),
