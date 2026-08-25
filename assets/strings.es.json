@@ -2089,7 +2089,7 @@
     "panel.settings.privacy_center.label.title":"Centro de privacidad",
     "panel.settings.privacy_center.label.description":"Personalice sus preferencias de privacidad y datos.",
     "panel.settings.privacy_center.label.finish_setup":"Finalizar configuración",
-    "panel.settings.privacy_center.label.finish_setup_description":"Inicie sesión con su NetID o número de teléfono para obtener la experiencia completa de {{app_title}}.",
+    "panel.settings.privacy_center.label.finish_setup_description":"Sign in with your NetID to get the full {{app_title}} experience.",
     "panel.settings.privacy_center.button.verify_identity.title":"Verifica tu identidad",
     "panel.settings.privacy_center.button.manage_privacy.title":"Administre su privacidad",
     "panel.settings.privacy_center.button.manage_privacy.hint":"",
