@@ -74,12 +74,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
             )),
             child: SafeArea(bottom: false, child:
               Column(children: <Widget>[
-                Align(alignment: Alignment.topLeft, child:
-                  Visibility(visible: _isFirst, child:
-                    Onboarding2BackButton(padding: const EdgeInsets.all(16), imageColor: Styles().colors.white, onTap: _onTapBack),
-                  ),
-                ),
-                Container(height: 8,),
+                Container(height: 24,),
                 Styles().images.getImage('university-logo-dark', excludeFromSemantics: true) ?? Container(),
                 Container(height: 10,),
                 Semantics(
@@ -166,11 +161,6 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
     }
   }
 
-  void _onTapBack() {
-    Analytics().logSelect(target: "Back");
-    _onboardingBack();
-  }
-
   // Onboarding
 
   bool get onboardingProgress => _onboardingProgress;
@@ -188,6 +178,4 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
     Auth2().prefs?.roles = _selectedRoles;
     Onboarding2().next(context, widget);
   }
-
-  bool get _isFirst => (widget.asWidget == Onboarding2().first);
 }
