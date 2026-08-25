@@ -6,6 +6,7 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/GBV.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/ui/gbv/GBVResourceDirectoryPanel.dart';
+import 'package:illinois/ui/home/HomeSavedResourcesWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -14,7 +15,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-typedef GBVResourceFavoriteListener = void Function(BuildContext context, GBVResourceFavorite favorite);
+typedef GBVResourceFavoriteListener = void Function(BuildContext context, ResourceFavorite favorite);
 
 class GBVResourceDirectoryContentWidget extends StatefulWidget {
   final String? contentCategory;
@@ -67,7 +68,7 @@ class _GBVResourceDirectoryContentWidgetState extends State<GBVResourceDirectory
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoriteChanged) {
-      if (mounted && (param is GBVResourceFavorite) && (param.key == widget.favoriteKey) && (param.category == _favoriteCategory)) {
+      if (mounted && (param is ResourceFavorite) && (param.key == widget.favoriteKey) && (param.category == _favoriteCategory)) {
         widget.favoriteListner?.call(context, param);
       }
     }

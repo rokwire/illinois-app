@@ -58,7 +58,8 @@ extension FavoriteExt on Favorite {
       return (this as MTDStop).name;
     }
     else if (this is GuideFavorite) {
-      return Guide().entryListTitle(Guide().entryById((this as GuideFavorite).id), stripHtmlTags: true);
+      GuideFavorite guideFavorite = this as GuideFavorite;
+      return guideFavorite.isCampusGuide ? Guide().entryListTitle(Guide().entryById((this as GuideFavorite).id), stripHtmlTags: true) : null;
     }
     else if (this is InboxMessage) {
       return (this as InboxMessage).subject;
@@ -88,7 +89,8 @@ extension FavoriteExt on Favorite {
       return (this as News).displayTime;
     }
     else if (this is GuideFavorite) {
-      return Guide().entryListDescription(Guide().entryById((this as GuideFavorite).id), stripHtmlTags: true);
+      GuideFavorite guideFavorite = this as GuideFavorite;
+      return guideFavorite.isCampusGuide ? Guide().entryListDescription(Guide().entryById((this as GuideFavorite).id), stripHtmlTags: true) : null;
     }
     else if (this is InboxMessage) {
       return (this as InboxMessage).body;
@@ -163,7 +165,8 @@ extension FavoriteExt on Favorite {
       return Styles().colors.accentColor3;
     }
     else if (this is GuideFavorite) {
-      return Styles().colors.accentColor3;
+      GuideFavorite guideFavorite = this as GuideFavorite;
+      return guideFavorite.isCampusGuide ? Styles().colors.accentColor3 : Styles().colors.fillColorSecondary;
     }
     else if (this is InboxMessage) {
       return Styles().colors.fillColorSecondary;
@@ -199,7 +202,12 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: this as MTDStop, analyticsFeature: analyticsFeature)));
     }
     else if (this is GuideFavorite) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as GuideFavorite).id, analyticsFeature: analyticsFeature,)));
+      GuideFavorite guideFavorite = this as GuideFavorite;
+      if (guideFavorite.isCampusGuide) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: guideFavorite.id, analyticsFeature: analyticsFeature,)));
+      } else {
+        //TBD...
+      }
     }
     else if (this is Appointment) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: (this as Appointment), analyticsFeature: analyticsFeature)));
