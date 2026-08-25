@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/athletics/AthleticsEventsContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDayContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsContentWidget.dart';
@@ -30,6 +29,8 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+
+import 'AthleticsEventsPanel.dart';
 
 enum AthleticsContentType { events, news, teams, game_day }
 
@@ -227,7 +228,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   Widget? get _contentWidget {
     switch (_selectedContentType) {
-      case AthleticsContentType.events: return AthleticsEventsContentWidget(starred: _starred,);
+      case AthleticsContentType.events: return AthleticsEventsPanel(starred: _starred,);
       case AthleticsContentType.news: return AthleticsNewsContentWidget(starred: _starred,);
       case AthleticsContentType.teams: return AthleticsTeamsContentWidget();
       case AthleticsContentType.game_day: return AthleticsGameDayContentWidget();

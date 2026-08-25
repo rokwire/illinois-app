@@ -59,6 +59,7 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+import 'athletics/AthleticsEventsPanel.dart';
 import 'dining/DiningLinksPanel.dart';
 
 ///////////////////////////
@@ -694,7 +695,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapSportEvents(BuildContext context) {
     Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsEventsPanel()));
   }
 
   static void _onTapSportNews(BuildContext context) {

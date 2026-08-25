@@ -15,6 +15,7 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Map2.dart';
+import 'package:illinois/ui/athletics/AthleticsEventsPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
@@ -222,7 +223,7 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) { return Dining2HomePanel(); } ));
     }
     else if (lowerCaseKey == Game.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsEventsPanel()));
     }
     else if (lowerCaseKey == News.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news)));
