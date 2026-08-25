@@ -17,14 +17,13 @@
 			],
 			"home.system": ["tout", "welcome_message", "emergency", "voter_registration", "connect"],
 			"home.connect": ["netid", "phone_or_email"],
-			"home.saved_resources": [ "my_campus_guide", "academic_links", "career_planing_links", "dining_links", "transportation_links", "wellness_links"],
 
 			"browse": ["academics", "appointments", "athletics", "campus_guide", "career_exploration", "dining", "directory", "events", "laundry", "groups", "messages", "mtd", "my", "polls", "music_and_news", "research_projects", "safety", "sexual_misconduct", "surveys", "transit_and_safety", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "campus_reminders", "academic_links", "my_illini"],
 			"browse.appointments": ["appointments"],
 			"browse.athletics": ["sport_events", "sport_news", "sport_teams", "my_game_day"],
 			"browse.laundry": ["laundry"],
-			"browse.campus_guide": ["campus_highlights", "campus_guide", "my_campus_guide"],
+			"browse.campus_guide": ["campus_highlights", "campus_guide", "saved_resources"],
 			"browse.career_exploration": ["career_planing_links", "interest_explorer", "business_card", "job_board"],
 			"browse.dining": ["dining", "dining_links"],
 			"browse.directory": ["user_directory"],
@@ -70,7 +69,7 @@
 
 			"map.types":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "my_locations", "storied_sites"],
 
-			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
+			"privacy_center": ["connect", "description", "policy", "manage", "delete"],
 
 			"appointment.providers.monitored": ["grainger"],
 			"appointment.providers.enabled": ["grainger"],
@@ -233,7 +232,8 @@
 				"wellness_mental_health"                  : false,
 				"wellness_todo"                           : false,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
-				"onboarding2.video_tutorial"              : [["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"], "AND", "${app.storage.onBoarding2ShowTutorial}"],
+				"onboarding2.get_started"                 : false,
+				"onboarding2.video_tutorial"              : false,
 				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"onboarding2.privacy_location_services"   : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"onboarding2.privacy_store_activity"      : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
