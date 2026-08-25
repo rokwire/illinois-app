@@ -5,7 +5,9 @@
     "Maps",
     "MTD Buses",
     "Parking",
-    "Regional & Intercampus Travel"
+    "Regional & Intercampus Travel",
+		"Safety Contacts",
+		"Safety Links"
   ],
   "screens": {},
   "resources": [
@@ -308,6 +310,99 @@
 			},{
 				"type": "external_link",
 				"content": "https://iflycu.com/"
+			}]
+		},{
+			"id": "911",
+			"type": "external_link",
+			"categories": ["Safety Contacts"],
+			"title": "911",
+			"directoryContent": [{
+				"type": "text",
+				"content": "Emergency or active crime"
+			},{
+				"type": "phone",
+				"content": "911"
+			}]
+		},{
+			"id": "general_university_police_assistance",
+			"type": "external_link",
+			"categories": ["Safety Contacts"],
+			"title": "General University Police Assistance",
+			"directoryContent": [{
+				"type": "phone",
+				"content": "217-333-1216"
+			},{
+				"type": "external_link",
+				"content": "https://police.illinois.edu/contact"
+			}]
+		},{
+			"id": "champaign_police",
+			"type": "external_link",
+			"categories": ["Safety Contacts"],
+			"title": "Champaign Police",
+			"directoryContent": [{
+				"type": "phone",
+				"content": "217-333-8911"
+			},{
+				"type": "external_link",
+				"content": "https://champaignil.gov/police"
+			}]
+		},{
+			"id": "urbana_police",
+			"type": "external_link",
+			"categories": ["Safety Contacts"],
+			"title": "Urbana Police",
+			"directoryContent": [{
+				"type": "phone",
+				"content": "217-384-2320"
+			},{
+				"type": "external_link",
+				"content": "https://www.urbanail.gov/police-department"
+			}]
+		},{
+			"id": "alcohol_and_other_drug_use",
+			"type": "external_link",
+			"categories": ["Safety Links"],
+			"title": "Alcohol & Other Drug Use",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://counselingcenter.illinois.edu/brochure-alcohol-and-other-drug-use"
+			}]
+		},{
+			"id": "campus_safety_tips",
+			"type": "external_link",
+			"categories": ["Safety Links"],
+			"title": "Campus Safety Tips",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://www.police.illinois.edu/campus-safety-tips"
+			}]
+		},{
+			"id": "emergency_exits_rescue_areas_and_refuge_areas_in_campus_buildings",
+			"type": "external_link",
+			"categories": ["Safety Links"],
+			"title": "Emergency Exits, Rescue Areas & Refuge Areas in Campus Buildings",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://facilityaccessmaps.fs.illinois.edu/archibus/schema/ab-products/essential/workplace/index.html"
+			}]
+		},{
+			"id": "illini_alert",
+			"type": "external_link",
+			"categories": ["Safety Links"],
+			"title": "Illini-Alert",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://www.police.illinois.edu/em/response/illini-alerts"
+			}]
+		},{
+			"id": "report_a_threat",
+			"type": "external_link",
+			"categories": ["Safety Links"],
+			"title": "Report a Threat",
+			"directoryContent": [{
+				"type": "external_link",
+				"content": "https://cm.maxient.com/reportingform.php?UnivofIllinois&layout_id=31"
 			}]
 		}
   ]

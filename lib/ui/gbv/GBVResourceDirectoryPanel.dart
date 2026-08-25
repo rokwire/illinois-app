@@ -274,6 +274,33 @@ class GBVResourceWidget extends StatelessWidget {
     );
   }
 
+  void _onTapResource(BuildContext context) {
+    Analytics().logSelect(target: 'Resource - ${resource.title}');
+    switch (resource.type) {
+      case GBVResourceType.external_link: {
+        GBVResourceDetail? linkDetail = resource.externalOrInternalLinkDetail;
+        if (linkDetail != null) {
+          AppLaunchUrl.launch(context: context, url: linkDetail.content);
+        } else break;
+      }
+      case GBVResourceType.internal_link: {
+        GBVResourceDetail? linkDetail = resource.internalOrExternalLinkDetail;
+        if (linkDetail != null) {
+          AppLaunchUrl.launch(context: context, url: linkDetail.content);
+        } else break;
+      }
+      case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: resource))); break;
+      case GBVResourceType.directory: break;
+      case GBVResourceType.resource_list: {
+        GBVResourceListScreen? targetScreen = (resource.resourceScreenId == "supporting_a_friend") ?
+          gbvData?.resourceListScreens?.supportingAFriend : null;
+        if ((gbvData != null) && (targetScreen != null)) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(gbvData: gbvData ?? GBVData.empty(), resourceListScreen: targetScreen)));
+        } else break;
+      }
+    }
+  }
+
   BoxDecoration get _contentDecoration {
     switch (displayMode) {
       case GBVResourceDisplayMode.native: return _nativeContentDecoraton;
@@ -304,78 +331,6 @@ class GBVResourceWidget extends StatelessWidget {
   static const BorderRadius browseBorderRadius = const BorderRadius.all(browseRadius);
   static const Radius browseRadius = const Radius.circular(8);
 
-  /*Widget build(BuildContext context) {
-    Widget titleTextWidget = Text(resource.title, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"));
-    Widget titleWidget = _canFavorite ?
-      Row(children: [
-        FavoriteButton(style: FavoriteIconStyle.Button, favorite: GBVResourceFavorite(key: favoriteKey ?? '', category: favoriteCategory, id: resource.id),),
-        Expanded(child:
-          Padding(padding: EdgeInsetsGeometry.symmetric(vertical: 4), child:
-            titleTextWidget
-          )
-        )
-      ],) :
-      Padding(padding: EdgeInsets.only(left: 16), child:
-        titleTextWidget
-      );
-
-    EdgeInsets descriptionPadding = EdgeInsets.only(left: _canFavorite ? FavoriteStarIcon.defaultButtonSize : 16 /*, right: 16 */);
-    Iterable<GBVResourceDetail> resourceDetails = (resource.type.isLink) ? resource.directoryNotLinkContent : resource.directoryContent;
-    Widget descriptionWidget = Padding(padding: descriptionPadding, child:
-      Column(children:
-        List.from(resourceDetails.map((detail) => GBVDetailContentWidget(resourceDetail: detail, isTextSelectable: false)))
-      )
-    );
-    return
-        GestureDetector(onTap: () => _onTapResource(context), child:
-          Container(decoration:
-            BoxDecoration(
-              color: Styles().colors.white,
-              border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1)),
-            ), child:
-            Padding(padding: EdgeInsets.only(top: _canFavorite ? 0 : 16, bottom: _canFavorite ? 0 : (resourceDetails.isNotEmpty ? 4 : 16)), child:
-              Row(children: [
-                Expanded(child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                    titleWidget,
-                    descriptionWidget
-                  ])
-                ),
-                Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
-                  Styles().images.getImage(resource.chevronIconKey, width: 16, height: 16, fit: BoxFit.contain) ?? Container()
-                )
-              ])
-            )
-          )
-        );
-  }*/
-
-  void _onTapResource(BuildContext context) {
-    Analytics().logSelect(target: 'Resource - ${resource.title}');
-    switch (resource.type) {
-      case GBVResourceType.external_link: {
-        GBVResourceDetail? linkDetail = resource.externalOrInternalLinkDetail;
-        if (linkDetail != null) {
-          AppLaunchUrl.launch(context: context, url: linkDetail.content);
-        } else break;
-      }
-      case GBVResourceType.internal_link: {
-        GBVResourceDetail? linkDetail = resource.internalOrExternalLinkDetail;
-        if (linkDetail != null) {
-          AppLaunchUrl.launch(context: context, url: linkDetail.content);
-        } else break;
-      }
-      case GBVResourceType.panel: Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceDetailPanel(resource: resource))); break;
-      case GBVResourceType.directory: break;
-      case GBVResourceType.resource_list: {
-        GBVResourceListScreen? targetScreen = (resource.resourceScreenId == "supporting_a_friend") ?
-          gbvData?.resourceListScreens?.supportingAFriend : null;
-        if ((gbvData != null) && (targetScreen != null)) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GBVResourceListPanel(gbvData: gbvData ?? GBVData.empty(), resourceListScreen: targetScreen)));
-        } else break;
-      }
-      }
-    }
 }
 
 extension GBVResourceDisplayModeImpl on GBVResourceDisplayMode {
