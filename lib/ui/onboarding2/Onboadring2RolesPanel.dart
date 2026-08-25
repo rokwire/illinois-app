@@ -133,13 +133,13 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
                         backgroundColor: Styles().colors.white,
                         borderColor: Styles().colors.fillColorSecondary,
                         progress: _onboardingProgress,
-                        onTap: _onTapContinue,
+                        onTap: _onboardingNext,
                       ),
                       Onboarding2UnderlinedButton(
                         title: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?"),
                         hint: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.hint", ""),
                         padding: const EdgeInsets.only(top: 8),
-                        onTap: _onTapReturningUser,
+                        onTap: () => _onboardingNext(returningUser: true),
                       ),
                     ],),
                   ),
@@ -171,17 +171,6 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
     _onboardingBack();
   }
 
-  void _onTapContinue() {
-    Analytics().logSelect(target: "Continue");
-    _onboardingNext();
-  }
-
-  void _onTapReturningUser() {
-    Analytics().logSelect(target: "Returning user?");
-    Onboarding2().privacyReturningUser = true;
-    _onboardingNext();
-  }
-
   // Onboarding
 
   bool get onboardingProgress => _onboardingProgress;
@@ -192,7 +181,10 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
   }
 
   void _onboardingBack() => Navigator.of(context).pop();
-  void _onboardingNext() {
+
+  void _onboardingNext({bool returningUser = false}) async {
+    Analytics().logSelect(target: returningUser ? "Returning user?" : "Continue");
+    Onboarding2().privacyReturningUser = returningUser;
     Auth2().prefs?.roles = _selectedRoles;
     Onboarding2().next(context, widget);
   }
