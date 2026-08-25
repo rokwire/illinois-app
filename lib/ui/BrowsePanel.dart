@@ -524,15 +524,7 @@ class _BrowseSection extends StatelessWidget {
       for(String code in _browseEntriesCodes!.reversed) {
         HomeFavorite? entryFavorite = _favorite(code);
         if (entryFavorite != null) {
-          String? entryCategory = entryFavorite.category;
-          Set<String>? entryCategoryItems = ((entryCategory != null) && (entryCategory != sectionId) && (_homeRootEntriesCodes?.contains(entryCategory) == true)) ?
-            _homeSectionsEntriesCodesMap[entryCategory] : null;
-          if (entryCategoryItems != null) {
-            favorites.add(HomeFavorite(entryCategory));
-            favorites.addAll(entryCategoryItems.map((itemId) => HomeFavorite(itemId, category: entryCategory)));
-          } else {
-            favorites.add(entryFavorite);
-          }
+          favorites.add(entryFavorite);
         }
       }
     }
@@ -642,7 +634,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
-      case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
+      case "campus_guide.saved_resources":   _onTapSavedResources(context); break;
 
       case "career_exploration.career_planing_links": _onTapCareerPlaningLinks(context); break;
       case "career_exploration.interest_explorer": _onTapInterestExplorer(context); break;
@@ -857,6 +849,11 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   static void _onTapMyCampusGuide(BuildContext context) {
+    Analytics().logSelect(target: "Saved Resources");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [GuideFavorite.favoriteKeyName]); } ));
+  }
+
+  static void _onTapSavedResources(BuildContext context) {
     Analytics().logSelect(target: "Saved Resources");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedResourcesPanel()));
   }
