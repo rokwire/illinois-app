@@ -50,14 +50,14 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
     return FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: Column(
       children: [
         _buildAccessibleWidget(focusNode: _entryFocusNode, onSelect: _onFeedback, child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.help_desk.title", "CONTACT HELP DESK"),
-            onTap: _onFeedback,
-            borderRadius: _topRounding)),
+            onTap: () => _onFeedback(analyticsTarget: "CONTACT HELP DESK"),
+        borderRadius: _topRounding)),
         _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.share_idea.title", "SHARE AN IDEA"),
             onTap: _onIdea), onSelect: _onIdea),
         _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.develop_code.title", "DEVELOP CODE WITH ROKWIRE"),
-            onTap: _onFeedback), onSelect: _onFeedback),
-        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.partner.title", "PARTNER WITH US"),
-          onTap: _onIdea), onSelect: _onIdea),
+            onTap: () => _onFeedback(analyticsTarget: "DEVELOP CODE WITH ROKWIRE")), onSelect: () => _onFeedback(analyticsTarget: "DEVELOP CODE WITH ROKWIRE")),
+        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.faq.title", "App FAQs"),
+          onTap: _onFaq), onSelect: _onFaq),
         _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.review.title", "REVIEW APP"),
             onTap: _onReviewClicked,
             borderRadius: _bottomRounding,), onSelect: _onReviewClicked),
@@ -159,7 +159,8 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
     InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
   }
 
-  void _onFeedback() {
+  void _onFeedback({String? analyticsTarget}) {
+    Analytics().logSelect(target: analyticsTarget);
     String email = Uri.encodeComponent(Auth2().email ?? '');
     String name = Uri.encodeComponent(Auth2().fullName ?? '');
     String phone = Uri.encodeComponent(Auth2().phone ?? '');
@@ -169,7 +170,13 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
   }
 
   void _onIdea() {
+    Analytics().logSelect(target: "SHARE AN IDEA");
     _processUrl(Config().ideaUrl);
+  }
+
+  void _onFaq() {
+    Analytics().logSelect(target: "App FAQs");
+    _processUrl(Config().faqsUrl);
   }
 
   void _processUrl(String? url) {

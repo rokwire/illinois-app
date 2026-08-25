@@ -34,7 +34,7 @@
 			"browse.polls": ["polls"],
 			"browse.music_and_news": ["illini_radio", "daily_illini", "illordle"],
 			"browse.sexual_misconduct": ["sexual_misconduct"],
-			"browse.transit_and_safety": ["mtd_stops", "my_locations", "safewalk_request", "safety_resources", "sexual_misconduct", "transportation_links"],
+			"browse.transit_and_safety": ["mtd_stops", "my_locations", "safewalk_request", "safety_resources", "sexual_misconduct", "transportation_and_safety_links"],
 			"browse.wellness": ["wellness_recreation", "wellness_resources", "wellness_mental_health", "wellness_success_team", "wellness_rings", "my_appointments", "wellness_tips", "wellness_health_screener", "wellness_links"],
 
 			"wallet": ["illini_id", "bus_pass", "library_card", "meal_plan", "business_card", "illini_cash", "add_illini_cash"],
