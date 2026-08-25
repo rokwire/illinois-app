@@ -22,7 +22,6 @@ import 'package:illinois/service/Onboarding2.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'Onboarding2Widgets.dart';
@@ -66,59 +65,29 @@ class _Onboarding2PrivacyStoreActivityPanelState extends State<Onboarding2Privac
           Column(children: [
             Expanded(child:
               SingleChildScrollView(child:
-                Container(color: Styles().colors.white, child:
-                  Column(children: <Widget>[
-                    Padding(padding: EdgeInsets.all(Onboarding2PrivacyProgress.defaultSpacing), child:
-                      Onboarding2PrivacyProgress(2)
-                    ),
-
-                    Align(alignment: Alignment.centerLeft, child:
-                      Onboarding2BackButton(padding: const EdgeInsets.all(16), onTap: _onTapBack),
-                    ),
-
-                    Semantics(
-                      label: _title,
-                      hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
-                      header: true,
-                      excludeSemantics: true,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-                        Text(_title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy.share_activity.heading.title"))
-                      )
+                Column(children: <Widget>[
+                  Align(alignment: Alignment.centerLeft, child:
+                    Onboarding2BackButton(padding: const EdgeInsets.all(16), onTap: _onTapBack),
+                  ),
+                  Container(height: 8,),
+                  Onboarding2PrivacyProgressBadge(2),
+                  Container(height: 24,),
+                  Semantics(
+                    label: _title,
+                    hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
+                    header: true,
+                    excludeSemantics: true,
+                    child: Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+                      Text(_title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.button.title.extra_large"))
                     )
-                    ,
-                    Semantics(
-                      label: _description,
-                      excludeSemantics: true,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                        Text(_description, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.description.regular"),),
-                      )
-                    ),
-
-                    Container(height: 10,),
-
-                    Onboarding2UnderlinedButton(
-                      title: Localization().getStringEx('panel.onboarding2.privacy.share_activity.button.title.learn_more', 'Learn More'),
-                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.medium.underline"),
-                      onTap: _onTapLearnMore,
-                    ),
-
-                    Container(height: 12,),
-
-                    Stack(children: [
-                      Column(children:[
-                        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.leftToRight), child:
-                          Container(height: 100,),
-                        ),
-                        Container(height: 100, color: Styles().colors.background,)
-                      ]),
-                      Positioned.fill(child:
-                        Center(child:
-                          Styles().images.getImage("personalize-illustration", excludeFromSemantics: true),
-                        )
-                      )
-                    ],)
-                  ])
-                ),
+                  ),
+                  Container(height: 12,),
+                  Onboarding2UnderlinedButton(
+                    title: Localization().getStringEx('panel.onboarding2.privacy.share_activity.button.title.learn_more', 'Learn More'),
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.medium.underline"),
+                    onTap: _onTapLearnMore,
+                  ),
+                ]),
               )
             ),
 
@@ -151,8 +120,7 @@ class _Onboarding2PrivacyStoreActivityPanelState extends State<Onboarding2Privac
     );
 
 
-  String get _title => Localization().getStringEx('panel.onboarding2.privacy.store_activity.label.title', 'Store your app activity and personal information?');
-  String get _description => Localization().getStringEx('panel.onboarding2.privacy.store_activity.label.description', 'This includes content you view, teams you follow, and sign-in information. ');
+  String get _title => Localization().getStringEx('panel.onboarding2.privacy.store_activity.label.title', 'Remember your sign-in information and your favorites?');
   String get _toggledButtonTitle => Localization().getStringEx('panel.onboarding2.privacy.store_activity.button.toggle.title', 'Store my app activity and my preferences.');
   String? get _unToggledButtonTitle => Localization().getStringEx('panel.onboarding2.privacy.store_activity.button.untoggle.title', 'Don\'t store my app activity or information.');
 

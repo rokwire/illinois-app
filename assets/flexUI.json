@@ -69,7 +69,7 @@
 
 			"map.types":  ["events2", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "my_locations", "storied_sites"],
 
-			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
+			"privacy_center": ["connect", "description", "policy", "manage", "delete"],
 
 			"appointment.providers.monitored": ["grainger"],
 			"appointment.providers.enabled": ["grainger"],
@@ -232,7 +232,8 @@
 				"wellness_mental_health"                  : false,
 				"wellness_todo"                           : false,
 				"messages"                                : ["NOT", "${app.storage.debugMessagesDisabled}"],
-				"onboarding2.video_tutorial"              : [["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"], "AND", "${app.storage.onBoarding2ShowTutorial}"],
+				"onboarding2.get_started"                 : false,
+				"onboarding2.video_tutorial"              : false,
 				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"onboarding2.privacy_location_services"   : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"onboarding2.privacy_store_activity"      : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
