@@ -102,7 +102,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
               Expanded(child:
                 SafeArea(top: false, bottom: false, child:
                   SingleChildScrollView(child:
-                    Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 16, bottom: 24), child:
+                    Padding(padding: EdgeInsets.only(left: 28, right: 28, top: 16, bottom: 24), child:
                       RoleGridButtonGrid.fromFlexUI(
                         selectedRoles: _selectedRoles,
                         showLabel: false,
