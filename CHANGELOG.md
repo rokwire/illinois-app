@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Onboarding UI updates [#5879](https://github.com/rokwire/illinois-app/issues/5879).
+### Fixed
+- Fixed unhandled exception from Home favorite widgets for accessing unmounted context.
 
 ## [8.2.10] - 2026-08-25
 ### Changed

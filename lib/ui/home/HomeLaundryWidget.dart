@@ -311,7 +311,7 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
   }
 
   void _updateInternalVisibility(bool visible) {
-    if (_visible != visible) {
+    if ((_visible != visible) && mounted) {
       _visible = visible;
       _onInternalVisibilityChanged();
     }

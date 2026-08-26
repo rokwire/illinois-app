@@ -333,7 +333,7 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
   }
 
   void _updateInternalVisibility(bool visible) {
-    if (_visible != visible) {
+    if ((_visible != visible) && mounted) {
       _visible = visible;
       _onInternalVisibilityChanged();
     }
