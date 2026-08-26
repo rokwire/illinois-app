@@ -22,7 +22,6 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
-import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/model/auth2.dart';
