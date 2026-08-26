@@ -2840,8 +2840,6 @@
 
     "panel.groups.common.privacy.title.private": "Private",
     "panel.groups.common.privacy.title.public":  "Public",
-    "panel.groups.common.privacy.description.short.private": "Only members can see group events and posts, unless an event is marked public.",
-    "panel.groups.common.privacy.description.short.public":  "Only members can see group events and posts, unless an event is marked public.",
     "panel.groups.common.privacy.description.long.private": "Anyone who uses the app can find this group if they search and match the full name. Only admins can see who is in the group.",
     "panel.groups.common.privacy.description.long.public":  "Anyone who uses the app will see this group. Only admins can see who is in the group.",
     "panel.groups.common.administrative.switch.label": "Is this group an admin team for managing Illinois app events?",
