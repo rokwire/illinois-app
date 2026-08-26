@@ -314,7 +314,7 @@ class _HomeAthliticsNewsImplWidgetState extends State<_HomeAthliticsNewsImplWidg
   }
 
   void _updateInternalVisibility(bool visible) {
-    if (_visible != visible) {
+    if ((_visible != visible) && mounted) {
       _visible = visible;
       _onInternalVisibilityChanged();
     }

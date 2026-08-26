@@ -888,11 +888,6 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [ExplorePOI.favoriteKeyName]); } ));
   }
 
-  static void _onTapMyCampusGuide(BuildContext context) {
-    Analytics().logSelect(target: "Saved Resources");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [GuideFavorite.favoriteKeyName]); } ));
-  }
-
   static void _onTapSavedResources(BuildContext context) {
     Analytics().logSelect(target: "Saved Resources");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedResourcesPanel()));

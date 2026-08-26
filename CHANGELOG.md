@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [8.2.11] - 2026-08-26
+### Changed
+- Onboarding UI updates [#5879](https://github.com/rokwire/illinois-app/issues/5879).
+- Hide Safety Resources browse entry and favorite widget [#6003](https://github.com/rokwire/illinois-app/issues/6003).
+- Capitalize all letters in "APP FAQS" [#6002](https://github.com/rokwire/illinois-app/issues/6002).
+- Updated Home photos [#6005](https://github.com/rokwire/illinois-app/issues/6005).
+- Text and layout edit on new group & admin settings panels [#5995](https://github.com/rokwire/illinois-app/issues/5995).
+### Fixed
+- Fixed unhandled exception from Home favorite widgets for accessing unmounted context.
+### Removed
+- Removed mobilecredential API call to Idenity BB [#6018](https://github.com/rokwire/illinois-app/issues/6018).
+
 ## [8.2.10] - 2026-08-25
 ### Changed
 - Unlink links items in Section from Saved Resources home widget, make it regular widget linked to University Living / Saved Resources [#5873](https://github.com/rokwire/illinois-app/issues/5873).

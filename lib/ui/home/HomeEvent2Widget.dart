@@ -452,7 +452,7 @@ class _HomeEvents2ImplWidgetState extends State<HomeEvents2ImplWidget> with Noti
   // Visibility
 
   void _updateInternalVisibility(bool visible) {
-    if (_visible != visible) {
+    if ((_visible != visible) && mounted) {
       _visible = visible;
       _onInternalVisibilityChanged();
     }

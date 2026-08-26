@@ -56,7 +56,7 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
             onTap: _onIdea), onSelect: _onIdea),
         _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.develop_code.title", "DEVELOP CODE WITH ROKWIRE"),
             onTap: () => _onFeedback(analyticsTarget: "DEVELOP CODE WITH ROKWIRE")), onSelect: () => _onFeedback(analyticsTarget: "DEVELOP CODE WITH ROKWIRE")),
-        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.faq.title", "App FAQs"),
+        _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.faq.title", "APP FAQS"),
           onTap: _onFaq), onSelect: _onFaq),
         _buildAccessibleWidget(child: _buildLinkButton(label: Localization().getStringEx("panel.settings.about.button.review.title", "REVIEW APP"),
             onTap: _onReviewClicked,
@@ -175,7 +175,7 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
   }
 
   void _onFaq() {
-    Analytics().logSelect(target: "App FAQs");
+    Analytics().logSelect(target: "APP FAQS");
     _processUrl(Config().faqsUrl);
   }
 

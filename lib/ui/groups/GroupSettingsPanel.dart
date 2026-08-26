@@ -585,21 +585,16 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       (dynamic item) => item == GroupPrivacy.private?
                         Localization().getStringEx("panel.groups.common.privacy.title.private", "Private") :
                         Localization().getStringEx("panel.groups.common.privacy.title.public",  "Public"),
-                  constructDropdownDescription:
-                      (dynamic item) => item == GroupPrivacy.private?
-                        Localization().getStringEx("panel.groups.common.privacy.description.short.private", "Only members can see group events and posts, unless an event is marked public.") :
-                        Localization().getStringEx("panel.groups.common.privacy.description.short.public",  "Only members can see group events and posts, unless an event is marked public."),
                   onValueChanged: (value) => _onPrivacyChanged(value)
               )
           )),
           Semantics(
             explicitChildNodes: true,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8,vertical: 12),
+              padding: EdgeInsets.only(left: 8, right: 8, top: 12),
               child:Text(longDescription ?? '',
                 style: Styles().textStyles.getTextStyle("widget.item.small.thin.spaced"),
             ),)),
-          Container(height: 8,)
       ],));
   }
 
@@ -622,7 +617,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         visible: _isPrivateGroup,
         child: Container(
             color: Styles().colors.background,
-            padding: EdgeInsets.only(left: 16, right: 16, bottom: 20),
+            padding: EdgeInsets.only(left: 16, right: 16, top: 12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(
                   child: _buildSwitch(
