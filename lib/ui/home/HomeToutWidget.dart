@@ -325,7 +325,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> with NotificationsListe
 
   void _updateContent({DayPart? dayPart}) {
     _dayPart = dayPart ?? DateTimeUtils.getDayPart();
-    Storage().homeToutImageUrl = _imageUrl = Content().randomImageUrl('home.tout_1290x750.${DateTimeUtils.dayPartToString(_dayPart)}');
+    Storage().homeToutImageUrl = _imageUrl = Content().randomImageUrl('home2.tout_1290x750.${DateTimeUtils.dayPartToString(_dayPart)}');
     Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).millisecondsSinceEpoch;
   }
 
