@@ -65,17 +65,17 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Container(
             decoration: BoxDecoration(gradient: LinearGradient(
-              begin: const Alignment(-0.2, -1.0), end: const Alignment(0.2, 1.0),
+              begin: const Alignment(-0.093, -1.0), end: const Alignment(0.093, 1.0),
               colors: [
-                Styles().colors.getColor('onboarding2RolesHeaderGradientStart') ?? const Color(0xFFFF5F05),
-                Styles().colors.getColor('onboarding2RolesHeaderGradientEnd') ?? const Color(0xFFC74300),
+                Styles().colors.getColor('onboarding2RolesHeaderGradientStart') ?? const Color(0xFF183461),
+                Styles().colors.getColor('onboarding2RolesHeaderGradientEnd') ?? const Color(0xFF0A172C),
               ],
-              stops: const [0.3901, 0.8467],
+              stops: const [0.0904, 0.9282],
             )),
             child: SafeArea(bottom: false, child:
               Column(children: <Widget>[
                 Container(height: 24,),
-                Styles().images.getImage('university-logo-dark', excludeFromSemantics: true) ?? Container(),
+                Styles().images.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
                 Container(height: 10,),
                 Semantics(
                   label: _welcomeTitle,
@@ -88,10 +88,10 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
                 ),
                 Container(height: 8,),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
-                  Text(_welcomeDescription, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.heading.regular")),
+                  Text(_welcomeDescription, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.roles.description")),
                 ),
                 Container(height: 12,),
-                Text(_checkAllLabel, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.dialog.message.small")),
+                Text(_checkAllLabel, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.roles.description")),
                 Container(height: 16,),
               ],),
             ),
@@ -102,7 +102,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
               Expanded(child:
                 SafeArea(top: false, bottom: false, child:
                   SingleChildScrollView(child:
-                    Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 16, bottom: 24), child:
+                    Padding(padding: EdgeInsets.only(left: 28, right: 28, top: 16, bottom: 24), child:
                       RoleGridButtonGrid.fromFlexUI(
                         selectedRoles: _selectedRoles,
                         showLabel: false,
