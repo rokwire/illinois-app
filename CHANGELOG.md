@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Onboarding UI updates [#5879](https://github.com/rokwire/illinois-app/issues/5879).
 - Hide Safety Resources browse entry and favorite widget [#6003](https://github.com/rokwire/illinois-app/issues/6003).
+- Capitalize all letters in "APP FAQS" [#6002](https://github.com/rokwire/illinois-app/issues/6002).
 ### Fixed
 - Fixed unhandled exception from Home favorite widgets for accessing unmounted context.
 ### Removed
