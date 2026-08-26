@@ -106,8 +106,8 @@
     "onboarding2PrivacyProgressGradientStart" :"#FFB984",
     "onboarding2PrivacyProgressGradientEnd"   :"#FF552E",
 
-    "onboarding2RolesHeaderGradientStart"     :"#FF5F05",
-    "onboarding2RolesHeaderGradientEnd"       :"#C74300"
+    "onboarding2RolesHeaderGradientStart"     :"#183461",
+    "onboarding2RolesHeaderGradientEnd"       :"#0A172C"
   },
   "font_family": {
     "black": "ProximaNovaBlack",
