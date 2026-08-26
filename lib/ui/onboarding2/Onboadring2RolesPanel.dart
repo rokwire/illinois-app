@@ -88,10 +88,10 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
                 ),
                 Container(height: 8,),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
-                  Text(_welcomeDescription, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.heading.regular")),
+                  Text(_welcomeDescription, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.roles.description")),
                 ),
                 Container(height: 12,),
-                Text(_checkAllLabel, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.dialog.message.small")),
+                Text(_checkAllLabel, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.roles.description")),
                 Container(height: 16,),
               ],),
             ),
