@@ -236,6 +236,7 @@
 				"onboarding2.get_started"                 : false,
 				"onboarding2.video_tutorial"              : false,
 				"safety_resources"                        : false,
+				"campus_highlights"                       : false,
 				"onboarding2.privacy_statement"           : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"onboarding2.privacy_location_services"   : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
 				"onboarding2.privacy_store_activity"      : ["NOT", "${app.storage.onBoarding2PrivacyReturningUser}"],
