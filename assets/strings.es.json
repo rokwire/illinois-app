@@ -271,6 +271,8 @@
     "panel.browse.section.polls.description": "Enter a poll number to vote, or create and share your own poll.",
     "panel.browse.section.music_and_news.title": "Illini Music, News & Games",
     "panel.browse.section.music_and_news.description": "Listen to {{app_title}} Public Media and student-run WPGU or catch the latest from The DI.",
+    "panel.browse.section.saved_resources.title": "Recursos guardados",
+    "panel.browse.section.saved_resources.description": "View your starred links.",
     "panel.browse.section.sexual_misconduct.title": "Concerns about Sexual, Dating, or Harassment Experiences",
     "panel.browse.section.sexual_misconduct.description": "Did a situation seem unsafe or uncomfortable? It can be sexual or not. Resources are available. (Reminder: your personal app activity is not shared with others.)",
     "panel.browse.section.surveys.title": "Surveys",
@@ -301,7 +303,6 @@
 
     "panel.browse.entry.campus_guide.campus_guide.title": "Lista completa",
     "panel.browse.entry.campus_guide.campus_highlights.title": "Recursos destacados",
-    "panel.browse.entry.campus_guide.saved_resources.title": "Recursos guardados",
 
     "panel.browse.entry.career_exploration.career_planing_links.title": "Career Planning Links",
     "panel.browse.entry.career_exploration.interest_explorer.title": "Interest Explorer",
@@ -314,7 +315,6 @@
     "panel.browse.entry.dining.dining_links.title": "Campus Dining",
 
     "panel.browse.entry.directory.user_directory.title": "Directory of Users",
-
     "panel.browse.entry.events.events.title": "Eventos",
 
     "panel.browse.entry.music_and_news.will_radio.title": "WILL News & Talk (NPR)",
@@ -326,15 +326,12 @@
     "panel.browse.entry.music_and_news.illordle.title": "ILLordle",
 
     "panel.browse.entry.groups.groups.title": "Grupos",
-    "panel.browse.entry.research_projects.title": "Research Participation",
+    "panel.browse.entry.research_projects.research_projects.title": "Research Participation",
     "panel.browse.entry.laundry.laundry.title": "Ropa sucia",
-
     "panel.browse.entry.messages.messages.title": "Conversaciones",
-
     "panel.browse.entry.polls.polls.title": "Encuestas",
-
+    "panel.browse.entry.saved_resources.saved_resources.title": "Recursos guardados",
     "panel.browse.entry.sexual_misconduct.sexual_misconduct.title": "Sexual Misconduct Resources",
-
     "panel.browse.entry.surveys.public_surveys.title": "Surveys",
 
     "panel.browse.entry.transit_and_safety.mtd_stops.title": "MTD Bus Stops",
@@ -2866,8 +2863,8 @@
 
     "panel.groups.common.privacy.title.private": "Privado",
     "panel.groups.common.privacy.title.public":  "Público",
-    "panel.groups.common.privacy.description.long.private": "Cualquier persona que utilice la aplicación puede encontrar este grupo si busca y coincide con el nombre completo. Solo los administradores pueden ver los miembros del grupo.",
-    "panel.groups.common.privacy.description.long.public":  "Cualquier persona que utilice la aplicación verá este grupo. Solo los administradores pueden ver los miembros del grupo.",
+    "panel.groups.common.privacy.description.long.private": "Anyone who uses the app can find this group if they search and match the full name.",
+    "panel.groups.common.privacy.description.long.public":  "Anyone who uses the app will see this group.",
     "panel.groups.common.administrative.switch.label": "¿Es este grupo un equipo de administración para gestionar eventos de la aplicación de Illinois?",
     "panel.groups.common.administrative.switch.subject": "Grupo del equipo de administración",
     "panel.groups.common.private.search.hidden.label": "Ocultar el Grupo",
@@ -4750,6 +4747,9 @@
     "common.message.exit_app":"¿Está seguro de que desea salir?",
     "common.message.login.not_available":"To sign in, {{link.settings}} to 4 or 5 under Settings",
     "common.message.login.not_available.link.settings":"set your privacy level",
+    "common.message.login.net_id_warning.title":"It looks like you're using an Illinois email address.",
+    "common.message.login.net_id_warning.message":"Illinois students and employees should {{link_net_id}}. This ensures your university features, Illini ID, and personalized content are available.",
+    "common.message.login.net_id_warning.link.net_id":"sign in using NetID",
     "common.message.logout.title":"You were signed out due to the inability to renew your access token.",
     "common.message.logout.description.token":"You were signed out due to the inability to renew your access token.",
     "common.message.logout.description.authorization":"You were signed out because authorization is not available. Usually the reason for this is a low value of privacy level.",

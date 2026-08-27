@@ -271,8 +271,10 @@
 	"panel.browse.section.polls.description": "Enter a poll number to vote, or create and share your own poll.",
 	"panel.browse.section.music_and_news.title": "Illini Music, News & Games",
 	"panel.browse.section.music_and_news.description": "Listen to {{app_title}} Public Media and student-run WPGU or catch the latest from The DI.",
+	"panel.browse.section.saved_resources.title": "節省的資源",
+	"panel.browse.section.saved_resources.description": "View your starred links.",
 	"panel.browse.section.sexual_misconduct.title": "Concerns about Sexual, Dating, or Harassment Experiences",
- "panel.browse.section.sexual_misconduct.description": "Did a situation seem unsafe or uncomfortable? It can be sexual or not. Resources are available. (Reminder: your personal app activity is not shared with others.)",
+	"panel.browse.section.sexual_misconduct.description": "Did a situation seem unsafe or uncomfortable? It can be sexual or not. Resources are available. (Reminder: your personal app activity is not shared with others.)",
 	"panel.browse.section.surveys.title": "Surveys",
 	"panel.browse.section.surveys.description": "Participate in surveys available to you.",
 	"panel.browse.section.transit_and_safety.title": "Campus Transit & Safety",
@@ -301,7 +303,6 @@
 
 	"panel.browse.entry.campus_guide.campus_guide.title": "完整列表",
 	"panel.browse.entry.campus_guide.campus_highlights.title": "特色資源",
-	"panel.browse.entry.campus_guide.saved_resources.title": "節省的資源",
 
 	"panel.browse.entry.career_exploration.career_planing_links.title": "Career Planning Links",
 	"panel.browse.entry.career_exploration.interest_explorer.title": "Interest Explorer",
@@ -314,7 +315,6 @@
 	"panel.browse.entry.dining.dining_links.title": "Campus Dining",
 
 	"panel.browse.entry.directory.user_directory.title": "Directory of Users",
-
 	"panel.browse.entry.events.events.title": "Events",
 
 	"panel.browse.entry.music_and_news.will_radio.title": "WILL News & Talk (NPR)",
@@ -326,15 +326,12 @@
 	"panel.browse.entry.music_and_news.illordle.title": "ILLordle",
 
 	"panel.browse.entry.groups.groups.title": "Groups",
-	"panel.browse.entry.research_projects.title": "Research Participation",
+	"panel.browse.entry.research_projects.research_projects.title": "Research Participation",
 	"panel.browse.entry.laundry.laundry.title": "洗衣房",
-
 	"panel.browse.entry.messages.messages.title": "對話",
-
 	"panel.browse.entry.polls.polls.title": "民意調查",
-
+	"panel.browse.entry.saved_resources.saved_resources.title": "節省的資源",
 	"panel.browse.entry.sexual_misconduct.sexual_misconduct.title": "Sexual Misconduct Resources",
-
 	"panel.browse.entry.surveys.public_surveys.title": "Surveys",
 
 	"panel.browse.entry.transit_and_safety.mtd_stops.title": "MTD Bus Stops",
@@ -2842,8 +2839,8 @@
 
 	"panel.groups.common.privacy.title.private": "私人",
 	"panel.groups.common.privacy.title.public":  "公开",
-	"panel.groups.common.privacy.description.long.private": "当任何应用程序用户以全名搜寻群组，都可以找到这个群组。只有管理员可以看到群组成员。",
-	"panel.groups.common.privacy.description.long.public":  "当任何应用程序用户以都会看到这个群组。只有管理员可以看到群组成员。",
+	"panel.groups.common.privacy.description.long.private": "Anyone who uses the app can find this group if they search and match the full name.",
+	"panel.groups.common.privacy.description.long.public":  "Anyone who uses the app will see this group.",
 	"panel.groups.common.administrative.switch.label": "這個群組是負責管理伊利諾州應用程式活動的管理團隊嗎？",
 	"panel.groups.common.administrative.switch.subject": "管理團隊組",
 	"panel.groups.common.private.search.hidden.label": "隐藏群组",
@@ -4722,9 +4719,12 @@
 	"common.message.exit_app":"确定要退出吗?",
 	"common.message.login.not_available":"To sign in, {{link.settings}} to 4 or 5 under Settings",
 	"common.message.login.not_available.link.settings":"set your privacy level",
+	"common.message.login.net_id_warning.title":"It looks like you're using an Illinois email address.",
+	"common.message.login.net_id_warning.message":"Illinois students and employees should {{link_net_id}}. This ensures your university features, Illini ID, and personalized content are available.",
+	"common.message.login.net_id_warning.link.net_id":"sign in using NetID",
 	"common.message.logout.title":"You were signed out due to the inability to renew your access token.",
- "common.message.logout.description.token":"You were signed out due to the inability to renew your access token.",
- "common.message.logout.description.authorization":"You were signed out because authorization is not available. Usually the reason for this is a low value of privacy level.",
+	"common.message.logout.description.token":"You were signed out due to the inability to renew your access token.",
+	"common.message.logout.description.authorization":"You were signed out because authorization is not available. Usually the reason for this is a low value of privacy level.",
 
 	"privacy.features2.entry.disable_location_awareness":"禁用地点感知.",
 	"privacy.features2.entry.dont_store_location":"不存儲您的位置.",
