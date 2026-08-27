@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
 import 'package:illinois/ui/profile/ProfileLoginEmailPanel.dart';
 import 'package:illinois/ui/profile/ProfileLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -225,12 +227,36 @@ class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmail
         _loginByPhone(phone);
       }
       else if (StringUtils.isNotEmpty(email)) {
-        _loginByEmail(email);
+        if (AppEmail.isUniversityEmail(email!)) {
+          _showUniversityEmailWarning();
+        }
+        else {
+          _loginByEmail(email);
+        }
       }
       else {
         setErrorMsg(validationText);
       }
     }
+  }
+
+  void _showUniversityEmailWarning() {
+    final String netIdRef = 'net_id';
+    String linkText = Localization().getStringEx('common.message.login.net_id_warning.link.net_id', 'sign in using NetID');
+    String title = Localization().getStringEx('common.message.login.net_id_warning.title', "It looks like you're using an Illinois email address.");
+    String message = Localization().getStringEx('common.message.login.net_id_warning.message',
+        'Illinois students and employees should {{link_net_id}}. This ensures your university features, Illini ID, and personalized content are available.')
+      .replaceAll('{{link_net_id}}', "<a href='$netIdRef'>$linkText</a>");
+    String html = "<b>$title</b><br><br>$message";
+
+    ExploreMessagePopup.show(context, html, onTapUrl: (String url) {
+      if (url == netIdRef) {
+        Analytics().logSelect(target: 'Sign in using NetID');
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      }
+      return true;
+    });
   }
 
   void _loginByPhone(String? phoneNumber) {

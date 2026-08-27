@@ -170,6 +170,17 @@ class AppAlert {
   }
 }
 
+class AppEmail {
+
+  static bool isUniversityEmail(String email) {
+    String? domain = Config().universityEmailDomain;
+    if (StringUtils.isEmpty(domain)) {
+      return false;
+    }
+    return email.trim().toLowerCase().endsWith('@${domain!.trim().toLowerCase()}');
+  }
+}
+
 class AppSemantics {
     static void announceCheckBoxStateChange(BuildContext? context, bool checked, String? name){
       String message = (StringUtils.isNotEmpty(name)?name!+", " :"")+
