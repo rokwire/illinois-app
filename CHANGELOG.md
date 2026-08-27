@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Smaller font for the RoleGridButton.standalone widget [#5879](https://github.com/rokwire/illinois-app/issues/5879).
 - Updated section entry text style [#5944](https://github.com/rokwire/illinois-app/issues/5944).
 - Text update on new group & admin settings panels [#5995](https://github.com/rokwire/illinois-app/issues/5995).
+- Make Saved Resources standalone section in Browse [#6024](https://github.com/rokwire/illinois-app/issues/6024).
+- Make Universoty Living standalone section in Browse, hide Featured resoures subsection [#6024](https://github.com/rokwire/illinois-app/issues/6024).
 
 ## [8.2.11] - 2026-08-26
 ### Changed
