@@ -2847,8 +2847,8 @@
 
     "panel.groups.common.privacy.title.private": "Privado",
     "panel.groups.common.privacy.title.public":  "Público",
-    "panel.groups.common.privacy.description.long.private": "Cualquier persona que utilice la aplicación puede encontrar este grupo si busca y coincide con el nombre completo. Solo los administradores pueden ver los miembros del grupo.",
-    "panel.groups.common.privacy.description.long.public":  "Cualquier persona que utilice la aplicación verá este grupo. Solo los administradores pueden ver los miembros del grupo.",
+    "panel.groups.common.privacy.description.long.private": "Anyone who uses the app can find this group if they search and match the full name.",
+    "panel.groups.common.privacy.description.long.public":  "Anyone who uses the app will see this group.",
     "panel.groups.common.administrative.switch.label": "¿Es este grupo un equipo de administración para gestionar eventos de la aplicación de Illinois?",
     "panel.groups.common.administrative.switch.subject": "Grupo del equipo de administración",
     "panel.groups.common.private.search.hidden.label": "Ocultar el Grupo",
