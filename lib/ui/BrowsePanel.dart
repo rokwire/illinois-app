@@ -575,7 +575,7 @@ class _BrowseEntry extends StatelessWidget {
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-              Text(_titleText, style: Styles().textStyles.getTextStyle("widget.title.small.fat"),)
+              Text(_titleText, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
             ),
           ),
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
