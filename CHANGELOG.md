@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make Saved Resources standalone section in Browse [#6024](https://github.com/rokwire/illinois-app/issues/6024).
 - Make University Living standalone section in Browse, hide Featured resources subsection [#6024](https://github.com/rokwire/illinois-app/issues/6024).
 - Do not allow users to sign in with emails that end on "illinois.edu" [#5882](https://github.com/rokwire/illinois-app/issues/5882).
+- Fill only A-Z sections in Groups Home panel, everything outside them falls in Other section [#5990](https://github.com/rokwire/illinois-app/issues/5990).
 
 ## [8.2.11] - 2026-08-26
 ### Changed
