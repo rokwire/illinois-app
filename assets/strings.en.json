@@ -272,6 +272,8 @@
     "panel.browse.section.polls.description": "Enter a poll number to vote, or create and share your own poll.",
     "panel.browse.section.music_and_news.title": "Illini Music, News & Games",
     "panel.browse.section.music_and_news.description": "Listen to {{app_title}} Public Media and student-run WPGU or check out the latest news and ILLordle from The DI.",
+    "panel.browse.section.saved_resources.title": "Saved Resources",
+    "panel.browse.section.saved_resources.description": "View your starred links.",
     "panel.browse.section.sexual_misconduct.title": "Concerns about Sexual, Dating, or Harassment Experiences",
     "panel.browse.section.sexual_misconduct.description": "Did a situation seem unsafe or uncomfortable? It can be sexual or not. Resources are available. (Reminder: your personal app activity is not shared with others.)",
     "panel.browse.section.surveys.title": "Surveys",
@@ -282,7 +284,6 @@
     "panel.browse.section.wallet.description": "Your ID, bus pass, Illini Cash balance, and residence hall meal plan all in one place.",
     "panel.browse.section.wellness.title": "Health & Wellness",
     "panel.browse.section.wellness.description": "Maintain and improve your health and well-being.",
-
     "panel.browse.entry.academics.gies_checklist.title": "iDegrees New Student Checklist",
     "panel.browse.entry.academics.new_student_checklist.title": "New Student Checklist",
     "panel.browse.entry.academics.gies_canvas_courses.title": "My Gies Canvas",
@@ -302,7 +303,6 @@
 
     "panel.browse.entry.campus_guide.campus_guide.title": "Complete List",
     "panel.browse.entry.campus_guide.campus_highlights.title": "Featured Resources",
-    "panel.browse.entry.campus_guide.saved_resources.title": "Saved Resources",
 
     "panel.browse.entry.career_exploration.career_planing_links.title": "Career Planning Links",
     "panel.browse.entry.career_exploration.interest_explorer.title": "Interest Explorer",
@@ -315,7 +315,6 @@
     "panel.browse.entry.dining.dining_links.title": "Campus Dining",
 
     "panel.browse.entry.directory.user_directory.title": "Directory of Users",
-
     "panel.browse.entry.events.events.title": "Events",
 
     "panel.browse.entry.music_and_news.will_radio.title": "WILL News & Talk (NPR)",
@@ -327,15 +326,12 @@
     "panel.browse.entry.music_and_news.illordle.title": "ILLordle",
 
     "panel.browse.entry.groups.groups.title": "Groups",
-    "panel.browse.entry.research_projects.title": "Research Participation",
+    "panel.browse.entry.research_projects.research_projects.title": "Research Participation",
     "panel.browse.entry.laundry.laundry.title": "Laundry",
-
     "panel.browse.entry.messages.messages.title": "Conversations",
-
     "panel.browse.entry.polls.polls.title": "Polls",
-
+    "panel.browse.entry.saved_resources.saved_resources.title": "Saved Resources",
     "panel.browse.entry.sexual_misconduct.sexual_misconduct.title": "Sexual Misconduct Resources",
-
     "panel.browse.entry.surveys.public_surveys.title": "Surveys",
 
     "panel.browse.entry.transit_and_safety.mtd_stops.title": "MTD Bus Stops",

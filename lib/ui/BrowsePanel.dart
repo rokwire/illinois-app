@@ -629,12 +629,10 @@ class _BrowseEntry extends StatelessWidget {
       case "athletics.my_game_day":          _onTapMyGameDay(context); break;
 
       case "laundry.laundry":                _onTapLaundry(context); break;
-
       case "messages.messages":              _onTapMessages(context); break;
 
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
-      case "campus_guide.saved_resources":   _onTapSavedResources(context); break;
 
       case "career_exploration.career_planing_links": _onTapCareerPlaningLinks(context); break;
       case "career_exploration.interest_explorer": _onTapInterestExplorer(context); break;
@@ -647,19 +645,16 @@ class _BrowseEntry extends StatelessWidget {
       case "dining.dining_links":            _onTapDiningLinks(context); break;
 
       case "directory.user_directory":       _onTapUserDirectory(context); break;
-
       case "events.events":                  _onTapEvents(context); break;
 
       case "music_and_news.illini_radio":    _onTapIlliniRadio(context); break;
       case "music_and_news.daily_illini":    _onTapDailyIllini(context); break;
       case "music_and_news.illordle":        _onTapIllordle(context); break;
 
-      case "groups.groups":                  _onTapGroups(context); break;
-
+      case "groups.groups":                       _onTapGroups(context); break;
       case "research_projects.research_projects": _onTapResearchProjects(context); break;
-
-      case "polls.polls":                    _onTapPolls(context); break;
-
+      case "polls.polls":                         _onTapPolls(context); break;
+      case "saved_resources.saved_resources":     _onTapSavedResources(context); break;
       case "sexual_misconduct.sexual_misconduct": _onTapSexualMisconduct(context, analyticsTarget: "Concerns about Sexual, Dating, or Harassment Experiences"); break;
 
       case "transit_and_safety.mtd_stops":            _onTapMTDStops(context); break;
