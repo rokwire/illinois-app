@@ -42,11 +42,10 @@
 
 			"assistant": ["openai_assistant", "google_assistant", "grok_assistant", "perplexity_assistant"],
 
-			"authenticate": ["connect", "connected", "link", "linked", "feedback"],
+			"authenticate": ["connect", "connected", "link", "feedback"],
 			"authenticate.connect": ["netid", "phone_or_email"],
 			"authenticate.connected": ["netid", "phone", "email"],
 			"authenticate.link": ["netid", "phone", "email"],
-			"authenticate.linked": ["netid", "phone", "email"],
 			"authenticate.connected.netid": ["info", "disconnect"],
 			"authenticate.connected.phone": ["info", "disconnect", "verify"],
 			"authenticate.connected.email": ["info", "disconnect", "login"],
