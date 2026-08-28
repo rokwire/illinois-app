@@ -179,10 +179,10 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
   static const String _localScheme = 'local';
   static const String _signInHost = 'signin';
   static const String _signInUrlMacro = '{{signin_url}}';
-  static const String signInUrl = '$_localScheme://$_signInHost';
+  static const String _signInUrl = '$_localScheme://$_signInHost';
 
   String get _signInWithPhoneOrEmailDescriptionHtml => Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description", "<b>Don’t have a NetID?</b> <a href='$_signInUrlMacro'>Use your mobile phone number or personal (non-Illinois) email address to sign in.</a><p>Once a NetID is issued, sign in above using your NetID.</p>").
-    replaceAll(_signInUrlMacro, signInUrl);
+    replaceAll(_signInUrlMacro, _signInUrl);
 
   Map<String, Map<String, String>> get _htmlStyleMap => {
     'a' : _htmlLinkStyle

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -13,10 +12,9 @@ import 'package:sprintf/sprintf.dart';
 class ProfileLoginPhoneConfirmPanel extends StatefulWidget {
 
   final String? phoneNumber;
-  final bool? link;
   final void Function()? onFinish;
 
-  ProfileLoginPhoneConfirmPanel({this.phoneNumber, this.link, this.onFinish});
+  ProfileLoginPhoneConfirmPanel({this.phoneNumber, this.onFinish});
 
   _ProfileLoginPhoneConfirmPanelState createState() => _ProfileLoginPhoneConfirmPanelState();
 }
@@ -99,20 +97,6 @@ class _ProfileLoginPhoneConfirmPanelState extends State<ProfileLoginPhoneConfirm
                   borderColor: Styles().colors.fillColorSecondary,
                   progress: _isConfirming,
                 ),
-                Visibility(visible: (widget.link == true), child:
-                  Padding(padding: EdgeInsets.only(top: 8), child:
-                    RoundedButton(
-                      label:  Localization().getStringEx("panel.onboarding.confirm_phone.button.link.cancel.label", "Cancel"),
-                      hint: Localization().getStringEx("panel.onboarding.confirm_phone.button.link.cancel.hint", ""),
-                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                      onTap: _onTapCancel,
-                      backgroundColor: Styles().colors.white,
-                      borderColor: Styles().colors.fillColorSecondary,
-                      progress: _isCanceling,
-                    ),
-                  ),
-                ),
-
               ]),
             ),
           ),
@@ -140,20 +124,9 @@ class _ProfileLoginPhoneConfirmPanelState extends State<ProfileLoginPhoneConfirm
     
     setState(() { _isConfirming = true; });
 
-    if (widget.link != true) {
-      Auth2().handlePhoneAuthentication(phoneNumber, _codeController.text).then((result) {
-        _onPhoneVerified(result);
-      });
-    } else {
-      Map<String, dynamic> creds = {
-        "phone": phoneNumber,
-        "code": _codeController.text,
-      };
-      Map<String, dynamic> params = {};
-      Auth2().linkAccountAuthType(Auth2LoginType.phoneTwilio, creds, params).then((result) {
-        _onPhoneVerified(auth2PhoneSendCodeResultFromAuth2LinkResult(result));
-      });
-    }
+    Auth2().handlePhoneAuthentication(phoneNumber, _codeController.text).then((result) {
+      _onPhoneVerified(result);
+    });
   }
 
   void _onPhoneVerified(Auth2PhoneSendCodeResult result) {
@@ -178,33 +151,6 @@ class _ProfileLoginPhoneConfirmPanelState extends State<ProfileLoginPhoneConfirm
     if (widget.onFinish != null) {
       widget.onFinish!();
     }
-  }
-
-  void _onTapCancel() {
-    if(_isConfirming || _isCanceling){
-      return;
-    }
-
-    String phoneNumber = widget.phoneNumber ?? '';
-    setState(() {
-      _isCanceling = true;
-    });
-
-    Auth2().unlinkAccountAuthType(Auth2LoginType.phoneTwilio, phoneNumber).then((success) {
-      if (mounted) {
-        setState(() {
-          _isCanceling = false;
-        });
-        if (success) {
-          _finishedPhoneVerification();
-        }
-        else {
-          setState(() {
-            _verificationErrorMsg = Localization().getStringEx("panel.onboarding.confirm_phone.link.cancel.text", "Failed to remove phone number from your account.");
-          });
-        }
-      }
-    });
   }
 
   void _validateCode() {

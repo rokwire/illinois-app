@@ -2099,7 +2099,7 @@
 	"panel.settings.link.login_prompt.confirm.title": "登入",
 
 	"panel.settings.login.phone.label.title": "透过手机登入",
-	"panel.settings.login.phone.label.description": "登入前，请先输入您的电子邮箱链结和密码",
+	"panel.settings.login.phone.label.description": "Enter your mobile phone number and receive a verification code via text message.",
 	"panel.settings.login.phone.label.heading": "电话号码",
 	"panel.settings.login.phone.label.heading.hint": "",
 	"panel.settings.login.phone.button.proceed.title": "请继续",
@@ -2118,7 +2118,7 @@
 	"panel.settings.link.phone.label.failed.exists.detail": "1. 请用此NetID登入至其他帐号。\n2. 前往浏览 \"设定\" 点击 \"删除所有信息\".\n您现在可以尝试重新登入。",
 
 	"panel.settings.login.email.label.title": "使用电子邮件登入",
-	"panel.settings.login.email.label.description": "您需要输入手机上的验证码才能登入。",
+	"panel.settings.login.email.label.description": "Enter your personal email address and follow the steps to sign in by email.。",
 	"panel.settings.login.email.label.heading": "电子邮件:",
 	"panel.settings.login.email.label.heading.hint": "",
 	"panel.settings.login.email.button.proceed.title": "请继续",
@@ -2137,7 +2137,7 @@
 	"panel.settings.link.email.label.failed.exists.detail": "1. 请用此电子邮件登入至其他帐号。\n2. 前往浏览 \"设定\" 点击 \"删除所有信息\".\n您现在可以尝试重新登入。",
 
 	"panel.settings.login.both.label.title": "请选择使用电话号码或是电子邮件来登入",
-	"panel.settings.login.both.label.description": "您需要输入手机上的验证码才能登入或是接收电子邮件并按照上面指示动作",
+	"panel.settings.login.both.label.description": "Enter your mobile phone number and receive a verification code via text message OR enter your personal email address and follow the steps to sign in by email.",
 	"panel.settings.login.both.label.heading": "电话号码或电子邮件:",
 	"panel.settings.login.both.label.heading.hint": "",
 	"panel.settings.login.both.button.proceed.title": "请继续",

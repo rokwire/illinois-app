@@ -2114,7 +2114,7 @@
     "panel.settings.link.login_prompt.confirm.title": "Iniciar Sesión",
 
     "panel.settings.login.phone.label.title": "Iniciar Sesión con Móvil",
-    "panel.settings.login.phone.label.description": "Para iniciar sesión, favor de ingresar tu dirección de correo electrónico y seguir los pasos para iniciar sesión por correo electrónico.",
+    "panel.settings.login.phone.label.description": "Enter your mobile phone number and receive a verification code via text message.",
     "panel.settings.login.phone.label.heading": "Número de Teléfono Móvil:",
     "panel.settings.login.phone.label.heading.hint": "",
     "panel.settings.login.phone.button.proceed.title": "Continuar",
@@ -2133,7 +2133,7 @@
     "panel.settings.link.phone.label.failed.exists.detail": "1. Debes iniciar sesión en la otra cuenta con este número de teléfono.\n2. Ve a \"Configuración\" y presiona \"Olvidar toda mi información\".\nAhora puedes usar esto como inicio de sesión alternativo.",
 
     "panel.settings.login.email.label.title": "Iniciar Sesión con tu Correo Electrónico",
-    "panel.settings.login.email.label.description": "Para iniciar sesión, favor de ingresar tu número de teléfono móvil para recibir un código de verificación por mensaje de texto.",
+    "panel.settings.login.email.label.description": "Enter your personal email address and follow the steps to sign in by email.",
     "panel.settings.login.email.label.heading": "Correo Electrónico:",
     "panel.settings.login.email.label.heading.hint": "",
     "panel.settings.login.email.button.proceed.title": "Continuar",
@@ -2152,7 +2152,7 @@
     "panel.settings.link.email.label.failed.exists.detail": "1. Debes iniciar sesión en la otra cuenta con esta dirección de correo electrónico.\n2. Ve a \"Configuración\" y presiona \"Olvidar toda mi información\".\nAhora puedes usar esto como inicio de sesión alternativo.",
 
     "panel.settings.login.both.label.title": "Iniciar Sesión con Móvil o Correo Electrónico",
-    "panel.settings.login.both.label.description": "Para iniciar sesión, favor de ingresar tu número de teléfono móvil para recibir un código de verificación por mensaje de texto. O ingresa tu dirección de correo electrónico y sigue los pasos para iniciar sesión por correo electrónico.",
+    "panel.settings.login.both.label.description": "Enter your mobile phone number and receive a verification code via text message OR enter your personal email address and follow the steps to sign in by email.",
     "panel.settings.login.both.label.heading": "Número de Teléfono Móvil o Dirección de Correo Electrónico:",
     "panel.settings.login.both.label.heading.hint": "",
     "panel.settings.login.both.button.proceed.title": "Continuar",
