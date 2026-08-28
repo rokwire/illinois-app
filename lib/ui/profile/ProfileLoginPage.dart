@@ -112,14 +112,14 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
     List<Widget> contentList =  [];
     List<dynamic> codes = FlexUI()['authenticate.connect'] ?? [];
     for (String code in codes) {
-      if (code == 'netid') {
-        contentList.add(Padding(padding: EdgeInsetsGeometry.only(top: contentList.isNotEmpty ? 16 : 0), child:
-          _signInWithNetIdWidget
-        ));
+      Widget? codeWidget;
+      switch(code) {
+        case 'netid': codeWidget = _signInWithNetIdWidget; break;
+        case 'phone_or_email': codeWidget = _signInWithPhoneOrEmailWidget; break;
       }
-      else if (code == 'phone_or_email') {
-        contentList.add(Padding(padding: EdgeInsetsGeometry.only(top: contentList.isNotEmpty ? 16 : 0, left: 16, right: 16), child:
-        _signInWithPhoneOrEmailWidget
+      if (codeWidget != null) {
+        contentList.add(Padding(padding: EdgeInsetsGeometry.only(top: contentList.isNotEmpty ? 16 : 0), child:
+          codeWidget,
         ));
       }
     }
@@ -132,7 +132,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
   }
 
   Widget get _signInWithNetIdWidget =>
-    Container(padding: _highlightedBoxPadding, decoration: _highlightedBoxDecoration, child:
+    _HighlightedBoxWidget(child:
         Column(children: [
           Text(Localization().getStringEx('panel.home.connect.not_logged_in.netid.description', 'Sign in with your Illinois NetID to access your Illini ID, course schedule, and other personalized features.'),
             style: Styles().textStyles.getTextStyle('widget.description.regular.thin')
@@ -230,38 +230,24 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
 
     List<dynamic> codes = FlexUI()['authenticate.connected'] ?? [];
     for (String code in codes) {
-      if (code == 'netid') {
-        contentList.addAll(_buildConnectedNetIdLayout());
+      Widget? codeWidget;
+      switch(code) {
+        case 'netid': codeWidget = _buildConnectedNetIdLayout(); break;
+        case 'phone': codeWidget = _buildConnectedPhoneLayout(); break;
+        case 'email': codeWidget = _buildConnectedEmailLayout(); break;
       }
-      else if (code == 'phone') {
-        contentList.addAll(_buildConnectedPhoneLayout());
-      }
-      else if (code == 'email') {
-        contentList.addAll(_buildConnectedEmailLayout());
+      if (codeWidget != null) {
+        contentList.add(Padding(padding: EdgeInsetsGeometry.only(top: contentList.isNotEmpty ? 16 : 0), child:
+          codeWidget,
+        ));
       }
     }
 
-    return Visibility(visible: CollectionUtils.isNotEmpty(contentList), child:
-      Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-        Container(padding: _highlightedBoxPadding, decoration: _highlightedBoxDecoration, child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-            contentList
-          )
-        )
-      )
-    );
+    return contentList.isNotEmpty ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList) : Container();
   }
 
-  static BoxDecoration get _highlightedBoxDecoration => BoxDecoration(
-    color: Styles().colors.white,
-    borderRadius: BorderRadius.all(Radius.circular(4)),
-    border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)
-  );
 
-  static EdgeInsets get _highlightedBoxPadding =>
-    EdgeInsets.symmetric(horizontal: 16, vertical: 12);
-
-  List<Widget> _buildConnectedNetIdLayout() {
+  Widget _buildConnectedNetIdLayout() {
     List<Widget> contentList = [];
 
     List<dynamic> codes = FlexUI()['authenticate.connected.netid'] ?? [];
@@ -296,10 +282,12 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
       }
     }
 
-    return contentList;
+    return _HighlightedBoxWidget(child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
+    );
   }
 
-  List<Widget> _buildConnectedPhoneLayout() {
+  Widget _buildConnectedPhoneLayout() {
     List<Widget> contentList = [];
 
     String fullName = Auth2().fullName ?? "";
@@ -343,10 +331,17 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
         ));
       }
     }
-    return contentList;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      _HighlightedBoxWidget(child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
+      ),
+      Padding(padding: EdgeInsetsGeometry.only(left: 16, right: 16, top: 12), child:
+        _connectedPhoneOrEmailDescription
+      )
+    ],);
   }
 
-  List<Widget> _buildConnectedEmailLayout() {
+  Widget _buildConnectedEmailLayout() {
     List<Widget> contentList = [];
 
     String fullName = Auth2().fullName ?? "";
@@ -391,8 +386,19 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
         ));
       }
     }
-    return contentList;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      _HighlightedBoxWidget(child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
+      ),
+      Padding(padding: EdgeInsetsGeometry.only(left: 16, right: 16, top: 12,), child:
+        _connectedPhoneOrEmailDescription
+      )
+    ],);
   }
+
+  Widget get _connectedPhoneOrEmailDescription =>
+    Text(Localization().getStringEx('panel.settings.home.connect.logged_in.phone_or_email.description.text', 'Once you\'ve been issued an Illinois NetID, sign out, then sign in again with "Sign In with Your NetID" to access university features.'),
+      style: Styles().textStyles.getTextStyle('widget.description.regular.thin'),);
 
   void _onDisconnectNetIdClicked() {
     Analytics().logSelect(target: 'Sign Out: Disconnect NetId');
@@ -515,4 +521,22 @@ class ProfilePromptLogoutWidget extends StatelessWidget {
     Analytics().logAlert(text: _promptText(language: 'en'), selection: "No");
     Navigator.pop(context, false);
   }
+}
+
+class _HighlightedBoxWidget extends StatelessWidget {
+  final Widget? child;
+  _HighlightedBoxWidget({this.child});
+
+  @override
+  Widget build(BuildContext context) =>
+    Container(decoration: decoration, padding: padding, child: child);
+
+  static BoxDecoration get decoration => BoxDecoration(
+    color: Styles().colors.white,
+    borderRadius: BorderRadius.all(Radius.circular(4)),
+    border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)
+  );
+
+  static EdgeInsets get padding =>
+    EdgeInsets.symmetric(horizontal: 16, vertical: 12);
 }
