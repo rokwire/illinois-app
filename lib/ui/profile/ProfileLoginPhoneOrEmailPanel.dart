@@ -209,15 +209,15 @@ class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmail
     String analyticsText, validationText;
     if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {
       analyticsText = 'Add Phone Number';
-      validationText = Localization().getStringEx('panel.settings.link.phone.label.validation', 'Please enter your phone number.');
+      validationText = Localization().getStringEx('panel.settings.login.phone.label.validation', 'Please enter your phone number.');
     }
     else if (widget.mode == SettingsLoginPhoneOrEmailMode.email){
       analyticsText = 'Add Email Address';
-      validationText = Localization().getStringEx('panel.settings.link.email.label.validation', 'Please enter your email address.');
+      validationText = Localization().getStringEx('panel.settings.login.email.label.validation', 'Please enter your email address.');
     }
     else {
       analyticsText = 'Add Phone or Email';
-      validationText = Localization().getStringEx('panel.settings.link.both.label.validation', 'Please enter your phone number or email address.');
+      validationText = Localization().getStringEx('panel.settings.login.both.label.validation', 'Please enter your phone number or email address.');
     }
 
 
@@ -286,10 +286,10 @@ class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmail
       if (result == Auth2PhoneRequestCodeResult.succeeded) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginPhoneConfirmPanel(phoneNumber: phoneNumber, onFinish: widget.onFinish)));
       } else if (result == Auth2PhoneRequestCodeResult.failedAccountExist) {
-        setErrorMsg(Localization().getStringEx("panel.settings.link.phone.label.failed.exists", "An account is already using this phone number."),
-            details: Localization().getStringEx("panel.settings.link.phone.label.failed.exists.detail", "1. You will need to sign in to the other account with this phone number.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."));
+        setErrorMsg(Localization().getStringEx("panel.settings.login.phone.label.failed.exists", "An account is already using this phone number."),
+            details: Localization().getStringEx("panel.settings.login.phone.label.failed.exists.detail", "1. You will need to sign in to the other account with this phone number.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."));
       } else {
-        setErrorMsg(Localization().getStringEx("panel.settings.link.phone.label.failed", "Failed to send phone verification code. An unexpected error has occurred."));
+        setErrorMsg(Localization().getStringEx("panel.settings.login.phone.label.failed", "Failed to send phone verification code. An unexpected error has occurred."));
       }
     }
   }
