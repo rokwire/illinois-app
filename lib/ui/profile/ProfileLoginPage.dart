@@ -115,7 +115,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
       Widget? codeWidget;
       switch(code) {
         case 'netid': codeWidget = _signInWithNetIdWidget; break;
-        case 'phone_or_email': codeWidget = _signInWithPhoneOrEmailWidget; break;
+        case 'phone_or_email': codeWidget = Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 16), child: _signInWithPhoneOrEmailWidget); break;
       }
       if (codeWidget != null) {
         contentList.add(Padding(padding: EdgeInsetsGeometry.only(top: contentList.isNotEmpty ? 16 : 0), child:
