@@ -323,10 +323,10 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
             setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address."));
           }
           else if (result == false) {
-            setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.failed", "An account is already using this email address."),);
+            setErrorMsg(Localization().getStringEx("panel.settings.login.email.label.failed", "An account is already using this email address."),);
           }
           else if (Auth2().isEmailLinked) { // at most one email address may be linked at a time
-            setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.linked", "You have already added an email address to your account."));
+            setErrorMsg(Localization().getStringEx("panel.settings.login.email.label.linked", "You have already added an email address to your account."));
           }
           else {
             // Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: Auth2EmailAccountState.nonExistent, onboardingContext: widget.onboardingContext)));
