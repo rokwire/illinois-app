@@ -184,14 +184,18 @@ class _ProfileLoginPhoneOrEmailPanelState extends State<ProfileLoginPhoneOrEmail
   void _onTapSignInWithNetIdLink(String? url) {
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;
     if ((uri?.scheme == _localScheme) && (uri?.host == _signInHost)) {
-      Analytics().logSelect(target: 'Sign in with Your NetID');
-      if (ProfileHomePanel.state != null) {
-        Navigator.of(context).popUntil((route) => (route.settings.name == ProfileHomePanel.routeName) || (route.isFirst));
-        NotificationService().notify(ProfileHomePanel.notifySelectContent, [ ProfileContentType.login, ]);
-      } else {
-        Navigator.pop(context);
-        ProfileHomePanel.present(context, contentType: ProfileContentType.login,);
-      }
+      _signInWithNetId();
+    }
+  }
+
+  void _signInWithNetId() {
+    Analytics().logSelect(target: 'Sign in with Your NetID');
+    if (ProfileHomePanel.state != null) {
+      Navigator.of(context).popUntil((route) => (route.settings.name == ProfileHomePanel.routeName) || (route.isFirst));
+      NotificationService().notify(ProfileHomePanel.notifySelectContent, [ ProfileContentType.login, ]);
+    } else {
+      Navigator.pop(context);
+      ProfileHomePanel.present(context, contentType: ProfileContentType.login,);
     }
   }
 
