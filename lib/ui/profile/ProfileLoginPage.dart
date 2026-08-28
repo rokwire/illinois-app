@@ -132,7 +132,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
   }
 
   Widget get _signInWithNetIdWidget =>
-    _HighlightedBoxWidget(child:
+    ProfileLoginHighlightedBox(child:
         Column(children: [
           Text(Localization().getStringEx('panel.home.connect.not_logged_in.netid.description', 'Sign in with your Illinois NetID to access your Illini ID, course schedule, and other personalized features.'),
             style: Styles().textStyles.getTextStyle('widget.description.regular.thin')
@@ -282,7 +282,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
       }
     }
 
-    return _HighlightedBoxWidget(child:
+    return ProfileLoginHighlightedBox(child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
     );
   }
@@ -332,7 +332,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
       }
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      _HighlightedBoxWidget(child:
+      ProfileLoginHighlightedBox(child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
       ),
       Padding(padding: EdgeInsetsGeometry.only(left: 16, right: 16, top: 12), child:
@@ -387,7 +387,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
       }
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      _HighlightedBoxWidget(child:
+      ProfileLoginHighlightedBox(child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
       ),
       Padding(padding: EdgeInsetsGeometry.only(left: 16, right: 16, top: 12,), child:
@@ -523,9 +523,9 @@ class ProfilePromptLogoutWidget extends StatelessWidget {
   }
 }
 
-class _HighlightedBoxWidget extends StatelessWidget {
+class ProfileLoginHighlightedBox extends StatelessWidget {
   final Widget? child;
-  _HighlightedBoxWidget({this.child});
+  ProfileLoginHighlightedBox({this.child});
 
   @override
   Widget build(BuildContext context) =>
