@@ -119,7 +119,7 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
         Semantics(explicitChildNodes: true, child:
           RoundedButton(
-            label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.button.title", "Sign In with your NetID"),
+            label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.button.title", "Sign In with Your NetID"),
             textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
             borderColor: Styles().colors.fillColorSecondary,
             backgroundColor: Styles().colors.surface,
@@ -158,29 +158,35 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) => HtmlWidget(_descriptionHtml,
       onTapUrl : (url) { _onTapLink(context, url); return true; },
-      textStyle:  Styles().textStyles.getTextStyle("widget.description.small.semi_fat"),
-      customStylesBuilder: (element) => (element.localName == "a") ? _htmlLinkStyle : null,
+      textStyle:  Styles().textStyles.getTextStyle("widget.description.small"),
+      customStylesBuilder: (element) => _htmlStyleMap[element.localName?.toLowerCase()],
   );
 
-  static const String localScheme = 'local';
-  static const String signInHost = 'signin';
-  static const String signInUrlMacro = '{{signin_url}}';
-  static const String signInUrl = '$localScheme://$signInHost';
+  static const String _localScheme = 'local';
+  static const String _signInHost = 'signin';
+  static const String _signInUrlMacro = '{{signin_url}}';
+  static const String _signInUrl = '$_localScheme://$_signInHost';
 
-  String get _descriptionHtml => Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description", "<b>Don’t have a NetID?</b><a href='$signInUrlMacro'>Use your mobile phone number or personal (non-Illinois) email address to sign in.</a>").
-    replaceAll(signInUrlMacro, signInUrl);
+  String get _descriptionHtml =>
+    Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description", "<b>Don’t have a NetID?</b> <a href='$_signInUrlMacro'>Use your mobile phone number or personal (non-Illinois) email address to sign in.</a><p>Once a NetID is issued, sign in above using your NetID.</p>").
+    replaceAll(_signInUrlMacro, _signInUrl);
+
+  Map<String, Map<String, String>> get _htmlStyleMap => {
+    'a' : _htmlLinkStyle
+  };
 
   Map<String, String> get _htmlLinkStyle => <String, String>{
-    //'color': _htmlLinkColor,
+    'color': _htmlTextColor,
     'text-decoration-color': _htmlLinkColor,
   };
 
-  String get _htmlLinkColor =>
-    ColorUtils.toHex(Styles().colors.fillColorSecondary);
+  String get _htmlTextColor => ColorUtils.toHex(Styles().colors.fillColorPrimary);
+  String get _htmlLinkColor => ColorUtils.toHex(Styles().colors.fillColorSecondary);
 
   void _onTapLink(BuildContext context, String? url) {
+    Analytics().logSelect(target: "Phone or Email Login");
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;
-    if ((uri?.scheme == localScheme) && (uri?.host == signInHost)) {
+    if ((uri?.scheme == _localScheme) && (uri?.host == _signInHost)) {
       Analytics().logSelect(target: "Phone or Email Login", source: runtimeType.toString());
       if (Connectivity().isOffline) {
         AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.label.offline.phone_or_email', 'Feature not available when offline.'));
