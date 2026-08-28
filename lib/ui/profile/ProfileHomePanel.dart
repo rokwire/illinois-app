@@ -73,6 +73,18 @@ class ProfileHomePanel extends StatefulWidget {
       ));*/
     }
   }
+
+  static _ProfileHomePanelState? get state {
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifySelectContent);
+    if (subscribers != null) {
+      for (NotificationsListener subscriber in subscribers) {
+        if ((subscriber is _ProfileHomePanelState) && subscriber.mounted) {
+          return subscriber;
+        }
+      }
+    }
+    return null;
+  }
 }
 
 class _ProfileHomePanelState extends State<ProfileHomePanel> with NotificationsListener {

@@ -42,18 +42,13 @@
 
 			"assistant": ["openai_assistant", "google_assistant", "grok_assistant", "perplexity_assistant"],
 
-			"authenticate": ["connect", "connected", "link", "linked", "feedback"],
+			"authenticate": ["connect", "connected", "feedback"],
 			"authenticate.connect": ["netid", "phone_or_email"],
 			"authenticate.connected": ["netid", "phone", "email"],
-			"authenticate.link": ["netid", "phone", "email"],
-			"authenticate.linked": ["netid", "phone", "email"],
 			"authenticate.connected.netid": ["info", "disconnect"],
 			"authenticate.connected.phone": ["info", "disconnect", "verify"],
 			"authenticate.connected.email": ["info", "disconnect", "login"],
-			"authenticate.linked.netid": ["info", "remove"],
-			"authenticate.linked.phone": ["info", "remove", "verify"],
-			"authenticate.linked.email": ["info", "remove", "verify"],
-	
+
 			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academic_links", "academics_events", "skills_self_evaluation", "essential_skills_coach", "my_illini", "skills_dashboard"],
 
 			"career_exploration.skills_self_evaluation.features": ["authentication", "login"],
@@ -179,20 +174,6 @@
 				"authenticate.connected.email.info"       : { "emailLoggedIn": true },
 				"authenticate.connected.email.disconnect" : { "emailLoggedIn": true },
 				"authenticate.connected.email.login"      : { "emailLoggedIn": false },
-				"authenticate.link"                       : { "loggedIn": true },
-				"authenticate.link.netid"                 : { "shibbolethLinked": false },
-				"authenticate.link.phone"                 : { "phoneLinked": false },
-				"authenticate.link.email"                 : { "emailLinked": false },
-				"authenticate.linked"                     : { "loggedIn": true },
-				"authenticate.linked.netid"               : { "shibbolethLinked": true },
-				"authenticate.linked.netid.info"          : { "shibbolethLinked": true },
-				"authenticate.linked.netid.remove"        : { "shibbolethLinked": true },
-				"authenticate.linked.phone"               : { "phoneLinked": true },
-				"authenticate.linked.phone.info"          : { "phoneLinked": true },
-				"authenticate.linked.phone.remove"        : { "phoneLinked": true },
-				"authenticate.linked.email"               : { "emailLinked": true },
-				"authenticate.linked.email.info"          : { "emailLinked": true },
-				"authenticate.linked.email.remove"        : { "emailLinked": true },
 
 				"onboarding2.profile_info"                : { "shibbolethLoggedIn": true },
 				"onboarding2.research_questionnaire"      : { "shibbolethLoggedIn": true },
