@@ -300,7 +300,7 @@ class _HomeResearchProjectsImplWidgetState extends State<_HomeResearchProjectsIm
   }
 
   void _updateInternalVisibility(bool visible) {
-    if (_visible != visible) {
+    if ((_visible != visible) && mounted) {
       _visible = visible;
       _onInternalVisibilityChanged();
     }

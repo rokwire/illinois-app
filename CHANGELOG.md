@@ -5,6 +5,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [8.2.14] - 2026-08-31
+### Changed
+- Allow edit of scheduled post date & time if it has not passed yet  [#5512](https://github.com/rokwire/illinois-app/issues/5512).
+- Rework refresh token processing [#5836](https://github.com/rokwire/illinois-app/issues/5836).
+### Fixed
+- Cursor jumping to start when picking an emoji in group posts [#6034](https://github.com/rokwire/illinois-app/issues/6034).
+
+## [8.2.13] - 2026-08-28
+### Changed
+- Simplified alternate email/phone sign-in flow [#5885](https://github.com/rokwire/illinois-app/issues/5885).
+
+## [8.2.12] - 2026-08-27
+### Changed
+- Smaller font for the RoleGridButton.standalone widget [#5879](https://github.com/rokwire/illinois-app/issues/5879).
+- Updated section entry text style [#5944](https://github.com/rokwire/illinois-app/issues/5944).
+- Text update on new group & admin settings panels [#5995](https://github.com/rokwire/illinois-app/issues/5995).
+- Make Saved Resources standalone section in Browse [#6024](https://github.com/rokwire/illinois-app/issues/6024).
+- Make University Living standalone section in Browse, hide Featured resources subsection [#6024](https://github.com/rokwire/illinois-app/issues/6024).
+- Do not allow users to sign in with emails that end on "illinois.edu" [#5882](https://github.com/rokwire/illinois-app/issues/5882).
+- Fill only A-Z sections in Groups Home panel, everything outside them falls in Other section [#5990](https://github.com/rokwire/illinois-app/issues/5990).
+
+## [8.2.11] - 2026-08-26
+### Changed
+- Onboarding UI updates [#5879](https://github.com/rokwire/illinois-app/issues/5879).
+- Hide Safety Resources browse entry and favorite widget [#6003](https://github.com/rokwire/illinois-app/issues/6003).
+- Capitalize all letters in "APP FAQS" [#6002](https://github.com/rokwire/illinois-app/issues/6002).
+- Updated Home photos [#6005](https://github.com/rokwire/illinois-app/issues/6005).
+- Text and layout edit on new group & admin settings panels [#5995](https://github.com/rokwire/illinois-app/issues/5995).
+### Fixed
+- Fixed unhandled exception from Home favorite widgets for accessing unmounted context.
+### Removed
+- Removed mobilecredential API call to Idenity BB [#6018](https://github.com/rokwire/illinois-app/issues/6018).
+
 ## [8.2.10] - 2026-08-25
 ### Changed
 - Unlink links items in Section from Saved Resources home widget, make it regular widget linked to University Living / Saved Resources [#5873](https://github.com/rokwire/illinois-app/issues/5873).

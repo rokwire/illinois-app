@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Onboarding2.dart';
+import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginNetIdPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -233,7 +236,12 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
         _loginByPhone(phone);
       }
       else if (StringUtils.isNotEmpty(email)) {
-        _loginByEmail(email);
+        if (AppEmail.isUniversityEmail(email!)) {
+          _showUniversityEmailWarning();
+        }
+        else {
+          _loginByEmail(email);
+        }
       }
       else {
         setErrorMsg(validationText);
@@ -241,6 +249,25 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     }
   }
 
+  void _showUniversityEmailWarning() {
+    final String netIdRef = 'net_id';
+    String linkText = Localization().getStringEx('common.message.login.net_id_warning.link.net_id', 'sign in using NetID');
+    String title = Localization().getStringEx('common.message.login.net_id_warning.title', "It looks like you're using an Illinois email address.");
+    String message = Localization().getStringEx('common.message.login.net_id_warning.message',
+        'Illinois students and employees should {{link_net_id}}. This ensures your university features, Illini ID, and personalized content are available.')
+      .replaceAll('{{link_net_id}}', "<a href='$netIdRef'>$linkText</a>");
+    String html = "<b>$title</b><br><br>$message";
+
+    ExploreMessagePopup.show(context, html, onTapUrl: (String url) {
+      if (url == netIdRef) {
+        Analytics().logSelect(target: 'Sign in using NetID');
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginNetIdPanel()));
+      }
+      return true;
+    });
+  }
 
   void _loginByPhone(String? phoneNumber) {
     setState(() { _isLoading = true; });
@@ -296,10 +323,10 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
             setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address."));
           }
           else if (result == false) {
-            setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.failed", "An account is already using this email address."),);
+            setErrorMsg(Localization().getStringEx("panel.settings.login.email.label.failed", "An account is already using this email address."),);
           }
           else if (Auth2().isEmailLinked) { // at most one email address may be linked at a time
-            setErrorMsg(Localization().getStringEx("panel.settings.link.email.label.linked", "You have already added an email address to your account."));
+            setErrorMsg(Localization().getStringEx("panel.settings.login.email.label.linked", "You have already added an email address to your account."));
           }
           else {
             // Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: Auth2EmailAccountState.nonExistent, onboardingContext: widget.onboardingContext)));

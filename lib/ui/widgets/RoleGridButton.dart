@@ -58,7 +58,7 @@ class RoleGridButton extends StatelessWidget {
     title: role.displayTitle,
     hint: role.displayHint,
     iconKey: role.displayIconKey,
-    textStyle: Styles().textStyles.getTextStyleEx('widget.button.title.medium.fat', fontHeight: 1.10),
+    textStyle: Styles().textStyles.getTextStyleEx('widget.message.small.fat', fontHeight: 1.10),
     aspectRatio: 300 / 200,
     selected: selected == true,
     sortOrder: sortOrder,
@@ -74,7 +74,7 @@ class RoleGridButton extends StatelessWidget {
     title: role.displayTitle,
     hint: role.displayHint,
     iconKey: role.displayIconKey,
-    textStyle: Styles().textStyles.getTextStyleEx('widget.button.title.medium.fat', fontHeight: 1.10),
+    textStyle: Styles().textStyles.getTextStyleEx('widget.message.small.fat', fontHeight: 1.10),
     aspectRatio: 800 / 200,
     selected: selected == true,
     sortOrder: sortOrder,
@@ -293,7 +293,7 @@ extension UserRoleUI on UserRole {
 
   String? get displayLabel {
     switch (this) {
-      case UserRole.prospective: return Localization().getStringEx('panel.onboarding2.roles.button.prospective.label', 'Are you considering attending the University of Illinois? Choose this option:');
+      case UserRole.prospective: return Localization().getStringEx('panel.onboarding2.roles.button.prospective.label', 'Are you considering attending the University of Illinois?');
       default: return null;
     }
   }

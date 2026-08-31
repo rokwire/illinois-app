@@ -36,44 +36,6 @@ class Identity /* with Service */ {
   String? get _externalAuthorizationHeaderValue => Auth2().uiucToken?.accessToken;
   Map<String, String?> get _externalAuthorizationHeader => {_externalAuthorizationHeaderKey: _externalAuthorizationHeaderValue};
 
-  // Mobile Credential
-
-  Future<Response?> _loadMobileCredentialResponse() async =>
-    StringUtils.isNotEmpty(Config().identityUrl) ? Network().get("${Config().identityUrl}/mobilecredential", auth: Auth2(), headers: _externalAuthorizationHeader) : null;
-
-  Future<MobileCredential?> loadMobileCredential() async {
-    if (StringUtils.isEmpty(Config().identityUrl)) {
-      Log.e('Identity: Failed to load mobile credential - missing identity url.');
-      return null;
-    }
-    Response? response = await _loadMobileCredentialResponse();
-    int? responseCode = response?.statusCode;
-    String? responseString = response?.body;
-    if (responseCode == 200) {
-      return MobileCredential.fromJson(JsonUtils.decodeMap(responseString));
-    } else {
-      Log.e('Identity: Failed to load mobile credential. Reason ($responseCode): $responseString');
-      return null;
-    }
-  }
-
-  Future<bool> deleteMobileCredential() async {
-    if (StringUtils.isEmpty(Config().identityUrl)) {
-      Log.e('Identity: Failed to delete mobile credential - missing identity url.');
-      return false;
-    }
-    Response? response = await Network().delete("${Config().identityUrl}/mobilecredential", auth: Auth2(), headers: _externalAuthorizationHeader);
-    int? responseCode = response?.statusCode;
-    String? responseString = response?.body;
-    if (responseCode == 200) {
-      Log.i('Identity: Successfully deleted mobile credential.');
-      return true;
-    } else {
-      Log.e('Identity: Failed to delete mobile credential. Reason ($responseCode): $responseString');
-      return false;
-    }
-  }
-
   // Student id
 
   Future<Response?> _loadStudentIdResponse() async =>
@@ -135,15 +97,13 @@ class Identity /* with Service */ {
   // User Data
   Future<Map<String, dynamic>?> loadUserDataJson() async {
     List<Response?> responses = await Future.wait<Response?>(<Future<Response?>>[
-      _loadMobileCredentialResponse(),
       _loadStudentIdResponse(),
       _loadStudentClassificationResponse(),
     ]);
 
     return {
-      'mobile_credential': _responseUserData(ListUtils.entry<Response?>(responses, 0)),
-      'student_id': _responseUserData(ListUtils.entry<Response?>(responses, 1)),
-      'student_classification': _responseUserData(ListUtils.entry<Response?>(responses, 2)),
+      'student_id': _responseUserData(ListUtils.entry<Response?>(responses, 0)),
+      'student_classification': _responseUserData(ListUtils.entry<Response?>(responses, 1)),
     };
   }
 
