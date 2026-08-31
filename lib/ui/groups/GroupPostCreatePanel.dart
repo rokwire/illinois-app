@@ -50,16 +50,19 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   GlobalKey _postImageHolderKey = GlobalKey();
   List<Member>? _selectedMembers;
   List<Member>? _allMembersAllowedToPost;
+  TextEditingController _subjectController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _subjectController.text = _postData.subject ?? '';
     _loadMembersAllowedToPost();
     _loadPostNudges();
   }
 
   @override
   void dispose() {
+    _subjectController.dispose();
     super.dispose();
   }
 
@@ -109,7 +112,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                             padding: EdgeInsets.only(top: 8, bottom: 8),
                             decoration: PostInputField.fieldDecoration,
                             child: Semantics(label: "Post Subject", child: TextField(
-                                controller: TextEditingController(text: _postData.subject),
+                                controller: _subjectController,
                                 onChanged: (msg)=> _postData.subject = msg,
                                 maxLines: 1,
                                 textCapitalization: TextCapitalization.sentences,
@@ -278,6 +281,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
       body = _selectedNudge?.body;
       _showPollConfirmationDialogIfNeeded();
     }
+    _subjectController.text = subject ?? '';
     setStateIfMounted(() {
       _postData.subject = subject;
       _postData.body = body;
