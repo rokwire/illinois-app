@@ -139,9 +139,9 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                   )
               ),
               Container(height: 10,),
-                _imageName!=null?
+              ((_imageName!=null) && !kIsWeb) ?
                 RoundedButton(label: Localization().getStringEx('panel.image_edit.button.edit.title', 'Edit Image'), onTap: _onEdit)
-                    : Container(),
+                 : Container(),
               Container(height: 10,),
               RoundedButton(
                 label: _imageName!=null?
@@ -345,11 +345,11 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
 
   }
 
-  void _onEdit(){
-    if (kIsWeb) {
-      //TBD: DDWEB - does not work for web
+  void _onEdit() {
+    //DDWEB - does not work for web
+    if (!kIsWeb) {
+      _openEditTools();
     }
-    _openEditTools();
   }
 
   void _onBack(){
