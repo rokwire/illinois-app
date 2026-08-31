@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [8.2.14] - 2026-08-31
 ### Changed
 - Allow edit of scheduled post date & time if it has not passed yet  [#5512](https://github.com/rokwire/illinois-app/issues/5512).
 - Rework refresh token processing [#5836](https://github.com/rokwire/illinois-app/issues/5836).
