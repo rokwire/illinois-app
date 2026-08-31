@@ -1730,11 +1730,13 @@ class _PostInputFieldState extends State<PostInputField> {
   TextEditingController _linkUrlController = TextEditingController();
 
   String? _hint;
+  String? _lastEmittedHtml;
 
   @override
   void initState() {
     super.initState();
     _hint = widget.hint;
+    _lastEmittedHtml = widget.text;
 
     // Initialize QuillController with HTML content if provided
     if (widget.text != null && widget.text!.isNotEmpty) {
@@ -1773,9 +1775,8 @@ class _PostInputFieldState extends State<PostInputField> {
   @override
   void didUpdateWidget(PostInputField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    String? oldBodyInitialText = oldWidget.text;
     String? newBodyInitialText = widget.text;
-    if (oldBodyInitialText != newBodyInitialText) {
+    if (newBodyInitialText != _lastEmittedHtml) {
       if (newBodyInitialText != null && newBodyInitialText.isNotEmpty) {
         try {
           // Convert HTML to Delta
@@ -1790,6 +1791,7 @@ class _PostInputFieldState extends State<PostInputField> {
         _controller.document = quill.Document();
       }
 
+      _lastEmittedHtml = newBodyInitialText;
       setStateIfMounted(() {});
     }
   }
@@ -1798,6 +1800,7 @@ class _PostInputFieldState extends State<PostInputField> {
     if (widget.onBodyChanged != null) {
       // Convert Delta to HTML
       final html = _deltaToHtml();
+      _lastEmittedHtml = html;
       widget.onBodyChanged?.call(html);
     }
     setStateIfMounted(() {});
