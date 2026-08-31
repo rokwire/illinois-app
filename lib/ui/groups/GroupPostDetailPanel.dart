@@ -171,7 +171,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
                   GroupScheduleTimeWidget(
                     timeZone: null,//TBD pass timezone
                     scheduleTime: widget.post?.dateActivatedUtc,
-                    enabled: false, //_isEditMainPost, Disable editing since the BB do not support editing of the create notification
+                    enabled: _canEditScheduledTime, //_isEditMainPost, Disable editing since the BB do not support editing of the create notification
                     onDateChanged: (DateTime? dateTimeUtc){
                       setStateIfMounted(() {
                         Log.d(groupUtcDateTimeToString(dateTimeUtc)??"");
@@ -988,6 +988,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
   bool get _isAdmin => widget.group.currentUserIsAdmin;
 
   bool get _isEditMainPost => _mainPostUpdateData != null;
+
+  bool get _canEditScheduledTime => (widget.post?.isScheduled == true) && _isEditMainPost && (widget.post?.dateActivatedUtc?.isAfter(DateTime.now().toUtc()) == true);
 
   String get _groupId => widget.group.id!;
 
