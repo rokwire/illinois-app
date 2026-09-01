@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/athletics/AthleticsGameDayContentWidget.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDayPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -231,7 +231,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
       case AthleticsContentType.events: return AthleticsEventsPanel(starred: _starred,);
       case AthleticsContentType.news: return AthleticsNewsContentWidget(starred: _starred,);
       case AthleticsContentType.teams: return AthleticsTeamsContentWidget();
-      case AthleticsContentType.game_day: return AthleticsGameDayContentWidget();
+      case AthleticsContentType.game_day: return AthleticsGameDayPanel();
       default: return null;
     }
   }
@@ -250,7 +250,7 @@ extension AthleticsContentTypeImpl on AthleticsContentType {
       case AthleticsContentType.events: return Localization().getStringEx('panel.athletics.content.section.events.label', 'Big 10 Events', language: language);
       case AthleticsContentType.news: return Localization().getStringEx('panel.athletics.content.section.news.label', 'Big 10 News', language: language);
       case AthleticsContentType.teams: return Localization().getStringEx('panel.athletics.content.section.teams.label', 'Big 10 Teams', language: language);
-      case AthleticsContentType.game_day: return Localization().getStringEx('panel.athletics.content.section.game_day.label', "It's Game Day!", language: language);
+      case AthleticsContentType.game_day: return Localization().getStringEx('panel.athletics.content.section.game_day.label', "It's Game Day", language: language);
     }
   }
 
