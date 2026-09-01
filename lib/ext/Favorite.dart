@@ -16,7 +16,6 @@ import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Map2.dart';
 import 'package:illinois/ui/athletics/AthleticsEventsPanel.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';

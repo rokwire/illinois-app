@@ -11,7 +11,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';

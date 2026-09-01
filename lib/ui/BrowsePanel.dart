@@ -20,8 +20,8 @@ import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
+import 'package:illinois/ui/athletics/AthleticsEventsPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDayPanel.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsContentPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
@@ -65,8 +65,6 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-import 'athletics/AthleticsEventsPanel.dart';
-import 'dining/DiningLinksPanel.dart';
 // BrowsePanel
 
 class BrowsePanel extends StatefulWidget {

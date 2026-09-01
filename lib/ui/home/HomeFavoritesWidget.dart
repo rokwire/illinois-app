@@ -28,7 +28,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/athletics/AthleticsEventsPanel.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsPanel.dart';
 import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';

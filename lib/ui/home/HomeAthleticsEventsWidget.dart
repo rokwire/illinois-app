@@ -7,7 +7,6 @@ import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/athletics/AthleticsEventsPanel.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/home/HomeEvent2Widget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
