@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Removed
 - Removed dropdown menus under 10 sub-sections [#5871](https://github.com/rokwire/illinois-app/issues/5871).
+### Changed
+- Allow editing of post subjects [#5726](https://github.com/rokwire/illinois-app/issues/5726).
 
 ## [8.2.14] - 2026-08-31
 ### Changed
