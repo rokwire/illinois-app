@@ -29,6 +29,7 @@ import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/athletics/AthleticsEventsPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsPanel.dart';
 import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -536,7 +537,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> with Notifica
     } else if(widget.favoriteKey == Game.favoriteKeyName) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsEventsPanel(starred: true)));
     } else if(widget.favoriteKey == News.favoriteKeyName) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news, starred: true,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsPanel(starred: true)));
     } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
     }

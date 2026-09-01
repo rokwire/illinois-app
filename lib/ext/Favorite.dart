@@ -17,6 +17,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Map2.dart';
 import 'package:illinois/ui/athletics/AthleticsEventsPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
@@ -234,7 +235,7 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsEventsPanel()));
     }
     else if (lowerCaseKey == News.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsPanel()));
     }
     else if (lowerCaseKey == LaundryRoom.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
