@@ -29,6 +29,7 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -38,16 +39,16 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class AthleticsEventsContentWidget extends StatefulWidget {
+class AthleticsEventsPanel extends StatefulWidget {
   final bool? starred;
 
-  AthleticsEventsContentWidget({this.starred});
+  AthleticsEventsPanel({this.starred});
 
   @override
-  State<AthleticsEventsContentWidget> createState() => _AthleticsEventsContentWidgetState();
+  State<AthleticsEventsPanel> createState() => _AthleticsEventsPanelState();
 }
 
-class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWidget> with NotificationsListener {
+class _AthleticsEventsPanelState extends State<AthleticsEventsPanel> with NotificationsListener {
   List<Event2>? _events;
   bool? _lastPageLoadedAll;
   int? _totalEventsCount;
@@ -90,12 +91,20 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      AthleticsTeamsFilterWidget(starred: _starred, onStarred: _onTapStarred,),
-      Expanded(child:
-        _buildContent()
-      )
-    ]);
+    return Scaffold(
+      appBar: _headerBar,
+      body: Column(children: [
+        AthleticsTeamsFilterWidget(starred: _starred, onStarred: _onTapStarred),
+        Expanded(child:
+          _buildContent()
+        )
+      ])
+    );
+  }
+
+  PreferredSizeWidget get _headerBar {
+    String title = Localization().getStringEx('panel.browse.entry.athletics.sport_events.title', 'Big 10 Events');
+    return HeaderBar(title: title);
   }
 
   Widget _buildContent() {
