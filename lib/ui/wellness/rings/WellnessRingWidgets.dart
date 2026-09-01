@@ -164,8 +164,8 @@ class _WellnessRingState extends State<WellnessRing> with NotificationsListener,
                             height: innerContentSize,
                             width: innerContentSize,
                             child: CircularProgressIndicator(
-                              semanticsLabel: "${data.name} Ring Progress indicator",// tbd localize
-                              semanticsValue: "completed ${WellnessRings().getRingDailyValue(data.id).toInt()} of ${data.goal.toInt()} ${data.unit}s", // tbd localize
+                              //semanticsLabel: "${data.name} Ring Progress indicator",// tbd localize
+                              //semanticsValue: "completed ${WellnessRings().getRingDailyValue(data.id).toInt()} of ${data.goal.toInt()} ${data.unit}s", // tbd localize
                               strokeWidth: widget.strokeSize.toDouble(),
                               value: controller!.value >= 1 ? 0.9975 : controller.value,
                               // * (completion) >= 1 ? 0.999 : completion, // Simulate padding in the end

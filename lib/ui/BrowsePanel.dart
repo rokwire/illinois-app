@@ -20,7 +20,10 @@ import 'package:illinois/ui/academics/EssentialSkillsCoachDashboardPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsEventsPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDayPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsTeamsContentPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/career/CareerPlanningLinks.dart';
@@ -43,8 +46,8 @@ import 'package:illinois/ui/mtd/TransportationAndSafetyLinks.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
-import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/gbv/GBVPathwaysPanel.dart';
+import 'package:illinois/ui/safety/SafetySafeWalkRequestPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessLinksPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
@@ -63,8 +66,6 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/datetime_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-
-///////////////////////////
 // BrowsePanel
 
 class BrowsePanel extends StatefulWidget {
@@ -761,17 +762,17 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapSportEvents(BuildContext context) {
     Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsEventsPanel()));
   }
 
   static void _onTapSportNews(BuildContext context) {
     Analytics().logSelect(target: "News");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsPanel()));
   }
 
   static void _onTapSportTeams(BuildContext context) {
     Analytics().logSelect(target: "Teams");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.teams)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamsContentPanel()));
   }
 
   static void _onTapCampusHighlights(BuildContext context) {
@@ -875,7 +876,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapMyGameDay(BuildContext context) {
     Analytics().logSelect(target: "It's Game Day");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.game_day)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDayPanel()));
   }
 
   static void _onTapMyLocations(BuildContext context) {
@@ -932,7 +933,7 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapSafewalkRequest(BuildContext context) {
     Analytics().logSelect(target: "Request a SafeWalk");
     if (FlexUI().isSafeWalkAvailable) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SafetyHomePanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SafetySafeWalkRequestPanel()));
     }
     else {
       AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safewalks.not_available.text", "SafeWalk feature is not currently available."));
@@ -961,7 +962,7 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   static void _onTapWellnessRings(BuildContext context) {
-    Analytics().logSelect(target: "Wellness Daily Rings");
+    Analytics().logSelect(target: "Wellness Daily Wellness Rings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.rings,)));
   }
 

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsEventsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/groups/GroupHome2Panel.dart';
 import 'package:illinois/ui/wallet/WalletHomePanel.dart';
@@ -317,7 +317,7 @@ class _GuideListPanelState extends State<GuideListPanel> with NotificationsListe
 
   void _navigateAthletics() {
     Analytics().logSelect(target: "Athletics");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsEventsPanel()));
   }
 
   void _navigateBusPass() {

@@ -289,10 +289,10 @@
 
     "panel.browse.entry.appointments.appointments.title": "Appointments",
 
-    "panel.browse.entry.athletics.sport_events.title": "Events",
-    "panel.browse.entry.athletics.sport_news.title": "News",
-    "panel.browse.entry.athletics.sport_teams.title": "Teams",
-    "panel.browse.entry.athletics.my_game_day.title": "It's Game Day!",
+    "panel.browse.entry.athletics.sport_events.title": "Big 10 Events",
+    "panel.browse.entry.athletics.sport_news.title": "Big 10 News",
+    "panel.browse.entry.athletics.sport_teams.title": "Big 10 Teams",
+    "panel.browse.entry.athletics.my_game_day.title": "It's Game Day",
 
     "panel.browse.entry.campus_guide.campus_guide.title": "Complete List",
     "panel.browse.entry.campus_guide.campus_highlights.title": "Featured Resources",
@@ -340,7 +340,7 @@
     "panel.browse.entry.wallet.bus_pass_card.title": "Bus Pass",
     "panel.browse.entry.wallet.illini_id_card.title": "Illini ID",
 
-    "panel.browse.entry.wellness.wellness_rings.title": "Daily Rings",
+    "panel.browse.entry.wellness.wellness_rings.title": "Daily Wellness Rings",
     "panel.browse.entry.wellness.wellness_todo.title": "To-Do List",
     "panel.browse.entry.wellness.my_appointments.title": "MyMcKinley Appointments",
     "panel.browse.entry.wellness.wellness_tips.title": "Daily Tip",
@@ -551,7 +551,7 @@
     "panel.athletics.label.offline.game_day_guide":"Game Day Guide is not available while offline.",
     "panel.athletics.label.offline.game":"Game Detail is not available while offline.",
 
-    "panel.athletics_teams.header.title": "Teams",
+    "panel.athletics_teams.header.title": "Big 10 Teams",
 
     "panel.athletics_team.button.favorite_team.title": "Favorite Teams",
     "panel.athletics_team.button.favorite_team.hint": "",
@@ -666,7 +666,7 @@
     "panel.athletics.content.common.filter.value.starred.label": "Starred",
 
     "panel.athletics.content.section.events.label": "Big 10 Events",
-    "panel.athletics.content.section.game_day.label": "It's Game Day!",
+    "panel.athletics.content.section.game_day.label": "It's Game Day",
     "panel.athletics.content.section.my_events.label": "My Big 10 Events",
     "panel.athletics.content.section.my_news.label": "My News",
     "panel.athletics.content.section.news.label": "Big 10 News",
@@ -3872,7 +3872,7 @@
     "widget.wordle.move.invalid.text": "Not in word list",
 
     "widget.game_day.label.my_game_day": "My Game Day",
-    "widget.game_day.label.its_game_day":"It's Game Day!",
+    "widget.game_day.label.its_game_day":"It's Game Day",
     "widget.game_day.label.no_games":"No Illini Big 10 events today.",
 
     "widget.game_detail_heading.button.live_stats.title":"Live Stats",

@@ -6,9 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [8.2.15] - 2026-09-01
+### Removed
+- Removed dropdown menus under 10 sub-sections [#5871](https://github.com/rokwire/illinois-app/issues/5871).
+### Changed
+- Allow editing of post subjects [#5726](https://github.com/rokwire/illinois-app/issues/5726).
+
 ## [8.2.14] - 2026-08-31
 ### Changed
-- Allow edit of scheduled post date & time if it has not passed yet  [#5512](https://github.com/rokwire/illinois-app/issues/5512).
+- Allow edit of scheduled post date & time if it has not passed yet [#5512](https://github.com/rokwire/illinois-app/issues/5512).
 - Rework refresh token processing [#5836](https://github.com/rokwire/illinois-app/issues/5836).
 ### Fixed
 - Cursor jumping to start when picking an emoji in group posts [#6034](https://github.com/rokwire/illinois-app/issues/6034).
