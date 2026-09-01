@@ -289,7 +289,7 @@
 
     "panel.browse.entry.appointments.appointments.title": "Citas",
 
-    "panel.browse.entry.athletics.sport_events.title": "Eventos",
+    "panel.browse.entry.athletics.sport_events.title": "Eventos de la Big 10",
     "panel.browse.entry.athletics.sport_news.title": "Noticias",
     "panel.browse.entry.athletics.sport_teams.title": "Equipos",
     "panel.browse.entry.athletics.my_game_day.title": "¡Es el día del juego!",
@@ -340,7 +340,7 @@
     "panel.browse.entry.wallet.bus_pass_card.title": "Pase de autobus",
     "panel.browse.entry.wallet.illini_id_card.title": "Illini ID",
 
-    "panel.browse.entry.wellness.wellness_rings.title": "Daily Rings",
+    "panel.browse.entry.wellness.wellness_rings.title": "Daily Wellness Rings",
     "panel.browse.entry.wellness.wellness_todo.title": "Lista de quehaceres",
     "panel.browse.entry.wellness.my_appointments.title": "Mis citas de MyMcKinley",
     "panel.browse.entry.wellness.wellness_tips.title": "Consejo diario",

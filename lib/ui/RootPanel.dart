@@ -59,7 +59,6 @@ import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/map2/Map2HomePanel.dart';
 import 'package:illinois/ui/messages/MessagesConversationPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
-import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/gbv/GBVPathwaysPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/notifications/NotificationsHomePanel.dart';
@@ -114,6 +113,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 import 'package:quick_actions/quick_actions.dart';
 import 'package:uuid/uuid.dart';
+
+import 'safety/SafetySafeWalkRequestPanel.dart';
 
 enum RootTab { Home, Favorites, Browse, Map, Academics, Wellness, Wallet, Assistant }
 
@@ -1467,10 +1468,9 @@ class _RootPanelState extends State<RootPanel> with NotificationsListener, Ticke
     if (context.mounted) {
       if (FlexUI().isSafeWalkAvailable) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-          SafetyHomePanel(
-            contentType: SafetyContentType.safeWalkRequest,
-            safeWalkRequestOrigin: (content != null) ? JsonUtils.decodeMap(content['origin']) : null,
-            safeWalkRequestDestination: (content != null) ? JsonUtils.decodeMap(content['destination']) : null,
+           SafetySafeWalkRequestPanel(
+            origin: (content != null) ? JsonUtils.decodeMap(content['origin']) : null,
+            destination: (content != null) ? JsonUtils.decodeMap(content['destination']) : null,
           )
         ));
       }
