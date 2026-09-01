@@ -244,18 +244,17 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     setStateIfMounted(() { });
   }
 
-  PreferredSizeWidget get _headerBar {
-    String title = Localization().getStringEx('panel.wellness.home.header.sections.title', 'Health & Wellness');
-    if (widget.rootTabDisplay) {
-      return RootHeaderBar(title: _selectedContentType?.displayTitle ?? title);
-    } else {
-      return HeaderBar(title: _selectedContentType?.displayTitle ?? title);
-    }
-  }
+  PreferredSizeWidget get _headerBar => widget.rootTabDisplay ?
+    RootHeaderBar(title: _headerBarTitle) : HeaderBar(title: _headerBarTitle);
 
-  Widget? get _navigationBar {
-    return widget.rootTabDisplay ? null : uiuc.TabBar();
-  }
+  String get _headerBarTitle => widget.dropdownDisplay ?
+    _defaultHeaderBarTitle : (_selectedContentType?.displayTitle ?? _defaultHeaderBarTitle);
+
+  String get _defaultHeaderBarTitle =>
+    Localization().getStringEx('panel.wellness.home.header.sections.title', 'Health & Wellness');
+
+  Widget? get _navigationBar =>
+    widget.rootTabDisplay ? null : uiuc.TabBar();
 
   static List<WellnessContentType> _buildContentTypes() {
     List<WellnessContentType>? contentTypes = [];
