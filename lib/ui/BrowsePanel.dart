@@ -924,7 +924,7 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   static void _onTapWellnessRings(BuildContext context) {
-    Analytics().logSelect(target: "Wellness Daily Rings");
+    Analytics().logSelect(target: "Wellness Daily Wellness Rings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(contentType: WellnessContentType.rings,)));
   }
 

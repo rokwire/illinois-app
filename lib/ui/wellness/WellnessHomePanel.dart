@@ -49,8 +49,9 @@ class WellnessHomePanel extends StatefulWidget with AnalyticsInfo {
 
   final bool rootTabDisplay;
   final WellnessContentType? contentType;
+  final bool dropdownDisplay;
 
-  WellnessHomePanel({this.contentType, this.rootTabDisplay = false});
+  WellnessHomePanel({this.contentType, this.rootTabDisplay = false, this.dropdownDisplay = false});
 
   @override
   _WellnessHomePanelState createState() => _WellnessHomePanelState();
@@ -145,22 +146,24 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     return Scaffold(
         appBar: _headerBar,
         body: Column(children: <Widget>[
-          Container(
-            color: _healthScreenerSelected ? Styles().colors.fillColorPrimaryVariant : Styles().colors.background,
-            padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-            child: Semantics(
-              hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
-              container: true,
-              child: RibbonButton(
-                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
-                  backgroundColor: Styles().colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                  rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                  title: _selectedContentType?.displayTitle ?? '',
-                  onTap: _changeSettingsContentValuesVisibility
+          Visibility(visible: widget.dropdownDisplay, child:
+            Container(
+              color: _healthScreenerSelected ? Styles().colors.fillColorPrimaryVariant : Styles().colors.background,
+              padding: EdgeInsets.only(left: 16, top: 16, right: 16),
+              child: Semantics(
+                hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
+                container: true,
+                child: RibbonButton(
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                    backgroundColor: Styles().colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                    rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
+                    title: _selectedContentType?.displayTitle ?? '',
+                    onTap: _changeSettingsContentValuesVisibility
+                ),
               ),
-            ),
+            )
           ),
           Expanded(
               child: Stack(children: [
@@ -244,9 +247,9 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   PreferredSizeWidget get _headerBar {
     String title = Localization().getStringEx('panel.wellness.home.header.sections.title', 'Health & Wellness');
     if (widget.rootTabDisplay) {
-      return RootHeaderBar(title: title);
+      return RootHeaderBar(title: _selectedContentType?.displayTitle ?? title);
     } else {
-      return HeaderBar(title: title);
+      return HeaderBar(title: _selectedContentType?.displayTitle ?? title);
     }
   }
 
