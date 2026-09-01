@@ -22,6 +22,7 @@ import 'package:illinois/ui/academics/student_courses/StudentCoursesHomePanel.da
 import 'package:illinois/ui/appointments/AppointmentsContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDayPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsTeamsContentPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/canvas/GiesCanvasCoursesListPanel.dart';
 import 'package:illinois/ui/career/CareerPlanningLinks.dart';
@@ -732,7 +733,7 @@ class _BrowseEntry extends StatelessWidget {
 
   static void _onTapSportTeams(BuildContext context) {
     Analytics().logSelect(target: "Teams");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.teams)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamsContentPanel()));
   }
 
   static void _onTapCampusHighlights(BuildContext context) {

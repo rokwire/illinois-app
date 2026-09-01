@@ -21,7 +21,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDayPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsContentWidget.dart';
-import 'package:illinois/ui/athletics/AthleticsTeamsContentWidget.dart';
+import 'package:illinois/ui/athletics/AthleticsTeamsContentPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -230,7 +230,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     switch (_selectedContentType) {
       case AthleticsContentType.events: return AthleticsEventsPanel(starred: _starred,);
       case AthleticsContentType.news: return AthleticsNewsContentWidget(starred: _starred,);
-      case AthleticsContentType.teams: return AthleticsTeamsContentWidget();
+      case AthleticsContentType.teams: return AthleticsTeamsContentPanel();
       case AthleticsContentType.game_day: return AthleticsGameDayPanel();
       default: return null;
     }

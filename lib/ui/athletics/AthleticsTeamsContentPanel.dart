@@ -22,20 +22,21 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class AthleticsTeamsContentWidget extends StatefulWidget {
-  AthleticsTeamsContentWidget();
+class AthleticsTeamsContentPanel extends StatefulWidget {
+  AthleticsTeamsContentPanel();
 
   @override
-  State<AthleticsTeamsContentWidget> createState() => _AthleticsTeamsContentWidgetState();
+  State<AthleticsTeamsContentPanel> createState() => _AthleticsTeamsContentPanelState();
 }
 
-class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidget> with NotificationsListener {
+class _AthleticsTeamsContentPanelState extends State<AthleticsTeamsContentPanel> with NotificationsListener {
   List<SportDefinition>? _teams;
 
   @override
@@ -53,12 +54,19 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        color: Styles().colors.white,
-        child: Column(children: [
-          AthleticsTeamsFilterWidget(showFilterDescription: false),
-          Expanded(child: _buildContent())
-        ]));
+    return Scaffold(
+      appBar: _headerBar,
+      body: Column(children: [
+        AthleticsTeamsFilterWidget(showFilterDescription: false),
+        Expanded(child: _buildContent())
+      ]),
+      backgroundColor: Styles().colors.background,
+    );
+  }
+
+  PreferredSizeWidget get _headerBar {
+    String title = Localization().getStringEx('panel.athletics.content.section.teams.label', 'Big 10 Teams');
+    return HeaderBar(title: title);
   }
 
   Widget _buildContent() {
@@ -155,8 +163,6 @@ class _AthleticsTeamsContentWidgetState extends State<AthleticsTeamsContentWidge
       }
     });
   }
-
-  // Notifications Listener
 
   @override
   void onNotification(String name, param) {

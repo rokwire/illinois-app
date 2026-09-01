@@ -291,7 +291,7 @@
 
     "panel.browse.entry.athletics.sport_events.title": "Big 10 Events",
     "panel.browse.entry.athletics.sport_news.title": "News",
-    "panel.browse.entry.athletics.sport_teams.title": "Teams",
+    "panel.browse.entry.athletics.sport_teams.title": "Big 10 Teams",
     "panel.browse.entry.athletics.my_game_day.title": "It's Game Day",
 
     "panel.browse.entry.campus_guide.campus_guide.title": "Complete List",
@@ -549,7 +549,7 @@
     "panel.athletics.label.offline.game_day_guide":"Game Day Guide is not available while offline.",
     "panel.athletics.label.offline.game":"Game Detail is not available while offline.",
 
-    "panel.athletics_teams.header.title": "Teams",
+    "panel.athletics_teams.header.title": "Big 10 Teams",
 
     "panel.athletics_team.button.favorite_team.title": "Favorite Teams",
     "panel.athletics_team.button.favorite_team.hint": "",
