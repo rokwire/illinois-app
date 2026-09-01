@@ -46,8 +46,8 @@ import 'package:illinois/ui/mtd/TransportationAndSafetyLinks.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
-import 'package:illinois/ui/safety/SafetyHomePanel.dart';
 import 'package:illinois/ui/gbv/GBVPathwaysPanel.dart';
+import 'package:illinois/ui/safety/SafetySafeWalkRequestPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessLinksPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
@@ -893,7 +893,7 @@ class _BrowseEntry extends StatelessWidget {
   static void _onTapSafewalkRequest(BuildContext context) {
     Analytics().logSelect(target: "Request a SafeWalk");
     if (FlexUI().isSafeWalkAvailable) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SafetyHomePanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SafetySafeWalkRequestPanel()));
     }
     else {
       AppAlert.showDialogResult(context, Localization().getStringEx("model.safety.safewalks.not_available.text", "SafeWalk feature is not currently available."));
