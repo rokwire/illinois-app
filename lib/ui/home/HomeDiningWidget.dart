@@ -97,9 +97,7 @@ class _HomeDiningWidgetState extends State<HomeDiningWidget> {
       ),
     ));
 
-  // https://stackoverflow.com/a/51157072/3759472
-  // IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch,
-  Widget get _contentTypeBar => Row(children: List<Widget>.from(
+  Widget get _contentTypeBar => IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: List<Widget>.from(
     FavoriteDiningContentType.values.map((FavoriteDiningContentType contentType) => Expanded(child:
       PillTabButton(contentType.diningTitle,
         position: contentType.position,
@@ -107,7 +105,7 @@ class _HomeDiningWidgetState extends State<HomeDiningWidget> {
         onTap: () => _onContentType(contentType),
       )
     )),
-  ));
+  )));
 
   void _onContentType(FavoriteDiningContentType contentType) {
     if ((_contentType != contentType) && mounted) {
