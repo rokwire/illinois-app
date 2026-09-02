@@ -43,7 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed unhandled exception from Home favorite widgets for accessing unmounted context.
 ### Removed
-- Removed mobilecredential API call to Idenity BB [#6018](https://github.com/rokwire/illinois-app/issues/6018).
+- Removed mobilecredential API call to Identity BB [#6018](https://github.com/rokwire/illinois-app/issues/6018).
 
 ## [8.2.10] - 2026-08-25
 ### Changed
