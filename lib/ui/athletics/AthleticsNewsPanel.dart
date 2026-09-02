@@ -28,6 +28,7 @@ import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -78,6 +79,7 @@ class _AthleticsNewsPanelState extends State<AthleticsNewsPanel> with Notificati
         Expanded(child: _buildContent())
       ]),
       backgroundColor: Styles().colors.background,
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
