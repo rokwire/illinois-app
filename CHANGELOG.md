@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Standardize 2-Part Pill Toggle Styling [#5841](https://github.com/rokwire/illinois-app/issues/5841).
 - Standardize 3-Part Pill Toggle Styling [#5861](https://github.com/rokwire/illinois-app/issues/5861).
+- Replace Research Dropdown with 2-Part Pill Toggle [#5996](https://github.com/rokwire/illinois-app/issues/5996).
 
 ## [8.2.15] - 2026-09-01
 ### Removed
