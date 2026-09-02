@@ -3285,8 +3285,8 @@
     "panel.group_polls.text.error": "Error",
 
     "panel.research_projects.home.header_bar.title": "Research Participation",
-    "panel.research_projects.home.content_type.open.title": "Proyectos de Investigación Abiertos",
-    "panel.research_projects.home.content_type.my.title": "My Research Projects",
+    "panel.research_projects.home.content_type.open.title": "Estudios Abiertos",
+    "panel.research_projects.home.content_type.my.title": "Mis Estudios",
     "panel.research_projects.home.button.create.title": "Crear",
     "panel.research_projects.home.button.search.title": "Buscar",
     "panel.research_projects.home.status.error.open.text": "Error al cargar los proyectos de investigación abiertos.",
