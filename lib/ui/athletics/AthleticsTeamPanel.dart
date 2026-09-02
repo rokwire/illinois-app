@@ -96,7 +96,11 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> with Notificati
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _buildContentWidget(), backgroundColor: Styles().colors.background, bottomNavigationBar: uiuc.TabBar());
+    return Scaffold(
+      body: _buildContentWidget(),
+      backgroundColor: Styles().colors.background,
+      bottomNavigationBar: uiuc.TabBar()
+    );
   }
 
   Widget _buildContentWidget() {

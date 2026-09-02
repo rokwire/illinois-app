@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [8.2.16] - 2026-09-02
+### Fixed
+- Fixed background color of AthleticsEventsPanel [#5871](https://github.com/rokwire/illinois-app/issues/5871).
+- Show bottom tab bar in all new Athletics panels [#5871](https://github.com/rokwire/illinois-app/issues/5871).
+### Changed
+- Standardize 2-Part Pill Toggle Styling [#5841](https://github.com/rokwire/illinois-app/issues/5841).
+- Standardize 3-Part Pill Toggle Styling [#5861](https://github.com/rokwire/illinois-app/issues/5861).
+- Replace Research Dropdown with 2-Part Pill Toggle [#5996](https://github.com/rokwire/illinois-app/issues/5996).
+- Filter building entrances when lookup for of the nearest one by excluding those that are too far from the building [#6016](https://github.com/rokwire/illinois-app/issues/6016).
+
 ## [8.2.15] - 2026-09-01
 ### Removed
 - Removed dropdown menus under 10 sub-sections [#5871](https://github.com/rokwire/illinois-app/issues/5871).
@@ -44,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed unhandled exception from Home favorite widgets for accessing unmounted context.
 ### Removed
-- Removed mobilecredential API call to Idenity BB [#6018](https://github.com/rokwire/illinois-app/issues/6018).
+- Removed mobilecredential API call to Identity BB [#6018](https://github.com/rokwire/illinois-app/issues/6018).
 
 ## [8.2.10] - 2026-08-25
 ### Changed

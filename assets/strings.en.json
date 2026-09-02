@@ -3298,8 +3298,8 @@
     "panel.group_polls.text.error": "Error",
 
     "panel.research_projects.home.header_bar.title": "Research Participation",
-    "panel.research_projects.home.content_type.open.title": "Open Research Projects",
-    "panel.research_projects.home.content_type.my.title": "My Research Projects",
+    "panel.research_projects.home.content_type.open.title": "Open Studies",
+    "panel.research_projects.home.content_type.my.title": "My Studies",
     "panel.research_projects.home.button.create.title": "Create",
     "panel.research_projects.home.button.search.title": "Search",
     "panel.research_projects.home.status.error.open.text": "Failed to load open research projects.",

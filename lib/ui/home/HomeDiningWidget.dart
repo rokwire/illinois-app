@@ -28,6 +28,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
+import 'package:illinois/ui/widgets/PillTabButton.dart';
 import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
@@ -96,17 +97,15 @@ class _HomeDiningWidgetState extends State<HomeDiningWidget> {
       ),
     ));
 
-  // https://stackoverflow.com/a/51157072/3759472
-  // IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch,
-  Widget get _contentTypeBar => Row(children: List<Widget>.from(
+  Widget get _contentTypeBar => IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: List<Widget>.from(
     FavoriteDiningContentType.values.map((FavoriteDiningContentType contentType) => Expanded(child:
-      HomeFavTabBarBtn(contentType.diningTitle.toUpperCase(),
+      PillTabButton(contentType.diningTitle,
         position: contentType.position,
         selected: _contentType == contentType,
         onTap: () => _onContentType(contentType),
       )
     )),
-  ));
+  )));
 
   void _onContentType(FavoriteDiningContentType contentType) {
     if ((_contentType != contentType) && mounted) {
@@ -513,15 +512,15 @@ extension _FavoriteDiningContentType on FavoriteDiningContentType {
     }
   }
 
-  HomeFavTabBarBtnPos get position {
+  PillTabButtonPosition get position {
     if (this == FavoriteDiningContentType.values.first) {
-      return HomeFavTabBarBtnPos.first;
+      return PillTabButtonPosition.first;
     }
     else if (this == FavoriteDiningContentType.values.last) {
-      return HomeFavTabBarBtnPos.last;
+      return PillTabButtonPosition.last;
     }
     else {
-      return HomeFavTabBarBtnPos.middle;
+      return PillTabButtonPosition.middle;
     }
   }
 

@@ -21,6 +21,7 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailHeading.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -65,6 +66,7 @@ class _AthleticsGameDayPanelState extends State<AthleticsGameDayPanel> with Noti
         Expanded(child: _buildContent())
       ]),
       backgroundColor: Styles().colors.background,
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

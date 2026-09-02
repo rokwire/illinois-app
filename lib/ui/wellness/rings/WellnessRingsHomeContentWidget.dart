@@ -23,6 +23,7 @@ import 'package:illinois/ui/wellness/rings/WellnessRingCreatePane.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dart';
+import 'package:illinois/ui/widgets/PillTabButton.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -84,18 +85,16 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
   Widget _buildTabButtonRow() {
     return Row(children: [
       Expanded(
-          child: _TabButton(
-              position: _TabButtonPosition.first,
+          child: PillTabButton(
+              Localization().getStringEx('panel.wellness.rings.tab.daily.label', "Today's Rings"),
+              position: PillTabButtonPosition.first,
               selected: (_selectedTab == _WellnessRingsTab.today),
-              label: Localization().getStringEx('panel.wellness.rings.tab.daily.label', "Today's Rings"),
-              hint: Localization().getStringEx('panel.wellness.rings.tab.daily.hint', ''),
               onTap: () => _onTabChanged(tab: _WellnessRingsTab.today))),
       Expanded(
-          child: _TabButton(
-              position: _TabButtonPosition.last,
+          child: PillTabButton(
+              Localization().getStringEx('panel.wellness.rings.tab.history.label', 'Accomplishments'),
+              position: PillTabButtonPosition.last,
               selected: (_selectedTab == _WellnessRingsTab.history),
-              label: Localization().getStringEx('panel.wellness.rings.tab.history.label', 'Accomplishments'),
-              hint: Localization().getStringEx('panel.wellness.rings.tab.history.hint', ''),
               onTap: () => _onTabChanged(tab: _WellnessRingsTab.history)))
     ]);
   }
@@ -336,61 +335,4 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
 
 }
 
-//Common Widgets //Probably will use shared widgets with TODOLIst
 enum _WellnessRingsTab { today, history}
-
-enum _TabButtonPosition { first, middle, last }
-
-class _TabButton extends StatelessWidget {
-  final String? label;
-  final String? hint;
-  final _TabButtonPosition position;
-  final bool? selected;
-  final GestureTapCallback? onTap;
-
-  _TabButton({this.label, this.hint, required this.position, this.selected, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: Semantics(
-            label: label,
-            hint: hint,
-            button: true,
-            excludeSemantics: true,
-            child: Container(
-                height: 24 + MediaQuery.of(context).textScaler.scale(16),
-                decoration: BoxDecoration(
-                    color: selected! ? Colors.white : Styles().colors.lightGray, border: _border, borderRadius: _borderRadius),
-                child: Center(
-                    child: Text(label!,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        style: selected! ? Styles().textStyles.getTextStyle('widget.tab.selected') : Styles().textStyles.getTextStyle('widget.tab.not_selected') )))));
-  }
-
-  BorderRadiusGeometry? get _borderRadius {
-    switch (position) {
-      case _TabButtonPosition.first:
-        return BorderRadius.horizontal(left: Radius.circular(100.0));
-      case _TabButtonPosition.middle:
-        return null;
-      case _TabButtonPosition.last:
-        return BorderRadius.horizontal(right: Radius.circular(100.0));
-    }
-  }
-
-  BoxBorder? get _border {
-    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent, width: 2, style: BorderStyle.solid);
-    switch (position) {
-      case _TabButtonPosition.first:
-        return Border.fromBorderSide(borderSide);
-      case _TabButtonPosition.middle:
-        return Border(top: borderSide, bottom: borderSide);
-      case _TabButtonPosition.last:
-        return Border.fromBorderSide(borderSide);
-    }
-  }
-}
