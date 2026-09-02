@@ -12,6 +12,7 @@ import 'package:illinois/ui/home/HomeEvent2Widget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:illinois/ui/widgets/PillTabButton.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -59,7 +60,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> {
 
   Widget get _contentTypeBar => Row(children:List<Widget>.from(
     FavoriteContentType.values.map((FavoriteContentType contentType) => Expanded(child:
-      HomeFavTabBarBtn(contentType.athliticsEventsTitle.toUpperCase(),
+      PillTabButton(contentType.athliticsEventsTitle,
         position: contentType.position,
         selected: _contentType == contentType,
         onTap: () => _onContentType(contentType),

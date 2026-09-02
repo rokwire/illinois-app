@@ -18,6 +18,7 @@ import 'package:illinois/ui/academics/student_courses/StudentCoursesWidgets.dart
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/PillTabButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -215,15 +216,15 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> wit
   }
 
   Widget _buildViewTypeToggle() => Row(children: <Widget>[
-    Expanded(child: HomeFavTabBarBtn(
-      StudentCoursesViewType.calendar.pillTitle.toUpperCase(),
-      position: HomeFavTabBarBtnPos.first,
+    Expanded(child: PillTabButton(
+      StudentCoursesViewType.calendar.pillTitle,
+      position: PillTabButtonPosition.first,
       selected: (_viewType == StudentCoursesViewType.calendar),
       onTap: () => _onTapViewType(StudentCoursesViewType.calendar),
     )),
-    Expanded(child: HomeFavTabBarBtn(
-      StudentCoursesViewType.list.pillTitle.toUpperCase(),
-      position: HomeFavTabBarBtnPos.last,
+    Expanded(child: PillTabButton(
+      StudentCoursesViewType.list.pillTitle,
+      position: PillTabButtonPosition.last,
       selected: (_viewType == StudentCoursesViewType.list),
       onTap: () => _onTapViewType(StudentCoursesViewType.list),
     )),

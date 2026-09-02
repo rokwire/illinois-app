@@ -15,6 +15,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
+import 'package:illinois/ui/widgets/PillTabButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -75,7 +76,7 @@ class _HomeResearchProjectsWidgetState extends State<HomeResearchProjectsWidget>
 
   Widget get _contentTypeBar => Row(children:List<Widget>.from(
     FavoriteContentType.values.map((FavoriteContentType contentType) => Expanded(child:
-      HomeFavTabBarBtn(contentType.researchProjectTitle.toUpperCase(),
+      PillTabButton(contentType.researchProjectTitle,
         position: contentType.position,
         selected: _contentType == contentType,
         onTap: () => _onContentType(contentType),
