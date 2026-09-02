@@ -466,6 +466,12 @@ extension Map2AppConfig on Config {
 
   double? get markersUpdateZoomDelta => JsonUtils.doubleValue(map2Settings?['markers_update_zoom_delta']);
   Map<String, dynamic>? get _initialCameraPosition => JsonUtils.mapValue(map2Settings?['initial_camera_position']);
+
+  Map<String, dynamic>? get _buildingsSettings => JsonUtils.mapValue(map2Settings?['buildings']);
+  Map<String, dynamic>? get _buildingsEntrancesSettings => JsonUtils.mapValue(_buildingsSettings?['entrances']);
+  Map<String, dynamic>? get _excludeBuildingEntrancesSettings => JsonUtils.mapValue(_buildingsEntrancesSettings?['exclude']);
+  int? get excludeBuildingEntrancesThresoldNumber => JsonUtils.intValue(_excludeBuildingEntrancesSettings?['thresoldNumber']);
+  double? get excludeBuildingEntrancesThresoldDistanceFactor => JsonUtils.doubleValue(_excludeBuildingEntrancesSettings?['thresoldDistanceFactor']);
 }
 
 extension _LatLngAppConfig on LatLng {

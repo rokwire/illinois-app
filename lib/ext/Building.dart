@@ -1,6 +1,12 @@
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/Building.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/map2/Map2HomeExts.dart';
+import 'package:illinois/utils/Utils.dart';
 
 extension BuildingFilter on Building {
 
@@ -46,6 +52,121 @@ extension BuildingFilter on Building {
       }
     }
     return featuresMap;
+  }
+}
+
+extension BuildingEntranceDistanceSearch on Building {
+  BuildingEntrance? nearstEntrance(Position? position, {bool requireAda = false}) =>
+    _nearstEntrance(entrances, position,
+        buildingPosition: hasValidLocation ? LatLng(latitude ?? 0, longitude ?? 0) : null,
+        requireAda: requireAda
+    );
+
+  static BuildingEntrance? _nearstEntrance(List<BuildingEntrance>? entrances, Position? position, { LatLng? buildingPosition, bool requireAda = false }) {
+    if ((entrances != null) && (position != null)) {
+
+      double? medianDistance;
+      Map<String, double> entranceDistancesFromBuilding = <String, double>{};
+      int? excludeThresoldNumber = Config().excludeBuildingEntrancesThresoldNumber;
+      double? thresoldDistanceFactor = Config().excludeBuildingEntrancesThresoldDistanceFactor;
+      if ((buildingPosition != null) && (excludeThresoldNumber != null) && (thresoldDistanceFactor != null)) {
+        for (BuildingEntrance entrance in entrances) {
+          if ((entrance.id != null) && entrance.hasValidLocation) {
+            entranceDistancesFromBuilding[entrance.id ?? ''] = GeoMapUtils.getDistance(entrance.latitude ?? 0, entrance.longitude ?? 0, buildingPosition.latitude, buildingPosition.longitude);
+          }
+        }
+
+        List<double> allDistances = entranceDistancesFromBuilding.values.sorted((d1, d2) => d1.compareTo(d2));
+        int allDistancesCount = allDistances.length;
+        if (excludeThresoldNumber <= allDistancesCount) {
+          int middleIndex = allDistancesCount ~/ 2;
+          medianDistance = ((allDistancesCount % 2) > 0) ?
+            (allDistances[middleIndex]) : // odd - use the middle index
+            ((allDistances[middleIndex] + allDistances[middleIndex - 1]) / 2); // even - eval the average value in the middle pair
+        }
+      }
+
+      double? minDistance, minAdaDistance;
+      BuildingEntrance? minEntrance, minAdaEntrance;
+      for (BuildingEntrance entrance in entrances) {
+        double? entranceDistance = entranceDistancesFromBuilding[entrance.id];
+        if (entrance.hasValidLocation && ((medianDistance == null) || (medianDistance == 0.0) || (entranceDistance == null) || (thresoldDistanceFactor == null) || (thresoldDistanceFactor > (entranceDistance / medianDistance)))) {
+          double distance = GeoMapUtils.getDistance(entrance.latitude ?? 0, entrance.longitude ?? 0, position.latitude, position.longitude);
+          if ((minDistance == null) || (distance < minDistance)) {
+            minDistance = distance;
+            minEntrance = entrance;
+          }
+          if (requireAda && (entrance.adaCompliant == true) && ((minAdaDistance == null) || (distance < minAdaDistance))) {
+            minAdaDistance = distance;
+            minAdaEntrance = entrance;
+          }
+        }
+      }
+      return (requireAda && (minAdaEntrance != null)) ? minAdaEntrance : minEntrance;
+    }
+    return null;
+  }
+}
+
+extension BuildingsEntranceDistanceExclude on Iterable<Building>  {
+  void logExcluded() {
+    for (Building building in this) {
+      Set<BuildingEntrance>? excluded = building.excludedEntrances;
+      if ((excluded != null) && excluded.isNotEmpty) {
+        for (BuildingEntrance entrance in excluded) {
+          double distance = GeoMapUtils.getDistance(entrance.latitude ?? 0, entrance.longitude ?? 0, building.latitude ?? 0, building.longitude ?? 0);
+          debugPrint("${building.displayName}\t[${building.latitude?.toStringAsFixed(6)},${building.longitude?.toStringAsFixed(6)}]\tEntrance: ${entrance.id}\t[${entrance.latitude?.toStringAsFixed(6)},${entrance.longitude?.toStringAsFixed(6)}]\t${distance.toInt()}");
+        }
+      }
+    }
+  }
+}
+
+extension BuildingEntranceDistanceExclude on Building {
+
+  Set<BuildingEntrance>? get excludedEntrances =>
+      _excludedEntrances(entrances, hasValidLocation ? LatLng(latitude ?? 0, longitude ?? 0) : null);
+
+  static Set<BuildingEntrance>? _excludedEntrances(List<BuildingEntrance>? entrances, LatLng? buildingPosition) {
+    int? excludeThresoldNumber = Config().excludeBuildingEntrancesThresoldNumber;
+    double? thresoldDistanceFactor = Config().excludeBuildingEntrancesThresoldDistanceFactor;
+    if ((entrances != null) && (buildingPosition != null) && (excludeThresoldNumber != null) && (thresoldDistanceFactor != null)) {
+
+      Map<String, double> entranceDistancesFromBuilding = <String, double>{};
+      for (BuildingEntrance entrance in entrances) {
+        if ((entrance.id != null) && entrance.hasValidLocation) {
+          entranceDistancesFromBuilding[entrance.id ?? ''] = GeoMapUtils.getDistance(entrance.latitude ?? 0, entrance.longitude ?? 0, buildingPosition.latitude, buildingPosition.longitude);
+        }
+      }
+
+      double? medianDistance;
+      List<double> allDistances = entranceDistancesFromBuilding.values.sorted((d1, d2) => d1.compareTo(d2));
+      int allDistancesCount = allDistances.length;
+      if (excludeThresoldNumber <= allDistancesCount) {
+        int middleIndex = allDistancesCount ~/ 2;
+        medianDistance = ((allDistancesCount % 2) > 0) ?
+          (allDistances[middleIndex]) : // odd - use the middle index
+          ((allDistances[middleIndex] + allDistances[middleIndex - 1]) / 2); // even - eval the average value in the middle pair
+      }
+
+      Set<BuildingEntrance>? excluded;
+      for (BuildingEntrance entrance in entrances) {
+        double? entranceDistance = entranceDistancesFromBuilding[entrance.id];
+        if (entrance.hasValidLocation && (entranceDistance != null) && (medianDistance != null) && (medianDistance != 0)) {
+          double entranceFactor = entranceDistance / medianDistance;
+          if (entranceFactor > thresoldDistanceFactor) {
+            if (excluded == null) {
+              excluded = <BuildingEntrance>{ entrance };
+            } else {
+              excluded.add(entrance);
+            }
+          }
+        }
+      }
+      return excluded;
+    } else {
+      return null;
+    }
   }
 }
 

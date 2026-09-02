@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:illinois/ext/Building.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
