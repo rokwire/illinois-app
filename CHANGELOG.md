@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed background color of AthleticsEventsPanel [#5871](https://github.com/rokwire/illinois-app/issues/5871).
 - Show bottom tab bar in all new Athletics panels [#5871](https://github.com/rokwire/illinois-app/issues/5871).
+### Changed
+- Standardize 2-Part Pill Toggle Styling [#5841](https://github.com/rokwire/illinois-app/issues/5841).
 
 ## [8.2.15] - 2026-09-01
 ### Removed
