@@ -42,7 +42,7 @@ class PillTabButton extends StatelessWidget {
         decoration: BoxDecoration(color: _frameColor, border: _frameBorder, borderRadius: _frameBorderRadius,),
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         child: Center(child:
-          Text(_displayTitle, style: _textStyle, textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis,)
+          Text(_displayTitle, style: _textStyle, textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis,)
         ),
       )
     )

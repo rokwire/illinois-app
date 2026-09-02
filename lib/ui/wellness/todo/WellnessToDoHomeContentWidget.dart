@@ -25,6 +25,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
+import 'package:illinois/ui/widgets/PillTabButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/AudioUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -124,29 +125,26 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   Widget _buildTabButtonRow() {
-    return Row(children: [
+    return IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       Expanded(
-          child: _TabButton(
-              position: _TabButtonPosition.first,
+          child: PillTabButton(
+              Localization().getStringEx('panel.wellness.todo.tab.daily.label', 'Daily'),
+              position: PillTabButtonPosition.first,
               selected: (_selectedTab == _ToDoTab.daily),
-              label: Localization().getStringEx('panel.wellness.todo.tab.daily.label', 'Daily'),
-              hint: Localization().getStringEx('panel.wellness.todo.tab.daily.hint', ''),
               onTap: () => _onTabChanged(tab: _ToDoTab.daily))),
       Expanded(
-          child: _TabButton(
-              position: _TabButtonPosition.middle,
+          child: PillTabButton(
+              Localization().getStringEx('panel.wellness.todo.tab.category.label', 'Category'),
+              position: PillTabButtonPosition.middle,
               selected: (_selectedTab == _ToDoTab.category),
-              label: Localization().getStringEx('panel.wellness.todo.tab.category.label', 'Category'),
-              hint: Localization().getStringEx('panel.wellness.todo.tab.category.hint', ''),
               onTap: () => _onTabChanged(tab: _ToDoTab.category))),
       Expanded(
-          child: _TabButton(
-              position: _TabButtonPosition.last,
+          child: PillTabButton(
+              Localization().getStringEx('panel.wellness.todo.tab.weekly.label', 'Weekly'),
+              position: PillTabButtonPosition.last,
               selected: (_selectedTab == _ToDoTab.weekly),
-              label: Localization().getStringEx('panel.wellness.todo.tab.weekly.label', 'Weekly'),
-              hint: Localization().getStringEx('panel.wellness.todo.tab.weekly.hint', ''),
               onTap: () => _onTabChanged(tab: _ToDoTab.weekly)))
-    ]);
+    ]));
   }
 
   Widget _buildManageButtonsRow() {
@@ -918,62 +916,6 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
 }
 
 enum _ToDoTab { daily, category, weekly }
-
-enum _TabButtonPosition { first, middle, last }
-
-class _TabButton extends StatelessWidget {
-  final String? label;
-  final String? hint;
-  final _TabButtonPosition position;
-  final bool? selected;
-  final GestureTapCallback? onTap;
-
-  _TabButton({this.label, this.hint, required this.position, this.selected, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: Semantics(
-            label: label,
-            hint: hint,
-            button: true,
-            excludeSemantics: true,
-            child: Container(
-                height: 24 + MediaQuery.of(context).textScaler.scale(16),
-                decoration: BoxDecoration(
-                    color: selected! ? Colors.white : Styles().colors.lightGray, border: _border, borderRadius: _borderRadius),
-                child: Center(
-                    child: Text(label!,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        style: selected! ? Styles().textStyles.getTextStyle("widget.tab.selected") : Styles().textStyles.getTextStyle("widget.tab.not_selected"))))));
-  }
-
-  BorderRadiusGeometry? get _borderRadius {
-    switch (position) {
-      case _TabButtonPosition.first:
-        return BorderRadius.horizontal(left: Radius.circular(100.0));
-      case _TabButtonPosition.middle:
-        return null;
-      case _TabButtonPosition.last:
-        return BorderRadius.horizontal(right: Radius.circular(100.0));
-    }
-  }
-
-  BoxBorder? get _border {
-    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent, width: 2, style: BorderStyle.solid);
-    switch (position) {
-      case _TabButtonPosition.first:
-        return Border.fromBorderSide(borderSide);
-      case _TabButtonPosition.middle:
-        return Border(top: borderSide, bottom: borderSide);
-      case _TabButtonPosition.last:
-        return Border.fromBorderSide(borderSide);
-    }
-  }
-}
 
 class _ToDoItemReminderDialog extends StatefulWidget {
   final WellnessToDoItem item;
