@@ -23,6 +23,7 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsScheduleCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/PillTabButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -75,15 +76,13 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
 
         Container(color:Styles().colors.background, child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:Row(children: <Widget>[
-          Expanded(child:_ScheduleTabButton(
-            text: Localization().getStringEx("panel.athletics_schedule.button.upcoming.title", "Upcoming"),
-            hint: Localization().getStringEx("panel.athletics_schedule.button.upcoming.hint", ""),
-            left: true, selected: _displayUpcoming, onTap: () { _setDisplayUpcoming(true); },
+          Expanded(child:PillTabButton(
+            Localization().getStringEx("panel.athletics_schedule.button.upcoming.title", "Upcoming"),
+            position: PillTabButtonPosition.first, selected: _displayUpcoming, onTap: () { _setDisplayUpcoming(true); },
           )),
-          Expanded(child:_ScheduleTabButton(
-              text: Localization().getStringEx("panel.athletics_schedule.button.past.title", "Past"),
-              hint: Localization().getStringEx("panel.athletics_schedule.button.past.hint", ""),
-              left: false, selected: !_displayUpcoming, onTap: () { _setDisplayUpcoming(false); }
+          Expanded(child:PillTabButton(
+              Localization().getStringEx("panel.athletics_schedule.button.past.title", "Past"),
+              position: PillTabButtonPosition.last, selected: !_displayUpcoming, onTap: () { _setDisplayUpcoming(false); }
           )),
         ],))
         ),
@@ -198,42 +197,3 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
 
 }
 
-class _ScheduleTabButton extends StatelessWidget {
-  final String? text;
-  final String? hint;
-  final bool? left;
-  final bool? selected;
-  final GestureTapCallback? onTap;
-
-  _ScheduleTabButton({Key? key, this.text, this.hint, this.left, this.selected, this.onTap})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    BorderSide borderSide = BorderSide(color: Styles().colors.surfaceAccent, width: 2, style: BorderStyle.solid);
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      child: Semantics(
-          label: text,
-          hint: hint,
-          button: true,
-          excludeSemantics: true,
-          child:Container(
-            height: MediaQuery.of(context).textScaler.scale(32 + 16),
-            decoration: BoxDecoration(
-              color: selected! ? Colors.white : Styles().colors.lightGray,
-              border: Border.fromBorderSide(borderSide),
-              borderRadius: left! ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
-            ),
-            child:
-            Row( children:[
-            Expanded(child: Text(text!,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: Styles().textStyles.getTextStyle("widget.detail.medium"))),
-            ])
-          )),
-    );
-  }
-}
