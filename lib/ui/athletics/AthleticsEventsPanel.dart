@@ -98,7 +98,8 @@ class _AthleticsEventsPanelState extends State<AthleticsEventsPanel> with Notifi
         Expanded(child:
           _buildContent()
         )
-      ])
+      ]),
+      backgroundColor: Styles().colors.background,
     );
   }
 
