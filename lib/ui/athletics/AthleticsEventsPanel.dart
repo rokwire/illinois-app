@@ -30,6 +30,7 @@ import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -98,7 +99,9 @@ class _AthleticsEventsPanelState extends State<AthleticsEventsPanel> with Notifi
         Expanded(child:
           _buildContent()
         )
-      ])
+      ]),
+      backgroundColor: Styles().colors.background,
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

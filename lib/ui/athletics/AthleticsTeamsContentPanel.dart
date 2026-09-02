@@ -23,6 +23,7 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -61,6 +62,7 @@ class _AthleticsTeamsContentPanelState extends State<AthleticsTeamsContentPanel>
         Expanded(child: _buildContent())
       ]),
       backgroundColor: Styles().colors.background,
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
