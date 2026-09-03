@@ -103,6 +103,8 @@
     "studentCourseBlueColor"                :"#D2E6EC",
     "studentCourseGreenColor"               :"#E1EED4",
 
+    "pollProgressVariantColor"              :"#F4E5CE",
+
     "onboarding2PrivacyProgressGradientStart" :"#FFB984",
     "onboarding2PrivacyProgressGradientEnd"   :"#FF552E",
 

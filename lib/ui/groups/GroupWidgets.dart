@@ -2678,8 +2678,6 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
     int totalVotes = widget.poll?.results?.totalVotes ?? 0;
     int optionsCount = widget.poll?.options?.length ?? 0;
 
-    isClosed = true; //TMP
-
     int maxVotesIndex = -1;
     if (isClosed  && (totalVotes > 0) && (optionsCount > 1)) {
       int? maxVotes, minVotes, maxVoterPos;
@@ -2710,8 +2708,8 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
       bool useCustomColor = isClosed && maxVotesIndex == optionIndex;
 
       String optionText = widget.poll?.options?[optionIndex] ?? '';
-      TextStyle? optionTextStyle = useCustomColor ? Styles().textStyles.getTextStyle('widget.group.card.poll.option_variant') : Styles().textStyles.getTextStyle('widget.group.card.poll.option');
-      Color progressColor = useCustomColor ? Styles().colors.fillColorPrimary : Styles().colors.lightGray;
+      TextStyle? optionTextStyle = /* useCustomColor ? Styles().textStyles.getTextStyle('widget.group.card.poll.option_variant') : */ Styles().textStyles.getTextStyle('widget.group.card.poll.option');
+      Color progressColor = useCustomColor ? _pollProgressVariantColor : _pollProgressColor;
 
       double statsWidth = (_optionStatsWidth ?? _maxOptionStatsWidth) + MediaQuery.of(context).textScaler.scale(5);
 
@@ -2854,6 +2852,8 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
   double get _maxOptionStatsWidth => (MediaQuery.of(context).size.width / 4);
 
   TextStyle? get _optionStatsTextStyle => Styles().textStyles.getTextStyle('widget.group.card.poll.votes');
+  Color get _pollProgressVariantColor   => Styles().colors.getColor('pollProgressColor') ?? const Color(0xFFF4E5CE);
+  Color get _pollProgressColor          => Styles().colors.lightGray;
 
   void _onVoteTapped(){
     Polls().presentPollVote(widget.poll);
