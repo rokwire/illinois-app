@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Match canvas course icons to student course panel [#5945](https://github.com/rokwire/illinois-app/issues/5945).
+### Fixed
+- Fixed editing groups content tabs [#6047](https://github.com/rokwire/illinois-app/issues/6047).
 
 ## [8.2.16] - 2026-09-02
 ### Fixed
