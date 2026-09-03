@@ -3484,6 +3484,8 @@
 	"panel.student_courses.calendar.day.thursday.letter": "四",
 	"panel.student_courses.calendar.day.friday.letter": "五",
 	"panel.student_courses.calendar.day.saturday.letter": "六",
+	"panel.student_courses.canvas.assignments.view.label": "Canvas 作业",
+	"panel.student_courses.canvas.launch.view.label": "啟動畫布",
 
 	"panel.skills_self_evaluation.header.title": "Skills Self-Evaluation & Career Explorer",
 	"panel.skills_self_evaluation.get_started.section.title": "Skills Self-Evaluation & Career Explorer",
@@ -3671,7 +3673,7 @@
 
 	"panel.home_canvas_course.header.title": "課程",
 	"panel.home_canvas_course.load.failed.error.msg": "無法加載課程. 請稍後再試.",
-	"panel.home_canvas_course.button.assignments.title": "作業",
+	"panel.home_canvas_course.button.assignments.title": "Canvas 作业",
 	"panel.home_canvas_course.button.launch.title": "啟動畫布",
 
 	"panel.canvas.common.all_courses.label": "所有課程",
@@ -4349,12 +4351,12 @@
 
 	"widget.home.dinings.header.title": "University Housing Dining",
 	"widget.home.dinings.text.offline.description": "No dining locations available while offline.",
- "widget.home.dinings.my.button.title": "My Locations",
- "widget.home.dinings.my.empty.description": "Tap the \u2606  on items in <a href='{{local_url}}'><b>University Housing Dining</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 3.)",
- "widget.home.dinings.all.button.title": "All Locations",
- "widget.home.dinings.all.empty.description": "No dining locations are available right now.",
- "widget.home.dinings.open.button.title": "Open Now",
- "widget.home.dinings.open.empty.description": "No dining locations are currently opened.",
+ 	"widget.home.dinings.my.button.title": "Starred",
+ 	"widget.home.dinings.my.empty.description": "Tap the \u2606  on items in <a href='{{local_url}}'><b>University Housing Dining</b></a> for quick access here. (<a href='{{privacy_url}}'>Your privacy level</a> must be at least 3.)",
+ 	"widget.home.dinings.all.button.title": "All",
+ 	"widget.home.dinings.all.empty.description": "No dining locations are available right now.",
+ 	"widget.home.dinings.open.button.title": "Open Now",
+ 	"widget.home.dinings.open.empty.description": "No dining locations are currently opened.",
 
 	"widget.appointment.card.cancelled.label": "取消",
 

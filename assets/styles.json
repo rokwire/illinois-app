@@ -103,6 +103,8 @@
     "studentCourseBlueColor"                :"#D2E6EC",
     "studentCourseGreenColor"               :"#E1EED4",
 
+    "pollProgressVariantColor"              :"#F4E5CE",
+
     "onboarding2PrivacyProgressGradientStart" :"#FFB984",
     "onboarding2PrivacyProgressGradientEnd"   :"#FF552E",
 
@@ -387,16 +389,19 @@
     "widget.info.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textSurface"},
     "widget.info.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "textSurface"},
     "widget.info.small": { "font_family": "regular", "size": 14.0, "color": "textSurface"},
+    "widget.info.small.italic": { "extends": "widget.info.small", "font_family": "regular_italic"},
     "widget.info.small.medium_fat": { "font_family": "medium", "size": 14.0, "color": "textSurface"},
     "widget.info.small.fat": { "font_family": "bold", "size": 14.0, "color": "textSurface"},
     "widget.info.small.semi_fat": { "font_family": "semi_bold", "size": 14.0, "color": "textSurface"},
     "widget.info.tiny": { "font_family": "regular", "size": 12.0, "color": "textSurface"},
+    "widget.info.tiny.italic": { "extends": "widget.info.tiny", "font_family": "regular_italic"},
 
     "widget.tab.selected": {"font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.tab.not_selected": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
 
     "widget.button.title.enabled": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.disabled": { "font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
+    "widget.button.title.disabled.medium_gray2": { "extends": "widget.button.title.disabled", "color": "mediumGray2"},
     "widget.button.disabled.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "surfaceAccent"},
     "widget.button.disabled.title.large.fat.variant": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimaryTransparent03"},
     "widget.button.disabled.title.large.fat.variant_two": { "font_family": "bold", "size": 20.0, "color": "disabledTextColorTwo"},

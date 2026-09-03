@@ -105,15 +105,15 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
     return Column(children: [
       _buildDelimiter(),
       RibbonButton(
-          title: Localization().getStringEx('panel.home_canvas_course.button.assignments.title', 'Assignments'),
+          title: Localization().getStringEx('panel.home_canvas_course.button.assignments.title', 'Canvas Assignments'),
           semanticsHint: Localization().getStringEx('panel.home_canvas_course.button.assignments.hint', ''),
-          leftIconKey: 'settings-working',
+          leftIconKey: 'canvas',
           onTap: _onTapAssignments),
       _buildDelimiter(),
       RibbonButton(
           title: Localization().getStringEx('panel.home_canvas_course.button.launch.title', 'Launch Canvas'),
           semanticsHint: Localization().getStringEx('panel.home_canvas_course.button.launch.hint', ''),
-          leftIconKey: 'settings-working',
+          leftIconKey: 'canvas',
           onTap: _onTapLaunch),
       _buildDelimiter(),
       // Show only when the flag is set to true
@@ -123,49 +123,49 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
             RibbonButton(
                 title: Localization().getStringEx('panel.home_canvas_course.button.syllabus.title', 'Syllabus'),
                 semanticsHint: Localization().getStringEx('panel.home_canvas_course.button.syllabus.hint', ''),
-                leftIconKey: 'settings-working',
+                leftIconKey: 'canvas',
                 onTap: _onTapSyllabus),
             _buildDelimiter(),
             RibbonButton(
                 title: Localization().getStringEx('panel.home_canvas_course.button.announcements.title', 'Announcements'),
                 semanticsHint: Localization().getStringEx('panel.home_canvas_course.button.announcements.hint', ''),
-                leftIconKey: 'settings-working',
+                leftIconKey: 'canvas',
                 onTap: _onTapAnnouncements),
             _buildDelimiter(),
             RibbonButton(
                 title: Localization().getStringEx('panel.home_canvas_course.button.files.title', 'Files'),
                 semanticsHint: Localization().getStringEx('panel.home_canvas_course.button.files.hint', ''),
-                leftIconKey: 'settings-working',
+                leftIconKey: 'canvas',
                 onTap: _onTapFiles),
             _buildDelimiter(),
             RibbonButton(
                 title: Localization().getStringEx('panel.home_canvas_course.button.collaborations.title', 'Collaborations'),
                 semanticsHint: Localization().getStringEx('panel.home_canvas_course.button.collaborations.hint', ''),
-                leftIconKey: 'settings-working',
+                leftIconKey: 'canvas',
                 onTap: _onTapCollaborations),
             _buildDelimiter(),
             RibbonButton(
                 title: Localization().getStringEx('panel.home_canvas_course.button.calendar.title', 'Calendar'),
                 semanticsHint: Localization().getStringEx('panel.home_canvas_course.button.calendar.hint', ''),
-                leftIconKey: 'settings-working',
+                leftIconKey: 'canvas',
                 onTap: _onTapCalendar),
             _buildDelimiter(),
             RibbonButton(
                 title: Localization().getStringEx('panel.home_canvas_course.button.notifications.title', 'Notifications'),
                 semanticsHint: Localization().getStringEx('panel.home_canvas_course.button.notifications.hint', ''),
-                leftIconKey: 'settings-working',
+                leftIconKey: 'canvas',
                 onTap: _onTapNotifications),
             _buildDelimiter(),
             RibbonButton(
                 title: Localization().getStringEx('panel.home_canvas_course.button.modules.title', 'Modules'),
                 semanticsHint: Localization().getStringEx('panel.home_canvas_course.button.modules.hint', ''),
-                leftIconKey: 'settings-working',
+                leftIconKey: 'canvas',
                 onTap: _onTapModules),
             _buildDelimiter(),
             RibbonButton(
                 title: Localization().getStringEx('panel.home_canvas_course.button.feedback.title', 'Feedback'),
                 semanticsHint: Localization().getStringEx('panel.home_canvas_course.button.feedback.hint', ''),
-                leftIconKey: 'settings-working',
+                leftIconKey: 'canvas',
                 onTap: _onTapFeedback),
             _buildDelimiter()
           ]))
@@ -193,7 +193,7 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   }
 
   void _onTapAssignments() {
-    Analytics().logSelect(target: 'Canvas Course -> Assignments');
+    Analytics().logSelect(target: 'Canvas Course -> Canvas Assignments');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseAssignmentsPanel(courseId: widget.courseId!, analyticsFeature: widget.analyticsFeature)));
   }
 

@@ -523,5 +523,5 @@ class _GroupContentSettingsFavoriteButton extends FavoriteButton {
   bool? get isFavorite => toggled;
 
   @override
-  void toggleFavorite() => onTap?.call();
+  void onFavorite(BuildContext context) => onTap?.call();
 }
