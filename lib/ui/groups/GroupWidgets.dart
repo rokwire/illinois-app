@@ -2552,6 +2552,7 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
       _updateGroupStats();
     } else if (((name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged) || (name == Polls.notifyStatusChanged)) && (param != null) && (param == widget.poll?.pollId) && mounted) {
       _updateMaxOptionStatsWidth();
+      setState(() {});
     }
   }
 
