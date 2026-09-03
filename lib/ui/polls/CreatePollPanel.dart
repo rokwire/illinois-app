@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -24,6 +25,7 @@ import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -334,21 +336,25 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
             });
           }
         }));
-    /*widgets.add(Container(
-      height: 16,
-    ));
-    widgets.add(ToggleRibbonButton(
-      label: Localization().getStringEx("panel.create_poll.setting.repeat_vote", "Allow repeat votes"),
-      toggled: _selectedRepeatVotes,
-      borderRadius: rounding,
-      textStyle: _textStyle,
-      onTap: () {
-        if (_progressPollStatus == null) {
-          setState(() {
-            _selectedRepeatVotes = !_selectedRepeatVotes;
-          });
-        }
-      }));*/
+    if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
+      widgets.add(Container(
+        height: 16,
+      ));
+      widgets.add(ToggleRibbonButton(
+        title: Localization().getStringEx("panel.create_poll.setting.repeat_vote", "Allow repeat votes"),
+        description: "Available in debug/dev mode only",
+        descriptionTextStyle: Styles().textStyles.getTextStyle('widget.info.small.italic'),
+        toggled: _selectedRepeatVotes,
+        borderRadius: rounding,
+        textStyle: _textStyle,
+        onTap: () {
+          if (_progressPollStatus == null) {
+            setState(() {
+              _selectedRepeatVotes = !_selectedRepeatVotes;
+            });
+          }
+        }));
+    }
     widgets.add(Container(
       height: 16,
     ));
