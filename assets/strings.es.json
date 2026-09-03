@@ -3491,6 +3491,8 @@
     "panel.student_courses.calendar.day.thursday.letter": "J",
     "panel.student_courses.calendar.day.friday.letter": "V",
     "panel.student_courses.calendar.day.saturday.letter": "S",
+    "panel.student_courses.canvas.assignments.view.label": "Tareas de Canvas",
+    "panel.student_courses.canvas.launch.view.label": "Lienzo de lanzamiento",
 
     "panel.skills_self_evaluation.header.title": "Skills Self-Evaluation & Career Explorer",
     "panel.skills_self_evaluation.get_started.section.title": "Skills Self-Evaluation & Career Explorer",
@@ -3679,7 +3681,7 @@
 
     "panel.home_canvas_course.header.title": "Curso",
     "panel.home_canvas_course.load.failed.error.msg": "No se ha podido cargar el curso. Vuelve a intentarlo más tarde.",
-    "panel.home_canvas_course.button.assignments.title": "Tareas",
+    "panel.home_canvas_course.button.assignments.title": "Tareas de Canvas",
     "panel.home_canvas_course.button.launch.title": "Lienzo de lanzamiento",
 
     "panel.canvas.common.all_courses.label": "Todos los cursos",
