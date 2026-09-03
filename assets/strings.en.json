@@ -3484,6 +3484,7 @@
     "panel.student_courses.calendar.day.wednesday.letter": "W",
     "panel.student_courses.calendar.day.thursday.letter": "T",
     "panel.student_courses.calendar.day.friday.letter": "F",
+    "panel.student_courses.calendar.day.saturday.letter": "S",
     "panel.student_courses.canvas.assignments.view.label": "Canvas Assignments",
     "panel.student_courses.canvas.launch.view.label": "Launch Canvas",
 
