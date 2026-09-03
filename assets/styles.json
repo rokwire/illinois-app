@@ -399,6 +399,7 @@
 
     "widget.button.title.enabled": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.disabled": { "font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
+    "widget.button.title.disabled.medium_gray2": { "extends": "widget.button.title.disabled", "color": "mediumGray2"},
     "widget.button.disabled.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "surfaceAccent"},
     "widget.button.disabled.title.large.fat.variant": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimaryTransparent03"},
     "widget.button.disabled.title.large.fat.variant_two": { "font_family": "bold", "size": 20.0, "color": "disabledTextColorTwo"},
