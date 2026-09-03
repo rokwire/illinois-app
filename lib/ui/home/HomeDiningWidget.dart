@@ -45,7 +45,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-enum FavoriteDiningContentType { my, all, open }
+enum FavoriteDiningContentType { all, open, my }
 
 class HomeDiningWidget extends StatefulWidget {
 
@@ -506,8 +506,8 @@ extension _FavoriteDiningContentType on FavoriteDiningContentType {
 
   String get diningTitle {
     switch (this) {
-      case FavoriteDiningContentType.my: return Localization().getStringEx('widget.home.dinings.my.button.title', 'My Locations');
-      case FavoriteDiningContentType.all: return Localization().getStringEx('widget.home.dinings.all.button.title', 'All Locations');
+      case FavoriteDiningContentType.my: return Localization().getStringEx('widget.home.dinings.my.button.title', 'Starred');
+      case FavoriteDiningContentType.all: return Localization().getStringEx('widget.home.dinings.all.button.title', 'All');
       case FavoriteDiningContentType.open: return Localization().getStringEx('widget.home.dinings.open.button.title', 'Open Now');
     }
   }
