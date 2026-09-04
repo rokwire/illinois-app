@@ -84,6 +84,8 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
   _ListeningStatus _listeningStatus = _ListeningStatus.off;
 
   bool _loadingResponse = false;
+  bool _showGeneratingResponseHint = false;
+  Timer? _generatingResponseHintTimer;
 
   List<Message> _messages = <Message>[];
   int? _queryLimit;
@@ -136,6 +138,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     _structsPageControllers?.values.forEach((controller) {
       controller.dispose();
     });
+    _cancelGeneratingResponseHintTimer();
     _ensureNotListening(updateStatus: false);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -218,6 +221,14 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
 
     if (_loadingResponse) {
       contentList.add(_buildTypingChatBubble());
+      if (_showGeneratingResponseHint) {
+        contentList.add(Padding(
+          padding: EdgeInsets.only(top: 8),
+          child: _buildAssistantStatusChatBubble(
+            Localization().getStringEx('panel.assistant.label.generating_response.title', 'Generating response...'),
+          ),
+        ));
+      }
     }
     contentList.add(Container(key: _lastContentItemKey, height: (_hideChatBar ? _chatBarHeight : 0)));
     return contentList;
@@ -444,6 +455,31 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
                     padding: const EdgeInsets.all(16.0),
                     child: TypingIndicator(
                         flashingCircleBrightColor: Styles().colors.surface, flashingCircleDarkColor: Styles().colors.blueAccent)))))));
+  }
+
+  Widget _buildAssistantStatusChatBubble(String text) {
+    return Padding(
+      padding: EdgeInsets.only(left: _defaultHorizontalPaddingValue, right: 116),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Flexible(
+            child: Material(
+              color: Styles().colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  text,
+                  style: Styles().textStyles.getTextStyle('widget.assistant.bubble.feedback.disclaimer.main.regular'),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   List<Widget> _buildWebLinkWidgets(List<SourceDataEntry>? sourceDataEntries) {
@@ -832,9 +868,11 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     setStateIfMounted(() {
       _inputController.text = '';
       _loadingResponse = true;
+      _showGeneratingResponseHint = false;
       _shouldScrollToBottom = true;
       _shouldSemanticFocusToLastBubble = true;
     });
+    _startGeneratingResponseHintTimer();
 
     int? queryLimit = _queryLimit;
     if ((queryLimit != null) && (queryLimit <= 0)) {
@@ -861,6 +899,7 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     }
 
     List<dynamic> queryResults = await Future.wait(assistantFutures);
+    _cancelGeneratingResponseHintTimer();
 
     for (int j = 0; j<queryResults.length;j++) {
       dynamic result = queryResults[j];
@@ -883,8 +922,26 @@ class _AssistantProvidersConversationContentWidgetState extends State<AssistantP
     }
     setStateIfMounted(() {
       _loadingResponse = false;
+      _showGeneratingResponseHint = false;
       _shouldScrollToBottom = true;
     });
+  }
+
+  void _startGeneratingResponseHintTimer() {
+    _cancelGeneratingResponseHintTimer();
+    _generatingResponseHintTimer = Timer(Duration(seconds: 10), () {
+      if (mounted && _loadingResponse && !_showGeneratingResponseHint) {
+        setState(() {
+          _showGeneratingResponseHint = true;
+          _shouldScrollToBottom = true;
+        });
+      }
+    });
+  }
+
+  void _cancelGeneratingResponseHintTimer() {
+    _generatingResponseHintTimer?.cancel();
+    _generatingResponseHintTimer = null;
   }
 
   void _addMessage(Message message) {
