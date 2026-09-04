@@ -17,6 +17,7 @@ import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/PillTabButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -27,8 +28,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 enum CardDisplayMode { home, browse, }
 enum FavoriteContentType { my, all }
-enum FavoriteContentStatus { none, refresh, reload }
-enum FavoriteContentActivity { none, extend, refresh, reload, }
+enum FavoriteContentStatus { none, update, refresh, reload }
+enum FavoriteContentActivity { none, extend, update, refresh, reload, }
 
 ////////////////////////////
 // HomeHandleWidget
@@ -267,8 +268,13 @@ class HomeFavoriteWidget extends StatefulWidget {
   final String? favoriteId;
   final List<Widget>? actions;
   final HomeFavoriteTitleBuilder? titleBuilder;
+  final HomeFavoriteButtonBuilder? buttonBuilder;
   final StreamController<String>? updateController;
 
+  static const EdgeInsets favoriteButtonPadding = const EdgeInsets.symmetric(
+    horizontal: FavoriteStarIcon.defaultSpacing,
+    vertical: FavoriteStarIcon.defaultSpacing - HomeCard.shadowMargin, // Preserve card shadow & keep small vertical offset #5289 & #5331
+  );
 
   const HomeFavoriteWidget({Key? key,
     this.title,
@@ -276,6 +282,7 @@ class HomeFavoriteWidget extends StatefulWidget {
     this.favoriteId,
     this.actions,
     this.titleBuilder,
+    this.buttonBuilder,
     this.updateController,
   }) : super(key: key);
 
@@ -289,10 +296,6 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
   late bool _expanded;
   StreamSubscription<String>? _updateSubscription;
 
-  static const EdgeInsets favoriteButtonPadding = const EdgeInsets.symmetric(
-    horizontal: FavoriteStarIcon.defaultSpacing,
-    vertical: FavoriteStarIcon.defaultSpacing - HomeCard.shadowMargin, // Preserve card shadow & keep small vertical offset #5289 & #5331
-  );
 
   @override
   void initState() {
@@ -355,10 +358,10 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
         ),
 
         if (favoriteId != null)
-          HomeFavoriteButton(
+          widget.buttonBuilder?.call() ?? HomeFavoriteButton(
             favorite: HomeFavorite(favoriteId),
             style: FavoriteIconStyle.Button,
-            padding: favoriteButtonPadding,
+            padding: HomeFavoriteWidget.favoriteButtonPadding,
             prompt: true
           ),
       ],),
@@ -430,6 +433,7 @@ class _HomeFavoriteWidgetState extends State<HomeFavoriteWidget> with Notificati
 }
 
 typedef HomeFavoriteTitleBuilder = Widget Function(Widget defaultContent);
+typedef HomeFavoriteButtonBuilder = Widget Function();
 
 ////////////////////////////
 // HomeCardWidget
@@ -555,7 +559,7 @@ class HomeFavoriteButton extends FavoriteButton {
   void _toggleFavorite({bool? isFavorite}) {
     _setFavorite(isFavorite != true);
   }
-  
+
   void _setFavorite(bool value) {
     if (favorite?.id != null) {
       if (favorite?.category == null) {
@@ -574,7 +578,7 @@ class HomeFavoriteButton extends FavoriteButton {
           HomeFavorite.log(favorite, value);
         }
       }
-      else { 
+      else {
         // process toggle home widget entry
         HomeFavorite sectionFavorite = HomeFavorite(favorite?.category);
         if (value) {
@@ -1178,74 +1182,10 @@ class HomeBrowseLinkButton extends LinkButton {
   );
 }
 
-///////////////////////////////
-// HomeFavoriteTabBarButton
-
-class HomeFavTabBarBtn extends StatelessWidget {
-  final String title;
-  final bool selected;
-  final HomeFavTabBarBtnPos position;
-  final TapHandler? onTap;
-  
-  final String? semanticsLabel;
-  final String? semanticsHint;
-
-  HomeFavTabBarBtn(this.title, {super.key,
-    this.selected = false, this.position = HomeFavTabBarBtnPos.middle,
-    this.semanticsLabel, this.semanticsHint,
-    this.onTap,
-  });
-  
-  @override
-  Widget build(BuildContext context) => Semantics(label: _semanticsLabel, hint: _semanticsHint, selected: selected, button: true, excludeSemantics: true, child:
-    InkWell(onTap: onTap, child:
-      Container(
-        decoration: BoxDecoration(color: _frameColor, border: _frameBorder, borderRadius: _frameBorderRadius,),
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        child: Center(child:
-          Text(title, style: _textStyle, textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis,)
-        ),
-      )
-    )
-  );
-
-  Color get _frameColor => selected ? Styles().colors.surface : Styles().colors.background;
-  TextStyle? get _textStyle => Styles().textStyles.getTextStyle(selected ? 'widget.button.title.small.fat' : 'widget.button.title.small');
-
-  BoxBorder get _frameBorder => (position != HomeFavTabBarBtnPos.last) ?
-    Border(left: _frameBorderSide, top: _frameBorderSide, bottom: _frameBorderSide) :
-    Border.fromBorderSide(_frameBorderSide);
-
-  BorderRadiusGeometry get _frameBorderRadius {
-    switch (position) {
-      case HomeFavTabBarBtnPos.first: return BorderRadius.horizontal(left: _frameRadius);
-      case HomeFavTabBarBtnPos.last: return BorderRadius.horizontal(right: _frameRadius);
-      default: return BorderRadius.zero;
-    }
-  }
-
-  BorderSide get _frameBorderSide => BorderSide(color: Styles().colors.surfaceAccent2);
-  Radius get _frameRadius => Radius.circular(24);
-
-  String get _semanticsLabel => semanticsLabel ?? title; 
-  String get _semanticsHint => semanticsHint ?? AppSemantics.selectHint(subject: _semanticsLabel); 
-}
-
 typedef TapHandler = void Function();
-enum HomeFavTabBarBtnPos { first, middle, last }
 
-extension HomeFavTabBarBtnPosImpl on HomeFavTabBarBtnPos {
-  static HomeFavTabBarBtnPos fromIndex(int index, int length) {
-    if (index == 0) {
-      return HomeFavTabBarBtnPos.first;
-    } else if ((index + 1) == length) {
-      return HomeFavTabBarBtnPos.last;
-    }
-    else {
-      return HomeFavTabBarBtnPos.middle;
-    }
-  }
-}
+///////////////////////////////
+// FavoritesContentTypeImpl
 
 extension FavoritesContentTypeImpl on FavoriteContentType {
 
@@ -1264,15 +1204,15 @@ extension FavoritesContentTypeImpl on FavoriteContentType {
     }
   }
 
-  HomeFavTabBarBtnPos get position {
+  PillTabButtonPosition get position {
     if (this == FavoriteContentType.values.first) {
-      return HomeFavTabBarBtnPos.first;
+      return PillTabButtonPosition.first;
     }
     else if (this == FavoriteContentType.values.last) {
-      return HomeFavTabBarBtnPos.last;
+      return PillTabButtonPosition.last;
     }
     else {
-      return HomeFavTabBarBtnPos.middle;
+      return PillTabButtonPosition.middle;
     }
   }
 }
@@ -1280,11 +1220,13 @@ extension FavoritesContentTypeImpl on FavoriteContentType {
 extension FavoriteContentStatusimpl on FavoriteContentStatus {
   bool get canReload => (this.index < FavoriteContentStatus.reload.index);
   bool get canRefresh => (this.index < FavoriteContentStatus.refresh.index);
+  bool get canUpdate => (this.index < FavoriteContentStatus.update.index);
 }
 
 extension FavoriteContentActivityimpl on FavoriteContentActivity {
   bool get canReload => (this.index < FavoriteContentActivity.reload.index);
   bool get canRefresh => (this.index < FavoriteContentActivity.refresh.index);
+  bool get canUpdate => (this.index < FavoriteContentActivity.update.index);
   bool get canExtend => (this.index < FavoriteContentActivity.extend.index);
   bool get canReloadOrRefresh => canRefresh;
 

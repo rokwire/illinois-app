@@ -102,7 +102,7 @@ class _GBVResourceDetailPanelState extends State<GBVResourceDetailPanel> {
           Container(decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1))), child:
             Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
               Column(children: List.from(section.content.map((detail) =>
-                GBVDetailContentWidget(resourceDetail: detail)
+                GBVDetailContentWidget(detail)
               )))
             )
           )

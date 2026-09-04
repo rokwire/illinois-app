@@ -21,7 +21,6 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -62,7 +61,7 @@ class _Onboarding2LoginNetIdPanelState extends State<Onboarding2LoginNetIdPanel>
 
   @override
   Widget build(BuildContext context) {
-    String titleString = Localization().getStringEx('panel.onboarding.login.netid.label.title', 'Connect your NetID');
+    String titleString = Localization().getStringEx('panel.onboarding.login.netid.label.title', 'Connect your NetID to:');
     String? skipTitle = Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.title', 'Not Right Now');
     return Scaffold(backgroundColor: Styles().colors.background, body:
       Column(children: [
@@ -71,19 +70,19 @@ class _Onboarding2LoginNetIdPanelState extends State<Onboarding2LoginNetIdPanel>
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Stack(children: <Widget>[
                 Styles().images.getImage("header-login", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true,) ?? Container(),
-                OnboardingBackButton(padding: const EdgeInsets.all(16), onTap: _onTapBack),
+                SafeArea(child: Onboarding2BackButton(padding: const EdgeInsets.all(16), onTap: _onTapBack)),
               ],),
               Container(height: 24,),
               Semantics(label: titleString, hint: Localization().getStringEx('panel.onboarding.login.netid.label.title.hint', ''), excludeSemantics: true, child:
                 Padding(padding: EdgeInsets.symmetric(horizontal: 18), child:
                   Center(child:
-                    Text(titleString, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
+                    Text(titleString, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 34, color: Styles().colors.fillColorPrimary)),
                   )
                 ),
               ),
               Container(height: 24,),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
-                Text(Localization().getStringEx('panel.onboarding.login.netid.label.description', 'View features specific to you such as your Illini ID or your course schedule and locations.'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))
+              Padding(padding: EdgeInsets.symmetric(horizontal: 80), child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: _checklistItems),
               ),
               Container(height: 32,),
             ]),
@@ -112,6 +111,29 @@ class _Onboarding2LoginNetIdPanelState extends State<Onboarding2LoginNetIdPanel>
       ]),
     );
   }
+
+  List<Widget> get _checklistItems {
+    List<String> titles = [
+      Localization().getStringEx('panel.onboarding.login.netid.label.checklist.1', 'Access your Illini ID, bus pass, and library card'),
+      Localization().getStringEx('panel.onboarding.login.netid.label.checklist.2', 'View your course schedule and get directions'),
+      Localization().getStringEx('panel.onboarding.login.netid.label.checklist.3', 'Receive reminders for your MyMcKinley appointments'),
+      Localization().getStringEx('panel.onboarding.login.netid.label.checklist.4', 'Participate in groups with others at Illinois'),
+      Localization().getStringEx('panel.onboarding.login.netid.label.checklist.5', 'Export your profile as a digital Illinois business card'),
+    ];
+    return titles.map((title) => _buildChecklistItem(title)).toList();
+  }
+
+  Widget _buildChecklistItem(String title) => Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+    Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Padding(padding: EdgeInsets.only(right: 5), child:
+        Styles().images.getImage('check', size: 16, excludeFromSemantics: true, fit: BoxFit.contain) ?? Container(),
+      ),
+      Container(width: 12,),
+      Expanded(child:
+        Text(title, style: Styles().textStyles.getTextStyle("widget.message.regular")),
+      ),
+    ],),
+  );
 
   Widget _buildDialogWidget(BuildContext context) {
     return Dialog(child:

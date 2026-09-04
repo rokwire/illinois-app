@@ -8,6 +8,7 @@ import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
 import 'package:illinois/ui/groups/GroupHome2Panel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/PillTabButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -73,7 +74,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> {
 
   Widget get _contentTypeBar => Row(children:List<Widget>.from(
     FavoriteContentType.values.map((FavoriteContentType contentType) => Expanded(child:
-      HomeFavTabBarBtn(contentType.groupsTitle.toUpperCase(),
+      PillTabButton(contentType.groupsTitle,
         position: contentType.position,
         selected: _contentType == contentType,
         onTap: () => _onContentType(contentType),
@@ -283,7 +284,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
   }
 
   void _updateInternalVisibility(bool visible) {
-    if (_visible != visible) {
+    if ((_visible != visible) && mounted) {
       _visible = visible;
       _onInternalVisibilityChanged();
     }
@@ -293,6 +294,7 @@ class _HomeGroupsImplWidgetState extends State<_HomeGroupsImplWidget> with Notif
     if (_visible) {
       switch(_contentStatus) {
         case FavoriteContentStatus.none: break;
+        case FavoriteContentStatus.update:
         case FavoriteContentStatus.refresh: _updateGroups(); break;
         case FavoriteContentStatus.reload: _loadGroups(); break;
       }

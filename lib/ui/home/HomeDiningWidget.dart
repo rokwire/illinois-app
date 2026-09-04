@@ -28,6 +28,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
+import 'package:illinois/ui/widgets/PillTabButton.dart';
 import 'package:illinois/ui/dining/Dining2HomePanel.dart';
 import 'package:illinois/ui/dining/DiningCard.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
@@ -44,7 +45,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-enum FavoriteDiningContentType { my, all, open }
+enum FavoriteDiningContentType { all, open, my }
 
 class HomeDiningWidget extends StatefulWidget {
 
@@ -59,7 +60,7 @@ class HomeDiningWidget extends StatefulWidget {
     );
 
   String get _title => title;
-  static String get title => Localization().getStringEx('widget.home.dinings.header.title', 'Dining');
+  static String get title => Localization().getStringEx('widget.home.dinings.header.title', 'University Housing Dining');
 
   @override
   State<StatefulWidget> createState() => _HomeDiningWidgetState();
@@ -96,17 +97,15 @@ class _HomeDiningWidgetState extends State<HomeDiningWidget> {
       ),
     ));
 
-  // https://stackoverflow.com/a/51157072/3759472
-  // IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch,
-  Widget get _contentTypeBar => Row(children: List<Widget>.from(
+  Widget get _contentTypeBar => IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: List<Widget>.from(
     FavoriteDiningContentType.values.map((FavoriteDiningContentType contentType) => Expanded(child:
-      HomeFavTabBarBtn(contentType.diningTitle.toUpperCase(),
+      PillTabButton(contentType.diningTitle,
         position: contentType.position,
         selected: _contentType == contentType,
         onTap: () => _onContentType(contentType),
       )
     )),
-  ));
+  )));
 
   void _onContentType(FavoriteDiningContentType contentType) {
     if ((_contentType != contentType) && mounted) {
@@ -302,7 +301,7 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
       return HomeMessageCard(message: Localization().getStringEx("widget.home.dinings.open.empty.description", "No dining locations are currently opened."),);
     }
     else if (widget.contentType == FavoriteDiningContentType.my) {
-      String message = Localization().getStringEx("widget.home.dinings.my.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Dining</b></a> for quick access here. (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 3.)")
+      String message = Localization().getStringEx("widget.home.dinings.my.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>University Housing Dining</b></a> for quick access here. (<a href='$privacyUrlMacro'>Your privacy level</a> must be at least 3.)")
           .replaceAll(localUrlMacro, '$localScheme://$localDiningHost')
           .replaceAll(privacyUrlMacro, '$privacyScheme://$privacyLevelHost');
 
@@ -333,7 +332,7 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
   }
 
   void _updateInternalVisibility(bool visible) {
-    if (_visible != visible) {
+    if ((_visible != visible) && mounted) {
       _visible = visible;
       _onInternalVisibilityChanged();
     }
@@ -343,6 +342,7 @@ class _HomeDiningImplWidgetState extends State<_HomeDiningImplWidget> with Notif
     if (_visible) {
       switch(_contentStatus) {
         case FavoriteContentStatus.none: break;
+        case FavoriteContentStatus.update: break;
         case FavoriteContentStatus.refresh: _refreshDinings(); break;
         case FavoriteContentStatus.reload: _loadDinings(); break;
       }
@@ -506,21 +506,21 @@ extension _FavoriteDiningContentType on FavoriteDiningContentType {
 
   String get diningTitle {
     switch (this) {
-      case FavoriteDiningContentType.my: return Localization().getStringEx('widget.home.dinings.my.button.title', 'My Locations');
-      case FavoriteDiningContentType.all: return Localization().getStringEx('widget.home.dinings.all.button.title', 'All Locations');
+      case FavoriteDiningContentType.my: return Localization().getStringEx('widget.home.dinings.my.button.title', 'Starred');
+      case FavoriteDiningContentType.all: return Localization().getStringEx('widget.home.dinings.all.button.title', 'All');
       case FavoriteDiningContentType.open: return Localization().getStringEx('widget.home.dinings.open.button.title', 'Open Now');
     }
   }
 
-  HomeFavTabBarBtnPos get position {
+  PillTabButtonPosition get position {
     if (this == FavoriteDiningContentType.values.first) {
-      return HomeFavTabBarBtnPos.first;
+      return PillTabButtonPosition.first;
     }
     else if (this == FavoriteDiningContentType.values.last) {
-      return HomeFavTabBarBtnPos.last;
+      return PillTabButtonPosition.last;
     }
     else {
-      return HomeFavTabBarBtnPos.middle;
+      return PillTabButtonPosition.middle;
     }
   }
 

@@ -11,12 +11,13 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/accessibility/AccessiblePageView.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:illinois/ui/widgets/PillTabButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -70,7 +71,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> {
 
   Widget get _contentTypeBar => Row(children:List<Widget>.from(
     FavoriteContentType.values.map((FavoriteContentType contentType) => Expanded(child:
-      HomeFavTabBarBtn(contentType.athleticsNewsTitle.toUpperCase(),
+      PillTabButton(contentType.athleticsNewsTitle,
         position: contentType.position,
         selected: _contentType == contentType,
         onTap: () => _onContentType(contentType),
@@ -298,7 +299,7 @@ class _HomeAthliticsNewsImplWidgetState extends State<_HomeAthliticsNewsImplWidg
     if (uri?.scheme == localScheme) {
       if (uri?.host.toLowerCase() == localAthleticsNewsHost.toLowerCase()) {
         Analytics().logSelect(target: 'Big 10 News', source: runtimeType.toString());
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsPanel()));
       }
       else if ((uri?.scheme == privacyScheme) && (uri?.host == privacyLevelHost)) {
         Analytics().logSelect(target: 'Privacy Level', source: runtimeType.toString());
@@ -314,7 +315,7 @@ class _HomeAthliticsNewsImplWidgetState extends State<_HomeAthliticsNewsImplWidg
   }
 
   void _updateInternalVisibility(bool visible) {
-    if (_visible != visible) {
+    if ((_visible != visible) && mounted) {
       _visible = visible;
       _onInternalVisibilityChanged();
     }
@@ -324,6 +325,7 @@ class _HomeAthliticsNewsImplWidgetState extends State<_HomeAthliticsNewsImplWidg
     if (_visible) {
       switch(_contentStatus) {
         case FavoriteContentStatus.none: break;
+        case FavoriteContentStatus.update: break;
         case FavoriteContentStatus.refresh: _refreshNews(); break;
         case FavoriteContentStatus.reload: _loadNews(); break;
       }
@@ -441,7 +443,7 @@ class _HomeAthliticsNewsImplWidgetState extends State<_HomeAthliticsNewsImplWidg
 
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news, starred: widget.contentType == FavoriteContentType.my)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsPanel(starred: widget.contentType == FavoriteContentType.my)));
   }
 }
 

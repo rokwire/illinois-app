@@ -217,7 +217,7 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
   Widget _buildCanvasContent() {
     return Padding(padding: EdgeInsets.only(top: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(height: 1, color: Styles().colors.surfaceAccent2,),
-      _buildCanvasButton(label: Localization().getStringEx('panel.student_courses.canvas.assignments.view.label', 'View Assignments in Canvas'), onTap: _onCanvasAssignments),
+      _buildCanvasButton(label: Localization().getStringEx('panel.student_courses.canvas.assignments.view.label', 'Canvas Assignments'), onTap: _onCanvasAssignments),
       _buildCanvasButton(label: Localization().getStringEx('panel.student_courses.canvas.launch.view.label', 'Launch Canvas'), onTap: _onCanvasLaunch),
     ],),);
   }
@@ -262,7 +262,7 @@ class _StudentCourseDetailPanelState extends State<StudentCourseDetailPanel> {
   }
 
   void _onCanvasAssignments() {
-    Analytics().logSelect(target: 'View Assignments in Canvas');
+    Analytics().logSelect(target: 'Canvas Assignments');
     int? courseId = _canvasCourse?.id;
     if (courseId != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseAssignmentsPanel(courseId: courseId, analyticsFeature: widget.analyticsFeature)));

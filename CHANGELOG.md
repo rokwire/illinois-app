@@ -6,6 +6,145 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [8.2.18] - 2026-09-03
+### Changed
+- Clean up PollCard, update max option progress and text colors [#6046](https://github.com/rokwire/illinois-app/issues/6046).
+### Fixed
+- Fixed evening & night random images for home tout widget [#6054](https://github.com/rokwire/illinois-app/issues/6054).
+
+## [8.2.17] - 2026-09-03
+### Changed
+- Match canvas course icons to student course panel [#5945](https://github.com/rokwire/illinois-app/issues/5945).
+- Shorten Dining Favorites toggle labels and reorder tabs [#5861](https://github.com/rokwire/illinois-app/issues/5861).
+- Change disabled font color for "Research interest form" label [#5742](https://github.com/rokwire/illinois-app/issues/5742).
+- Clean up GroupPollCard, update max option progress and text colors [#6046](https://github.com/rokwire/illinois-app/issues/6046).
+### Fixed
+- Fixed editing groups content tabs [#6047](https://github.com/rokwire/illinois-app/issues/6047).
+
+## [8.2.16] - 2026-09-02
+### Fixed
+- Fixed background color of AthleticsEventsPanel [#5871](https://github.com/rokwire/illinois-app/issues/5871).
+- Show bottom tab bar in all new Athletics panels [#5871](https://github.com/rokwire/illinois-app/issues/5871).
+### Changed
+- Standardize 2-Part Pill Toggle Styling [#5841](https://github.com/rokwire/illinois-app/issues/5841).
+- Standardize 3-Part Pill Toggle Styling [#5861](https://github.com/rokwire/illinois-app/issues/5861).
+- Replace Research Dropdown with 2-Part Pill Toggle [#5996](https://github.com/rokwire/illinois-app/issues/5996).
+- Filter building entrances when lookup for of the nearest one by excluding those that are too far from the building [#6016](https://github.com/rokwire/illinois-app/issues/6016).
+
+## [8.2.15] - 2026-09-01
+### Removed
+- Removed dropdown menus under 10 sub-sections [#5871](https://github.com/rokwire/illinois-app/issues/5871).
+### Changed
+- Allow editing of post subjects [#5726](https://github.com/rokwire/illinois-app/issues/5726).
+
+## [8.2.14] - 2026-08-31
+### Changed
+- Allow edit of scheduled post date & time if it has not passed yet [#5512](https://github.com/rokwire/illinois-app/issues/5512).
+- Rework refresh token processing [#5836](https://github.com/rokwire/illinois-app/issues/5836).
+### Fixed
+- Cursor jumping to start when picking an emoji in group posts [#6034](https://github.com/rokwire/illinois-app/issues/6034).
+
+## [8.2.13] - 2026-08-28
+### Changed
+- Simplified alternate email/phone sign-in flow [#5885](https://github.com/rokwire/illinois-app/issues/5885).
+
+## [8.2.12] - 2026-08-27
+### Changed
+- Smaller font for the RoleGridButton.standalone widget [#5879](https://github.com/rokwire/illinois-app/issues/5879).
+- Updated section entry text style [#5944](https://github.com/rokwire/illinois-app/issues/5944).
+- Text update on new group & admin settings panels [#5995](https://github.com/rokwire/illinois-app/issues/5995).
+- Make Saved Resources standalone section in Browse [#6024](https://github.com/rokwire/illinois-app/issues/6024).
+- Make University Living standalone section in Browse, hide Featured resources subsection [#6024](https://github.com/rokwire/illinois-app/issues/6024).
+- Do not allow users to sign in with emails that end on "illinois.edu" [#5882](https://github.com/rokwire/illinois-app/issues/5882).
+- Fill only A-Z sections in Groups Home panel, everything outside them falls in Other section [#5990](https://github.com/rokwire/illinois-app/issues/5990).
+
+## [8.2.11] - 2026-08-26
+### Changed
+- Onboarding UI updates [#5879](https://github.com/rokwire/illinois-app/issues/5879).
+- Hide Safety Resources browse entry and favorite widget [#6003](https://github.com/rokwire/illinois-app/issues/6003).
+- Capitalize all letters in "APP FAQS" [#6002](https://github.com/rokwire/illinois-app/issues/6002).
+- Updated Home photos [#6005](https://github.com/rokwire/illinois-app/issues/6005).
+- Text and layout edit on new group & admin settings panels [#5995](https://github.com/rokwire/illinois-app/issues/5995).
+### Fixed
+- Fixed unhandled exception from Home favorite widgets for accessing unmounted context.
+### Removed
+- Removed mobilecredential API call to Identity BB [#6018](https://github.com/rokwire/illinois-app/issues/6018).
+
+## [8.2.10] - 2026-08-25
+### Changed
+- Unlink links items in Section from Saved Resources home widget, make it regular widget linked to University Living / Saved Resources [#5873](https://github.com/rokwire/illinois-app/issues/5873).
+- Onboarding and Privacy App updated UI without Share activity panel [#5879](https://github.com/rokwire/illinois-app/issues/5879).
+- "Transportation Links" renamed to "Transportation & Safety Links", panel content was also updated [#6003](https://github.com/rokwire/illinois-app/issues/6003).
+- Updated "Settings / About the App" link entry [#6002](https://github.com/rokwire/illinois-app/issues/6002).
+- Updated wording in "Settings / My App Privacy Settings" [#6004](https://github.com/rokwire/illinois-app/issues/6004).
+### Removed
+- Removed favorite button/star from MTDStopDeparturesPanel's header bar [#5880](https://github.com/rokwire/illinois-app/issues/5880).
+
+## [8.2.9] - 2026-08-24
+### Fixed
+- Fixed crash in SwipeDetector widget [#6006](https://github.com/rokwire/illinois-app/issues/6006).
+### Changed
+- Reworked Saved Resources home widget and related functionality, implemented Saved Resources panel [#5873](https://github.com/rokwire/illinois-app/issues/5873).
+
+## [8.2.8] - 2026-08-21
+### Changed
+- Decreased chevron icon size in Home / Section browse entries [#5944](https://github.com/rokwire/illinois-app/issues/5944).
+- Populate transportationLinks.json with real data and load it from Content BB instead of from app resources [#5881](https://github.com/rokwire/illinois-app/issues/5944).
+### Removed
+- Removed favorite button/star from compound MTD bus stop card [#5880](https://github.com/rokwire/illinois-app/issues/5880).
+
+## [8.2.7] - 2026-08-20
+### Added
+- Add Private Certified Housing links to Campus Dining [#5872](https://github.com/rokwire/illinois-app/issues/5872).
+- Created Saved GBV Resources home widget and related functionality [#5873](https://github.com/rokwire/illinois-app/issues/5873).
+### Fixed
+- Do not report image exceptions as fatal errors [#5991](https://github.com/rokwire/illinois-app/issues/5991).
+
+## [8.2.6] - 2026-08-19
+### Fixed
+- Hopefully fixed a crash reported by Crashlytics for accessing unattached scroll controller in GroupConversationPanel [#5984](https://github.com/rokwire/illinois-app/issues/5984).
+- Fixed crash with ListTile and ExpansionListTile reported in Crashlytics [#5986](https://github.com/rokwire/illinois-app/issues/5986).
+- Fixed crash in Groups and Directory reported in Crashlytics [#5988](https://github.com/rokwire/illinois-app/issues/5988).
+
+## [8.2.5] - 2026-08-18
+### Changed
+- Update University Housing Dining section name references in favorites [#5872](https://github.com/rokwire/illinois-app/issues/5872).
+- Update MTD Bus Stops home panel [#5880](https://github.com/rokwire/illinois-app/issues/5880).
+- Merge MTD Buses and Safety sections from Browse panel into new Campus Transit and Safety section [#5881](https://github.com/rokwire/illinois-app/issues/5881).
+### Fixed
+- Allow filtering favorite Big 10 Events for privacy level 3 or above [#5964](https://github.com/rokwire/illinois-app/issues/5964).
+
+## [8.2.4] - 2026-08-14
+### Fixed
+- Loading header images for Big 10 Athletics News [#5863](https://github.com/rokwire/illinois-app/issues/5863).
+- Fix incorrect wellness links analytics label [#5860](https://github.com/rokwire/illinois-app/issues/5860).
+- Fixed crash on closing link dialog in Group Conversation panel.
+- Fixed card paddings in Research Projects Home panel [#5946](https://github.com/rokwire/illinois-app/issues/5946).
+### Changed
+- Set URL keyboard type in URL text field of link dialog in Group Conversation panel.
+- Show text cursor in Quill Editor in Group Conversation panel.
+- Implemented new Home / Sections UI [#5944](https://github.com/rokwire/illinois-app/issues/5944).
+- Display only favorite content in Campus Reminders home widget [#5906](https://github.com/rokwire/illinois-app/issues/5906).
+
+## [8.2.3] - 2026-08-12
+### Changed
+- Hide courses without days and start time in Calendar and List views [#5930](https://github.com/rokwire/illinois-app/issues/5930).
+- Increased minimum deployment target of the iOS app to 15.0 [#5972](https://github.com/rokwire/illinois-app/issues/5972).
+### Fixed
+- Course markers not showing on the map [#5925](https://github.com/rokwire/illinois-app/issues/5925).
+
+## [8.2.2] - 2026-08-11
+### Added
+- Added Campus Dining subsection to Dining [#5872](https://github.com/rokwire/illinois-app/issues/5872).
+- Added A-Z headings for directory of users [#5701](https://github.com/rokwire/illinois-app/issues/5701).
+- Show icon for online courses [#5931](https://github.com/rokwire/illinois-app/issues/5931).
+### Changed
+- Match Notifications buttons to match app style [#5868](https://github.com/rokwire/illinois-app/issues/5868).
+
+## [8.2.1] - 2026-08-05
+
+## [8.2.0] - 2026-08-04
+
 ## [8.1.11] - 2026-08-11
 ### Fixed
 - Loading Big 10 Athletics events and News [#5964](https://github.com/rokwire/illinois-app/issues/5964).

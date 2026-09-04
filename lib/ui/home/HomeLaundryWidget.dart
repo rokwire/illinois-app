@@ -17,6 +17,7 @@ import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/AccentCard.dart';
+import 'package:illinois/ui/widgets/PillTabButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -78,7 +79,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> {
 
   Widget get _contentTypeBar => Row(children:List<Widget>.from(
     FavoriteContentType.values.map((FavoriteContentType contentType) => Expanded(child:
-      HomeFavTabBarBtn(contentType.laundryTitle.toUpperCase(),
+      PillTabButton(contentType.laundryTitle,
         position: contentType.position,
         selected: _contentType == contentType,
         onTap: () => _onContentType(contentType),
@@ -311,7 +312,7 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
   }
 
   void _updateInternalVisibility(bool visible) {
-    if (_visible != visible) {
+    if ((_visible != visible) && mounted) {
       _visible = visible;
       _onInternalVisibilityChanged();
     }
@@ -321,6 +322,7 @@ class _HomeLaundryImplWidgetState extends State<_HomeLaundryImplWidget> with Not
     if (_visible) {
       switch(_contentStatus) {
         case FavoriteContentStatus.none: break;
+        case FavoriteContentStatus.update: break;
         case FavoriteContentStatus.refresh: _refreshLaundry(); break;
         case FavoriteContentStatus.reload: _loadLaundry(); break;
       }

@@ -6,12 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/Analytics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsEventsPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/home/HomeEvent2Widget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:illinois/ui/widgets/PillTabButton.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -59,7 +60,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> {
 
   Widget get _contentTypeBar => Row(children:List<Widget>.from(
     FavoriteContentType.values.map((FavoriteContentType contentType) => Expanded(child:
-      HomeFavTabBarBtn(contentType.athliticsEventsTitle.toUpperCase(),
+      PillTabButton(contentType.athliticsEventsTitle,
         position: contentType.position,
         selected: _contentType == contentType,
         onTap: () => _onContentType(contentType),
@@ -102,7 +103,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> {
   // View All
   void _onViewAll(FavoriteContentType contentType) {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events, starred: (contentType == FavoriteContentType.my),)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsEventsPanel(starred: (contentType == FavoriteContentType.my))));
   }
 
   // Empty Content Builder
@@ -133,7 +134,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> {
       Uri? uri = (url != null) ? Uri.tryParse(url) : null;
       if ((uri?.scheme == localScheme) && (uri?.host == localAthleticsEventHost)) {
         Analytics().logSelect(target: 'Big 10 Events', source: runtimeType.toString());
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events, starred: true,)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsEventsPanel(starred: true)));
         //Event2HomePanel.present(context, attributes: Event2HomePanel.athleticsCategoryAttributes, analyticsFeature: AnalyticsFeature.Athletics);
       }
       else if ((uri?.scheme == privacyScheme) && (uri?.host == privacyLevelHost)) {

@@ -3,7 +3,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -13,11 +12,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class ProfileLoginEmailPanel extends StatefulWidget {
 
   final String? email;
-  final bool? link;
   final Auth2EmailAccountState? state;
   final void Function()? onFinish;
 
-  ProfileLoginEmailPanel({this.email, this.state, this.link, this.onFinish});
+  ProfileLoginEmailPanel({this.email, this.state, this.onFinish});
 
   _ProfileLoginEmailPanelState createState() => _ProfileLoginEmailPanelState();
 }
@@ -40,7 +38,6 @@ class _ProfileLoginEmailPanelState extends State<ProfileLoginEmailPanel>  {
   GlobalKey _validationErrorKey = GlobalKey();
 
   bool _isSiging = false;
-  bool _isCanceling = false;
   bool _isShowingPassword = false;
 
   Auth2EmailAccountState? _state;
@@ -71,16 +68,10 @@ class _ProfileLoginEmailPanelState extends State<ProfileLoginEmailPanel>  {
   Widget build(BuildContext context) {
 
     String title = (_state == Auth2EmailAccountState.nonExistent) ?
-      (widget.link == true) ? Localization().getStringEx('panel.settings.link.email.label.title', 'Add Email Address') :
       Localization().getStringEx('panel.onboarding2.email.sign_up.title.text', 'Sign Up with Email') :
       Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign In with Email');
 
-    // String? headingTitle; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.onboarding2.email.link.title.text', 'Add Your Email Address') : null;
-
-    // String? heading; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) : null;
-
     String description = (_state == Auth2EmailAccountState.nonExistent) ?
-      (widget.link == true) ? Localization().getStringEx('panel.onboarding2.email.link.description.text', 'Please enter a password to add your email address.') :
       Localization().getStringEx('panel.onboarding2.email.sign_up.description.text', 'Please enter a password to create a new account with your email.') :
       Localization().getStringEx('panel.onboarding2.email.sign_in.description.text', 'Please enter your password to sign in with your email.');
 
@@ -89,12 +80,10 @@ class _ProfileLoginEmailPanelState extends State<ProfileLoginEmailPanel>  {
       Localization().getStringEx("panel.onboarding2.email.label.show_password.text", "Show Password");
 
     String buttonTitle = (_state == Auth2EmailAccountState.nonExistent) ?
-      (widget.link == true) ? Localization().getStringEx('panel.onboarding2.email.button.link.text', 'Add') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_up.text', 'Sign Up') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_in.text', 'Sign In');
 
     String buttonHint = (_state == Auth2EmailAccountState.nonExistent) ?
-      (widget.link == true) ? Localization().getStringEx('panel.onboarding2.email.button.link.hint', '') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_up.hint', '') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_in.hint', '');
 
@@ -268,18 +257,6 @@ class _ProfileLoginEmailPanelState extends State<ProfileLoginEmailPanel>  {
                   progress: _isSiging,
                 ),),
                 
-                Visibility(visible: (widget.link == true), child:
-                  Padding(padding: EdgeInsets.only(bottom: 8), child: RoundedButton(
-                    label:  Localization().getStringEx("panel.onboarding2.email.button.link.cancel.label", "Cancel"),
-                    hint: Localization().getStringEx("panel.onboarding2.email.button.link.cancel.hint", ""),
-                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
-                    onTap: _onTapCancel,
-                    backgroundColor: Styles().colors.white,
-                    borderColor: Styles().colors.fillColorSecondary,
-                    progress: _isCanceling,
-                  ),),
-                ),
-
               ]),
             ),
           ),
@@ -393,23 +370,9 @@ class _ProfileLoginEmailPanelState extends State<ProfileLoginEmailPanel>  {
       else {
         setState(() { _isSiging = true; });
 
-        if (widget.link != true) {
-          Auth2().signUpWithEmail(widget.email, password).then((Auth2EmailSignUpResult result) {
-            _trySignUpCallback(result);
-          });
-        } else {
-          Map<String, dynamic> creds = {
-            "email": widget.email,
-            "password": password
-          };
-          Map<String, dynamic> params = {
-            "sign_up": true,
-            "confirm_password": confirmPassword
-          };
-          Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((result) {
-            _trySignUpCallback(auth2EmailSignUpResultFromAuth2LinkResult(result));
-          });
-        }
+        Auth2().signUpWithEmail(widget.email, password).then((Auth2EmailSignUpResult result) {
+          _trySignUpCallback(result);
+        });
       }
     }
   }
@@ -455,20 +418,9 @@ class _ProfileLoginEmailPanelState extends State<ProfileLoginEmailPanel>  {
       else {
         setState(() { _isSiging = true; });
 
-        if (widget.link != true) {        
-          Auth2().authenticateWithEmail(widget.email, password).then((Auth2EmailSignInResult result) {
-            _trySignInCallback(result);
-          });
-        } else {
-          Map<String, dynamic> creds = {
-            "email": widget.email,
-            "password": password
-          };
-          Map<String, dynamic> params = {};
-          Auth2().linkAccountAuthType(Auth2LoginType.email, creds, params).then((Auth2LinkResult result) {
-            _trySignInCallback(auth2EmailSignInResultFromAuth2LinkResult(result));
-          });
-        }
+        Auth2().authenticateWithEmail(widget.email, password).then((Auth2EmailSignInResult result) {
+          _trySignInCallback(result);
+        });
       }
     }
   }
@@ -501,35 +453,6 @@ class _ProfileLoginEmailPanelState extends State<ProfileLoginEmailPanel>  {
       else if (widget.onFinish != null) {
         widget.onFinish!();
       }
-    }
-  }
-
-  void _onTapCancel() {
-    setState(() { _isCanceling = true; });
-
-    for (Auth2Type authType in Auth2().linkedEmail) {
-      if (authType.identifier == widget.email) {
-        Auth2().unlinkAccountAuthType(Auth2LoginType.email, widget.email!).then((success) {
-          if(mounted) {
-            setState(() {
-              _isCanceling = false;
-            });
-            if (!success) {
-              setState(() {
-                setErrorMsg(Localization().getStringEx("panel.onboarding2.email.link.cancel.text", "Failed to remove email address from your account."));
-              });
-            }
-            else if (widget.onFinish != null) {
-              widget.onFinish!();
-            }
-          }
-        });
-        return;
-      }
-    }
-
-    if (widget.onFinish != null) {
-      widget.onFinish!();
     }
   }
 

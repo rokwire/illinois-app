@@ -256,7 +256,7 @@ class DirectoryAccountsListState extends State<DirectoryAccountsList> with Notif
   int get _accountsCount => _accounts?.length ?? 0;
 }
 
-extension _Auth2PublicAccountUtils on Auth2PublicAccount {
+extension Auth2PublicAccountImpl on Auth2PublicAccount {
   String? get directoryKey => (profile?.lastName?.isNotEmpty == true) ?
-    profile?.lastName?.substring(0, 1).toUpperCase() : null;
+    profile?.lastName?.characters.first.toUpperCase() : null;
 }

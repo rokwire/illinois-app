@@ -2,8 +2,6 @@
 // Building
 
 import 'package:collection/collection.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -146,9 +144,6 @@ class Building with Explore implements Favorite {
     DeepCollectionEquality().hash(floors);
 
   // Accessories
-
-  BuildingEntrance? nearstEntrance(Position? position, {bool requireAda = false}) =>
-    BuildingEntrance.nearstEntrance(entrances, position, requireAda: requireAda);
 
   String? get displayName =>
     (name?.isNotEmpty == true) ? ((shortName?.isNotEmpty == true) ? '$name ($shortName)' : name) : shortName;
@@ -389,27 +384,5 @@ class BuildingEntrance {
     return jsonList;
   }
 
-  // Accessories
-  static BuildingEntrance? nearstEntrance(List<BuildingEntrance>?entrances, Position? position, {bool requireAda = false}) {
-    if ((entrances != null) && (position != null)) {
-      double? minDistance, minAdaDistance;
-      BuildingEntrance? minEntrance, minAdaEntrance;
-      for (BuildingEntrance entrance in entrances) {
-        if (entrance.hasValidLocation) {
-          double distance = GeoMapUtils.getDistance(entrance.latitude!, entrance.longitude!, position.latitude, position.longitude);
-          if ((minDistance == null) || (distance < minDistance)) {
-            minDistance = distance;
-            minEntrance = entrance;
-          }
-          if (requireAda && (entrance.adaCompliant == true) && ((minAdaDistance == null) || (distance < minAdaDistance))) {
-            minAdaDistance = distance;
-            minAdaEntrance = entrance;
-          }
-        }
-      }
-      return (requireAda && (minAdaEntrance != null)) ? minAdaEntrance : minEntrance;
-    }
-    return null;
-  }
 }
 

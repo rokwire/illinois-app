@@ -16,16 +16,19 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/profile/ProfileLoginPage.dart';
 import 'package:illinois/ui/profile/ProfileLoginPhoneOrEmailPanel.dart';
-import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsVerifyIdentityPanel extends StatefulWidget{
@@ -36,7 +39,7 @@ class SettingsVerifyIdentityPanel extends StatefulWidget{
 
 class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPanel> {
 
-  bool? _loading;
+  bool _connectingNetId = false;
 
   @override
   void initState() {
@@ -46,149 +49,115 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx("panel.settings.verify_identity.label.title", "Verify your Identity"),
-      ),
+      appBar: HeaderBar(title: Localization().getStringEx("panel.settings.verify_identity.label.title", "Verify your Identity"),),
       body: SingleChildScrollView(child: _buildContent()),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
-  Widget _buildContent() {
-    return Stack(alignment: Alignment.center, children: [
-      // Content Widgets
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(height: 41),
-          Container(padding: EdgeInsets.symmetric(horizontal: 24),
-            child: Text(
-              Localization().getStringEx("panel.settings.verify_identity.label.description", "Connect to {{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-              style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat"),
-            ),
+  Widget _buildContent() =>
+    Column( crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Container(height: 42),
+      Container(padding: EdgeInsets.symmetric(horizontal: 24), child:
+        Text(Localization().getStringEx("panel.settings.verify_identity.label.description", "Connect to {{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+          style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat"),
+        ),
+      ),
+      Container(height: 8,),
+      Container(padding: EdgeInsets.symmetric(horizontal: 24),
+        child: _signInWithNetIdWidget
+      ),
+      Container(height: 24,),
+      Container(padding: EdgeInsets.symmetric(horizontal: 42),
+        child: _signInWithPhoneOrEmailWidget
+      ),
+    ],);
+
+  Widget get _signInWithNetIdWidget =>
+    ProfileLoginHighlightedBox(child:
+        Column(children: [
+          Text(Localization().getStringEx('panel.home.connect.not_logged_in.netid.description', 'Sign in with your Illinois NetID to access your Illini ID, course schedule, and other personalized features.'),
+            style: Styles().textStyles.getTextStyle('widget.description.regular.thin')
           ),
-          Container(height: 8,),
-          Container(padding: EdgeInsets.symmetric(horizontal: 24),
-            child: _contentIdDescription
-          ),
-          Container(height: 12,),
-          Container(padding: EdgeInsets.symmetric(horizontal: 16),
-              child:RibbonButton(
-                  title: Localization().getStringEx("panel.settings.verify_identity.button.connect_net_id.title", "Connect Your NetID"),
-                  borderRadius: BorderRadius.circular(4),
-                  onTap: _onTapConnectNetId
-              )),
-          Container(height: 16,),
-          Container(padding: EdgeInsets.symmetric(horizontal: 24),
-              child:RichText(
-                text: TextSpan(
-                  style:  Styles().textStyles.getTextStyle("widget.info.regular.thin"),
-                  children: <TextSpan>[
-                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.phone_or_email.desription1", "Don’t have a NetID"),
-                        style:  Styles().textStyles.getTextStyle("widget.info.regular.fat")),
-                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.phone_or_email.desription2", "? Verify your phone number or sign in by email to save your preferences and have the same experience on more than one device.")),
-                  ],
-                ),
-              )
-          ),
-          Container(height: 12,),
-          Container(padding: EdgeInsets.symmetric(horizontal: 16),
-              child:RibbonButton(
-                  title: Localization().getStringEx("panel.settings.verify_identity.button.phone_or_phone.title", "Proceed"),
-                  borderRadius: BorderRadius.circular(4),
-                  onTap: _onTapProceed
-              )),
-        ],),
-      // Loading indicator widgets
-      Visibility(visible: (_loading == true), child: CircularProgressIndicator())
-    ]);
-  }
-
-  Widget get _contentIdDescription {
-    final String appTitleMacro = '{{app_title}}';
-    final String employeeMacro = '{{employee}}';
-    final String universityStudentMacro = '{{university_student}}';
-
-    String appTitleText = Localization().getStringEx('app.title', 'Illinois');
-    String employeeText = Localization().getStringEx('panel.settings.home.connect.not_logged_in.netid.description.employee', 'employee');
-    String universityStudentText = Localization().getStringEx('panel.settings.home.connect.not_logged_in.netid.description.university_student', 'university student');
-
-    TextStyle? regularTextStyle = Styles().textStyles.getTextStyle('widget.info.regular.thin');
-    TextStyle? boldTextStyle = Styles().textStyles.getTextStyle('widget.detail.regular.fat');
-
-    String descriptionText = Localization().getStringEx('panel.settings.home.connect.not_logged_in.netid.description', 'Are you a $universityStudentMacro or $employeeMacro? Sign in with your NetID to see $appTitleMacro information specific to you, like your Illini ID and course schedule.').
-      replaceAll(appTitleMacro, appTitleText);
-
-    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(descriptionText, macros: [employeeMacro, universityStudentMacro], builder: (String entry){
-      if (entry == employeeMacro) {
-        return TextSpan(text: employeeText, style: boldTextStyle);
-      }
-      if (entry == universityStudentMacro) {
-        return TextSpan(text: universityStudentText, style: boldTextStyle);
-      }
-      else {
-        return TextSpan(text: entry);
-      }
-    });
-    return RichText(text:
-      TextSpan(style: regularTextStyle, children: spanList)
+          SizedBox(height: 16,),
+          RoundedButton(
+            label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.button.title", "Sign In with Your NetID"),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+            borderColor: Styles().colors.fillColorSecondary,
+            backgroundColor: Styles().colors.surface,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            contentWeight: 0.75,
+            progress: (_connectingNetId == true),
+            onTap: _onConnectNetIdClicked,
+          )
+        ],)
     );
-  }
 
-  void _onTapConnectNetId() {
+  void _onConnectNetIdClicked() {
+    Analytics().logSelect(target: "Connect netId");
     if (!FlexUI().isAuthenticationAvailable) {
       AppAlert.showAuthenticationNAMessage(context);
     }
-    else if (_loading != true) {
-      _setLoading(true);
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? success) {
+    else if (_connectingNetId != true) {
+      setState(() { _connectingNetId = true; });
+      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
-          _setLoading(false);
-          if (success == Auth2OidcAuthenticateResult.succeeded) {
-            _didLogin(context);
-          }
-          else if (success == Auth2OidcAuthenticateResult.failed) {
+          setState(() { _connectingNetId = false; });
+          if (result != Auth2OidcAuthenticateResult.succeeded) {
             AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          } else {
+            Navigator.of(context).pop();
           }
         }
       });
     }
   }
 
-  void _onTapProceed() {
-    _setLoading(true);
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => ProfileLoginPhoneOrEmailPanel(
-                  onFinish: () {
-                    _setLoading(false);
-                    _didLogin(context);
-                  }
-                )));
-  }
+  Widget get _signInWithPhoneOrEmailWidget =>
+    HtmlWidget(_signInWithPhoneOrEmailDescriptionHtml,
+      onTapUrl : (url) { _onTapSignInWithPhoneOrEmailLink(context, url); return true; },
+      textStyle:  Styles().textStyles.getTextStyle("widget.description.small"),
+      customStylesBuilder: (element) => _htmlStyleMap[element.localName?.toLowerCase()],
+    );
 
-  void _didLogin(_) {
-    Navigator.of(context).popUntil((Route route) {
-      bool isCurrent = (AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType);
-      if (isCurrent) {
-        Navigator.of(context).pop();
-        return true;
-      } else {
-        return false;
-      }
-    });
-  }
+  static const String _localScheme = 'local';
+  static const String _signInHost = 'signin';
+  static const String _signInUrlMacro = '{{signin_url}}';
+  static const String _signInUrl = '$_localScheme://$_signInHost';
 
-  void _setLoading(bool loading) {
-    if (_loading != loading) {
-      _loading = loading;
-      if (mounted) {
-        setState(() {});
-      }
+  String get _signInWithPhoneOrEmailDescriptionHtml => Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description", "<b>Don’t have a NetID?</b> <a href='$_signInUrlMacro'>Use your mobile phone number or personal (non-Illinois) email address to sign in.</a><p>Once a NetID is issued, sign in above using your NetID.</p>").
+    replaceAll(_signInUrlMacro, _signInUrl);
+
+  Map<String, Map<String, String>> get _htmlStyleMap => {
+    'a' : _htmlLinkStyle
+  };
+
+  Map<String, String> get _htmlLinkStyle => <String, String>{
+    'color': _htmlTextColor,
+    'text-decoration-color': _htmlLinkColor,
+  };
+
+  String get _htmlTextColor => ColorUtils.toHex(Styles().colors.fillColorPrimary);
+  String get _htmlLinkColor => ColorUtils.toHex(Styles().colors.fillColorSecondary);
+
+  void _onTapSignInWithPhoneOrEmailLink(BuildContext context, String? url) {
+    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+    if ((uri?.scheme == _localScheme) && (uri?.host == _signInHost)) {
+      _connectPhoneOrEmail();
     }
   }
 
-  //TBD consider availability for phone/netId depending on role ()
+  void _connectPhoneOrEmail() {
+    Analytics().logSelect(target: "Phone or Email Login", source: runtimeType.toString());
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
+    }
+    else if (!FlexUI().isAuthenticationAvailable) {
+      AppAlert.showAuthenticationNAMessage(context);
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => ProfileLoginPhoneOrEmailPanel(onFinish: () => Navigator.of(context).pop()),),);
+    }
+  }
 }

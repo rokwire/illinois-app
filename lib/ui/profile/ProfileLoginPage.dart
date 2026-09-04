@@ -1,23 +1,18 @@
 
-import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
-import 'package:illinois/ui/profile/ProfileLoginLinkedAccountPanel.dart';
-import 'package:illinois/ui/profile/ProfileLoginEmailPanel.dart';
-import 'package:illinois/ui/profile/ProfileLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/profile/ProfileLoginPhoneOrEmailPanel.dart';
-import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -38,12 +33,6 @@ class ProfileLoginPage extends StatefulWidget {
 }
 
 class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsListener {
-
-  static BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5));
-  static BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
-  static BorderRadius _allRounding = BorderRadius.all(Radius.circular(5));
-  static Border _allBorder = Border.all(color: Styles().colors.surfaceAccent, width: 1);
-
   bool _connectingNetId = false;
   bool _disconnectingNetId = false;
   bool _disconnectingPhone = false;
@@ -102,16 +91,13 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
       else if (code == 'connected') {
         contentList.add(_buildConnected());
       }
-      else if (code == 'linked') {
-        contentList.add(_buildLinked());
-      }
     }
 
     if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
       contentList.add(_buildDebug());
     }
 
-    contentList.add(Container(height: 48,),);
+    contentList.add(Container(height: 48 * 4,),);
 
     contentList.add(_buildAppInfo());
 
@@ -124,45 +110,17 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
 
   Widget _buildConnect() {
     List<Widget> contentList =  [];
-    contentList.add(Padding(padding: EdgeInsets.only(bottom: 2), child:
-      Text(Localization().getStringEx("panel.settings.home.connect.not_logged_in.title", "Sign in to {{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-        style: Styles().textStyles.getTextStyle("widget.title.large"),
-      ),
-    ),);
-
     List<dynamic> codes = FlexUI()['authenticate.connect'] ?? [];
     for (String code in codes) {
-      if (code == 'netid') {
-          contentList.add(Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-            _netIdDescription
-          ),);
-          contentList.add(RibbonButton(
-            border: _allBorder,
-            borderRadius: _allRounding,
-            title: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Sign in with your NetID"),
-            progress: _connectingNetId == true,
-            onTap: _onConnectNetIdClicked
-          ),);
+      Widget? codeWidget;
+      switch(code) {
+        case 'netid': codeWidget = _signInWithNetIdWidget; break;
+        case 'phone_or_email': codeWidget = Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 16), child: _signInWithPhoneOrEmailWidget); break;
       }
-      else if (code == 'phone_or_email') {
-          contentList.add(Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-            RichText(text:
-              TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
-                TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "),
-                  style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")
-                ),
-                TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_2",
-                  "Sign in with your mobile phone number or email address to save your preferences and have the same experience on more than one device."
-                )),
-              ],),
-            ),
-          ),);
-          contentList.add(RibbonButton(
-            borderRadius: _allRounding,
-            border: _allBorder,
-            title: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Sign in with mobile phone or email"),
-            onTap: _onPhoneOrEmailLoginClicked
-          ),);
+      if (codeWidget != null) {
+        contentList.add(Padding(padding: EdgeInsetsGeometry.only(top: contentList.isNotEmpty ? 16 : 0), child:
+          codeWidget,
+        ));
       }
     }
 
@@ -172,6 +130,26 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
       ),
     );
   }
+
+  Widget get _signInWithNetIdWidget =>
+    ProfileLoginHighlightedBox(child:
+        Column(children: [
+          Text(Localization().getStringEx('panel.home.connect.not_logged_in.netid.description', 'Sign in with your Illinois NetID to access your Illini ID, course schedule, and other personalized features.'),
+            style: Styles().textStyles.getTextStyle('widget.description.regular.thin')
+          ),
+          SizedBox(height: 16,),
+          RoundedButton(
+            label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.button.title", "Sign In with Your NetID"),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+            borderColor: Styles().colors.fillColorSecondary,
+            backgroundColor: Styles().colors.surface,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            contentWeight: 0.75,
+            progress: (_connectingNetId == true),
+            onTap: _onConnectNetIdClicked,
+          )
+        ],)
+    );
 
   void _onConnectNetIdClicked() {
     Analytics().logSelect(target: "Connect netId");
@@ -191,39 +169,42 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
     }
   }
 
-  Widget get _netIdDescription {
-    final String appTitleMacro = '{{app_title}}';
-    final String employeeMacro = '{{employee}}';
-    final String universityStudentMacro = '{{university_student}}';
-
-    String appTitleText = Localization().getStringEx('app.title', 'Illinois');
-    String employeeText = Localization().getStringEx('panel.settings.verify_identity.label.connect_id.desription.employee', 'employee');
-    String universityStudentText = Localization().getStringEx('panel.settings.verify_identity.label.connect_id.desription.university_student', 'university student');
-
-    TextStyle? regularTextStyle = Styles().textStyles.getTextStyle('widget.info.regular.thin');
-    TextStyle? boldTextStyle = Styles().textStyles.getTextStyle('widget.info.regular.fat');
-
-    String descriptionText = Localization().getStringEx('panel.settings.verify_identity.label.connect_id.desription', 'Are you a $universityStudentMacro or $employeeMacro? Sign in with your NetID to see $appTitleMacro information specific to you, like your Illini ID and course schedule.').
-      replaceAll(appTitleMacro, appTitleText);
-
-    List<InlineSpan> spanList = StringUtils.split<InlineSpan>(descriptionText, macros: [employeeMacro, universityStudentMacro], builder: (String entry){
-      if (entry == employeeMacro) {
-        return TextSpan(text: employeeText, style: boldTextStyle);
-      }
-      if (entry == universityStudentMacro) {
-        return TextSpan(text: universityStudentText, style: boldTextStyle);
-      }
-      else {
-        return TextSpan(text: entry);
-      }
-    });
-    return RichText(text:
-      TextSpan(style: regularTextStyle, children: spanList)
+  Widget get _signInWithPhoneOrEmailWidget =>
+    HtmlWidget(_signInWithPhoneOrEmailDescriptionHtml,
+      onTapUrl : (url) { _onTapSignInWithPhoneOrEmailLink(context, url); return true; },
+      textStyle:  Styles().textStyles.getTextStyle("widget.description.small"),
+      customStylesBuilder: (element) => _htmlStyleMap[element.localName?.toLowerCase()],
     );
+
+  static const String _localScheme = 'local';
+  static const String _signInHost = 'signin';
+  static const String _signInUrlMacro = '{{signin_url}}';
+  static const String _signInUrl = '$_localScheme://$_signInHost';
+
+  String get _signInWithPhoneOrEmailDescriptionHtml => Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description", "<b>Don’t have a NetID?</b> <a href='$_signInUrlMacro'>Use your mobile phone number or personal (non-Illinois) email address to sign in.</a><p>Once a NetID is issued, sign in above using your NetID.</p>").
+    replaceAll(_signInUrlMacro, _signInUrl);
+
+  Map<String, Map<String, String>> get _htmlStyleMap => {
+    'a' : _htmlLinkStyle
+  };
+
+  Map<String, String> get _htmlLinkStyle => <String, String>{
+    'color': _htmlTextColor,
+    'text-decoration-color': _htmlLinkColor,
+  };
+
+  String get _htmlTextColor => ColorUtils.toHex(Styles().colors.fillColorPrimary);
+  String get _htmlLinkColor => ColorUtils.toHex(Styles().colors.fillColorSecondary);
+
+  void _onTapSignInWithPhoneOrEmailLink(BuildContext context, String? url) {
+    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+    if ((uri?.scheme == _localScheme) && (uri?.host == _signInHost)) {
+      _connectPhoneOrEmail();
+    }
   }
 
-  void _onPhoneOrEmailLoginClicked() {
-    Analytics().logSelect(target: "Phone or Email Login");
+  void _connectPhoneOrEmail() {
+    Analytics().logSelect(target: "Phone or Email Login", source: runtimeType.toString());
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
@@ -249,33 +230,24 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
 
     List<dynamic> codes = FlexUI()['authenticate.connected'] ?? [];
     for (String code in codes) {
-      if (code == 'netid') {
-        contentList.addAll(_buildConnectedNetIdLayout());
+      Widget? codeWidget;
+      switch(code) {
+        case 'netid': codeWidget = _buildConnectedNetIdLayout(); break;
+        case 'phone': codeWidget = _buildConnectedPhoneLayout(); break;
+        case 'email': codeWidget = _buildConnectedEmailLayout(); break;
       }
-      else if (code == 'phone') {
-        contentList.addAll(_buildConnectedPhoneLayout());
-      }
-      else if (code == 'email') {
-        contentList.addAll(_buildConnectedEmailLayout());
+      if (codeWidget != null) {
+        contentList.add(Padding(padding: EdgeInsetsGeometry.only(top: contentList.isNotEmpty ? 16 : 0), child:
+          codeWidget,
+        ));
       }
     }
 
-    return Visibility(visible: CollectionUtils.isNotEmpty(contentList), child:
-      Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: Styles().colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(4)),
-            border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)
-          ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList)
-        )
-      )
-    );
+    return contentList.isNotEmpty ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList) : Container();
   }
 
-  List<Widget> _buildConnectedNetIdLayout() {
+
+  Widget _buildConnectedNetIdLayout() {
     List<Widget> contentList = [];
 
     List<dynamic> codes = FlexUI()['authenticate.connected.netid'] ?? [];
@@ -310,10 +282,12 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
       }
     }
 
-    return contentList;
+    return ProfileLoginHighlightedBox(child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
+    );
   }
 
-  List<Widget> _buildConnectedPhoneLayout() {
+  Widget _buildConnectedPhoneLayout() {
     List<Widget> contentList = [];
 
     String fullName = Auth2().fullName ?? "";
@@ -341,7 +315,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
             border: _allBorder,
             borderRadius: _allRounding,
             title: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Mobile Phone Number"),
-            onTap: _onPhoneOrEmailLoginClicked));
+            onTap: _connectPhoneOrEmail));
       }
       else if (code == 'disconnect') {
         contentList.add(Padding(padding: EdgeInsets.only(top: 12), child:
@@ -357,10 +331,17 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
         ));
       }
     }
-    return contentList;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      ProfileLoginHighlightedBox(child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
+      ),
+      Padding(padding: EdgeInsetsGeometry.only(left: 16, right: 16, top: 12), child:
+        _connectedPhoneOrEmailDescription
+      )
+    ],);
   }
 
-  List<Widget> _buildConnectedEmailLayout() {
+  Widget _buildConnectedEmailLayout() {
     List<Widget> contentList = [];
 
     String fullName = Auth2().fullName ?? "";
@@ -388,7 +369,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
           border: _allBorder,
           borderRadius: _allRounding,
           title: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
-          onTap: _onPhoneOrEmailLoginClicked
+          onTap: _connectPhoneOrEmail
         ));
       }
       else if (code == 'disconnect') {
@@ -405,8 +386,19 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
         ));
       }
     }
-    return contentList;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      ProfileLoginHighlightedBox(child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
+      ),
+      Padding(padding: EdgeInsetsGeometry.only(left: 16, right: 16, top: 12,), child:
+        _connectedPhoneOrEmailDescription
+      )
+    ],);
   }
+
+  Widget get _connectedPhoneOrEmailDescription =>
+    Text(Localization().getStringEx('panel.settings.home.connect.logged_in.phone_or_email.description.text', 'Once you\'ve been issued an Illinois NetID, sign out, then sign in again with "Sign In with Your NetID" to access university features.'),
+      style: Styles().textStyles.getTextStyle('widget.description.regular.thin'),);
 
   void _onDisconnectNetIdClicked() {
     Analytics().logSelect(target: 'Sign Out: Disconnect NetId');
@@ -443,333 +435,7 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
 
   // Linked
 
-  Widget _buildLinked() {
-    List<Widget> contentList =  [];
 
-    List<dynamic> codes = FlexUI()['authenticate.linked'] ?? [];
-    for (String code in codes) {
-      if (code == 'netid') {
-        List<Widget> linkedNetIDs = _buildLinkedNetIdLayout();
-        contentList.addAll(linkedNetIDs);
-      }
-      else if (code == 'phone') {
-        List<Widget> linkedPhones = _buildLinkedPhoneLayout();
-        if (linkedPhones.length > 0 && contentList.length > 0) {
-          contentList.add(Container(height: 16.0,));
-        }
-        contentList.addAll(linkedPhones);
-      }
-      else if (code == 'email') {
-        List<Widget> linkedEmails = _buildLinkedEmailLayout();
-        if (linkedEmails.length > 0 && contentList.length > 0) {
-          contentList.add(Container(height: 16.0,));
-        }
-        contentList.addAll(linkedEmails);
-      }
-    }
-
-    contentList.add(_buildLink());
-
-    return Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Padding(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 5), child:
-          Text(Localization().getStringEx("panel.settings.home.linked.title", "Alternate Sign Ins"),
-            style: Styles().textStyles.getTextStyle("widget.title.large.fat"),
-          ),
-        ),
-        ...contentList,
-      ])
-    );
-  }
-
-  List<Widget> _buildLinkedNetIdLayout() {
-    List<Widget> contentList = [];
-    List<Auth2Type> linkedTypes = Auth2().linkedOidc;
-
-    List<dynamic> codes = FlexUI()['authenticate.linked.netid'] ?? [];
-    for (Auth2Type linked in linkedTypes) {
-      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.authType?.identifier) {
-        for (int index = 0; index < codes.length; index++) {
-          String code = codes[index];
-          BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
-          if (code == 'info') {
-            contentList.add(Container(
-              width: double.infinity,
-              decoration: BoxDecoration(borderRadius: borderRadius, border: _allBorder),
-              child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Text(Localization().getStringEx("panel.settings.home.linked.net_id.header", "UIN"),
-                      style: Styles().textStyles.getTextStyle("widget.item.small.thin")),
-                  Text(linked.identifier!, style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
-                ],)
-              )
-            ));
-          }
-        }
-      }
-    }
-
-    return contentList;
-  }
-
-  List<Widget> _buildLinkedPhoneLayout() {
-    List<Widget> contentList = [];
-    List<Auth2Type> linkedTypes = Auth2().linkedPhone;
-
-    List<dynamic> codes = FlexUI()['authenticate.linked.phone'] ?? [];
-    for (Auth2Type linked in linkedTypes) {
-      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.authType?.identifier) {
-        for (int index = 0; index < codes.length; index++) {
-          String code = codes[index];
-          BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
-          if (code == 'info') {
-            contentList.add(GestureDetector(onTap: () => _onTapAlternatePhone(linked), child:
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(borderRadius: borderRadius, border: _allBorder),
-                child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                      Text(Localization().getStringEx("panel.settings.home.linked.phone.header", "Phone"),
-                        style: Styles().textStyles.getTextStyle("widget.item.small.thin")),
-                      Text(linked.identifier!,
-                        style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
-                    ],),
-                    Expanded(child: Container()),
-                    Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
-                  ])
-                )
-              )
-            ));
-          }
-        }
-      }
-    }
-
-    return contentList;
-  }
-
-  List<Widget> _buildLinkedEmailLayout() {
-    List<Widget> contentList = [];
-    List<Auth2Type> linkedTypes = Auth2().linkedEmail;
-
-    List<dynamic> codes = FlexUI()['authenticate.linked.email'] ?? [];
-    for (Auth2Type linked in linkedTypes) {
-      if (StringUtils.isNotEmpty(linked.identifier) && linked.identifier != Auth2().account?.authType?.identifier) {
-        for (int index = 0; index < codes.length; index++) {
-          String code = codes[index];
-          BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
-          if (code == 'info') {
-            contentList.add(GestureDetector(onTap: () => _onTapAlternateEmail(linked), child:
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(borderRadius: borderRadius, border: _allBorder),
-                child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                      Text(Localization().getStringEx("panel.settings.home.linked.email.header", "Email"),
-                        style: Styles().textStyles.getTextStyle("widget.item.small.thin")),
-                      Text(linked.identifier!,
-                        style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
-                    ]),
-                    Expanded(child: Container()),
-                    Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
-                  ]),
-                )
-              )
-            ));
-          }
-        }
-      }
-    }
-
-    return contentList;
-  }
-
-
-  // Link
-
-  Widget _buildLink() {
-    List<Widget> contentList =  [];
-    List<dynamic> codes = FlexUI()['authenticate.link'] ?? [];
-    for (int index = 0; index < codes.length; index++) {
-      String code = codes[index];
-      if (code == 'netid') {
-        contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
-          RibbonButton(
-            backgroundColor: Styles().colors.white,
-            border: _allBorder,
-            borderRadius: _allRounding,
-            title: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
-            progress: (_connectingNetId == true),
-            onTap: _onLinkNetIdClicked),
-        ));
-      }
-      else if (code == 'phone') {
-        contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
-          RibbonButton(
-            backgroundColor: Styles().colors.white,
-            border: _allBorder,
-            borderRadius: _allRounding,
-            title: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
-            onTap: () => _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.phone)),
-        ),);
-      }
-      else if (code == 'email') {
-        contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
-          RibbonButton(
-            backgroundColor: Styles().colors.white,
-            border: _allBorder,
-            borderRadius: _allRounding,
-            title: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
-            onTap: () => _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.email)),
-        ),);
-      }
-    }
-
-    if (contentList.length > 0) {
-      return Column(children: contentList);
-    }
-
-    return Container(height: 0.0,);
-  }
-
-  void _onLinkNetIdClicked() {
-    Analytics().logSelect(target: "Link Illinois NetID");
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.netid', 'Feature not available when offline.'));
-    }
-    else if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showAuthenticationNAMessage(context);
-    }
-    else {
-      SettingsDialog.show(context,
-        title: Localization().getStringEx("panel.settings.link.login_prompt.title", "Sign In Required"),
-        message: [ TextSpan(text: Localization().getStringEx("panel.settings.link.login_prompt.description", "For security, you must sign in again to confirm it's you before adding an alternate account.")), ],
-        continueTitle: Localization().getStringEx("panel.settings.link.login_prompt.confirm.title", "Sign In"),
-        onContinue: (List<String> selectedValues, OnContinueProgressController progressController ) => _onLinkNetIdReloginConfirmed(progressController),
-      );
-    }
-  }
-
-  void _onLinkNetIdReloginConfirmed(OnContinueProgressController progressController) {
-      progressController(loading: true);
-      _linkVerifySignIn().then((bool? result) {
-        progressController(loading: false);
-        _popToMe();
-        if (result == true) {
-          Auth2().authenticateWithOidc(link: true).then((Auth2OidcAuthenticateResult? result) {
-            if (result == Auth2OidcAuthenticateResult.failed) {
-              AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to add {{app_title}} NetID.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
-            } else if (result == Auth2OidcAuthenticateResult.failedAccountExist) {
-              _showNetIDAccountExistsDialog();
-            }
-          });
-        }
-      });
-  }
-
-  void _showNetIDAccountExistsDialog() {
-    AppAlert.showCustomDialog(context: context, contentWidget:
-      Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(Localization().getStringEx("panel.settings.netid.link.failed.exists", "An account is already using this NetID."),
-          style: Styles().textStyles.getTextStyle("panel.settings.error.text")),
-        Padding(padding: const EdgeInsets.only(top: 8.0), child:
-          Text(Localization().getStringEx("panel.settings.netid.link.failed.exists.details", "1. You will need to sign in to the other account with this NetID.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."),
-            style: Styles().textStyles.getTextStyle("widget.message.small")
-          ),
-        ),
-      ]),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(context, true), child:
-          Text(Localization().getStringEx("dialog.ok.title", "OK")),
-        ),
-      ]
-    );
-  }
-
-  void _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode mode) {
-    Analytics().logSelect(target: "Link ${settingsLoginPhoneOrEmailModeToString(mode)}");
-
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
-    }
-    else if (!FlexUI().isAuthenticationAvailable) {
-      AppAlert.showAuthenticationNAMessage(context);
-    }
-    else {
-      SettingsDialog.show(context,
-        title: Localization().getStringEx("panel.settings.link.login_prompt.title", "Sign In Required"),
-        message: [ TextSpan(text: Localization().getStringEx("panel.settings.link.login_prompt.description", "For security, you must sign in again to confirm it's you before adding an alternate account.")), ],
-        continueTitle: Localization().getStringEx("panel.settings.link.login_prompt.confirm.title", "Sign In"),
-        onContinue: (List<String> selectedValues, OnContinueProgressController progressController) => _onLinkPhoneOrEmailReloginConfirmed(mode, progressController),
-      );
-    }
-  }
-
-  void _onLinkPhoneOrEmailReloginConfirmed(SettingsLoginPhoneOrEmailMode mode, OnContinueProgressController progressController) {
-    progressController(loading: true);
-    _linkVerifySignIn().then((bool? result) {
-      progressController(loading: false);
-      _popToMe();
-      if (result == true) {
-        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => ProfileLoginPhoneOrEmailPanel(mode: mode, link: true, onFinish: () {
-          _popToMe();
-        },)),);
-      }
-    });
-  }
-
-  Future<bool?> _linkVerifySignIn() async {
-    if (Auth2().isOidcLoggedIn) {
-      Auth2OidcAuthenticateResult? result = await Auth2().authenticateWithOidc();
-      return (result != null) ? (result == Auth2OidcAuthenticateResult.succeeded) : null;
-    }
-    else if (Auth2().isEmailLoggedIn) {
-      Completer<bool?> completer = Completer<bool?>();
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
-        ProfileLoginEmailPanel(email: Auth2().account?.authType?.identifier, state: Auth2EmailAccountState.verified, onFinish: () {
-          completer.complete(true);
-        },)
-      ),).then((_) {
-        completer.complete(null);
-      });
-      return completer.future;
-    }
-    else if (Auth2().isPhoneLoggedIn) {
-      Completer<bool?> completer = Completer<bool?>();
-      Auth2().authenticateWithPhone(Auth2().account?.authType?.identifier).then((Auth2PhoneRequestCodeResult result) {
-        if (result == Auth2PhoneRequestCodeResult.succeeded) {
-          Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
-            ProfileLoginPhoneConfirmPanel(phoneNumber: Auth2().account?.authType?.identifier, onFinish: () {
-              completer.complete(true);
-            },)
-          ),).then((_) {
-            completer.complete(null);
-          });
-        }
-        else {
-          AppAlert.showDialogResult(context, Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed", "Failed to send phone verification code. An unexpected error has occurred.")).then((_) {
-            completer.complete(null);
-          });
-        }
-      });
-      return completer.future;
-    }
-    else {
-      return null;
-    }
-  }
-
-  void _onTapAlternateEmail(Auth2Type linked) {
-    Analytics().logSelect(target: "Alternate Email");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.email,)));
-  }
-
-  void _onTapAlternatePhone(Auth2Type linked) {
-    Analytics().logSelect(target: "Alternate Phone");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ProfileLoginLinkedAccountPanel(linkedAccount: linked, mode: LinkAccountMode.phone,)));
-  }
 
   // Debug
 
@@ -812,22 +478,9 @@ class _ProfileLoginPageState extends State<ProfileLoginPage> with NotificationsL
 
   // Utilities
 
-  BorderRadius _borderRadiusFromIndex(int index, int length) {
-    int first = 0;
-    int last = length - 1;
-    if ((index == first) && (index < last)) {
-      return _topRounding;
-    }
-    else if ((first < index) && (index == last)) {
-      return _bottomRounding;
-    }
-    else if ((index == first) && (index == last)) {
-      return _allRounding;
-    }
-    else {
-      return BorderRadius.zero;
-    }
-  }
+
+  static Border get _allBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
+  static const BorderRadius _allRounding = BorderRadius.all(Radius.circular(5));
 }
 
 class ProfilePromptLogoutWidget extends StatelessWidget {
@@ -868,4 +521,22 @@ class ProfilePromptLogoutWidget extends StatelessWidget {
     Analytics().logAlert(text: _promptText(language: 'en'), selection: "No");
     Navigator.pop(context, false);
   }
+}
+
+class ProfileLoginHighlightedBox extends StatelessWidget {
+  final Widget? child;
+  ProfileLoginHighlightedBox({this.child});
+
+  @override
+  Widget build(BuildContext context) =>
+    Container(decoration: decoration, padding: padding, child: child);
+
+  static BoxDecoration get decoration => BoxDecoration(
+    color: Styles().colors.white,
+    borderRadius: BorderRadius.all(Radius.circular(4)),
+    border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)
+  );
+
+  static EdgeInsets get padding =>
+    EdgeInsets.symmetric(horizontal: 16, vertical: 12);
 }

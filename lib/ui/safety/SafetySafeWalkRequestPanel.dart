@@ -16,9 +16,10 @@ import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/explore/ExploreMessagePopup.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/map2/Map2LocationPanel.dart';
-import 'package:illinois/ui/safety/SafetyHomePanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/QrCodePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -33,9 +34,32 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+class SafetySafeWalkRequestPanel extends StatelessWidget {
+  final Map<String, dynamic>? origin;
+  final Map<String, dynamic>? destination;
+
+  SafetySafeWalkRequestPanel({this.origin, this.destination});
+
+  @override
+  Widget build(BuildContext context) =>
+    Scaffold(
+      appBar: HeaderBar(title: Localization().getStringEx('panel.safety.header.title', 'Safety')),
+      body: _scaffoldContent,
+      backgroundColor: Styles().colors.background,
+      bottomNavigationBar: uiuc.TabBar(),
+    );
+
+  Widget get _scaffoldContent =>
+    SingleChildScrollView(child:
+      Padding(padding: EdgeInsets.only(bottom: 16), child:
+        SafetySafeWalkRequestPage(origin: origin, destination: destination,)
+      ),
+    );
+}
+
 enum _SafeWalkLocationType { current, map, saved }
 
-class SafetySafeWalkRequestPage extends StatefulWidget with SafetyHomeContentPage {
+class SafetySafeWalkRequestPage extends StatefulWidget {
 
   final Map<String, dynamic>? origin;
   final Map<String, dynamic>? destination;
@@ -46,11 +70,6 @@ class SafetySafeWalkRequestPage extends StatefulWidget with SafetyHomeContentPag
 
   @override
   State<StatefulWidget> createState() => _SafetySafeWalkRequestPageState();
-
-  // SafetyHomeContentPage
-
-  @override
-  Color get safetyPageBackgroundColor => Styles().colors.fillColorPrimaryVariant;
 }
 
 class _SafetySafeWalkRequestPageState extends State<SafetySafeWalkRequestPage> {

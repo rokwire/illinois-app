@@ -189,7 +189,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
   }
 
   void _updateInternalVisibility(bool visible) {
-    if (_visible != visible) {
+    if ((_visible != visible) && mounted) {
       _visible = visible;
       _onInternalVisibilityChanged();
     }
@@ -199,6 +199,7 @@ class _HomeWordleWidgetState extends State<HomeWordleWidget> with NotificationsL
     if (_visible) {
       switch(_contentStatus) {
         case FavoriteContentStatus.none: break;
+        case FavoriteContentStatus.update: break;
         case FavoriteContentStatus.refresh: _refreshData(); break;
         case FavoriteContentStatus.reload: _loadData(); break;
       }

@@ -29,7 +29,7 @@ import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesCalendarContentWidget.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesListContentWidget.dart';
 import 'package:illinois/ui/academics/student_courses/StudentCoursesMapContentWidget.dart';
-import 'package:illinois/ui/map2/Map2Widgets.dart';
+import 'package:illinois/ui/widgets/FilterTextButton.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -208,7 +208,7 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
           DropdownButton2<String>(
             dropdownStyleData: DropdownStyleData(width: _termsDropdownWidth, padding: EdgeInsets.zero),
             buttonStyleData: ButtonStyleData(overlayColor: WidgetStateProperty.all(Colors.transparent)),
-            customButton: Map2FilterTextButton(
+            customButton: FilterTextButton(
               title: currentTerm?.name ?? '',
               rightIcon: Styles().images.getImage('chevron-down'),
             ),
@@ -284,7 +284,7 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
         DropdownButton2<StudentCoursesViewType>(
           dropdownStyleData: DropdownStyleData(width: _viewTypeDropdownWidth, padding: EdgeInsets.zero),
           buttonStyleData: ButtonStyleData(overlayColor: WidgetStateProperty.all(Colors.transparent)),
-          customButton: Map2FilterTextButton(
+          customButton: FilterTextButton(
             title: _selectedViewType.pillTitle,
             rightIcon: Styles().images.getImage('chevron-down'),
           ),
@@ -355,9 +355,9 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
   Widget get _rawViewTypeContentWidget {
     switch (_selectedViewType) {
       case StudentCoursesViewType.calendar:
-        return StudentCoursesCalendarContentWidget(courses: _courses, analyticsFeature: widget.analyticsFeature);
+        return StudentCoursesCalendarContentWidget(courses: _scheduledCourses, analyticsFeature: widget.analyticsFeature);
       case StudentCoursesViewType.list:
-        return StudentCoursesListContentWidget(courses: _courses, analyticsFeature: widget.analyticsFeature);
+        return StudentCoursesListContentWidget(courses: _scheduledCourses, analyticsFeature: widget.analyticsFeature);
       case StudentCoursesViewType.map:
         return StudentCoursesMapContentWidget(courses: _courses, analyticsFeature: widget.analyticsFeature);
     }
@@ -366,6 +366,8 @@ class _StudentCoursesHomePanelState extends State<StudentCoursesHomePanel> with 
   bool get _canLoadCourses => (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn);
 
   bool get _showNavigationBars => (widget.showNavigationBars == true);
+
+  List<StudentCourse>? get _scheduledCourses => _courses?.withScheduledMeeting;
 }
 
 enum StudentCoursesViewType { calendar, list, map }

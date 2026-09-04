@@ -272,6 +272,11 @@ class Storage extends rokwire.Storage with NotificationsListener {
   bool? get voterHiddenForPeriod => getBoolWithName(_voterHiddenForPeriodKey, defaultValue: false);
   set voterHiddenForPeriod(bool? value) => setBoolWithName(_voterHiddenForPeriodKey, value);
 
+  // Saved Resources
+  static const String _askForSavedResourcesHomeFavoriteKey = 'saved_resources_ask_home_favorite';
+  bool? get askForSavedResourcesHomeFavorite => getBoolWithName(_askForSavedResourcesHomeFavoriteKey);
+  set askForSavedResourcesHomeFavorite(bool? value) => setBoolWithName(_askForSavedResourcesHomeFavoriteKey, value);
+
   // Http Proxy
   @override String get httpProxyEnabledKey => 'http_proxy_enabled';
   @override String get httpProxyHostKey => 'http_proxy_host';

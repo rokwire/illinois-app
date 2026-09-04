@@ -41,6 +41,7 @@ import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeResearchProjectsWidget.dart';
 import 'package:illinois/ui/home/HomeSafeWalkRequestWidget.dart';
+import 'package:illinois/ui/home/HomeSavedResourcesWidget.dart';
 import 'package:illinois/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeRadioWidget.dart';
@@ -268,7 +269,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: Appointment.favoriteKeyName);
       }
     }
-    else if (code == 'my_mtd_stops') {
+    else if (code == 'mtd_stops') {
       if (title) {
         return HomeFavoritesWidget.titleFromKey(favoriteKey: MTDStop.favoriteKeyName);
       } else if (handle) {
@@ -314,6 +315,7 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
       }
     }
 
+    // Served by HomeSavedResourcesWidget
     else if (code == 'my_campus_guide') {
       if (title) {
         return HomeFavoritesWidget.titleFromKey(favoriteKey: GuideFavorite.favoriteKeyName);
@@ -340,6 +342,15 @@ class HomePanel extends StatefulWidget with AnalyticsInfo {
         return HomeSafetyResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeSafetyResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == HomeSavedResourcesWidget.homeCode) {
+      if (title) {
+        return HomeSavedResourcesWidget.title;
+      } else if (handle) {
+        return HomeSavedResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeSavedResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
 

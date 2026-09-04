@@ -29,6 +29,8 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -38,16 +40,16 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class AthleticsEventsContentWidget extends StatefulWidget {
+class AthleticsEventsPanel extends StatefulWidget {
   final bool? starred;
 
-  AthleticsEventsContentWidget({this.starred});
+  AthleticsEventsPanel({this.starred});
 
   @override
-  State<AthleticsEventsContentWidget> createState() => _AthleticsEventsContentWidgetState();
+  State<AthleticsEventsPanel> createState() => _AthleticsEventsPanelState();
 }
 
-class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWidget> with NotificationsListener {
+class _AthleticsEventsPanelState extends State<AthleticsEventsPanel> with NotificationsListener {
   List<Event2>? _events;
   bool? _lastPageLoadedAll;
   int? _totalEventsCount;
@@ -73,6 +75,7 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       Events2.notifyChanged,
       Auth2UserPrefs.notifyInterestsChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
       AppDateTime.notifyTimeZoneChanged,
     ]);
     _scrollController.addListener(_scrollListener);
@@ -89,16 +92,28 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      AthleticsTeamsFilterWidget(starred: _starred, onStarred: _onTapStarred,),
-      Expanded(child:
-        _buildContent()
-      )
-    ]);
+    return Scaffold(
+      appBar: _headerBar,
+      body: Column(children: [
+        AthleticsTeamsFilterWidget(starred: _starred, onStarred: _onTapStarred),
+        Expanded(child:
+          _buildContent()
+        )
+      ]),
+      backgroundColor: Styles().colors.background,
+      bottomNavigationBar: uiuc.TabBar(),
+    );
+  }
+
+  PreferredSizeWidget get _headerBar {
+    String title = Localization().getStringEx('panel.browse.entry.athletics.sport_events.title', 'Big 10 Events');
+    return HeaderBar(title: title);
   }
 
   Widget _buildContent() {
-    if (_loadingEvents) {
+    if (_favoritesUnavailable) {
+      return _buildEmptyContent();
+    } else if (_loadingEvents) {
       return _buildLoadingContent();
     } else if (_events == null) {
       return _buildErrorContent();
@@ -209,6 +224,10 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   Future<void> _reloadEvents({ int limit = _eventsPageLength }) async {
     if (!mounted) {
+      return;
+    }
+
+    if (_favoritesUnavailable) {
       return;
     }
 
@@ -365,6 +384,8 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   bool get _favoritesMode => (_starred == true);
 
+  bool get _favoritesUnavailable => _favoritesMode && (Auth2().canFavorite != true);
+
   String get _emptyMessageHtml {
     return _favoritesMode ?
       Localization().getStringEx('panel.athletics.content.events.my.empty.message', "There are no starred events for the selected teams. (<a href='$_privacyUrlMacro'>Your privacy level</a> must be at least 3.)").replaceAll(_privacyUrlMacro, _privacyUrl) :
@@ -384,6 +405,9 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
       if (_starred) {
         _reloadEvents();
       }
+    } else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
+      setStateIfMounted(() {});
+      _reloadEvents();
     } else if (name == AppDateTime.notifyTimeZoneChanged) {
       _reloadEvents();
     }

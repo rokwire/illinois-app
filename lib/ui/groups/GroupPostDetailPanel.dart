@@ -90,6 +90,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
   //Refresh
   GlobalKey _postInputKey = GlobalKey();
   GlobalKey _postImageHolderKey = GlobalKey();
+  TextEditingController _subjectController = TextEditingController();
 
   @override
   void initState() {
@@ -113,6 +114,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
 
   @override
   void dispose() {
+    _subjectController.dispose();
     super.dispose();
     NotificationService().unsubscribe(this);
   }
@@ -170,7 +172,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
                   GroupScheduleTimeWidget(
                     timeZone: null,//TBD pass timezone
                     scheduleTime: widget.post?.dateActivatedUtc,
-                    enabled: false, //_isEditMainPost, Disable editing since the BB do not support editing of the create notification
+                    enabled: _canEditScheduledTime, //_isEditMainPost, Disable editing since the BB do not support editing of the create notification
                     onDateChanged: (DateTime? dateTimeUtc){
                       setStateIfMounted(() {
                         Log.d(groupUtcDateTimeToString(dateTimeUtc)??"");
@@ -189,7 +191,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
                 Row(children: [
                   Expanded( child:
                     // Container(),
-                    Visibility(visible: _post?.isPost == true,
+                    Visibility(visible: _post?.isPost == true && !_isEditMainPost,
                       child: Semantics(sortKey: OrdinalSortKey(1), container: true, child:
                         Text(StringUtils.ensureNotEmpty(_post?.subject), maxLines: 5, overflow: TextOverflow.ellipsis,
                             style: Styles().textStyles.getTextStyle("widget.detail.extra_large.fat"),
@@ -277,6 +279,26 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                Visibility(visible: _isPost,
+                                    child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                            padding: EdgeInsets.only(top: 8, bottom: 8),
+                                            decoration: PostInputField.fieldDecoration,
+                                            child: Semantics(label: Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'), child: TextField(
+                                                controller: _subjectController,
+                                                onChanged: (msg) => _mainPostUpdateData?.subject = msg,
+                                                maxLines: 1,
+                                                textCapitalization: TextCapitalization.sentences,
+                                                decoration: InputDecoration(
+                                                    fillColor: Colors.white,
+                                                    border: InputBorder.none,
+                                                    contentPadding: EdgeInsets.all(8)
+                                                ),
+                                                style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"))),),
+                                        Container(height: 12,),
+                                    ],)
+                                ),
                                 Container(
                                     padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
                                     color: Styles().colors.surface,
@@ -739,13 +761,21 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
           selectedAccountIds: selectedAccountIds,
           upToDateMembers: _allMembersAllowedToPost),
     );
+    _subjectController.text = _mainPostUpdateData?.subject ?? '';
     setStateIfMounted(() {});
   }
 
   void _onTapUpdateMainPost() {
     String? body = _mainPostUpdateData?.body;
+    String? subject = _mainPostUpdateData?.subject;
     String? imageUrl = _mainPostUpdateData?.imageUrl ?? _post?.imageUrl;
     List<Member>? toMembers = _mainPostUpdateData?.members;
+    if (_isPost && StringUtils.isEmpty(subject)) {
+      String? validationMsg = Localization().getStringEx('panel.group.detail.post.create.validation.subject.msg', 'Post subject required');
+      AppAlert.showDialogResult(context, validationMsg);
+      return;
+    }
+
     if (StringUtils.isEmpty(body)) {
       String? validationMsg = Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', 'Post message required');
       AppAlert.showDialogResult(context, validationMsg);
@@ -754,6 +784,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
 
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _setLoading(true);
+    _post!.subject = subject;
     _post!.body = htmlModifiedBody;
     _post!.imageUrl = imageUrl;
     _post!.dateActivatedUtc = _mainPostUpdateData?.dateScheduled?.toUtc();
@@ -766,10 +797,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
       if(_mainPostUpdateData?.pinned != _post?.pinned){
         Social().pinPost(postId: _post?.id ?? "", pinned: _mainPostUpdateData?.pinned == true).whenComplete((){
           _mainPostUpdateData = null;
+          _subjectController.text = '';
           _setLoading(false);
         });
       } else {
         _mainPostUpdateData = null;
+        _subjectController.text = '';
         _setLoading(false);
       }
     });
@@ -988,6 +1021,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> with Notifi
 
   bool get _isEditMainPost => _mainPostUpdateData != null;
 
+  bool get _canEditScheduledTime => (widget.post?.isScheduled == true) && _isEditMainPost && (widget.post?.dateActivatedUtc?.isAfter(DateTime.now().toUtc()) == true);
+
   String get _groupId => widget.group.id!;
 
   // Notifications Listener
@@ -1008,6 +1043,7 @@ class PostUpdateData extends PostDataModel {
   factory PostUpdateData.fromPost(Post? post, {List<Member>? members}) =>
       PostUpdateData(
           body: post?.body,
+          subject: post?.subject,
           imageUrl: post?.imageUrl,
           dateScheduled: post?.dateActivatedLocal,
           pinned: post?.pinned,

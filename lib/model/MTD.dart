@@ -156,8 +156,8 @@ class MTDStop with Explore implements Favorite {
   }
 
   static List<MTDStop>? searchInList(List<MTDStop>? stops, { String? search } ) {
-    List<MTDStop>? result;
     if ((stops != null) && (search != null)) {
+      List<MTDStop> result= <MTDStop>[];
       for (MTDStop stop in stops) {
         MTDStop? foundStop;
         List<MTDStop>? foundPoints = searchInList(stop.points, search: search);
@@ -169,16 +169,13 @@ class MTDStop with Explore implements Favorite {
         }
 
         if (foundStop != null) {
-          if (result != null) {
-            result.add(foundStop);
-          }
-          else {
-            result = <MTDStop>[foundStop];
-          }
+          result.add(foundStop);
         }
       }
+      return result;
+    } else {
+      return null;
     }
-    return result;
   }
 
   bool match({ String? search, String? name, LatLng? location, double locationThresholdDistance = 1 /* in meters */ }) {

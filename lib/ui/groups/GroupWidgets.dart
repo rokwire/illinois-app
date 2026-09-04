@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:device_calendar/device_calendar.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -35,7 +36,7 @@ import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/ImageDescriptionInput.dart';
 import 'package:illinois/ui/widgets/WebEmbed.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:rokwire_plugin/model/content.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -1728,11 +1729,13 @@ class _PostInputFieldState extends State<PostInputField> {
   TextEditingController _linkUrlController = TextEditingController();
 
   String? _hint;
+  String? _lastEmittedHtml;
 
   @override
   void initState() {
     super.initState();
     _hint = widget.hint;
+    _lastEmittedHtml = widget.text;
 
     // Initialize QuillController with HTML content if provided
     if (widget.text != null && widget.text!.isNotEmpty) {
@@ -1771,9 +1774,8 @@ class _PostInputFieldState extends State<PostInputField> {
   @override
   void didUpdateWidget(PostInputField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    String? oldBodyInitialText = oldWidget.text;
     String? newBodyInitialText = widget.text;
-    if (oldBodyInitialText != newBodyInitialText) {
+    if (newBodyInitialText != _lastEmittedHtml) {
       if (newBodyInitialText != null && newBodyInitialText.isNotEmpty) {
         try {
           // Convert HTML to Delta
@@ -1788,6 +1790,7 @@ class _PostInputFieldState extends State<PostInputField> {
         _controller.document = quill.Document();
       }
 
+      _lastEmittedHtml = newBodyInitialText;
       setStateIfMounted(() {});
     }
   }
@@ -1796,6 +1799,7 @@ class _PostInputFieldState extends State<PostInputField> {
     if (widget.onBodyChanged != null) {
       // Convert Delta to HTML
       final html = _deltaToHtml();
+      _lastEmittedHtml = html;
       widget.onBodyChanged?.call(html);
     }
     setStateIfMounted(() {});
@@ -2519,17 +2523,18 @@ class GroupPollCard extends StatefulWidget{
 
 class _GroupPollCardState extends State<GroupPollCard> with NotificationsListener {
   GroupStats? _groupStats;
-
-  List<GlobalKey>? _progressKeys;
-  double? _progressWidth;
+  double? _optionStatsWidth;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Groups.notifyGroupStatsUpdated,
+      Polls.notifyVoteChanged,
+      Polls.notifyResultsChanged,
+      Polls.notifyStatusChanged,
     ]);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _evalProgressWidths();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      _updateMaxOptionStatsWidth();
     });
     _loadGroupStats();
     super.initState();
@@ -2545,6 +2550,9 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
   void onNotification(String name, dynamic param) {
     if ((name == Groups.notifyGroupStatsUpdated) && (widget.group?.id == param)) {
       _updateGroupStats();
+    } else if (((name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged) || (name == Polls.notifyStatusChanged)) && (param != null) && (param == widget.poll?.pollId) && mounted) {
+      _updateMaxOptionStatsWidth();
+      setState(() {});
     }
   }
 
@@ -2667,77 +2675,89 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
   }
 
   List<Widget> _buildCheckboxOptions() {
-    bool isClosed = widget.poll!.status == PollStatus.closed;
+    bool isClosed = widget.poll?.status == PollStatus.closed;
+    int totalVotes = widget.poll?.results?.totalVotes ?? 0;
+    int optionsCount = widget.poll?.options?.length ?? 0;
 
-    List<Widget> result = [];
-    _progressKeys = [];
-    int maxValueIndex=-1;
-    if(isClosed  && ((widget.poll!.results?.totalVotes ?? 0) > 0)){
-      maxValueIndex = 0;
-      for (int optionIndex = 0; optionIndex<widget.poll!.options!.length ; optionIndex++) {
-        int? optionVotes =  widget.poll!.results![optionIndex];
-        if(optionVotes!=null &&  optionVotes > widget.poll!.results![maxValueIndex]!)
-          maxValueIndex = optionIndex;
+    int maxVotesIndex = -1;
+    if (isClosed  && (totalVotes > 0) && (optionsCount > 1)) {
+      int? maxVotes, minVotes, maxVoterPos;
+      for (int optionIndex = 0; optionIndex < optionsCount ; optionIndex++) {
+        int? optionVotes =  widget.poll?.results?[optionIndex];
+        if (optionVotes != null) {
+          if ((maxVotes == null) || (optionVotes > maxVotes)) {
+            maxVotes = optionVotes;
+            maxVoterPos = optionIndex;
+          }
+          if ((minVotes == null) || (optionVotes < minVotes)) {
+            minVotes = optionVotes;
+          }
+        }
       }
+      maxVotesIndex = ((maxVotes != null) && (minVotes != null) && (maxVotes > minVotes) && (maxVoterPos != null)) ? maxVoterPos : -1;
     }
 
-    int totalVotes = (widget.poll!.results?.totalVotes ?? 0);
-    for (int optionIndex = 0; optionIndex<widget.poll!.options!.length ; optionIndex++) {
-      bool useCustomColor = isClosed && maxValueIndex == optionIndex;
-      String option = widget.poll!.options![optionIndex];
-      bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
+    List<Widget> result = [];
+    for (int optionIndex = 0; optionIndex < optionsCount ; optionIndex++) {
+      bool didVote = ((widget.poll?.userVote != null) && (0 < (widget.poll?.userVote?[optionIndex] ?? 0)));
       String checkboxImage = didVote ? 'check-circle-filled' : 'check-circle-outline-gray';
 
-      String votesString;
-      int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
-      double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
-      if ((votesCount == null) || (votesCount == 0)) {
-        votesString = '';
-      }
-      else if (votesCount == 1) {
-        votesString = Localization().getStringEx("panel.polls_home.card.text.one_vote","1 vote");
-      }
-      else {
-        String? votes = Localization().getStringEx("panel.polls_home.card.text.votes","votes");
-        votesString = '$votesCount $votes';
-      }
+      double votesPercent = _optionPercent(optionIndex);
+      String statsString = _optionStatsString(optionIndex);
+      String semanticsText = _optionStatsString(optionIndex, semantics: true);
 
-      GlobalKey progressKey = GlobalKey();
-      _progressKeys!.add(progressKey);
+      bool useCustomColor = isClosed && maxVotesIndex == optionIndex;
 
-      String semanticsText = option + "," +"\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
+      String optionText = widget.poll?.options?[optionIndex] ?? '';
+      TextStyle? optionTextStyle = /* useCustomColor ? Styles().textStyles.getTextStyle('widget.group.card.poll.option_variant') : */ Styles().textStyles.getTextStyle('widget.group.card.poll.option');
+      Color progressColor = useCustomColor ? _pollProgressVariantColor : _pollProgressColor;
+
+      double statsWidth = (_optionStatsWidth ?? _maxOptionStatsWidth) + MediaQuery.of(context).textScaler.scale(5);
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 8 : 0), child:
-      GestureDetector(
-          child:
-          Semantics(label: semanticsText, excludeSemantics: true, child:
+        Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage(checkboxImage)),
-            Expanded(
-                flex: 5,
-                key: progressKey, child:
-            Stack(alignment: Alignment.centerLeft, children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.white, progressColor: useCustomColor ?Styles().colors.fillColorPrimary:Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
-              Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
-              Padding(padding: EdgeInsets.only(left: 5), child:
-              Row(children: <Widget>[
-                Expanded( child:
-                Padding( padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: Text(option, style: useCustomColor? Styles().textStyles.getTextStyle('widget.group.card.poll.option_variant')  : Styles().textStyles.getTextStyle('widget.group.card.poll.option')),)),
-                //TBD Do we need this icon and is it the correct icon resource?  Erase if not needed
-               /* Visibility( visible: didVote,
-                    child:Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage('check-circle-outline-gray'))
-                ),*/
-              ],),)
-              ),
-            ],)
+            Padding(padding: EdgeInsets.only(right: 10), child:
+              Styles().images.getImage(checkboxImage)
             ),
-            Expanded(
-              flex: 5,
-              child: Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: Styles().textStyles.getTextStyle('widget.group.card.poll.votes'),),),
+            Expanded(child:
+              Stack(alignment: Alignment.centerLeft, children: <Widget>[
+                Positioned.fill(child:
+                  CustomPaint(
+                    painter: PollProgressPainter(
+                      backgroundColor: Styles().colors.white,
+                      progressColor: progressColor,
+                      progress: votesPercent / 100.0
+                    ),
+                    child: Row(children: [
+                      Expanded(child:
+                        Container()
+                      )
+                    ],),
+                  ),
+                ),
+                Padding(padding: EdgeInsets.only(left: 5), child:
+                  Row(children: <Widget>[
+                    Expanded( child:
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 5, vertical: 8), child:
+                        Text(optionText, style: optionTextStyle),
+                      )
+                    ),
+                  ],),
+                )
+              ],)
+            ),
+
+            Container(width: statsWidth + 5, padding: EdgeInsetsGeometry.only(left: 5), child:
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Expanded(child:
+                  Text(statsString, textAlign: TextAlign.right, style: _optionStatsTextStyle,),
+                )
+              ],)
             )
-          ],)
-          ))));
+        ],)
+      )
+    ));
     }
     return result;
   }
@@ -2766,7 +2786,7 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
                   ),
                 ),
                 Visibility(visible: loading,
-                  child: Container(padding: EdgeInsets.symmetric(vertical: 5),
+                  child: Container(padding: EdgeInsets.symmetric(vertical: 5,),
                     child: Align(alignment: Alignment.center,
                       child: SizedBox(height: 24, width: 24,
                           child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), )
@@ -2779,27 +2799,65 @@ class _GroupPollCardState extends State<GroupPollCard> with NotificationsListene
         ));
   }
 
-  void _onVoteTapped(){
-    Polls().presentPollVote(widget.poll);
+  String _optionStatsString(int optionIndex, { bool semantics = false }) {
+
+    String votesString;
+    int? votesCount = widget.poll?.results?[optionIndex];
+    if ((votesCount == null) || (votesCount == 0)) {
+      votesString = '';
+    }
+    else if (votesCount == 1) {
+      votesString = Localization().getStringEx("panel.polls_home.card.text.one_vote","1 vote");
+    }
+    else {
+      String? votes = Localization().getStringEx("panel.polls_home.card.text.votes","votes");
+      votesString = '$votesCount $votes';
+    }
+
+    double votesPercent = _optionPercent(optionIndex);
+    String votesPercentString = votesPercent.toStringAsFixed(0);
+
+    String? optionText = widget.poll?.options?[optionIndex];
+
+    return (semantics != true) ? '$votesString ($votesPercentString%)' : '$optionText,\n$votesString,$votesPercentString%';
   }
 
-  void _evalProgressWidths() {
-    if (_progressKeys != null) {
-      double progressWidth = -1.0;
-      for (GlobalKey progressKey in _progressKeys!) {
-        final RenderObject? progressRender = progressKey.currentContext?.findRenderObject();
-        if ((progressRender is RenderBox) && progressRender.hasSize && (0 < progressRender.size.width)) {
-          if ((progressWidth < 0.0) || (progressRender.size.width < progressWidth)) {
-            progressWidth = progressRender.size.width;
-          }
-        }
-      }
-      if (0 < progressWidth) {
-        setState(() {
-          _progressWidth = progressWidth;
-        });
+  double _optionPercent(int optionIndex) {
+    int? votesCount = widget.poll?.results?[optionIndex];
+    int? totalVotes = widget.poll?.results?.totalVotes;
+    return ((totalVotes != null) && (0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
+  }
+
+  void _updateMaxOptionStatsWidth() {
+    double maxWidth = 0.0;
+    int optionsCount = widget.poll?.options?.length ?? 0;
+    for (int optionIndex = 0; optionIndex < optionsCount ; optionIndex++) {
+      String optionStats = _optionStatsString(optionIndex);
+      final Size textSizeFull = (TextPainter(
+        text: TextSpan(text: optionStats, style: _optionStatsTextStyle,),
+        textScaler: MediaQuery.of(context).textScaler,
+        textDirection: TextDirection.ltr,
+      )..layout()).size;
+      if (textSizeFull.width > maxWidth) {
+        maxWidth = textSizeFull.width;
       }
     }
+    maxWidth = min(maxWidth, _maxOptionStatsWidth) ;
+    if (maxWidth != _optionStatsWidth) {
+      setState(() {
+        _optionStatsWidth = maxWidth;
+      });
+    }
+  }
+
+  double get _maxOptionStatsWidth => (MediaQuery.of(context).size.width / 4);
+
+  TextStyle? get _optionStatsTextStyle => Styles().textStyles.getTextStyle('widget.group.card.poll.votes');
+  Color get _pollProgressVariantColor   => Styles().colors.getColor('pollProgressColor') ?? const Color(0xFFF4E5CE);
+  Color get _pollProgressColor          => Styles().colors.lightGray;
+
+  void _onVoteTapped(){
+    Polls().presentPollVote(widget.poll);
   }
 
   void _loadGroupStats() {
@@ -3731,7 +3789,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
   Widget _buildDropdown(){
     // String title = (_time != null? DateFormat("EEE, MMM dd, h:mma").format(_dateWithTimeOfDay(_time!)) : "");
     DateTime? selectedTime = _dateTime?.toLocal();
-    String title = (selectedTime != null? DateFormat("EEE, MMM dd, h:mma").format(selectedTime) : "");
+    String title = (selectedTime != null? intl.DateFormat("EEE, MMM dd, h:mma").format(selectedTime) : "");
 
     return Padding(padding: EdgeInsets.zero, child:
     Column(children: <Widget>[
@@ -3789,7 +3847,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
         Row(
           children: [
             Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "DATE"),)),
-            Expanded(flex: 7, child: _buildDropdownButton(label: (_date != null) ? DateFormat("EEE, MMM dd, yyyy").format(_date!) : "-", onTap: _onDate))
+            Expanded(flex: 7, child: _buildDropdownButton(label: (_date != null) ? intl.DateFormat("EEE, MMM dd, yyyy").format(_date!) : "-", onTap: _onDate))
           ],)
       ),
       Padding(padding: EdgeInsets.only(bottom: 12)),
@@ -3797,7 +3855,7 @@ class _GroupScheduleTimeState extends State<GroupScheduleTimeWidget>{
         Row(
           children: [
             Expanded(flex: 3, child:buildSectionTitleWidget(Localization().getStringEx("", "TIME"),)),
-            Expanded(flex: 7, child: _buildDropdownButton(label: (_time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(_time!)) : "-", onTap: _onTime))
+            Expanded(flex: 7, child: _buildDropdownButton(label: (_time != null) ? intl.DateFormat("h:mma").format(_dateWithTimeOfDay(_time!)) : "-", onTap: _onTime))
         ],)
       )
     ]);

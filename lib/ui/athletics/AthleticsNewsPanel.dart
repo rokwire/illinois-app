@@ -14,40 +14,39 @@
  * limitations under the License.
  */
 
-
 import 'dart:collection';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/model/News.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Sports.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/model/News.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 
-import 'AthleticsNewsArticlePanel.dart';
-
-class AthleticsNewsContentWidget extends StatefulWidget {
-
+class AthleticsNewsPanel extends StatefulWidget {
   final bool? starred;
 
-  AthleticsNewsContentWidget({this.starred});
+  AthleticsNewsPanel({this.starred});
 
   @override
-  _AthleticsNewsContentWidgetState createState() => _AthleticsNewsContentWidgetState();
+  _AthleticsNewsPanelState createState() => _AthleticsNewsPanelState();
 }
 
-class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget> with NotificationsListener {
+class _AthleticsNewsPanelState extends State<AthleticsNewsPanel> with NotificationsListener {
   List<News>? _news;
   List<News>? _displayNews;
 
@@ -73,14 +72,20 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Container(color: Styles().colors.white, child:
-      Column(children: [
-        AthleticsTeamsFilterWidget(starred: _starred, onStarred: _onTapStarred,),
-        Expanded(child:
-          _buildContent()
-        )
-      ])
+    return Scaffold(
+      appBar: _headerBar,
+      body: Column(children: [
+        AthleticsTeamsFilterWidget(starred: _starred, onStarred: _onTapStarred),
+        Expanded(child: _buildContent())
+      ]),
+      backgroundColor: Styles().colors.background,
+      bottomNavigationBar: uiuc.TabBar(),
     );
+  }
+
+  PreferredSizeWidget get _headerBar {
+    String title = Localization().getStringEx('panel.athletics.content.section.news.label', 'Big 10 News');
+    return HeaderBar(title: title);
   }
 
   void _loadNews() {
@@ -132,8 +137,8 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   Widget _buildEmptyContent() {
     return _buildCenteredWidget(
       HtmlWidget("<center>$_emptyMessageHtml</center>",
-        onTapUrl : _handleLocalUrl,
-        textStyle:  Styles().textStyles.getTextStyle('widget.item.medium'),
+        onTapUrl: _handleLocalUrl,
+        textStyle: Styles().textStyles.getTextStyle('widget.item.medium'),
         customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary)} : null,
       )
     );
@@ -142,10 +147,9 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
   bool _handleLocalUrl(String? url) {
     if (url == _privacyUrl) {
       Analytics().logSelect(target: 'Privacy Level', source: widget.runtimeType.toString());
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular)));
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -210,8 +214,6 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
       Localization().getStringEx('panel.athletics.content.news.empty.message', 'There is no news for the selected teams.');
   }
 
-  // Notifications Listener
-
   @override
   void onNotification(String name, param) {
     if (name == Auth2UserPrefs.notifyInterestsChanged) {
@@ -220,11 +222,10 @@ class _AthleticsNewsContentWidgetState extends State<AthleticsNewsContentWidget>
       });
     } else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       if (_starred == true) {
-        setStateIfMounted((){
+        setStateIfMounted(() {
           _displayNews = _buildDisplayNews();
         });
       }
     }
   }
 }
-

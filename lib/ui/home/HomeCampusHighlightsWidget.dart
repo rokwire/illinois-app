@@ -59,8 +59,6 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
       Config.notifyConfigChanged,
       Guide.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
-      Auth2UserPrefs.notifyRolesChanged,
-      Auth2.notifyCardChanged,
       AppLivecycle.notifyStateChanged,
     ]);
 
@@ -93,13 +91,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     else if (name == Guide.notifyChanged) {
       _updatePromotedItems();
     }
-    else if (name == Auth2UserPrefs.notifyRolesChanged) {
-      _updatePromotedItems();
-    }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _updatePromotedItems();
-    }
-    else if (name == Auth2.notifyCardChanged) {
       _updatePromotedItems();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
@@ -133,7 +125,10 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
         pages.add(Padding(
           key: _contentKeys[Guide().entryId(promotedItem) ?? ''] ??= GlobalKey(),
           padding: HomeCard.defaultPageMargin,
-          child: GuideEntryCard(promotedItem, displayMode: CardDisplayMode.home)
+          child: GuideEntryCard(promotedItem,
+            favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusHighlightContentType),
+            displayMode: CardDisplayMode.home
+          )
         ));
       }
 
@@ -156,7 +151,10 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     }
     else {
       contentWidget = Padding(padding: HomeCard.defaultSingleCardMargin, child:
-        GuideEntryCard(_promotedItems?.first, displayMode: CardDisplayMode.home)
+        GuideEntryCard(_promotedItems?.first,
+          favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusHighlightContentType),
+          displayMode: CardDisplayMode.home
+        )
       );
     }
 

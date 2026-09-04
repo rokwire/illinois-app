@@ -50,9 +50,8 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title', 'Control Your Data Privacy');
-    String titleText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title2', '');
-    String descriptionText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description', 'Choose what information you want to store and share to get a recommended privacy level.');
+    String titleText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title', 'Control Your Data & Privacy');
+    String descriptionText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description', 'Set your privacy level by choosing what information you want to store and share.');
 
     String descriptionText1 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description1', 'Please read the ');
     String descriptionText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description2', 'Privacy Notice ');
@@ -71,24 +70,19 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                   Align(alignment: Alignment.centerLeft, child:
                     Onboarding2BackButton( padding: const EdgeInsets.all(16), onTap: _onTapBack,),
                   ),
-
-                  Styles().images.getImage("lock-illustration", excludeFromSemantics: true, width: 130, fit: BoxFit.fitWidth) ?? Container(),
-
+                  Container(height: 8,),
+                  Onboarding2PrivacyProgressBadge(0),
+                  Container(height: 24,),
                   Semantics(
-                    label: titleText + titleText2,
+                    label: titleText,
                     hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
                     header: true,
                     excludeSemantics: true,
-                    child: Padding(padding: EdgeInsets.symmetric(horizontal: 42, vertical: 12), child:
-                      RichText(textAlign: TextAlign.center, text:
-                        TextSpan(children: <TextSpan>[
-                          TextSpan(text:titleText , style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy_statement.title.fat")),
-                          TextSpan(text:titleText2, style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy_statement.title.regular")),
-                        ])
-                      ),
+                    child: Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+                      Text(titleText, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.button.title.extra_large"))
                     ),
                   ),
-
+                  Container(height: 12,),
                   Semantics(label: descriptionText, excludeSemantics: true, child:
                     Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
                       Text(descriptionText, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.privacy_statement.description.regular"))

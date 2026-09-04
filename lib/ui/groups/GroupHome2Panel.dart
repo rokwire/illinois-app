@@ -13,9 +13,9 @@ import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/ui/map2/Map2Widgets.dart';
 import 'package:illinois/ui/profile/ProfileHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:illinois/ui/widgets/FilterTextButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -65,8 +65,15 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   List<_DisplayListItem>? _displayList;
   int? _totalContentLength;
   final Map<String, GlobalKey> _cardKeys = <String, GlobalKey>{};
-
   late Set<String> _collapsedSections;
+
+  static const String _otherSection = '_';
+  static const Set<String> _displaySections = <String>{
+    'A', 'B', 'C', 'D', 'E',
+    'F', 'G', 'H', 'I', 'J',
+    'K', 'L', 'M', 'N', 'O',
+    'P', 'Q', 'R', 'S', 'T',
+    'U', 'V', 'W', 'X', 'Y', 'Z'};
 
   ContentActivity? _contentActivity;
 
@@ -181,7 +188,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   Widget? _buildDisplayListItem(BuildContext context, int index) {
     _DisplayListItem? displayListItem = ListUtils.entry(_displayList, index);
     if (displayListItem is _SectionHeadingListItem) {
-      return _buildSection(displayListItem.section, collapsed: _collapsedSections.contains(displayListItem.section));
+      return _buildSection(displayListItem.section, displayTitle: displayListItem.displayTitle, collapsed: _collapsedSections.contains(displayListItem.section));
     } else if (displayListItem is _SplitterListItem) {
       return Divider(height: _dividerHeight, color: Styles().colors.surfaceAccent,);
     } else if (displayListItem is _SpacerListItem) {
@@ -195,7 +202,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     }
   }
 
-  Widget _buildSection(String section, {bool? collapsed}) {
+  Widget _buildSection(String section, { String? displayTitle, bool? collapsed }) {
     return Row(children: [
       InkWell(onTap: () => _onToggleSection(section), child:
         Padding(padding: _sectionIconPadding, child:
@@ -204,7 +211,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       ),
       Expanded(child:
         Padding(padding: _sectionTextPadding, child:
-          Text(section, style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
+          Text(displayTitle ?? section, style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),)
         )
       )
     ],);
@@ -284,7 +291,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
     Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
       MergeSemantics(key: _filtersButtonKey, child:
         Semantics(/* TBD: value: _currentFilterParam.descriptionText, hint: _filtersButtonHint,*/ child:
-          Map2FilterTextButton(
+          FilterTextButton(
             title: Localization().getStringEx('panel.group.home2.bar.button.filter.title', 'Filter'),
             hint: Localization().getStringEx('panel.group.home2.bar.button.filter.hint', 'Tap to build filter'),
             leftIcon: Styles().images.getImage('filters', size: 16),
@@ -296,7 +303,7 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
       if (Auth2().isLoggedIn)
         MergeSemantics(key: _myGroupsFilterButtonKey, child:
           Semantics(/* TBD: value: _currentFilterParam.descriptionText, hint: _filtersButtonHint,*/ child:
-            Map2FilterTextButton(
+            FilterTextButton(
               title: Localization().getStringEx('panel.group.home2.bar.button.my_groups.title', 'My Groups'),
               hint: Localization().getStringEx('panel.group.home2.bar.button.my_groups.hint', 'Tap to toggle my groups filter'),
               leftIcon: Styles().images.getImage('groups', size: 16),
@@ -512,14 +519,22 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
 
   static LinkedHashMap<String, List<Group>> _buildContentMap(List<Group> contentList) {
     LinkedHashMap<String, List<Group>> contentMap = LinkedHashMap<String, List<Group>>();
+    List<Group> otherGroups = <Group>[];
     for (Group group in contentList) {
       String section = group.section ?? '';
-      List<Group>? sectionList = contentMap[section];
-      if (sectionList != null) {
-        sectionList.add(group);
+      if (_displaySections.contains(section)) {
+        List<Group>? sectionList = contentMap[section];
+        if (sectionList != null) {
+          sectionList.add(group);
+        } else {
+          contentMap[section] = <Group>[group];
+        }
       } else {
-        contentMap[section] = <Group>[group];
+        otherGroups.add(group);
       }
+    }
+    if (otherGroups.isNotEmpty) {
+      contentMap[_otherSection] = otherGroups;
     }
     return contentMap;
   }
@@ -527,18 +542,38 @@ class _GroupHome2PanelState extends State<GroupHome2Panel> with NotificationsLis
   List<_DisplayListItem> _buildDisplayList(LinkedHashMap<String, List<Group>> contentMap, { Set<String>? collapsedSections }) {
     List<_DisplayListItem> displayList = <_DisplayListItem>[];
     for (String section in contentMap.keys) {
-      List<Group>? sectionList = contentMap[section];
-      displayList.add(_SectionHeadingListItem(section));
-      if ((collapsedSections?.contains(section) != true) && (sectionList != null) && sectionList.isNotEmpty)  {
-        for (Group group in sectionList) {
-          displayList.add(_GroupListItem(group));
-          displayList.add(_SpacerListItem(16));
-        }
+      if (section != _otherSection) {
+        displayList.addAll(_buildDisplaySection(section,
+          sectionList: (collapsedSections?.contains(section) != true) ? contentMap[section] : null,
+        ));
       }
-      displayList.add(_SplitterListItem());
     }
+
+    List<Group>? otherSectionList = contentMap[_otherSection];
+    if (otherSectionList != null) {
+      displayList.addAll(_buildDisplaySection(_otherSection,
+        displayTitle: Localization().getStringEx('panel.group.home2.section.other.title', 'Other'),
+        sectionList: (collapsedSections?.contains(_otherSection) != true) ? otherSectionList : null,
+      ));
+    }
+
     return displayList;
   }
+
+  List<_DisplayListItem> _buildDisplaySection(String section, { String? displayTitle, List<Group>? sectionList }) {
+    List<_DisplayListItem> displayList = <_DisplayListItem>[];
+    displayList.add(_SectionHeadingListItem(section, displayTitle: displayTitle));
+    if ((sectionList != null) && sectionList.isNotEmpty)  {
+      for (Group group in sectionList) {
+        displayList.add(_GroupListItem(group));
+        displayList.add(_SpacerListItem(16));
+      }
+    }
+    displayList.add(_SplitterListItem());
+    return displayList;
+  }
+
+
 
   // Notification Handlers
 
@@ -1126,7 +1161,7 @@ extension _GroupsSectionsImpl on Group {
   String? get section {
     if (title != null) {
       if (title?.isNotEmpty == true) {
-        return title?[0].toUpperCase();
+        return title?.characters.first.toUpperCase();
       } else {
         return '';
       }
@@ -1140,7 +1175,8 @@ abstract class _DisplayListItem {}
 
 class _SectionHeadingListItem extends _DisplayListItem {
   final String section;
-  _SectionHeadingListItem(this.section);
+  final String? displayTitle;
+  _SectionHeadingListItem(this.section, { this.displayTitle });
 }
 
 class _SplitterListItem extends _DisplayListItem {

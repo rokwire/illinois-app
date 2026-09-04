@@ -51,7 +51,7 @@ class _StudentCoursesMapContentWidgetState extends Map2BasePanelState<StudentCou
   void initState() {
     super.initState();
     _trayExplores = _buildTrayExplores();
-    WidgetsBinding.instance.addPostFrameCallback((_) => buildMapContentData(_explores, updateCamera: true));
+    WidgetsBinding.instance.addPostFrameCallback((_) => _rebuildMapContentData());
   }
 
   @override
@@ -59,9 +59,16 @@ class _StudentCoursesMapContentWidgetState extends Map2BasePanelState<StudentCou
     super.didUpdateWidget(oldWidget);
     if (!DeepCollectionEquality().equals(widget.courses, oldWidget.courses)) {
       _selectedExploreGroup = null;
-      buildMapContentData(_explores, updateCamera: true, showProgress: true);
+      _rebuildMapContentData(showProgress: true);
       _updateTrayExplores();
     }
+  }
+
+  Future<void> _rebuildMapContentData({bool showProgress = false}) async {
+    await buildMapContentData(_explores, updateCamera: true, showProgress: showProgress);
+    setStateIfMounted(() {
+      mapKey = UniqueKey(); // force map rebuild
+    });
   }
 
   @override

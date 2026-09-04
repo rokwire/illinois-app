@@ -20,22 +20,23 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailHeading.dart';
 import 'package:illinois/ui/athletics/AthleticsWidgets.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
-class AthleticsGameDayContentWidget extends StatefulWidget {
-
-  AthleticsGameDayContentWidget();
+class AthleticsGameDayPanel extends StatefulWidget {
+  AthleticsGameDayPanel();
 
   @override
-  _AthleticsGameDayContentWidgetState createState() => _AthleticsGameDayContentWidgetState();
+  _AthleticsGameDayPanelState createState() => _AthleticsGameDayPanelState();
 }
 
-class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentWidget> with NotificationsListener {
+class _AthleticsGameDayPanelState extends State<AthleticsGameDayPanel> with NotificationsListener {
   List<Game>? _todayGames;
 
   bool _loading = false;
@@ -58,12 +59,20 @@ class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentW
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        color: Styles().colors.white,
-        child: Column(children: [
-          AthleticsTeamsFilterWidget(),
-          Expanded(child: _buildContent())
-        ]));
+    return Scaffold(
+      appBar: _headerBar,
+      body: Column(children: [
+        AthleticsTeamsFilterWidget(),
+        Expanded(child: _buildContent())
+      ]),
+      backgroundColor: Styles().colors.background,
+      bottomNavigationBar: uiuc.TabBar(),
+    );
+  }
+
+  PreferredSizeWidget get _headerBar {
+    String title = Localization().getStringEx('panel.athletics.content.section.game_day.label', "It's Game Day");
+    return HeaderBar(title: title);
   }
 
   void _loadTodayGames() {
@@ -96,17 +105,16 @@ class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentW
 
   Widget _buildEmptyContent() {
     return _buildCenteredWidget(Text(
-        Localization()
-            .getStringEx('panel.athletics.content.game_day.empty.message', 'There are no available gameday guides for the selected teams.'),
-        textAlign: TextAlign.center,
-        style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
+      Localization().getStringEx('panel.athletics.content.game_day.empty.message', 'There are no available gameday guides for the selected teams.'),
+      textAlign: TextAlign.center,
+      style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
   }
 
   Widget _buildErrorContent() {
     return _buildCenteredWidget(Text(
-        Localization().getStringEx('panel.athletics.content.game_day.failed.message', "Failed to load today's games."),
-        textAlign: TextAlign.center,
-        style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
+      Localization().getStringEx('panel.athletics.content.game_day.failed.message', "Failed to load today's games."),
+      textAlign: TextAlign.center,
+      style: Styles().textStyles.getTextStyle('widget.item.medium.fat')));
   }
 
   Widget _buildCenteredWidget(Widget child) {
@@ -124,16 +132,12 @@ class _AthleticsGameDayContentWidgetState extends State<AthleticsGameDayContentW
     return SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child: Column(children: gameDayWidgets));
   }
 
-  // Notifications Listener
-
   @override
   void onNotification(String name, param) {
     if (name == Auth2UserPrefs.notifyInterestsChanged) {
       _loadTodayGames();
-    }
-    else if (name == AppDateTime.notifyTimeZoneChanged) {
+    } else if (name == AppDateTime.notifyTimeZoneChanged) {
       _loadTodayGames();
     }
   }
 }
-

@@ -15,7 +15,8 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Map2.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsEventsPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
@@ -58,7 +59,8 @@ extension FavoriteExt on Favorite {
       return (this as MTDStop).name;
     }
     else if (this is GuideFavorite) {
-      return Guide().entryListTitle(Guide().entryById((this as GuideFavorite).id), stripHtmlTags: true);
+      GuideFavorite guideFavorite = this as GuideFavorite;
+      return guideFavorite.isCampusGuide ? Guide().entryListTitle(Guide().entryById((this as GuideFavorite).id), stripHtmlTags: true) : null;
     }
     else if (this is InboxMessage) {
       return (this as InboxMessage).subject;
@@ -88,7 +90,8 @@ extension FavoriteExt on Favorite {
       return (this as News).displayTime;
     }
     else if (this is GuideFavorite) {
-      return Guide().entryListDescription(Guide().entryById((this as GuideFavorite).id), stripHtmlTags: true);
+      GuideFavorite guideFavorite = this as GuideFavorite;
+      return guideFavorite.isCampusGuide ? Guide().entryListDescription(Guide().entryById((this as GuideFavorite).id), stripHtmlTags: true) : null;
     }
     else if (this is InboxMessage) {
       return (this as InboxMessage).body;
@@ -163,7 +166,8 @@ extension FavoriteExt on Favorite {
       return Styles().colors.accentColor3;
     }
     else if (this is GuideFavorite) {
-      return Styles().colors.accentColor3;
+      GuideFavorite guideFavorite = this as GuideFavorite;
+      return guideFavorite.isCampusGuide ? Styles().colors.accentColor3 : Styles().colors.fillColorSecondary;
     }
     else if (this is InboxMessage) {
       return Styles().colors.fillColorSecondary;
@@ -199,7 +203,12 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: this as MTDStop, analyticsFeature: analyticsFeature)));
     }
     else if (this is GuideFavorite) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as GuideFavorite).id, analyticsFeature: analyticsFeature,)));
+      GuideFavorite guideFavorite = this as GuideFavorite;
+      if (guideFavorite.isCampusGuide) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: guideFavorite.id, analyticsFeature: analyticsFeature,)));
+      } else {
+        //TBD...
+      }
     }
     else if (this is Appointment) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: (this as Appointment), analyticsFeature: analyticsFeature)));
@@ -222,10 +231,10 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) { return Dining2HomePanel(); } ));
     }
     else if (lowerCaseKey == Game.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.events)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsEventsPanel()));
     }
     else if (lowerCaseKey == News.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel(contentType: AthleticsContentType.news)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsPanel()));
     }
     else if (lowerCaseKey == LaundryRoom.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));

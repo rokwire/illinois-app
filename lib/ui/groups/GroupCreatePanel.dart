@@ -587,13 +587,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
     String? longDescription;
     switch(_group?.privacy) {
-      case GroupPrivacy.private: longDescription = Localization().getStringEx("panel.groups.common.privacy.description.long.private", "Anyone who uses the app can find this group if they search and match the full name. Only admins can see who is in the group."); break;
-      case GroupPrivacy.public: longDescription = Localization().getStringEx("panel.groups.common.privacy.description.long.public", "Anyone who uses the app will see this group. Only admins can see who is in the group."); break;
+      case GroupPrivacy.private: longDescription = Localization().getStringEx("panel.groups.common.privacy.description.long.private", "Anyone who uses the app can find this group if they search and match the full name."); break;
+      case GroupPrivacy.public: longDescription = Localization().getStringEx("panel.groups.common.privacy.description.long.public", "Anyone who uses the app will see this group."); break;
       default: break;
     }
 
     return
-      Column(children: <Widget>[
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child:  GroupDropDownButton(
@@ -605,20 +605,16 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   (dynamic item) => item == GroupPrivacy.private?
               Localization().getStringEx("panel.groups.common.privacy.title.private", "Private") :
               Localization().getStringEx("panel.groups.common.privacy.title.public",  "Public"),
-              constructDropdownDescription:
-                  (dynamic item) => item == GroupPrivacy.private?
-              Localization().getStringEx("panel.groups.common.privacy.description.short.private", "Only members can see group events and posts, unless an event is marked public.") :
-              Localization().getStringEx("panel.groups.common.privacy.description.short.public",  "Only members can see group events and posts, unless an event is marked public."),
 
               onValueChanged: (value) => _onPrivacyChanged(value)
           )
         ),
         Semantics(container: true, child:
-          Container(padding: EdgeInsets.symmetric(horizontal: 24,vertical: 12),
+          Container(padding: EdgeInsets.only(left: 24, right: 24, top: 12),
             child:Text(longDescription ?? '',
               style: Styles().textStyles.getTextStyle("widget.item.small.thin.spaced")
             ),)),
-        Container(height: _isPrivateGroup ? 5 : 40)
+        //Container(height: _isPrivateGroup ? 5 : 0)
       ],);
   }
 
@@ -637,7 +633,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Visibility(
         visible: _isPrivateGroup,
         child: Padding(
-            padding: EdgeInsets.only(left: 16, right: 16),
+            padding: EdgeInsets.only(left: 16, right: 16, top: 12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(
                   child: _buildSwitch(
