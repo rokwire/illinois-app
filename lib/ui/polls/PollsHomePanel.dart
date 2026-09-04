@@ -704,9 +704,8 @@ class PollCard extends StatefulWidget {
   _PollCardState createState() => _PollCardState();
 }
 
-class _PollCardState extends State<PollCard> {
-  List<GlobalKey>? _progressKeys;
-  double? _progressWidth;
+class _PollCardState extends State<PollCard> with NotificationsListener {
+  double? _optionStatsWidth;
 
   bool _showStartPollProgress = false;
   bool _showEndPollProgress = false;
@@ -716,16 +715,33 @@ class _PollCardState extends State<PollCard> {
 
   @override
   void initState() {
-    _loadGroupStats();
+    NotificationService().subscribe(this, [
+      Groups.notifyGroupStatsUpdated,
+      Polls.notifyVoteChanged,
+      Polls.notifyResultsChanged,
+      Polls.notifyStatusChanged,
+    ]);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _evalProgressWidths();
+      _updateMaxOptionStatsWidth();
     });
+    _loadGroupStats();
     super.initState();
   }
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if ((name == Groups.notifyGroupStatsUpdated) && (widget.group?.id == param)) {
+      _updateGroupStats();
+    } else if (((name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged) || (name == Polls.notifyStatusChanged)) && (param != null) && (param == widget.poll.pollId) && mounted) {
+      _updateMaxOptionStatsWidth();
+      setState(() {});
+    }
   }
 
   @override
@@ -836,82 +852,146 @@ class _PollCardState extends State<PollCard> {
 
   List<Widget> _buildCheckboxOptions() {
     bool isClosed = (_poll.status == PollStatus.closed);
-
-    List<Widget> result = [];
-    _progressKeys = [];
-    int totalVotesCount = (_poll.results?.totalVotes ?? 0);
+    int totalVotes = (_poll.results?.totalVotes ?? 0);
     int optionsCount = (_poll.options?.length ?? 0);
+
     int maxValueIndex = -1;
-    if (isClosed && (totalVotesCount > 0)) {
-      maxValueIndex = 0;
-      for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
-        int? optionVotes = _poll.results![optionIndex];
-        int? maxOptionVotes = _poll.results![maxValueIndex];
-        if ((optionVotes != null) && (maxOptionVotes != null) && (optionVotes > maxOptionVotes)) {
-          maxValueIndex = optionIndex;
+    if (isClosed  && (totalVotes > 0) && (optionsCount > 1)) {
+      int? maxValue, minValue, maxValuePos;
+      for (int optionIndex = 0; optionIndex < optionsCount ; optionIndex++) {
+        int? optionVotes =  widget.poll.results?[optionIndex];
+        if (optionVotes != null) {
+          if ((maxValue == null) || (optionVotes > maxValue)) {
+            maxValue = optionVotes;
+            maxValuePos = optionIndex;
+          }
+          if ((minValue == null) || (optionVotes < minValue)) {
+            minValue = optionVotes;
+          }
         }
       }
+      maxValueIndex = ((maxValue != null) && (minValue != null) && (maxValue > minValue) && (maxValuePos != null)) ? maxValuePos : -1;
     }
 
+    List<Widget> result = [];
     for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
-      bool useCustomColor = isClosed && maxValueIndex == optionIndex;
-      String option = _poll.options![optionIndex];
-      bool didVote = ((_poll.userVote != null) && (0 < (_poll.userVote![optionIndex] ?? 0)));
+      bool didVote = ((_poll.userVote != null) && (0 < (_poll.userVote?[optionIndex] ?? 0)));
       String checkboxIconKey = didVote ? 'check-circle-filled' : 'check-circle-outline-gray';
 
-      String? votesString;
-      int? votesCount = (_poll.results != null) ? _poll.results![optionIndex] : null;
-      double votesPercent = ((0 < totalVotesCount) && (votesCount != null)) ? (votesCount.toDouble() / totalVotesCount.toDouble() * 100.0) : 0.0;
-      if ((votesCount == null) || (votesCount == 0)) {
-        votesString = '';
-      }
-      else if (votesCount == 1) {
-        votesString = Localization().getStringEx("panel.polls_home.card.text.one_vote","1 vote");
-      }
-      else {
-        String? votes = Localization().getStringEx("panel.polls_home.card.text.votes","votes");
-        votesString = '$votesCount $votes';
-      }
+      double votesPercent = _optionPercent(optionIndex);
+      String statsString = _optionStatsString(optionIndex);
+      String semanticsText = _optionStatsString(optionIndex, semantics: true);
 
-      GlobalKey progressKey = GlobalKey();
-      _progressKeys!.add(progressKey);
+      bool useCustomColor = isClosed && maxValueIndex == optionIndex;
 
-      String semanticsText = option +"\n "+  votesString +"," + votesPercent.toStringAsFixed(0) +"%";
+      String optionText = widget.poll.options?[optionIndex] ?? '';
+      TextStyle? optionTextStyle = /* useCustomColor ? Styles().textStyles.getTextStyle('widget.group.card.poll.option_variant') : */ Styles().textStyles.getTextStyle('widget.group.card.poll.option');
+      Color progressColor = useCustomColor ? _pollProgressVariantColor : _pollProgressColor;
+
+      double statsWidth = (_optionStatsWidth ?? _maxOptionStatsWidth) + MediaQuery.of(context).textScaler.scale(5);
 
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 8 : 0), child:
-      GestureDetector(
-          child:
-          Semantics(label: semanticsText, excludeSemantics: true, child:
+        Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage(checkboxIconKey, excludeFromSemantics: true)),
-            Expanded(
-              flex: 5,
-              key: progressKey, child:
-                Stack(alignment: Alignment.centerLeft, children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.white, progressColor: useCustomColor ?Styles().colors.fillColorPrimary:Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
-              Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
-                Padding(padding: EdgeInsets.only(left: 5), child:
-                    Row(children: <Widget>[
-                      Expanded( child:
-                      Padding( padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: Text(option, style: useCustomColor? Styles().textStyles.getTextStyle("panel.polls.home.check.accent") : Styles().textStyles.getTextStyle("panel.polls.home.check")),)),
-                      //TBD Do we need this icon and is it the correct icon resource?  Erase if not needed
-                      /*Visibility( visible: didVote,
-                          child: Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage('check-circle-outline-gray', excludeFromSemantics: true))
-                        ),*/
-                    ],),)
-              ),
-            ],)
+            Padding(padding: EdgeInsets.only(right: 10), child:
+              Styles().images.getImage(checkboxIconKey, excludeFromSemantics: true)
             ),
-            Expanded(
-              flex: 5,
-              child: Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: Styles().textStyles.getTextStyle("panel.polls.home.card.percentage.title"),),),
+            Expanded(child:
+              Stack(alignment: Alignment.centerLeft, children: <Widget>[
+                Positioned.fill(child:
+                  CustomPaint(
+                    painter: PollProgressPainter(
+                      backgroundColor: Styles().colors.white,
+                      progressColor: progressColor,
+                      progress: votesPercent / 100.0
+                    ),
+                    child: Row(children: [
+                      Expanded(child:
+                        Container()
+                      )
+                    ],),
+                  ),
+                ),
+                Padding(padding: EdgeInsets.only(left: 5), child:
+                  Row(children: <Widget>[
+                    Expanded( child:
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 5, vertical: 8), child:
+                        Text(optionText, style: optionTextStyle),
+                      )
+                    ),
+                  ],),
+                )
+              ],)
+            ),
+            Container(width: statsWidth + 5, padding: EdgeInsetsGeometry.only(left: 5), child:
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Expanded(child:
+                  Text(statsString, textAlign: TextAlign.right, style: _optionStatsTextStyle,),
+                )
+              ],)
             )
           ],)
-      ))));
+      )));
     }
     return result;
   }
+
+  String _optionStatsString(int optionIndex, { bool semantics = false }) {
+    String votesString;
+    int? votesCount = _poll.results?[optionIndex];
+
+    if ((votesCount == null) || (votesCount == 0)) {
+      votesString = '';
+    }
+    else if (votesCount == 1) {
+      votesString = Localization().getStringEx("panel.polls_home.card.text.one_vote","1 vote");
+    }
+    else {
+      String? votes = Localization().getStringEx("panel.polls_home.card.text.votes","votes");
+      votesString = '$votesCount $votes';
+    }
+
+    double votesPercent = _optionPercent(optionIndex);
+    String votesPercentString = votesPercent.toStringAsFixed(0);
+
+    String? optionText = widget.poll.options?[optionIndex];
+
+    return (semantics != true) ? '$votesString ($votesPercentString%)' : '$optionText,\n$votesString,$votesPercentString%';
+  }
+
+  double _optionPercent(int optionIndex) {
+    int? votesCount = widget.poll.results?[optionIndex];
+    int? totalVotes = widget.poll.results?.totalVotes;
+    return ((totalVotes != null) && (0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
+  }
+
+  void _updateMaxOptionStatsWidth() {
+    double maxWidth = 0.0;
+    int optionsCount = widget.poll.options?.length ?? 0;
+    for (int optionIndex = 0; optionIndex < optionsCount ; optionIndex++) {
+      String optionStats = _optionStatsString(optionIndex);
+      final Size textSizeFull = (TextPainter(
+        text: TextSpan(text: optionStats, style: _optionStatsTextStyle,),
+        textScaler: MediaQuery.of(context).textScaler,
+        textDirection: TextDirection.ltr,
+      )..layout()).size;
+      if (textSizeFull.width > maxWidth) {
+        maxWidth = textSizeFull.width;
+      }
+    }
+    maxWidth = min(maxWidth, _maxOptionStatsWidth) ;
+    if (maxWidth != _optionStatsWidth) {
+      setState(() {
+        _optionStatsWidth = maxWidth;
+      });
+    }
+  }
+
+  double get _maxOptionStatsWidth => (MediaQuery.of(context).size.width / 4);
+
+  TextStyle? get _optionStatsTextStyle => Styles().textStyles.getTextStyle('widget.group.card.poll.votes');
+  Color get _pollProgressVariantColor   => Styles().colors.getColor('pollProgressColor') ?? const Color(0xFFF4E5CE);
+  Color get _pollProgressColor          => Styles().colors.lightGray;
 
   Widget _createStartPollButton(){
     return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.start_poll","Start Poll"), _onStartPollTapped, loading: _showStartPollProgress);
@@ -1054,25 +1134,6 @@ class _PollCardState extends State<PollCard> {
     Polls().presentPollVote(widget.poll);
   }
 
-  void _evalProgressWidths() {
-    if (_progressKeys != null) {
-      double progressWidth = -1.0;
-      for (GlobalKey progressKey in _progressKeys!) {
-        final RenderObject? progressRender = progressKey.currentContext?.findRenderObject();
-        if ((progressRender is RenderBox) && progressRender.hasSize && (0 < progressRender.size.width)) {
-          if ((progressWidth < 0.0) || (progressRender.size.width < progressWidth)) {
-            progressWidth = progressRender.size.width;
-          }
-        }
-      }
-      if (0 < progressWidth) {
-        setStateIfMounted(() {
-          _progressWidth = progressWidth;
-        });
-      }
-    }
-  }
-
   void _setStartButtonProgress(bool showProgress){
     setStateIfMounted(() {
       _showStartPollProgress = showProgress;
@@ -1088,6 +1149,15 @@ class _PollCardState extends State<PollCard> {
     setStateIfMounted(() {
       _showDeletePollProgress = showProgress;
     });
+  }
+
+  void _updateGroupStats() {
+    GroupStats? cachedGroupStats = Groups().cachedGroupStats(widget.group?.id);
+    if ((cachedGroupStats != null) && (_groupStats != cachedGroupStats) && mounted) {
+      setState(() {
+        _groupStats = cachedGroupStats;
+      });
+    }
   }
 
   Poll get _poll => widget.poll;

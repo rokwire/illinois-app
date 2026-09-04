@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [8.2.18] - 2026-09-03
+### Changed
+- Clean up PollCard, update max option progress and text colors [#6046](https://github.com/rokwire/illinois-app/issues/6046).
+### Fixed
+- Fixed evening & night random images for home tout widget [#6054](https://github.com/rokwire/illinois-app/issues/6054).
+
 ## [8.2.17] - 2026-09-03
 ### Changed
 - Match canvas course icons to student course panel [#5945](https://github.com/rokwire/illinois-app/issues/5945).
